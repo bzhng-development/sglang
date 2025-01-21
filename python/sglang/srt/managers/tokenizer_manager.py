@@ -1411,11 +1411,15 @@ class TokenizerManager(TokenizerCommunicatorMixin):
                 "id": origin_rid,
                 "finish_reason": recv_obj.finished_reasons[i],
                 "prompt_tokens": recv_obj.prompt_tokens[i],
-                "weight_version": self.server_args.weight_version,
             }
+            if hasattr(self.server_args, "weight_version"):
+                meta_info["weight_version"] = self.server_args.weight_version
 
-            if getattr(recv_obj, "beam_search_output", None) is not None:
-                meta_info["beam_search_outputs"] = recv_obj.beam_search_output[i]
+            beam_outputs = getattr(recv_obj, "beam_search_output", None)
+            if beam_outputs is not None:
+                meta_info["beam_search_outputs"] = (
+                    beam_outputs[i] if i < len(beam_outputs) else None
+                )
 
             if getattr(state.obj, "return_logprob", False):
                 self.convert_logprob_style(
