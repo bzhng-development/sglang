@@ -206,7 +206,6 @@ from sglang.srt.beam_search import (
     BeamSearchSequence,
     sort_by_beam_search_score,
 )
-
 xlx_test_beam_width = int(os.getenv("SGLANG_TEST_BEAM_WIDTH", 0))
 
 
@@ -1223,6 +1222,86 @@ class Scheduler(
                 else:
                     self.send_to_tokenizer.send_pyobj(output)
 
+    def handle_generate_request(
+        self,
+        recv_req: TokenizedGenerateReqInput,
+    ):
+        self.maybe_update_dp_balance_data(recv_req)
+                recv_req.input_ids,
+                recv_req.sampling_params,
+                return_logprob=recv_req.return_logprob,
+                top_logprobs_num=recv_req.top_logprobs_num,
+                stream=recv_req.stream,
+                lora_path=recv_req.lora_path,
+                input_embeds=recv_req.input_embeds,
+                custom_logit_processor=custom_logit_processor,
+                eos_token_ids=self.model_config.hf_eos_token_id,
+            )
+            req.tokenizer = self.tokenizer
+
+            if (
+                recv_req.session_params is not None
+                and recv_req.session_params.id is not None
+            ):
+                req.finished_reason = FINISH_ABORT(
+                    f"Invalid request: session id {recv_req.session_params.id} does not exist"
+                )
+                self.waiting_queue.append(req)
+                return
+        else:
+            # Create a new request from a previous session
+            session = self.sessions[recv_req.session_params.id]
+            req = session.create_req(recv_req, self.tokenizer)
+            if isinstance(req.finished_reason, FINISH_ABORT):
+                self.waiting_queue.append(req)
+                return
+
+        # Handle image inputs
+        if recv_req.image_inputs is not None:
+            image_inputs = ImageInputs.from_dict(recv_req.image_inputs)
+            # Expand a single image token into multiple dummy tokens for receiving image embeddings
+            req.origin_input_ids = self.pad_input_ids_func(
+                req.origin_input_ids, image_inputs
+            )
+            req.extend_image_inputs(image_inputs)
+
+            if len(req.origin_input_ids) >= self.max_req_input_len:
+                error_msg = (
+                    "Multimodal prompt is too long after expanding multimodal tokens. "
+                    f"After expanding {len(req.origin_input_ids_unpadded)=} => {len(req.origin_input_ids)} >= {self.max_req_input_len}."
+                )
+                logger.error(error_msg)
+                req.origin_input_ids = [0]
+                req.image_inputs = None
+                req.sampling_params.max_new_tokens = 0
+                req.finished_reason = FINISH_ABORT(
+                    error_msg, HTTPStatus.BAD_REQUEST, "BadRequestError"
+                )
+                self.waiting_queue.append(req)
+                return
+
+        # Copy more attributes
+        req.logprob_start_len = recv_req.logprob_start_len
+
+        if xlx_test_beam_width > 0:
+            req.return_logprob = True
+            req.top_logprobs_num = xlx_test_beam_width * 2
+
+        if req.logprob_start_len == -1:
+            # By default, only return the logprobs for output tokens
+            req.logprob_start_len = len(req.origin_input_ids) - 1
+
+        # Validate prompts length
+        error_msg = validate_input_length(
+            req,
+            self.max_req_input_len,
+            self.server_args.allow_auto_truncate,
+        )
+
+        if error_msg:
+            self.waiting_queue.append(req)
+            return
+
     def init_req_max_new_tokens(self, req):
         req.sampling_params.max_new_tokens = min(
             (
@@ -2155,6 +2234,108 @@ class Scheduler(
         )
 
     def process_batch_result_beam_search(
+=======
+            # Check finish conditions
+            logprob_pt = 0
+            for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
+                if req.is_retracted:
+                    continue
+
+                if self.is_mixed_chunk and self.enable_overlap and req.finished():
+                    # Free the one delayed token for the mixed decode batch
+                    j = len(batch.out_cache_loc) - len(batch.reqs) + i
+                    self.token_to_kv_pool.free(batch.out_cache_loc[j : j + 1])
+                    continue
+
+                if req.is_being_chunked <= 0:
+                    req.output_ids.append(next_token_id)
+                    req.check_finished()
+
+                    if req.finished():
+                        self.tree_cache.cache_finished_req(req)
+                    elif not batch.decoding_reqs or req not in batch.decoding_reqs:
+                        self.tree_cache.cache_unfinished_req(req)
+
+                    if req.return_logprob:
+                        logprob_pt += self.add_logprob_return_values(
+                            i, req, logprob_pt, next_token_ids, logits_output
+                        )
+
+                        if xlx_test_beam_width > 0:
+                            req.beam_list.beam_width = xlx_test_beam_width
+                            batch.beam_width = xlx_test_beam_width
+                            incompleted = [
+                                BeamSearchSequence(
+                                    last_token=top_token,
+                                    tokens=[top_token],
+                                    cum_logprob=top_logprob,
+                                    finish=self._check_token_finish(req, top_token),
+                                    # for new prepare_for_beam_search
+                                    prefix_len=len(req.origin_input_ids)
+                                    + len(req.output_ids)
+                                    - 1,
+                                    # prefix = req.output_ids.copy() if next_token_id==top_token \
+                                    #     else req.output_ids[:-1],
+                                )
+                                for top_logprob, top_token in zip(
+                                    logits_output.next_token_top_logprobs_val[i],
+                                    logits_output.next_token_top_logprobs_idx[i],
+                                )
+                            ]
+                            incompleted = sorted(
+                                incompleted, key=sort_by_beam_search_score, reverse=True
+                            )
+                            if req.finished():
+                                req.beam_list.completed = incompleted[
+                                    : req.beam_list.beam_width
+                                ]
+                            else:
+                                req.beam_list.incompleted = incompleted[
+                                    : req.beam_list.beam_width
+                                ]
+
+                    if req.grammar is not None:
+                        req.grammar.accept_token(next_token_id)
+                        req.grammar.finished = req.finished()
+                else:
+                    # being chunked reqs' prefill is not finished
+                    req.is_being_chunked -= 1
+                    # There is only at most one request being currently chunked.
+                    # Because this request does not finish prefill,
+                    # we don't want to stream the request currently being chunked.
+                    skip_stream_req = req
+
+            if batch.next_batch_sampling_info:
+                batch.next_batch_sampling_info.update_regex_vocab_mask()
+                self.current_stream.synchronize()
+                batch.next_batch_sampling_info.sampling_info_done.set()
+
+        else:  # embedding or reward model
+            embeddings, bid = result.embeddings, result.bid
+            embeddings = embeddings.tolist()
+
+            # Check finish conditions
+            for i, req in enumerate(batch.reqs):
+                if req.is_retracted:
+                    continue
+
+                req.embedding = embeddings[i]
+                if req.is_being_chunked <= 0:
+                    # Dummy output token for embedding models
+                    req.output_ids.append(0)
+                    req.check_finished()
+
+                    if req.finished():
+                        self.tree_cache.cache_finished_req(req)
+                    else:
+                        self.tree_cache.cache_unfinished_req(req)
+                else:
+                    # being chunked reqs' prefill is not finished
+                    req.is_being_chunked -= 1
+
+        self.stream_output(batch.reqs, batch.return_logprob, skip_stream_req)
+
+    def process_batch_result_decode(
         self,
         batch: ScheduleBatch,
         result: GenerationBatchResult,

@@ -26,6 +26,7 @@ from sglang.srt.beam_search import BeamSearchOutput
 from sglang.srt.lora.lora_registry import LoRARef
 from sglang.srt.managers.schedule_batch import BaseFinishReason
 from sglang.srt.multimodal.mm_utils import has_valid_data
+from sglang.srt.sampling.custom_logit_processor import CustomLogitProcessor
 from sglang.srt.sampling.sampling_params import SamplingParams
 from sglang.srt.utils import ImageData
 

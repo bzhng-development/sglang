@@ -14,8 +14,7 @@ import enum
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ==============================================================================
-"""
+# ======================================================================="""
 Store information about requests and batches.
 
 The following is the flow of data structures for a batch:
@@ -1697,9 +1696,6 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         self.forward_mode = ForwardMode.DECODE
 
         # self.input_ids = self.output_ids
-        beam_ids = [
-            [beam.last_token for beam in req.beam_list.incompleted] for req in self.reqs
-        ]
         beam_ids_tensor = torch.tensor(beam_ids, dtype=torch.int64).to(
             self.device, non_blocking=True
         )
@@ -1978,6 +1974,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
                             req.beam_list.req_pool_start_idx + i
                             for i in range(self.beam_width + 1)
                         ],
+                        dtype=torch.int64,
                         dtype=torch.int64,
                         device=self.device,
                     )

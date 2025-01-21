@@ -254,32 +254,85 @@ class RadixCache(BasePrefixCache):
             self.disable
             or not getattr(batch, "beam_width", 0)
             or not getattr(batch, "req_pool_indices", None)
+            or not getattr(batch, "seq_lens", None)
         ):
             return
 
         beam_width = batch.beam_width
-        req_pool_indices = batch.req_pool_indices.cpu().tolist()
-        seq_lens = batch.seq_lens.cpu().tolist()
+        if beam_width <= 0:
+            return
 
-        for req in batch.reqs:
-            start_idx = getattr(
-                getattr(req, "beam_list", None), "req_pool_start_idx", -1
+        finished_reqs = [req for req in batch.reqs if req.finished()]
+        if not finished_reqs:
+            return
+
+        beam_stride = beam_width + 1
+        total_slots = len(batch.req_pool_indices)
+        if total_slots == 0:
+            return
+
+        pools_to_free: List[int] = []
+        beam_chunks: List[torch.Tensor] = []
+
+        keep_kv_indices = None
+        if self.token_to_kv_pool_allocator is not None:
+            pool_tensor = self.req_to_token_pool.req_to_token
+            pool_device = pool_tensor.device
+            pool_dtype = pool_tensor.dtype
+
+            base_chunks: List[torch.Tensor] = []
+            base_indices = batch.req_pool_indices[::beam_stride]
+            base_seq_lens = batch.seq_lens[::beam_stride]
+            for base_idx_tensor, base_len_tensor in zip(base_indices, base_seq_lens):
+                base_idx = int(base_idx_tensor.item())
+                base_len = int(base_len_tensor.item())
+                if base_idx < 0 or base_len <= 0:
+                    continue
+                base_chunks.append(pool_tensor[base_idx, :base_len])
+
+            keep_kv_indices = (
+                torch.cat(base_chunks).unique()
+                if base_chunks
+                else torch.empty(0, dtype=pool_dtype, device=pool_device)
             )
-            if start_idx == -1 or not req.finished():
+        else:
+            pool_tensor = None
+
+        for req in finished_reqs:
+            beam_list = getattr(req, "beam_list", None)
+            start_idx = getattr(beam_list, "req_pool_start_idx", -1)
+            if start_idx == -1:
                 continue
 
-            for offset in range(1, beam_width + 1):
+            req_beam_width = getattr(beam_list, "beam_width", beam_width) or 0
+            req_beam_width = min(req_beam_width, beam_width)
+            for offset in range(1, req_beam_width + 1):
                 pos = start_idx + offset
-                if pos >= len(req_pool_indices):
+                if pos >= total_slots:
                     break
-                pool_idx = req_pool_indices[pos]
-                seq_len = seq_lens[pos]
-                if pool_idx < 0 or seq_len <= 0:
+                pool_idx_tensor = batch.req_pool_indices[pos]
+                seq_len_tensor = batch.seq_lens[pos]
+                pool_idx = int(pool_idx_tensor.item())
+                seq_len_val = int(seq_len_tensor.item())
+                if pool_idx < 0 or seq_len_val <= 0:
                     continue
-                kv_indices = self.req_to_token_pool.req_to_token[pool_idx, :seq_len]
+
+                pools_to_free.append(pool_idx)
                 if self.token_to_kv_pool_allocator is not None:
-                    self.token_to_kv_pool_allocator.free(kv_indices.to(torch.int64))
-                self.req_to_token_pool.free(pool_idx)
+                    beam_chunks.append(pool_tensor[pool_idx, :seq_len_val])
+
+        if self.token_to_kv_pool_allocator is not None and beam_chunks:
+            beam_kv_indices = torch.cat(beam_chunks).unique()
+            if keep_kv_indices.numel() > 0:
+                mask = ~torch.isin(beam_kv_indices, keep_kv_indices)
+                free_kv_indices = beam_kv_indices[mask]
+            else:
+                free_kv_indices = beam_kv_indices
+            if free_kv_indices.numel() > 0:
+                self.token_to_kv_pool_allocator.free(free_kv_indices.to(torch.int64))
+
+        if pools_to_free:
+            self.req_to_token_pool.free(pools_to_free)
 
     def cache_unfinished_req(self, req: Req, chunked=False):
         """Cache request when it is unfinished."""
