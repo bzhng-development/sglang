@@ -451,6 +451,9 @@ class ServerArgs:
     enable_triton_kernel_moe: bool = False
     enable_flashinfer_mxfp4_moe: bool = False
 
+    # Beam Search
+    beam_width: int = 0
+
     def __post_init__(self):
         # Check deprecated arguments
         if self.enable_ep_moe:
@@ -2540,6 +2543,14 @@ class ServerArgs:
             "--enable-flashinfer-mxfp4-moe",
             action="store_true",
             help="(Deprecated) Enable FlashInfer MXFP4 MoE backend for modelopt_fp4 quant on Blackwell.",
+        )
+
+        # beam search
+        parser.add_argument(
+            "--beam-width",
+            type=int,
+            default=0,
+            help="The number of kept sequences in beam search",
         )
 
     @classmethod

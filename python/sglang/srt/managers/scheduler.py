@@ -174,7 +174,6 @@ from sglang.srt.utils import (
     broadcast_pyobj,
     configure_gc_logger,
     configure_logger,
-    disable_request_logging,
     freeze_gc,
     get_available_gpu_memory,
     get_bool_env_var,
@@ -184,7 +183,6 @@ from sglang.srt.utils import (
     kill_itself_when_parent_died,
     numa_bind_to_node,
     point_to_point_pyobj,
-    pyspy_dump_schedulers,
     require_mlp_sync,
     require_mlp_tp_gather,
     set_gpu_proc_affinity,
@@ -206,8 +204,10 @@ from sglang.srt.beam_search import (
     BeamSearchSequence,
     sort_by_beam_search_score,
 )
-xlx_test_beam_width = int(os.getenv("SGLANG_TEST_BEAM_WIDTH", 0))
-xlx_test_beam_fixed_max_token = bool(os.getenv("SGLANG_TEST_BEAM_FIXED_MAX_TOKEN", 0))
+
+test_beam_fixed_max_token = bool(
+    os.getenv("SGLANG_TEST_BEAM_FIXED_MAX_TOKEN", 0)
+)  # for beam search unit test
 
 @dataclass
 class GenerationBatchResult:
@@ -635,6 +635,9 @@ class Scheduler(
             ]
         )
 
+        # beam search
+        self.beam_width = server_args.beam_width
+
     def init_tokenizer(self):
         server_args = self.server_args
         self.is_generation = self.model_config.is_generation
@@ -658,6 +661,26 @@ class Scheduler(
                     trust_remote_code=server_args.trust_remote_code,
                     revision=server_args.revision,
                 )
+
+    def watchdog_thread(self):
+        """A watch dog thread that will try to kill the server itself if one batch takes too long."""
+        self.watchdog_last_forward_ct = 0
+        self.watchdog_last_time = time.time()
+
+        while True:
+            current = time.time()
+            if self.cur_batch is not None:
+                if self.watchdog_last_forward_ct == self.forward_ct:
+                    if current > self.watchdog_last_time + self.watchdog_timeout:
+                        logger.error(f"Watchdog timeout ({self.watchdog_timeout=})")
+                        break
+                else:
+                    self.watchdog_last_forward_ct = self.forward_ct
+                    self.watchdog_last_time = current
+            time.sleep(self.watchdog_timeout // 2)
+        # Wait sometimes so that the parent process can print the error.
+        time.sleep(5)
+        self.parent_process.send_signal(signal.SIGQUIT)
 
     def init_memory_pool_and_cache(self):
         server_args = self.server_args
@@ -1222,86 +1245,6 @@ class Scheduler(
                 else:
                     self.send_to_tokenizer.send_pyobj(output)
 
-    def handle_generate_request(
-        self,
-        recv_req: TokenizedGenerateReqInput,
-    ):
-        self.maybe_update_dp_balance_data(recv_req)
-                recv_req.input_ids,
-                recv_req.sampling_params,
-                return_logprob=recv_req.return_logprob,
-                top_logprobs_num=recv_req.top_logprobs_num,
-                stream=recv_req.stream,
-                lora_path=recv_req.lora_path,
-                input_embeds=recv_req.input_embeds,
-                custom_logit_processor=custom_logit_processor,
-                eos_token_ids=self.model_config.hf_eos_token_id,
-            )
-            req.tokenizer = self.tokenizer
-
-            if (
-                recv_req.session_params is not None
-                and recv_req.session_params.id is not None
-            ):
-                req.finished_reason = FINISH_ABORT(
-                    f"Invalid request: session id {recv_req.session_params.id} does not exist"
-                )
-                self.waiting_queue.append(req)
-                return
-        else:
-            # Create a new request from a previous session
-            session = self.sessions[recv_req.session_params.id]
-            req = session.create_req(recv_req, self.tokenizer)
-            if isinstance(req.finished_reason, FINISH_ABORT):
-                self.waiting_queue.append(req)
-                return
-
-        # Handle image inputs
-        if recv_req.image_inputs is not None:
-            image_inputs = ImageInputs.from_dict(recv_req.image_inputs)
-            # Expand a single image token into multiple dummy tokens for receiving image embeddings
-            req.origin_input_ids = self.pad_input_ids_func(
-                req.origin_input_ids, image_inputs
-            )
-            req.extend_image_inputs(image_inputs)
-
-            if len(req.origin_input_ids) >= self.max_req_input_len:
-                error_msg = (
-                    "Multimodal prompt is too long after expanding multimodal tokens. "
-                    f"After expanding {len(req.origin_input_ids_unpadded)=} => {len(req.origin_input_ids)} >= {self.max_req_input_len}."
-                )
-                logger.error(error_msg)
-                req.origin_input_ids = [0]
-                req.image_inputs = None
-                req.sampling_params.max_new_tokens = 0
-                req.finished_reason = FINISH_ABORT(
-                    error_msg, HTTPStatus.BAD_REQUEST, "BadRequestError"
-                )
-                self.waiting_queue.append(req)
-                return
-
-        # Copy more attributes
-        req.logprob_start_len = recv_req.logprob_start_len
-
-        if xlx_test_beam_width > 0:
-            req.return_logprob = True
-            req.top_logprobs_num = xlx_test_beam_width * 2
-
-        if req.logprob_start_len == -1:
-            # By default, only return the logprobs for output tokens
-            req.logprob_start_len = len(req.origin_input_ids) - 1
-
-        # Validate prompts length
-        error_msg = validate_input_length(
-            req,
-            self.max_req_input_len,
-            self.server_args.allow_auto_truncate,
-        )
-
-        if error_msg:
-            self.waiting_queue.append(req)
-            return
-
     def init_req_max_new_tokens(self, req):
         req.sampling_params.max_new_tokens = min(
             (
@@ -1317,6 +1260,19 @@ class Scheduler(
         recv_req: TokenizedGenerateReqInput,
     ):
         self.maybe_update_dp_balance_data(recv_req)
+
+        # Handle custom logit processor passed to the request
+        custom_logit_processor = recv_req.custom_logit_processor
+        if (
+            not self.server_args.enable_custom_logit_processor
+            and custom_logit_processor is not None
+        ):
+            logger.warning(
+                "The SGLang server is not configured to enable custom logit processor."
+                "The custom logit processor passed in will be ignored."
+                "Please set --enable-custom-logits-processor to enable this feature."
+            )
+            custom_logit_processor = None
 
         # Create a new request
         if (
@@ -1334,18 +1290,22 @@ class Scheduler(
                 # Use default bootstrap port
                 recv_req.bootstrap_port = self.server_args.disaggregation_bootstrap_port
 
+            top_logprobs_num = recv_req.top_logprobs_num or 0
+            if self.beam_width > 0:
+                top_logprobs_num = max(top_logprobs_num, self.beam_width * 2)
+
             req = Req(
                 recv_req.rid,
                 recv_req.input_text,
                 recv_req.input_ids,
                 recv_req.sampling_params,
-                return_logprob=recv_req.return_logprob,
-                top_logprobs_num=recv_req.top_logprobs_num,
+                return_logprob=recv_req.return_logprob or self.beam_width > 0,
+                top_logprobs_num=top_logprobs_num,
                 token_ids_logprob=recv_req.token_ids_logprob,
                 stream=recv_req.stream,
                 lora_id=recv_req.lora_id,
                 input_embeds=recv_req.input_embeds,
-                custom_logit_processor=recv_req.custom_logit_processor,
+                custom_logit_processor=custom_logit_processor,
                 return_hidden_states=recv_req.return_hidden_states,
                 eos_token_ids=self.model_config.hf_eos_token_id,
                 bootstrap_host=recv_req.bootstrap_host,
@@ -1382,6 +1342,9 @@ class Scheduler(
                 self.init_req_max_new_tokens(req)
                 self._add_request_to_queue(req)
                 return
+
+            if self.beam_width > 0:
+                req.beam_list.beam_width = self.beam_width
         else:
             # Create a new request from a previous session
             session = self.sessions[recv_req.session_params.id]
@@ -1390,6 +1353,13 @@ class Scheduler(
                 self.init_req_max_new_tokens(req)
                 self._add_request_to_queue(req)
                 return
+
+            if self.beam_width > 0:
+                req.return_logprob = True
+                if req.top_logprobs_num is None:
+                    req.top_logprobs_num = 0
+                req.top_logprobs_num = max(req.top_logprobs_num, self.beam_width * 2)
+                req.beam_list.beam_width = self.beam_width
 
         # Handle multimodal inputs
         if recv_req.mm_inputs is not None:
@@ -1425,12 +1395,12 @@ class Scheduler(
             self._add_request_to_queue(req)
             return
 
-        if xlx_test_beam_width > 0:
+        if self.beam_width > 0:
             req.return_logprob = True
-            req.top_logprobs_num = max(
-                req.top_logprobs_num or 0, xlx_test_beam_width * 2
-            )
-            req.beam_list.beam_width = xlx_test_beam_width
+            if req.top_logprobs_num is None:
+                req.top_logprobs_num = 0
+            req.top_logprobs_num = max(req.top_logprobs_num, self.beam_width * 2)
+            req.beam_list.beam_width = self.beam_width
 
         # Copy more attributes
         if recv_req.logprob_start_len == -1 or not recv_req.return_logprob:
@@ -2233,108 +2203,6 @@ class Scheduler(
             disable_overlap_schedule=self.server_args.disable_overlap_schedule,
         )
 
-    def process_batch_result_beam_search(
-=======
-            # Check finish conditions
-            logprob_pt = 0
-            for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
-                if req.is_retracted:
-                    continue
-
-                if self.is_mixed_chunk and self.enable_overlap and req.finished():
-                    # Free the one delayed token for the mixed decode batch
-                    j = len(batch.out_cache_loc) - len(batch.reqs) + i
-                    self.token_to_kv_pool.free(batch.out_cache_loc[j : j + 1])
-                    continue
-
-                if req.is_being_chunked <= 0:
-                    req.output_ids.append(next_token_id)
-                    req.check_finished()
-
-                    if req.finished():
-                        self.tree_cache.cache_finished_req(req)
-                    elif not batch.decoding_reqs or req not in batch.decoding_reqs:
-                        self.tree_cache.cache_unfinished_req(req)
-
-                    if req.return_logprob:
-                        logprob_pt += self.add_logprob_return_values(
-                            i, req, logprob_pt, next_token_ids, logits_output
-                        )
-
-                        if xlx_test_beam_width > 0:
-                            req.beam_list.beam_width = xlx_test_beam_width
-                            batch.beam_width = xlx_test_beam_width
-                            incompleted = [
-                                BeamSearchSequence(
-                                    last_token=top_token,
-                                    tokens=[top_token],
-                                    cum_logprob=top_logprob,
-                                    finish=self._check_token_finish(req, top_token),
-                                    # for new prepare_for_beam_search
-                                    prefix_len=len(req.origin_input_ids)
-                                    + len(req.output_ids)
-                                    - 1,
-                                    # prefix = req.output_ids.copy() if next_token_id==top_token \
-                                    #     else req.output_ids[:-1],
-                                )
-                                for top_logprob, top_token in zip(
-                                    logits_output.next_token_top_logprobs_val[i],
-                                    logits_output.next_token_top_logprobs_idx[i],
-                                )
-                            ]
-                            incompleted = sorted(
-                                incompleted, key=sort_by_beam_search_score, reverse=True
-                            )
-                            if req.finished():
-                                req.beam_list.completed = incompleted[
-                                    : req.beam_list.beam_width
-                                ]
-                            else:
-                                req.beam_list.incompleted = incompleted[
-                                    : req.beam_list.beam_width
-                                ]
-
-                    if req.grammar is not None:
-                        req.grammar.accept_token(next_token_id)
-                        req.grammar.finished = req.finished()
-                else:
-                    # being chunked reqs' prefill is not finished
-                    req.is_being_chunked -= 1
-                    # There is only at most one request being currently chunked.
-                    # Because this request does not finish prefill,
-                    # we don't want to stream the request currently being chunked.
-                    skip_stream_req = req
-
-            if batch.next_batch_sampling_info:
-                batch.next_batch_sampling_info.update_regex_vocab_mask()
-                self.current_stream.synchronize()
-                batch.next_batch_sampling_info.sampling_info_done.set()
-
-        else:  # embedding or reward model
-            embeddings, bid = result.embeddings, result.bid
-            embeddings = embeddings.tolist()
-
-            # Check finish conditions
-            for i, req in enumerate(batch.reqs):
-                if req.is_retracted:
-                    continue
-
-                req.embedding = embeddings[i]
-                if req.is_being_chunked <= 0:
-                    # Dummy output token for embedding models
-                    req.output_ids.append(0)
-                    req.check_finished()
-
-                    if req.finished():
-                        self.tree_cache.cache_finished_req(req)
-                    else:
-                        self.tree_cache.cache_unfinished_req(req)
-                else:
-                    # being chunked reqs' prefill is not finished
-                    req.is_being_chunked -= 1
-
-        self.stream_output(batch.reqs, batch.return_logprob, skip_stream_req)
-
     def process_batch_result_decode(
         self,
         batch: ScheduleBatch,
@@ -2584,21 +2452,38 @@ class Scheduler(
                     beam.finish = FINISH_MATCHED_STR(matched=stop_str)
                     return
 
-    def process_batch_result_beam_search(self, batch: ScheduleBatch, result):
-        logits_output, next_token_ids, bid = (
+    def process_batch_result_beam_search(
+        self,
+        batch: ScheduleBatch,
+        result: GenerationBatchResult,
+        launch_done: Optional[threading.Event] = None,
+    ):
+        logits_output, next_token_ids, _ = (
             result.logits_output,
             result.next_token_ids,
             result.bid,
         )
-        self.num_generated_tokens += len(batch.reqs) * (batch.beam_width + 1)
 
-        # Move next_token_ids and logprobs to cpu
-        next_token_ids = next_token_ids.tolist()
-        next_token_logprobs = logits_output.next_token_logprobs.tolist()
+        beam_stride = batch.beam_width + 1
+        self.num_generated_tokens += len(batch.reqs) * beam_stride
 
-        next_token_logprobs = next_token_logprobs[:: batch.beam_width + 1]
-        next_token_ids = next_token_ids[:: batch.beam_width + 1]
-        batch.output_ids = batch.output_ids[:: batch.beam_width + 1]
+        if self.enable_overlap:
+            logits_output, next_token_ids, _ = self.tp_worker.resolve_last_batch_result(
+                launch_done
+            )
+        else:
+            next_token_ids = next_token_ids.tolist()
+
+        next_token_logprobs = logits_output.next_token_logprobs
+        if isinstance(next_token_logprobs, torch.Tensor):
+            next_token_logprobs = next_token_logprobs.tolist()
+
+        next_token_logprobs = next_token_logprobs[::beam_stride]
+        next_token_ids = next_token_ids[::beam_stride]
+
+        if isinstance(batch.output_ids, torch.Tensor):
+            batch.output_ids = batch.output_ids.tolist()
+        batch.output_ids = batch.output_ids[::beam_stride]
 
         # [bs*(1+beam_width), vocab_size] -> [bs*(1+beam_width), top_logprobs_nums]
         max_k = max(batch.top_logprobs_nums)
@@ -2608,7 +2493,7 @@ class Scheduler(
         beam_output_top_token = beam_top_token_logprobs.indices.tolist()
         beam_output_top_logprob = beam_top_token_logprobs.values.tolist()
 
-        self.token_to_kv_pool.free_group_begin()
+        self.token_to_kv_pool_allocator.free_group_begin()
 
         for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
             if req.is_retracted:
@@ -2618,7 +2503,7 @@ class Scheduler(
             req.check_finished()
             if (isinstance(req.finished_reason, FINISH_MATCHED_TOKEN) or isinstance(
                 req.finished_reason, FINISH_MATCHED_STR
-            )) and not xlx_test_beam_fixed_max_token:
+            )) and not test_beam_fixed_max_token:
                 req.finished_reason = None
 
             if req.return_logprob:
@@ -2675,7 +2560,7 @@ class Scheduler(
             if (
                 len(req.beam_list.incompleted) < batch.beam_width
                 or len(req.beam_list.completed) > 10 * batch.beam_width
-            ) and not req.finished() and not xlx_test_beam_fixed_max_token:
+            ) and not req.finished() and not test_beam_fixed_max_token:
                 req.finished_reason = req.beam_list.completed[0].finish
 
             if req.finished():
@@ -2702,7 +2587,7 @@ class Scheduler(
 
         self.stream_output(batch.reqs, batch.return_logprob)
 
-        self.token_to_kv_pool.free_group_end()
+        self.token_to_kv_pool_allocator.free_group_end()
 
         self.forward_ct_decode = (self.forward_ct_decode + 1) % (1 << 30)
         if (
@@ -3098,59 +2983,6 @@ class Scheduler(
                 batch.next_batch_sampling_info.update_regex_vocab_mask()
                 self.current_stream.synchronize()
             batch.next_batch_sampling_info.sampling_info_done.set()
-
-    def watchdog_thread(self):
-        """A watch dog thread that will try to kill the server itself if one forward batch takes too long."""
-        self.watchdog_last_forward_ct = 0
-        self.watchdog_last_time = time.perf_counter()
-
-        while True:
-            current = time.perf_counter()
-            if self.cur_batch is not None:
-                if self.watchdog_last_forward_ct == self.forward_ct:
-                    if current > self.watchdog_last_time + self.watchdog_timeout:
-                        break
-                else:
-                    self.watchdog_last_forward_ct = self.forward_ct
-                    self.watchdog_last_time = current
-            time.sleep(self.watchdog_timeout // 2)
-
-        if not disable_request_logging():
-            # Print batch size and memory pool info to check whether there are de-sync issues.
-            if self.is_hybrid:
-                (
-                    _,
-                    _,
-                    _,
-                    _,
-                    full_available_size,
-                    full_evictable_size,
-                    swa_available_size,
-                    swa_evictable_size,
-                ) = self._get_swa_token_info()
-                info_msg = (
-                    f"{full_available_size=}, "
-                    f"{full_evictable_size=}, "
-                    f"{swa_available_size=}, "
-                    f"{swa_evictable_size=}, "
-                )
-            else:
-                _, _, available_size, evictable_size = self._get_token_info()
-                info_msg = f"{available_size=}, " f"{evictable_size=}, "
-            logger.error(
-                f"{self.cur_batch.batch_size()=}, "
-                f"{self.cur_batch.reqs=}, "
-                f"{info_msg}"
-            )
-
-        pyspy_dump_schedulers()
-        logger.error(f"Watchdog timeout ({self.watchdog_timeout=})")
-        print(file=sys.stderr, flush=True)
-        print(file=sys.stdout, flush=True)
-
-        # Wait for some time so that the parent process can print the error.
-        time.sleep(5)
-        self.parent_process.send_signal(signal.SIGQUIT)
 
     def flush_cache_wrapped(self, recv_req: FlushCacheReqInput):
         success = self.flush_cache()

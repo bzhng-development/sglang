@@ -14,8 +14,9 @@ import enum
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ======================================================================="""
-Store information about requests and batches.
+# ======================================================================
+
+"""Store information about requests and batches.
 
 The following is the flow of data structures for a batch:
 
@@ -78,8 +79,6 @@ if TYPE_CHECKING:
     from sglang.srt.speculative.spec_info import SpeculativeAlgorithm
 
 from sglang.srt.beam_search import BeamSearchList
-
-xlx_test_beam_width = int(os.getenv("SGLANG_TEST_BEAM_WIDTH", 0))
 
 INIT_INCREMENTAL_DETOKENIZATION_OFFSET = 5
 
@@ -582,8 +581,7 @@ class Req:
         self.temp_input_token_ids_logprobs_val: Optional[List[float]] = None
         self.temp_input_token_ids_logprobs_idx: Optional[List[int]] = None
 
-        if return_logprob or xlx_test_beam_width > 0:
-            # shape: (bs, 1)
+        if return_logprob:
             self.output_token_logprobs_val = []
             self.output_token_logprobs_idx = []
             # shape: (bs, k)
@@ -1974,7 +1972,6 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
                             req.beam_list.req_pool_start_idx + i
                             for i in range(self.beam_width + 1)
                         ],
-                        dtype=torch.int64,
                         dtype=torch.int64,
                         device=self.device,
                     )
