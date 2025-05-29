@@ -21,9 +21,9 @@ The `/generate` endpoint accepts the following parameters in JSON format. For de
 | custom_logit_processor | `Optional[Union[List[Optional[str]], str]] = None`      | Custom logit processor for advanced sampling control. For usage see below.                                                                     |
 | return_hidden_states   | `bool = False`                                          | Whether to return hidden states of the model. Note that each time it changes, the CUDA graph will be recaptured, which might lead to a performance hit. See the [examples](https://github.com/sgl-project/sglang/blob/main/examples/runtime/hidden_states) for more information. |
 
-## Sampling parameters
+## Sampling Parameters
 
-### Core parameters
+### Core Parameters
 
 | Argument        | Type/Default                                 | Description                                                                                                                                    |
 |-----------------|----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -43,7 +43,7 @@ The `/generate` endpoint accepts the following parameters in JSON format. For de
 | presence_penalty   | `float = 0.0`          | Penalizes tokens if they appeared in the generation so far. Must be between `-2` and `2` where negative numbers encourage repeatment of tokens and positive number encourages sampling of new tokens. The scaling of the penalization is constant if a token occurred. |
 | min_new_tokens     | `int = 0`              | Forces the model to generate at least `min_new_tokens` until a stop word or EOS token is sampled. Note that this might lead to unintended behavior, for example, if the distribution is highly skewed towards these tokens. |
 
-### Constrained decoding
+### Constrained Decoding
 
 Please refer to our dedicated guide on [constrained decoding](./structured_outputs.ipynb) for the following parameters.
 
@@ -53,7 +53,7 @@ Please refer to our dedicated guide on [constrained decoding](./structured_outpu
 | regex        | `Optional[str] = None`          | Regex for structured outputs.                                                                                                                  |
 | ebnf         | `Optional[str] = None`          | EBNF for structured outputs.                                                                                                                   |
 
-### Other options
+### Other Options
 
 | Argument                      | Type/Default                    | Description                                                                                                                                    |
 |-------------------------------|---------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
