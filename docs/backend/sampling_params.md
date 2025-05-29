@@ -129,7 +129,7 @@ for chunk in response.iter_lines(decode_unicode=False):
 print("")
 ```
 
-Detailed example in [openai compatible api](https://docs.sglang.ai/backend/openai_api_completions.html#id2).
+Detailed example in the [OpenAI compatible API](https://docs.sglang.ai/backend/openai_api_completions.html#id2).
 
 ### Multimodal
 
