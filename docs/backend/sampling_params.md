@@ -63,8 +63,9 @@ Please refer to our dedicated guide on [constrained decoding](./structured_outpu
 | continue_final_message        | `bool = False`                  | When enabled, the final assistant message is removed and its content is used as a prefill so that the model continues that message instead of starting a new turn. See [openai_chat_with_response_prefill.py](https://github.com/sgl-project/sglang/blob/main/examples/runtime/openai_chat_with_response_prefill.py) for examples. |
 | ignore_eos                    | `bool = False`                  | Don't stop generation when EOS token is sampled.                                                                                               |
 | skip_special_tokens           | `bool = True`                   | Remove special tokens during decoding.                                                                                                         |
+| logit_bias                    | `Optional[Dict[int, int]] = None` | Used to bias the logits of the model. Must be between `-100` and greater. For example, `{"4": -100}` will bias the logits of token ID `4` to `-100`, which will become forbidden in the output.                                                                                  |
 | custom_params                 | `Optional[List[Optional[Dict[str, Any]]]] = None` | Used when employing `CustomLogitProcessor`. For usage, see below.                                                                              |
-
+n
 ## Examples
 
 ### Normal
