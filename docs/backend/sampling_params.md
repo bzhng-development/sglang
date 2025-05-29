@@ -65,7 +65,7 @@ Please refer to our dedicated guide on [constrained decoding](./structured_outpu
 | skip_special_tokens           | `bool = True`                   | Remove special tokens during decoding.                                                                                                         |
 | logit_bias                    | `Optional[Dict[int, int]] = None` | Used to bias the logits of the model. Must be between `-100` and greater. For example, `{"4": -100}` will bias the logits of token ID `4` to `-100`, which will become forbidden in the output.                                                                                  |
 | custom_params                 | `Optional[List[Optional[Dict[str, Any]]]] = None` | Used when employing `CustomLogitProcessor`. For usage, see below.                                                                              |
-n
+
 ## Examples
 
 ### Normal
