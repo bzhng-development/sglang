@@ -470,8 +470,9 @@ class EAGLEWorker(TpModelWorker):
                     self.page_size,
                 )
 
-                # TODO(lmzheng): remove this device sync
-                extend_num_tokens = torch.sum(self.extend_lens).item()
+                # Compute upper bound without device sync
+                # Maximum tokens = batch_size * topk * speculative_num_steps
+                extend_num_tokens = num_seqs * self.topk * self.speculative_num_steps
 
             out_cache_loc, token_to_kv_pool_state_backup = (
                 batch.alloc_paged_token_slots_extend(
