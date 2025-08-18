@@ -202,6 +202,7 @@ class ModelRunner:
 
         self.use_mla_backend = self.model_config.attention_arch == AttentionArch.MLA
         self.attention_chunk_size = model_config.attention_chunk_size
+        self.is_hybrid = model_config.is_hybrid
         if self.is_draft_worker:
             assert (
                 self.target_worker is not None
@@ -295,16 +296,6 @@ class ModelRunner:
         self.sampler = Sampler()
         self.load_model()
 
-        # Check if the model is using hybrid SWA
-        if (
-            not self.server_args.disable_hybrid_swa_memory
-            and self.sliding_window_size is not None
-            and self.sliding_window_size > 0
-        ):
-            architectures = self.model_config.hf_config.architectures
-            if architectures and not any("Llama4" in arch for arch in architectures):
-                self.is_hybrid = self.model_config.is_hybrid = True
-
         # For MTP models like DeepSeek-V3 or GLM-4.5, the MTP layer(s) are used separately as draft
         # models for speculative decoding. In those cases, `num_nextn_predict_layers` is used to
         # determine the number of layers.
@@ -325,6 +316,16 @@ class ModelRunner:
                 and (self.num_effective_layers == model_num_layers)
             )
         ), "PP is not compatible with MTP models."
+
+        # Check if the model is using hybrid SWA
+        if (
+            not self.server_args.disable_hybrid_swa_memory
+            and self.sliding_window_size is not None
+            and self.sliding_window_size > 0
+        ):
+            architectures = self.model_config.hf_config.architectures
+            if architectures and not any("Llama4" in arch for arch in architectures):
+                self.is_hybrid = self.model_config.is_hybrid = True
 
         # Apply torchao quantization
         torchao_applied = getattr(self.model, "torchao_applied", False)
@@ -1278,6 +1279,9 @@ class ModelRunner:
                 // self.server_args.page_size
                 * self.server_args.page_size
             )
+            # create token size for hybrid cache
+            if self.is_hybrid:
+                self.set_num_token_hybrid()
 
         if self.req_to_token_pool is None:
             if self.server_args.disaggregation_mode == "decode":
