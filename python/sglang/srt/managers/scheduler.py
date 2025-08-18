@@ -1383,6 +1383,13 @@ class Scheduler(
             memory_leak = discrepancy > max_allowed_discrepancy
             token_msg = f"{self.max_total_num_tokens=}, {available_size=}, {evictable_size=}, {protected_size=}, {discrepancy=}, {max_allowed_discrepancy=}\n"
 
+        logger.warning(
+    f"Memory Check Details:\n"
+    f"  - Running Reqs: {len(self.running_batch.reqs)}\n"
+    f"  - Waiting Queue: {len(self.waiting_queue)}\n"
+    f"  - Allocator Free Slots: {len(self.token_to_kv_pool_allocator.free_slots)}\n"
+    f"  - Discrepancy Details: actual={discrepancy}, allowed={max_allowed_discrepancy}"
+)
         if memory_leak:
             msg = "token_to_kv_pool_allocator memory leak detected! " f"{token_msg}"
             raise ValueError(msg)
