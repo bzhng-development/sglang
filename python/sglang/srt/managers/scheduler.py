@@ -1387,7 +1387,7 @@ class Scheduler(
     f"Memory Check Details:\n"
     f"  - Running Reqs: {len(self.running_batch.reqs)}\n"
     f"  - Waiting Queue: {len(self.waiting_queue)}\n"
-    f"  - Allocator Free Slots: {len(self.token_to_kv_pool_allocator.free_slots)}\n"
+    f"  - Allocator Available Size: {self.token_to_kv_pool_allocator.available_size()}\n"
     f"  - Discrepancy Details: actual={discrepancy}, allowed={max_allowed_discrepancy}"
 )
         if memory_leak:
