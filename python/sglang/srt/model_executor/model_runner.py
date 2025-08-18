@@ -169,8 +169,7 @@ class ModelRunner:
         nccl_port: int,
         server_args: ServerArgs,
         is_draft_worker: bool = False,
-        req_to_token_pool: Optional[ReqToTokenPool] = None,
-        token_to_kv_pool_allocator: Optional[BaseTokenToKVPoolAllocator] = None,
+        target_worker: Optional["TpModelWorker"] = None,
     ):
         # Parse args
         self.mem_fraction_static = mem_fraction_static
@@ -195,12 +194,19 @@ class ModelRunner:
         self.spec_algorithm = SpeculativeAlgorithm.from_string(
             server_args.speculative_algorithm
         )
+        self.target_worker = target_worker
         self.page_size = server_args.page_size
-        self.req_to_token_pool = req_to_token_pool
-        self.token_to_kv_pool_allocator = token_to_kv_pool_allocator
-        self.is_hybrid = model_config.is_hybrid
+        # For draft worker, share with target worker in init_memory_pool
+        self.req_to_token_pool: ReqToTokenPool = None
+        self.token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator = None
+
         self.use_mla_backend = self.model_config.attention_arch == AttentionArch.MLA
         self.attention_chunk_size = model_config.attention_chunk_size
+        if self.is_draft_worker:
+            assert (
+                self.target_worker is not None
+            ), "Must pass in target worker to draft worker to init memory pool"
+
         self.forward_pass_id = 0
 
         # Apply the rank zero filter to logger
@@ -230,14 +236,18 @@ class ModelRunner:
             self.init_threads_binding()
 
         # Get memory before model loading
-        min_per_gpu_memory = self.init_torch_distributed()
+        if not self.is_draft_worker:
+            self.available_memory = self.init_torch_distributed()
+        else:
+            self.init_torch_distributed()
+            self.available_memory = self.target_worker.model_runner.available_memory
 
         # Update deep gemm configure
         if deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM:
             deep_gemm_wrapper.update_deep_gemm_config(gpu_id, server_args)
 
-        # Initialize the model runner
-        self.initialize(min_per_gpu_memory)
+        # If it is a draft model, tp_group can be different
+        self.initialize()
 
         # Temporary cached values
         self.support_pp = (
@@ -247,7 +257,7 @@ class ModelRunner:
         # For weight updates
         self._model_update_group = {}
 
-    def initialize(self, min_per_gpu_memory: float):
+    def initialize(self):
         server_args = self.server_args
 
         self.memory_saver_adapter = TorchMemorySaverAdapter.create(
@@ -334,11 +344,21 @@ class ModelRunner:
             self.init_lora_manager()
 
         # Init memory pool and attention backends
-        self.init_memory_pool(
-            min_per_gpu_memory,
-            server_args.max_running_requests,
-            server_args.max_total_tokens,
-        )
+        # Draft worker calls init_memory_pool for target worker to correctly reserve KV pool memory
+        # after model loading.
+        self.init_kv_cache_dtype()
+        if self.spec_algorithm.is_none() or self.is_draft_worker:
+            self.init_memory_pool(
+                server_args.max_running_requests,
+                server_args.max_total_tokens,
+            )
+            self.init_attention()
+
+    def init_attention(self):
+        # Wait for kv pool init
+        if self.is_draft_worker:
+            self.target_worker.model_runner.init_attention()
+
         if self.device == "cuda":
             self.init_cublas()
             self.init_attention_backend()
@@ -355,8 +375,8 @@ class ModelRunner:
         if self.spec_algorithm.is_eagle3() and not self.is_draft_worker:
             # load draft config
             draft_model_config = ModelConfig.from_server_args(
-                server_args,
-                model_path=(server_args.speculative_draft_model_path),
+                self.server_args,
+                model_path=(self.server_args.speculative_draft_model_path),
                 is_draft_model=True,
             )
 
@@ -1037,13 +1057,7 @@ class ModelRunner:
 
         return result
 
-    def profile_max_num_token(self, total_gpu_memory: int):
-        available_gpu_memory = get_available_gpu_memory(
-            self.device,
-            self.gpu_id,
-            distributed=get_world_group().world_size > 1,
-            cpu_group=get_world_group().cpu_group,
-        )
+    def compute_cell_size(self):
         if self.is_draft_worker:
             num_layers = getattr(
                 self.model_config.hf_config,
@@ -1053,23 +1067,41 @@ class ModelRunner:
         else:
             num_layers = self.num_effective_layers
         if self.use_mla_backend:
-            cell_size = (
+            # FIXME: pipeline parallelism is not compatible with mla backend
+            assert self.pp_size == 1
+            return (
                 (self.model_config.kv_lora_rank + self.model_config.qk_rope_head_dim)
                 * num_layers
                 * torch._utils._element_size(self.kv_cache_dtype)
             )
         else:
-            cell_size = (
+            return (
                 self.model_config.get_num_kv_heads(get_attention_tp_size())
                 * self.model_config.head_dim
                 * num_layers
                 * 2
                 * torch._utils._element_size(self.kv_cache_dtype)
             )
-        rest_memory = available_gpu_memory - total_gpu_memory * (
-            1 - self.mem_fraction_static
+
+    def profile_max_num_token(
+        self, total_gpu_memory: int, draft_model_cell_size: Optional[int] = None
+    ):
+        available_gpu_memory = get_available_gpu_memory(
+            self.device,
+            self.gpu_id,
+            distributed=get_world_group().world_size > 1,
+            cpu_group=get_world_group().cpu_group,
         )
-        max_num_token = int(rest_memory * (1 << 30) // cell_size)
+        cell_size = self.compute_cell_size()
+        if draft_model_cell_size is not None:
+            cell_size += draft_model_cell_size
+
+        min_unoccupied_memory = total_gpu_memory * (1 - self.mem_fraction_static)
+        usable_memory = available_gpu_memory - min_unoccupied_memory
+        assert (
+            usable_memory > 0
+        ), "Not enough memory for KV pool after loading model. Please increase --mem-fraction-static."
+        max_num_token = int(usable_memory * (1 << 30) // cell_size)
         return max_num_token
 
     def set_num_token_hybrid(self):
@@ -1154,13 +1186,7 @@ class ModelRunner:
                 f"Use Sliding window memory pool. full_layer_tokens={self.full_max_total_num_tokens}, swa_layer_tokens={self.swa_max_total_num_tokens}"
             )
 
-    def init_memory_pool(
-        self,
-        total_gpu_memory: int,
-        max_num_reqs: Optional[int] = None,
-        max_total_tokens: Optional[int] = None,
-    ):
-        # Determine the kv cache dtype
+    def init_kv_cache_dtype(self):
         if self.server_args.kv_cache_dtype == "auto":
             self.kv_cache_dtype = self.dtype
         elif self.server_args.kv_cache_dtype == "fp8_e5m2":
@@ -1178,68 +1204,81 @@ class ModelRunner:
                 f"Unsupported kv_cache_dtype: {self.server_args.kv_cache_dtype}."
             )
 
-        self.max_total_num_tokens = self.profile_max_num_token(total_gpu_memory)
-        if SGLANG_CI_SMALL_KV_SIZE:
-            self.max_total_num_tokens = int(SGLANG_CI_SMALL_KV_SIZE)
-
-        if max_num_reqs is None:
-            max_num_reqs = min(
-                max(
-                    int(
-                        self.max_total_num_tokens / self.model_config.context_len * 512
+    def init_memory_pool(
+        self,
+        max_num_reqs: Optional[int] = None,
+        max_total_tokens: Optional[int] = None,
+        draft_model_cell_size: Optional[int] = None,
+    ):
+        if not self.spec_algorithm.is_none() and self.is_draft_worker:
+            self.max_total_num_tokens = (
+                self.target_worker.model_runner.init_memory_pool(
+                    max_num_reqs,
+                    max_total_tokens,
+                    draft_model_cell_size=self.compute_cell_size(),
+                )
+            )
+            self.target_worker.post_memory_pool_init()
+        else:
+            self.max_total_num_tokens = self.profile_max_num_token(
+                self.available_memory, draft_model_cell_size
+            )
+            if max_num_reqs is None:
+                max_num_reqs = min(
+                    max(
+                        int(
+                            self.max_total_num_tokens
+                            / self.model_config.context_len
+                            * 512
+                        ),
+                        2048,
                     ),
-                    2048,
-                ),
-                4096,
+                    4096,
+                )
+
+            if SGLANG_CI_SMALL_KV_SIZE:
+                self.max_total_num_tokens = int(SGLANG_CI_SMALL_KV_SIZE)
+
+            if not self.spec_algorithm.is_none():
+                if self.is_draft_worker:
+                    self.max_total_num_tokens = self.server_args.draft_runner_cache_size
+                    max_num_reqs = self.server_args.max_num_reqs
+                else:
+                    # We are sharing the `token_to_kv_pool_allocator`, and both verify and draft tokens
+                    # can be concurrently allocated, so we should give a headroom for it.
+                    self.server_args.draft_runner_cache_size = (
+                        self.max_total_num_tokens
+                        # draft
+                        + max_num_reqs
+                        * self.server_args.speculative_num_steps
+                        * self.server_args.speculative_eagle_topk
+                        # verify
+                        + max_num_reqs * self.server_args.speculative_num_draft_tokens
+                        # buffer
+                        + 100
+                    )
+                    # Target worker and draft worker shares the same indices for the
+                    # token_to_kv_pool_allocator, so we should make sure to match max_total_num_tokens.
+                    self.max_total_num_tokens = self.server_args.draft_runner_cache_size
+                    self.server_args.max_num_reqs = max_num_reqs
+
+            if max_total_tokens is not None:
+                if max_total_tokens > self.max_total_num_tokens:
+                    logging.warning(
+                        f"max_total_tokens={max_total_tokens} is larger than the profiled value "
+                        f"{self.max_total_num_tokens}. "
+                        f"Use the profiled value instead."
+                    )
+                self.max_total_num_tokens = min(
+                    self.max_total_num_tokens, max_total_tokens
+                )
+
+            self.max_total_num_tokens = (
+                self.max_total_num_tokens
+                // self.server_args.page_size
+                * self.server_args.page_size
             )
 
-        if not self.spec_algorithm.is_none():
-            if self.is_draft_worker:
-                self.max_total_num_tokens = self.server_args.draft_runner_cache_size
-                max_num_reqs = self.server_args.max_num_reqs
-            else:
-                # We are sharing the `token_to_kv_pool`, and both verify and draft tokens
-                # can be concurrently allocated, so we should give a headroom for it.
-                self.server_args.draft_runner_cache_size = (
-                    self.max_total_num_tokens
-                    # draft
-                    + max_num_reqs
-                    * self.server_args.speculative_num_steps
-                    * self.server_args.speculative_eagle_topk
-                    # verify
-                    + max_num_reqs * self.server_args.speculative_num_draft_tokens
-                    # buffer
-                    + 100
-                )
-                # Target worker and draft worker shares the same indices for the
-                # token_to_kv_pool, so we should make sure to match max_total_num_tokens.
-                self.max_total_num_tokens = self.server_args.draft_runner_cache_size
-                self.server_args.max_num_reqs = max_num_reqs
-
-        if max_total_tokens is not None:
-            if max_total_tokens > self.max_total_num_tokens:
-                logging.warning(
-                    f"max_total_tokens={max_total_tokens} is larger than the profiled value "
-                    f"{self.max_total_num_tokens}. "
-                    f"Use the profiled value instead."
-                )
-            self.max_total_num_tokens = min(self.max_total_num_tokens, max_total_tokens)
-
-        self.max_total_num_tokens = (
-            self.max_total_num_tokens
-            // self.server_args.page_size
-            * self.server_args.page_size
-        )
-        # create token size for hybrid cache
-        if self.is_hybrid:
-            self.set_num_token_hybrid()
-
-        if self.max_total_num_tokens <= 0:
-            raise RuntimeError(
-                "Not enough memory. Please try to increase --mem-fraction-static."
-            )
-
-        # Initialize req_to_token_pool
         if self.req_to_token_pool is None:
             if self.server_args.disaggregation_mode == "decode":
                 from sglang.srt.disaggregation.decode import DecodeReqToTokenPool
@@ -1264,6 +1303,7 @@ class ModelRunner:
         else:
             # Draft worker shares req_to_token_pool with the target worker.
             assert self.is_draft_worker
+            self.req_to_token_pool = self.target_worker.model_runner.req_to_token_pool
 
         # Initialize token_to_kv_pool
         if self.server_args.attention_backend == "ascend":
@@ -1400,11 +1440,15 @@ class ModelRunner:
                     )
         else:
             assert self.is_draft_worker
+            self.token_to_kv_pool_allocator = (
+                self.target_worker.model_runner.token_to_kv_pool_allocator
+            )
 
         logger.info(
             f"Memory pool end. "
             f"avail mem={get_available_gpu_memory(self.device, self.gpu_id):.2f} GB"
         )
+        return self.max_total_num_tokens
 
     def init_cublas(self):
         """We need to run a small matmul to init cublas. Otherwise, it will raise some errors later."""
