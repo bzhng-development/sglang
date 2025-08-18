@@ -126,9 +126,7 @@ class TpModelWorker:
             server_args.speculative_algorithm
         )
         # TODO: adjust for nextn
-        if self.spec_algorithm.is_none() or (
-            self.spec_algorithm.is_eagle() and is_draft_worker
-        ):
+        if self.spec_algorithm.is_none():
             self.post_memory_pool_init()
 
         # Sync random seed across TP workers

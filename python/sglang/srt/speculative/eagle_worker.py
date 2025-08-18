@@ -167,6 +167,7 @@ class EAGLEWorker(TpModelWorker):
         )
         self.extend_lens = torch.empty((), dtype=torch.int64, device=self.device)
 
+        self.post_memory_pool_init()
     def init_attention_backend(self):
         # Create multi-step attn backends and cuda graph runners
 
