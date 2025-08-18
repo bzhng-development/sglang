@@ -417,8 +417,8 @@ class EAGLEWorker(TpModelWorker):
         # [       topk 0         ] [       topk 1         ]
         # [iter=0, iter=1, iter=2] [iter=0, iter=1, iter=2]
         if self.page_size == 1:
-            out_cache_loc, token_to_kv_pool_state_backup = batch.alloc_token_slots(
-                num_seqs * self.speculative_num_steps * self.topk, backup_state=True
+            out_cache_loc= batch.alloc_token_slots(
+                num_seqs * self.speculative_num_steps * self.topk
             )
         else:
             if self.topk == 1:
@@ -502,7 +502,7 @@ class EAGLEWorker(TpModelWorker):
         batch.seq_lens_sum = torch.sum(batch.seq_lens).item()
         batch.return_hidden_states = False
         spec_info.positions = batch.seq_lens.repeat_interleave(self.topk, dim=0)
-        self.token_to_kv_pool_allocator.restore_state(token_to_kv_pool_state_backup)
+        # self.token_to_kv_pool_allocator.restore_state(token_to_kv_pool_state_backup)
 
     def _draft_preprocess_idle(self, batch: ScheduleBatch):
         batch.spec_info = EagleDraftInput.create_idle_input(
