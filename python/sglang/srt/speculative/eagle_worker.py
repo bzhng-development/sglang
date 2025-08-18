@@ -127,7 +127,7 @@ class EAGLEWorker(TpModelWorker):
                 is_draft_worker=True,
                 target_worker=self.target_worker,
             )
-        self.token_to_kv_pool_allocator = self.model_runner.token_to_kv_pool_allocator
+        self.token_to_kv_pool_allocator = self.target_worker.model_runner.token_to_kv_pool_allocator
 
         embed, head = self.target_worker.model_runner.model.get_embed_and_head()
 
