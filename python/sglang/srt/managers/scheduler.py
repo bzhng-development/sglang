@@ -1374,11 +1374,8 @@ class Scheduler(
             if not self.spec_algorithm.is_none():
                 # Allow for tokens temporarily allocated by draft worker during speculative decoding
                 # The maximum discrepancy is roughly: num_seqs * num_steps * topk
-                max_allowed_discrepancy = (
-                    self.max_running_requests 
-                    * self.server_args.speculative_num_steps 
-                    * self.server_args.speculative_eagle_topk
-                )
+                tokens_for_draft_tree = ( self.server_args.speculative_num_steps * self.server_args.speculative_eagle_topk)
+                max_allowed_discrepancy = self.max_running_requests * (tokens_for_draft_tree + self.server_args.speculative_num_draft_tokens)
             
             memory_leak = discrepancy > max_allowed_discrepancy
             token_msg = f"{self.max_total_num_tokens=}, {available_size=}, {evictable_size=}, {protected_size=}, {discrepancy=}, {max_allowed_discrepancy=}\n"
