@@ -1358,12 +1358,30 @@ class Scheduler(
         else:
             _, _, available_size, evictable_size = self._get_token_info()
             protected_size = self.tree_cache.protected_size()
-            memory_leak = (available_size + evictable_size) != (
+            expected_total = (
                 self.max_total_num_tokens
                 if not self.enable_hierarchical_cache
                 else self.max_total_num_tokens - protected_size
             )
-            token_msg = f"{self.max_total_num_tokens=}, {available_size=}, {evictable_size=}, {protected_size=}\n"
+            actual_total = available_size + evictable_size
+            
+            # In speculative decoding, the draft worker may temporarily allocate tokens
+            # from the shared allocator without the tree cache knowing about them.
+            # This can cause a small discrepancy that's not actually a memory leak.
+            discrepancy = abs(actual_total - expected_total)
+            max_allowed_discrepancy = 0
+            
+            if not self.spec_algorithm.is_none():
+                # Allow for tokens temporarily allocated by draft worker during speculative decoding
+                # The maximum discrepancy is roughly: num_seqs * num_steps * topk
+                max_allowed_discrepancy = (
+                    self.max_running_requests 
+                    * self.server_args.speculative_num_steps 
+                    * self.server_args.speculative_eagle_topk
+                )
+            
+            memory_leak = discrepancy > max_allowed_discrepancy
+            token_msg = f"{self.max_total_num_tokens=}, {available_size=}, {evictable_size=}, {protected_size=}, {discrepancy=}, {max_allowed_discrepancy=}\n"
 
         if memory_leak:
             msg = "token_to_kv_pool_allocator memory leak detected! " f"{token_msg}"
