@@ -3,6 +3,7 @@ import os
 import time
 from contextlib import contextmanager
 from typing import List, Optional, Tuple
+from math import ceil
 
 import torch
 from huggingface_hub import snapshot_download
@@ -490,8 +491,8 @@ class EAGLEWorker(TpModelWorker):
                     self.page_size,
                 )
 
-                # TODO(lmzheng): remove this device sync
-                extend_num_tokens = num_seqs * self.topk * self.speculative_num_steps
+                m = ceil(self.speculative_num_steps / self.page_size)
+                extend_num_tokens = num_seqs * self.topk * m * self.page_size
 
             out_cache_loc, token_to_kv_pool_state_backup = (
                 batch.alloc_paged_token_slots_extend(
