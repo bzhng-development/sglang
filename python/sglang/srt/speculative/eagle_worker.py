@@ -491,7 +491,7 @@ class EAGLEWorker(TpModelWorker):
                 )
 
                 # TODO(lmzheng): remove this device sync
-                extend_num_tokens = torch.sum(self.extend_lens).item()
+                extend_num_tokens = num_seqs * self.topk * self.speculative_num_steps
 
             out_cache_loc, token_to_kv_pool_state_backup = (
                 batch.alloc_paged_token_slots_extend(
