@@ -550,28 +550,27 @@ class DualChunkFlashAttentionBackend(AttentionBackend):
                 "orig_seq_lens_tensor"
             ][:bs]
             metadata.max_seq_len = self.max_context_len
-            metadata.block_tables = self.decode_metadata["block_tables"][
-                req_pool_indices, :
-            ]
+            # Bind block tables as a slice view (avoid advanced indexing during capture)
+            metadata.block_tables = self.decode_metadata["block_tables"][:bs, :]
 
-            # intra
-            metadata.max_seq_len_intra = self.max_context_len
+            # Intra runs during capture with minimal length (1 token)
             metadata.seq_lens_intra = self.decode_metadata["seq_lens_intra"][:bs]
+            metadata.seq_lens_intra.fill_(1)
+            metadata.max_seq_len_intra = 1
+            metadata.block_tables_intra = self.decode_metadata["block_tables_intra"][:bs, :1]
+            metadata.block_tables_intra.zero_()
 
-            metadata.block_tables_intra = self.decode_metadata["block_tables_intra"][
-                :bs, :
-            ]
-
-            # succ
+            # Disable succ during capture
             metadata.seq_lens_succ = self.decode_metadata["seq_lens_succ"][:bs]
-            metadata.max_seq_len_succ = self.max_context_len
+            metadata.seq_lens_succ.zero_()
+            metadata.max_seq_len_succ = 0
+            metadata.block_tables_succ = self.decode_metadata["block_tables_succ"][:bs, :1]
+            metadata.block_tables_succ.zero_()
 
-            metadata.block_tables_succ = self.decode_metadata["block_tables_succ"][
-                :bs, :
-            ]
-
+            # Disable inter during capture
             metadata.seq_lens_inter = self.decode_metadata["seq_lens_inter"][:bs]
-            metadata.max_seq_len_inter = self.max_context_len
+            metadata.seq_lens_inter.zero_()
+            metadata.max_seq_len_inter = 0
 
             self.decode_metadata[bs] = metadata
 
