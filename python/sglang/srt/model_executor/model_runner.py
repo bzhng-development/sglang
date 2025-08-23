@@ -1546,6 +1546,11 @@ class ModelRunner:
             )
 
             return DualChunkFlashAttentionBackend(self)
+        elif backend_str == "double_sparsity":
+            raise ValueError(
+                "The double sparsity attention backend has been removed and is no longer supported. "
+                "Please use an alternative attention backend such as 'flashinfer', 'triton', or 'fa3'."
+            )
         else:
             raise ValueError(f"Invalid attention backend: {backend_str}")
 
