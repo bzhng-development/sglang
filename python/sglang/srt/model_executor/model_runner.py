@@ -83,7 +83,6 @@ from sglang.srt.mem_cache.allocator_ascend import AscendPagedTokenToKVPoolAlloca
 from sglang.srt.mem_cache.memory_pool import (
     AscendMLAPagedTokenToKVPool,
     AscendTokenToKVPool,
-    DoubleSparseTokenToKVPool,
     MHATokenToKVPool,
     MLATokenToKVPool,
     ReqToTokenPool,
@@ -495,18 +494,6 @@ class ModelRunner:
                 "Setting attention backend to triton."
             )
             server_args.attention_backend = "triton"
-
-        if server_args.enable_double_sparsity:
-            logger.info(
-                "Double sparsity optimization is turned on. Use triton backend without CUDA graph."
-            )
-            server_args.attention_backend = "triton"
-            server_args.disable_cuda_graph = True
-            if server_args.ds_heavy_channel_type is None:
-                raise ValueError(
-                    "Please specify the heavy channel type for double sparsity optimization."
-                )
-            self.init_double_sparsity_channel_config(server_args.ds_heavy_channel_type)
 
         if self.is_multimodal:
             if not self.is_multimodal_chunked_prefill_supported:
@@ -1316,20 +1303,6 @@ class ModelRunner:
                 start_layer=self.start_layer,
                 end_layer=self.end_layer,
             )
-        elif self.server_args.enable_double_sparsity:
-            self.token_to_kv_pool = DoubleSparseTokenToKVPool(
-                self.max_total_num_tokens,
-                page_size=self.page_size,
-                dtype=self.kv_cache_dtype,
-                head_num=self.model_config.get_num_kv_heads(get_attention_tp_size()),
-                head_dim=self.model_config.head_dim,
-                layer_num=self.num_effective_layers,
-                device=self.device,
-                heavy_channel_num=self.server_args.ds_heavy_channel_num,
-                enable_memory_saver=self.server_args.enable_memory_saver,
-                start_layer=self.start_layer,
-                end_layer=self.end_layer,
-            )
         else:
             if self.is_hybrid:
                 self.token_to_kv_pool = SWAKVPool(
@@ -1514,16 +1487,9 @@ class ModelRunner:
                 "Cross attention is not supported in the triton attention backend. "
                 "Please use `--attention-backend flashinfer`."
             )
-            if self.server_args.enable_double_sparsity:
-                from sglang.srt.layers.attention.double_sparsity_backend import (
-                    DoubleSparseAttnBackend,
-                )
+            from sglang.srt.layers.attention.triton_backend import TritonAttnBackend
 
-                return DoubleSparseAttnBackend(self)
-            else:
-                from sglang.srt.layers.attention.triton_backend import TritonAttnBackend
-
-                return TritonAttnBackend(self)
+            return TritonAttnBackend(self)
         elif backend_str == "torch_native":
             from sglang.srt.layers.attention.torch_native_backend import (
                 TorchNativeAttnBackend,
@@ -1582,23 +1548,6 @@ class ModelRunner:
             return DualChunkFlashAttentionBackend(self)
         else:
             raise ValueError(f"Invalid attention backend: {backend_str}")
-
-    def init_double_sparsity_channel_config(self, selected_channel):
-        selected_channel = "." + selected_channel + "_proj"
-        self.sorted_channels = []
-        # load channel config
-        with open(self.server_args.ds_channel_config_path, "r") as f:
-            channel_config = json.load(f)
-
-        for i in range(self.start_layer, self.end_layer):
-            key = "model.layers." + str(i) + ".self_attn" + selected_channel
-            self.sorted_channels.append(
-                torch.tensor(channel_config[key])[
-                    :, : self.server_args.ds_heavy_channel_num
-                ]
-                .contiguous()
-                .cuda()
-            )
 
     def init_device_graphs(self):
         """Capture cuda graphs."""

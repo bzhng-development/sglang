@@ -216,14 +216,6 @@ class ServerArgs:
     hicache_storage_backend: Optional[str] = None
     hicache_storage_prefetch_policy: str = "best_effort"
 
-    # Double Sparsity
-    enable_double_sparsity: bool = False
-    ds_channel_config_path: Optional[str] = None
-    ds_heavy_channel_num: int = 32
-    ds_heavy_token_num: int = 256
-    ds_heavy_channel_type: str = "qk"
-    ds_sparse_decode_threshold: int = 4096
-
     # Optimization/debug options
     disable_radix_cache: bool = False
     cuda_graph_max_bs: Optional[int] = None
@@ -1628,43 +1620,6 @@ class ServerArgs:
             choices=["best_effort", "wait_complete", "timeout"],
             default=ServerArgs.hicache_storage_prefetch_policy,
             help="Control when prefetching from the storage backend should stop.",
-        )
-
-        # Double Sparsity
-        parser.add_argument(
-            "--enable-double-sparsity",
-            action="store_true",
-            help="Enable double sparsity attention",
-        )
-        parser.add_argument(
-            "--ds-channel-config-path",
-            type=str,
-            default=ServerArgs.ds_channel_config_path,
-            help="The path of the double sparsity channel config",
-        )
-        parser.add_argument(
-            "--ds-heavy-channel-num",
-            type=int,
-            default=ServerArgs.ds_heavy_channel_num,
-            help="The number of heavy channels in double sparsity attention",
-        )
-        parser.add_argument(
-            "--ds-heavy-token-num",
-            type=int,
-            default=ServerArgs.ds_heavy_token_num,
-            help="The number of heavy tokens in double sparsity attention",
-        )
-        parser.add_argument(
-            "--ds-heavy-channel-type",
-            type=str,
-            default=ServerArgs.ds_heavy_channel_type,
-            help="The type of heavy channels in double sparsity attention",
-        )
-        parser.add_argument(
-            "--ds-sparse-decode-threshold",
-            type=int,
-            default=ServerArgs.ds_sparse_decode_threshold,
-            help="The type of heavy channels in double sparsity attention",
         )
 
         # Optimization/debug options
