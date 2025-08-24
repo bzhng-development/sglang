@@ -185,7 +185,7 @@ def make_local_attention_virtual_batches(
     # arange per virtual item and request id via bucketize (faster than repeat_interleave)
     arange = torch.arange(V, dtype=i32, device=dev)                                 # [V]
     # req_ids in [0, B-1]; bucketize returns int64
-    req_ids = torch.bucketize(arange, cu_num_blocks, right=False).to(i64)          # [V]
+    req_ids = torch.bucketize(arange, cu_num_blocks, right=True).to(i64)          # [V]
 
     # Offset within each request’s block list: start index of that request’s region
     starts = torch.nn.functional.pad(cu_num_blocks[:-1], (1, 0))                   # [B]
