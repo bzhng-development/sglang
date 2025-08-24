@@ -642,17 +642,6 @@ class CuDNNBackend(AttentionBackend):
                         raise ValueError(
                             f"Invalid tensor stride {key}: cudnn expect {tensor_attr.get_stride()} (shape: {tensor_attr.get_dim()}) but got {torch_tensor.stride()} (shape: {torch_tensor.shape})"
                         )
-                    # Extra dtype validation for known INT32 tensors
-                    if key in (
-                        self._ArgMapKeys.seq_len_q_tensor_info,
-                        self._ArgMapKeys.seq_len_kv_tensor_info,
-                        self._ArgMapKeys.k_page_table,
-                        self._ArgMapKeys.v_page_table,
-                    ):
-                        if torch_tensor.dtype != torch.int32:
-                            raise ValueError(
-                                f"Invalid tensor dtype for {key}: expected int32 but got {torch_tensor.dtype}"
-                            )
 
             workspace = torch.empty(
                 graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8
