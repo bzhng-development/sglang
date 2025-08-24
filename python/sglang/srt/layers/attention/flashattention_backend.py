@@ -117,201 +117,125 @@ class FlashAttentionMetadata:
 #   cu_seqlens_q_local = [0, 4,  6, 10, 14, 18, 19, 23, 24]
 #   seqlens_k_local    = [   4,  2,  4,  4,  4,  1,  4,  1]
 #   block_table_local  : shape[local_virtual_batches, pages_per_local_batch]
+@torch.no_grad()  # metadata builder; keep out of autograd
 def make_local_attention_virtual_batches(
     attn_chunk_size: int,
-    query_start_loc: torch.Tensor,
-    seq_lens: torch.Tensor,
-    block_table: torch.Tensor,
+    query_start_loc: torch.Tensor,     # int32, device==block_table.device
+    seq_lens: torch.Tensor,            # int32, device==block_table.device
+    block_table: torch.Tensor,         # int32, [B, P]
     page_size: int = 0,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
-    Take in `query_start_loc` and `seq_lens` and break the sequences into
-    local attention blocks, where each block is passed to the attention kernel
-    as an independent local ("virtual") batch item.
-
-    Args:
-        attn_chunk_size: Size of local attention chunks
-        query_start_loc: Cumulative sum of query lengths (torch int32 tensor)
-        seq_lens: Sequence lengths (torch int32 tensor)
-        block_table: Block table for KV cache
-        page_size: Size of each page in the KV cache
-
     Returns:
-        seqlens_q_local: Query sequence lengths for local attention (torch int32)
-        cu_seqlens_q_local: Cumulative sum of query sequence lengths for local attention (torch int32)
-        seqlens_k_local: Key sequence lengths for local attention (torch int32)
-        block_table_local: Block table for local attention (torch int32)
+        seqlens_q_local      : int32 [V]
+        cu_seqlens_q_local   : int32 [V+1]
+        seqlens_k_local      : int32 [V]
+        block_table_local    : int32 [V, pages_per_local_batch]
     """
-    # Ensure tensors are on the same device and correct dtype
-    device = block_table.device
-    query_start_loc = query_start_loc.to(device=device, dtype=torch.int32)
-    seq_lens = seq_lens.to(device=device, dtype=torch.int32)
-    block_table = block_table.to(device=device, dtype=torch.int32)
-    page_size = int(page_size) if page_size > 0 else 1
-    # Adjust attention_chunk_size based on the actual sequence length
-    # to avoid index out of bounds errors
-    max_seq_len = int(seq_lens.max().item()) if seq_lens.numel() > 0 else 0
-    effective_chunk_size = min(attn_chunk_size, max_seq_len) if max_seq_len > 0 else attn_chunk_size
-    # Make sure effective_chunk_size is divisible by page_size
-    effective_chunk_size = (effective_chunk_size // page_size) * page_size if effective_chunk_size > 0 else page_size
-    if effective_chunk_size < page_size:
-        effective_chunk_size = page_size
-    attn_chunk_size = int(effective_chunk_size)
+    dev = block_table.device
+    i32, i64 = torch.int32, torch.int64
 
-    q_seqlens = query_start_loc[1:] - query_start_loc[:-1]
-    actual_batch_size = int(seq_lens.shape[0])
+    # Single normalization pass (no copies if already correct)
+    query_start_loc = query_start_loc.to(dev, i32, copy=False)
+    seq_lens        = seq_lens.to(dev, i32, copy=False)
+    block_table     = block_table.to(dev, i32, copy=False)
 
-    # Handle if we are starting in the middle of a local attention block,
-    #  we assume q_seqlens > 0 (for all elements), for each batch idx we compute
-    #  the number of tokens that are not in the first local attention block and
-    #  then we can simply use a cdiv for the rest.
-    # For example if we have:
-    #   attn_chunk_size = 4
-    #   q_seqlens = [4, 10, 5]
-    #   k_seqlens = [6, 17, 9]
-    # Then we would get:
-    #   new_tokens_in_first_block = [2, 1, 4]
-    #   local_blocks = [2, 4, 2]
+    # Page semantics: 0 => no paging; keep original behavior, don’t coerce to 1
+    if page_size == 0:
+        pages_per_local_batch = attn_chunk_size
+        PAGE = None
+    else:
+        assert attn_chunk_size % page_size == 0, (
+            f"attn_chunk_size {attn_chunk_size} not divisible by page_size {page_size}"
+        )
+        pages_per_local_batch = attn_chunk_size // page_size
+        PAGE = torch.tensor(page_size, dtype=i32, device=dev)
+
+    # Early out on empty batch
+    if seq_lens.numel() == 0:
+        zero = torch.zeros(0, dtype=i32, device=dev)
+        cu1  = torch.zeros(1, dtype=i32, device=dev)
+        return zero, cu1, zero, zero.view(0, pages_per_local_batch)
+
+    # Keep chunk size unchanged if max seq < chunk; do not change semantics with page_size
+    ATTN = torch.tensor(attn_chunk_size, dtype=i32, device=dev)
+
+    # q_seqlens per request
+    q_seqlens = query_start_loc[1:] - query_start_loc[:-1]   # [B]
+    B = q_seqlens.shape[0]
+
+    # new_tokens_in_first_block: min(attn - ((k - q) % attn), q)
     q_tokens_in_first_block = torch.minimum(
-        torch.as_tensor(attn_chunk_size, dtype=torch.int32, device=device)
-        - torch.remainder(seq_lens - q_seqlens, attn_chunk_size),
+        ATTN - torch.remainder(seq_lens - q_seqlens, ATTN),
         q_seqlens,
     )
-    # tokens_in_last_block ∈ [1, attn_chunk_size]
-    tokens_in_last_block = torch.remainder(seq_lens - 1, attn_chunk_size) + 1
-    # ceil division for non-negative numerator
-    numerator = torch.clamp_min(q_seqlens - q_tokens_in_first_block, 0)
-    local_blocks = 1 + torch.div(
-        numerator + (attn_chunk_size - 1),
-        attn_chunk_size,
-        rounding_mode="floor",
-    )
+    # tokens_in_last_block \in [1, ATTN]
+    tokens_in_last_block = torch.remainder(seq_lens - 1, ATTN) + 1
 
-    # Once we know the number of local blocks we can compute the request spans
-    #  for each batch idx, we can figure out the number of "virtual" requests we
-    #  have to make,
-    # For the above example we would get:
-    #   seqlens_q_local = [2, 2, 1, 4, 4, 1, 4, 1]
-    #
-    # First Get batched arange. (E.g., [2, 4, 2] -> [0, 1, 0, 1, 2, 3, 0, 1])
-    #   (TODO: max a utility to share this code with _prepare_inputs)
-    # arange step 1. [2, 4, 2] -> [2, 6, 8]
-    cu_num_blocks = torch.cumsum(local_blocks, dim=0)
-    virtual_batches = int(cu_num_blocks[-1].item()) if cu_num_blocks.numel() > 0 else 0
-    # arange step 2. [2, 6, 8] -> [0, 0, 2, 2, 2, 2, 6, 6]
-    block_offsets = torch.repeat_interleave(cu_num_blocks - local_blocks, local_blocks)
-    # arange step 3. [0, 1, 0, 1, 2, 3, 0, 1]
-    arange = (
-        torch.arange(virtual_batches, device=device, dtype=torch.int32) - block_offsets
-        if virtual_batches > 0
-        else torch.zeros(0, dtype=torch.int32, device=device)
-    )
-    # also compute reverse arange (i.e. [1, 0, 3, 2, 1, 0, 1, 0])
-    rarange = (
-        torch.repeat_interleave(local_blocks, local_blocks) - arange - 1
-        if virtual_batches > 0
-        else torch.zeros(0, dtype=torch.int32, device=device)
-    )
-    # Then we can compute the seqlens_q_local, handling the fact that the
-    #  first and last blocks could be partial
-    seqlens_q_local = (
-        torch.repeat_interleave(q_seqlens - q_tokens_in_first_block, local_blocks)
-        if actual_batch_size > 0
-        else torch.zeros(0, dtype=torch.int32, device=device)
-    )
-    # set the first block since this may be a partial block
-    if virtual_batches > 0:
-        # Ensure dtype consistency for masked assignment
-        if q_tokens_in_first_block.dtype != seqlens_q_local.dtype:
-            q_tokens_in_first_block = q_tokens_in_first_block.to(seqlens_q_local.dtype)
-        seqlens_q_local[arange == 0] = q_tokens_in_first_block
-    # set the remaining blocks
-    if virtual_batches > 0:
-        temp_rem = torch.minimum(
-            seqlens_q_local - attn_chunk_size * (arange - 1),
-            torch.as_tensor(attn_chunk_size, dtype=torch.int32, device=device),
-        )
-        # Ensure dtype consistency for masked assignment
-        if temp_rem.dtype != seqlens_q_local.dtype:
-            temp_rem = temp_rem.to(seqlens_q_local.dtype)
-        seqlens_q_local[arange > 0] = temp_rem[arange > 0]
+    # local_blocks = 1 + ceil(max(q - first, 0)/ATTN)
+    rem = torch.clamp_min(q_seqlens - q_tokens_in_first_block, 0)
+    local_blocks = 1 + torch.div(rem + (ATTN - 1), ATTN, rounding_mode="floor")   # [B], i32
 
-    # convert from q_seqlens to cu_seqlens_q
+    # Prefix-sum => total V (virtual batches)
+    cu_num_blocks = torch.cumsum(local_blocks, dim=0)                              # [B]
+    V = int(cu_num_blocks[-1].item())
+
+    # arange per virtual item and request id via bucketize (faster than repeat_interleave)
+    arange = torch.arange(V, dtype=i32, device=dev)                                 # [V]
+    # req_ids in [0, B-1]; bucketize returns int64
+    req_ids = torch.bucketize(arange, cu_num_blocks, right=False).to(i64)          # [V]
+
+    # Offset within each request’s block list: start index of that request’s region
+    starts = torch.nn.functional.pad(cu_num_blocks[:-1], (1, 0))                   # [B]
+    starts = starts.index_select(0, req_ids.to(i64)).to(i32)                        # [V]
+    pos_in_req = arange - starts                                                    # [V]  (0..local_blocks[req]-1)
+    rarange    = local_blocks.index_select(0, req_ids.to(i32)).to(i32) - pos_in_req - 1
+
+    # Build seqlens_q_local branchlessly
+    base = (q_seqlens - q_tokens_in_first_block).index_select(0, req_ids.to(i32))   # [V]
+    first_mask = (pos_in_req == 0)
+    rem_q = torch.minimum(base - ATTN * (pos_in_req - 1), ATTN)
+    seqlens_q_local = torch.where(first_mask,
+                                  q_tokens_in_first_block.index_select(0, req_ids.to(i32)),
+                                  rem_q).clamp_min_(0)                              # [V], i32
+
+    # cu_seqlens_q_local (length V+1, starting with 0)
     cu_seqlens_q_local = torch.nn.functional.pad(
-        torch.cumsum(seqlens_q_local, dim=0, dtype=torch.int32), (1, 0)
+        torch.cumsum(seqlens_q_local, dim=0, dtype=i32), (1, 0)
     )
 
-    # compute the seqlens_k_local,
-    #  basically a full local attention block for all but the last block in each
-    #  batch
-    # For our example this will be:
-    #   seqlens_k_local = [4, 2, 4, 4, 4, 1, 4, 1]
-    seqlens_k_local = torch.full(
-        (virtual_batches,), attn_chunk_size, dtype=torch.int32, device=device
+    # seqlens_k_local: full chunks except last block of each request
+    seqlens_k_local = ATTN.expand(V).clone()
+    # last block index per request == cu_num_blocks-1; scatter tokens_in_last_block there
+    last_block_positions = (cu_num_blocks - 1).to(i64)                              # [B]
+    seqlens_k_local.index_copy_(
+        0, last_block_positions, tokens_in_last_block.to(i32)
     )
-    if virtual_batches > 0:
-        seqlens_k_local[cu_num_blocks - 1] = tokens_in_last_block
 
-    k_seqstarts_absolute = (
-        torch.repeat_interleave(seq_lens, local_blocks) - (
-            rarange * attn_chunk_size
-            + torch.repeat_interleave(tokens_in_last_block, local_blocks)
-        )
-        if actual_batch_size > 0
-        else torch.zeros(0, dtype=torch.int32, device=device)
-    )
-    # For the example the local attention blocks start at:
-    #                           _b0_  _____b1_____  _b2_
-    #   k_seqstarts_absolute = [0, 4, 4, 8, 12, 16, 4, 8]
-    block_starts = torch.div(k_seqstarts_absolute, page_size, rounding_mode="floor")
+    # Absolute key starts per virtual item
+    # k_seqstarts_absolute = k_len(req)- (rarange*ATTN + tokens_in_last_block(req))
+    k_len_req  = seq_lens.index_select(0, req_ids.to(i32))
+    last_tok   = tokens_in_last_block.index_select(0, req_ids.to(i32))
+    k_seqstarts_absolute = k_len_req - (rarange * ATTN + last_tok)                  # [V]
+    if PAGE is not None:
+        block_starts = torch.div(k_seqstarts_absolute, PAGE, rounding_mode="floor").clamp_min_(0)  # [V]
+    else:
+        block_starts = k_seqstarts_absolute.clamp_min_(0)
 
-    assert attn_chunk_size % page_size == 0, (
-        f"attn_chunk_size {attn_chunk_size} is not "
-        f"divisible by page_size {page_size}"
-    )
-    pages_per_local_batch = int(attn_chunk_size // page_size) if page_size > 0 else attn_chunk_size
-
-    # Create a block_table for the local attention blocks
-    # For out example if we have a block-table like (assuming page_size=2):
-    #   block_table = [
-    #     [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9],  < batch 0
-    #     [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],  < batch 1
-    #     [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],  < batch 2
-    #   ]
-    # Then for the local batches we would want a block-table like
-    #   block_table_local = [
-    #     [  0,  1 ], < local-batch 0, (batch 0, starting from k[0])
-    #     [  2,  3 ], < local-batch 1, (batch 0, starting from k[4])
-    #     [ 12, 13 ], < local-batch 2, (batch 1, starting from k[4])
-    #     [ 14, 15 ], < local-batch 3, (batch 1, starting from k[8])
-    #     [ 16, 17 ], < local-batch 4, (batch 1, starting from k[12])
-    #     [ 18, 19 ], < local-batch 5, (batch 1, starting from k[16])
-    #     [ 22, 23 ], < local-batch 6, (batch 2, starting from k[4])
-    #     [ 24, 25 ], < local-batch 7, (batch 2, starting from k[8])
-    #   ]
-    if virtual_batches == 0:
-        empty_i32 = torch.zeros(0, dtype=torch.int32, device=device)
-        empty_bt = torch.zeros(0, pages_per_local_batch, dtype=torch.int32, device=device)
-        return empty_i32, torch.zeros(1, dtype=torch.int32, device=device), empty_i32, empty_bt
-    # Build block indices matrix per local batch
-    per_block = torch.arange(pages_per_local_batch, device=device, dtype=torch.int32)
-    block_indices_matrix = per_block.unsqueeze(0).expand(virtual_batches, -1) + block_starts.unsqueeze(1)
+    # Build per-local-batch page indices: [V, pages_per_local_batch]
+    per_block = torch.arange(pages_per_local_batch, dtype=i32, device=dev)          # [PBLK]
+    block_indices = block_starts.unsqueeze(1) + per_block.unsqueeze(0)              # [V,PBLK]
     # Clamp to block_table width to avoid OOB
     max_col = block_table.shape[1] - 1
     if max_col >= 0:
-        block_indices_matrix = block_indices_matrix.clamp(max=max_col)
-    # Map each local batch to its original request index
-    batch_ids = torch.repeat_interleave(
-        torch.arange(actual_batch_size, device=device, dtype=torch.int64),
-        local_blocks.to(torch.int64),
-    )
-    # Select rows and gather columns
-    selected_rows = block_table[batch_ids]  # [virtual_batches, P]
-    block_table_local = torch.gather(
-        selected_rows, 1, block_indices_matrix.to(torch.int64)
-    )
+        block_indices.clamp_(0, int(max_col))
+
+    # Row selection once, then column gather with take_along_dim (better fusion)
+    bt_rows = block_table.index_select(0, req_ids)                                  # [V, P]
+    block_table_local = torch.take_along_dim(bt_rows, block_indices.to(i64), dim=1) # [V,PBLK]
 
     return seqlens_q_local, cu_seqlens_q_local, seqlens_k_local, block_table_local
+
 
 
 def cdiv(a: int, b: int) -> int:
