@@ -596,8 +596,8 @@ class CuDNNBackend(AttentionBackend):
             container_v_gpu = v_cache.view(s, h, b, d)
 
             # Sequence lengths
-            seq_lens_kv = seq_lens[i].view(1, 1, 1, 1)
-            seq_lens_q = padded_extend_seq_lens[i].view(1, 1, 1, 1)
+            seq_lens_kv = seq_lens[i].to(dtype=torch.int32).view(1, 1, 1, 1)
+            seq_lens_q = padded_extend_seq_lens[i].to(dtype=torch.int32).view(1, 1, 1, 1)
 
             # Build the page table
             # only want prefix + the newly added tokens for each sequence
@@ -642,6 +642,17 @@ class CuDNNBackend(AttentionBackend):
                         raise ValueError(
                             f"Invalid tensor stride {key}: cudnn expect {tensor_attr.get_stride()} (shape: {tensor_attr.get_dim()}) but got {torch_tensor.stride()} (shape: {torch_tensor.shape})"
                         )
+                    # Extra dtype validation for known INT32 tensors
+                    if key in (
+                        self._ArgMapKeys.seq_len_q_tensor_info,
+                        self._ArgMapKeys.seq_len_kv_tensor_info,
+                        self._ArgMapKeys.k_page_table,
+                        self._ArgMapKeys.v_page_table,
+                    ):
+                        if torch_tensor.dtype != torch.int32:
+                            raise ValueError(
+                                f"Invalid tensor dtype for {key}: expected int32 but got {torch_tensor.dtype}"
+                            )
 
             workspace = torch.empty(
                 graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8
@@ -714,7 +725,7 @@ class CuDNNBackend(AttentionBackend):
         container_v_gpu = v_cache.view(s, h, b, d)
 
 
-        seq_lens_kv = seq_lens.view(seq_lens.shape[0], 1, 1, 1)
+        seq_lens_kv = seq_lens.to(dtype=torch.int32).view(seq_lens.shape[0], 1, 1, 1)
         seq_lens_q = self._decode_seq_len[:batch_size_query]
 
         variant_pack = {
@@ -741,6 +752,17 @@ class CuDNNBackend(AttentionBackend):
                     raise ValueError(
                         f"Invalid tensor stride {key}: cudnn expect {tensor_attr.get_stride()} but got {torch_tensor.stride()}"
                     )
+                # Extra dtype validation for known INT32 tensors
+                if key in (
+                    self._ArgMapKeys.seq_len_q_tensor_info,
+                    self._ArgMapKeys.seq_len_kv_tensor_info,
+                    self._ArgMapKeys.k_page_table,
+                    self._ArgMapKeys.v_page_table,
+                ):
+                    if torch_tensor.dtype != torch.int32:
+                        raise ValueError(
+                            f"Invalid tensor dtype for {key}: expected int32 but got {torch_tensor.dtype}"
+                        )
         workspace = torch.empty(
             cudnn_decode_graph.get_workspace_size(), device="cuda", dtype=torch.uint8
         )
