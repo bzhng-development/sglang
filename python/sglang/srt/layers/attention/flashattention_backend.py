@@ -135,30 +135,32 @@ def make_local_attention_virtual_batches(
     dev = block_table.device
     i32, i64 = torch.int32, torch.int64
 
-    # Single normalization pass (no copies if already correct)
+    # Normalize dtypes/devices once
     query_start_loc = query_start_loc.to(dev, i32, copy=False)
     seq_lens        = seq_lens.to(dev, i32, copy=False)
     block_table     = block_table.to(dev, i32, copy=False)
 
-    # Page semantics: 0 => no paging; keep original behavior, don’t coerce to 1
-    if page_size == 0:
-        pages_per_local_batch = attn_chunk_size
-        PAGE = None
-    else:
-        assert attn_chunk_size % page_size == 0, (
-            f"attn_chunk_size {attn_chunk_size} not divisible by page_size {page_size}"
-        )
-        pages_per_local_batch = attn_chunk_size // page_size
-        PAGE = torch.tensor(page_size, dtype=i32, device=dev)
-
-    # Early out on empty batch
+    # --- effective, page-aligned chunk size (CRITICAL) ---
     if seq_lens.numel() == 0:
         zero = torch.zeros(0, dtype=i32, device=dev)
         cu1  = torch.zeros(1, dtype=i32, device=dev)
+        pages_per_local_batch = max(1, (attn_chunk_size // max(page_size, 1)))  # harmless
         return zero, cu1, zero, zero.view(0, pages_per_local_batch)
 
-    # Keep chunk size unchanged if max seq < chunk; do not change semantics with page_size
-    ATTN = torch.tensor(attn_chunk_size, dtype=i32, device=dev)
+    max_seq_len = int(seq_lens.max().item())
+    if page_size > 0:
+        # floor to multiple of page_size, cap by actual max, and never below one page
+        eff = min(attn_chunk_size, max_seq_len)
+        eff = max(page_size, (eff // page_size) * page_size)
+        pages_per_local_batch = eff // page_size
+        PAGE = torch.tensor(page_size, dtype=i32, device=dev)
+    else:
+        # no paging: just cap by max length
+        eff = min(attn_chunk_size, max_seq_len)
+        pages_per_local_batch = eff
+        PAGE = None
+
+    ATTN = torch.tensor(eff, dtype=i32, device=dev)
 
     # q_seqlens per request
     q_seqlens = query_start_loc[1:] - query_start_loc[:-1]   # [B]
