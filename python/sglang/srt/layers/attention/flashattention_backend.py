@@ -8,7 +8,6 @@ import torch
 from sglang.srt.configs.model_config import AttentionArch
 from sglang.srt.layers.attention.base_attn_backend import AttentionBackend
 from sglang.srt.managers.schedule_batch import global_server_args_dict
-from sglang.srt.mem_cache.memory_pool import SWAKVPool
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch, ForwardMode
 from sglang.srt.speculative.eagle_utils import EagleDraftInput, EagleVerifyInput
 
@@ -222,6 +221,9 @@ def make_local_attention_virtual_batches(
     )
     # set the first block since this may be a partial block
     if virtual_batches > 0:
+        # Ensure dtype consistency for masked assignment
+        if q_tokens_in_first_block.dtype != seqlens_q_local.dtype:
+            q_tokens_in_first_block = q_tokens_in_first_block.to(seqlens_q_local.dtype)
         seqlens_q_local[arange == 0] = q_tokens_in_first_block
     # set the remaining blocks
     if virtual_batches > 0:
@@ -229,6 +231,9 @@ def make_local_attention_virtual_batches(
             seqlens_q_local - attn_chunk_size * (arange - 1),
             torch.as_tensor(attn_chunk_size, dtype=torch.int32, device=device),
         )
+        # Ensure dtype consistency for masked assignment
+        if temp_rem.dtype != seqlens_q_local.dtype:
+            temp_rem = temp_rem.to(seqlens_q_local.dtype)
         seqlens_q_local[arange > 0] = temp_rem[arange > 0]
 
     # convert from q_seqlens to cu_seqlens_q
