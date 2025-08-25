@@ -1,4 +1,5 @@
 import itertools
+import os
 
 import torch
 import triton
@@ -89,6 +90,68 @@ def benchmark(batch_size, seq_len, save_kv_cache, provider):
     )
 
     time_s = bench_kineto(bench_fn, kernel_names="BatchQKApplyRotaryPosIds")
+    return time_s * 1e6
+
+
+@triton.testing.perf_report(
+    triton.testing.Benchmark(
+        x_names=["batch_size", "seq_len", "save_kv_cache"],
+        x_vals=configs,
+        line_arg="provider",
+        line_vals=["mrope_triton"],
+        line_names=["SGL mRoPE Triton"],
+        styles=[("blue", "-")],
+        ylabel="us",
+        plot_name="bench_mrope",
+        args={},
+    )
+)
+def benchmark_mrope(batch_size, seq_len, save_kv_cache, provider):
+    # Simple mRoPE benchmark using SGLang Triton path
+    device = torch.device("cuda")
+    dtype = torch.bfloat16
+
+    num_q_heads = 32
+    num_kv_heads = 8
+    head_size = 64
+    rotary_dim = 64
+    max_position = 4096
+    base = 10000
+
+    T = batch_size * seq_len
+
+    # Prepare inputs
+    positions = torch.randint(
+        0, max_position // 4, (3, T), device=device, dtype=torch.int64
+    )
+    q = torch.randn(T, num_q_heads * head_size, dtype=dtype, device=device)
+    k = torch.randn(T, num_kv_heads * head_size, dtype=dtype, device=device)
+
+    # Create mRoPE helper
+    from sglang.srt.layers.rotary_embedding import get_rope as sgl_get_rope
+
+    rope = sgl_get_rope(
+        head_size=head_size,
+        rotary_dim=rotary_dim,
+        max_position=max_position,
+        base=base,
+        is_neox_style=True,
+        rope_scaling={"type": "default", "mrope_section": [rotary_dim // 2, 0, 0]},
+        dtype=dtype,
+    ).to(device=device)
+
+    def bench_fn():
+        prev = os.environ.get("SGLANG_ROPE_TRITON")
+        try:
+            os.environ["SGLANG_ROPE_TRITON"] = "1"
+            rope.forward(positions, q.clone(), k.clone())
+        finally:
+            if prev is None:
+                os.environ.pop("SGLANG_ROPE_TRITON", None)
+            else:
+                os.environ["SGLANG_ROPE_TRITON"] = prev
+
+    time_s = bench_kineto(bench_fn)
     return time_s * 1e6
 
 
