@@ -57,7 +57,7 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch, PPProxyTe
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen2_moe import Qwen2MoeMLP as Qwen3MoeMLP
 from sglang.srt.models.qwen2_moe import Qwen2MoeModel
-from sglang.srt.utils import add_prefix, is_cuda, is_non_idle_and_non_empty
+from sglang.srt.utils import LazyValue, add_prefix, is_cuda, is_non_idle_and_non_empty
 
 Qwen3MoeConfig = None
 
@@ -639,6 +639,15 @@ class Qwen3MoeForCausalLM(nn.Module):
         self.logits_processor = LogitsProcessor(config)
         self.capture_aux_hidden_states = False
 
+        # Initialize LazyValue for EPLB integration
+        self._routed_experts_weights_of_layer = LazyValue(
+            lambda: {
+                layer_id: self.model.layers[layer_id].mlp.get_moe_weights()
+                for layer_id in range(self.start_layer, self.end_layer)
+                if isinstance(self.model.layers[layer_id].mlp, Qwen3MoeSparseMoeBlock)
+            }
+        )
+
     def get_input_embeddings(self) -> nn.Embedding:
         return self.model.embed_tokens
 
@@ -723,6 +732,11 @@ class Qwen3MoeForCausalLM(nn.Module):
 
     def get_embed_and_head(self):
         return self.model.embed_tokens.weight, self.lm_head.weight
+
+    @property
+    def routed_experts_weights_of_layer(self):
+        """Property to access expert weights for EPLB integration."""
+        return self._routed_experts_weights_of_layer.value
 
     def set_eagle3_layers_to_capture(self, layer_ids: Optional[List[int]] = None):
         if not self.pp_group.is_last_rank:
@@ -844,14 +858,7 @@ class Qwen3MoeForCausalLM(nn.Module):
                     else:
                         logger.warning(f"Parameter {name} not found in params_dict")
 
-        # TODO mimic deepseek
-        # Lazy initialization of expert weights cache to avoid slowing down load_weights
-        if not hasattr(self, "routed_experts_weights_of_layer"):
-            self.routed_experts_weights_of_layer = {
-                layer_id: self.model.layers[layer_id].mlp.get_moe_weights()
-                for layer_id in range(self.start_layer, self.end_layer)
-                if isinstance(self.model.layers[layer_id].mlp, Qwen3MoeSparseMoeBlock)
-            }
+        pass
 
     @classmethod
     def get_model_config_for_expert_location(cls, config):
