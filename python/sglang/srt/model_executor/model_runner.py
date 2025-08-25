@@ -1606,6 +1606,14 @@ class ModelRunner:
         self.graph_runner = None
         self.cuda_graph_mem_usage = 0
 
+        # Disable CUDA graph capture for Gemma3n models (HF forward uses capture-unsafe ops).
+        archs = getattr(self.model_config.hf_config, "architectures", []) or []
+        if any("Gemma3n" in arch for arch in archs):
+            logger.info(
+                "Disable CUDA graph capture for Gemma3n models due to capture-unsafe ops in HF forward."
+            )
+            return
+
         if not self.is_generation:
             # TODO: Currently, cuda graph only captures decode steps, which only exists for generation models
             return
