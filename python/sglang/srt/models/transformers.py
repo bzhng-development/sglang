@@ -1,4 +1,4 @@
-# Copyright 2025 SGLang Team
+p  # Copyright 2025 SGLang Team
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -66,11 +66,19 @@ def sglang_flash_attention_forward(
     # sglang kwargs
     forward_batch: ForwardBatch,
     # Transformers kwargs
-    scaling: float = None,
-    attention_instances: list[RadixAttention] = None,
+    scaling: Optional[float] = None,
+    attention_instances: Optional[list[RadixAttention]] = None,
     **kwargs,
 ):
-    self_attn: RadixAttention = attention_instances[module.layer_idx]
+    assert attention_instances is not None, "attention_instances must be provided"
+    idx = getattr(module, "layer_idx", None)
+    if idx is None:
+        idx = getattr(module, "layer_id", None)
+    if idx is None:
+        raise AttributeError(
+            "Module missing layer_idx/layer_id required for attention dispatch"
+        )
+    self_attn: RadixAttention = attention_instances[int(idx)]
     if scaling is not None:
         self_attn.scaling = float(scaling)
     hidden = query.shape[-2]
@@ -84,20 +92,20 @@ ALL_ATTENTION_FUNCTIONS["sglang"] = sglang_flash_attention_forward
 
 class HFColumnParallelLinear(ColumnParallelLinear):
 
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
-        return super().forward(input)[0]
+    def forward(self, input_: torch.Tensor, *args, **kwargs) -> torch.Tensor:  # type: ignore[override]
+        return super().forward(input_, *args, **kwargs)[0]
 
 
 class HFRowParallelLinear(RowParallelLinear):
 
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
-        return super().forward(input)[0]
+    def forward(self, input_: torch.Tensor, *args, **kwargs) -> torch.Tensor:  # type: ignore[override]
+        return super().forward(input_, *args, **kwargs)[0]
 
 
 def replace_linear_class(
     linear: nn.Linear,
     style: str,
-    quant_config: QuantizationConfig,
+    quant_config: Optional[QuantizationConfig],
 ) -> Union[ColumnParallelLinear, RowParallelLinear, ReplicatedLinear]:
     """
     Replace nn.Linear with one of SGLang's tensor parallel linear classes.
@@ -134,9 +142,9 @@ def replace_linear_class(
         def parent_cls(self) -> type:
             return sglang_linear_cls
 
-        def forward(self, input: torch.Tensor) -> torch.Tensor:
+        def forward(self, input_: torch.Tensor, *args, **kwargs) -> torch.Tensor:  # type: ignore[override]
             # All SGLang LinearBase.forward returns (output, output_bias)
-            return super().forward(input)[0]
+            return super().forward(input_, *args, **kwargs)[0]
 
     return HFCompatibleLinear(
         input_size=linear.in_features,
@@ -234,16 +242,14 @@ class TransformersForCausalLM(nn.Module):
 
                 if isinstance(child_module, nn.Linear):
                     # Find first matching pattern; otherwise fallback to wildcard or replicate
-                    chosen_style: Optional[str] = None
+                    selected_style: str = tp_plan.get(".*", "replicate")
                     for pattern, style in tp_plan.items():
                         if re.match(pattern, qual_name):
-                            chosen_style = style
+                            selected_style = style
                             break
-                    if chosen_style is None:
-                        chosen_style = tp_plan.get(".*", "replicate")
 
                     new_module = replace_linear_class(
-                        child_module, chosen_style, self.quant_config
+                        child_module, selected_style, self.quant_config
                     )
                     setattr(module, child_name, new_module)
                     self.log_replacement(qual_name, child_module, new_module)
@@ -271,7 +277,7 @@ class TransformersForCausalLM(nn.Module):
         input_ids: torch.Tensor,
         positions: torch.Tensor,
         forward_batch: ForwardBatch,
-        input_embeds: torch.Tensor = None,
+        input_embeds: Optional[torch.Tensor] = None,
         get_embedding: bool = False,
     ) -> LogitsProcessorOutput:
         assert get_embedding is False, "embedding is not supported yet"
