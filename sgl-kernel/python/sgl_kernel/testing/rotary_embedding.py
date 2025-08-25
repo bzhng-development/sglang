@@ -215,3 +215,154 @@ def create_inputs(
     return dict(
         pos_ids=pos_ids, query=query, key=key, value=value, out_cache_loc=out_cache_loc
     )
+
+
+# =========================
+# mRoPE Triton parity tests
+# =========================
+import os
+
+
+def _sections_variants(half_rot_dim: int):
+    # Produce a few valid section partitions that sum to (rotary_dim // 2)
+    s0 = half_rot_dim
+    yield [s0, 0, 0]
+    s0 = half_rot_dim // 2
+    s1 = half_rot_dim - s0
+    yield [s0, s1, 0]
+    s0 = half_rot_dim // 3
+    s1 = half_rot_dim // 3
+    s2 = half_rot_dim - s0 - s1
+    yield [s0, s1, s2]
+
+
+@pytest.mark.skipif(
+    not torch.cuda.is_available(), reason="CUDA-only tests for Triton mRoPE."
+)
+def test_mrope_triton_parity_neox_small_and_large():
+    # Import here to avoid import cost for other tests and keep this file re-usable
+    from sglang.srt.layers.rotary_embedding import get_rope as sgl_get_rope
+
+    device = torch.device("cuda")
+    dtype = torch.bfloat16
+
+    # Configs
+    num_q_heads = 8
+    num_kv_heads = 8
+    head_size = 64
+    rotary_dim = 64  # typical Neox setup uses rotary_dim == head_size
+    half_rot_dim = rotary_dim // 2
+    max_position = 8192
+    base = 10000
+    is_neox_style = True
+
+    # Sweep small and large token counts
+    for num_tokens in (11, 1024):
+        # Random mRoPE positions [3, T]
+        positions = torch.randint(
+            0, max_position // 4, (3, num_tokens), device=device, dtype=torch.int64
+        )
+
+        # Random q/k
+        q = torch.randn(num_tokens, num_q_heads * head_size, dtype=dtype, device=device)
+        k = torch.randn(
+            num_tokens, num_kv_heads * head_size, dtype=dtype, device=device
+        )
+
+        for section in _sections_variants(half_rot_dim):
+            rope = sgl_get_rope(
+                head_size=head_size,
+                rotary_dim=rotary_dim,
+                max_position=max_position,
+                base=base,
+                is_neox_style=is_neox_style,
+                rope_scaling={"type": "default", "mrope_section": section},
+                dtype=dtype,
+            ).to(device=device)
+
+            # Reference (native) path: disable Triton via env
+            prev = os.environ.get("SGLANG_ROPE_TRITON")
+            try:
+                os.environ["SGLANG_ROPE_TRITON"] = "0"
+                with torch.no_grad():
+                    q_ref, k_ref = rope.forward(positions, q.clone(), k.clone())
+            finally:
+                if prev is None:
+                    os.environ.pop("SGLANG_ROPE_TRITON", None)
+                else:
+                    os.environ["SGLANG_ROPE_TRITON"] = prev
+
+            # Triton path: enable via env
+            prev = os.environ.get("SGLANG_ROPE_TRITON")
+            try:
+                os.environ["SGLANG_ROPE_TRITON"] = "1"
+                with torch.no_grad():
+                    q_triton, k_triton = rope.forward(positions, q.clone(), k.clone())
+            finally:
+                if prev is None:
+                    os.environ.pop("SGLANG_ROPE_TRITON", None)
+                else:
+                    os.environ["SGLANG_ROPE_TRITON"] = prev
+
+            # Tolerances aligned to bf16 expectations for rotary parity
+            atol = 1e-5
+            rtol = 1.6e-2
+            torch.testing.assert_close(q_ref, q_triton, atol=atol, rtol=rtol)
+            torch.testing.assert_close(k_ref, k_triton, atol=atol, rtol=rtol)
+
+
+@pytest.mark.skipif(
+    not torch.cuda.is_available(), reason="CUDA-only tests for Triton mRoPE."
+)
+def test_mrope_triton_preserves_tail_pass_through():
+    from sglang.srt.layers.rotary_embedding import get_rope as sgl_get_rope
+
+    device = torch.device("cuda")
+    dtype = torch.bfloat16
+
+    num_q_heads = 4
+    num_kv_heads = 4
+    head_size = 128
+    rotary_dim = 64  # have a non-empty tail to verify pass-through (Dh - Dr)
+    half_rot_dim = rotary_dim // 2
+    max_position = 4096
+
+    num_tokens = 128
+    positions = torch.randint(
+        0, max_position // 4, (3, num_tokens), device=device, dtype=torch.int64
+    )
+
+    q = torch.randn(num_tokens, num_q_heads * head_size, dtype=dtype, device=device)
+    k = torch.randn(num_tokens, num_kv_heads * head_size, dtype=dtype, device=device)
+
+    rope = sgl_get_rope(
+        head_size=head_size,
+        rotary_dim=rotary_dim,
+        max_position=max_position,
+        base=10000,
+        is_neox_style=True,
+        rope_scaling={"type": "default", "mrope_section": [half_rot_dim, 0, 0]},
+        dtype=dtype,
+    ).to(device=device)
+
+    prev = os.environ.get("SGLANG_ROPE_TRITON")
+    try:
+        os.environ["SGLANG_ROPE_TRITON"] = "1"
+        q_in = q.clone()
+        k_in = k.clone()
+        with torch.no_grad():
+            q_out, k_out = rope.forward(positions, q_in, k_in)
+    finally:
+        if prev is None:
+            os.environ.pop("SGLANG_ROPE_TRITON", None)
+        else:
+            os.environ["SGLANG_ROPE_TRITON"] = prev
+
+    # Verify that the tail [Dr:] is preserved exactly (bf16 friendly strict check)
+    q_tail_in = q.clone().view(num_tokens, -1, head_size)[..., rotary_dim:]
+    q_tail_out = q_out.view(num_tokens, -1, head_size)[..., rotary_dim:]
+    k_tail_in = k.clone().view(num_tokens, -1, head_size)[..., rotary_dim:]
+    k_tail_out = k_out.view(num_tokens, -1, head_size)[..., rotary_dim:]
+
+    torch.testing.assert_close(q_tail_in, q_tail_out, atol=0, rtol=0)
+    torch.testing.assert_close(k_tail_in, k_tail_out, atol=0, rtol=0)
