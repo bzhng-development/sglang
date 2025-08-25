@@ -9,6 +9,7 @@ from sglang.srt.configs.deepseekvl2 import (
     DeepseekVL2Config,
     DeepseekVL2MlpProjectorConfig,
 )
+from sglang.srt.distributed import get_tensor_model_parallel_world_size
 from sglang.srt.layers.linear import ReplicatedLinear
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
 from sglang.srt.managers.mm_utils import (
@@ -20,6 +21,7 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.deepseek import DeepseekForCausalLM
 from sglang.srt.models.deepseek_v2 import DeepseekV2ForCausalLM
+from sglang.srt.models.transformers import replace_linear_class
 
 
 class DeepseekVL2MlpProjector(nn.Module):
@@ -196,14 +198,41 @@ class DeepseekVL2ForCausalLM(nn.Module):
             # deepseek-vl2-tiny forbids mla
             self.language_model = DeepseekForCausalLM(language_config)
 
+    def _get_parent_and_attr(self, root: torch.nn.Module, dotted_name: str):
+        """Return (parent_module, final_attr_name) for a dotted module path."""
+        names = dotted_name.split(".")
+        parent = root
+        for n in names[:-1]:
+            parent = getattr(parent, n)
+        return parent, names[-1]
+
+    def patch_vit_for_tp(self, vit: torch.nn.Module, quant_config: QuantizationConfig):
+        """Patch for timm ViT instance to support tensor parallel."""
+        try:
+            import timm
+        except ImportError as e:
+            raise ImportError("Please install timm") from e
+
+        for name, module in vit.named_modules():
+            if isinstance(module, nn.Linear):
+                parent, attr_name = self._get_parent_and_attr(vit, name)
+                if isinstance(parent, timm.layers.Mlp) and attr_name == "fc1":
+                    new_linear = replace_linear_class(module, "colwise", quant_config)
+                    setattr(parent, attr_name, new_linear)
+                elif isinstance(parent, timm.layers.Mlp) and attr_name == "fc2":
+                    new_linear = replace_linear_class(module, "rowwise", quant_config)
+                    setattr(parent, attr_name, new_linear)
+
+        return vit
+
     def _init_vision_module(
         self, vision_config, quant_config: Optional[QuantizationConfig]
     ) -> nn.Module:
         # TODO: refactor vision model through timm wrapper from transformers
         try:
             import timm
-        except ImportError:
-            raise ImportError("Please install timm") from ImportError
+        except ImportError as e:
+            raise ImportError("Please install timm") from e
 
         model = timm.create_model(
             "vit_so400m_patch14_siglip_384.webli",
@@ -212,6 +241,9 @@ class DeepseekVL2ForCausalLM(nn.Module):
             dynamic_img_size=True,
             dynamic_img_pad=True,
         )
+
+        if get_tensor_model_parallel_world_size() > 1:
+            model = self.patch_vit_for_tp(model, quant_config)
 
         model = model.to(dtype=torch.get_default_dtype())
         return model
