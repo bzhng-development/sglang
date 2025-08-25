@@ -96,29 +96,36 @@ class HFRowParallelLinear(RowParallelLinear):
 
 def replace_linear_class(
     linear: nn.Linear,
-    style: Literal["colwise", "rowwise"],
+    style: str,
     quant_config: QuantizationConfig,
-) -> Union[ColumnParallelLinear, RowParallelLinear]:
+) -> Union[ColumnParallelLinear, RowParallelLinear, ReplicatedLinear]:
     """
-    Replace nn.Linear with one of vLLM's tensor parallel linear classes.
+    Replace nn.Linear with one of SGLang's tensor parallel linear classes.
 
     Args:
         linear (nn.Linear): `nn.Linear` to be replaced.
         style (str): Tensor parallel style of the new linear, e.g. "colwise".
-        quant_config (QuantConfig): Quantization config for the new linear.
+        quant_config (QuantizationConfig): Quantization config for the new linear.
     Returns:
-        Union[ColumnParallelLinear, RowParallelLinear]: The new linear.
+        Union[ColumnParallelLinear, RowParallelLinear, ReplicatedLinear]: The new linear.
     """
 
     if not isinstance(style, str):
         raise ValueError(f"Unsupported parallel style type {type(style)}, expected str")
 
-    sglang_linear_cls = {
-        "colwise": ColumnParallelLinear,
-        "rowwise": RowParallelLinear,
-    }.get(style, ReplicatedLinear)
+    style = style.lower()
+    if style == "replicated":
+        style = "replicate"
 
-    class HFCompatibleLinear(sglang_linear_cls):
+    sglang_linear_cls, sglang_linear_kwargs = {
+        "colwise": (ColumnParallelLinear, {}),
+        "colwise_rep": (ColumnParallelLinear, {"gather_output": True}),
+        "rowwise": (RowParallelLinear, {}),
+        "rowwise_rep": (RowParallelLinear, {"input_is_parallel": False}),
+        "replicate": (ReplicatedLinear, {}),
+    }.get(style, (ReplicatedLinear, {}))
+
+    class HFCompatibleLinear(sglang_linear_cls):  # type: ignore[misc]
         """
         Wrapper class that removes `output_bias` from returned output.
         """
@@ -128,6 +135,7 @@ def replace_linear_class(
             return sglang_linear_cls
 
         def forward(self, input: torch.Tensor) -> torch.Tensor:
+            # All SGLang LinearBase.forward returns (output, output_bias)
             return super().forward(input)[0]
 
     return HFCompatibleLinear(
@@ -135,6 +143,7 @@ def replace_linear_class(
         output_size=linear.out_features,
         bias=linear.bias is not None,
         quant_config=quant_config,
+        **sglang_linear_kwargs,
     )
 
 
@@ -213,7 +222,7 @@ class TransformersForCausalLM(nn.Module):
         """
         tp_plan = getattr(self.model.config, "base_model_tp_plan", None) or {}
 
-        if not tp_plan and self.tp_size > 1:
+        if not tp_plan and tp_size > 1:
             raise ValueError(
                 f"{type(self.model)} does not support tensor parallel yet!"
             )
@@ -221,15 +230,22 @@ class TransformersForCausalLM(nn.Module):
         def _tensor_parallel(module: nn.Module, prefix: str = ""):
             for child_name, child_module in module.named_children():
                 qual_name = maybe_prefix(prefix, child_name)
-                for pattern, style in tp_plan.items():
-                    if re.match(pattern, qual_name) and isinstance(
-                        child_module, nn.Linear
-                    ):
-                        new_module = replace_linear_class(
-                            child_module, style, self.quant_config
-                        )
-                        setattr(module, child_name, new_module)
-                        self.log_replacement(qual_name, child_module, new_module)
+
+                if isinstance(child_module, nn.Linear):
+                    # Find first matching pattern; otherwise fallback to wildcard or replicate
+                    chosen_style: Optional[str] = None
+                    for pattern, style in tp_plan.items():
+                        if re.match(pattern, qual_name):
+                            chosen_style = style
+                            break
+                    if chosen_style is None:
+                        chosen_style = tp_plan.get(".*", "replicate")
+
+                    new_module = replace_linear_class(
+                        child_module, chosen_style, self.quant_config
+                    )
+                    setattr(module, child_name, new_module)
+                    self.log_replacement(qual_name, child_module, new_module)
                 else:
                     _tensor_parallel(child_module, prefix=qual_name)
 
