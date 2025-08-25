@@ -3,7 +3,7 @@ from typing import Iterable, Optional, Set, Tuple
 import torch
 import torch.nn.functional as F
 from torch import nn
-from transformers import AutoModel, Gemma3nTextConfig, PretrainedConfig, PreTrainedModel
+from transformers import Gemma3nTextConfig, PretrainedConfig, PreTrainedModel
 
 from sglang.srt.distributed import get_tensor_model_parallel_world_size
 from sglang.srt.layers.activation import GeluAndMul
@@ -1007,4 +1007,3 @@ class Gemma3nForCausalLM(PreTrainedModel):
 
 
 EntryClass = Gemma3nForCausalLM
-AutoModel.register(Gemma3nTextConfig, Gemma3nForCausalLM, exist_ok=True)
