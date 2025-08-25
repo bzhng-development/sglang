@@ -562,6 +562,12 @@ class Gemma3nDecoderLayer(nn.Module):
         self.post_per_layer_input_norm = Gemma3nRMSNorm(
             self.hidden_size, eps=config.rms_norm_eps
         )
+        # Precompute 1/sqrt(2) as a buffer to avoid tensor creation during forward (CUDA graph safe).
+        self.register_buffer(
+            "inv_sqrt2",
+            torch.tensor(1.0 / (2.0**0.5), dtype=torch.float32),
+            persistent=False,
+        )
         self.is_sliding = self.self_attn.is_sliding
 
     def forward(
@@ -592,7 +598,7 @@ class Gemma3nDecoderLayer(nn.Module):
         attn = self.post_attention_layernorm(attn)  # [num_tokens, hidden_size]
 
         attn_gated = active_prediction + attn  # [num_tokens, hidden_size]
-        attn_laurel = (attn_gated + laurel_output) / torch.sqrt(torch.tensor(2.0))
+        attn_laurel = (attn_gated + laurel_output) * self.inv_sqrt2.type_as(attn_gated)
 
         attn_norm = self.pre_feedforward_layernorm(
             attn_laurel
@@ -786,8 +792,8 @@ class Gemma3nTextModel(PreTrainedModel):
             positions = positions.unsqueeze(0)
 
         # Expand hidden_states to support per-layer inputs
-        target_magnitude = torch.mean(input_embeds**2, dim=-1, keepdim=True) ** 0.5
-        epsilon_tensor = torch.tensor(torch.finfo(input_embeds.dtype).min)
+        target_magnitude = torch.mean(input_embeds**2, dim=-1, keepdim=True).sqrt()
+        eps = torch.finfo(input_embeds.dtype).eps
 
         # embed positions
         hidden_states_0 = input_embeds
@@ -796,11 +802,12 @@ class Gemma3nTextModel(PreTrainedModel):
         for i in range(1, self.config.altup_num_inputs):
             altup_proj, _ = self.altup_projections[i - 1](hidden_states_0)
             current_hidden_state = altup_proj.type(hidden_states_0.dtype)
-            new_magnitude = (
-                torch.mean(current_hidden_state**2, dim=-1, keepdim=True) ** 0.5
-            )
+            new_magnitude = torch.mean(
+                current_hidden_state**2, dim=-1, keepdim=True
+            ).sqrt()
+            new_magnitude = torch.clamp(new_magnitude, min=eps)
             current_hidden_state = current_hidden_state * (
-                target_magnitude / torch.maximum(new_magnitude, epsilon_tensor)
+                target_magnitude / new_magnitude
             )
             temp_hidden_states.append(current_hidden_state)
 
@@ -819,9 +826,9 @@ class Gemma3nTextModel(PreTrainedModel):
             )
 
         # Per-layer inputs to single output
-        target_magnitude = (
-            torch.mean(hidden_states[0] ** 2, dim=-1, keepdim=True) ** 0.5
-        )
+        target_magnitude = torch.mean(
+            hidden_states[0] ** 2, dim=-1, keepdim=True
+        ).sqrt()
 
         temp_hidden_states = [hidden_states[0]]
 
@@ -831,11 +838,12 @@ class Gemma3nTextModel(PreTrainedModel):
                 hidden_states[i]
             )
             current_hidden_state = altup_unemb_proj.type(hidden_states_0.dtype)
-            new_magnitude = (
-                torch.mean(current_hidden_state**2, dim=-1, keepdim=True) ** 0.5
-            )
+            new_magnitude = torch.mean(
+                current_hidden_state**2, dim=-1, keepdim=True
+            ).sqrt()
+            new_magnitude = torch.clamp(new_magnitude, min=eps)
             current_hidden_state = current_hidden_state * (
-                target_magnitude / torch.maximum(new_magnitude, epsilon_tensor)
+                target_magnitude / new_magnitude
             )
             temp_hidden_states.append(current_hidden_state)
 
