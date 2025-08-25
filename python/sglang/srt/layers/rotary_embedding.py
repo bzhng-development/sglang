@@ -33,6 +33,14 @@ if _use_aiter:
 if is_npu():
     import torch_npu
 
+# Optional Triton mRoPE launcher (CUDA-only). Keep import lazy/safe.
+try:
+    from sglang.srt.layers.mrope_triton import apply_mrope_triton as _apply_mrope_triton
+
+    _HAS_MROPE_TRITON = True
+except Exception:
+    _HAS_MROPE_TRITON = False
+
 
 def _rotate_neox(x: torch.Tensor) -> torch.Tensor:
     x1 = x[..., : x.shape[-1] // 2]
@@ -1046,6 +1054,33 @@ class MRotaryEmbedding(RotaryEmbedding):
             key: [num_tokens, num_kv_heads * head_size]
         """
         assert positions.ndim == 1 or positions.ndim == 2
+
+        # Triton CUDA fast path for mRoPE
+        if positions.ndim == 2:
+            if _is_cpu:
+                raise NotImplementedError("mRoPE on CPU is unsupported")
+            if (
+                _HAS_MROPE_TRITON
+                and _is_cuda
+                and get_bool_env_var("SGLANG_ROPE_TRITON", "true")
+                and self.is_neox_style
+            ):
+                m_section = (
+                    self.mrope_section
+                    if self.mrope_section is not None
+                    else [self.rotary_dim // 2, 0, 0]
+                )
+                q_out, k_out = _apply_mrope_triton(
+                    query,
+                    key,
+                    self.cos_sin_cache,
+                    self.rotary_dim,
+                    self.head_size,
+                    self.is_neox_style,
+                    mrope_positions=positions,
+                    mrope_section=m_section,
+                )
+                return q_out, k_out
 
         num_tokens = positions.shape[-1]
         cos_sin = self.cos_sin_cache[positions]
