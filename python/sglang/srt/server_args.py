@@ -69,6 +69,10 @@ class ServerArgs:
     skip_server_warmup: bool = False
     warmups: Optional[str] = None
     nccl_port: Optional[int] = None
+    h11_max_incomplete_event_size: int = (
+        4194304  # 4 MB - max size of HTTP headers/events
+    )
+    h11_max_header_count: int = 256  # max number of HTTP headers
 
     # Quantization and data type
     dtype: str = "auto"
@@ -872,6 +876,20 @@ class ServerArgs:
             type=int,
             default=ServerArgs.nccl_port,
             help="The port for NCCL distributed environment setup. Defaults to a random port.",
+        )
+        parser.add_argument(
+            "--h11-max-incomplete-event-size",
+            type=int,
+            default=ServerArgs.h11_max_incomplete_event_size,
+            help="Maximum size (bytes) of an incomplete HTTP event (header or body) for "
+            "h11 parser. Helps mitigate header abuse. Default: 4194304 (4 MB).",
+        )
+        parser.add_argument(
+            "--h11-max-header-count",
+            type=int,
+            default=ServerArgs.h11_max_header_count,
+            help="Maximum number of HTTP headers allowed in a request for h11 parser. "
+            "Helps mitigate header abuse. Default: 256.",
         )
 
         # Quantization and data type

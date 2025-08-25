@@ -24,6 +24,33 @@ class TestPrepareServerArgs(CustomTestCase):
             {"rope_scaling": {"factor": 2.0, "rope_type": "linear"}},
         )
 
+    def test_header_limit_args(self):
+        # Test default values
+        server_args = prepare_server_args(
+            [
+                "--model-path",
+                "test-model",
+            ]
+        )
+        self.assertEqual(
+            server_args.h11_max_incomplete_event_size, 4194304
+        )  # 4 MB default
+        self.assertEqual(server_args.h11_max_header_count, 256)  # 256 headers default
+
+        # Test custom values
+        server_args = prepare_server_args(
+            [
+                "--model-path",
+                "test-model",
+                "--h11-max-incomplete-event-size",
+                "8388608",  # 8 MB
+                "--h11-max-header-count",
+                "512",
+            ]
+        )
+        self.assertEqual(server_args.h11_max_incomplete_event_size, 8388608)
+        self.assertEqual(server_args.h11_max_header_count, 512)
+
 
 class TestPortArgs(unittest.TestCase):
     @patch("sglang.srt.server_args.is_port_available")

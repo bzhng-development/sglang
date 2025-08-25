@@ -113,6 +113,11 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 HEALTH_CHECK_TIMEOUT = int(os.getenv("SGLANG_HEALTH_CHECK_TIMEOUT", 20))
 
+# HTTP header limits for h11 parser
+# These constants help mitigate header abuse attacks
+H11_MAX_INCOMPLETE_EVENT_SIZE_DEFAULT = 4194304  # 4 MB
+H11_MAX_HEADER_COUNT_DEFAULT = 256
+
 
 # Store global states
 @dataclasses.dataclass
@@ -1104,8 +1109,9 @@ def launch_server(
         # Update logging configs
         set_uvicorn_logging_configs()
         app.server_args = server_args
-        # Listen for HTTP requests
-        uvicorn.run(
+
+        # Prepare Uvicorn config with header limits
+        uvicorn_config = uvicorn.Config(
             app,
             host=server_args.host,
             port=server_args.port,
@@ -1113,6 +1119,24 @@ def launch_server(
             timeout_keep_alive=5,
             loop="uvloop",
         )
+
+        # Apply header limits (use defaults if not specified in server_args)
+        h11_max_incomplete_event_size = getattr(
+            server_args,
+            "h11_max_incomplete_event_size",
+            H11_MAX_INCOMPLETE_EVENT_SIZE_DEFAULT,
+        )
+        h11_max_header_count = getattr(
+            server_args, "h11_max_header_count", H11_MAX_HEADER_COUNT_DEFAULT
+        )
+
+        # Set header limits on the config
+        uvicorn_config.h11_max_incomplete_event_size = h11_max_incomplete_event_size
+        uvicorn_config.h11_max_header_count = h11_max_header_count
+
+        # Create and run the server with the configured limits
+        uvicorn_server = uvicorn.Server(uvicorn_config)
+        uvicorn_server.run()
     finally:
         warmup_thread.join()
 
