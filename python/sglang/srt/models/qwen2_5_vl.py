@@ -30,8 +30,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
-from transformers.activations import ACT2FN
-from transformers.models.qwen2.modeling_qwen2 import Qwen2RMSNorm
+from sglang.srt.layers.activation import SiluAndMul
+from sglang.srt.layers.layernorm import RMSNorm
 from transformers.models.qwen2_5_vl.configuration_qwen2_5_vl import (
     Qwen2_5_VLConfig,
     Qwen2_5_VLVisionConfig,
@@ -94,14 +94,24 @@ class Qwen2_5_VLMLP(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("down_proj", prefix),
         )
-        self.act = ACT2FN[hidden_act]
+        # Only SiLU is supported by the fused SiluAndMul kernel
+        if hidden_act != "silu":
+            raise ValueError(
+                f"Unsupported activation: {hidden_act}. Only 'silu' is supported for fused SiluAndMul."
+            )
+        self.silu_and_mul = SiluAndMul()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Compute gate and up projections
         x_parallel_gate, _ = self.gate_proj(x)
-        x_parallel_gate = self.act(x_parallel_gate)
         x_parallel_up, _ = self.up_proj(x)
-        x_parallel = x_parallel_gate * x_parallel_up
-        x, _ = self.down_proj(x_parallel)
+
+        # Fused SiLU-and-Mul kernel expects concatenated [gate, up] along the last dim
+        fused_in = torch.cat([x_parallel_gate, x_parallel_up], dim=-1)
+        fused = self.silu_and_mul(fused_in)
+
+        # Down projection
+        x, _ = self.down_proj(fused)
         return x
 
 
@@ -122,8 +132,8 @@ class Qwen2_5_VisionBlock(nn.Module):
         super().__init__()
         if norm_layer is None:
             norm_layer = partial(nn.LayerNorm, eps=1e-6)
-        self.norm1 = Qwen2RMSNorm(dim, eps=1e-6)
-        self.norm2 = Qwen2RMSNorm(dim, eps=1e-6)
+        self.norm1 = RMSNorm(dim, eps=1e-6)
+        self.norm2 = RMSNorm(dim, eps=1e-6)
 
         if attn_implementation is None:
             softmax_in_single_precision = False
@@ -182,9 +192,9 @@ class Qwen2_5_VisionBlock(nn.Module):
             position_embeddings=position_embeddings,
         )
         attn = rearrange(attn, "b s ... -> s b ...")
-        x = x + attn
-        norm2 = self.norm2(x)
-        mlp = self.mlp(norm2)
+        # Fuse (x + attn) with RMSNorm for better performance
+        norm2_out, x = self.norm2(attn, x)
+        mlp = self.mlp(norm2_out)
         x = x + mlp
         return x
 
@@ -201,7 +211,7 @@ class Qwen2_5_VisionPatchMerger(nn.Module):
     ) -> None:
         super().__init__()
         self.hidden_size = context_dim * (spatial_merge_size**2)
-        self.ln_q = Qwen2RMSNorm(context_dim, eps=1e-6)
+        self.ln_q = RMSNorm(context_dim, eps=1e-6)
         self.mlp = nn.ModuleList(
             [
                 ColumnParallelLinear(
