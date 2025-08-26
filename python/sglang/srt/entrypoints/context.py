@@ -78,6 +78,8 @@ class HarmonyContext(ConversationContext):
         self.num_cached_tokens = 0
         self.num_output_tokens = 0
         self.num_reasoning_tokens = 0
+        # Track whether token metadata has been initialized for this response
+        self._token_metadata_initialized = False
 
     def append_output(self, output) -> None:
         if isinstance(output, dict) and "output_ids" in output:
@@ -98,10 +100,16 @@ class HarmonyContext(ConversationContext):
             meta_info = output["meta_info"]
 
             if isinstance(meta_info, dict):
-                if "prompt_token_ids" in meta_info:
-                    self.num_prompt_tokens = meta_info["prompt_tokens"]
-                if "cached_tokens" in meta_info:
-                    self.num_cached_tokens = meta_info["cached_tokens"]
+                # Only set prompt and cached token counts if not already initialized
+                if not self._token_metadata_initialized:
+                    if "prompt_tokens" in meta_info:
+                        self.num_prompt_tokens = meta_info["prompt_tokens"]
+                    if "cached_tokens" in meta_info:
+                        self.num_cached_tokens = meta_info["cached_tokens"]
+                    # Mark metadata as initialized after setting counts
+                    self._token_metadata_initialized = True
+                
+                # Always update completion tokens (accumulative)
                 if "completion_tokens" in meta_info:
                     self.num_output_tokens += meta_info["completion_tokens"]
 
@@ -109,6 +117,10 @@ class HarmonyContext(ConversationContext):
             output_msgs = output
 
         self._messages.extend(output_msgs)
+
+    def reset_token_metadata(self) -> None:
+        """Reset the token metadata initialization flag for a new response."""
+        self._token_metadata_initialized = False
 
     @property
     def messages(self) -> list:
