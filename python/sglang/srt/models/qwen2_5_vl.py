@@ -300,14 +300,16 @@ class Qwen2_5_VisionTransformer(nn.Module):
                 for i in range(depth)
             ]
         )
-        # Optional: compile vision blocks to reduce dispatch and fuse trivial ops
+        # Optional: torch.compile bound forward funcs to avoid parameter name remapping
+        self._compiled_block_forwards = None
         if os.environ.get("SGLANG_VL_COMPILE_BLOCKS", "0") == "1" and hasattr(torch, "compile"):
             try:
-                self.blocks = nn.ModuleList(
-                    [torch.compile(b, fullgraph=False, dynamic=True) for b in self.blocks]
-                )
-                logger.info("Compiled Qwen2.5-VL vision blocks with torch.compile")
+                self._compiled_block_forwards = [
+                    torch.compile(b.forward, fullgraph=False, dynamic=True) for b in self.blocks
+                ]
+                logger.info("Compiled Qwen2.5-VL vision block forwards with torch.compile")
             except Exception as e:
+                self._compiled_block_forwards = None
                 logger.warning(f"torch.compile for vision blocks failed: {e}; falling back to eager")
         self.merger = Qwen2_5_VisionPatchMerger(
             dim=vision_config.out_hidden_size,
@@ -457,9 +459,14 @@ class Qwen2_5_VisionTransformer(nn.Module):
                 cu_seqlens_now = cu_seqlens
             else:
                 cu_seqlens_now = cu_window_seqlens
-            x = blk(
-                x, cu_seqlens=cu_seqlens_now, position_embeddings=position_embeddings
-            )
+            if self._compiled_block_forwards is not None:
+                x = self._compiled_block_forwards[layer_num](
+                    x, cu_seqlens=cu_seqlens_now, position_embeddings=position_embeddings
+                )
+            else:
+                x = blk(
+                    x, cu_seqlens=cu_seqlens_now, position_embeddings=position_embeddings
+                )
 
         # adapter
         x = self.merger(x)
