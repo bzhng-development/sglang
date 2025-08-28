@@ -640,6 +640,8 @@ class Qwen2_5_VLForConditionalGeneration(nn.Module):
                 if "visual" in name:
                     # adapt to VisionAttention
                     name = name.replace(r"attn.qkv.", r"attn.qkv_proj.")
+                    # Handle torch.compile _orig_mod prefix
+                    name = name.replace("._orig_mod.", ".")
 
                 try:
                     # Skip loading extra bias for GPTQ models.
@@ -647,7 +649,8 @@ class Qwen2_5_VLForConditionalGeneration(nn.Module):
                         continue
                     param = params_dict[name]
                 except KeyError:
-                    print(params_dict.keys())
+                    print(f"Available keys: {list(params_dict.keys())[:10]}...")
+                    print(f"Looking for: {name}")
                     raise
 
                 weight_loader = getattr(param, "weight_loader", default_weight_loader)
