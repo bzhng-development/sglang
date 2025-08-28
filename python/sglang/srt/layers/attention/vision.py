@@ -107,7 +107,10 @@ class VisionSdpaAttention(nn.Module):
     @staticmethod
     @lru_cache(maxsize=128)
     def _generate_mask_cache(
-        s: int, flatten_batch: bool, cu_seqlens: tuple
+        s: int,
+        flatten_batch: bool,
+        cu_seqlens: tuple,
+        device_key: tuple,
     ) -> torch.BoolTensor:
         """
         Generate a boolean attention mask with caching mechanism.
@@ -118,23 +121,33 @@ class VisionSdpaAttention(nn.Module):
         Returns:
             attention mask tensor of shape [b, 1, s, s] or [1, s, s]
         """
+        device = torch.device(*device_key)
         if flatten_batch:
-            mask = torch.zeros([1, s, s], dtype=torch.bool)
-            for i in range(1, len(cu_seqlens)):
-                start = cu_seqlens[i - 1]
-                end = cu_seqlens[i]
-                mask[..., start:end, start:end] = True
+            # Vectorized block-diagonal mask on device
+            # cu_seqlens here encodes segment boundaries within the flattened batch
+            starts = torch.as_tensor(cu_seqlens[:-1], device=device)
+            ends = torch.as_tensor(cu_seqlens[1:], device=device)
+            idx = torch.arange(s, device=device)
+            in_row_seg = (idx[:, None] >= starts) & (idx[:, None] < ends)  # [s, b]
+            # Same segments for columns
+            in_col_seg = in_row_seg  # [s, b]
+            # mask[i, j] = any_k (in_row_seg[i,k] & in_col_seg[j,k])
+            mask2d = (in_row_seg[:, None, :] & in_col_seg[None, :, :]).any(dim=-1)
+            mask = mask2d.view(1, s, s)
         else:
-            # [1, 1, 1, s]
-            row_indices = torch.arange(s).view(1, 1, 1, s)
-            # [1, 1, s, 1]
-            col_indices = torch.arange(s).view(1, 1, s, 1)
-            # [b, 1, 1, 1]
-            seq_lens = torch.tensor(
+            # Non-flattened: per-batch square masks, True for valid tokens
+            seq_lens = torch.as_tensor(
                 [end - start for start, end in zip(cu_seqlens[:-1], cu_seqlens[1:])],
-            ).view(-1, 1, 1, 1)
-
-            mask = (row_indices < seq_lens) & (col_indices < seq_lens)
+                device=device,
+                dtype=torch.long,
+            )
+            # [1, 1, 1, s] and [1, 1, s, 1] on device
+            idx = torch.arange(s, device=device)
+            row_indices = idx.view(1, 1, 1, s)
+            col_indices = idx.view(1, 1, s, 1)
+            mask = (row_indices < seq_lens.view(-1, 1, 1, 1)) & (
+                col_indices < seq_lens.view(-1, 1, 1, 1)
+            )
 
         return mask
 
@@ -143,6 +156,7 @@ class VisionSdpaAttention(nn.Module):
         s: int,
         cu_seqlens: Optional[torch.Tensor],
         flatten_batch: bool = False,
+        device: Optional[torch.device] = None,
     ) -> Optional[torch.Tensor]:
         r"""
         Creates a non-causal 4D mask of shape `(b, 1, s, s)` or `(1, 1, s, s)`.
@@ -156,9 +170,14 @@ class VisionSdpaAttention(nn.Module):
         if cu_seqlens is None:
             return None
 
-        cu_seqlens_tuple = tuple(cu_seqlens.cpu().tolist())
+        if device is None:
+            # Default to CPU key to avoid unnecessary device caching
+            device = cu_seqlens.device if cu_seqlens.is_cuda else torch.device("cpu")
 
-        return self._generate_mask_cache(s, flatten_batch, cu_seqlens_tuple)
+        cu_seqlens_tuple = tuple(cu_seqlens.tolist())
+        device_key = (device.type, device.index)
+
+        return self._generate_mask_cache(s, flatten_batch, cu_seqlens_tuple, device_key)
 
     def forward(
         self,
@@ -186,14 +205,17 @@ class VisionSdpaAttention(nn.Module):
         # [b, 1, s, s]
         if attention_mask is None:
             attention_mask = self.generate_patch_attention_mask(
-                s, cu_seqlens, flatten_batch=self.flatten_batch
+                s,
+                cu_seqlens,
+                flatten_batch=self.flatten_batch,
+                device=q.device,
             )
 
         if attention_mask is None:
             if self.softmax_in_single_precision:
                 raise RuntimeError("Empty attention mask")
         else:
-            attention_mask = attention_mask.to(device=q.device)
+            attention_mask = attention_mask.to(device=q.device, non_blocking=True)
 
         q, k, v = [rearrange(x, "(b s) h d -> b h s d", b=bsz) for x in [q, k, v]]
 
@@ -271,8 +293,8 @@ class VisionTritonAttention(nn.Module):
             k,
             v,
             output,
-            cu_seqlens.cuda(),
-            seq_lens.cuda(),
+            cu_seqlens.to(q.device, non_blocking=True),
+            seq_lens.to(q.device, non_blocking=True),
             max_seqlen,
             is_causal=False,
         )

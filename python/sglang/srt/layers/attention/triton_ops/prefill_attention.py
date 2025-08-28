@@ -31,6 +31,16 @@ if _is_cuda or _is_hip:
     CUDA_CAPABILITY = torch.cuda.get_device_capability()
 
 
+@triton.autotune(
+    configs=[
+        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 64, 'num_warps': 4, 'num_stages': 2}),
+        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 128, 'num_warps': 4, 'num_stages': 2}),
+        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 64, 'num_warps': 8, 'num_stages': 2}),
+        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 128, 'num_warps': 8, 'num_stages': 2}),
+        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 128, 'num_warps': 8, 'num_stages': 3}),
+    ],
+    key=['Lk', 'IS_CAUSAL']
+)
 @triton.jit
 def _fwd_kernel(
     Q,
@@ -108,6 +118,7 @@ def _fwd_kernel(
             k_ptrs + (cur_batch_in_all_start_index + start_n) * stride_kbs,
             mask=((start_n + offs_n[None, :]) < cur_batch_seq_len) & (mask_d[:, None]),
             other=0.0,
+            eviction_policy='evict_last',
         )
         # mask = tl.load(mask_ptrs + start_n, mask=start_n + offs_n < cur_batch_end_loc, other=0.0)
 
@@ -148,6 +159,7 @@ def _fwd_kernel(
             v_ptrs + (cur_batch_in_all_start_index + start_n) * stride_vbs,
             mask=((start_n + offs_n[:, None]) < cur_batch_seq_len) & (mask_d[None, :]),
             other=0.0,
+            eviction_policy='evict_last',
         )
 
         p = p.to(v.dtype)
@@ -176,19 +188,15 @@ def context_attention_fwd(
     b_seq_len: [b]
     out: [b * s, head, head_dim]
     """
-    if (_is_cuda or _is_hip) and CUDA_CAPABILITY[0] > 8:
-        BLOCK = 128
-    else:
-        BLOCK = 64
-
     Lq, Lk, Lv = q.shape[-1], k.shape[-1], v.shape[-1]
 
     sm_scale = 1.0 / (Lq**0.5)
     batch, head = b_seq_len.shape[0], q.shape[1]
     kv_group_num = q.shape[1] // k.shape[1]
 
-    grid = (batch, head, triton.cdiv(max_input_len, BLOCK))
-    num_warps = 4 if Lk <= 64 else 8
+    # Use autotuned BLOCK sizes; provide grid as a function of meta-parameters
+    def grid(meta):
+        return (batch, head, triton.cdiv(max_input_len, meta['BLOCK_M']))
 
     _fwd_kernel[grid](
         q,
@@ -207,11 +215,7 @@ def context_attention_fwd(
         o.stride(0),
         o.stride(1),
         kv_group_num=kv_group_num,
-        BLOCK_M=BLOCK,
         BLOCK_DMODEL=triton.next_power_of_2(Lk),
-        BLOCK_N=BLOCK,
         IS_CAUSAL=is_causal,
-        num_warps=num_warps,
-        num_stages=1,
         Lk=Lk,
     )
