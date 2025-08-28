@@ -42,6 +42,7 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
 )
 
 from sglang.srt.hf_transformers_utils import get_processor
+from sglang.srt.layers.activation import get_act_fn
 from sglang.srt.layers.attention.vision import VisionAttention
 from sglang.srt.layers.linear import ColumnParallelLinear, RowParallelLinear
 from sglang.srt.layers.logits_processor import LogitsProcessor
@@ -94,7 +95,13 @@ class Qwen2_5_VLMLP(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("down_proj", prefix),
         )
-        self.act = ACT2FN[hidden_act]
+        self.hidden_act = hidden_act.lower()
+        self.act = get_act_fn(
+            self.hidden_act,
+            quant_config=quant_config,
+            intermediate_size=hidden_features,
+            input_is_parallel=True,
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x_parallel_gate, _ = self.gate_proj(x)
