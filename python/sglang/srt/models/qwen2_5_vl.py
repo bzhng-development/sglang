@@ -55,6 +55,7 @@ from sglang.srt.managers.mm_utils import (
 from sglang.srt.managers.schedule_batch import MultimodalDataItem, MultimodalInputs
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
+from sglang.srt.models.glm4v import Glm4vVisionRotaryEmbedding
 from sglang.srt.models.qwen2 import Qwen2Model
 from sglang.srt.utils import add_prefix
 
@@ -266,7 +267,7 @@ class Qwen2_5_VisionTransformer(nn.Module):
 
         norm_layer = partial(nn.LayerNorm, eps=norm_eps)
         head_dim = hidden_size // num_heads
-        self.rotary_pos_emb = Qwen2_5_VisionRotaryEmbedding(head_dim // 2)
+        self.rotary_pos_emb = Glm4vVisionRotaryEmbedding(head_dim // 2)
         self.blocks = nn.ModuleList(
             [
                 Qwen2_5_VisionBlock(
