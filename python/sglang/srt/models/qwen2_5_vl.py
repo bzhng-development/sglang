@@ -23,6 +23,7 @@
 # limitations under the License.
 """Inference-only Qwen2-VL model compatible with HuggingFace weights."""
 import logging
+import os
 from functools import lru_cache, partial
 from typing import Iterable, List, Optional, Tuple, Type
 
@@ -299,6 +300,15 @@ class Qwen2_5_VisionTransformer(nn.Module):
                 for i in range(depth)
             ]
         )
+        # Optional: compile vision blocks to reduce dispatch and fuse trivial ops
+        if os.environ.get("SGLANG_VL_COMPILE_BLOCKS", "0") == "1" and hasattr(torch, "compile"):
+            try:
+                self.blocks = nn.ModuleList(
+                    [torch.compile(b, fullgraph=False, dynamic=True) for b in self.blocks]
+                )
+                logger.info("Compiled Qwen2.5-VL vision blocks with torch.compile")
+            except Exception as e:
+                logger.warning(f"torch.compile for vision blocks failed: {e}; falling back to eager")
         self.merger = Qwen2_5_VisionPatchMerger(
             dim=vision_config.out_hidden_size,
             context_dim=hidden_size,
@@ -314,12 +324,15 @@ class Qwen2_5_VisionTransformer(nn.Module):
             self.window_size // self.spatial_merge_size // self.patch_size
         )
         window_index: list = []
+        device = self.device
         for grid_t, grid_h, grid_w in grid_thw:
             llm_grid_h, llm_grid_w = (
                 grid_h // self.spatial_merge_size,
                 grid_w // self.spatial_merge_size,
             )
-            index = torch.arange(grid_t * llm_grid_h * llm_grid_w).reshape(
+            index = torch.arange(
+                grid_t * llm_grid_h * llm_grid_w, device=device
+            ).reshape(
                 grid_t, llm_grid_h, llm_grid_w
             )
             pad_h = vit_merger_window_size - llm_grid_h % vit_merger_window_size
@@ -415,6 +428,9 @@ class Qwen2_5_VisionTransformer(nn.Module):
         seq_len, _ = x.size()
 
         x = x.reshape(seq_len // self.spatial_merge_unit, self.spatial_merge_unit, -1)
+        # Ensure index lives on the same device to avoid implicit device copies
+        if window_index.device != x.device:
+            window_index = window_index.to(x.device, non_blocking=True)
         x = x[window_index, :, :]
         x = x.reshape(seq_len, -1)
         rotary_pos_emb = rotary_pos_emb.reshape(

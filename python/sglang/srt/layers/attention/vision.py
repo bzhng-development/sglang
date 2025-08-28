@@ -556,9 +556,9 @@ class VisionAttention(nn.Module):
             q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
 
             # [b, s, embed_dim] --> [b * s, head, head_size]
-            q = q.reshape(bsz * s, head, -1).contiguous()
-            k = k.reshape(bsz * s, kv_head, -1).contiguous()
-            v = v.reshape(bsz * s, kv_head, -1).contiguous()
+            q = q.reshape(bsz * s, head, -1)
+            k = k.reshape(bsz * s, kv_head, -1)
+            v = v.reshape(bsz * s, kv_head, -1)
         else:
             # [b, s, embed_dim] --> [s, b, embed_dim]
             x = rearrange(x, "b s ... -> s b ...")
@@ -603,13 +603,13 @@ class VisionAttention(nn.Module):
 
         if q.dim() == 4:
             # [b, s, head, head_size] --> [b * s, head, head_size]
-            q = rearrange(q, "b s ... -> (b s) ...")
+            q = q.reshape(bsz * s, *q.shape[2:])
         if k.dim() == 4:
             # [b, s, head, head_size] --> [b * s, head, head_size]
-            k = rearrange(k, "b s ... -> (b s) ...")
+            k = k.reshape(bsz * s, *k.shape[2:])
         if v.dim() == 4:
             # [b, s, head, head_size] --> [b * s, head, head_size]
-            v = rearrange(v, "b s ... -> (b s) ...")
+            v = v.reshape(bsz * s, *v.shape[2:])
 
         assert q.dim() == 3, q.dim()
         assert k.dim() == 3, k.dim()
