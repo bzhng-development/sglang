@@ -23,7 +23,7 @@ import sys
 import time
 import traceback
 import warnings
-from argparse import ArgumentParser
+from argparse import ArgumentParser, BooleanOptionalAction
 from dataclasses import dataclass, field
 from datetime import datetime
 from json import JSONDecodeError
@@ -213,6 +213,7 @@ async def async_request_openai_completions(
         ttft = 0.0
         st = time.perf_counter()
         most_recent_timestamp = st
+        latency = 0.0
         try:
             async with session.post(
                 url=api_url, json=payload, headers=headers
@@ -327,6 +328,7 @@ async def async_request_openai_chat_completions(
         ttft = 0.0
         st = time.perf_counter()
         most_recent_timestamp = st
+        latency = 0.0
         try:
             async with session.post(
                 url=api_url, json=payload, headers=headers
@@ -402,6 +404,117 @@ async def async_request_openai_chat_completions(
     return output
 
 
+async def async_request_openai_chat_completions_with_messages(
+    messages: List[Dict[str, Any]],
+    model: str,
+    api_url: str,
+    output_len: int,
+    extra_request_body: Dict[str, Any],
+    pbar: Optional[tqdm] = None,
+) -> RequestFuncOutput:
+    """Makes a request to the OpenAI Chat Completions API with an explicit messages list.
+
+    - Supports streaming and non-streaming responses.
+    - Computes TTFT/ITL/E2E metrics.
+    - This variant is used by the multi-turn multimodal benchmark to pass the full conversation each turn.
+    """
+    assert api_url.endswith(
+        "chat/completions"
+    ), "OpenAI Chat Completions API URL must end with 'chat/completions'."
+
+    async with _create_bench_client_session() as session:
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": 0.0,
+            "max_tokens": output_len,
+            "stream": not args.disable_stream,
+            **(extra_request_body or {}),
+        }
+        headers = get_auth_headers()
+
+        output = RequestFuncOutput()
+
+        generated_text = ""
+        reported_output_len = output_len
+        ttft = 0.0
+        st = time.perf_counter()
+        most_recent_timestamp = st
+        latency = 0.0
+        try:
+            async with session.post(
+                url=api_url, json=payload, headers=headers
+            ) as response:
+                if response.status == 200:
+                    if args.disable_stream:
+                        # Non-streaming response
+                        response_json = await response.json()
+                        output.generated_text = response_json["choices"][0]["message"][
+                            "content"
+                        ]
+                        output.success = True
+                        output.latency = time.perf_counter() - st
+                        output.ttft = (
+                            output.latency
+                        )  # For non-streaming, TTFT = total latency
+                        output.output_len = response_json.get("usage", {}).get(
+                            "completion_tokens", reported_output_len
+                        )
+                    else:
+                        # Streaming response
+                        async for chunk_bytes in response.content:
+                            chunk_bytes = chunk_bytes.strip()
+                            if not chunk_bytes:
+                                continue
+
+                            chunk = remove_prefix(chunk_bytes.decode("utf-8"), "data: ")
+                            latency = time.perf_counter() - st
+                            if chunk == "[DONE]":
+                                pass
+                            else:
+                                data = json.loads(chunk)
+
+                                # Check if this chunk contains content
+                                delta = data.get("choices", [{}])[0].get("delta", {})
+                                content = delta.get("content", "")
+
+                                if content:
+                                    timestamp = time.perf_counter()
+                                    # First token
+                                    if ttft == 0.0:
+                                        ttft = timestamp - st
+                                        output.ttft = ttft
+                                    else:
+                                        # Decoding phase
+                                        output.itl.append(
+                                            timestamp - most_recent_timestamp
+                                        )
+
+                                    most_recent_timestamp = timestamp
+                                    generated_text += content
+
+                                # Check for usage info in final chunk if present
+                                reported_output_len = (data.get("usage") or {}).get(
+                                    "completion_tokens", reported_output_len
+                                )
+
+                        output.generated_text = generated_text
+                        output.success = True
+                        output.latency = latency
+                        output.output_len = reported_output_len
+                else:
+                    output.error = response.reason or ""
+                    output.success = False
+        except Exception:
+            output.success = False
+            exc_info = sys.exc_info()
+            output.error = "".join(traceback.format_exception(*exc_info))
+
+    if pbar:
+        pbar.update(1)
+    return output
+
+
 async def async_request_truss(
     request_func_input: RequestFuncInput,
     pbar: Optional[tqdm] = None,
@@ -429,6 +542,7 @@ async def async_request_truss(
         ttft = 0.0
         st = time.perf_counter()
         most_recent_timestamp = st
+        latency = 0.0
         try:
             async with session.post(
                 url=api_url, json=payload, headers=headers
@@ -515,6 +629,7 @@ async def async_request_sglang_generate(
         ttft = 0.0
         st = time.perf_counter()
         most_recent_timestamp = st
+        latency = 0.0
         last_output_len = 0
         try:
             async with session.post(
@@ -1263,6 +1378,141 @@ def gen_prompt(tokenizer, token_num):
     return tokenizer.decode(selected_tokens)
 
 
+def apply_chat_template_for_messages(
+    tokenizer: PreTrainedTokenizerBase, messages: List[Dict[str, Any]]
+) -> str:
+    """Apply chat template to a list of messages; fallback to simple text + <image>."""
+    try:
+        return tokenizer.apply_chat_template(
+            messages, add_generation_prompt=True, tokenize=False
+        )
+    except Exception:
+        # Fallback: concatenate text and replace images with <image> placeholders
+        parts: List[str] = []
+        for msg in messages:
+            content = msg.get("content", "")
+            if isinstance(content, list):
+                for item in content:
+                    if isinstance(item, dict):
+                        if item.get("type") == "text":
+                            parts.append(item.get("text", ""))
+                        elif item.get("type") == "image_url":
+                            parts.append("<image>")
+            elif isinstance(content, str):
+                parts.append(content)
+        return "\n".join(parts)
+
+
+def compute_prompt_len_for_messages(
+    tokenizer: PreTrainedTokenizerBase, messages: List[Dict[str, Any]]
+) -> int:
+    """Compute tokenized length for the given messages using chat template, ignoring image bytes."""
+    prompt_str = apply_chat_template_for_messages(tokenizer, messages)
+    token_ids = tokenizer.encode(prompt_str)
+    return len(token_ids)
+
+
+def build_user_content(text: str, images: List[str]) -> List[Dict[str, Any]]:
+    """Build OpenAI Chat message content with text-first then images for determinism."""
+    content: List[Dict[str, Any]] = [{"type": "text", "text": text}]
+    for url in images:
+        content.append({"type": "image_url", "image_url": {"url": url}})
+    return content
+
+
+def sample_random_image_mt_conversations(
+    num_conversations: int,
+    tokenizer: PreTrainedTokenizerBase,
+    mt_turns: int,
+    mt_image_prob: float,
+    mt_max_images_per_turn: int,
+    input_len: int,
+    output_len: int,
+    range_ratio: float,
+    has_system: bool,
+    image_resolution: str,
+) -> List[Dict[str, Any]]:
+    """Synthesize random multi-turn multimodal conversations.
+
+    Returns a list of conversation specs:
+    {
+      "system": Optional[str],
+      "turns": [
+         {"user_content": [...], "output_len": int, "had_image": bool, "num_images": int},
+         ...
+      ]
+    }
+    """
+    try:
+        import pybase64
+        from PIL import Image
+    except ImportError as e:
+        raise ImportError(
+            "Please install Pillow and pybase64 to generate random images for multi-turn: pip install pillow pybase64"
+        ) from e
+
+    # Parse resolution once
+    width, height = parse_random_image_resolution(image_resolution)
+
+    def _gen_random_image_data_uri() -> str:
+        arr = (np.random.rand(height, width, 3) * 255).astype(np.uint8)
+        img = Image.fromarray(arr, mode="RGB")
+        buf = io.BytesIO()
+        img.save(buf, format="JPEG", quality=85)
+        encoded = pybase64.b64encode(buf.getvalue()).decode("utf-8")
+        return f"data:image/jpeg;base64,{encoded}"
+
+    # Sample per-turn input/output lengths
+    input_lens = np.random.randint(
+        max(int(input_len * range_ratio), 1),
+        input_len + 1,
+        size=(num_conversations, mt_turns),
+    )
+    output_lens = np.random.randint(
+        int(output_len * range_ratio),
+        output_len + 1,
+        size=(num_conversations, mt_turns),
+    )
+
+    conversations: List[Dict[str, Any]] = []
+
+    for cid in range(num_conversations):
+        conv: Dict[str, Any] = {}
+        if has_system:
+            conv["system"] = "You are a helpful multi-modal assistant."
+        else:
+            conv["system"] = None
+        turns: List[Dict[str, Any]] = []
+        for t in range(mt_turns):
+            tok_len = int(input_lens[cid, t])
+            text_prompt = gen_prompt(tokenizer, tok_len)
+
+            # Decide images
+            had_image = random.random() < mt_image_prob
+            num_images = (
+                random.randint(1, max(1, mt_max_images_per_turn)) if had_image else 0
+            )
+            images: List[str] = (
+                [_gen_random_image_data_uri() for _ in range(num_images)]
+                if had_image
+                else []
+            )
+
+            user_content = build_user_content(text_prompt, images)
+            turns.append(
+                {
+                    "user_content": user_content,
+                    "output_len": int(output_lens[cid, t]),
+                    "had_image": had_image,
+                    "num_images": num_images,
+                }
+            )
+        conv["turns"] = turns
+        conversations.append(conv)
+
+    return conversations
+
+
 def get_gen_prefix_cache_path(args, tokenizer):
     """Create cache directory under ~/.cache/sglang/benchmark"""
     cache_dir = Path.home() / ".cache" / "sglang" / "benchmark"
@@ -1451,6 +1701,354 @@ def calculate_metrics(
     )
 
     return metrics, output_lens
+
+
+async def run_multi_turn_benchmark(
+    backend: str,
+    api_url: str,
+    base_url: str,
+    model_id: str,
+    tokenizer: PreTrainedTokenizerBase,
+    num_conversations: int,
+    mt_turns: int,
+    mt_image_prob: float,
+    mt_max_images_per_turn: int,
+    mt_has_system: bool,
+    image_resolution: str,
+    request_rate: float,
+    max_concurrency: Optional[int],
+    disable_tqdm: bool,
+    extra_request_body: Dict[str, Any],
+    profile: bool,
+    flush_cache: bool,
+):
+    """Run multi-turn multimodal benchmark using OpenAI Chat Completions path.
+
+    Each conversation runs strictly sequentially across turns to preserve chat context.
+    Conversations are scheduled concurrently up to max_concurrency with optional
+    Poisson inter-arrival delays based on request_rate.
+    """
+    # Prepare conversations
+    conversations = sample_random_image_mt_conversations(
+        num_conversations=num_conversations,
+        tokenizer=tokenizer,
+        mt_turns=mt_turns,
+        mt_image_prob=mt_image_prob,
+        mt_max_images_per_turn=mt_max_images_per_turn,
+        input_len=args.random_input_len,
+        output_len=args.random_output_len,
+        range_ratio=args.random_range_ratio,
+        has_system=mt_has_system,
+        image_resolution=image_resolution,
+    )
+
+    # Warmup (single conversation, first turn only)
+    warmup_requests = getattr(args, "warmup_requests", 1)
+    if warmup_requests > 0 and len(conversations) > 0:
+        test_conv = conversations[0]
+        test_messages: List[Dict[str, Any]] = []
+        if mt_has_system and test_conv.get("system"):
+            test_messages.append({"role": "system", "content": test_conv["system"]})
+        # First turn only
+        test_messages.append(
+            {"role": "user", "content": test_conv["turns"][0]["user_content"]}
+        )
+        test_out_len = min(int(test_conv["turns"][0]["output_len"]), 32)
+        warmup_tasks = [
+            asyncio.create_task(
+                async_request_openai_chat_completions_with_messages(
+                    messages=test_messages,
+                    model=model_id,
+                    api_url=api_url,
+                    output_len=test_out_len,
+                    extra_request_body=extra_request_body,
+                )
+            )
+            for _ in range(warmup_requests)
+        ]
+        warmup_outputs = await asyncio.gather(*warmup_tasks)
+        if not any(o.success for o in warmup_outputs):
+            raise ValueError(
+                "Warmup failed - Please make sure benchmark arguments are correctly specified. "
+                f"Error: {warmup_outputs[0].error if warmup_outputs else 'unknown'}"
+            )
+        else:
+            print(
+                f"Warmup completed with {warmup_requests} sequences. Starting multi-turn benchmark..."
+            )
+
+    # Flush cache
+    if ("sglang" in backend and _get_bool_env_var("SGLANG_IS_IN_CI")) or flush_cache:
+        requests.post(base_url + "/flush_cache", headers=get_auth_headers())
+    time.sleep(1.0)
+
+    # Start profiler
+    if profile:
+        print("Starting profiler...")
+        profile_output = await async_request_profile(
+            api_url=base_url + "/start_profile"
+        )
+        if profile_output.success:
+            print("Profiler started")
+
+    # Concurrency semaphore
+    semaphore = asyncio.Semaphore(max_concurrency) if max_concurrency else None
+
+    # Progress bar tracks turns
+    total_turns = num_conversations * mt_turns
+    pbar = None if disable_tqdm else tqdm(total=total_turns)
+
+    # Aggregators (flattened per-turn)
+    outputs_flat: List[RequestFuncOutput] = []
+    prompt_lens_flat: List[int] = []
+    conversation_ids: List[int] = []
+    turn_indices: List[int] = []
+    had_image_flags: List[bool] = []
+    num_images_per_turn: List[int] = []
+
+    async def process_conversation(conv_id: int, conv_spec: Dict[str, Any]):
+        messages: List[Dict[str, Any]] = []
+        if mt_has_system and conv_spec.get("system"):
+            messages.append({"role": "system", "content": conv_spec["system"]})
+        for t_idx, turn in enumerate(conv_spec["turns"]):
+            # Build messages up to current user turn
+            user_msg = {"role": "user", "content": turn["user_content"]}
+            messages_so_far = messages + [user_msg]
+            prompt_len = compute_prompt_len_for_messages(tokenizer, messages_so_far)
+
+            # Invoke one turn
+            output = await async_request_openai_chat_completions_with_messages(
+                messages=messages_so_far,
+                model=model_id,
+                api_url=api_url,
+                output_len=int(turn["output_len"]),
+                extra_request_body=extra_request_body,
+                pbar=pbar,
+            )
+
+            # Record per-turn
+            prompt_lens_flat.append(prompt_len)
+            outputs_flat.append(output)
+            conversation_ids.append(conv_id)
+            turn_indices.append(t_idx)
+            had_image_flags.append(bool(turn["had_image"]))
+            num_images_per_turn.append(int(turn["num_images"]))
+
+            if not output.success:
+                # Abort the rest of the conversation on failure, continue other convs
+                return
+
+            # Advance dialogue with assistant's generated text
+            messages.append(user_msg)
+            messages.append({"role": "assistant", "content": output.generated_text})
+
+    async def conversation_scheduler():
+        # Optional Poisson arrival of conversations
+        async def _stream_conversations():
+            for idx, conv in enumerate(conversations):
+                yield idx, conv
+                if request_rate != float("inf"):
+                    interval = np.random.exponential(1.0 / request_rate)
+                    await asyncio.sleep(interval)
+
+        tasks: List[asyncio.Task] = []
+        async for cid, conv in _stream_conversations():
+            if semaphore is None:
+                tasks.append(asyncio.create_task(process_conversation(cid, conv)))
+            else:
+
+                async def _wrapped(_cid=cid, _conv=conv):
+                    async with semaphore:
+                        await process_conversation(_cid, _conv)
+
+                tasks.append(asyncio.create_task(_wrapped()))
+        if tasks:
+            await asyncio.gather(*tasks)
+
+    benchmark_start_time = time.perf_counter()
+    await conversation_scheduler()
+    benchmark_duration = time.perf_counter() - benchmark_start_time
+
+    if pbar is not None:
+        pbar.close()
+
+    # Accept length (if available)
+    if "sglang" in backend:
+        server_info = requests.get(base_url + "/get_server_info")
+        if server_info.status_code == 200:
+            server_info_json = server_info.json()
+            if "decode" in server_info_json:
+                server_info_json = server_info_json["decode"][0]
+            accept_length = server_info_json["internal_states"][0].get(
+                "avg_spec_accept_length", None
+            )
+        else:
+            accept_length = None
+    else:
+        accept_length = None
+
+    # Compute metrics over flattened turns
+    # Note: images are non-token contributors; prompt_len reflects text tokens only.
+    input_requests_flat = [
+        DatasetRow(prompt="", prompt_len=pl, output_len=0) for pl in prompt_lens_flat
+    ]
+    metrics, output_lens = calculate_metrics(
+        input_requests=input_requests_flat,
+        outputs=outputs_flat,
+        dur_s=benchmark_duration,
+        tokenizer=tokenizer,
+        backend=backend,
+    )
+
+    # Print result summary (turn-level)
+    print(
+        "\n{s:{c}^{n}}".format(s=" Multi-Turn Serving Benchmark Result ", n=50, c="=")
+    )
+    print("{:<40} {:<10}".format("Backend:", backend))
+    print("{:<40} {:<10}".format("Traffic request rate:", request_rate))
+    print(
+        "{:<40} {:<10}".format(
+            "Max request concurrency:",
+            max_concurrency if max_concurrency else "not set",
+        )
+    )
+    print("{:<40} {:<10}".format("Successful turns:", metrics.completed))
+    print("{:<40} {:<10.2f}".format("Benchmark duration (s):", benchmark_duration))
+    print("{:<40} {:<10}".format("Total input tokens:", metrics.total_input))
+    print("{:<40} {:<10}".format("Total generated tokens:", metrics.total_output))
+    print(
+        "{:<40} {:<10}".format(
+            "Total generated tokens (retokenized):", metrics.total_output_retokenized
+        )
+    )
+    print(
+        "{:<40} {:<10.2f}".format(
+            "Request throughput (turn/s):", metrics.request_throughput
+        )
+    )
+    print(
+        "{:<40} {:<10.2f}".format(
+            "Input token throughput (tok/s):", metrics.input_throughput
+        )
+    )
+    print(
+        "{:<40} {:<10.2f}".format(
+            "Output token throughput (tok/s):", metrics.output_throughput
+        )
+    )
+    print(
+        "{:<40} {:<10.2f}".format(
+            "Total token throughput (tok/s):", metrics.total_throughput
+        )
+    )
+    print("{:<40} {:<10.2f}".format("Concurrency:", metrics.concurrency))
+    if accept_length:
+        print("{:<40} {:<10.2f}".format("Accept length:", accept_length))
+    print("{s:{c}^{n}}".format(s="End-to-End Latency", n=50, c="-"))
+    print(
+        "{:<40} {:<10.2f}".format("Mean E2E Latency (ms):", metrics.mean_e2e_latency_ms)
+    )
+    print(
+        "{:<40} {:<10.2f}".format(
+            "Median E2E Latency (ms):", metrics.median_e2e_latency_ms
+        )
+    )
+    print("{s:{c}^{n}}".format(s="Time to First Token", n=50, c="-"))
+    print("{:<40} {:<10.2f}".format("Mean TTFT (ms):", metrics.mean_ttft_ms))
+    print("{:<40} {:<10.2f}".format("Median TTFT (ms):", metrics.median_ttft_ms))
+    print("{s:{c}^{n}}".format(s="Inter-Token Latency", n=50, c="-"))
+    print("{:<40} {:<10.2f}".format("Mean ITL (ms):", metrics.mean_itl_ms))
+    print("{:<40} {:<10.2f}".format("Median ITL (ms):", metrics.median_itl_ms))
+    print("{:<40} {:<10.2f}".format("P95 ITL (ms):", metrics.p95_itl_ms))
+    print("{:<40} {:<10.2f}".format("P99 ITL (ms):", metrics.p99_itl_ms))
+    print("{:<40} {:<10.2f}".format("Max ITL (ms):", metrics.max_itl_ms))
+    print("=" * 50)
+
+    # Determine output file name
+    now = datetime.now().strftime("%m%d")
+    if args.output_file:
+        output_file_name = args.output_file
+    else:
+        output_file_name = (
+            f"{args.backend}_{now}_{num_conversations}conv_{mt_turns}turns_"
+            f"{args.random_input_len}_{args.random_output_len}_{image_resolution}.jsonl"
+        )
+
+    # Prepare results
+    result = {
+        # Arguments
+        "backend": args.backend,
+        "dataset_name": args.dataset_name,
+        "num_conversations": num_conversations,
+        "mt_turns": mt_turns,
+        "mt_image_prob": mt_image_prob,
+        "mt_max_images_per_turn": mt_max_images_per_turn,
+        "mt_has_system": mt_has_system,
+        "request_rate": request_rate,
+        "max_concurrency": max_concurrency,
+        "random_input_len": args.random_input_len,
+        "random_output_len": args.random_output_len,
+        "random_range_ratio": args.random_range_ratio,
+        "random_image_resolution": image_resolution,
+        # Results
+        "duration": benchmark_duration,
+        "completed": metrics.completed,
+        "total_input_tokens": metrics.total_input,
+        "total_output_tokens": metrics.total_output,
+        "total_output_tokens_retokenized": metrics.total_output_retokenized,
+        "request_throughput": metrics.request_throughput,
+        "input_throughput": metrics.input_throughput,
+        "output_throughput": metrics.output_throughput,
+        "mean_e2e_latency_ms": metrics.mean_e2e_latency_ms,
+        "median_e2e_latency_ms": metrics.median_e2e_latency_ms,
+        "std_e2e_latency_ms": metrics.std_e2e_latency_ms,
+        "p99_e2e_latency_ms": metrics.p99_e2e_latency_ms,
+        "mean_ttft_ms": metrics.mean_ttft_ms,
+        "median_ttft_ms": metrics.median_ttft_ms,
+        "std_ttft_ms": metrics.std_ttft_ms,
+        "p99_ttft_ms": metrics.p99_ttft_ms,
+        "mean_tpot_ms": metrics.mean_tpot_ms,
+        "median_tpot_ms": metrics.median_tpot_ms,
+        "std_tpot_ms": metrics.std_tpot_ms,
+        "p99_tpot_ms": metrics.p99_tpot_ms,
+        "mean_itl_ms": metrics.mean_itl_ms,
+        "median_itl_ms": metrics.median_itl_ms,
+        "std_itl_ms": metrics.std_itl_ms,
+        "p95_itl_ms": metrics.p95_itl_ms,
+        "p99_itl_ms": metrics.p99_itl_ms,
+        "concurrency": metrics.concurrency,
+        "accept_length": accept_length,
+    }
+
+    result_details = {
+        "conversation_ids": conversation_ids,
+        "turn_indices": turn_indices,
+        "had_image": had_image_flags,
+        "num_images": num_images_per_turn,
+        "input_lens": prompt_lens_flat,
+        "output_lens": output_lens,
+        "ttfts": [o.ttft for o in outputs_flat],
+        "itls": [o.itl for o in outputs_flat],
+        "generated_texts": [o.generated_text for o in outputs_flat],
+        "errors": [o.error for o in outputs_flat],
+    }
+
+    # Append results (JSONL)
+    with open(output_file_name, "a") as file:
+        if args.output_details:
+            result_for_dump = result | result_details
+        else:
+            result_for_dump = result
+        file.write(json.dumps(result_for_dump) + "\n")
+
+    # Stop profiler
+    if profile:
+        print("Stopping profiler...")
+        profile_output = await async_request_profile(api_url=base_url + "/stop_profile")
+        if profile_output.success:
+            print("Profiler stopped")
+
+    return result | result_details
 
 
 async def benchmark(
@@ -1891,11 +2489,33 @@ def run_benchmark(args_: argparse.Namespace):
 
     print(f"{args}\n")
 
-    # Read dataset
+    # Read dataset and run benchmark
     backend = args.backend
     model_id = args.model
     tokenizer_id = args.tokenizer if args.tokenizer is not None else args.model
     tokenizer = get_tokenizer(tokenizer_id)
+    if args.dataset_name == "random-image-mt":
+        return asyncio.run(
+            run_multi_turn_benchmark(
+                backend=backend,
+                api_url=api_url,
+                base_url=base_url,
+                model_id=model_id,
+                tokenizer=tokenizer,
+                num_conversations=args.num_prompts,
+                mt_turns=args.mt_turns,
+                mt_image_prob=args.mt_image_prob,
+                mt_max_images_per_turn=args.mt_max_images_per_turn,
+                mt_has_system=args.mt_has_system,
+                image_resolution=args.random_image_resolution,
+                request_rate=args.request_rate,
+                max_concurrency=args.max_concurrency,
+                disable_tqdm=args.disable_tqdm,
+                extra_request_body=extra_request_body,
+                profile=args.profile,
+                flush_cache=args.flush_cache,
+            )
+        )
     input_requests = get_dataset(args, tokenizer)
 
     # compatible with SimpleNamespace
@@ -1975,6 +2595,7 @@ if __name__ == "__main__":
             "generated-shared-prefix",
             "mmmu",
             "random-image",
+            "random-image-mt",
         ],
         help="Name of the dataset to benchmark on.",
     )
@@ -2043,6 +2664,30 @@ if __name__ == "__main__":
             "Resolution of random images for random-image dataset. "
             "Supports presets 4k/1080p/720p/360p or custom 'heightxwidth' (e.g., 1080x1920)."
         ),
+    )
+    parser.add_argument(
+        "--mt-turns",
+        type=int,
+        default=3,
+        help="Number of user→assistant turns per conversation for random-image-mt dataset",
+    )
+    parser.add_argument(
+        "--mt-image-prob",
+        type=float,
+        default=0.5,
+        help="Probability a user turn includes images for random-image-mt dataset",
+    )
+    parser.add_argument(
+        "--mt-max-images-per-turn",
+        type=int,
+        default=2,
+        help="Maximum images per user turn (only for random-image-mt dataset)",
+    )
+    parser.add_argument(
+        "--mt-has-system",
+        action=BooleanOptionalAction,
+        default=True,
+        help="Include a system message at the start (use --no-mt-has-system to disable) for random-image-mt dataset",
     )
     parser.add_argument(
         "--request-rate",
