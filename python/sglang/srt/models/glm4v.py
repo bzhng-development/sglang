@@ -10,6 +10,8 @@ from transformers.models.glm4v.configuration_glm4v import Glm4vConfig, Glm4vVisi
 from sglang.srt.hf_transformers_utils import get_processor
 from sglang.srt.layers.activation import SiluAndMul
 from sglang.srt.layers.attention import vision_utils
+from sglang.srt.layers.attention.vision_utils import Glm4vVisionRotaryEmbedding
+from sglang.srt.layers.dp_attention import get_attention_tp_size
 from sglang.srt.layers.layernorm import RMSNorm
 from sglang.srt.layers.linear import (
     ColumnParallelLinear,
@@ -276,44 +278,6 @@ class Glm4vVisionEmbeddings(nn.Module):
         # Add adapted position encoding to embeddings
         embeddings = embeddings + adapted_pos_embed
         return embeddings
-
-
-class Glm4vVisionRotaryEmbedding(nn.Module):
-    def __init__(self, dim: int, theta: float = 10000.0) -> None:
-        super().__init__()
-        self.dim = dim
-        self.theta = theta
-        inv_freq = 1.0 / (theta ** (torch.arange(0, dim, 2, dtype=torch.float) / dim))
-        self.register_buffer("inv_freq", inv_freq, persistent=False)
-        self._seq_len_cached = 0
-        self._freqs_cached = None
-
-    def update_freqs_cache(self, seqlen: int) -> None:
-        if seqlen > self._seq_len_cached:
-            seqlen *= 2
-            self._seq_len_cached = seqlen
-            self.inv_freq = 1.0 / (
-                self.theta
-                ** (
-                    torch.arange(
-                        0,
-                        self.dim,
-                        2,
-                        dtype=torch.float,
-                        device=self.inv_freq.device,
-                    )
-                    / self.dim
-                )
-            )
-            seq = torch.arange(
-                seqlen, device=self.inv_freq.device, dtype=self.inv_freq.dtype
-            )
-            freqs = torch.outer(seq, self.inv_freq)
-            self._freqs_cached = freqs
-
-    def forward(self, seqlen: int) -> torch.Tensor:
-        self.update_freqs_cache(seqlen)
-        return self._freqs_cached[:seqlen]
 
 
 class Glm4vVisionModel(nn.Module):

@@ -43,6 +43,7 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
 
 from sglang.srt.hf_transformers_utils import get_processor
 from sglang.srt.layers.attention.vision import VisionAttention
+from sglang.srt.layers.attention.vision_utils import Glm4vVisionRotaryEmbedding
 from sglang.srt.layers.linear import ColumnParallelLinear, RowParallelLinear
 from sglang.srt.layers.logits_processor import LogitsProcessor
 from sglang.srt.layers.pooler import Pooler, PoolingType
@@ -55,7 +56,6 @@ from sglang.srt.managers.mm_utils import (
 from sglang.srt.managers.schedule_batch import MultimodalDataItem, MultimodalInputs
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
-from sglang.srt.models.glm4v import Glm4vVisionRotaryEmbedding
 from sglang.srt.models.qwen2 import Qwen2Model
 from sglang.srt.utils import add_prefix
 
