@@ -43,6 +43,7 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
 
 from sglang.srt.hf_transformers_utils import get_processor
 from sglang.srt.layers.attention.vision import VisionAttention
+from sglang.srt.layers.rotary_embedding import _apply_rotary_emb
 from sglang.srt.layers.linear import ColumnParallelLinear, RowParallelLinear
 from sglang.srt.layers.logits_processor import LogitsProcessor
 from sglang.srt.layers.pooler import Pooler, PoolingType
@@ -146,6 +147,22 @@ class Qwen2_5_VisionBlock(nn.Module):
             qkv_backend = "fa3"
             flatten_batch = True
 
+        # Use a customized RoPE applier that consumes half-sized cos/sin to avoid
+        # duplicating angles and extra elementwise cos/sin + concat work.
+        def _qwen25_apply_rope_half(
+            q: torch.Tensor,
+            k: torch.Tensor,
+            position_embeddings: Tuple[torch.Tensor, torch.Tensor],
+            x_shape: Tuple[int, int, int],
+        ) -> Tuple[torch.Tensor, torch.Tensor]:
+            # q, k: [b, s, head, head_size]; return flattened for VisionAttention to reshape back
+            cos_half, sin_half = position_embeddings
+            qf = q.view(-1, q.shape[-2], q.shape[-1])
+            kf = k.view(-1, k.shape[-2], k.shape[-1])
+            # neox-style rotation matches apply_rotary_pos_emb behavior here
+            q_rot, k_rot = _apply_rotary_emb(qf, cos_half, sin_half, True)
+            return q_rot, k_rot
+
         self.attn = VisionAttention(
             embed_dim=dim,
             num_heads=num_heads,
@@ -156,6 +173,7 @@ class Qwen2_5_VisionBlock(nn.Module):
             qkv_backend=qkv_backend,
             softmax_in_single_precision=softmax_in_single_precision,
             flatten_batch=flatten_batch,
+            customized_position_embedding_applier=_qwen25_apply_rope_half,
             quant_config=quant_config,
             prefix=add_prefix("attn", prefix),
             num_dummy_heads=num_dummy_heads,
@@ -404,8 +422,8 @@ class Qwen2_5_VisionTransformer(nn.Module):
         )
         rotary_pos_emb = rotary_pos_emb[window_index, :, :]
         rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1)
-        emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
-        position_embeddings = (emb.cos(), emb.sin())
+        # Avoid redundant concat and trig on duplicated angles: compute cos/sin once on half-dim
+        position_embeddings = (rotary_pos_emb.cos(), rotary_pos_emb.sin())
 
         # compute cu_seqlens
         cu_seqlens = torch.cat(
