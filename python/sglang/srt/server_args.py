@@ -326,6 +326,7 @@ class ServerArgs:
     disable_overlap_schedule: bool = False
     enable_mixed_chunk: bool = False
     enable_dp_attention: bool = False
+    enable_dp_linear: bool = False
     enable_dp_lm_head: bool = False
     enable_two_batch_overlap: bool = False
     tbo_token_distribution_threshold: float = 0.48
@@ -1841,6 +1842,11 @@ class ServerArgs:
             "--enable-dp-attention",
             action="store_true",
             help="Enabling data parallelism for attention and tensor parallelism for FFN. The dp size should be equal to the tp size. Currently DeepSeek-V2 and Qwen 2/3 MoE models are supported.",
+        )
+        parser.add_argument(
+            "--enable-dp-linear",
+            action="store_true",
+            help="Enable data parallelism for initial MLA linear projections (e.g., fused qkv_a and kv_a). Splits total tokens across TP ranks and all-gathers the outputs. Effective in prefill only; requires tp_size > 1.",
         )
         parser.add_argument(
             "--enable-dp-lm-head",

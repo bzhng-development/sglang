@@ -23,6 +23,7 @@ from enum import IntEnum, auto
 from typing import Any, Dict, Iterable, Optional, Tuple, Union
 
 import torch
+import torch.distributed as dist
 import torch.nn.functional as F
 from torch import nn
 from tqdm import tqdm
@@ -1156,17 +1157,90 @@ class DeepseekV2AttentionMLA(nn.Module):
         forward_batch: ForwardBatch,
         zero_allocator: BumpAllocator,
     ):
+        # Optional DP-linear sharding of ReplicatedLinear on token dimension for prefill
+        q_len = hidden_states.shape[0]
+        use_dp_linear = (
+            bool(global_server_args_dict.get("enable_dp_linear", False))
+            and (not is_dp_attention_enabled())
+            and dist.is_initialized()
+        )
         if self.q_lora_rank is not None:
-            q, latent_cache = self.fused_qkv_a_proj_with_mqa(hidden_states)[0].split(
-                [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim], dim=-1
-            )
-            q = self.q_a_layernorm(q)
-            q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
+            if use_dp_linear:
+                tp_size = get_tensor_model_parallel_world_size()
+                if tp_size > 1 and q_len % tp_size == 0 and q_len >= 1024:
+                    tp_rank = parallel_state.get_tensor_model_parallel_rank()
+                    local_bs = q_len // tp_size
+                    start_idx = tp_rank * local_bs
+                    end_idx = start_idx + local_bs
+                    local_x = hidden_states[start_idx:end_idx, :]
+                    fused_local = self.fused_qkv_a_proj_with_mqa(local_x)[0]
+                    fused_full = torch.empty(
+                        q_len,
+                        fused_local.shape[1],
+                        dtype=fused_local.dtype,
+                        device=fused_local.device,
+                    )
+                    dist.all_gather_into_tensor(
+                        fused_full,
+                        fused_local,
+                        group=parallel_state.get_tp_group().device_group,
+                    )
+                    q, latent_cache = fused_full.split(
+                        [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim],
+                        dim=-1,
+                    )
+                    q = self.q_a_layernorm(q)
+                    q = self.q_b_proj(q)[0].view(
+                        -1, self.num_local_heads, self.qk_head_dim
+                    )
+                else:
+                    q, latent_cache = self.fused_qkv_a_proj_with_mqa(hidden_states)[
+                        0
+                    ].split(
+                        [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim],
+                        dim=-1,
+                    )
+                    q = self.q_a_layernorm(q)
+                    q = self.q_b_proj(q)[0].view(
+                        -1, self.num_local_heads, self.qk_head_dim
+                    )
+            else:
+                q, latent_cache = self.fused_qkv_a_proj_with_mqa(hidden_states)[
+                    0
+                ].split(
+                    [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim],
+                    dim=-1,
+                )
+                q = self.q_a_layernorm(q)
+                q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
         else:
             q = self.q_proj(hidden_states)[0].view(
                 -1, self.num_local_heads, self.qk_head_dim
             )
-            latent_cache = self.kv_a_proj_with_mqa(hidden_states)[0]
+            if use_dp_linear:
+                tp_size = get_tensor_model_parallel_world_size()
+                if tp_size > 1 and q_len % tp_size == 0 and q_len >= 1024:
+                    tp_rank = parallel_state.get_tensor_model_parallel_rank()
+                    local_bs = q_len // tp_size
+                    start_idx = tp_rank * local_bs
+                    end_idx = start_idx + local_bs
+                    local_x = hidden_states[start_idx:end_idx, :]
+                    local_latent = self.kv_a_proj_with_mqa(local_x)[0]
+                    latent_cache = torch.empty(
+                        q_len,
+                        local_latent.shape[1],
+                        dtype=local_latent.dtype,
+                        device=local_latent.device,
+                    )
+                    dist.all_gather_into_tensor(
+                        latent_cache,
+                        local_latent,
+                        group=parallel_state.get_tp_group().device_group,
+                    )
+                else:
+                    latent_cache = self.kv_a_proj_with_mqa(hidden_states)[0]
+            else:
+                latent_cache = self.kv_a_proj_with_mqa(hidden_states)[0]
 
         _, q_pe = q.split([self.qk_nope_head_dim, self.qk_rope_head_dim], dim=-1)
         kv_a, _ = latent_cache.split([self.kv_lora_rank, self.qk_rope_head_dim], dim=-1)
@@ -1224,16 +1298,68 @@ class DeepseekV2AttentionMLA(nn.Module):
     ):
         from sglang.srt.model_executor.cuda_graph_runner import get_is_capture_mode
 
+        # Optional DP-linear sharding of ReplicatedLinear on token dimension for prefill (absorb path)
+        use_dp_linear = (
+            bool(global_server_args_dict.get("enable_dp_linear", False))
+            and (not is_dp_attention_enabled())
+            and dist.is_initialized()
+        )
         if self.q_lora_rank is not None:
-            if hidden_states.shape[0] <= 16 and self.use_min_latency_fused_a_gemm:
-                fused_qkv_a_proj_out = dsv3_fused_a_gemm(
-                    hidden_states, self.fused_qkv_a_proj_with_mqa.weight.T
-                )
+            q_len = hidden_states.shape[0]
+            if use_dp_linear:
+                tp_size = get_tensor_model_parallel_world_size()
+                if tp_size > 1 and q_len % tp_size == 0 and q_len >= 1024:
+                    tp_rank = parallel_state.get_tensor_model_parallel_rank()
+                    local_bs = q_len // tp_size
+                    start_idx = tp_rank * local_bs
+                    end_idx = start_idx + local_bs
+                    local_x = hidden_states[start_idx:end_idx, :]
+                    fused_local = self.fused_qkv_a_proj_with_mqa(local_x)[0]
+                    fused_full = torch.empty(
+                        q_len,
+                        fused_local.shape[1],
+                        dtype=fused_local.dtype,
+                        device=fused_local.device,
+                    )
+                    dist.all_gather_into_tensor(
+                        fused_full,
+                        fused_local,
+                        group=parallel_state.get_tp_group().device_group,
+                    )
+                    q, latent_cache = fused_full.split(
+                        [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim],
+                        dim=-1,
+                    )
+                else:
+                    if (
+                        hidden_states.shape[0] <= 16
+                        and self.use_min_latency_fused_a_gemm
+                    ):
+                        fused_qkv_a_proj_out = dsv3_fused_a_gemm(
+                            hidden_states, self.fused_qkv_a_proj_with_mqa.weight.T
+                        )
+                    else:
+                        fused_qkv_a_proj_out = self.fused_qkv_a_proj_with_mqa(
+                            hidden_states
+                        )[0]
+                    q, latent_cache = fused_qkv_a_proj_out.split(
+                        [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim],
+                        dim=-1,
+                    )
             else:
-                fused_qkv_a_proj_out = self.fused_qkv_a_proj_with_mqa(hidden_states)[0]
-            q, latent_cache = fused_qkv_a_proj_out.split(
-                [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim], dim=-1
-            )
+                if hidden_states.shape[0] <= 16 and self.use_min_latency_fused_a_gemm:
+                    fused_qkv_a_proj_out = dsv3_fused_a_gemm(
+                        hidden_states, self.fused_qkv_a_proj_with_mqa.weight.T
+                    )
+                else:
+                    fused_qkv_a_proj_out = self.fused_qkv_a_proj_with_mqa(
+                        hidden_states
+                    )[0]
+                q, latent_cache = fused_qkv_a_proj_out.split(
+                    [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim],
+                    dim=-1,
+                )
+
             k_nope = latent_cache[..., : self.kv_lora_rank]
 
             # overlap qk norm
@@ -1254,7 +1380,31 @@ class DeepseekV2AttentionMLA(nn.Module):
             q = self.q_proj(hidden_states)[0].view(
                 -1, self.num_local_heads, self.qk_head_dim
             )
-            latent_cache = self.kv_a_proj_with_mqa(hidden_states)[0]
+            if use_dp_linear:
+                q_len = hidden_states.shape[0]
+                tp_size = get_tensor_model_parallel_world_size()
+                if tp_size > 1 and q_len % tp_size == 0 and q_len >= 1024:
+                    tp_rank = parallel_state.get_tensor_model_parallel_rank()
+                    local_bs = q_len // tp_size
+                    start_idx = tp_rank * local_bs
+                    end_idx = start_idx + local_bs
+                    local_x = hidden_states[start_idx:end_idx, :]
+                    local_latent = self.kv_a_proj_with_mqa(local_x)[0]
+                    latent_cache = torch.empty(
+                        q_len,
+                        local_latent.shape[1],
+                        dtype=local_latent.dtype,
+                        device=local_latent.device,
+                    )
+                    dist.all_gather_into_tensor(
+                        latent_cache,
+                        local_latent,
+                        group=parallel_state.get_tp_group().device_group,
+                    )
+                else:
+                    latent_cache = self.kv_a_proj_with_mqa(hidden_states)[0]
+            else:
+                latent_cache = self.kv_a_proj_with_mqa(hidden_states)[0]
             k_nope = latent_cache[..., : self.kv_lora_rank]
             k_nope = self.kv_a_layernorm(k_nope).unsqueeze(1)
 
