@@ -53,6 +53,7 @@ class SamplingParams:
         custom_params: Optional[Dict[str, Any]] = None,
         stream_interval: Optional[int] = None,
         logit_bias: Optional[Dict[str, float]] = None,
+        truncate_prompt_tokens: Optional[int] = None,
     ) -> None:
         self.max_new_tokens = max_new_tokens
         self.stop_strs = stop
@@ -80,6 +81,7 @@ class SamplingParams:
         self.custom_params = custom_params
         self.stream_interval = stream_interval
         self.logit_bias = logit_bias
+        self.truncate_prompt_tokens = truncate_prompt_tokens
 
         # Process some special cases
         if 0 <= self.temperature < _SAMPLING_EPS:
@@ -130,6 +132,11 @@ class SamplingParams:
                 raise ValueError(
                     f"min_new_tokens must be in [0, max_new_tokens({self.max_new_tokens})], got "
                     f"{self.min_new_tokens}."
+                )
+        if self.truncate_prompt_tokens is not None:
+            if self.truncate_prompt_tokens < 1:
+                raise ValueError(
+                    f"truncate_prompt_tokens must be at least 1, got {self.truncate_prompt_tokens}."
                 )
         if self.logit_bias is not None:
             for token_id in self.logit_bias:

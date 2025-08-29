@@ -577,57 +577,87 @@ class TokenizerManager:
     def _validate_one_request(
         self, obj: Union[GenerateReqInput, EmbeddingReqInput], input_ids: List[int]
     ) -> None:
-        """Validates that the input token count and the requested token count doesn't exceed the model's context length."""
-        # FIXME: unify the length validation logic with the one in the scheduler.
-        _max_req_len = self.context_len
+        """Validates that the input token count and the requested token count doesn't exceed the effective token budget.
+
+        Behavior when allow_auto_truncate is True:
+        - Preserve space for completion by truncating the prompt to at most
+          min(truncate_prompt_tokens, budget - max_new_tokens).
+        - budget = min(model context length, --max-total-tokens if set).
+        """
+        # Determine effective budget for a single request
+        effective_limit = self.context_len
+        if getattr(self.server_args, "max_total_tokens", None):
+            effective_limit = min(effective_limit, self.server_args.max_total_tokens)
 
         input_token_num = len(input_ids) if input_ids is not None else 0
-        if input_token_num >= self.context_len:
-            if self.server_args.allow_auto_truncate:
-                logger.warning(
-                    f"The input ({input_token_num} tokens) is longer than the "
-                    f"model's context length ({self.context_len} tokens). "
-                    "Truncating the input."
-                )
-                del input_ids[_max_req_len:]
-                input_token_num = len(input_ids)
-            else:
-                raise ValueError(
-                    f"The input ({input_token_num} tokens) is longer than the "
-                    f"model's context length ({self.context_len} tokens)."
-                )
 
+        # Embedding model validation
         if isinstance(obj, EmbeddingReqInput) and self.is_generation:
             raise ValueError(
                 "This model does not appear to be an embedding model by default. "
                 "Please add `--is-embedding` when launching the server or try another model."
             )
 
-        # Check total tokens (input + max_new_tokens)
-        max_new_tokens = obj.sampling_params.get("max_new_tokens")
-        if (
-            max_new_tokens is not None
-            and (max_new_tokens + input_token_num) >= _max_req_len
-        ):
-            if self.server_args.allow_auto_truncate:
-                logger.warning(
-                    f"Requested token count ({input_token_num} input + {max_new_tokens} new) "
-                    f"exceeds the model's context length ({self.context_len} tokens). "
-                    "Truncating max_new_tokens."
+        if not self.server_args.allow_auto_truncate:
+            # Strict mode: reject if exceeding budget
+            if input_token_num >= effective_limit:
+                raise ValueError(
+                    f"The input ({input_token_num} tokens) is longer than the effective token budget "
+                    f"({effective_limit} tokens)."
                 )
-                obj.sampling_params["max_new_tokens"] = max(
-                    0, _max_req_len - input_token_num
-                )
-            else:
+
+            max_new_tokens = obj.sampling_params.get("max_new_tokens")
+            if (
+                max_new_tokens is not None
+                and (max_new_tokens + input_token_num) >= effective_limit
+            ):
                 total_tokens = max_new_tokens + input_token_num
-                error_msg = (
-                    f"Requested token count exceeds the model's maximum context length "
-                    f"of {self.context_len} tokens. You requested a total of {total_tokens} "
-                    f"tokens: {input_token_num} tokens from the input messages and "
-                    f"{max_new_tokens} tokens for the completion. Please reduce the number "
-                    f"of tokens in the input messages or the completion to fit within the limit."
+                raise ValueError(
+                    "Requested token count exceeds the effective token budget "
+                    f"({effective_limit} tokens). You requested a total of {total_tokens} tokens: "
+                    f"{input_token_num} prompt tokens + {max_new_tokens} completion tokens. "
+                    "Please reduce the number of tokens in the prompt or the completion."
                 )
-                raise ValueError(error_msg)
+            return
+
+        # Auto-truncate mode: preserve space for completion
+        sp = obj.sampling_params or {}
+        max_new_tokens = int(sp.get("max_new_tokens") or 0)
+
+        # Base cap to preserve completion space
+        allowed_prompt_len_base = max(0, effective_limit - max_new_tokens)
+
+        # If user provides truncate_prompt_tokens, it caps the prompt length as well
+        tpt = sp.get("truncate_prompt_tokens")
+        if tpt is not None:
+            try:
+                tpt_int = int(tpt)
+            except Exception:
+                tpt_int = 0
+            if tpt_int < 0:
+                tpt_int = 0
+            allowed_prompt_len = min(allowed_prompt_len_base, tpt_int)
+        else:
+            allowed_prompt_len = allowed_prompt_len_base
+
+        # Truncate prompt if needed to preserve the reserved space
+        if input_token_num > allowed_prompt_len:
+            logger.warning(
+                "Prompt exceeds effective budget after reserving response tokens. "
+                f"Truncating prompt from {input_token_num} to {allowed_prompt_len} tokens. "
+                f"(budget={effective_limit}, max_new_tokens={max_new_tokens}, "
+                f"truncate_prompt_tokens={tpt})"
+            )
+            del input_ids[allowed_prompt_len:]
+            input_token_num = len(input_ids)
+
+        # Extra guard: if max_new_tokens itself is larger than budget, clamp it
+        if max_new_tokens > effective_limit:
+            logger.warning(
+                f"max_new_tokens ({max_new_tokens}) exceeds effective budget ({effective_limit}). "
+                f"Clamping max_new_tokens to {effective_limit}."
+            )
+            obj.sampling_params["max_new_tokens"] = effective_limit
 
         if isinstance(obj, GenerateReqInput):
             if (

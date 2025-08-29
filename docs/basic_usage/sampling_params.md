@@ -71,6 +71,7 @@ Please refer to our dedicated guide on [constrained decoding](../advanced_featur
 | spaces_between_special_tokens | `bool = True`                   | Whether or not to add spaces between special tokens during detokenization.                                                                     |
 | no_stop_trim                  | `bool = False`                  | Don't trim stop words or EOS token from the generated text.                                                                                    |
 | custom_params                 | `Optional[List[Optional[Dict[str, Any]]]] = None` | Used when employing `CustomLogitProcessor`. For usage, see below.                                                                              |
+| truncate_prompt_tokens        | `Optional[int] = None`          | Explicit cap for prompt length after truncation. When `--allow-auto-truncate` is enabled and the prompt is too long, the prompt will be truncated to at most `min(truncate_prompt_tokens, context_length - max_new_tokens)` tokens to preserve space for completion tokens. If unset, defaults to `context_length - max_new_tokens`. |
 
 ## Examples
 
