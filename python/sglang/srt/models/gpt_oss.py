@@ -73,6 +73,7 @@ from sglang.srt.utils import (
     is_flashinfer_available,
     is_sm100_supported,
     make_layers,
+    get_compiler_backend,
 )
 
 _is_cuda = is_cuda()
@@ -175,6 +176,7 @@ class GptOssSparseMoeBlock(nn.Module):
             if name not in ["correction_bias"]
         ]
 
+    @torch.compile(dynamic=True, backend=get_compiler_backend())
     def forward_normal(
         self,
         hidden_states: torch.Tensor,
@@ -320,6 +322,7 @@ class GptOssAttention(nn.Module):
         )
         self.layer_id = layer_id
 
+    @torch.compile(dynamic=True, backend=get_compiler_backend())
     def forward_prepare(
         self,
         positions: torch.Tensor,
@@ -348,6 +351,7 @@ class GptOssAttention(nn.Module):
         inner_state = q, k, v, forward_batch
         return None, forward_batch, inner_state
 
+    @torch.compile(dynamic=True, backend=get_compiler_backend())
     def forward_core(self, intermediate_state):
         hidden_states, forward_batch, inner_state = intermediate_state
         if inner_state is None:
