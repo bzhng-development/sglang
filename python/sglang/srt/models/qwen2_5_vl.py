@@ -30,7 +30,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
-from transformers.activations import ACT2FN
 from transformers.models.qwen2_5_vl.configuration_qwen2_5_vl import (
     Qwen2_5_VLConfig,
     Qwen2_5_VLVisionConfig,
@@ -95,23 +94,9 @@ class Qwen2_5_VLMLP(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
-        g2 = gate_up.size(-1)
-        assert (g2 % 2) == 0, f"silu_and_mul expects even last dim, got {g2}"
-
-        # Fused SiLU* produces a fresh, contiguous buffer.
-        y = self.act_fn(gate_up)
-        # Make it explicit.
-        y = y.to(dtype=gate_up.dtype, device=gate_up.device).contiguous()
-
-        k = y.size(-1)
-        if y.dtype == torch.bfloat16 and (k % 8) != 0:
-            # Avoid BF16 kernels that require 16-byte row alignment.
-            y_fp16 = y.to(torch.float16)
-            x_down, _ = self.down_proj(y_fp16)
-            return x_down.to(torch.bfloat16)
-        else:
-            x_down, _ = self.down_proj(y)
-            return x_down
+        x = self.act_fn(gate_up)
+        x, _ = self.down_proj(x)
+        return x
 
 
 class Qwen2_5_VisionBlock(nn.Module):

@@ -114,19 +114,33 @@ class UnquantizedLinearMethod(LinearMethodBase):
         x: torch.Tensor,
         bias: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
+        # Ensure matmul dtypes are aligned. Some code paths (e.g. BF16 activations
+        # with non-aligned K) may cast activations to FP16 for kernel compatibility,
+        # while weights remain BF16. Torch requires matching dtypes for F.linear.
+        # Cast weight/bias to input dtype on-the-fly when they differ.
+        if layer.weight.dtype != x.dtype:
+            weight = layer.weight.to(x.dtype)
+            bias_ = (
+                bias.to(x.dtype)
+                if (bias is not None and bias.dtype != x.dtype)
+                else bias
+            )
+        else:
+            weight = layer.weight
+            bias_ = bias
 
         if use_intel_amx_backend(layer):
             x_shapes = x.shape
             if len(x_shapes) == 3:
                 x = x.view(-1, x.shape[-1])
             output = torch.ops.sgl_kernel.weight_packed_linear(
-                x, layer.weight, bias, True  # is_vnni
+                x, weight, bias_, True  # is_vnni
             )
             if len(x_shapes) == 3:
                 output = output.view(x_shapes[0], x_shapes[1], -1)
             return output
 
-        return F.linear(x, layer.weight, bias)
+        return F.linear(x, weight, bias_)
 
 
 class UnquantizedFusedMoEMethod(FusedMoEMethodBase, CustomOp):
