@@ -95,6 +95,7 @@ class Qwen2_5_VLMLP(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
+        assert gate_up.size(-1) % 2 == 0
         # gate, up = gate_up.chunk(2, dim=-1)
         y = self.act_fn(gate_up).contiguous()
         x_down, _ = self.down_proj(y)
