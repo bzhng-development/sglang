@@ -98,6 +98,9 @@ class Qwen2_5_VLMLP(nn.Module):
         assert gate_up.size(-1) % 2 == 0
         # gate, up = gate_up.chunk(2, dim=-1)
         y = self.act_fn(gate_up).contiguous()
+        logger.info(
+            f"down_proj input: shape={y.shape}, dtype={y.dtype}, is_contiguous={y.is_contiguous()}, stride={y.stride()}"
+        )
         x_down, _ = self.down_proj(y)
         return x_down
 
