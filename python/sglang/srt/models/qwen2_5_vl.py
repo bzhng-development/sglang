@@ -95,10 +95,21 @@ class Qwen2_5_VLMLP(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
-        # gate, up = gate_up.chunk(2, dim=-1)
-        y = self.act_fn(gate_up).contiguous()
-        x_down, _ = self.down_proj(y)
-        return x_down
+        # Fused SiLU* produces a fresh, contiguous buffer of size hidden_features.
+        y = self.act_fn(gate_up)
+        # Keep dtype/device consistent and ensure contiguous before GEMM
+        y = y.to(dtype=gate_up.dtype, device=gate_up.device).contiguous()
+
+        # Many BF16 GEMM kernels require K to be 8-aligned. If not aligned,
+        # do the matmul in FP16 using AMP and cast the result back to BF16.
+        k = y.size(-1)
+        if y.dtype == torch.bfloat16 and (k % 8) != 0 and torch.cuda.is_available():
+            with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
+                x_down, _ = self.down_proj(y.to(torch.float16))
+            return x_down.to(torch.bfloat16)
+        else:
+            x_down, _ = self.down_proj(y)
+            return x_down
 
 
 class Qwen2_5_VisionBlock(nn.Module):
