@@ -95,14 +95,23 @@ class Qwen2_5_VLMLP(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
-        assert gate_up.size(-1) % 2 == 0
-        # gate, up = gate_up.chunk(2, dim=-1)
-        y = self.act_fn(gate_up).contiguous()
-        logger.info(
-            f"down_proj input: shape={y.shape}, dtype={y.dtype}, is_contiguous={y.is_contiguous()}, stride={y.stride()}"
-        )
-        x_down, _ = self.down_proj(y)
-        return x_down
+        g2 = gate_up.size(-1)
+        assert (g2 % 2) == 0, f"silu_and_mul expects even last dim, got {g2}"
+
+        # Fused SiLU* produces a fresh, contiguous buffer.
+        y = self.act_fn(gate_up)
+        # Make it explicit.
+        y = y.to(dtype=gate_up.dtype, device=gate_up.device).contiguous()
+
+        k = y.size(-1)
+        if y.dtype == torch.bfloat16 and (k % 8) != 0:
+            # Avoid BF16 kernels that require 16-byte row alignment.
+            y_fp16 = y.to(torch.float16)
+            x_down, _ = self.down_proj(y_fp16)
+            return x_down.to(torch.bfloat16)
+        else:
+            x_down, _ = self.down_proj(y)
+            return x_down
 
 
 class Qwen2_5_VisionBlock(nn.Module):
