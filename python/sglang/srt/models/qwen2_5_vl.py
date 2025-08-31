@@ -41,6 +41,7 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
 )
 
 from sglang.srt.hf_transformers_utils import get_processor
+from sglang.srt.layers.activation import SiluAndMul
 from sglang.srt.layers.attention.vision import VisionAttention
 from sglang.srt.layers.layernorm import RMSNorm
 from sglang.srt.layers.linear import (
@@ -90,12 +91,12 @@ class Qwen2_5_VLMLP(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("down_proj", prefix),
         )
-        self.act = ACT2FN[hidden_act]
+        self.act = SiluAndMul()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
-        gate, up = gate_up.chunk(2, dim=-1)
-        x = self.act(gate) * up
+        # gate, up = gate_up.chunk(2, dim=-1)
+        x = self.act(gate_up)
         x_down, _ = self.down_proj(x)
         return x_down
 
