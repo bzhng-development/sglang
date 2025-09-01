@@ -1,15 +1,16 @@
 # SGLang Documentation
 
-We recommend new contributors start from writing documentation, which helps you quickly understand SGLang codebase.
-Most documentation files are located under the `docs/` folder.
+**📖 For the complete documentation guide, see: [DOCUMENTATION_GUIDE.md](DOCUMENTATION_GUIDE.md)**
 
-## Documentation Systems
+This README provides a quick overview. For comprehensive workflows, troubleshooting, and detailed instructions, use the consolidated guide above.
 
-SGLang uses multiple documentation approaches:
+## Quick Overview
 
-1. **Sphinx Documentation** (Primary) - Main documentation with tutorials and guides
-2. **API Documentation** - Generated API reference using pdoc3
-3. **Function Index** - Code analysis and function listings
+SGLang uses three documentation systems:
+
+1. **Sphinx Documentation** (Primary) - Main docs at https://docs.sglang.ai
+2. **API Documentation** - Developer reference (`docs/dev/refs/api/`)
+3. **Function Index** - Code analysis tools (`docs/dev/refs/code-index/`)
 
 ## Docs Workflow
 
