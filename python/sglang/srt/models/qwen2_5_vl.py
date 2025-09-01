@@ -71,8 +71,8 @@ class Qwen2_5_VLMLP(nn.Module):
         self,
         in_features: int,
         hidden_features: int = None,
+        hidden_act: str = "silu",
         bias: bool = True,
-        hidden_act="silu",
         quant_config: Optional[QuantizationConfig] = None,
         prefix: str = "",
     ):
@@ -92,35 +92,20 @@ class Qwen2_5_VLMLP(nn.Module):
             prefix=add_prefix("down_proj", prefix),
         )
         self.act_fn = SiluAndMul()
+        self.orig_act = ACT2FN[hidden_act]
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
-        # Fused SiLU* produces a fresh, contiguous buffer of size hidden_features.
         y = self.act_fn(gate_up)
-        # Keep dtype/device consistent and ensure contiguous before GEMM
-        y = y.to(dtype=gate_up.dtype, device=gate_up.device).contiguous()
-
-        # Many BF16 GEMM kernels require K to be 8-aligned. If not aligned,
-        # do the matmul in FP32 and cast the result back to original dtype.
-        k = y.size(-1)
-        if (
-            (y.dtype in (torch.bfloat16, torch.float16))
-            and (k % 8) != 0
-            and torch.cuda.is_available()
-            and getattr(self.down_proj, "tp_size", 1) == 1
-        ):
-            # Fall back to explicit FP32 GEMM to avoid BF16/FP16 alignment issues.
-            W = getattr(self.down_proj, "weight")
-            b = getattr(self.down_proj, "bias")
-            out_fp32 = F.linear(
-                y.to(torch.float32),
-                W.to(torch.float32),
-                b.to(torch.float32) if b is not None else None,
-            )
-            return out_fp32.to(y.dtype)
+        hidden = gate_up.size(-1) // 2
+        if (hidden % 8) != 0:
+            gate, up = gate_up.chunk(2, dim=-1)
+            y = self.orig_act(gate) * up
         else:
-            x_down, _ = self.down_proj(y)
-            return x_down
+            y = self.act_fn(gate_up)
+        y = y.contiguous()
+        y, _ = self.down_proj(y)
+        return y
 
 
 class Qwen2_5_VisionBlock(nn.Module):

@@ -34,6 +34,13 @@ logger = logging.getLogger(__name__)
 cached_get_processor = lru_cache(get_processor)
 
 
+def _tmeta(t: torch.Tensor, name: str) -> str:
+    try:
+        return f"{name}: shape={tuple(t.shape)} dtype={t.dtype} device={t.device} contig={t.is_contiguous()}"
+    except Exception:
+        return f"{name}: type={type(t)}"
+
+
 class Glm4vRMSNorm(RMSNorm):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         original_shape = x.shape
@@ -70,9 +77,13 @@ class Glm4vVisionMLP(nn.Module):
         self.act_fn = SiluAndMul()
 
     def forward(self, x: torch.Tensor):
+        logger.info(_tmeta(x, "[GLM4V MLP] input x"))
         gate_up, _ = self.gate_up_proj(x)
+        logger.info(_tmeta(gate_up, "[GLM4V MLP] gate_up after gate_up_proj"))
         x = self.act_fn(gate_up)
+        logger.info(_tmeta(x, "[GLM4V MLP] y after SiluAndMul"))
         x, _ = self.down_proj(x)
+        logger.info(_tmeta(x, "[GLM4V MLP] output x after down_proj"))
         return x
 
 
@@ -105,6 +116,59 @@ class Glm4vVisionBlock(Qwen2_5_VisionBlock):
             prefix=add_prefix("mlp", prefix),
         )
 
+    def forward(
+        self,
+        x: torch.Tensor,
+        cu_seqlens: torch.Tensor,
+        position_embeddings: torch.Tensor,
+    ) -> torch.Tensor:
+        S, B, H = x.shape
+        logger.info(f"[GLM4V Block] start: S={S} B={B} H={H}")
+        logger.info(_tmeta(x, "[GLM4V Block] x (S,B,H)"))
+
+        # norm1: flatten to 2D -> [S*B, H], then reshape back
+        x2d = x.reshape(-1, H).contiguous()
+        logger.info(_tmeta(x2d, "[GLM4V Block] x2d before norm1"))
+        hidden_states = self.norm1(x2d).reshape(S, B, H)
+        logger.info(_tmeta(hidden_states, "[GLM4V Block] hidden_states after norm1"))
+
+        # Attention expects [B, S, H]
+        hidden_states = rearrange(hidden_states, "s b h -> b s h")
+        logger.info(
+            _tmeta(hidden_states, "[GLM4V Block] hidden_states for attn (B,S,H)")
+        )
+        attn = self.attn(
+            hidden_states,
+            cu_seqlens=cu_seqlens,
+            position_embeddings=position_embeddings,
+        )
+        logger.info(_tmeta(attn, "[GLM4V Block] attn output (B,S,H)"))
+        attn = rearrange(attn, "b s h -> s b h")
+        logger.info(_tmeta(attn, "[GLM4V Block] attn reshaped (S,B,H)"))
+
+        # norm2 with fused residual-add: also 2D
+        attn2d = attn.reshape(-1, H).contiguous()
+        logger.info(_tmeta(attn2d, "[GLM4V Block] attn2d before norm2"))
+        x_norm_2d, x_after_add_2d = self.norm2(x2d, residual=attn2d)
+        logger.info(_tmeta(x_norm_2d, "[GLM4V Block] x_norm_2d after norm2"))
+        logger.info(
+            _tmeta(
+                x_after_add_2d,
+                "[GLM4V Block] x_after_add_2d after norm2 (residual added)",
+            )
+        )
+        x_norm = x_norm_2d.reshape(S, B, H)
+        x_after_add = x_after_add_2d.reshape(S, B, H)
+        logger.info(_tmeta(x_norm, "[GLM4V Block] x_norm (S,B,H)"))
+        logger.info(_tmeta(x_after_add, "[GLM4V Block] x_after_add (S,B,H)"))
+
+        # MLP and final residual
+        mlp_out = self.mlp(x_norm)
+        logger.info(_tmeta(mlp_out, "[GLM4V Block] mlp_out (S,B,H)"))
+        x = x_after_add + mlp_out
+        logger.info(_tmeta(x, "[GLM4V Block] x after residual add (S,B,H)"))
+        return x
+
 
 class Glm4vVisionPatchEmbed(nn.Module):
     def __init__(
@@ -130,6 +194,7 @@ class Glm4vVisionPatchEmbed(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        logger.info(_tmeta(x, "[GLM4V PatchEmbed] input x"))
         x = x.view(
             -1,
             self.in_channels,
@@ -137,7 +202,9 @@ class Glm4vVisionPatchEmbed(nn.Module):
             self.patch_size,
             self.patch_size,
         )
+        logger.info(_tmeta(x, "[GLM4V PatchEmbed] x reshaped for Conv3d"))
         x = self.proj(x).view(-1, self.hidden_size)
+        logger.info(_tmeta(x, "[GLM4V PatchEmbed] output x after Conv3d+view"))
         return x
 
 
@@ -178,12 +245,18 @@ class Glm4vPatchMerger(nn.Module):
         self.extra_activation_func = nn.GELU()
 
     def forward(self, x: torch.Tensor):
+        logger.info(_tmeta(x, "[GLM4V PatchMerger] input x"))
         x, _ = self.proj(x)
+        logger.info(_tmeta(x, "[GLM4V PatchMerger] after proj"))
         x = self.extra_activation_func(self.post_projection_norm(x))
+        logger.info(_tmeta(x, "[GLM4V PatchMerger] after norm+GELU"))
         gate_up, _ = self.gate_up_proj(x)
+        logger.info(_tmeta(gate_up, "[GLM4V PatchMerger] gate_up after gate_up_proj"))
         gate, up = gate_up.chunk(2, dim=-1)
         x = F.silu(gate) * up
+        logger.info(_tmeta(x, "[GLM4V PatchMerger] after SiLU*"))
         x, _ = self.down_proj(x)
+        logger.info(_tmeta(x, "[GLM4V PatchMerger] output x after down_proj"))
         return x
 
 
