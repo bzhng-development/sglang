@@ -238,3 +238,6 @@ compile_commands.json
 Cargo.lock
 
 lmms-eval
+
+# Pandoc HTML artifacts
+**/*.md.html
