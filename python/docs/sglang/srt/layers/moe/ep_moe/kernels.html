@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.moe.ep_moe.kernels API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.moe.ep_moe.kernels</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.deepep_run_moe_deep_preprocess"><code class="name flex">
+<span>def <span class="ident">deepep_run_moe_deep_preprocess</span></span>(<span>topk_ids: torch.Tensor, num_experts: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deepep_run_moe_deep_preprocess(topk_ids: torch.Tensor, num_experts: int):
+    reorder_topk_ids, reorder_ids = torch.sort(topk_ids.view(-1), stable=True)
+    seg_indptr = torch.empty(num_experts + 1, device=topk_ids.device, dtype=torch.int64)
+    src2dst = torch.empty(topk_ids.numel(), device=topk_ids.device, dtype=torch.int64)
+
+    # Find offset
+    expert_ids = torch.arange(
+        num_experts + 1, device=topk_ids.device, dtype=reorder_topk_ids.dtype
+    )
+    torch.searchsorted(reorder_topk_ids, expert_ids, out=seg_indptr)
+    num_minus_one = seg_indptr[0]
+    seg_indptr = seg_indptr - num_minus_one
+
+    BLOCK_SIZE = 512
+    grid = (triton.cdiv(topk_ids.numel(), BLOCK_SIZE),)
+    deepep_compute_src2dst_triton_kernel[grid](
+        reorder_ids, src2dst, topk_ids.numel(), num_minus_one, BLOCK_SIZE
+    )
+    reorder_topk_ids = reorder_topk_ids[num_minus_one:]
+    return reorder_topk_ids, src2dst, seg_indptr</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.ep_gather"><code class="name flex">
+<span>def <span class="ident">ep_gather</span></span>(<span>input_tensor: torch.Tensor,<br>recv_topk_ids: torch.Tensor,<br>recv_topk_weight: torch.Tensor,<br>input_index: torch.Tensor,<br>output_tensor: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def ep_gather(
+    input_tensor: torch.Tensor,
+    recv_topk_ids: torch.Tensor,
+    recv_topk_weight: torch.Tensor,
+    input_index: torch.Tensor,
+    output_tensor: torch.Tensor,
+):
+    BLOCK_D = 1024 if not is_in_ci() else 128  # block size of quantization
+    num_warps = 2
+    num_tokens = output_tensor.shape[0]
+    hidden_size = input_tensor.shape[1]
+    assert hidden_size % BLOCK_D == 0
+    grid = (triton.cdiv(hidden_size, BLOCK_D), min(num_tokens, 1024))
+    _fwd_kernel_ep_gather[grid](
+        num_tokens,
+        input_tensor,
+        input_tensor.stride(0),
+        input_tensor.stride(1),
+        recv_topk_ids,
+        recv_topk_ids.stride(0),
+        recv_topk_ids.stride(1),
+        recv_topk_weight,
+        recv_topk_weight.stride(0),
+        recv_topk_weight.stride(1),
+        input_index,
+        input_index.stride(0),
+        input_index.stride(1),
+        output_tensor,
+        output_tensor.stride(0),
+        output_tensor.stride(1),
+        topk_num=recv_topk_ids.shape[1],
+        num_warps=num_warps,
+        BLOCK_D=BLOCK_D,
+    )
+    return</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.ep_scatter"><code class="name flex">
+<span>def <span class="ident">ep_scatter</span></span>(<span>recv_x: torch.Tensor,<br>recv_x_scale: torch.Tensor,<br>recv_topk: torch.Tensor,<br>num_recv_tokens_per_expert: torch.Tensor,<br>expert_start_loc: torch.Tensor,<br>output_tensor: torch.Tensor,<br>output_tensor_scale: torch.Tensor,<br>m_indices: torch.Tensor,<br>output_index: torch.Tensor,<br>scale_ue8m0: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def ep_scatter(
+    recv_x: torch.Tensor,
+    recv_x_scale: torch.Tensor,
+    recv_topk: torch.Tensor,
+    num_recv_tokens_per_expert: torch.Tensor,
+    expert_start_loc: torch.Tensor,
+    output_tensor: torch.Tensor,
+    output_tensor_scale: torch.Tensor,
+    m_indices: torch.Tensor,
+    output_index: torch.Tensor,
+    scale_ue8m0: bool = False,
+):
+    BLOCK_E = 128  # token num of per expert is aligned to 128
+    BLOCK_D = 128  # block size of quantization
+    num_warps = 8
+    num_experts = num_recv_tokens_per_expert.shape[0]
+    hidden_size = recv_x.shape[1]
+    # grid = (triton.cdiv(hidden_size, BLOCK_D), num_experts)
+    grid = num_experts
+
+    scale_hidden_size = hidden_size // BLOCK_D
+    if scale_ue8m0:
+        # ue8m0 scales are packed here (4 scales per int32),
+        # hence the effective size of this dimension is divided by 4.
+        scale_hidden_size = ceil_div(scale_hidden_size, 4)
+
+    assert m_indices.shape[0] % BLOCK_E == 0
+    assert recv_x_scale.dtype == output_tensor_scale.dtype
+    assert recv_x_scale.shape[1] == output_tensor_scale.shape[1] == scale_hidden_size
+
+    _fwd_kernel_ep_scatter_1[(grid,)](
+        num_recv_tokens_per_expert,
+        expert_start_loc,
+        m_indices,
+        num_experts=num_experts,
+        num_warps=num_warps,
+        BLOCK_E=BLOCK_E,
+        BLOCK_EXPERT_NUM=triton.next_power_of_2(num_experts),
+    )
+
+    grid = min(recv_topk.shape[0], 1024 * 8)
+
+    _fwd_kernel_ep_scatter_2[(grid,)](
+        recv_topk.shape[0],
+        expert_start_loc,
+        recv_x,
+        recv_x.stride(0),
+        recv_x.stride(1),
+        recv_x_scale,
+        recv_x_scale.stride(0),
+        recv_x_scale.stride(1),
+        recv_topk,
+        recv_topk.stride(0),
+        recv_topk.stride(1),
+        output_tensor,
+        output_tensor.stride(0),
+        output_tensor.stride(1),
+        output_tensor_scale,
+        output_tensor_scale.stride(0),
+        output_tensor_scale.stride(1),
+        output_index,
+        output_index.stride(0),
+        output_index.stride(1),
+        topk_num=recv_topk.shape[1],
+        num_warps=num_warps,
+        HIDDEN_SIZE=hidden_size,
+        HIDDEN_SIZE_PAD=triton.next_power_of_2(hidden_size),
+        SCALE_HIDDEN_SIZE=scale_hidden_size,
+        SCALE_HIDDEN_SIZE_PAD=triton.next_power_of_2(scale_hidden_size),
+    )
+    return</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.get_tma_aligned_size"><code class="name flex">
+<span>def <span class="ident">get_tma_aligned_size</span></span>(<span>x: int, element_size: int) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tma_aligned_size(x: int, element_size: int) -&gt; int:
+    &#34;&#34;&#34;
+    Global memory address of TMA must be 16-byte aligned.
+    Since we use column-major layout for the LHS scaling tensor,
+        the M-axis of the LHS scaling tensor needs to be padded to a multiple of 16 bytes.
+
+    Arguments:
+        x: original M-axis shape of the LHS scaling tensor.
+        element_size: element size of the LHS scaling tensor.
+
+    Returns:
+        M-axis shape of the LHS scaling tensor after padding.
+    &#34;&#34;&#34;
+    tma_alignment_bytes = 16
+    assert tma_alignment_bytes % element_size == 0
+    alignment = tma_alignment_bytes // element_size
+    return ceil_div(x, alignment) * alignment</code></pre>
+</details>
+<div class="desc"><p>Global memory address of TMA must be 16-byte aligned.
+Since we use column-major layout for the LHS scaling tensor,
+the M-axis of the LHS scaling tensor needs to be padded to a multiple of 16 bytes.</p>
+<h2 id="arguments">Arguments</h2>
+<p>x: original M-axis shape of the LHS scaling tensor.
+element_size: element size of the LHS scaling tensor.</p>
+<h2 id="returns">Returns</h2>
+<p>M-axis shape of the LHS scaling tensor after padding.</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.grouped_gemm_triton"><code class="name flex">
+<span>def <span class="ident">grouped_gemm_triton</span></span>(<span>a: torch.Tensor,<br>b: torch.Tensor,<br>c: torch.Tensor,<br>batch_size: int,<br>weight_column_major: bool,<br>seg_indptr: torch.Tensor | None = None,<br>weight_indices: torch.Tensor | None = None,<br>use_fp8_w8a8: bool = False,<br>scale_a: torch.Tensor = None,<br>scale_b: torch.Tensor = None,<br>block_shape: List[int] | None = None,<br>c_dtype=None,<br>use_per_token_if_dynamic: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def grouped_gemm_triton(
+    a: torch.Tensor,
+    b: torch.Tensor,
+    c: torch.Tensor,
+    batch_size: int,
+    weight_column_major: bool,
+    seg_indptr: Optional[torch.Tensor] = None,
+    weight_indices: Optional[torch.Tensor] = None,
+    use_fp8_w8a8: bool = False,
+    scale_a: torch.Tensor = None,
+    scale_b: torch.Tensor = None,
+    block_shape: Optional[List[int]] = None,
+    c_dtype=None,
+    use_per_token_if_dynamic: bool = True,
+):
+    assert weight_column_major == True  # TODO: more
+    if use_fp8_w8a8 and block_shape is None:
+        assert scale_a is not None and scale_b is not None
+
+    if block_shape is not None:
+        a_original = a
+
+        assert len(block_shape) == 2
+        block_n, block_k = block_shape[0], block_shape[1]
+        a, scale_a = per_token_group_quant_fp8(a, block_k)
+
+        assert triton.cdiv(a.shape[-1], block_k) == scale_a.shape[-1]
+        assert triton.cdiv(b.shape[-2], block_n) == scale_b.shape[-2]
+        assert triton.cdiv(b.shape[-1], block_k) == scale_b.shape[-1]
+
+        dispose_tensor(a_original)
+
+    # TODO: adjust config or tune kernel
+    # Reduce block size to prevent L40 shared memory overflow.
+    config = {
+        &#34;BLOCK_SIZE_M&#34;: 64,
+        &#34;BLOCK_SIZE_N&#34;: 32,
+        &#34;BLOCK_SIZE_K&#34;: 128,
+    }
+
+    m_num_tiles_indptr = torch.zeros(batch_size + 1, device=a.device, dtype=torch.int64)
+    compute_m_num_tiles_indptr[(1,)](
+        m_num_tiles_indptr, seg_indptr, batch_size, config[&#34;BLOCK_SIZE_M&#34;]
+    )
+
+    if c is None:
+        assert c_dtype is not None
+        c = torch.empty(a.shape[0], b.shape[1], device=a.device, dtype=c_dtype)
+
+    grid = lambda META: (
+        triton.cdiv(a.size(0), META[&#34;BLOCK_SIZE_M&#34;]) + batch_size,
+        triton.cdiv(b.size(1), META[&#34;BLOCK_SIZE_N&#34;]),
+    )
+
+    if use_fp8_w8a8 and block_shape is None and use_per_token_if_dynamic:
+        assert (
+            scale_a.shape[0] == a.shape[0]
+        ), f&#34;scale_a.shape: {scale_a.shape}, a.shape: {a.shape}&#34;
+
+    grouped_gemm_triton_kernel[grid](
+        a,
+        b,
+        c,
+        batch_size,
+        b.size(1),
+        b.size(2),
+        seg_indptr,
+        weight_indices,
+        m_num_tiles_indptr,
+        scale_a,
+        scale_b,
+        use_fp8_w8a8,
+        0 if block_shape is None else block_shape[0],
+        0 if block_shape is None else block_shape[1],
+        a.stride(0),
+        b.stride(0),
+        b.stride(1),
+        scale_a.stride(0) if scale_a is not None and scale_a.ndim == 2 else 0,
+        scale_a.stride(1) if scale_a is not None and scale_a.ndim == 2 else 0,
+        scale_b.stride(0) if scale_b is not None and scale_b.ndim &gt;= 2 else 0,
+        scale_b.stride(2) if scale_b is not None and scale_b.ndim == 3 else 0,
+        scale_b.stride(1) if scale_b is not None and scale_b.ndim &gt;= 2 else 0,
+        use_per_token_if_dynamic,
+        **config,
+    )
+    return c</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.moe_ep_deepgemm_preprocess"><code class="name flex">
+<span>def <span class="ident">moe_ep_deepgemm_preprocess</span></span>(<span>topk_ids: torch.Tensor,<br>num_experts: int,<br>hidden_states: torch.Tensor,<br>top_k: int,<br>start_expert_id,<br>end_expert_id,<br>block_shape,<br>output_dtype: torch.dtype = torch.float8_e4m3fn)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def moe_ep_deepgemm_preprocess(
+    topk_ids: torch.Tensor,
+    num_experts: int,
+    hidden_states: torch.Tensor,
+    top_k: int,
+    start_expert_id,
+    end_expert_id,
+    block_shape,
+    output_dtype: torch.dtype = torch.float8_e4m3fn,
+):
+    reorder_topk_ids, reorder_ids = torch.sort(topk_ids.view(-1), stable=True)
+    seg_indptr = torch.zeros(num_experts + 1, device=topk_ids.device, dtype=torch.int64)
+    src2dst = torch.empty(topk_ids.numel(), device=topk_ids.device, dtype=torch.int32)
+    masked_m = torch.zeros(num_experts, device=topk_ids.device, dtype=torch.int32)
+
+    compute_seg_indptr_triton_kernel[(num_experts,)](
+        reorder_topk_ids, seg_indptr, topk_ids.numel()
+    )
+
+    grid = lambda meta: (triton.cdiv(topk_ids.numel(), meta[&#34;BLOCK_SIZE&#34;]),)
+    compute_masked_m_triton_kernel[(num_experts,)](seg_indptr, masked_m)
+
+    # For masked grouped GEMM, shape M should be multiple of the block M (current block M: {block_m}) https://github.com/deepseek-ai/DeepGEMM/blob/main/deep_gemm/jit_kernels/m_grouped_gemm.py#L165
+    m_max = (hidden_states.size(0) + 255) // 256 * 256
+    expected_m = (topk_ids.numel() + num_experts - 1) // num_experts
+    gateup_input = torch.empty(
+        (int(end_expert_id - start_expert_id + 1), m_max, hidden_states.size(1)),
+        device=hidden_states.device,
+        dtype=output_dtype,
+    )
+
+    deepgemm_compute_src2dst_triton_kernel[grid](
+        topk_ids,
+        reorder_ids,
+        seg_indptr,
+        src2dst,
+        m_max,
+        topk_ids.numel(),
+        BLOCK_SIZE=256,
+    )
+
+    if block_shape is None:
+        block_shape = [128, 128]
+    assert len(block_shape) == 2
+    block_n, block_k = block_shape[0], block_shape[1]
+    hidden_states, scale = per_token_group_quant_fp8(hidden_states, block_k)
+
+    gateup_input_scale = torch.empty(
+        (gateup_input.size(0), gateup_input.size(1), scale.size(1)),
+        device=hidden_states.device,
+        dtype=scale.dtype,
+    )
+
+    fill_gateup_input_triton_kernel[(hidden_states.shape[0],)](
+        hidden_states,
+        scale,
+        gateup_input,
+        gateup_input_scale,
+        src2dst,
+        topk_ids,
+        start_expert_id,
+        end_expert_id,
+        top_k,
+        m_max,
+        hidden_states.size(1),
+        scale.size(1),
+        BLOCK_SIZE=1024,
+    )
+
+    return (
+        m_max,
+        masked_m[start_expert_id : (end_expert_id + 1)],
+        expected_m,
+        src2dst,
+        gateup_input,
+        gateup_input_scale,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.run_cutlass_moe_ep_preproess"><code class="name flex">
+<span>def <span class="ident">run_cutlass_moe_ep_preproess</span></span>(<span>local_topk_ids: torch.Tensor, local_num_experts: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_cutlass_moe_ep_preproess(local_topk_ids: torch.Tensor, local_num_experts: int):
+    reorder_topk_ids, reorder_ids = torch.sort(local_topk_ids.view(-1), stable=True)
+
+    seg_indptr = torch.zeros(
+        local_num_experts + 1, device=local_topk_ids.device, dtype=torch.int64
+    )
+    src2dst = torch.empty(
+        local_topk_ids.numel(), device=local_topk_ids.device, dtype=torch.int32
+    )
+
+    BLOCK_SIZE = 512
+    grid = (triton.cdiv(local_topk_ids.numel(), BLOCK_SIZE),)
+    compute_src2dst_triton_kernel[grid](
+        reorder_ids, src2dst, local_topk_ids.numel(), BLOCK_SIZE
+    )
+
+    return reorder_topk_ids, src2dst, seg_indptr</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.run_moe_ep_preproess"><code class="name flex">
+<span>def <span class="ident">run_moe_ep_preproess</span></span>(<span>topk_ids: torch.Tensor, num_experts: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_moe_ep_preproess(topk_ids: torch.Tensor, num_experts: int):
+    reorder_topk_ids, reorder_ids = torch.sort(topk_ids.view(-1), stable=True)
+
+    seg_indptr = torch.zeros(num_experts + 1, device=topk_ids.device, dtype=torch.int64)
+    src2dst = torch.empty(topk_ids.numel(), device=topk_ids.device, dtype=torch.int32)
+
+    compute_seg_indptr_triton_kernel[(num_experts,)](
+        reorder_topk_ids, seg_indptr, topk_ids.numel()
+    )
+
+    BLOCK_SIZE = 512
+    grid = (triton.cdiv(topk_ids.numel(), BLOCK_SIZE),)
+    compute_src2dst_triton_kernel[grid](
+        reorder_ids, src2dst, topk_ids.numel(), BLOCK_SIZE
+    )
+
+    return reorder_topk_ids, src2dst, seg_indptr</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.silu_and_mul_masked_post_quant_fwd"><code class="name flex">
+<span>def <span class="ident">silu_and_mul_masked_post_quant_fwd</span></span>(<span>input: torch.Tensor,<br>output: torch.Tensor,<br>output_scale: torch.Tensor,<br>quant_group_size: int,<br>masked_m: torch.Tensor,<br>scale_ue8m0: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def silu_and_mul_masked_post_quant_fwd(
+    input: torch.Tensor,
+    output: torch.Tensor,
+    output_scale: torch.Tensor,
+    quant_group_size: int,
+    masked_m: torch.Tensor,
+    scale_ue8m0: bool = False,
+):
+    &#34;&#34;&#34;
+    input shape [expert_num, token_num_padded, hidden_dim]
+    output shape [expert_num, token_num_padded, hidden_dim // 2], dtype fp8
+    output_scale [expert_num token_num_paddded, hidden_dim // 2 // 128] dtype float32
+    quant_group_size  int,
+    masked_m shape [expert_num],
+    &#34;&#34;&#34;
+
+    assert input.is_contiguous()
+    assert output.dtype == torch.float8_e4m3fn
+    assert output.is_contiguous()
+    assert len(input.shape) == 3
+    assert input.shape[0] == masked_m.shape[0]
+    assert input.shape[-1] % 2 == 0
+
+    size_n = input.shape[-1] // 2
+    assert size_n % quant_group_size == 0
+
+    expert_num = len(masked_m)
+
+    if expert_num &lt; 4:
+        BLOCK_NUM_PER_EXPERT = 64
+    else:
+        BLOCK_NUM_PER_EXPERT = 32
+
+    BLOCK_N = quant_group_size
+    num_warps = 1
+    NUM_STAGES = 6
+    hidden_dim_split_block_num = triton.cdiv(size_n, BLOCK_N)
+    assert BLOCK_N % quant_group_size == 0
+
+    grid = (
+        hidden_dim_split_block_num,
+        BLOCK_NUM_PER_EXPERT,
+        expert_num,
+    )
+
+    finfo = torch.finfo(torch.float8_e4m3fn)
+    fp8_max = finfo.max
+    fp8_min = -fp8_max
+
+    _silu_and_mul_post_quant_kernel[grid](
+        input,
+        *input.stride(),
+        output,
+        *output.stride(),
+        output_scale,
+        *output_scale.stride(),
+        masked_m,
+        size_n,
+        fp8_max,
+        fp8_min,
+        BLOCK_N=BLOCK_N,
+        NUM_STAGE=NUM_STAGES,
+        num_warps=num_warps,
+        SCALE_UE8M0=scale_ue8m0,
+    )
+    return</code></pre>
+</details>
+<div class="desc"><p>input shape [expert_num, token_num_padded, hidden_dim]
+output shape [expert_num, token_num_padded, hidden_dim // 2], dtype fp8
+output_scale [expert_num token_num_paddded, hidden_dim // 2 // 128] dtype float32
+quant_group_size
+int,
+masked_m shape [expert_num],</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.tma_align_input_scale"><code class="name flex">
+<span>def <span class="ident">tma_align_input_scale</span></span>(<span>input_scale: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tma_align_input_scale(input_scale: torch.Tensor):
+    assert input_scale.dim() == 2
+    m, k_div_block_size = input_scale.shape
+    padd_m = get_tma_aligned_size(m, input_scale.element_size())
+    output = torch.empty(
+        (k_div_block_size, padd_m), dtype=input_scale.dtype, device=input_scale.device
+    )
+
+    grid_m = min(m, 8192)
+    BLOCK_SIZE_K = triton.next_power_of_2(k_div_block_size)
+
+    _tma_align_input_scale_kernel[(grid_m,)](
+        input_scale_ptr=input_scale,
+        output_ptr=output,
+        m=m,
+        k_div_block_size=k_div_block_size,
+        input_scale_stride_m=input_scale.stride(0),
+        input_scale_stride_k=input_scale.stride(1),
+        output_stride_m=output.stride(1),  # Note: these are swapped
+        output_stride_k=output.stride(0),  # for column-major
+        BLOCK_SIZE_K=BLOCK_SIZE_K,
+    )
+    return output.t()[:m]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.ep_moe.kernels.zero_experts_compute_triton"><code class="name flex">
+<span>def <span class="ident">zero_experts_compute_triton</span></span>(<span>expert_indices, expert_scales, num_experts, zero_expert_type, hidden_states)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def zero_experts_compute_triton(
+    expert_indices, expert_scales, num_experts, zero_expert_type, hidden_states
+):
+    N = expert_indices.numel()
+    top_k = expert_indices.size(-1)
+    grid = lambda meta: (triton.cdiv(N, meta[&#34;BLOCK_SIZE&#34;]),)
+
+    if zero_expert_type == &#34;identity&#34;:
+        zero_expert_mask = expert_indices &lt; num_experts
+        zero_expert_scales = expert_scales.clone()
+        zero_expert_scales[zero_expert_mask] = 0.0
+
+    normal_expert_mask = expert_indices &gt;= num_experts
+    expert_indices[normal_expert_mask] = 0
+    expert_scales[normal_expert_mask] = 0.0
+
+    output = torch.zeros_like(hidden_states).to(hidden_states.device)
+    hidden_dim = hidden_states.size(-1)
+    num_tokens = hidden_states.size(0)
+
+    grid = lambda meta: (num_tokens * (hidden_dim // meta[&#34;BLOCK_SIZE&#34;]),)
+    compute_identity_kernel[grid](
+        top_k,
+        hidden_states,
+        zero_expert_scales,
+        num_tokens,
+        output,
+        hidden_dim,
+        zero_expert_scales.stride(0),
+        BLOCK_SIZE=256,
+    )
+
+    return output</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.moe.ep_moe" href="index.html">sglang.srt.layers.moe.ep_moe</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.deepep_run_moe_deep_preprocess" href="#sglang.srt.layers.moe.ep_moe.kernels.deepep_run_moe_deep_preprocess">deepep_run_moe_deep_preprocess</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.ep_gather" href="#sglang.srt.layers.moe.ep_moe.kernels.ep_gather">ep_gather</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.ep_scatter" href="#sglang.srt.layers.moe.ep_moe.kernels.ep_scatter">ep_scatter</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.get_tma_aligned_size" href="#sglang.srt.layers.moe.ep_moe.kernels.get_tma_aligned_size">get_tma_aligned_size</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.grouped_gemm_triton" href="#sglang.srt.layers.moe.ep_moe.kernels.grouped_gemm_triton">grouped_gemm_triton</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.moe_ep_deepgemm_preprocess" href="#sglang.srt.layers.moe.ep_moe.kernels.moe_ep_deepgemm_preprocess">moe_ep_deepgemm_preprocess</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.run_cutlass_moe_ep_preproess" href="#sglang.srt.layers.moe.ep_moe.kernels.run_cutlass_moe_ep_preproess">run_cutlass_moe_ep_preproess</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.run_moe_ep_preproess" href="#sglang.srt.layers.moe.ep_moe.kernels.run_moe_ep_preproess">run_moe_ep_preproess</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.silu_and_mul_masked_post_quant_fwd" href="#sglang.srt.layers.moe.ep_moe.kernels.silu_and_mul_masked_post_quant_fwd">silu_and_mul_masked_post_quant_fwd</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.tma_align_input_scale" href="#sglang.srt.layers.moe.ep_moe.kernels.tma_align_input_scale">tma_align_input_scale</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.ep_moe.kernels.zero_experts_compute_triton" href="#sglang.srt.layers.moe.ep_moe.kernels.zero_experts_compute_triton">zero_experts_compute_triton</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

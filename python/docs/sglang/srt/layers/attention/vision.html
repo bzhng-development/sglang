@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.attention.vision API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.attention.vision</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.SingletonCache"><code class="flex name class">
+<span>class <span class="ident">SingletonCache</span></span>
+<span>(</span><span>data: Any = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class SingletonCache:
+    data: Any = None
+
+    def set_data(self, value: Any) -&gt; None:
+        self.data = value
+
+    def get_data(self) -&gt; Optional[Any]:
+        return self.data
+
+    def empty(self) -&gt; bool:
+        return self.get_data() is None</code></pre>
+</details>
+<div class="desc"><p>SingletonCache(data: 'Any' = None)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.SingletonCache.data"><code class="name">var <span class="ident">data</span> : Any</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.SingletonCache.empty"><code class="name flex">
+<span>def <span class="ident">empty</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def empty(self) -&gt; bool:
+    return self.get_data() is None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.SingletonCache.get_data"><code class="name flex">
+<span>def <span class="ident">get_data</span></span>(<span>self) ‑> Any | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_data(self) -&gt; Optional[Any]:
+    return self.data</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.SingletonCache.set_data"><code class="name flex">
+<span>def <span class="ident">set_data</span></span>(<span>self, value: Any) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_data(self, value: Any) -&gt; None:
+    self.data = value</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.VisionAttention"><code class="flex name class">
+<span>class <span class="ident">VisionAttention</span></span>
+<span>(</span><span>embed_dim: int,<br>num_heads: int,<br>projection_size: int,<br>use_qkv_parallel: bool,<br>qkv_backend: Optional[str] = None,<br>quant_config: Optional[QuantizationConfig] = None,<br>dropout: float = 0.0,<br>softmax_in_single_precision: bool = False,<br>flatten_batch: bool = False,<br>prefix: str = '',<br>proj_bias: bool = True,<br>num_dummy_heads: int = 0,<br>qkv_bias: bool = True,<br>qk_normalization: bool = False,<br>layer_norm_eps: float = 1e-06,<br>customized_position_embedding_applier: Callable[[torch.Tensor, torch.Tensor, Any, Any], Tuple[torch.Tensor, torch.Tensor]] = None,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisionAttention(nn.Module):
+    r&#34;&#34;&#34;
+        Multi-headed attention without any cache, mostly used for multimodal transformers.
+
+
+    Args:
+        use_qkv_parallel (bool, optional): If True, use QKV-parallel attention.
+        softmax_in_single_precision (bool, default to False):
+            if ``True``, the softmax will be performed in single-precision
+            Otherwise, it will be performed in half-precision
+
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        embed_dim: int,
+        num_heads: int,
+        projection_size: int,
+        use_qkv_parallel: bool,
+        qkv_backend: Optional[str] = None,
+        quant_config: Optional[QuantizationConfig] = None,
+        dropout: float = 0.0,
+        softmax_in_single_precision: bool = False,
+        flatten_batch: bool = False,
+        prefix: str = &#34;&#34;,
+        proj_bias: bool = True,
+        num_dummy_heads: int = 0,
+        qkv_bias: bool = True,
+        qk_normalization: bool = False,
+        layer_norm_eps: float = 1e-06,
+        customized_position_embedding_applier: Callable[
+            [torch.Tensor, torch.Tensor, Any, Any], Tuple[torch.Tensor, torch.Tensor]
+        ] = None,
+        **kwargs,
+    ):
+        super().__init__()
+        attn_tp_rank = get_attention_tp_rank()
+        attn_tp_size = get_attention_tp_size()
+        self.tp_size = attn_tp_size
+        self.tp_rank = attn_tp_rank
+        self.dropout = dropout
+        self.head_size = embed_dim // num_heads
+        self.hidden_size_per_attention_head = dist_utils.divide(
+            projection_size, num_heads
+        )
+        self.num_attention_heads_per_partition = dist_utils.divide(
+            num_dummy_heads + num_heads, self.tp_size
+        )
+        self.num_attention_kv_heads_per_partition = dist_utils.divide(
+            num_dummy_heads + num_heads, self.tp_size
+        )
+
+        self.q_size = self.num_attention_heads_per_partition * self.head_size
+        self.kv_size = self.num_attention_kv_heads_per_partition * self.head_size
+
+        self.qk_normalization = qk_normalization
+
+        # Additional dummy heads are used to enable TP for common GPU counts.
+        self.dummy_dim = (num_dummy_heads + num_heads) * self.head_size
+
+        if self.qk_normalization:
+            self.q_norm = RMSNorm(
+                self.dummy_dim, eps=layer_norm_eps, var_hidden_size=embed_dim
+            )
+            self.k_norm = RMSNorm(
+                self.dummy_dim, eps=layer_norm_eps, var_hidden_size=embed_dim
+            )
+
+        # Select attention backend via a unified method
+        _passed_backend = qkv_backend
+        qkv_backend = self._determine_attention_backend(_passed_backend)
+        if (
+            global_server_args_dict[&#34;mm_attention_backend&#34;] is None
+            and _passed_backend is None
+        ):
+            print_info_once(f&#34;Multimodal attention backend not set. Use {qkv_backend}.&#34;)
+        print_info_once(f&#34;Using {qkv_backend} as multimodal attention backend.&#34;)
+
+        self.customized_position_embedding_applier = (
+            customized_position_embedding_applier
+        )
+        self.qkv_backend = QKV_BACKEND_IMPL[qkv_backend](
+            head_dim=self.head_size,
+            num_heads=self.num_attention_heads_per_partition,
+            num_kv_heads=self.num_attention_kv_heads_per_partition,
+            dropout=dropout,
+            flatten_batch=flatten_batch,
+            softmax_in_single_precision=softmax_in_single_precision,
+        )
+
+        self.use_qkv_parallel = use_qkv_parallel
+        if use_qkv_parallel:
+            self.qkv_proj = QKVParallelLinear(
+                hidden_size=embed_dim,
+                head_size=self.head_size,
+                total_num_heads=num_dummy_heads + num_heads,
+                total_num_kv_heads=num_dummy_heads + num_heads,
+                bias=qkv_bias,
+                quant_config=quant_config,
+                tp_rank=self.tp_rank,
+                tp_size=self.tp_size,
+                prefix=add_prefix(&#34;qkv_proj&#34;, prefix),
+            )
+        else:
+            self.qkv_proj = ColumnParallelLinear(
+                input_size=embed_dim,
+                output_size=3 * self.dummy_dim,
+                bias=qkv_bias,
+                quant_config=quant_config,
+                tp_rank=self.tp_rank,
+                tp_size=self.tp_size,
+                prefix=add_prefix(&#34;qkv_proj&#34;, prefix),
+            )
+        self.proj = RowParallelLinear(
+            input_size=self.dummy_dim,
+            output_size=embed_dim,
+            bias=proj_bias,
+            quant_config=quant_config,
+            tp_rank=self.tp_rank,
+            tp_size=self.tp_size,
+            prefix=add_prefix(&#34;proj&#34;, prefix),
+        )
+
+    def _determine_attention_backend(self, passed_backend: Optional[str]) -&gt; str:
+        &#34;&#34;&#34;Decide the multimodal attention backend string.
+
+        Priority: server args override &gt; constructor arg &gt; platform default.
+
+        Platform defaults:
+        - CUDA: &#34;triton_attn&#34;
+        - Non-CUDA: &#34;sdpa&#34;
+        &#34;&#34;&#34;
+        override_backend = global_server_args_dict[&#34;mm_attention_backend&#34;]
+        if override_backend is not None:
+            backend = override_backend
+        elif passed_backend is not None:
+            backend = passed_backend
+        elif is_cuda():
+            major, minor = get_device_capability()
+            if major == 9:
+                backend = &#34;fa3&#34;
+            else:
+                backend = &#34;triton_attn&#34;
+        else:
+            backend = &#34;sdpa&#34;
+        if backend == &#34;fa3&#34; and is_blackwell():
+            raise ValueError(&#34;The &#39;fa3&#39; backend is not supported on Blackwell GPUs&#34;)
+
+        return backend
+
+    def _apply_qk_norm(self, q: torch.Tensor, k: torch.Tensor):
+        &#34;&#34;&#34;apply qk norm for internvl vit attn&#34;&#34;&#34;
+        q = q.flatten(1, 2)
+        k = k.flatten(1, 2)
+
+        if self.tp_size &gt; 1:
+            q = tensor_model_parallel_all_gather(q.contiguous())
+            k = tensor_model_parallel_all_gather(k.contiguous())
+        q = self.q_norm(q)
+        k = self.k_norm(k)
+        if self.tp_size &gt; 1:
+            splitter = partial(split_tensor_along_last_dim, num_partitions=self.tp_size)
+            q = splitter(q)[self.tp_rank]
+            k = splitter(k)[self.tp_rank]
+        q = q.unflatten(-1, (-1, self.head_size))
+        k = k.unflatten(-1, (-1, self.head_size))
+        return q, k
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        cu_seqlens: Optional[torch.Tensor] = None,
+        position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+        attention_mask: Optional[torch.Tensor] = None,
+        **kwargs,
+    ) -&gt; torch.Tensor:
+        r&#34;&#34;&#34;
+        Args:
+            x: [b, s, embed_dim]
+            cu_seqlens: [b]
+        Returns:
+             [s, b, head * head_size]
+        &#34;&#34;&#34;
+        if x.dim() == 2:
+            x = x.unsqueeze(0)
+        assert x.dim() == 3, x.shape
+        x_shape = x.shape
+        bsz, s, _ = x_shape
+        head = self.num_attention_heads_per_partition
+        kv_head = self.num_attention_kv_heads_per_partition
+        if self.use_qkv_parallel:
+            # [b, s, embed_dim] --&gt; [b, s, embed_dim]
+            qkv, _ = self.qkv_proj(x)
+            q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+
+            # [b, s, embed_dim] --&gt; [b * s, head, head_size]
+            q = q.reshape(bsz * s, head, -1).contiguous()
+            k = k.reshape(bsz * s, kv_head, -1).contiguous()
+            v = v.reshape(bsz * s, kv_head, -1).contiguous()
+        else:
+            # [b, s, embed_dim] --&gt; [s, b, embed_dim]
+            x = rearrange(x, &#34;b s ... -&gt; s b ...&#34;)
+            # [s, b, embed_dim] --&gt; [s, b, head * 3 * head_size]
+            qkv, _ = self.qkv_proj(x)
+
+            # [s, b, head, head_dim_sum]
+            new_x_shape = qkv.size()[:-1] + (
+                head,
+                self.q_size + 2 * self.kv_size,
+            )
+            qkv = qkv.view(*new_x_shape)
+
+            # [s, b, head, 3 * head_size] --&gt; 3 [s, b, head, head_size]
+            q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+
+            # [s, b, head, head_size] --&gt; [b, s, head, head_size]
+            q, k, v = [
+                rearrange(x, &#34;s b ... -&gt; b s ...&#34;).contiguous() for x in (q, k, v)
+            ]
+
+        if position_embeddings is not None:
+            original_shape = q.shape
+
+            if self.customized_position_embedding_applier is not None:
+                q, k = self.customized_position_embedding_applier(
+                    q, k, position_embeddings, x_shape
+                )
+                q = q.view(original_shape)
+                k = k.view(original_shape)
+            else:
+                cos, sin = position_embeddings
+
+                # [total_tokens, head, head_size]
+                q = q.view(-1, head, self.head_size)
+                k = k.view(-1, head, self.head_size)
+
+                q, k = apply_rotary_pos_emb(q, k, cos, sin)
+
+                q = q.view(original_shape)
+                k = k.view(original_shape)
+
+        if q.dim() == 4:
+            # [b, s, head, head_size] --&gt; [b * s, head, head_size]
+            q = rearrange(q, &#34;b s ... -&gt; (b s) ...&#34;)
+        if k.dim() == 4:
+            # [b, s, head, head_size] --&gt; [b * s, head, head_size]
+            k = rearrange(k, &#34;b s ... -&gt; (b s) ...&#34;)
+        if v.dim() == 4:
+            # [b, s, head, head_size] --&gt; [b * s, head, head_size]
+            v = rearrange(v, &#34;b s ... -&gt; (b s) ...&#34;)
+
+        assert q.dim() == 3, q.dim()
+        assert k.dim() == 3, k.dim()
+        assert v.dim() == 3, v.dim()
+
+        # internvl
+        if self.qk_normalization:
+            q, k = self._apply_qk_norm(q, k)
+
+        output = self.qkv_backend.forward(
+            q=q,
+            k=k,
+            v=v,
+            bsz=bsz,
+            seq_len=s,
+            cu_seqlens=cu_seqlens,
+            attention_mask=attention_mask,
+        )
+
+        assert output.dim() == 3, output.shape
+
+        if self.use_qkv_parallel:
+            # [b * s, h, head_size] --&gt; [b, s, h * head_size]
+            output = rearrange(output, &#34;(b s) ... h d -&gt; b s ... (h d)&#34;, b=bsz)
+
+            # [b, s, h * head_size] --&gt; [b, s, h * head_size]
+            output, _ = self.proj(output)
+        else:
+            # [b * s, h, head_size] --&gt; [s, b, h * head_size]
+            context_layer = rearrange(
+                output, &#34;(b s) h d -&gt; s b (h d)&#34;, b=bsz, s=s
+            ).contiguous()
+
+            # [s, b, h * head_size] --&gt; [s, b, h * head_size]
+            output, _ = self.proj(context_layer)
+
+            # [s, b, h * head_size] --&gt; [b, s, h * head_size]
+            output = output.view(bsz, s, -1)
+
+        return output</code></pre>
+</details>
+<div class="desc"><p>Multi-headed attention without any cache, mostly used for multimodal transformers.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>use_qkv_parallel</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>If True, use QKV-parallel attention.</dd>
+</dl>
+<p>softmax_in_single_precision (bool, default to False):
+if <code>True</code>, the softmax will be performed in single-precision
+Otherwise, it will be performed in half-precision
+Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.VisionAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>x: torch.Tensor,<br>cu_seqlens: Optional[torch.Tensor] = None,<br>position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,<br>attention_mask: Optional[torch.Tensor] = None,<br>**kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    x: torch.Tensor,
+    cu_seqlens: Optional[torch.Tensor] = None,
+    position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+    attention_mask: Optional[torch.Tensor] = None,
+    **kwargs,
+) -&gt; torch.Tensor:
+    r&#34;&#34;&#34;
+    Args:
+        x: [b, s, embed_dim]
+        cu_seqlens: [b]
+    Returns:
+         [s, b, head * head_size]
+    &#34;&#34;&#34;
+    if x.dim() == 2:
+        x = x.unsqueeze(0)
+    assert x.dim() == 3, x.shape
+    x_shape = x.shape
+    bsz, s, _ = x_shape
+    head = self.num_attention_heads_per_partition
+    kv_head = self.num_attention_kv_heads_per_partition
+    if self.use_qkv_parallel:
+        # [b, s, embed_dim] --&gt; [b, s, embed_dim]
+        qkv, _ = self.qkv_proj(x)
+        q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+
+        # [b, s, embed_dim] --&gt; [b * s, head, head_size]
+        q = q.reshape(bsz * s, head, -1).contiguous()
+        k = k.reshape(bsz * s, kv_head, -1).contiguous()
+        v = v.reshape(bsz * s, kv_head, -1).contiguous()
+    else:
+        # [b, s, embed_dim] --&gt; [s, b, embed_dim]
+        x = rearrange(x, &#34;b s ... -&gt; s b ...&#34;)
+        # [s, b, embed_dim] --&gt; [s, b, head * 3 * head_size]
+        qkv, _ = self.qkv_proj(x)
+
+        # [s, b, head, head_dim_sum]
+        new_x_shape = qkv.size()[:-1] + (
+            head,
+            self.q_size + 2 * self.kv_size,
+        )
+        qkv = qkv.view(*new_x_shape)
+
+        # [s, b, head, 3 * head_size] --&gt; 3 [s, b, head, head_size]
+        q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+
+        # [s, b, head, head_size] --&gt; [b, s, head, head_size]
+        q, k, v = [
+            rearrange(x, &#34;s b ... -&gt; b s ...&#34;).contiguous() for x in (q, k, v)
+        ]
+
+    if position_embeddings is not None:
+        original_shape = q.shape
+
+        if self.customized_position_embedding_applier is not None:
+            q, k = self.customized_position_embedding_applier(
+                q, k, position_embeddings, x_shape
+            )
+            q = q.view(original_shape)
+            k = k.view(original_shape)
+        else:
+            cos, sin = position_embeddings
+
+            # [total_tokens, head, head_size]
+            q = q.view(-1, head, self.head_size)
+            k = k.view(-1, head, self.head_size)
+
+            q, k = apply_rotary_pos_emb(q, k, cos, sin)
+
+            q = q.view(original_shape)
+            k = k.view(original_shape)
+
+    if q.dim() == 4:
+        # [b, s, head, head_size] --&gt; [b * s, head, head_size]
+        q = rearrange(q, &#34;b s ... -&gt; (b s) ...&#34;)
+    if k.dim() == 4:
+        # [b, s, head, head_size] --&gt; [b * s, head, head_size]
+        k = rearrange(k, &#34;b s ... -&gt; (b s) ...&#34;)
+    if v.dim() == 4:
+        # [b, s, head, head_size] --&gt; [b * s, head, head_size]
+        v = rearrange(v, &#34;b s ... -&gt; (b s) ...&#34;)
+
+    assert q.dim() == 3, q.dim()
+    assert k.dim() == 3, k.dim()
+    assert v.dim() == 3, v.dim()
+
+    # internvl
+    if self.qk_normalization:
+        q, k = self._apply_qk_norm(q, k)
+
+    output = self.qkv_backend.forward(
+        q=q,
+        k=k,
+        v=v,
+        bsz=bsz,
+        seq_len=s,
+        cu_seqlens=cu_seqlens,
+        attention_mask=attention_mask,
+    )
+
+    assert output.dim() == 3, output.shape
+
+    if self.use_qkv_parallel:
+        # [b * s, h, head_size] --&gt; [b, s, h * head_size]
+        output = rearrange(output, &#34;(b s) ... h d -&gt; b s ... (h d)&#34;, b=bsz)
+
+        # [b, s, h * head_size] --&gt; [b, s, h * head_size]
+        output, _ = self.proj(output)
+    else:
+        # [b * s, h, head_size] --&gt; [s, b, h * head_size]
+        context_layer = rearrange(
+            output, &#34;(b s) h d -&gt; s b (h d)&#34;, b=bsz, s=s
+        ).contiguous()
+
+        # [s, b, h * head_size] --&gt; [s, b, h * head_size]
+        output, _ = self.proj(context_layer)
+
+        # [s, b, h * head_size] --&gt; [b, s, h * head_size]
+        output = output.view(bsz, s, -1)
+
+    return output</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong></dt>
+<dd>[b, s, embed_dim]</dd>
+<dt><strong><code>cu_seqlens</code></strong></dt>
+<dd>[b]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[s, b, head * head_size]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.VisionFlash3Attention"><code class="flex name class">
+<span>class <span class="ident">VisionFlash3Attention</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisionFlash3Attention(nn.Module):
+    def __init__(
+        self,
+        **kwargs,
+    ):
+        if not _is_cuda:
+            raise Exception(&#34;VisionFlash3Attention is only available for cuda&#34;)
+        super().__init__()
+
+    def forward(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        cu_seqlens: Optional[Union[SingletonCache, torch.Tensor]],
+        bsz: int,
+        seq_len: int,
+        **kwargs,
+    ) -&gt; torch.Tensor:
+        r&#34;&#34;&#34;
+        Args:
+            cu_seqlens: [b]
+        Returns:
+             [b * s, h, head_size]
+        &#34;&#34;&#34;
+        if cu_seqlens is None:
+            cu_seqlens = _get_cu_seqlens_for_shape(bsz, seq_len, device=q.device)
+        elif isinstance(cu_seqlens, SingletonCache):
+            if cu_seqlens.empty():
+                cu_seqlens.set_data(
+                    _get_cu_seqlens_for_shape(bsz, seq_len, device=q.device)
+                )
+            cu_seqlens = cu_seqlens.get_data()
+
+        cu_seqlens = cu_seqlens.to(dtype=torch.int32).to(q.device)
+        seq_lens = cu_seqlens[1:] - cu_seqlens[:-1]
+        max_seqlen = seq_lens.max().item()
+
+        output = flash_attn_varlen_func(
+            q,
+            k,
+            v,
+            cu_seqlens_q=cu_seqlens,
+            cu_seqlens_k=cu_seqlens,
+            max_seqlen_q=max_seqlen,
+            max_seqlen_k=max_seqlen,
+        )
+
+        return output</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.VisionFlash3Attention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>q: torch.Tensor,<br>k: torch.Tensor,<br>v: torch.Tensor,<br>cu_seqlens: Optional[Union[<a title="sglang.srt.layers.attention.vision.SingletonCache" href="#sglang.srt.layers.attention.vision.SingletonCache">SingletonCache</a>, torch.Tensor]],<br>bsz: int,<br>seq_len: int,<br>**kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    cu_seqlens: Optional[Union[SingletonCache, torch.Tensor]],
+    bsz: int,
+    seq_len: int,
+    **kwargs,
+) -&gt; torch.Tensor:
+    r&#34;&#34;&#34;
+    Args:
+        cu_seqlens: [b]
+    Returns:
+         [b * s, h, head_size]
+    &#34;&#34;&#34;
+    if cu_seqlens is None:
+        cu_seqlens = _get_cu_seqlens_for_shape(bsz, seq_len, device=q.device)
+    elif isinstance(cu_seqlens, SingletonCache):
+        if cu_seqlens.empty():
+            cu_seqlens.set_data(
+                _get_cu_seqlens_for_shape(bsz, seq_len, device=q.device)
+            )
+        cu_seqlens = cu_seqlens.get_data()
+
+    cu_seqlens = cu_seqlens.to(dtype=torch.int32).to(q.device)
+    seq_lens = cu_seqlens[1:] - cu_seqlens[:-1]
+    max_seqlen = seq_lens.max().item()
+
+    output = flash_attn_varlen_func(
+        q,
+        k,
+        v,
+        cu_seqlens_q=cu_seqlens,
+        cu_seqlens_k=cu_seqlens,
+        max_seqlen_q=max_seqlen,
+        max_seqlen_k=max_seqlen,
+    )
+
+    return output</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cu_seqlens</code></strong></dt>
+<dd>[b]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[b * s, h, head_size]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.VisionSdpaAttention"><code class="flex name class">
+<span>class <span class="ident">VisionSdpaAttention</span></span>
+<span>(</span><span>head_dim: int,<br>num_heads: int,<br>num_kv_heads: int,<br>dropout: float = 0.0,<br>flatten_batch: bool = False,<br>softmax_in_single_precision: bool = False,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisionSdpaAttention(nn.Module):
+    r&#34;&#34;&#34;
+    Scaled Dot Product Attention inner product
+
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        head_dim: int,
+        num_heads: int,
+        num_kv_heads: int,
+        dropout: float = 0.0,
+        flatten_batch: bool = False,
+        softmax_in_single_precision: bool = False,
+        **kwargs,
+    ):
+        super().__init__()
+        self.head_size = head_dim
+        self.num_heads = num_heads
+        self.num_kv_heads = num_kv_heads
+        self.flatten_batch = flatten_batch
+        self.softmax_in_single_precision = softmax_in_single_precision
+        self.dropout = dropout
+        self.scale = 1.0 / math.sqrt(self.head_size)
+
+    @staticmethod
+    @lru_cache(maxsize=128)
+    def _generate_mask_cache(
+        s: int, flatten_batch: bool, cu_seqlens: tuple
+    ) -&gt; torch.BoolTensor:
+        &#34;&#34;&#34;
+        Generate a boolean attention mask with caching mechanism.
+        Args:
+            s: sequence length
+            flatten_batch: whether to flatten batch dimension
+            cu_seqlens: tuple of cumulative sequence lengths
+        Returns:
+            attention mask tensor of shape [b, 1, s, s] or [1, s, s]
+        &#34;&#34;&#34;
+        if flatten_batch:
+            mask = torch.zeros([1, s, s], dtype=torch.bool)
+            for i in range(1, len(cu_seqlens)):
+                start = cu_seqlens[i - 1]
+                end = cu_seqlens[i]
+                mask[..., start:end, start:end] = True
+        else:
+            # [1, 1, 1, s]
+            row_indices = torch.arange(s).view(1, 1, 1, s)
+            # [1, 1, s, 1]
+            col_indices = torch.arange(s).view(1, 1, s, 1)
+            # [b, 1, 1, 1]
+            seq_lens = torch.tensor(
+                [end - start for start, end in zip(cu_seqlens[:-1], cu_seqlens[1:])],
+            ).view(-1, 1, 1, 1)
+
+            mask = (row_indices &lt; seq_lens) &amp; (col_indices &lt; seq_lens)
+
+        return mask
+
+    def generate_patch_attention_mask(
+        self,
+        s: int,
+        cu_seqlens: Optional[torch.Tensor],
+        flatten_batch: bool = False,
+    ) -&gt; Optional[torch.Tensor]:
+        r&#34;&#34;&#34;
+        Creates a non-causal 4D mask of shape `(b, 1, s, s)` or `(1, 1, s, s)`.
+        Args:
+            s: sequence length
+            cu_seqlens: cumulative sequence lengths tensor. If not, returns an empty mask
+            flatten_batch: whether to flatten batch dimension
+        Returns:
+            attention mask tensor or None
+        &#34;&#34;&#34;
+        if cu_seqlens is None:
+            return None
+
+        cu_seqlens_tuple = tuple(cu_seqlens.cpu().tolist())
+
+        return self._generate_mask_cache(s, flatten_batch, cu_seqlens_tuple)
+
+    def forward(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        bsz: int,
+        cu_seqlens: Optional[torch.Tensor] = None,
+        attention_mask: Optional[torch.Tensor] = None,
+        **kwargs,
+    ) -&gt; torch.Tensor:
+        r&#34;&#34;&#34;
+        Args:
+            cu_seqlens: [b]
+        Returns:
+             [b * s, h, head_size]
+        &#34;&#34;&#34;
+        if self.flatten_batch:
+            assert bsz == 1, &#34;flatten_batch is True, bsz must be 1&#34;
+
+        assert q.dim() == 3, q.shape
+
+        s = q.shape[0] // bsz
+
+        # [b, 1, s, s]
+        if attention_mask is None:
+            attention_mask = self.generate_patch_attention_mask(
+                s, cu_seqlens, flatten_batch=self.flatten_batch
+            )
+
+        if attention_mask is None:
+            if self.softmax_in_single_precision:
+                raise RuntimeError(&#34;Empty attention mask&#34;)
+        else:
+            attention_mask = attention_mask.to(device=q.device)
+
+        q, k, v = [rearrange(x, &#34;(b s) h d -&gt; b h s d&#34;, b=bsz) for x in [q, k, v]]
+
+        if self.softmax_in_single_precision:
+            k = rearrange(k, &#34;b h s d -&gt; b h d s&#34;)
+            attn_weights = torch.matmul(q, k) * self.scale
+            del k
+            # masking
+            attention_mask = (~attention_mask) * torch.finfo(q.dtype).min
+            attn_weights = attn_weights + attention_mask
+            del attention_mask
+            # full-precision
+            attn_weights = nn.functional.softmax(
+                attn_weights, dim=-1, dtype=torch.float32
+            ).to(q.dtype)
+            attn_weights = nn.functional.dropout(
+                attn_weights, p=self.dropout, training=False
+            )
+            output = torch.matmul(attn_weights, v)
+            del attn_weights, v
+        else:
+            # SDPA
+            # [b, h, s, head_size]
+            output = F.scaled_dot_product_attention(
+                q,
+                k,
+                v,
+                attn_mask=attention_mask,
+                dropout_p=self.dropout,
+                is_causal=False,
+            )
+
+        # [b, h, s, head_size] --&gt; [b * s, h, head_size]
+        output = rearrange(output, &#34;b h s d -&gt; (b s) h d&#34;)
+
+        return output</code></pre>
+</details>
+<div class="desc"><p>Scaled Dot Product Attention inner product</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.VisionSdpaAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>q: torch.Tensor,<br>k: torch.Tensor,<br>v: torch.Tensor,<br>bsz: int,<br>cu_seqlens: Optional[torch.Tensor] = None,<br>attention_mask: Optional[torch.Tensor] = None,<br>**kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    bsz: int,
+    cu_seqlens: Optional[torch.Tensor] = None,
+    attention_mask: Optional[torch.Tensor] = None,
+    **kwargs,
+) -&gt; torch.Tensor:
+    r&#34;&#34;&#34;
+    Args:
+        cu_seqlens: [b]
+    Returns:
+         [b * s, h, head_size]
+    &#34;&#34;&#34;
+    if self.flatten_batch:
+        assert bsz == 1, &#34;flatten_batch is True, bsz must be 1&#34;
+
+    assert q.dim() == 3, q.shape
+
+    s = q.shape[0] // bsz
+
+    # [b, 1, s, s]
+    if attention_mask is None:
+        attention_mask = self.generate_patch_attention_mask(
+            s, cu_seqlens, flatten_batch=self.flatten_batch
+        )
+
+    if attention_mask is None:
+        if self.softmax_in_single_precision:
+            raise RuntimeError(&#34;Empty attention mask&#34;)
+    else:
+        attention_mask = attention_mask.to(device=q.device)
+
+    q, k, v = [rearrange(x, &#34;(b s) h d -&gt; b h s d&#34;, b=bsz) for x in [q, k, v]]
+
+    if self.softmax_in_single_precision:
+        k = rearrange(k, &#34;b h s d -&gt; b h d s&#34;)
+        attn_weights = torch.matmul(q, k) * self.scale
+        del k
+        # masking
+        attention_mask = (~attention_mask) * torch.finfo(q.dtype).min
+        attn_weights = attn_weights + attention_mask
+        del attention_mask
+        # full-precision
+        attn_weights = nn.functional.softmax(
+            attn_weights, dim=-1, dtype=torch.float32
+        ).to(q.dtype)
+        attn_weights = nn.functional.dropout(
+            attn_weights, p=self.dropout, training=False
+        )
+        output = torch.matmul(attn_weights, v)
+        del attn_weights, v
+    else:
+        # SDPA
+        # [b, h, s, head_size]
+        output = F.scaled_dot_product_attention(
+            q,
+            k,
+            v,
+            attn_mask=attention_mask,
+            dropout_p=self.dropout,
+            is_causal=False,
+        )
+
+    # [b, h, s, head_size] --&gt; [b * s, h, head_size]
+    output = rearrange(output, &#34;b h s d -&gt; (b s) h d&#34;)
+
+    return output</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cu_seqlens</code></strong></dt>
+<dd>[b]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[b * s, h, head_size]</p></div>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.VisionSdpaAttention.generate_patch_attention_mask"><code class="name flex">
+<span>def <span class="ident">generate_patch_attention_mask</span></span>(<span>self, s: int, cu_seqlens: Optional[torch.Tensor], flatten_batch: bool = False) ‑> torch.Tensor | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_patch_attention_mask(
+    self,
+    s: int,
+    cu_seqlens: Optional[torch.Tensor],
+    flatten_batch: bool = False,
+) -&gt; Optional[torch.Tensor]:
+    r&#34;&#34;&#34;
+    Creates a non-causal 4D mask of shape `(b, 1, s, s)` or `(1, 1, s, s)`.
+    Args:
+        s: sequence length
+        cu_seqlens: cumulative sequence lengths tensor. If not, returns an empty mask
+        flatten_batch: whether to flatten batch dimension
+    Returns:
+        attention mask tensor or None
+    &#34;&#34;&#34;
+    if cu_seqlens is None:
+        return None
+
+    cu_seqlens_tuple = tuple(cu_seqlens.cpu().tolist())
+
+    return self._generate_mask_cache(s, flatten_batch, cu_seqlens_tuple)</code></pre>
+</details>
+<div class="desc"><p>Creates a non-causal 4D mask of shape <code>(b, 1, s, s)</code> or <code>(1, 1, s, s)</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>s</code></strong></dt>
+<dd>sequence length</dd>
+<dt><strong><code>cu_seqlens</code></strong></dt>
+<dd>cumulative sequence lengths tensor. If not, returns an empty mask</dd>
+<dt><strong><code>flatten_batch</code></strong></dt>
+<dd>whether to flatten batch dimension</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>attention mask tensor or None</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.vision.VisionTritonAttention"><code class="flex name class">
+<span>class <span class="ident">VisionTritonAttention</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisionTritonAttention(nn.Module):
+    &#34;&#34;&#34;
+    Triton-implemented attention without a causal mask
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        **kwargs,
+    ):
+        super().__init__()
+
+    def forward(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        cu_seqlens: Optional[torch.Tensor],
+        bsz: int,
+        seq_len: int,
+        **kwargs,
+    ) -&gt; torch.Tensor:
+        r&#34;&#34;&#34;
+        Args:
+            cu_seqlens: [b]
+        Returns:
+             [b * s, h, head_size]
+        &#34;&#34;&#34;
+        if cu_seqlens is None:
+            cu_seqlens = _get_cu_seqlens_for_shape(bsz, seq_len, device=q.device)
+
+        # [b * s, head, head_size]
+        output = torch.empty_like(q)
+        seq_lens = cu_seqlens[1:] - cu_seqlens[:-1]
+        max_seqlen = seq_lens.max().item()
+        context_attention_fwd(
+            q,
+            k,
+            v,
+            output,
+            cu_seqlens.cuda(),
+            seq_lens.cuda(),
+            max_seqlen,
+            is_causal=False,
+        )
+
+        return output</code></pre>
+</details>
+<div class="desc"><p>Triton-implemented attention without a causal mask</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.vision.VisionTritonAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>q: torch.Tensor,<br>k: torch.Tensor,<br>v: torch.Tensor,<br>cu_seqlens: Optional[torch.Tensor],<br>bsz: int,<br>seq_len: int,<br>**kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    cu_seqlens: Optional[torch.Tensor],
+    bsz: int,
+    seq_len: int,
+    **kwargs,
+) -&gt; torch.Tensor:
+    r&#34;&#34;&#34;
+    Args:
+        cu_seqlens: [b]
+    Returns:
+         [b * s, h, head_size]
+    &#34;&#34;&#34;
+    if cu_seqlens is None:
+        cu_seqlens = _get_cu_seqlens_for_shape(bsz, seq_len, device=q.device)
+
+    # [b * s, head, head_size]
+    output = torch.empty_like(q)
+    seq_lens = cu_seqlens[1:] - cu_seqlens[:-1]
+    max_seqlen = seq_lens.max().item()
+    context_attention_fwd(
+        q,
+        k,
+        v,
+        output,
+        cu_seqlens.cuda(),
+        seq_lens.cuda(),
+        max_seqlen,
+        is_causal=False,
+    )
+
+    return output</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cu_seqlens</code></strong></dt>
+<dd>[b]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>[b * s, h, head_size]</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.attention" href="index.html">sglang.srt.layers.attention</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.vision.SingletonCache" href="#sglang.srt.layers.attention.vision.SingletonCache">SingletonCache</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.vision.SingletonCache.data" href="#sglang.srt.layers.attention.vision.SingletonCache.data">data</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.vision.SingletonCache.empty" href="#sglang.srt.layers.attention.vision.SingletonCache.empty">empty</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.vision.SingletonCache.get_data" href="#sglang.srt.layers.attention.vision.SingletonCache.get_data">get_data</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.vision.SingletonCache.set_data" href="#sglang.srt.layers.attention.vision.SingletonCache.set_data">set_data</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.vision.VisionAttention" href="#sglang.srt.layers.attention.vision.VisionAttention">VisionAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.vision.VisionAttention.forward" href="#sglang.srt.layers.attention.vision.VisionAttention.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.vision.VisionFlash3Attention" href="#sglang.srt.layers.attention.vision.VisionFlash3Attention">VisionFlash3Attention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.vision.VisionFlash3Attention.forward" href="#sglang.srt.layers.attention.vision.VisionFlash3Attention.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.vision.VisionSdpaAttention" href="#sglang.srt.layers.attention.vision.VisionSdpaAttention">VisionSdpaAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.vision.VisionSdpaAttention.forward" href="#sglang.srt.layers.attention.vision.VisionSdpaAttention.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.vision.VisionSdpaAttention.generate_patch_attention_mask" href="#sglang.srt.layers.attention.vision.VisionSdpaAttention.generate_patch_attention_mask">generate_patch_attention_mask</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.vision.VisionTritonAttention" href="#sglang.srt.layers.attention.vision.VisionTritonAttention">VisionTritonAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.vision.VisionTritonAttention.forward" href="#sglang.srt.layers.attention.vision.VisionTritonAttention.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

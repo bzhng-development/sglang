@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.distributed.device_communicators.pynccl API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.distributed.device_communicators.pynccl</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator"><code class="flex name class">
+<span>class <span class="ident">PyNcclCommunicator</span></span>
+<span>(</span><span>group: torch.distributed.distributed_c10d.ProcessGroup | <a title="sglang.srt.distributed.utils.StatelessProcessGroup" href="../utils.html#sglang.srt.distributed.utils.StatelessProcessGroup">StatelessProcessGroup</a>,<br>device: int | str | torch.device,<br>library_path: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PyNcclCommunicator:
+
+    def __init__(
+        self,
+        group: Union[ProcessGroup, StatelessProcessGroup],
+        device: Union[int, str, torch.device],
+        library_path: Optional[str] = None,
+    ):
+        &#34;&#34;&#34;
+        Args:
+            group: the process group to work on. If None, it will use the
+                default process group.
+            device: the device to bind the PyNcclCommunicator to. If None,
+                it will be bind to f&#34;cuda:{local_rank}&#34;.
+            library_path: the path to the NCCL library. If None, it will
+                use the default library path.
+        It is the caller&#39;s responsibility to make sure each communicator
+        is bind to a unique device.
+        &#34;&#34;&#34;
+        if not isinstance(group, StatelessProcessGroup):
+            assert dist.is_initialized()
+            assert (
+                dist.get_backend(group) != dist.Backend.NCCL
+            ), &#34;PyNcclCommunicator should be attached to a non-NCCL group.&#34;
+            # note: this rank is the rank in the group
+            self.rank = dist.get_rank(group)
+            self.world_size = dist.get_world_size(group)
+        else:
+            self.rank = group.rank
+            self.world_size = group.world_size
+
+        self.group = group
+
+        # if world_size == 1, no need to create communicator
+        if self.world_size == 1:
+            self.available = False
+            self.disabled = True
+            self.stream = None
+            return
+        try:
+            self.nccl = NCCLLibrary(library_path)
+        except Exception:
+            # disable because of missing NCCL library
+            # e.g. in a non-GPU environment
+            self.available = False
+            self.disabled = True
+            self.stream = None
+            return
+
+        self.available = True
+        self.disabled = False
+
+        self.nccl_version = self.nccl.ncclGetRawVersion()
+        if self.rank == 0:
+            logger.info(&#34;sglang is using nccl==%s&#34;, self.nccl.ncclGetVersion())
+
+        if self.rank == 0:
+            # get the unique id from NCCL
+            self.unique_id = self.nccl.ncclGetUniqueId()
+        else:
+            # construct an empty unique id
+            self.unique_id = ncclUniqueId()
+
+        if not isinstance(group, StatelessProcessGroup):
+            tensor = torch.ByteTensor(list(self.unique_id.internal))
+            ranks = dist.get_process_group_ranks(group)
+            # arg `src` in `broadcast` is the global rank
+            dist.broadcast(tensor, src=ranks[0], group=group)
+            byte_list = tensor.tolist()
+            for i, byte in enumerate(byte_list):
+                self.unique_id.internal[i] = byte
+        else:
+            self.unique_id = group.broadcast_obj(self.unique_id, src=0)
+        if isinstance(device, int):
+            device = torch.device(f&#34;cuda:{device}&#34;)
+        elif isinstance(device, str):
+            device = torch.device(device)
+        # now `device` is a `torch.device` object
+        assert isinstance(device, torch.device)
+        self.device = device
+        # nccl communicator and stream will use this device
+        # `torch.cuda.device` is a context manager that changes the
+        # current cuda device to the specified one
+        with torch.cuda.device(device):
+            self.comm: ncclComm_t = self.nccl.ncclCommInitRank(
+                self.world_size, self.unique_id, self.rank
+            )
+            self.stream = torch.cuda.Stream()
+
+            # A small all_reduce for warmup.
+            data = torch.zeros(1, device=device)
+            self.all_reduce(data)
+            self.stream.synchronize()
+            del data
+
+        # by default it is disabled, e.g. in profiling models and prefill phase.
+        # to use it, use under `with obj.change_state(enable=True)`, usually
+        # when we are using CUDA graph.
+        self.disabled = True
+
+    def all_reduce(
+        self, tensor: torch.Tensor, op: ReduceOp = ReduceOp.SUM, stream=None
+    ):
+        if self.disabled:
+            return
+        # nccl communicator created on a specific device
+        # will only work on tensors on the same device
+        # otherwise it will cause &#34;illegal memory access&#34;
+        assert tensor.device == self.device, (
+            f&#34;this nccl communicator is created to work on {self.device}, &#34;
+            f&#34;but the input tensor is on {tensor.device}&#34;
+        )
+        if stream is None:
+            stream = self.stream
+        self.nccl.ncclAllReduce(
+            buffer_type(tensor.data_ptr()),
+            buffer_type(tensor.data_ptr()),
+            tensor.numel(),
+            ncclDataTypeEnum.from_torch(tensor.dtype),
+            ncclRedOpTypeEnum.from_torch(op),
+            self.comm,
+            cudaStream_t(stream.cuda_stream),
+        )
+
+    def all_gather(
+        self,
+        output_tensor: torch.Tensor,
+        input_tensor: torch.Tensor,
+        stream=None,
+        sizes: Optional[list[int]] = None,
+    ):
+        if self.disabled:
+            return
+        # nccl communicator created on a specific device
+        # will only work on tensors on the same device
+        # otherwise it will cause &#34;illegal memory access&#34;
+        assert input_tensor.device == self.device, (
+            f&#34;this nccl communicator is created to work on {self.device}, &#34;
+            f&#34;but the input tensor is on {input_tensor.device}&#34;
+        )
+        if stream is None:
+            stream = self.stream
+
+        if sizes is not None:
+            split_offset = 0
+
+            self.nccl.ncclGroupStart()
+            for root, split_size in enumerate(sizes):
+                dst_slice = output_tensor[split_offset : split_offset + split_size]
+                self.nccl.ncclBroadcast(
+                    buffer_type(input_tensor.data_ptr()),
+                    buffer_type(dst_slice.data_ptr()),
+                    dst_slice.numel(),
+                    ncclDataTypeEnum.from_torch(input_tensor.dtype),
+                    root,
+                    self.comm,
+                    cudaStream_t(stream.cuda_stream),
+                )
+                split_offset += split_size
+            self.nccl.ncclGroupEnd()
+        else:
+            self.nccl.ncclAllGather(
+                buffer_type(input_tensor.data_ptr()),
+                buffer_type(output_tensor.data_ptr()),
+                input_tensor.numel(),
+                ncclDataTypeEnum.from_torch(input_tensor.dtype),
+                self.comm,
+                cudaStream_t(stream.cuda_stream),
+            )
+
+    def reduce_scatter(
+        self,
+        output_tensor: torch.Tensor,
+        input_tensor: torch.Tensor,
+        op: ReduceOp = ReduceOp.SUM,
+        stream=None,
+        sizes: Optional[list[int]] = None,
+    ):
+        if self.disabled:
+            return
+        # nccl communicator created on a specific device
+        # will only work on tensors on the same device
+        # otherwise it will cause &#34;illegal memory access&#34;
+        assert input_tensor.device == self.device, (
+            f&#34;this nccl communicator is created to work on {self.device}, &#34;
+            f&#34;but the input tensor is on {input_tensor.device}&#34;
+        )
+        if stream is None:
+            stream = self.stream
+
+        if sizes is not None:
+            split_offset = 0
+            self.nccl.ncclGroupStart()
+            for root, split_size in enumerate(sizes):
+                chunk = input_tensor[split_offset : split_offset + split_size, ...]
+
+                self.nccl.ncclReduce(
+                    buffer_type(chunk.data_ptr()),
+                    buffer_type(output_tensor.data_ptr()),
+                    chunk.numel(),
+                    ncclDataTypeEnum.from_torch(input_tensor.dtype),
+                    ncclRedOpTypeEnum.from_torch(op),
+                    root,
+                    self.comm,
+                    cudaStream_t(stream.cuda_stream),
+                )
+                split_offset += split_size
+            self.nccl.ncclGroupEnd()
+        else:
+            self.nccl.ncclReduceScatter(
+                buffer_type(input_tensor.data_ptr()),
+                buffer_type(output_tensor.data_ptr()),
+                output_tensor.numel(),
+                ncclDataTypeEnum.from_torch(input_tensor.dtype),
+                ncclRedOpTypeEnum.from_torch(op),
+                self.comm,
+                cudaStream_t(stream.cuda_stream),
+            )
+
+    def send(self, tensor: torch.Tensor, dst: int, stream=None):
+        if self.disabled:
+            return
+        assert tensor.device == self.device, (
+            f&#34;this nccl communicator is created to work on {self.device}, &#34;
+            f&#34;but the input tensor is on {tensor.device}&#34;
+        )
+        if stream is None:
+            stream = self.stream
+        self.nccl.ncclSend(
+            buffer_type(tensor.data_ptr()),
+            tensor.numel(),
+            ncclDataTypeEnum.from_torch(tensor.dtype),
+            dst,
+            self.comm,
+            cudaStream_t(stream.cuda_stream),
+        )
+
+    def recv(self, tensor: torch.Tensor, src: int, stream=None):
+        if self.disabled:
+            return
+        assert tensor.device == self.device, (
+            f&#34;this nccl communicator is created to work on {self.device}, &#34;
+            f&#34;but the input tensor is on {tensor.device}&#34;
+        )
+        if stream is None:
+            stream = self.stream
+        self.nccl.ncclRecv(
+            buffer_type(tensor.data_ptr()),
+            tensor.numel(),
+            ncclDataTypeEnum.from_torch(tensor.dtype),
+            src,
+            self.comm,
+            cudaStream_t(stream.cuda_stream),
+        )
+
+    def broadcast(self, tensor: torch.Tensor, src: int, stream=None):
+        if self.disabled:
+            return
+        assert tensor.device == self.device, (
+            f&#34;this nccl communicator is created to work on {self.device}, &#34;
+            f&#34;but the input tensor is on {tensor.device}&#34;
+        )
+        if stream is None:
+            stream = self.stream
+        if src == self.rank:
+            sendbuff = buffer_type(tensor.data_ptr())
+            # NCCL requires the sender also to have a receive buffer
+            recvbuff = buffer_type(tensor.data_ptr())
+        else:
+            sendbuff = buffer_type()
+            recvbuff = buffer_type(tensor.data_ptr())
+        self.nccl.ncclBroadcast(
+            sendbuff,
+            recvbuff,
+            tensor.numel(),
+            ncclDataTypeEnum.from_torch(tensor.dtype),
+            src,
+            self.comm,
+            cudaStream_t(stream.cuda_stream),
+        )
+
+    def register_comm_window_raw(self, ptr: int, size: int):
+        return self.nccl.ncclCommWindowRegister(self.comm, buffer_type(ptr), size, 1)
+
+    def deregister_comm_window(self, window):
+        return self.nccl.ncclCommWindowDeregister(self.comm, window)
+
+    def group_start(self):
+        self.nccl.ncclGroupStart()
+
+    def group_end(self):
+        self.nccl.ncclGroupEnd()
+
+    @contextmanager
+    def change_state(
+        self, enable: Optional[bool] = None, stream: Optional[torch.cuda.Stream] = None
+    ):
+        &#34;&#34;&#34;
+        A context manager to change the state of the communicator.
+        &#34;&#34;&#34;
+        if enable is None:
+            # guess a default value when not specified
+            enable = self.available
+
+        if stream is None:
+            stream = self.stream
+
+        old_disable = self.disabled
+        old_stream = self.stream
+
+        self.stream = stream
+        self.disabled = not enable
+        yield
+
+        self.disabled = old_disable
+        self.stream = old_stream</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>group</code></strong></dt>
+<dd>the process group to work on. If None, it will use the
+default process group.</dd>
+<dt><strong><code>device</code></strong></dt>
+<dd>the device to bind the PyNcclCommunicator to. If None,
+it will be bind to f"cuda:{local_rank}".</dd>
+<dt><strong><code>library_path</code></strong></dt>
+<dd>the path to the NCCL library. If None, it will
+use the default library path.</dd>
+</dl>
+<p>It is the caller's responsibility to make sure each communicator
+is bind to a unique device.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.all_gather"><code class="name flex">
+<span>def <span class="ident">all_gather</span></span>(<span>self,<br>output_tensor: torch.Tensor,<br>input_tensor: torch.Tensor,<br>stream=None,<br>sizes: list[int] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def all_gather(
+    self,
+    output_tensor: torch.Tensor,
+    input_tensor: torch.Tensor,
+    stream=None,
+    sizes: Optional[list[int]] = None,
+):
+    if self.disabled:
+        return
+    # nccl communicator created on a specific device
+    # will only work on tensors on the same device
+    # otherwise it will cause &#34;illegal memory access&#34;
+    assert input_tensor.device == self.device, (
+        f&#34;this nccl communicator is created to work on {self.device}, &#34;
+        f&#34;but the input tensor is on {input_tensor.device}&#34;
+    )
+    if stream is None:
+        stream = self.stream
+
+    if sizes is not None:
+        split_offset = 0
+
+        self.nccl.ncclGroupStart()
+        for root, split_size in enumerate(sizes):
+            dst_slice = output_tensor[split_offset : split_offset + split_size]
+            self.nccl.ncclBroadcast(
+                buffer_type(input_tensor.data_ptr()),
+                buffer_type(dst_slice.data_ptr()),
+                dst_slice.numel(),
+                ncclDataTypeEnum.from_torch(input_tensor.dtype),
+                root,
+                self.comm,
+                cudaStream_t(stream.cuda_stream),
+            )
+            split_offset += split_size
+        self.nccl.ncclGroupEnd()
+    else:
+        self.nccl.ncclAllGather(
+            buffer_type(input_tensor.data_ptr()),
+            buffer_type(output_tensor.data_ptr()),
+            input_tensor.numel(),
+            ncclDataTypeEnum.from_torch(input_tensor.dtype),
+            self.comm,
+            cudaStream_t(stream.cuda_stream),
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.all_reduce"><code class="name flex">
+<span>def <span class="ident">all_reduce</span></span>(<span>self,<br>tensor: torch.Tensor,<br>op: torch.distributed.distributed_c10d.ReduceOp = &lt;RedOpType.SUM: 0&gt;,<br>stream=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def all_reduce(
+    self, tensor: torch.Tensor, op: ReduceOp = ReduceOp.SUM, stream=None
+):
+    if self.disabled:
+        return
+    # nccl communicator created on a specific device
+    # will only work on tensors on the same device
+    # otherwise it will cause &#34;illegal memory access&#34;
+    assert tensor.device == self.device, (
+        f&#34;this nccl communicator is created to work on {self.device}, &#34;
+        f&#34;but the input tensor is on {tensor.device}&#34;
+    )
+    if stream is None:
+        stream = self.stream
+    self.nccl.ncclAllReduce(
+        buffer_type(tensor.data_ptr()),
+        buffer_type(tensor.data_ptr()),
+        tensor.numel(),
+        ncclDataTypeEnum.from_torch(tensor.dtype),
+        ncclRedOpTypeEnum.from_torch(op),
+        self.comm,
+        cudaStream_t(stream.cuda_stream),
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.broadcast"><code class="name flex">
+<span>def <span class="ident">broadcast</span></span>(<span>self, tensor: torch.Tensor, src: int, stream=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def broadcast(self, tensor: torch.Tensor, src: int, stream=None):
+    if self.disabled:
+        return
+    assert tensor.device == self.device, (
+        f&#34;this nccl communicator is created to work on {self.device}, &#34;
+        f&#34;but the input tensor is on {tensor.device}&#34;
+    )
+    if stream is None:
+        stream = self.stream
+    if src == self.rank:
+        sendbuff = buffer_type(tensor.data_ptr())
+        # NCCL requires the sender also to have a receive buffer
+        recvbuff = buffer_type(tensor.data_ptr())
+    else:
+        sendbuff = buffer_type()
+        recvbuff = buffer_type(tensor.data_ptr())
+    self.nccl.ncclBroadcast(
+        sendbuff,
+        recvbuff,
+        tensor.numel(),
+        ncclDataTypeEnum.from_torch(tensor.dtype),
+        src,
+        self.comm,
+        cudaStream_t(stream.cuda_stream),
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.change_state"><code class="name flex">
+<span>def <span class="ident">change_state</span></span>(<span>self,<br>enable: bool | None = None,<br>stream: torch.cuda.streams.Stream | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def change_state(
+    self, enable: Optional[bool] = None, stream: Optional[torch.cuda.Stream] = None
+):
+    &#34;&#34;&#34;
+    A context manager to change the state of the communicator.
+    &#34;&#34;&#34;
+    if enable is None:
+        # guess a default value when not specified
+        enable = self.available
+
+    if stream is None:
+        stream = self.stream
+
+    old_disable = self.disabled
+    old_stream = self.stream
+
+    self.stream = stream
+    self.disabled = not enable
+    yield
+
+    self.disabled = old_disable
+    self.stream = old_stream</code></pre>
+</details>
+<div class="desc"><p>A context manager to change the state of the communicator.</p></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.deregister_comm_window"><code class="name flex">
+<span>def <span class="ident">deregister_comm_window</span></span>(<span>self, window)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deregister_comm_window(self, window):
+    return self.nccl.ncclCommWindowDeregister(self.comm, window)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.group_end"><code class="name flex">
+<span>def <span class="ident">group_end</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def group_end(self):
+    self.nccl.ncclGroupEnd()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.group_start"><code class="name flex">
+<span>def <span class="ident">group_start</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def group_start(self):
+    self.nccl.ncclGroupStart()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.recv"><code class="name flex">
+<span>def <span class="ident">recv</span></span>(<span>self, tensor: torch.Tensor, src: int, stream=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def recv(self, tensor: torch.Tensor, src: int, stream=None):
+    if self.disabled:
+        return
+    assert tensor.device == self.device, (
+        f&#34;this nccl communicator is created to work on {self.device}, &#34;
+        f&#34;but the input tensor is on {tensor.device}&#34;
+    )
+    if stream is None:
+        stream = self.stream
+    self.nccl.ncclRecv(
+        buffer_type(tensor.data_ptr()),
+        tensor.numel(),
+        ncclDataTypeEnum.from_torch(tensor.dtype),
+        src,
+        self.comm,
+        cudaStream_t(stream.cuda_stream),
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.reduce_scatter"><code class="name flex">
+<span>def <span class="ident">reduce_scatter</span></span>(<span>self,<br>output_tensor: torch.Tensor,<br>input_tensor: torch.Tensor,<br>op: torch.distributed.distributed_c10d.ReduceOp = &lt;RedOpType.SUM: 0&gt;,<br>stream=None,<br>sizes: list[int] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reduce_scatter(
+    self,
+    output_tensor: torch.Tensor,
+    input_tensor: torch.Tensor,
+    op: ReduceOp = ReduceOp.SUM,
+    stream=None,
+    sizes: Optional[list[int]] = None,
+):
+    if self.disabled:
+        return
+    # nccl communicator created on a specific device
+    # will only work on tensors on the same device
+    # otherwise it will cause &#34;illegal memory access&#34;
+    assert input_tensor.device == self.device, (
+        f&#34;this nccl communicator is created to work on {self.device}, &#34;
+        f&#34;but the input tensor is on {input_tensor.device}&#34;
+    )
+    if stream is None:
+        stream = self.stream
+
+    if sizes is not None:
+        split_offset = 0
+        self.nccl.ncclGroupStart()
+        for root, split_size in enumerate(sizes):
+            chunk = input_tensor[split_offset : split_offset + split_size, ...]
+
+            self.nccl.ncclReduce(
+                buffer_type(chunk.data_ptr()),
+                buffer_type(output_tensor.data_ptr()),
+                chunk.numel(),
+                ncclDataTypeEnum.from_torch(input_tensor.dtype),
+                ncclRedOpTypeEnum.from_torch(op),
+                root,
+                self.comm,
+                cudaStream_t(stream.cuda_stream),
+            )
+            split_offset += split_size
+        self.nccl.ncclGroupEnd()
+    else:
+        self.nccl.ncclReduceScatter(
+            buffer_type(input_tensor.data_ptr()),
+            buffer_type(output_tensor.data_ptr()),
+            output_tensor.numel(),
+            ncclDataTypeEnum.from_torch(input_tensor.dtype),
+            ncclRedOpTypeEnum.from_torch(op),
+            self.comm,
+            cudaStream_t(stream.cuda_stream),
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.register_comm_window_raw"><code class="name flex">
+<span>def <span class="ident">register_comm_window_raw</span></span>(<span>self, ptr: int, size: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_comm_window_raw(self, ptr: int, size: int):
+    return self.nccl.ncclCommWindowRegister(self.comm, buffer_type(ptr), size, 1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.send"><code class="name flex">
+<span>def <span class="ident">send</span></span>(<span>self, tensor: torch.Tensor, dst: int, stream=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send(self, tensor: torch.Tensor, dst: int, stream=None):
+    if self.disabled:
+        return
+    assert tensor.device == self.device, (
+        f&#34;this nccl communicator is created to work on {self.device}, &#34;
+        f&#34;but the input tensor is on {tensor.device}&#34;
+    )
+    if stream is None:
+        stream = self.stream
+    self.nccl.ncclSend(
+        buffer_type(tensor.data_ptr()),
+        tensor.numel(),
+        ncclDataTypeEnum.from_torch(tensor.dtype),
+        dst,
+        self.comm,
+        cudaStream_t(stream.cuda_stream),
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.distributed.device_communicators" href="index.html">sglang.srt.distributed.device_communicators</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator">PyNcclCommunicator</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.all_gather" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.all_gather">all_gather</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.all_reduce" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.all_reduce">all_reduce</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.broadcast" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.broadcast">broadcast</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.change_state" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.change_state">change_state</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.deregister_comm_window" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.deregister_comm_window">deregister_comm_window</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.group_end" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.group_end">group_end</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.group_start" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.group_start">group_start</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.recv" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.recv">recv</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.reduce_scatter" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.reduce_scatter">reduce_scatter</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.register_comm_window_raw" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.register_comm_window_raw">register_comm_window_raw</a></code></li>
+<li><code><a title="sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.send" href="#sglang.srt.distributed.device_communicators.pynccl.PyNcclCommunicator.send">send</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1046 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.metrics.collector API documentation</title>
+<meta name="description" content="Utilities for Prometheus Metrics Collection.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.metrics.collector</code></h1>
+</header>
+<section id="section-intro">
+<p>Utilities for Prometheus Metrics Collection.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.metrics.collector.SchedulerMetricsCollector"><code class="flex name class">
+<span>class <span class="ident">SchedulerMetricsCollector</span></span>
+<span>(</span><span>labels: Dict[str, str])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SchedulerMetricsCollector:
+
+    def __init__(self, labels: Dict[str, str]) -&gt; None:
+        # We need to import prometheus_client after setting the env variable `PROMETHEUS_MULTIPROC_DIR`
+        from prometheus_client import Counter, Gauge
+
+        self.labels = labels
+        self.last_log_time = time.perf_counter()
+
+        self.num_running_reqs = Gauge(
+            name=&#34;sglang:num_running_reqs&#34;,
+            documentation=&#34;The number of running requests.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_used_tokens = Gauge(
+            name=&#34;sglang:num_used_tokens&#34;,
+            documentation=&#34;The number of used tokens.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.token_usage = Gauge(
+            name=&#34;sglang:token_usage&#34;,
+            documentation=&#34;The token usage.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.gen_throughput = Gauge(
+            name=&#34;sglang:gen_throughput&#34;,
+            documentation=&#34;The generation throughput (token/s).&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_queue_reqs = Gauge(
+            name=&#34;sglang:num_queue_reqs&#34;,
+            documentation=&#34;The number of requests in the waiting queue.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_grammar_queue_reqs = Gauge(
+            name=&#34;sglang:num_grammar_queue_reqs&#34;,
+            documentation=&#34;The number of requests in the grammar waiting queue.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.cache_hit_rate = Gauge(
+            name=&#34;sglang:cache_hit_rate&#34;,
+            documentation=&#34;The prefix cache hit rate.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.spec_accept_length = Gauge(
+            name=&#34;sglang:spec_accept_length&#34;,
+            documentation=&#34;The average acceptance length of speculative decoding.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.avg_request_queue_latency = Gauge(
+            name=&#34;sglang:avg_request_queue_latency&#34;,
+            documentation=&#34;The average request queue latency for the last batch of requests in seconds.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.total_retracted_reqs = Gauge(
+            name=&#34;sglang:total_retracted_reqs&#34;,
+            documentation=&#34;The total number of retracted requests due to kvcache full.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        # Disaggregation queue metrics
+        self.num_prefill_prealloc_queue_reqs = Gauge(
+            name=&#34;sglang:num_prefill_prealloc_queue_reqs&#34;,
+            documentation=&#34;The number of requests in the prefill prealloc queue.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_prefill_inflight_queue_reqs = Gauge(
+            name=&#34;sglang:num_prefill_inflight_queue_reqs&#34;,
+            documentation=&#34;The number of requests in the prefill inflight queue.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_decode_prealloc_queue_reqs = Gauge(
+            name=&#34;sglang:num_decode_prealloc_queue_reqs&#34;,
+            documentation=&#34;The number of requests in the decode prealloc queue.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_decode_transfer_queue_reqs = Gauge(
+            name=&#34;sglang:num_decode_transfer_queue_reqs&#34;,
+            documentation=&#34;The number of requests in the decode transfer queue.&#34;,
+            labelnames=labels.keys(),
+            multiprocess_mode=&#34;mostrecent&#34;,
+        )
+
+        self.num_bootstrap_failed_reqs = Counter(
+            name=&#34;sglang:num_bootstrap_failed_reqs&#34;,
+            documentation=&#34;The number of bootstrap failed requests.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        self.num_transfer_failed_reqs = Counter(
+            name=&#34;sglang:num_transfer_failed_reqs&#34;,
+            documentation=&#34;The number of transfer failed requests.&#34;,
+            labelnames=labels.keys(),
+        )
+
+    def _log_gauge(self, gauge, data: Union[int, float]) -&gt; None:
+        # Convenience function for logging to gauge.
+        gauge.labels(**self.labels).set(data)
+
+    def increment_bootstrap_failed_reqs(self) -&gt; None:
+        self.num_bootstrap_failed_reqs.labels(**self.labels).inc(1)
+
+    def increment_transfer_failed_reqs(self) -&gt; None:
+        self.num_transfer_failed_reqs.labels(**self.labels).inc(1)
+
+    def log_stats(self, stats: SchedulerStats) -&gt; None:
+        self._log_gauge(self.num_running_reqs, stats.num_running_reqs)
+        self._log_gauge(self.num_used_tokens, stats.num_used_tokens)
+        self._log_gauge(self.token_usage, stats.token_usage)
+        self._log_gauge(self.gen_throughput, stats.gen_throughput)
+        self._log_gauge(self.num_queue_reqs, stats.num_queue_reqs)
+        self._log_gauge(self.num_grammar_queue_reqs, stats.num_grammar_queue_reqs)
+        self._log_gauge(self.cache_hit_rate, stats.cache_hit_rate)
+        self._log_gauge(self.spec_accept_length, stats.spec_accept_length)
+        self._log_gauge(self.total_retracted_reqs, stats.total_retracted_reqs)
+
+        # Disaggregation metrics
+        self._log_gauge(
+            self.num_prefill_prealloc_queue_reqs, stats.num_prefill_prealloc_queue_reqs
+        )
+        self._log_gauge(
+            self.num_prefill_inflight_queue_reqs, stats.num_prefill_inflight_queue_reqs
+        )
+        self._log_gauge(
+            self.num_decode_prealloc_queue_reqs, stats.num_decode_prealloc_queue_reqs
+        )
+        self._log_gauge(
+            self.num_decode_transfer_queue_reqs, stats.num_decode_transfer_queue_reqs
+        )
+
+        self.last_log_time = time.perf_counter()</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.metrics.collector.SchedulerMetricsCollector.increment_bootstrap_failed_reqs"><code class="name flex">
+<span>def <span class="ident">increment_bootstrap_failed_reqs</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def increment_bootstrap_failed_reqs(self) -&gt; None:
+    self.num_bootstrap_failed_reqs.labels(**self.labels).inc(1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerMetricsCollector.increment_transfer_failed_reqs"><code class="name flex">
+<span>def <span class="ident">increment_transfer_failed_reqs</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def increment_transfer_failed_reqs(self) -&gt; None:
+    self.num_transfer_failed_reqs.labels(**self.labels).inc(1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerMetricsCollector.log_stats"><code class="name flex">
+<span>def <span class="ident">log_stats</span></span>(<span>self,<br>stats: <a title="sglang.srt.metrics.collector.SchedulerStats" href="#sglang.srt.metrics.collector.SchedulerStats">SchedulerStats</a>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_stats(self, stats: SchedulerStats) -&gt; None:
+    self._log_gauge(self.num_running_reqs, stats.num_running_reqs)
+    self._log_gauge(self.num_used_tokens, stats.num_used_tokens)
+    self._log_gauge(self.token_usage, stats.token_usage)
+    self._log_gauge(self.gen_throughput, stats.gen_throughput)
+    self._log_gauge(self.num_queue_reqs, stats.num_queue_reqs)
+    self._log_gauge(self.num_grammar_queue_reqs, stats.num_grammar_queue_reqs)
+    self._log_gauge(self.cache_hit_rate, stats.cache_hit_rate)
+    self._log_gauge(self.spec_accept_length, stats.spec_accept_length)
+    self._log_gauge(self.total_retracted_reqs, stats.total_retracted_reqs)
+
+    # Disaggregation metrics
+    self._log_gauge(
+        self.num_prefill_prealloc_queue_reqs, stats.num_prefill_prealloc_queue_reqs
+    )
+    self._log_gauge(
+        self.num_prefill_inflight_queue_reqs, stats.num_prefill_inflight_queue_reqs
+    )
+    self._log_gauge(
+        self.num_decode_prealloc_queue_reqs, stats.num_decode_prealloc_queue_reqs
+    )
+    self._log_gauge(
+        self.num_decode_transfer_queue_reqs, stats.num_decode_transfer_queue_reqs
+    )
+
+    self.last_log_time = time.perf_counter()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats"><code class="flex name class">
+<span>class <span class="ident">SchedulerStats</span></span>
+<span>(</span><span>num_running_reqs: int = 0,<br>num_used_tokens: int = 0,<br>token_usage: float = 0.0,<br>gen_throughput: float = 0.0,<br>num_queue_reqs: int = 0,<br>cache_hit_rate: float = 0.0,<br>num_grammar_queue_reqs: int = 0,<br>spec_accept_length: float = 0.0,<br>avg_request_queue_latency: float = 0.0,<br>num_prefill_prealloc_queue_reqs: int = 0,<br>num_prefill_inflight_queue_reqs: int = 0,<br>num_decode_prealloc_queue_reqs: int = 0,<br>num_decode_transfer_queue_reqs: int = 0,<br>total_retracted_reqs: int = 0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class SchedulerStats:
+    num_running_reqs: int = 0
+    num_used_tokens: int = 0
+    token_usage: float = 0.0
+    gen_throughput: float = 0.0
+    num_queue_reqs: int = 0
+    cache_hit_rate: float = 0.0
+    num_grammar_queue_reqs: int = 0
+    spec_accept_length: float = 0.0
+    avg_request_queue_latency: float = 0.0
+    num_prefill_prealloc_queue_reqs: int = 0
+    num_prefill_inflight_queue_reqs: int = 0
+    num_decode_prealloc_queue_reqs: int = 0
+    num_decode_transfer_queue_reqs: int = 0
+    total_retracted_reqs: int = 0</code></pre>
+</details>
+<div class="desc"><p>SchedulerStats(num_running_reqs: int = 0, num_used_tokens: int = 0, token_usage: float = 0.0, gen_throughput: float = 0.0, num_queue_reqs: int = 0, cache_hit_rate: float = 0.0, num_grammar_queue_reqs: int = 0, spec_accept_length: float = 0.0, avg_request_queue_latency: float = 0.0, num_prefill_prealloc_queue_reqs: int = 0, num_prefill_inflight_queue_reqs: int = 0, num_decode_prealloc_queue_reqs: int = 0, num_decode_transfer_queue_reqs: int = 0, total_retracted_reqs: int = 0)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.avg_request_queue_latency"><code class="name">var <span class="ident">avg_request_queue_latency</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.cache_hit_rate"><code class="name">var <span class="ident">cache_hit_rate</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.gen_throughput"><code class="name">var <span class="ident">gen_throughput</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_decode_prealloc_queue_reqs"><code class="name">var <span class="ident">num_decode_prealloc_queue_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_decode_transfer_queue_reqs"><code class="name">var <span class="ident">num_decode_transfer_queue_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_grammar_queue_reqs"><code class="name">var <span class="ident">num_grammar_queue_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_prefill_inflight_queue_reqs"><code class="name">var <span class="ident">num_prefill_inflight_queue_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_prefill_prealloc_queue_reqs"><code class="name">var <span class="ident">num_prefill_prealloc_queue_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_queue_reqs"><code class="name">var <span class="ident">num_queue_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_running_reqs"><code class="name">var <span class="ident">num_running_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.num_used_tokens"><code class="name">var <span class="ident">num_used_tokens</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.spec_accept_length"><code class="name">var <span class="ident">spec_accept_length</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.token_usage"><code class="name">var <span class="ident">token_usage</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.SchedulerStats.total_retracted_reqs"><code class="name">var <span class="ident">total_retracted_reqs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats"><code class="flex name class">
+<span>class <span class="ident">TimeStats</span></span>
+<span>(</span><span>lb_entry_time: float = 0.0,<br>wait_queue_entry_time: float = 0.0,<br>forward_entry_time: float = 0.0,<br>completion_time: float = 0.0,<br>prefill_bootstrap_queue_entry_time: float = 0.0,<br>prefill_transfer_queue_entry_time: float = 0.0,<br>decode_prealloc_queue_entry_time: float = 0.0,<br>decode_transfer_queue_entry_time: float = 0.0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class TimeStats:
+    &#34;&#34;&#34;
+    Store the timestamps for each stage of a request.
+
+    Unified: wait_queue -&gt; forward -&gt; completion
+    Prefill: bootstrap_queue -&gt; wait_queue -&gt; forward -&gt; transfer_queue -&gt; completion
+    Decode: prealloc_queue -&gt; transfer_queue -&gt; wait_queue -&gt; forward -&gt; completion
+    &#34;&#34;&#34;
+
+    lb_entry_time: float = 0.0
+    wait_queue_entry_time: float = 0.0
+    forward_entry_time: float = 0.0
+    completion_time: float = 0.0
+    prefill_bootstrap_queue_entry_time: float = 0.0
+    prefill_transfer_queue_entry_time: float = 0.0
+    decode_prealloc_queue_entry_time: float = 0.0
+    decode_transfer_queue_entry_time: float = 0.0
+
+    class RequestType(Enum):
+        UNIFIED = &#34;unified&#34;
+        PREFILL = &#34;prefill&#34;
+        DECODE = &#34;decode&#34;
+        INVALID = &#34;invalid&#34;
+
+    def __str__(self) -&gt; str:
+        # if unified
+        _type = self.get_type()
+
+        if _type == self.RequestType.UNIFIED:
+            queue_duration = self.forward_entry_time - self.wait_queue_entry_time
+            forward_duration = self.completion_time - self.forward_entry_time
+
+            if SGLANG_TEST_REQUEST_TIME_STATS:
+                assert (
+                    queue_duration &gt;= 0 and forward_duration &gt;= 0
+                ), f&#34;queue_duration={queue_duration} &lt; 0 or forward_duration={forward_duration} &lt; 0&#34;
+
+            return f&#34;queue_duration={self.format_duration(queue_duration)}, forward_duration={self.format_duration(forward_duration)}, start_time={self.wait_queue_entry_time}&#34;
+        elif _type == self.RequestType.PREFILL:
+            bootstrap_duration = (
+                self.wait_queue_entry_time - self.prefill_bootstrap_queue_entry_time
+            )
+
+            queue_duration = self.forward_entry_time - self.wait_queue_entry_time
+
+            forward_duration = self.completion_time - self.forward_entry_time
+
+            if SGLANG_TEST_REQUEST_TIME_STATS:
+                assert (
+                    bootstrap_duration &gt;= 0
+                    and queue_duration &gt;= 0
+                    and forward_duration &gt;= 0
+                ), f&#34;bootstrap_duration={bootstrap_duration} &lt; 0 or queue_duration={queue_duration} &lt; 0 or forward_duration={forward_duration} &lt; 0&#34;
+            return f&#34;bootstrap_duration={self.format_duration(bootstrap_duration)}, queue_duration={self.format_duration(queue_duration)}, forward_duration={self.format_duration(forward_duration)}, start_time={self.prefill_bootstrap_queue_entry_time}&#34;
+        # if decode
+        elif _type == self.RequestType.DECODE:
+            prealloc_duration = (
+                self.decode_transfer_queue_entry_time
+                - self.decode_prealloc_queue_entry_time
+            )
+
+            transfer_duration = (
+                self.wait_queue_entry_time - self.decode_transfer_queue_entry_time
+            )
+            queue_duration = self.forward_entry_time - self.wait_queue_entry_time
+            forward_duration = self.completion_time - self.forward_entry_time
+
+            if SGLANG_TEST_REQUEST_TIME_STATS:
+                assert (
+                    prealloc_duration &gt;= 0
+                    and transfer_duration &gt;= 0
+                    and queue_duration &gt;= 0
+                    and forward_duration &gt;= 0
+                ), f&#34;prealloc_duration={prealloc_duration} &lt; 0 or transfer_duration={transfer_duration} &lt; 0 or queue_duration={queue_duration} &lt; 0 or forward_duration={forward_duration} &lt; 0&#34;
+
+            return f&#34;prealloc_duration={self.format_duration(prealloc_duration)}, transfer_duration={self.format_duration(transfer_duration)}, queue_duration={self.format_duration(queue_duration)}, forward_duration={self.format_duration(forward_duration)}, start_time={self.decode_prealloc_queue_entry_time}&#34;
+        else:
+            return &#34;Invalid Time Stats&#34;
+
+    def format_duration(self, duration: float) -&gt; str:
+        return f&#34;{duration * 1e3:.2f}ms&#34;
+
+    def get_type(self) -&gt; RequestType:
+        &#34;&#34;&#34;Determine the type of request based on timestamp values.&#34;&#34;&#34;
+        if (
+            self.prefill_bootstrap_queue_entry_time == 0.0
+            and self.prefill_transfer_queue_entry_time == 0.0
+            and self.decode_prealloc_queue_entry_time == 0.0
+            and self.decode_transfer_queue_entry_time == 0.0
+        ):
+            return self.RequestType.UNIFIED
+        elif (
+            self.prefill_bootstrap_queue_entry_time &gt; 0.0
+            and self.prefill_transfer_queue_entry_time &gt; 0.0
+        ):
+            return self.RequestType.PREFILL
+        elif (
+            self.decode_prealloc_queue_entry_time &gt; 0.0
+            and self.decode_transfer_queue_entry_time &gt; 0.0
+            and self.wait_queue_entry_time &gt; 0.0
+        ):
+            return self.RequestType.DECODE
+        else:
+            return self.RequestType.INVALID</code></pre>
+</details>
+<div class="desc"><p>Store the timestamps for each stage of a request.</p>
+<p>Unified: wait_queue -&gt; forward -&gt; completion
+Prefill: bootstrap_queue -&gt; wait_queue -&gt; forward -&gt; transfer_queue -&gt; completion
+Decode: prealloc_queue -&gt; transfer_queue -&gt; wait_queue -&gt; forward -&gt; completion</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.metrics.collector.TimeStats.RequestType"><code class="name">var <span class="ident">RequestType</span></code></dt>
+<dd>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color.RED
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>value lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color(1)
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>name lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color['RED']
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.metrics.collector.TimeStats.completion_time"><code class="name">var <span class="ident">completion_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.decode_prealloc_queue_entry_time"><code class="name">var <span class="ident">decode_prealloc_queue_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.decode_transfer_queue_entry_time"><code class="name">var <span class="ident">decode_transfer_queue_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.forward_entry_time"><code class="name">var <span class="ident">forward_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.lb_entry_time"><code class="name">var <span class="ident">lb_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.prefill_bootstrap_queue_entry_time"><code class="name">var <span class="ident">prefill_bootstrap_queue_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.prefill_transfer_queue_entry_time"><code class="name">var <span class="ident">prefill_transfer_queue_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.wait_queue_entry_time"><code class="name">var <span class="ident">wait_queue_entry_time</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.metrics.collector.TimeStats.format_duration"><code class="name flex">
+<span>def <span class="ident">format_duration</span></span>(<span>self, duration: float) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_duration(self, duration: float) -&gt; str:
+    return f&#34;{duration * 1e3:.2f}ms&#34;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TimeStats.get_type"><code class="name flex">
+<span>def <span class="ident">get_type</span></span>(<span>self) ‑> <a title="sglang.srt.metrics.collector.TimeStats.RequestType" href="#sglang.srt.metrics.collector.TimeStats.RequestType">TimeStats.RequestType</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_type(self) -&gt; RequestType:
+    &#34;&#34;&#34;Determine the type of request based on timestamp values.&#34;&#34;&#34;
+    if (
+        self.prefill_bootstrap_queue_entry_time == 0.0
+        and self.prefill_transfer_queue_entry_time == 0.0
+        and self.decode_prealloc_queue_entry_time == 0.0
+        and self.decode_transfer_queue_entry_time == 0.0
+    ):
+        return self.RequestType.UNIFIED
+    elif (
+        self.prefill_bootstrap_queue_entry_time &gt; 0.0
+        and self.prefill_transfer_queue_entry_time &gt; 0.0
+    ):
+        return self.RequestType.PREFILL
+    elif (
+        self.decode_prealloc_queue_entry_time &gt; 0.0
+        and self.decode_transfer_queue_entry_time &gt; 0.0
+        and self.wait_queue_entry_time &gt; 0.0
+    ):
+        return self.RequestType.DECODE
+    else:
+        return self.RequestType.INVALID</code></pre>
+</details>
+<div class="desc"><p>Determine the type of request based on timestamp values.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.metrics.collector.TokenizerMetricsCollector"><code class="flex name class">
+<span>class <span class="ident">TokenizerMetricsCollector</span></span>
+<span>(</span><span>labels: Dict[str, str],<br>bucket_time_to_first_token: List[float] | None = None,<br>bucket_inter_token_latency: List[float] | None = None,<br>bucket_e2e_request_latency: List[float] | None = None,<br>collect_tokens_histogram: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TokenizerMetricsCollector:
+    def __init__(
+        self,
+        labels: Dict[str, str],
+        bucket_time_to_first_token: Optional[List[float]] = None,
+        bucket_inter_token_latency: Optional[List[float]] = None,
+        bucket_e2e_request_latency: Optional[List[float]] = None,
+        collect_tokens_histogram: bool = False,
+    ) -&gt; None:
+        # We need to import prometheus_client after setting the env variable `PROMETHEUS_MULTIPROC_DIR`
+        from prometheus_client import Counter, Histogram
+
+        self.labels = labels
+        self.collect_tokens_histogram = collect_tokens_histogram
+
+        self.prompt_tokens_total = Counter(
+            name=&#34;sglang:prompt_tokens_total&#34;,
+            documentation=&#34;Number of prefill tokens processed.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        self.generation_tokens_total = Counter(
+            name=&#34;sglang:generation_tokens_total&#34;,
+            documentation=&#34;Number of generation tokens processed.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        if collect_tokens_histogram:
+            bucket_prompt_tokens = [
+                100,
+                300,
+                500,
+                700,
+                1000,
+                1500,
+                2000,
+                3000,
+                4000,
+                5000,
+                6000,
+                7000,
+                8000,
+                9000,
+                10000,
+                12000,
+                15000,
+                20000,
+                22000,
+                25000,
+                30000,
+                35000,
+                40000,
+            ]
+            self.prompt_tokens_histogram = Histogram(
+                name=&#34;sglang:prompt_tokens_histogram&#34;,
+                documentation=&#34;Histogram of prompt token length.&#34;,
+                labelnames=labels.keys(),
+                buckets=bucket_prompt_tokens,
+            )
+            bucket_generation_tokens = [
+                100,
+                300,
+                500,
+                1000,
+                1200,
+                1500,
+                1700,
+                2000,
+                2500,
+                3000,
+                3500,
+                4000,
+                4500,
+                5000,
+                6000,
+                7000,
+                8000,
+                9000,
+                10000,
+            ]
+            self.generation_tokens_histogram = Histogram(
+                name=&#34;sglang:generation_tokens_histogram&#34;,
+                documentation=&#34;Histogram of generation token length.&#34;,
+                labelnames=labels.keys(),
+                buckets=bucket_generation_tokens,
+            )
+
+        self.cached_tokens_total = Counter(
+            name=&#34;sglang:cached_tokens_total&#34;,
+            documentation=&#34;Number of cached prompt tokens.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        self.num_requests_total = Counter(
+            name=&#34;sglang:num_requests_total&#34;,
+            documentation=&#34;Number of requests processed.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        self.num_so_requests_total = Counter(
+            name=&#34;sglang:num_so_requests_total&#34;,
+            documentation=&#34;Number of structured output requests processed.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        self.num_aborted_requests_total = Counter(
+            name=&#34;sglang:num_aborted_requests&#34;,
+            documentation=&#34;Number of requests aborted.&#34;,
+            labelnames=labels.keys(),
+        )
+
+        if bucket_time_to_first_token is None:
+            bucket_time_to_first_token = [
+                0.1,
+                0.2,
+                0.4,
+                0.6,
+                0.8,
+                1,
+                2,
+                4,
+                6,
+                8,
+                10,
+                20,
+                40,
+                60,
+                80,
+                100,
+                200,
+                400,
+            ]
+
+        if bucket_e2e_request_latency is None:
+            bucket_e2e_request_latency = [
+                0.1,
+                0.2,
+                0.4,
+                0.6,
+                0.8,
+                1,
+                2,
+                4,
+                6,
+                8,
+                10,
+                20,
+                40,
+                60,
+                80,
+                100,
+                200,
+                400,
+                800,
+            ]
+
+        if bucket_inter_token_latency is None:
+            bucket_inter_token_latency = [
+                0.002,
+                0.004,
+                0.006,
+                0.008,
+                0.010,
+                0.015,
+                0.020,
+                0.025,
+                0.030,
+                0.035,
+                0.040,
+                0.060,
+                0.080,
+                0.100,
+                0.200,
+                0.400,
+                0.600,
+                0.800,
+                1.000,
+                2.000,
+                4.000,
+                6.000,
+                8.000,
+            ]
+
+        self.histogram_time_to_first_token = Histogram(
+            name=&#34;sglang:time_to_first_token_seconds&#34;,
+            documentation=&#34;Histogram of time to first token in seconds.&#34;,
+            labelnames=labels.keys(),
+            buckets=bucket_time_to_first_token,
+        )
+
+        self.histogram_inter_token_latency_seconds = Histogram(
+            name=&#34;sglang:inter_token_latency_seconds&#34;,
+            documentation=&#34;Histogram of inter-token latency in seconds.&#34;,
+            labelnames=labels.keys(),
+            buckets=bucket_inter_token_latency,
+        )
+
+        self.histogram_e2e_request_latency = Histogram(
+            name=&#34;sglang:e2e_request_latency_seconds&#34;,
+            documentation=&#34;Histogram of End-to-end request latency in seconds&#34;,
+            labelnames=labels.keys(),
+            buckets=bucket_e2e_request_latency,
+        )
+
+    def _log_histogram(self, histogram, data: Union[int, float]) -&gt; None:
+        histogram.labels(**self.labels).observe(data)
+
+    def observe_one_finished_request(
+        self,
+        prompt_tokens: int,
+        generation_tokens: int,
+        cached_tokens: int,
+        e2e_latency: float,
+        has_grammar: bool,
+    ):
+        self.prompt_tokens_total.labels(**self.labels).inc(prompt_tokens)
+        self.generation_tokens_total.labels(**self.labels).inc(generation_tokens)
+        if cached_tokens &gt; 0:
+            self.cached_tokens_total.labels(**self.labels).inc(cached_tokens)
+        self.num_requests_total.labels(**self.labels).inc(1)
+        if has_grammar:
+            self.num_so_requests_total.labels(**self.labels).inc(1)
+        self._log_histogram(self.histogram_e2e_request_latency, e2e_latency)
+        if self.collect_tokens_histogram:
+            self._log_histogram(self.prompt_tokens_histogram, prompt_tokens)
+            self._log_histogram(self.generation_tokens_histogram, generation_tokens)
+
+    def observe_time_to_first_token(self, value: float):
+        self.histogram_time_to_first_token.labels(**self.labels).observe(value)
+
+    def observe_inter_token_latency(self, internval: float, num_new_tokens: int):
+        adjusted_interval = internval / num_new_tokens
+
+        # A faster version of the Histogram::observe which observes multiple values at the same time.
+        # reference: https://github.com/prometheus/client_python/blob/v0.21.1/prometheus_client/metrics.py#L639
+        his = self.histogram_inter_token_latency_seconds.labels(**self.labels)
+        his._sum.inc(internval)
+
+        for i, bound in enumerate(his._upper_bounds):
+            if adjusted_interval &lt;= bound:
+                his._buckets[i].inc(num_new_tokens)
+                break
+
+    def observe_one_aborted_request(self):
+        self.num_aborted_requests_total.labels(**self.labels).inc(1)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_inter_token_latency"><code class="name flex">
+<span>def <span class="ident">observe_inter_token_latency</span></span>(<span>self, internval: float, num_new_tokens: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def observe_inter_token_latency(self, internval: float, num_new_tokens: int):
+    adjusted_interval = internval / num_new_tokens
+
+    # A faster version of the Histogram::observe which observes multiple values at the same time.
+    # reference: https://github.com/prometheus/client_python/blob/v0.21.1/prometheus_client/metrics.py#L639
+    his = self.histogram_inter_token_latency_seconds.labels(**self.labels)
+    his._sum.inc(internval)
+
+    for i, bound in enumerate(his._upper_bounds):
+        if adjusted_interval &lt;= bound:
+            his._buckets[i].inc(num_new_tokens)
+            break</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_one_aborted_request"><code class="name flex">
+<span>def <span class="ident">observe_one_aborted_request</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def observe_one_aborted_request(self):
+    self.num_aborted_requests_total.labels(**self.labels).inc(1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_one_finished_request"><code class="name flex">
+<span>def <span class="ident">observe_one_finished_request</span></span>(<span>self,<br>prompt_tokens: int,<br>generation_tokens: int,<br>cached_tokens: int,<br>e2e_latency: float,<br>has_grammar: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def observe_one_finished_request(
+    self,
+    prompt_tokens: int,
+    generation_tokens: int,
+    cached_tokens: int,
+    e2e_latency: float,
+    has_grammar: bool,
+):
+    self.prompt_tokens_total.labels(**self.labels).inc(prompt_tokens)
+    self.generation_tokens_total.labels(**self.labels).inc(generation_tokens)
+    if cached_tokens &gt; 0:
+        self.cached_tokens_total.labels(**self.labels).inc(cached_tokens)
+    self.num_requests_total.labels(**self.labels).inc(1)
+    if has_grammar:
+        self.num_so_requests_total.labels(**self.labels).inc(1)
+    self._log_histogram(self.histogram_e2e_request_latency, e2e_latency)
+    if self.collect_tokens_histogram:
+        self._log_histogram(self.prompt_tokens_histogram, prompt_tokens)
+        self._log_histogram(self.generation_tokens_histogram, generation_tokens)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_time_to_first_token"><code class="name flex">
+<span>def <span class="ident">observe_time_to_first_token</span></span>(<span>self, value: float)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def observe_time_to_first_token(self, value: float):
+    self.histogram_time_to_first_token.labels(**self.labels).observe(value)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.metrics" href="index.html">sglang.srt.metrics</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.metrics.collector.SchedulerMetricsCollector" href="#sglang.srt.metrics.collector.SchedulerMetricsCollector">SchedulerMetricsCollector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.metrics.collector.SchedulerMetricsCollector.increment_bootstrap_failed_reqs" href="#sglang.srt.metrics.collector.SchedulerMetricsCollector.increment_bootstrap_failed_reqs">increment_bootstrap_failed_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerMetricsCollector.increment_transfer_failed_reqs" href="#sglang.srt.metrics.collector.SchedulerMetricsCollector.increment_transfer_failed_reqs">increment_transfer_failed_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerMetricsCollector.log_stats" href="#sglang.srt.metrics.collector.SchedulerMetricsCollector.log_stats">log_stats</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.metrics.collector.SchedulerStats" href="#sglang.srt.metrics.collector.SchedulerStats">SchedulerStats</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.avg_request_queue_latency" href="#sglang.srt.metrics.collector.SchedulerStats.avg_request_queue_latency">avg_request_queue_latency</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.cache_hit_rate" href="#sglang.srt.metrics.collector.SchedulerStats.cache_hit_rate">cache_hit_rate</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.gen_throughput" href="#sglang.srt.metrics.collector.SchedulerStats.gen_throughput">gen_throughput</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_decode_prealloc_queue_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_decode_prealloc_queue_reqs">num_decode_prealloc_queue_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_decode_transfer_queue_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_decode_transfer_queue_reqs">num_decode_transfer_queue_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_grammar_queue_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_grammar_queue_reqs">num_grammar_queue_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_prefill_inflight_queue_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_prefill_inflight_queue_reqs">num_prefill_inflight_queue_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_prefill_prealloc_queue_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_prefill_prealloc_queue_reqs">num_prefill_prealloc_queue_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_queue_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_queue_reqs">num_queue_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_running_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.num_running_reqs">num_running_reqs</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.num_used_tokens" href="#sglang.srt.metrics.collector.SchedulerStats.num_used_tokens">num_used_tokens</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.spec_accept_length" href="#sglang.srt.metrics.collector.SchedulerStats.spec_accept_length">spec_accept_length</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.token_usage" href="#sglang.srt.metrics.collector.SchedulerStats.token_usage">token_usage</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.SchedulerStats.total_retracted_reqs" href="#sglang.srt.metrics.collector.SchedulerStats.total_retracted_reqs">total_retracted_reqs</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.metrics.collector.TimeStats" href="#sglang.srt.metrics.collector.TimeStats">TimeStats</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.RequestType" href="#sglang.srt.metrics.collector.TimeStats.RequestType">RequestType</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.completion_time" href="#sglang.srt.metrics.collector.TimeStats.completion_time">completion_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.decode_prealloc_queue_entry_time" href="#sglang.srt.metrics.collector.TimeStats.decode_prealloc_queue_entry_time">decode_prealloc_queue_entry_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.decode_transfer_queue_entry_time" href="#sglang.srt.metrics.collector.TimeStats.decode_transfer_queue_entry_time">decode_transfer_queue_entry_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.format_duration" href="#sglang.srt.metrics.collector.TimeStats.format_duration">format_duration</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.forward_entry_time" href="#sglang.srt.metrics.collector.TimeStats.forward_entry_time">forward_entry_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.get_type" href="#sglang.srt.metrics.collector.TimeStats.get_type">get_type</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.lb_entry_time" href="#sglang.srt.metrics.collector.TimeStats.lb_entry_time">lb_entry_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.prefill_bootstrap_queue_entry_time" href="#sglang.srt.metrics.collector.TimeStats.prefill_bootstrap_queue_entry_time">prefill_bootstrap_queue_entry_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.prefill_transfer_queue_entry_time" href="#sglang.srt.metrics.collector.TimeStats.prefill_transfer_queue_entry_time">prefill_transfer_queue_entry_time</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TimeStats.wait_queue_entry_time" href="#sglang.srt.metrics.collector.TimeStats.wait_queue_entry_time">wait_queue_entry_time</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.metrics.collector.TokenizerMetricsCollector" href="#sglang.srt.metrics.collector.TokenizerMetricsCollector">TokenizerMetricsCollector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_inter_token_latency" href="#sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_inter_token_latency">observe_inter_token_latency</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_one_aborted_request" href="#sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_one_aborted_request">observe_one_aborted_request</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_one_finished_request" href="#sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_one_finished_request">observe_one_finished_request</a></code></li>
+<li><code><a title="sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_time_to_first_token" href="#sglang.srt.metrics.collector.TokenizerMetricsCollector.observe_time_to_first_token">observe_time_to_first_token</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

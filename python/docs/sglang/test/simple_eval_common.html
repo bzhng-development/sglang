@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.test.simple_eval_common API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.test.simple_eval_common</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.test.simple_eval_common.aggregate_results"><code class="name flex">
+<span>def <span class="ident">aggregate_results</span></span>(<span>single_eval_results: List[<a title="sglang.test.simple_eval_common.SingleEvalResult" href="#sglang.test.simple_eval_common.SingleEvalResult">SingleEvalResult</a>],<br>default_stats: Tuple[str] = ('mean', 'std'),<br>name2stats: Dict[str, Tuple[str]] | None = None) ‑> <a title="sglang.test.simple_eval_common.EvalResult" href="#sglang.test.simple_eval_common.EvalResult">EvalResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def aggregate_results(
+    single_eval_results: List[SingleEvalResult],
+    default_stats: Tuple[str] = (&#34;mean&#34;, &#34;std&#34;),
+    name2stats: Optional[Dict[str, Tuple[str]]] = None,
+) -&gt; EvalResult:
+    &#34;&#34;&#34;
+    Aggregate results from multiple evaluations into a single EvalResult.
+    &#34;&#34;&#34;
+    name2stats = name2stats or {}
+    name2values = defaultdict(list)
+    htmls = []
+    convos = []
+    for single_eval_result in single_eval_results:
+        for name, value in single_eval_result.metrics.items():
+            name2values[name].append(value)
+        if single_eval_result.score is not None:
+            name2values[&#34;score&#34;].append(single_eval_result.score)
+        htmls.append(single_eval_result.html)
+        convos.append(single_eval_result.convo)
+    final_metrics = {}
+    for name, values in name2values.items():
+        stats = name2stats.get(name, default_stats)
+        for stat in stats:
+            key = name if stat == &#34;mean&#34; else f&#34;{name}:{stat}&#34;
+            final_metrics[key] = _compute_stat(values, stat)
+    return EvalResult(
+        score=final_metrics.pop(&#34;score&#34;, None),
+        metrics=final_metrics,
+        htmls=htmls,
+        convos=convos,
+    )</code></pre>
+</details>
+<div class="desc"><p>Aggregate results from multiple evaluations into a single EvalResult.</p></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.check_equality"><code class="name flex">
+<span>def <span class="ident">check_equality</span></span>(<span>sampler: <a title="sglang.test.simple_eval_common.SamplerBase" href="#sglang.test.simple_eval_common.SamplerBase">SamplerBase</a>,<br>expr1: str,<br>expr2: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_equality(sampler: SamplerBase, expr1: str, expr2: str):
+    prompt = EQUALITY_TEMPLATE % {&#34;expression1&#34;: expr1, &#34;expression2&#34;: expr2}
+    response = sampler([dict(content=prompt, role=&#34;user&#34;)])
+    return response.lower().strip() == &#34;yes&#34;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.download_dataset"><code class="name flex">
+<span>def <span class="ident">download_dataset</span></span>(<span>path, url)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_dataset(path, url):
+    print(f&#34;Downloading dataset {path} from {url}&#34;)
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+
+        total_size = int(response.headers.get(&#34;content-length&#34;, 0))
+        block_size = 8192
+
+        with open(path, &#34;wb&#34;) as f, tqdm(
+            desc=&#34;Downloading&#34;,
+            total=total_size,
+            unit=&#34;iB&#34;,
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as progress_bar:
+            for data in response.iter_content(block_size):
+                size = f.write(data)
+                progress_bar.update(size)
+
+        print(f&#34;Dataset downloaded and saved to {path}&#34;)
+    except requests.RequestException as e:
+        raise Exception(f&#34;Failed to download dataset: {e}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.format_multichoice_question"><code class="name flex">
+<span>def <span class="ident">format_multichoice_question</span></span>(<span>row)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def format_multichoice_question(row):
+    return QUERY_TEMPLATE_MULTICHOICE.format(**row)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.make_report"><code class="name flex">
+<span>def <span class="ident">make_report</span></span>(<span>eval_result: <a title="sglang.test.simple_eval_common.EvalResult" href="#sglang.test.simple_eval_common.EvalResult">EvalResult</a>) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_report(eval_result: EvalResult) -&gt; str:
+    &#34;&#34;&#34;
+    Create a standalone HTML report from an EvalResult.
+    &#34;&#34;&#34;
+    return jinja_env.from_string(_report_template).render(
+        score=eval_result.score,
+        metrics=eval_result.metrics,
+        htmls=eval_result.htmls,
+    )</code></pre>
+</details>
+<div class="desc"><p>Create a standalone HTML report from an EvalResult.</p></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.make_report_from_example_htmls"><code class="name flex">
+<span>def <span class="ident">make_report_from_example_htmls</span></span>(<span>htmls: List[str])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def make_report_from_example_htmls(htmls: List[str]):
+    &#34;&#34;&#34;
+    Create a standalone HTML report from a list of example htmls
+    &#34;&#34;&#34;
+    return jinja_env.from_string(_report_template).render(
+        score=None, metrics={}, htmls=htmls
+    )</code></pre>
+</details>
+<div class="desc"><p>Create a standalone HTML report from a list of example htmls</p></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.map_with_progress"><code class="name flex">
+<span>def <span class="ident">map_with_progress</span></span>(<span>f: <built-in function callable>, xs: List[Any], num_threads: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def map_with_progress(f: callable, xs: List[Any], num_threads: int):
+    &#34;&#34;&#34;
+    Apply f to each element of xs, using a ThreadPool, and show progress.
+    &#34;&#34;&#34;
+    if os.getenv(&#34;debug&#34;):
+        return list(map(f, tqdm(xs, total=len(xs))))
+    else:
+        with ThreadPool(min(num_threads, len(xs))) as pool:
+            return list(tqdm(pool.imap(f, xs), total=len(xs)))</code></pre>
+</details>
+<div class="desc"><p>Apply f to each element of xs, using a ThreadPool, and show progress.</p></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.message_to_html"><code class="name flex">
+<span>def <span class="ident">message_to_html</span></span>(<span>message: Dict[str, Any]) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def message_to_html(message: Message) -&gt; str:
+    &#34;&#34;&#34;
+    Generate HTML snippet (inside a &lt;div&gt;) for a message.
+    &#34;&#34;&#34;
+    return jinja_env.from_string(_message_template).render(
+        role=message[&#34;role&#34;],
+        content=message[&#34;content&#34;],
+        variant=message.get(&#34;variant&#34;, None),
+    )</code></pre>
+</details>
+<div class="desc"><p>Generate HTML snippet (inside a <div>) for a message.</p></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.set_ulimit"><code class="name flex">
+<span>def <span class="ident">set_ulimit</span></span>(<span>target_soft_limit=65535)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_ulimit(target_soft_limit=65535):
+    resource_type = resource.RLIMIT_NOFILE
+    current_soft, current_hard = resource.getrlimit(resource_type)
+
+    if current_soft &lt; target_soft_limit:
+        try:
+            resource.setrlimit(resource_type, (target_soft_limit, current_hard))
+        except ValueError as e:
+            print(f&#34;Fail to set RLIMIT_NOFILE: {e}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.test.simple_eval_common.ChatCompletionSampler"><code class="flex name class">
+<span>class <span class="ident">ChatCompletionSampler</span></span>
+<span>(</span><span>base_url: str = None,<br>model: str | None = None,<br>system_message: str | None = None,<br>temperature: float = 0.0,<br>reasoning_effort: str | None = None,<br>max_tokens: int = 2048)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ChatCompletionSampler(SamplerBase):
+    &#34;&#34;&#34;
+    Sample from OpenAI&#39;s chat completion API
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        base_url: str = None,
+        model: Optional[str] = None,
+        system_message: Optional[str] = None,
+        temperature: float = 0.0,
+        reasoning_effort: Optional[str] = None,
+        max_tokens: int = 2048,
+    ):
+        self.client = OpenAI(base_url=base_url, http_client=LargerHttpxClient())
+
+        if model is None:
+            model = self.client.models.list().data[0].id
+
+        self.model = model
+        self.system_message = system_message
+        self.temperature = temperature
+        self.max_tokens = max_tokens
+        self.reasoning_effort = reasoning_effort
+        self.image_format = &#34;url&#34;
+        print(
+            f&#34;ChatCompletionSampler initialized with {self.system_message=} {self.temperature=} {self.max_tokens=} {self.reasoning_effort=}&#34;
+        )
+
+    def _handle_image(
+        self,
+        image: str,
+        encoding: str = &#34;base64&#34;,
+        format: str = &#34;png&#34;,
+        fovea: int = 768,
+    ):
+        new_image = {
+            &#34;type&#34;: &#34;image_url&#34;,
+            &#34;image_url&#34;: {
+                &#34;url&#34;: f&#34;data:image/{format};{encoding},{image}&#34;,
+            },
+        }
+        return new_image
+
+    def _handle_text(self, text: str):
+        return {&#34;type&#34;: &#34;text&#34;, &#34;text&#34;: text}
+
+    def _pack_message(self, role: str, content: Any):
+        return {&#34;role&#34;: str(role), &#34;content&#34;: content}
+
+    def __call__(self, message_list: MessageList) -&gt; str:
+        if self.system_message:
+            message_list = [
+                self._pack_message(&#34;system&#34;, self.system_message)
+            ] + message_list
+        trial = 0
+        while True:
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=message_list,
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens,
+                    reasoning_effort=self.reasoning_effort,
+                )
+                return response.choices[0].message.content
+            # NOTE: BadRequestError is triggered once for MMMU, please uncomment if you are rerunning MMMU
+            except openai.BadRequestError as e:
+                print(&#34;Bad Request Error&#34;, e)
+                return &#34;&#34;
+            except Exception as e:
+                exception_backoff = 2**trial  # expontial back off
+                print(
+                    f&#34;Rate limit exception so wait and retry {trial} after {exception_backoff} sec&#34;,
+                    e,
+                )
+                time.sleep(exception_backoff)
+                trial += 1
+            # unknown error shall throw exception</code></pre>
+</details>
+<div class="desc"><p>Sample from OpenAI's chat completion API</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.test.simple_eval_common.SamplerBase" href="#sglang.test.simple_eval_common.SamplerBase">SamplerBase</a></li>
+</ul>
+</dd>
+<dt id="sglang.test.simple_eval_common.Eval"><code class="flex name class">
+<span>class <span class="ident">Eval</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Eval:
+    &#34;&#34;&#34;
+    Base class for defining an evaluation.
+    &#34;&#34;&#34;
+
+    def __call__(self, sampler: SamplerBase) -&gt; EvalResult:
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Base class for defining an evaluation.</p></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.test.simple_eval_gpqa.GPQAEval" href="simple_eval_gpqa.html#sglang.test.simple_eval_gpqa.GPQAEval">GPQAEval</a></li>
+<li><a title="sglang.test.simple_eval_math.MathEval" href="simple_eval_math.html#sglang.test.simple_eval_math.MathEval">MathEval</a></li>
+<li><a title="sglang.test.simple_eval_mgsm.MGSMEval" href="simple_eval_mgsm.html#sglang.test.simple_eval_mgsm.MGSMEval">MGSMEval</a></li>
+<li><a title="sglang.test.simple_eval_mmlu.MMLUEval" href="simple_eval_mmlu.html#sglang.test.simple_eval_mmlu.MMLUEval">MMLUEval</a></li>
+</ul>
+</dd>
+<dt id="sglang.test.simple_eval_common.EvalResult"><code class="flex name class">
+<span>class <span class="ident">EvalResult</span></span>
+<span>(</span><span>score: float | None,<br>metrics: Dict[str, float] | None,<br>htmls: List[str],<br>convos: List[List[Dict[str, Any]]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class EvalResult:
+    &#34;&#34;&#34;
+    Result of running an evaluation (usually consisting of many samples)
+    &#34;&#34;&#34;
+
+    score: Optional[float]  # top-line metric
+    metrics: Optional[Dict[str, float]]  # other metrics
+    htmls: List[str]  # strings of valid HTML
+    convos: List[MessageList]  # sampled conversations</code></pre>
+</details>
+<div class="desc"><p>Result of running an evaluation (usually consisting of many samples)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.test.simple_eval_common.EvalResult.convos"><code class="name">var <span class="ident">convos</span> : List[List[Dict[str, Any]]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.EvalResult.htmls"><code class="name">var <span class="ident">htmls</span> : List[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.EvalResult.metrics"><code class="name">var <span class="ident">metrics</span> : Dict[str, float] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.EvalResult.score"><code class="name">var <span class="ident">score</span> : float | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.test.simple_eval_common.LargerHttpxClient"><code class="flex name class">
+<span>class <span class="ident">LargerHttpxClient</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LargerHttpxClient(httpx.Client):
+    def __init__(self):
+        timeout_config = httpx.Timeout(3600)
+        limits = httpx.Limits(
+            max_keepalive_connections=3600,
+            max_connections=3600,
+        )
+        super().__init__(timeout=timeout_config, limits=limits)</code></pre>
+</details>
+<div class="desc"><p>An HTTP client, with connection pooling, HTTP/2, redirects, cookie persistence, etc.</p>
+<p>It can be shared between threads.</p>
+<p>Usage:</p>
+<pre><code class="language-python">&gt;&gt;&gt; client = httpx.Client()
+&gt;&gt;&gt; response = client.get('https://example.org')
+</code></pre>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><strong>auth</strong> - <em>(optional)</em> An authentication class to use when sending
+requests.</li>
+<li><strong>params</strong> - <em>(optional)</em> Query parameters to include in request URLs, as
+a string, dictionary, or sequence of two-tuples.</li>
+<li><strong>headers</strong> - <em>(optional)</em> Dictionary of HTTP headers to include when
+sending requests.</li>
+<li><strong>cookies</strong> - <em>(optional)</em> Dictionary of Cookie items to include when
+sending requests.</li>
+<li><strong>verify</strong> - <em>(optional)</em> Either <code>True</code> to use an SSL context with the
+default CA bundle, <code>False</code> to disable verification, or an instance of
+<code>ssl.SSLContext</code> to use a custom context.</li>
+<li><strong>http2</strong> - <em>(optional)</em> A boolean indicating if HTTP/2 support should be
+enabled. Defaults to <code>False</code>.</li>
+<li><strong>proxy</strong> - <em>(optional)</em> A proxy URL where all the traffic should be routed.</li>
+<li><strong>timeout</strong> - <em>(optional)</em> The timeout configuration to use when sending
+requests.</li>
+<li><strong>limits</strong> - <em>(optional)</em> The limits configuration to use.</li>
+<li><strong>max_redirects</strong> - <em>(optional)</em> The maximum number of redirect responses
+that should be followed.</li>
+<li><strong>base_url</strong> - <em>(optional)</em> A URL to use as the base when building
+request URLs.</li>
+<li><strong>transport</strong> - <em>(optional)</em> A transport class to use for sending requests
+over the network.</li>
+<li><strong>trust_env</strong> - <em>(optional)</em> Enables or disables usage of environment
+variables for configuration.</li>
+<li><strong>default_encoding</strong> - <em>(optional)</em> The default encoding to use for decoding
+response text, if no charset information is included in a response Content-Type
+header. Set to a callable for automatic character set detection. Default: "utf-8".</li>
+</ul></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>httpx.Client</li>
+<li>httpx._client.BaseClient</li>
+</ul>
+</dd>
+<dt id="sglang.test.simple_eval_common.SamplerBase"><code class="flex name class">
+<span>class <span class="ident">SamplerBase</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SamplerBase:
+    &#34;&#34;&#34;
+    Base class for defining a sampling model, which can be evaluated,
+    or used as part of the grading process.
+    &#34;&#34;&#34;
+
+    def __call__(self, message_list: MessageList) -&gt; str:
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Base class for defining a sampling model, which can be evaluated,
+or used as part of the grading process.</p></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.test.simple_eval_common.ChatCompletionSampler" href="#sglang.test.simple_eval_common.ChatCompletionSampler">ChatCompletionSampler</a></li>
+</ul>
+</dd>
+<dt id="sglang.test.simple_eval_common.SingleEvalResult"><code class="flex name class">
+<span>class <span class="ident">SingleEvalResult</span></span>
+<span>(</span><span>score: float | None,<br>metrics: Dict[str, float] = &lt;factory&gt;,<br>html: str | None = None,<br>convo: List[Dict[str, Any]] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class SingleEvalResult:
+    &#34;&#34;&#34;
+    Result of evaluating a single sample
+    &#34;&#34;&#34;
+
+    score: Optional[float]
+    metrics: Dict[str, float] = field(default_factory=dict)
+    html: Optional[str] = None
+    convo: Optional[MessageList] = None  # sampled conversation</code></pre>
+</details>
+<div class="desc"><p>Result of evaluating a single sample</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.test.simple_eval_common.SingleEvalResult.convo"><code class="name">var <span class="ident">convo</span> : List[Dict[str, Any]] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.SingleEvalResult.html"><code class="name">var <span class="ident">html</span> : str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.SingleEvalResult.metrics"><code class="name">var <span class="ident">metrics</span> : Dict[str, float]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.simple_eval_common.SingleEvalResult.score"><code class="name">var <span class="ident">score</span> : float | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.test" href="index.html">sglang.test</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.test.simple_eval_common.aggregate_results" href="#sglang.test.simple_eval_common.aggregate_results">aggregate_results</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.check_equality" href="#sglang.test.simple_eval_common.check_equality">check_equality</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.download_dataset" href="#sglang.test.simple_eval_common.download_dataset">download_dataset</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.format_multichoice_question" href="#sglang.test.simple_eval_common.format_multichoice_question">format_multichoice_question</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.make_report" href="#sglang.test.simple_eval_common.make_report">make_report</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.make_report_from_example_htmls" href="#sglang.test.simple_eval_common.make_report_from_example_htmls">make_report_from_example_htmls</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.map_with_progress" href="#sglang.test.simple_eval_common.map_with_progress">map_with_progress</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.message_to_html" href="#sglang.test.simple_eval_common.message_to_html">message_to_html</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.set_ulimit" href="#sglang.test.simple_eval_common.set_ulimit">set_ulimit</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.test.simple_eval_common.ChatCompletionSampler" href="#sglang.test.simple_eval_common.ChatCompletionSampler">ChatCompletionSampler</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.test.simple_eval_common.Eval" href="#sglang.test.simple_eval_common.Eval">Eval</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.test.simple_eval_common.EvalResult" href="#sglang.test.simple_eval_common.EvalResult">EvalResult</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.test.simple_eval_common.EvalResult.convos" href="#sglang.test.simple_eval_common.EvalResult.convos">convos</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.EvalResult.htmls" href="#sglang.test.simple_eval_common.EvalResult.htmls">htmls</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.EvalResult.metrics" href="#sglang.test.simple_eval_common.EvalResult.metrics">metrics</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.EvalResult.score" href="#sglang.test.simple_eval_common.EvalResult.score">score</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.test.simple_eval_common.LargerHttpxClient" href="#sglang.test.simple_eval_common.LargerHttpxClient">LargerHttpxClient</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.test.simple_eval_common.SamplerBase" href="#sglang.test.simple_eval_common.SamplerBase">SamplerBase</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.test.simple_eval_common.SingleEvalResult" href="#sglang.test.simple_eval_common.SingleEvalResult">SingleEvalResult</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.test.simple_eval_common.SingleEvalResult.convo" href="#sglang.test.simple_eval_common.SingleEvalResult.convo">convo</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.SingleEvalResult.html" href="#sglang.test.simple_eval_common.SingleEvalResult.html">html</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.SingleEvalResult.metrics" href="#sglang.test.simple_eval_common.SingleEvalResult.metrics">metrics</a></code></li>
+<li><code><a title="sglang.test.simple_eval_common.SingleEvalResult.score" href="#sglang.test.simple_eval_common.SingleEvalResult.score">score</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

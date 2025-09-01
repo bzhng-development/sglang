@@ -1,0 +1,1509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.conversation API documentation</title>
+<meta name="description" content="Conversation chat templates …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.conversation</code></h1>
+</header>
+<section id="section-intro">
+<p>Conversation chat templates.</p>
+<p>This module provides conversation template definitions, data structures, and utilities
+for managing chat templates across different model types in SGLang.</p>
+<p>Key components:
+- Conversation class: Defines the structure and behavior of chat templates
+- SeparatorStyle enum: Different conversation formatting styles
+- Template registry: Functions to register and retrieve templates by name or model path
+- Built-in templates: Pre-defined templates for popular models</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.conversation.chat_template_exists"><code class="name flex">
+<span>def <span class="ident">chat_template_exists</span></span>(<span>template_name: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def chat_template_exists(template_name: str) -&gt; bool:
+    return template_name in chat_templates</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.generate_chat_conv"><code class="name flex">
+<span>def <span class="ident">generate_chat_conv</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.ChatCompletionRequest" href="entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.ChatCompletionRequest">ChatCompletionRequest</a>,<br>template_name: str) ‑> <a title="sglang.srt.conversation.Conversation" href="#sglang.srt.conversation.Conversation">Conversation</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_chat_conv(
+    request: ChatCompletionRequest, template_name: str
+) -&gt; Conversation:
+    conv = chat_templates[template_name].copy()
+    conv = Conversation(
+        name=conv.name,
+        system_template=conv.system_template,
+        system_message=conv.system_message,
+        roles=conv.roles,
+        messages=list(conv.messages),  # prevent in-place modification
+        offset=conv.offset,
+        sep_style=SeparatorStyle(conv.sep_style),
+        sep=conv.sep,
+        sep2=conv.sep2,
+        stop_str=conv.stop_str,
+        image_data=[],
+        video_data=[],
+        audio_data=[],
+        modalities=[],
+        image_token=conv.image_token,
+        audio_token=conv.audio_token,
+        video_token=conv.video_token,
+    )
+
+    if isinstance(request.messages, str):
+        raise ValueError(&#34;The messages should be a list of dict.&#34;)
+    for message in request.messages:
+        msg_role = message.role
+        if msg_role == &#34;system&#34;:
+            if isinstance(message.content, str):
+                conv.system_message = message.content
+            elif isinstance(message.content, list):
+                if (
+                    len(message.content) != 1
+                    or getattr(message.content[0], &#34;type&#34;, None) != &#34;text&#34;
+                ):
+                    raise ValueError(&#34;The system message should be a single text.&#34;)
+                else:
+                    conv.system_message = getattr(message.content[0], &#34;text&#34;, &#34;&#34;)
+        elif msg_role == &#34;user&#34;:
+            # Handle the various types of Chat Request content types here.
+            if isinstance(message.content, str):
+                conv.append_message(conv.roles[0], message.content)
+            else:
+                real_content = &#34;&#34;
+                # calculate number of image_url
+                num_image_url = 0
+                for content in message.content:
+                    if content.type == &#34;image_url&#34;:
+                        num_image_url += 1
+                        conv.modalities.append(content.modalities)
+                image_token = (
+                    conv.image_token + &#34;\n&#34;
+                    if conv.name != &#34;qwen2-vl&#34;
+                    else conv.image_token
+                )
+                add_token_as_needed: bool = (
+                    conv.name in _MODELS_REQUIRING_MODALITY_SUPPLEMENT
+                )
+                if add_token_as_needed:
+                    image_token = &#34;&#34;
+
+                audio_token = conv.audio_token
+                video_token = conv.video_token
+                for content in message.content:
+                    if content.type == &#34;text&#34;:
+                        if num_image_url &gt; 16:
+                            real_content += &#34;\n&#34;  # for video
+                        real_content += content.text
+                    elif content.type == &#34;image_url&#34;:
+                        # NOTE: works for llava and intervl2_5
+                        if conv.name in [&#34;internvl-2-5&#34;]:
+                            real_content = image_token + real_content
+                        else:
+                            real_content += image_token
+                        conv.append_image(
+                            content.image_url.url, content.image_url.detail
+                        )
+                    elif content.type == &#34;video_url&#34;:
+                        real_content += video_token
+                        conv.append_video(content.video_url.url)
+                    elif content.type == &#34;audio_url&#34;:
+                        real_content += audio_token
+                        conv.append_audio(content.audio_url.url)
+                if add_token_as_needed:
+                    real_content = _get_full_multimodal_text_prompt(
+                        conv.image_token, num_image_url, real_content
+                    )
+                conv.append_message(conv.roles[0], real_content)
+        elif msg_role == &#34;assistant&#34;:
+            parsed_content = &#34;&#34;
+            if isinstance(message.content, str):
+                parsed_content = message.content
+            elif isinstance(message.content, list):
+                if (
+                    len(message.content) != 1
+                    or getattr(message.content[0], &#34;type&#34;, None) != &#34;text&#34;
+                ):
+                    raise ValueError(
+                        &#34;The assistant&#39;s response should be a single text.&#34;
+                    )
+                else:
+                    parsed_content = getattr(message.content[0], &#34;text&#34;, &#34;&#34;)
+            conv.append_message(conv.roles[1], parsed_content)
+        else:
+            raise ValueError(f&#34;Unknown role: {msg_role}&#34;)
+
+    # Add a blank message for the assistant.
+    conv.append_message(conv.roles[1], None)
+    return conv</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.generate_embedding_convs"><code class="name flex">
+<span>def <span class="ident">generate_embedding_convs</span></span>(<span>texts: List[str], images: List[str], template_name: str) ‑> List[<a title="sglang.srt.conversation.Conversation" href="#sglang.srt.conversation.Conversation">Conversation</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_embedding_convs(
+    texts: List[str], images: List[str], template_name: str
+) -&gt; List[Conversation]:
+    conv_template = chat_templates[template_name].copy()
+    convs = []
+    for text, image in zip(texts, images):
+        conv = Conversation(
+            name=conv_template.name,
+            system_template=conv_template.system_template,
+            system_message=conv_template.system_message,
+            roles=conv_template.roles,
+            messages=list(conv_template.messages),  # prevent in-place modification
+            offset=conv_template.offset,
+            sep_style=SeparatorStyle(conv_template.sep_style),
+            sep=conv_template.sep,
+            sep2=conv_template.sep2,
+            stop_str=conv_template.stop_str,
+            image_data=[],
+            video_data=[],
+            audio_data=[],
+            modalities=[],
+            image_token=conv_template.image_token,
+            video_token=conv_template.video_token,
+            audio_token=conv_template.audio_token,
+        )
+        real_content = &#34;&#34;
+
+        if image is not None:
+            image_token = (
+                conv.image_token + &#34;\n&#34;
+                if conv.name != &#34;gme-qwen2-vl&#34;
+                else conv.image_token
+            )
+            real_content += image_token
+        if text is not None:
+            real_content += text
+        conv.append_message(conv.roles[0], real_content)
+        # Add a blank message for the assistant.
+        conv.append_message(conv.roles[1], None)
+        convs.append(conv)
+
+    return convs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.get_conv_template_by_model_path"><code class="name flex">
+<span>def <span class="ident">get_conv_template_by_model_path</span></span>(<span>model_path)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_conv_template_by_model_path(model_path):
+    for matching_func in matching_function_registry:
+        conv_name = matching_func(model_path)
+        if conv_name is not None:
+            return conv_name
+    return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.get_model_type"><code class="name flex">
+<span>def <span class="ident">get_model_type</span></span>(<span>model_path: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_model_type(model_path: str) -&gt; Optional[str]:
+    config_path = os.path.join(model_path, &#34;config.json&#34;)
+    if not os.path.exists(config_path):
+        return None
+    try:
+        with open(config_path, &#34;r&#34;, encoding=&#34;utf-8&#34;) as f:
+            config = json.load(f)
+        return config.get(&#34;model_type&#34;)
+    except (IOError, json.JSONDecodeError):
+        return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.register_conv_template"><code class="name flex">
+<span>def <span class="ident">register_conv_template</span></span>(<span>template: <a title="sglang.srt.conversation.Conversation" href="#sglang.srt.conversation.Conversation">Conversation</a>,<br>override: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_conv_template(template: Conversation, override: bool = False):
+    &#34;&#34;&#34;Register a new conversation template.&#34;&#34;&#34;
+    if not override:
+        assert (
+            template.name not in chat_templates
+        ), f&#34;{template.name} has been registered.&#34;
+
+    chat_templates[template.name] = template</code></pre>
+</details>
+<div class="desc"><p>Register a new conversation template.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.register_conv_template_matching_function"><code class="name flex">
+<span>def <span class="ident">register_conv_template_matching_function</span></span>(<span>func)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_conv_template_matching_function(func):
+    matching_function_registry.append(func)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.conversation.Conversation"><code class="flex name class">
+<span>class <span class="ident">Conversation</span></span>
+<span>(</span><span>name: str,<br>system_template: str = '{system_message}',<br>system_message: str = '',<br>roles: Tuple[str] = ('USER', 'ASSISTANT'),<br>messages: List[List[str]] = (),<br>offset: int = 0,<br>sep_style: <a title="sglang.srt.conversation.SeparatorStyle" href="#sglang.srt.conversation.SeparatorStyle">SeparatorStyle</a> = 1,<br>sep: str = '\n',<br>sep2: str = None,<br>stop_str: str | List[str] = None,<br>image_token: str = &#x27;&lt;image&gt;&#x27;,<br>video_token: str = &#x27;&lt;video&gt;&#x27;,<br>audio_token: str = &#x27;&lt;audio&gt;&#x27;,<br>image_data: List[<a title="sglang.srt.utils.ImageData" href="utils.html#sglang.srt.utils.ImageData">ImageData</a>] | None = None,<br>video_data: List[str] | None = None,<br>modalities: List[str] | None = None,<br>stop_token_ids: int | None = None,<br>audio_data: List[str] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class Conversation:
+    &#34;&#34;&#34;A class that manages prompt templates and keeps all conversation history.&#34;&#34;&#34;
+
+    # The name of this template
+    name: str
+    # The template of the system prompt
+    system_template: str = &#34;{system_message}&#34;
+    # The system message
+    system_message: str = &#34;&#34;
+    # The names of two roles
+    roles: Tuple[str] = (&#34;USER&#34;, &#34;ASSISTANT&#34;)
+    # All messages. Each item is (role, message).
+    messages: List[List[str]] = ()
+    # The number of few shot examples
+    offset: int = 0
+    # The separator style and configurations
+    sep_style: SeparatorStyle = SeparatorStyle.ADD_COLON_SINGLE
+    sep: str = &#34;\n&#34;
+    sep2: str = None
+    # Stop criteria (the default one is EOS token)
+    stop_str: Union[str, List[str]] = None
+    # The string that represents an image token in the prompt
+    image_token: str = &#34;&lt;image&gt;&#34;
+    video_token: str = &#34;&lt;video&gt;&#34;
+    audio_token: str = &#34;&lt;audio&gt;&#34;
+
+    image_data: Optional[List[ImageData]] = None
+    video_data: Optional[List[str]] = None
+    modalities: Optional[List[str]] = None
+    stop_token_ids: Optional[int] = None
+
+    audio_data: Optional[List[str]] = None
+
+    def get_prompt(self) -&gt; str:
+        &#34;&#34;&#34;Get the prompt for generation.&#34;&#34;&#34;
+        system_prompt = self.system_template.format(system_message=self.system_message)
+        if self.sep_style == SeparatorStyle.ADD_COLON_SINGLE:
+            ret = system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;: &#34; + message + self.sep
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.ADD_COLON_TWO:
+            seps = [self.sep, self.sep2]
+            ret = system_prompt + seps[0]
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += role + &#34;: &#34; + message + seps[i % 2]
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.ADD_COLON_SPACE_SINGLE:
+            ret = system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;: &#34; + message + self.sep
+                else:
+                    ret += role + &#34;: &#34;  # must be end with a space
+            return ret
+        elif self.sep_style == SeparatorStyle.ADD_NEW_LINE_SINGLE:
+            ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;\n&#34; + message + self.sep
+                else:
+                    ret += role + &#34;\n&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.QWEN2_VL_EMBED:
+            ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;\n&#34; + message + self.sep
+                else:
+                    ret += role + &#34;\n&#34;
+            ret += self.stop_str
+            return ret
+        elif self.sep_style == SeparatorStyle.NO_COLON_SINGLE:
+            ret = system_prompt
+            for role, message in self.messages:
+                if message:
+                    ret += role + message + self.sep
+                else:
+                    ret += role
+            return ret
+        elif self.sep_style == SeparatorStyle.NO_COLON_TWO:
+            seps = [self.sep, self.sep2]
+            ret = system_prompt
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += role + message + seps[i % 2]
+                else:
+                    ret += role
+            return ret
+        elif self.sep_style == SeparatorStyle.RWKV:
+            ret = system_prompt
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += (
+                        role
+                        + &#34;: &#34;
+                        + message.replace(&#34;\r\n&#34;, &#34;\n&#34;).replace(&#34;\n\n&#34;, &#34;\n&#34;)
+                    )
+                    ret += &#34;\n\n&#34;
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.LLAMA4:
+            # begin_of_text is added by default
+            if self.system_message:
+                ret = system_prompt
+            else:
+                ret = &#34;&#34;
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += f&#34;&lt;|header_start|&gt;{role}&lt;|header_end|&gt;\n\n&#34;
+                    ret += f&#34;{message.strip()}&lt;|eot|&gt;&#34;
+                else:
+                    ret += f&#34;&lt;|header_start|&gt;{role}&lt;|header_end|&gt;\n\n&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.LLAMA3:
+            if self.system_message:
+                ret = system_prompt
+            else:
+                ret = &#34;&#34;
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += f&#34;&lt;|start_header_id|&gt;{role}&lt;|end_header_id|&gt;\n\n&#34;
+                    ret += f&#34;{message.strip()}&lt;|eot_id|&gt;&#34;
+                else:
+                    ret += f&#34;&lt;|start_header_id|&gt;{role}&lt;|end_header_id|&gt;\n\n&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.LLAMA2:
+            seps = [self.sep, self.sep2]
+            if self.system_message:
+                ret = system_prompt
+            else:
+                ret = &#34;[INST] &#34;
+            for i, (role, message) in enumerate(self.messages):
+                tag = self.roles[i % 2]
+                if message:
+                    if i == 0:
+                        ret += message + &#34; &#34;
+                    else:
+                        ret += tag + &#34; &#34; + message + seps[i % 2]
+                else:
+                    ret += tag
+            return ret
+        elif self.sep_style == SeparatorStyle.CHATGLM:
+            # source: https://huggingface.co/THUDM/chatglm-6b/blob/1d240ba371910e9282298d4592532d7f0f3e9f3e/modeling_chatglm.py#L1302-L1308
+            # source2: https://huggingface.co/THUDM/chatglm2-6b/blob/e186c891cf64310ac66ef10a87e6635fa6c2a579/modeling_chatglm.py#L926
+            round_add_n = 1 if self.name == &#34;chatglm2&#34; else 0
+            if system_prompt:
+                ret = system_prompt + self.sep
+            else:
+                ret = &#34;&#34;
+
+            for i, (role, message) in enumerate(self.messages):
+                if i % 2 == 0:
+                    ret += f&#34;[Round {i // 2 + round_add_n}]{self.sep}&#34;
+
+                if message:
+                    ret += f&#34;{role}：{message}{self.sep}&#34;
+                else:
+                    ret += f&#34;{role}：&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.CHATML:
+            ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep + &#34;\n&#34;
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;\n&#34; + message + self.sep + &#34;\n&#34;
+                else:
+                    ret += role + &#34;\n&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.CHATGLM3:
+            ret = &#34;&#34;
+            if self.system_message:
+                ret += system_prompt
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;\n&#34; + message
+                else:
+                    ret += role
+            return ret
+        elif self.sep_style == SeparatorStyle.CHATINTERN:
+            # source: https://huggingface.co/internlm/internlm-chat-7b-8k/blob/bd546fa984b4b0b86958f56bf37f94aa75ab8831/modeling_internlm.py#L771
+            seps = [self.sep, self.sep2]
+            ret = system_prompt
+            for i, (role, message) in enumerate(self.messages):
+                if i % 2 == 0:
+                    ret += &#34;&lt;s&gt;&#34;
+                if message:
+                    ret += role + &#34;:&#34; + message + seps[i % 2] + &#34;\n&#34;
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.DOLLY:
+            seps = [self.sep, self.sep2]
+            ret = system_prompt
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += role + &#34;:\n&#34; + message + seps[i % 2]
+                    if i % 2 == 1:
+                        ret += &#34;\n\n&#34;
+                else:
+                    ret += role + &#34;:\n&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.PHOENIX:
+            ret = system_prompt
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;: &#34; + &#34;&lt;s&gt;&#34; + message + &#34;&lt;/s&gt;&#34;
+                else:
+                    ret += role + &#34;: &#34; + &#34;&lt;s&gt;&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.ROBIN:
+            ret = system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;:\n&#34; + message + self.sep
+                else:
+                    ret += role + &#34;:\n&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.FALCON_CHAT:
+            ret = &#34;&#34;
+            if self.system_message:
+                ret += system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    ret += role + &#34;: &#34; + message + self.sep
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.METAMATH:
+            ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+            for i, (role, message) in enumerate(self.messages):
+                # For MetaMath, sep2 is used to prefix the message.
+                starting_sep = &#34;:\n&#34; if i % 2 == 0 else &#34;: &#34; + self.sep2
+                ending_sep = self.sep if i % 2 == 0 else &#34;&#34;
+                if message:
+                    ret += role + starting_sep + message + ending_sep
+                else:
+                    ret += role + starting_sep
+            return ret
+        elif self.sep_style == SeparatorStyle.DEEPSEEK_CHAT:
+            seps = [self.sep, self.sep2]
+            ret = system_prompt
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += role + &#34;: &#34; + message + seps[i % 2]
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.DeepSeekVL2:
+            seps = [self.sep, self.sep2]
+            if system_prompt == &#34;&#34; or system_prompt is None:
+                ret = &#34;&#34;
+            else:
+                ret = system_prompt + seps[0]
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    ret += role + &#34;: &#34; + message + seps[i % 2]
+                else:
+                    ret += role + &#34;:&#34;
+            return ret
+        elif self.sep_style == SeparatorStyle.GEMMA3:
+            ret = system_prompt
+            for i, (role, message) in enumerate(self.messages):
+                if message:
+                    if i == 0:
+                        ret += message + self.sep
+                    else:
+                        ret += role + message + self.sep
+                else:
+                    ret += role
+            return ret
+
+        elif self.sep_style == SeparatorStyle.MPT:
+            ret = system_prompt + self.sep
+            for role, message in self.messages:
+                if message:
+                    if type(message) is tuple:
+                        message, _, _ = message
+                    ret += role + message + self.sep
+                else:
+                    ret += role
+            return ret
+        elif self.sep_style == SeparatorStyle.QWEN2_AUDIO:
+            ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+
+            counter = 1
+            for role, message in self.messages:
+                if message:
+                    while self.audio_token in message:
+                        message = message.replace(
+                            self.audio_token, self.audio_token.format(idx=counter), 1
+                        )
+                        counter += 1
+
+                    ret += role + &#34;\n&#34; + message + self.sep
+                else:
+                    ret += role + &#34;\n&#34;
+
+            return ret
+        else:
+            raise ValueError(f&#34;Invalid style: {self.sep_style}&#34;)
+
+    def set_system_message(self, system_message: str):
+        &#34;&#34;&#34;Set the system message.&#34;&#34;&#34;
+        self.system_message = system_message
+
+    def append_message(self, role: str, message: str):
+        &#34;&#34;&#34;Append a new message.&#34;&#34;&#34;
+        self.messages.append([role, message])
+
+    def append_image(self, image: str, detail: Literal[&#34;auto&#34;, &#34;low&#34;, &#34;high&#34;]):
+        &#34;&#34;&#34;Append a new image.&#34;&#34;&#34;
+        self.image_data.append(ImageData(url=image, detail=detail))
+
+    def append_video(self, video: str):
+        &#34;&#34;&#34;Append a new video.&#34;&#34;&#34;
+        self.video_data.append(video)
+
+    def append_audio(self, audio: str):
+        &#34;&#34;&#34;Append a new audio.&#34;&#34;&#34;
+        self.audio_data.append(audio)
+
+    def update_last_message(self, message: str):
+        &#34;&#34;&#34;Update the last output.
+
+        The last message is typically set to be None when constructing the prompt,
+        so we need to update it in-place after getting the response from a model.
+        &#34;&#34;&#34;
+        self.messages[-1][1] = message
+
+    def to_gradio_chatbot(self):
+        &#34;&#34;&#34;Convert the conversation to gradio chatbot format.&#34;&#34;&#34;
+        ret = []
+        for i, (role, msg) in enumerate(self.messages[self.offset :]):
+            if i % 2 == 0:
+                ret.append([msg, None])
+            else:
+                ret[-1][-1] = msg
+        return ret
+
+    def to_openai_api_messages(self):
+        &#34;&#34;&#34;Convert the conversation to OpenAI chat completion format.&#34;&#34;&#34;
+        if self.system_message == &#34;&#34;:
+            ret = []
+        else:
+            ret = [{&#34;role&#34;: &#34;system&#34;, &#34;content&#34;: self.system_message}]
+
+        for i, (_, msg) in enumerate(self.messages[self.offset :]):
+            if i % 2 == 0:
+                ret.append({&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: msg})
+            else:
+                if msg is not None:
+                    ret.append({&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: msg})
+        return ret
+
+    def copy(self):
+        return Conversation(
+            name=self.name,
+            system_template=self.system_template,
+            system_message=self.system_message,
+            roles=self.roles,
+            messages=[[x, y] for x, y in self.messages],
+            offset=self.offset,
+            sep_style=self.sep_style,
+            sep=self.sep,
+            sep2=self.sep2,
+            stop_str=self.stop_str,
+            image_token=self.image_token,
+            video_token=self.video_token,
+            audio_token=self.audio_token,
+        )
+
+    def dict(self):
+        return {
+            &#34;template_name&#34;: self.name,
+            &#34;system_message&#34;: self.system_message,
+            &#34;roles&#34;: self.roles,
+            &#34;messages&#34;: self.messages,
+            &#34;offset&#34;: self.offset,
+        }</code></pre>
+</details>
+<div class="desc"><p>A class that manages prompt templates and keeps all conversation history.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.conversation.Conversation.audio_data"><code class="name">var <span class="ident">audio_data</span> : List[str] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.audio_token"><code class="name">var <span class="ident">audio_token</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.image_data"><code class="name">var <span class="ident">image_data</span> : List[<a title="sglang.srt.utils.ImageData" href="utils.html#sglang.srt.utils.ImageData">ImageData</a>] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.image_token"><code class="name">var <span class="ident">image_token</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.messages"><code class="name">var <span class="ident">messages</span> : List[List[str]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.modalities"><code class="name">var <span class="ident">modalities</span> : List[str] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.offset"><code class="name">var <span class="ident">offset</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.roles"><code class="name">var <span class="ident">roles</span> : Tuple[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.sep"><code class="name">var <span class="ident">sep</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.sep2"><code class="name">var <span class="ident">sep2</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.sep_style"><code class="name">var <span class="ident">sep_style</span> : <a title="sglang.srt.conversation.SeparatorStyle" href="#sglang.srt.conversation.SeparatorStyle">SeparatorStyle</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.stop_str"><code class="name">var <span class="ident">stop_str</span> : str | List[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.stop_token_ids"><code class="name">var <span class="ident">stop_token_ids</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.system_message"><code class="name">var <span class="ident">system_message</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.system_template"><code class="name">var <span class="ident">system_template</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.video_data"><code class="name">var <span class="ident">video_data</span> : List[str] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.video_token"><code class="name">var <span class="ident">video_token</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.conversation.Conversation.append_audio"><code class="name flex">
+<span>def <span class="ident">append_audio</span></span>(<span>self, audio: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append_audio(self, audio: str):
+    &#34;&#34;&#34;Append a new audio.&#34;&#34;&#34;
+    self.audio_data.append(audio)</code></pre>
+</details>
+<div class="desc"><p>Append a new audio.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.append_image"><code class="name flex">
+<span>def <span class="ident">append_image</span></span>(<span>self, image: str, detail: Literal['auto', 'low', 'high'])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append_image(self, image: str, detail: Literal[&#34;auto&#34;, &#34;low&#34;, &#34;high&#34;]):
+    &#34;&#34;&#34;Append a new image.&#34;&#34;&#34;
+    self.image_data.append(ImageData(url=image, detail=detail))</code></pre>
+</details>
+<div class="desc"><p>Append a new image.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.append_message"><code class="name flex">
+<span>def <span class="ident">append_message</span></span>(<span>self, role: str, message: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append_message(self, role: str, message: str):
+    &#34;&#34;&#34;Append a new message.&#34;&#34;&#34;
+    self.messages.append([role, message])</code></pre>
+</details>
+<div class="desc"><p>Append a new message.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.append_video"><code class="name flex">
+<span>def <span class="ident">append_video</span></span>(<span>self, video: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def append_video(self, video: str):
+    &#34;&#34;&#34;Append a new video.&#34;&#34;&#34;
+    self.video_data.append(video)</code></pre>
+</details>
+<div class="desc"><p>Append a new video.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return Conversation(
+        name=self.name,
+        system_template=self.system_template,
+        system_message=self.system_message,
+        roles=self.roles,
+        messages=[[x, y] for x, y in self.messages],
+        offset=self.offset,
+        sep_style=self.sep_style,
+        sep=self.sep,
+        sep2=self.sep2,
+        stop_str=self.stop_str,
+        image_token=self.image_token,
+        video_token=self.video_token,
+        audio_token=self.audio_token,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.dict"><code class="name flex">
+<span>def <span class="ident">dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dict(self):
+    return {
+        &#34;template_name&#34;: self.name,
+        &#34;system_message&#34;: self.system_message,
+        &#34;roles&#34;: self.roles,
+        &#34;messages&#34;: self.messages,
+        &#34;offset&#34;: self.offset,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.get_prompt"><code class="name flex">
+<span>def <span class="ident">get_prompt</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_prompt(self) -&gt; str:
+    &#34;&#34;&#34;Get the prompt for generation.&#34;&#34;&#34;
+    system_prompt = self.system_template.format(system_message=self.system_message)
+    if self.sep_style == SeparatorStyle.ADD_COLON_SINGLE:
+        ret = system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;: &#34; + message + self.sep
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.ADD_COLON_TWO:
+        seps = [self.sep, self.sep2]
+        ret = system_prompt + seps[0]
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += role + &#34;: &#34; + message + seps[i % 2]
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.ADD_COLON_SPACE_SINGLE:
+        ret = system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;: &#34; + message + self.sep
+            else:
+                ret += role + &#34;: &#34;  # must be end with a space
+        return ret
+    elif self.sep_style == SeparatorStyle.ADD_NEW_LINE_SINGLE:
+        ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;\n&#34; + message + self.sep
+            else:
+                ret += role + &#34;\n&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.QWEN2_VL_EMBED:
+        ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;\n&#34; + message + self.sep
+            else:
+                ret += role + &#34;\n&#34;
+        ret += self.stop_str
+        return ret
+    elif self.sep_style == SeparatorStyle.NO_COLON_SINGLE:
+        ret = system_prompt
+        for role, message in self.messages:
+            if message:
+                ret += role + message + self.sep
+            else:
+                ret += role
+        return ret
+    elif self.sep_style == SeparatorStyle.NO_COLON_TWO:
+        seps = [self.sep, self.sep2]
+        ret = system_prompt
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += role + message + seps[i % 2]
+            else:
+                ret += role
+        return ret
+    elif self.sep_style == SeparatorStyle.RWKV:
+        ret = system_prompt
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += (
+                    role
+                    + &#34;: &#34;
+                    + message.replace(&#34;\r\n&#34;, &#34;\n&#34;).replace(&#34;\n\n&#34;, &#34;\n&#34;)
+                )
+                ret += &#34;\n\n&#34;
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.LLAMA4:
+        # begin_of_text is added by default
+        if self.system_message:
+            ret = system_prompt
+        else:
+            ret = &#34;&#34;
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += f&#34;&lt;|header_start|&gt;{role}&lt;|header_end|&gt;\n\n&#34;
+                ret += f&#34;{message.strip()}&lt;|eot|&gt;&#34;
+            else:
+                ret += f&#34;&lt;|header_start|&gt;{role}&lt;|header_end|&gt;\n\n&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.LLAMA3:
+        if self.system_message:
+            ret = system_prompt
+        else:
+            ret = &#34;&#34;
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += f&#34;&lt;|start_header_id|&gt;{role}&lt;|end_header_id|&gt;\n\n&#34;
+                ret += f&#34;{message.strip()}&lt;|eot_id|&gt;&#34;
+            else:
+                ret += f&#34;&lt;|start_header_id|&gt;{role}&lt;|end_header_id|&gt;\n\n&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.LLAMA2:
+        seps = [self.sep, self.sep2]
+        if self.system_message:
+            ret = system_prompt
+        else:
+            ret = &#34;[INST] &#34;
+        for i, (role, message) in enumerate(self.messages):
+            tag = self.roles[i % 2]
+            if message:
+                if i == 0:
+                    ret += message + &#34; &#34;
+                else:
+                    ret += tag + &#34; &#34; + message + seps[i % 2]
+            else:
+                ret += tag
+        return ret
+    elif self.sep_style == SeparatorStyle.CHATGLM:
+        # source: https://huggingface.co/THUDM/chatglm-6b/blob/1d240ba371910e9282298d4592532d7f0f3e9f3e/modeling_chatglm.py#L1302-L1308
+        # source2: https://huggingface.co/THUDM/chatglm2-6b/blob/e186c891cf64310ac66ef10a87e6635fa6c2a579/modeling_chatglm.py#L926
+        round_add_n = 1 if self.name == &#34;chatglm2&#34; else 0
+        if system_prompt:
+            ret = system_prompt + self.sep
+        else:
+            ret = &#34;&#34;
+
+        for i, (role, message) in enumerate(self.messages):
+            if i % 2 == 0:
+                ret += f&#34;[Round {i // 2 + round_add_n}]{self.sep}&#34;
+
+            if message:
+                ret += f&#34;{role}：{message}{self.sep}&#34;
+            else:
+                ret += f&#34;{role}：&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.CHATML:
+        ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep + &#34;\n&#34;
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;\n&#34; + message + self.sep + &#34;\n&#34;
+            else:
+                ret += role + &#34;\n&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.CHATGLM3:
+        ret = &#34;&#34;
+        if self.system_message:
+            ret += system_prompt
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;\n&#34; + message
+            else:
+                ret += role
+        return ret
+    elif self.sep_style == SeparatorStyle.CHATINTERN:
+        # source: https://huggingface.co/internlm/internlm-chat-7b-8k/blob/bd546fa984b4b0b86958f56bf37f94aa75ab8831/modeling_internlm.py#L771
+        seps = [self.sep, self.sep2]
+        ret = system_prompt
+        for i, (role, message) in enumerate(self.messages):
+            if i % 2 == 0:
+                ret += &#34;&lt;s&gt;&#34;
+            if message:
+                ret += role + &#34;:&#34; + message + seps[i % 2] + &#34;\n&#34;
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.DOLLY:
+        seps = [self.sep, self.sep2]
+        ret = system_prompt
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += role + &#34;:\n&#34; + message + seps[i % 2]
+                if i % 2 == 1:
+                    ret += &#34;\n\n&#34;
+            else:
+                ret += role + &#34;:\n&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.PHOENIX:
+        ret = system_prompt
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;: &#34; + &#34;&lt;s&gt;&#34; + message + &#34;&lt;/s&gt;&#34;
+            else:
+                ret += role + &#34;: &#34; + &#34;&lt;s&gt;&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.ROBIN:
+        ret = system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;:\n&#34; + message + self.sep
+            else:
+                ret += role + &#34;:\n&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.FALCON_CHAT:
+        ret = &#34;&#34;
+        if self.system_message:
+            ret += system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                ret += role + &#34;: &#34; + message + self.sep
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.METAMATH:
+        ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+        for i, (role, message) in enumerate(self.messages):
+            # For MetaMath, sep2 is used to prefix the message.
+            starting_sep = &#34;:\n&#34; if i % 2 == 0 else &#34;: &#34; + self.sep2
+            ending_sep = self.sep if i % 2 == 0 else &#34;&#34;
+            if message:
+                ret += role + starting_sep + message + ending_sep
+            else:
+                ret += role + starting_sep
+        return ret
+    elif self.sep_style == SeparatorStyle.DEEPSEEK_CHAT:
+        seps = [self.sep, self.sep2]
+        ret = system_prompt
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += role + &#34;: &#34; + message + seps[i % 2]
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.DeepSeekVL2:
+        seps = [self.sep, self.sep2]
+        if system_prompt == &#34;&#34; or system_prompt is None:
+            ret = &#34;&#34;
+        else:
+            ret = system_prompt + seps[0]
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                ret += role + &#34;: &#34; + message + seps[i % 2]
+            else:
+                ret += role + &#34;:&#34;
+        return ret
+    elif self.sep_style == SeparatorStyle.GEMMA3:
+        ret = system_prompt
+        for i, (role, message) in enumerate(self.messages):
+            if message:
+                if i == 0:
+                    ret += message + self.sep
+                else:
+                    ret += role + message + self.sep
+            else:
+                ret += role
+        return ret
+
+    elif self.sep_style == SeparatorStyle.MPT:
+        ret = system_prompt + self.sep
+        for role, message in self.messages:
+            if message:
+                if type(message) is tuple:
+                    message, _, _ = message
+                ret += role + message + self.sep
+            else:
+                ret += role
+        return ret
+    elif self.sep_style == SeparatorStyle.QWEN2_AUDIO:
+        ret = &#34;&#34; if system_prompt == &#34;&#34; else system_prompt + self.sep
+
+        counter = 1
+        for role, message in self.messages:
+            if message:
+                while self.audio_token in message:
+                    message = message.replace(
+                        self.audio_token, self.audio_token.format(idx=counter), 1
+                    )
+                    counter += 1
+
+                ret += role + &#34;\n&#34; + message + self.sep
+            else:
+                ret += role + &#34;\n&#34;
+
+        return ret
+    else:
+        raise ValueError(f&#34;Invalid style: {self.sep_style}&#34;)</code></pre>
+</details>
+<div class="desc"><p>Get the prompt for generation.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.set_system_message"><code class="name flex">
+<span>def <span class="ident">set_system_message</span></span>(<span>self, system_message: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_system_message(self, system_message: str):
+    &#34;&#34;&#34;Set the system message.&#34;&#34;&#34;
+    self.system_message = system_message</code></pre>
+</details>
+<div class="desc"><p>Set the system message.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.to_gradio_chatbot"><code class="name flex">
+<span>def <span class="ident">to_gradio_chatbot</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_gradio_chatbot(self):
+    &#34;&#34;&#34;Convert the conversation to gradio chatbot format.&#34;&#34;&#34;
+    ret = []
+    for i, (role, msg) in enumerate(self.messages[self.offset :]):
+        if i % 2 == 0:
+            ret.append([msg, None])
+        else:
+            ret[-1][-1] = msg
+    return ret</code></pre>
+</details>
+<div class="desc"><p>Convert the conversation to gradio chatbot format.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.to_openai_api_messages"><code class="name flex">
+<span>def <span class="ident">to_openai_api_messages</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_openai_api_messages(self):
+    &#34;&#34;&#34;Convert the conversation to OpenAI chat completion format.&#34;&#34;&#34;
+    if self.system_message == &#34;&#34;:
+        ret = []
+    else:
+        ret = [{&#34;role&#34;: &#34;system&#34;, &#34;content&#34;: self.system_message}]
+
+    for i, (_, msg) in enumerate(self.messages[self.offset :]):
+        if i % 2 == 0:
+            ret.append({&#34;role&#34;: &#34;user&#34;, &#34;content&#34;: msg})
+        else:
+            if msg is not None:
+                ret.append({&#34;role&#34;: &#34;assistant&#34;, &#34;content&#34;: msg})
+    return ret</code></pre>
+</details>
+<div class="desc"><p>Convert the conversation to OpenAI chat completion format.</p></div>
+</dd>
+<dt id="sglang.srt.conversation.Conversation.update_last_message"><code class="name flex">
+<span>def <span class="ident">update_last_message</span></span>(<span>self, message: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_last_message(self, message: str):
+    &#34;&#34;&#34;Update the last output.
+
+    The last message is typically set to be None when constructing the prompt,
+    so we need to update it in-place after getting the response from a model.
+    &#34;&#34;&#34;
+    self.messages[-1][1] = message</code></pre>
+</details>
+<div class="desc"><p>Update the last output.</p>
+<p>The last message is typically set to be None when constructing the prompt,
+so we need to update it in-place after getting the response from a model.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle"><code class="flex name class">
+<span>class <span class="ident">SeparatorStyle</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SeparatorStyle(IntEnum):
+    &#34;&#34;&#34;Separator styles.&#34;&#34;&#34;
+
+    ADD_COLON_SINGLE = auto()
+    ADD_COLON_TWO = auto()
+    ADD_COLON_SPACE_SINGLE = auto()
+    NO_COLON_SINGLE = auto()
+    NO_COLON_TWO = auto()
+    ADD_NEW_LINE_SINGLE = auto()
+    LLAMA2 = auto()
+    LLAMA3 = auto()
+    LLAMA4 = auto()
+    CHATGLM = auto()
+    CHATML = auto()
+    CHATINTERN = auto()
+    DOLLY = auto()
+    RWKV = auto()
+    PHOENIX = auto()
+    ROBIN = auto()
+    FALCON_CHAT = auto()
+    CHATGLM3 = auto()
+    DEEPSEEK_CHAT = auto()
+    METAMATH = auto()
+    DeepSeekVL2 = auto()
+    QWEN2_VL_EMBED = auto()
+    QWEN2_AUDIO = auto()
+    GEMMA3 = auto()
+    MPT = auto()</code></pre>
+</details>
+<div class="desc"><p>Separator styles.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.IntEnum</li>
+<li>builtins.int</li>
+<li>enum.ReprEnum</li>
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.conversation.SeparatorStyle.ADD_COLON_SINGLE"><code class="name">var <span class="ident">ADD_COLON_SINGLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.ADD_COLON_SPACE_SINGLE"><code class="name">var <span class="ident">ADD_COLON_SPACE_SINGLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.ADD_COLON_TWO"><code class="name">var <span class="ident">ADD_COLON_TWO</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.ADD_NEW_LINE_SINGLE"><code class="name">var <span class="ident">ADD_NEW_LINE_SINGLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.CHATGLM"><code class="name">var <span class="ident">CHATGLM</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.CHATGLM3"><code class="name">var <span class="ident">CHATGLM3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.CHATINTERN"><code class="name">var <span class="ident">CHATINTERN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.CHATML"><code class="name">var <span class="ident">CHATML</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.DEEPSEEK_CHAT"><code class="name">var <span class="ident">DEEPSEEK_CHAT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.DOLLY"><code class="name">var <span class="ident">DOLLY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.DeepSeekVL2"><code class="name">var <span class="ident">DeepSeekVL2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.FALCON_CHAT"><code class="name">var <span class="ident">FALCON_CHAT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.GEMMA3"><code class="name">var <span class="ident">GEMMA3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.LLAMA2"><code class="name">var <span class="ident">LLAMA2</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.LLAMA3"><code class="name">var <span class="ident">LLAMA3</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.LLAMA4"><code class="name">var <span class="ident">LLAMA4</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.METAMATH"><code class="name">var <span class="ident">METAMATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.MPT"><code class="name">var <span class="ident">MPT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.NO_COLON_SINGLE"><code class="name">var <span class="ident">NO_COLON_SINGLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.NO_COLON_TWO"><code class="name">var <span class="ident">NO_COLON_TWO</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.PHOENIX"><code class="name">var <span class="ident">PHOENIX</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.QWEN2_AUDIO"><code class="name">var <span class="ident">QWEN2_AUDIO</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.QWEN2_VL_EMBED"><code class="name">var <span class="ident">QWEN2_VL_EMBED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.ROBIN"><code class="name">var <span class="ident">ROBIN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.conversation.SeparatorStyle.RWKV"><code class="name">var <span class="ident">RWKV</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.conversation.chat_template_exists" href="#sglang.srt.conversation.chat_template_exists">chat_template_exists</a></code></li>
+<li><code><a title="sglang.srt.conversation.generate_chat_conv" href="#sglang.srt.conversation.generate_chat_conv">generate_chat_conv</a></code></li>
+<li><code><a title="sglang.srt.conversation.generate_embedding_convs" href="#sglang.srt.conversation.generate_embedding_convs">generate_embedding_convs</a></code></li>
+<li><code><a title="sglang.srt.conversation.get_conv_template_by_model_path" href="#sglang.srt.conversation.get_conv_template_by_model_path">get_conv_template_by_model_path</a></code></li>
+<li><code><a title="sglang.srt.conversation.get_model_type" href="#sglang.srt.conversation.get_model_type">get_model_type</a></code></li>
+<li><code><a title="sglang.srt.conversation.register_conv_template" href="#sglang.srt.conversation.register_conv_template">register_conv_template</a></code></li>
+<li><code><a title="sglang.srt.conversation.register_conv_template_matching_function" href="#sglang.srt.conversation.register_conv_template_matching_function">register_conv_template_matching_function</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.conversation.Conversation" href="#sglang.srt.conversation.Conversation">Conversation</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.conversation.Conversation.append_audio" href="#sglang.srt.conversation.Conversation.append_audio">append_audio</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.append_image" href="#sglang.srt.conversation.Conversation.append_image">append_image</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.append_message" href="#sglang.srt.conversation.Conversation.append_message">append_message</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.append_video" href="#sglang.srt.conversation.Conversation.append_video">append_video</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.audio_data" href="#sglang.srt.conversation.Conversation.audio_data">audio_data</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.audio_token" href="#sglang.srt.conversation.Conversation.audio_token">audio_token</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.copy" href="#sglang.srt.conversation.Conversation.copy">copy</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.dict" href="#sglang.srt.conversation.Conversation.dict">dict</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.get_prompt" href="#sglang.srt.conversation.Conversation.get_prompt">get_prompt</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.image_data" href="#sglang.srt.conversation.Conversation.image_data">image_data</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.image_token" href="#sglang.srt.conversation.Conversation.image_token">image_token</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.messages" href="#sglang.srt.conversation.Conversation.messages">messages</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.modalities" href="#sglang.srt.conversation.Conversation.modalities">modalities</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.name" href="#sglang.srt.conversation.Conversation.name">name</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.offset" href="#sglang.srt.conversation.Conversation.offset">offset</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.roles" href="#sglang.srt.conversation.Conversation.roles">roles</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.sep" href="#sglang.srt.conversation.Conversation.sep">sep</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.sep2" href="#sglang.srt.conversation.Conversation.sep2">sep2</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.sep_style" href="#sglang.srt.conversation.Conversation.sep_style">sep_style</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.set_system_message" href="#sglang.srt.conversation.Conversation.set_system_message">set_system_message</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.stop_str" href="#sglang.srt.conversation.Conversation.stop_str">stop_str</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.stop_token_ids" href="#sglang.srt.conversation.Conversation.stop_token_ids">stop_token_ids</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.system_message" href="#sglang.srt.conversation.Conversation.system_message">system_message</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.system_template" href="#sglang.srt.conversation.Conversation.system_template">system_template</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.to_gradio_chatbot" href="#sglang.srt.conversation.Conversation.to_gradio_chatbot">to_gradio_chatbot</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.to_openai_api_messages" href="#sglang.srt.conversation.Conversation.to_openai_api_messages">to_openai_api_messages</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.update_last_message" href="#sglang.srt.conversation.Conversation.update_last_message">update_last_message</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.video_data" href="#sglang.srt.conversation.Conversation.video_data">video_data</a></code></li>
+<li><code><a title="sglang.srt.conversation.Conversation.video_token" href="#sglang.srt.conversation.Conversation.video_token">video_token</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.conversation.SeparatorStyle" href="#sglang.srt.conversation.SeparatorStyle">SeparatorStyle</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.ADD_COLON_SINGLE" href="#sglang.srt.conversation.SeparatorStyle.ADD_COLON_SINGLE">ADD_COLON_SINGLE</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.ADD_COLON_SPACE_SINGLE" href="#sglang.srt.conversation.SeparatorStyle.ADD_COLON_SPACE_SINGLE">ADD_COLON_SPACE_SINGLE</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.ADD_COLON_TWO" href="#sglang.srt.conversation.SeparatorStyle.ADD_COLON_TWO">ADD_COLON_TWO</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.ADD_NEW_LINE_SINGLE" href="#sglang.srt.conversation.SeparatorStyle.ADD_NEW_LINE_SINGLE">ADD_NEW_LINE_SINGLE</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.CHATGLM" href="#sglang.srt.conversation.SeparatorStyle.CHATGLM">CHATGLM</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.CHATGLM3" href="#sglang.srt.conversation.SeparatorStyle.CHATGLM3">CHATGLM3</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.CHATINTERN" href="#sglang.srt.conversation.SeparatorStyle.CHATINTERN">CHATINTERN</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.CHATML" href="#sglang.srt.conversation.SeparatorStyle.CHATML">CHATML</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.DEEPSEEK_CHAT" href="#sglang.srt.conversation.SeparatorStyle.DEEPSEEK_CHAT">DEEPSEEK_CHAT</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.DOLLY" href="#sglang.srt.conversation.SeparatorStyle.DOLLY">DOLLY</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.DeepSeekVL2" href="#sglang.srt.conversation.SeparatorStyle.DeepSeekVL2">DeepSeekVL2</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.FALCON_CHAT" href="#sglang.srt.conversation.SeparatorStyle.FALCON_CHAT">FALCON_CHAT</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.GEMMA3" href="#sglang.srt.conversation.SeparatorStyle.GEMMA3">GEMMA3</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.LLAMA2" href="#sglang.srt.conversation.SeparatorStyle.LLAMA2">LLAMA2</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.LLAMA3" href="#sglang.srt.conversation.SeparatorStyle.LLAMA3">LLAMA3</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.LLAMA4" href="#sglang.srt.conversation.SeparatorStyle.LLAMA4">LLAMA4</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.METAMATH" href="#sglang.srt.conversation.SeparatorStyle.METAMATH">METAMATH</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.MPT" href="#sglang.srt.conversation.SeparatorStyle.MPT">MPT</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.NO_COLON_SINGLE" href="#sglang.srt.conversation.SeparatorStyle.NO_COLON_SINGLE">NO_COLON_SINGLE</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.NO_COLON_TWO" href="#sglang.srt.conversation.SeparatorStyle.NO_COLON_TWO">NO_COLON_TWO</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.PHOENIX" href="#sglang.srt.conversation.SeparatorStyle.PHOENIX">PHOENIX</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.QWEN2_AUDIO" href="#sglang.srt.conversation.SeparatorStyle.QWEN2_AUDIO">QWEN2_AUDIO</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.QWEN2_VL_EMBED" href="#sglang.srt.conversation.SeparatorStyle.QWEN2_VL_EMBED">QWEN2_VL_EMBED</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.ROBIN" href="#sglang.srt.conversation.SeparatorStyle.ROBIN">ROBIN</a></code></li>
+<li><code><a title="sglang.srt.conversation.SeparatorStyle.RWKV" href="#sglang.srt.conversation.SeparatorStyle.RWKV">RWKV</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

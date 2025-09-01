@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.mem_cache.radix_cache API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.mem_cache.radix_cache</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache"><code class="flex name class">
+<span>class <span class="ident">RadixCache</span></span>
+<span>(</span><span>req_to_token_pool: ReqToTokenPool,<br>token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator,<br>page_size: int,<br>disable: bool = False,<br>enable_kv_cache_events: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RadixCache(BasePrefixCache):
+    def __init__(
+        self,
+        req_to_token_pool: ReqToTokenPool,
+        token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator,
+        page_size: int,
+        disable: bool = False,
+        enable_kv_cache_events: bool = False,
+    ):
+        self.req_to_token_pool = req_to_token_pool
+        self.token_to_kv_pool_allocator = token_to_kv_pool_allocator
+        self.page_size = page_size
+        self.disable = disable
+        self.enable_kv_cache_events = enable_kv_cache_events
+        self.kv_event_queue = []
+
+        if self.token_to_kv_pool_allocator:
+            self.device = self.token_to_kv_pool_allocator.device
+        else:
+            self.device = torch.device(&#34;cpu&#34;)
+
+        if self.page_size == 1:
+            self.key_match_fn = _key_match_page_size1
+            self.get_child_key_fn = lambda key: key[0]
+        else:
+            self.key_match_fn = partial(_key_match_paged, page_size=page_size)
+            self.get_child_key_fn = lambda key: tuple(key[:page_size])
+        self.reset()
+
+    ##### Public API #####
+
+    def reset(self):
+        self.root_node = TreeNode()
+        self.root_node.key = []
+        self.root_node.value = []
+        self.root_node.host_value = []
+        self.root_node.lock_ref = 1
+        self.evictable_size_ = 0
+        self.protected_size_ = 0
+        self._record_all_cleared_event()
+
+    def match_prefix(self, key: List[int], **kwargs) -&gt; MatchResult:
+        &#34;&#34;&#34;Find the matching prefix from the radix tree.
+        Args:
+            key: A list of token IDs to find a matching prefix.
+        Returns:
+            A tuple of a tensor of matching prefix token IDs and
+            the last node that contains the prefix values. Note that
+            this API can modify the internal state of the Radix tree.
+            The last node create a new child if the prefix is shorter
+            than the last node&#39;s value.
+        &#34;&#34;&#34;
+        if self.disable or len(key) == 0:
+            return MatchResult(
+                device_indices=torch.empty(
+                    (0,),
+                    dtype=torch.int64,
+                    device=self.device,
+                ),
+                last_device_node=self.root_node,
+                last_host_node=self.root_node,
+            )
+
+        if self.page_size != 1:
+            page_aligned_len = len(key) // self.page_size * self.page_size
+            key = key[:page_aligned_len]
+
+        value, last_node = self._match_prefix_helper(self.root_node, key)
+        if value:
+            value = torch.cat(value)
+        else:
+            value = torch.empty((0,), dtype=torch.int64, device=self.device)
+        return MatchResult(
+            device_indices=value,
+            last_device_node=last_node,
+            last_host_node=last_node,
+        )
+
+    def insert(self, key: List, value=None, chunked=False):
+        if self.disable:
+            return 0
+
+        if value is None:
+            value = [x for x in key]
+        return self._insert_helper(self.root_node, key, value)
+
+    def cache_finished_req(self, req: Req):
+        &#34;&#34;&#34;Cache request when it finishes.&#34;&#34;&#34;
+        if self.disable:
+            kv_indices = self.req_to_token_pool.req_to_token[
+                req.req_pool_idx, : len(req.origin_input_ids) + len(req.output_ids) - 1
+            ]
+            self.token_to_kv_pool_allocator.free(kv_indices)
+            self.req_to_token_pool.free(req.req_pool_idx)
+            return
+
+        token_ids = (req.origin_input_ids + req.output_ids)[:-1]
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx, : len(token_ids)
+        ]
+
+        if self.page_size != 1:
+            page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+            page_aligned_kv_indices = kv_indices[:page_aligned_len].to(
+                dtype=torch.int64, copy=True
+            )
+            self.token_to_kv_pool_allocator.free(kv_indices[page_aligned_len:])
+        else:
+            page_aligned_len = len(kv_indices)
+            page_aligned_kv_indices = kv_indices.to(dtype=torch.int64, copy=True)
+
+        # Radix Cache takes one ref in memory pool
+        new_prefix_len = self.insert(
+            token_ids[:page_aligned_len], page_aligned_kv_indices
+        )
+        self.token_to_kv_pool_allocator.free(
+            kv_indices[len(req.prefix_indices) : new_prefix_len]
+        )
+
+        # Remove req slot release the cache lock
+        self.req_to_token_pool.free(req.req_pool_idx)
+        self.dec_lock_ref(req.last_node)
+
+    def cache_unfinished_req(self, req: Req, chunked=False):
+        &#34;&#34;&#34;Cache request when it is unfinished.&#34;&#34;&#34;
+        if self.disable:
+            return
+
+        token_ids = req.fill_ids
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx, : len(token_ids)
+        ]
+
+        if self.page_size != 1:
+            page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+            page_aligned_kv_indices = kv_indices[:page_aligned_len].to(
+                dtype=torch.int64, copy=True
+            )
+        else:
+            page_aligned_len = len(kv_indices)
+            page_aligned_kv_indices = kv_indices.to(dtype=torch.int64, copy=True)
+        page_aligned_token_ids = token_ids[:page_aligned_len]
+
+        # Radix Cache takes one ref in memory pool
+        new_prefix_len = self.insert(
+            page_aligned_token_ids, page_aligned_kv_indices, chunked=chunked
+        )
+        self.token_to_kv_pool_allocator.free(
+            kv_indices[len(req.prefix_indices) : new_prefix_len]
+        )
+
+        # The prefix indices could be updated, reuse it
+        new_indices, new_last_node, _, _ = self.match_prefix(page_aligned_token_ids)
+        self.req_to_token_pool.write(
+            (req.req_pool_idx, slice(len(req.prefix_indices), len(new_indices))),
+            new_indices[len(req.prefix_indices) :],
+        )
+
+        self.dec_lock_ref(req.last_node)
+        self.inc_lock_ref(new_last_node)
+
+        # `req.prefix_indices` will be used in `PrefillAdder::add_chunked_req` later
+        if self.page_size != 1:
+            req.prefix_indices = torch.cat(
+                [new_indices, kv_indices[len(new_indices) :]]
+            )
+        else:
+            req.prefix_indices = new_indices
+        req.last_node = new_last_node
+
+    def pretty_print(self):
+        self._print_helper(self.root_node, 0)
+        print(f&#34;#tokens: {self.total_size()}&#34;)
+
+    def total_size(self):
+        return self._total_size_helper()
+
+    def evict(self, num_tokens: int):
+        if self.disable:
+            return
+
+        leaves = self._collect_leaves()
+        heapq.heapify(leaves)
+
+        num_evicted = 0
+        while num_evicted &lt; num_tokens and len(leaves):
+            x = heapq.heappop(leaves)
+
+            if x == self.root_node:
+                break
+            if x.lock_ref &gt; 0:
+                continue
+
+            self.token_to_kv_pool_allocator.free(x.value)
+            num_evicted += len(x.value)
+            self._delete_leaf(x)
+
+            if len(x.parent.children) == 0:
+                heapq.heappush(leaves, x.parent)
+
+            self._record_remove_event(x)
+
+    def inc_lock_ref(self, node: TreeNode):
+        if self.disable:
+            return 0
+
+        delta = 0
+        while node != self.root_node:
+            if node.lock_ref == 0:
+                self.evictable_size_ -= len(node.value)
+                self.protected_size_ += len(node.value)
+                delta -= len(node.value)
+            node.lock_ref += 1
+            node = node.parent
+        return delta
+
+    def dec_lock_ref(self, node: TreeNode):
+        if self.disable:
+            return 0
+
+        delta = 0
+        while node != self.root_node:
+            if node.lock_ref == 1:
+                self.evictable_size_ += len(node.value)
+                self.protected_size_ -= len(node.value)
+                delta += len(node.value)
+            node.lock_ref -= 1
+            node = node.parent
+        return delta
+
+    def evictable_size(self):
+        return self.evictable_size_
+
+    def protected_size(self):
+        # protected size refers to the size of the cache that is locked
+        return self.protected_size_
+
+    def all_values_flatten(self):
+        values = []
+
+        def _dfs_helper(node: TreeNode):
+            for _, child in node.children.items():
+                values.append(child.value)
+                _dfs_helper(child)
+
+        _dfs_helper(self.root_node)
+        return torch.cat(values)
+
+    ##### Internal Helper Functions #####
+
+    def _match_prefix_helper(self, node: TreeNode, key: List):
+        node.last_access_time = time.monotonic()
+
+        child_key = self.get_child_key_fn(key)
+
+        value = []
+        while len(key) &gt; 0 and child_key in node.children.keys():
+            child = node.children[child_key]
+            child.last_access_time = time.monotonic()
+            prefix_len = self.key_match_fn(child.key, key)
+            if prefix_len &lt; len(child.key):
+                new_node = self._split_node(child.key, child, prefix_len)
+                value.append(new_node.value)
+                node = new_node
+                break
+            else:
+                value.append(child.value)
+                node = child
+                key = key[prefix_len:]
+
+                if len(key):
+                    child_key = self.get_child_key_fn(key)
+
+        return value, node
+
+    def _split_node(self, key, child: TreeNode, split_len: int):
+        # new_node -&gt; child
+        self._record_remove_event(child)
+        new_node = TreeNode()
+        new_node.children = {self.get_child_key_fn(key[split_len:]): child}
+        new_node.parent = child.parent
+        new_node.lock_ref = child.lock_ref
+        new_node.key = child.key[:split_len]
+        new_node.value = child.value[:split_len]
+        child.parent = new_node
+        child.key = child.key[split_len:]
+        child.value = child.value[split_len:]
+        new_node.parent.children[self.get_child_key_fn(key)] = new_node
+
+        self._record_store_event(new_node)
+        self._record_store_event(child)
+
+        return new_node
+
+    def _insert_helper(self, node: TreeNode, key: List, value):
+        node.last_access_time = time.monotonic()
+        if len(key) == 0:
+            return 0
+
+        child_key = self.get_child_key_fn(key)
+
+        total_prefix_length = 0
+        while len(key) &gt; 0 and child_key in node.children.keys():
+            node = node.children[child_key]
+            node.last_access_time = time.monotonic()
+            prefix_len = self.key_match_fn(node.key, key)
+            total_prefix_length += prefix_len
+            key = key[prefix_len:]
+            value = value[prefix_len:]
+
+            if prefix_len &lt; len(node.key):
+                new_node = self._split_node(node.key, node, prefix_len)
+                node = new_node
+
+            if len(key):
+                child_key = self.get_child_key_fn(key)
+
+        if len(key):
+            new_node = TreeNode()
+            new_node.parent = node
+            new_node.key = key
+            new_node.value = value
+            node.children[child_key] = new_node
+            self.evictable_size_ += len(value)
+            self._record_store_event(new_node)
+        return total_prefix_length
+
+    def _print_helper(self, node: TreeNode, indent: int):
+        &#34;&#34;&#34;Prints the radix tree in a human-readable format.&#34;&#34;&#34;
+        stack = [(node, indent)]
+        while stack:
+            current_node, current_indent = stack.pop()
+            print(
+                &#34; &#34; * current_indent,
+                len(current_node.key),
+                current_node.key[:10],
+                f&#34;r={current_node.lock_ref}&#34;,
+            )
+            for key, child in current_node.children.items():
+                stack.append((child, current_indent + 2))
+
+                assert key == self.get_child_key_fn(
+                    child.key
+                ), f&#34;{key=}, {self.get_child_key_fn(child.key)=}&#34;
+
+    def _delete_leaf(self, node):
+        for k, v in node.parent.children.items():
+            if v == node:
+                break
+        del node.parent.children[k]
+        self.evictable_size_ -= len(node.key)
+
+    def _total_size_helper(self):
+        total_size = 0
+        stack = [self.root_node]
+        while stack:
+            current_node = stack.pop()
+            total_size += len(current_node.value)
+            for child in current_node.children.values():
+                if child.evicted:
+                    continue
+                stack.append(child)
+        return total_size
+
+    def _collect_leaves(self):
+        ret_list = []
+        stack = [self.root_node]
+
+        while stack:
+            cur_node = stack.pop()
+            if len(cur_node.children) == 0:
+                ret_list.append(cur_node)
+            else:
+                stack.extend(cur_node.children.values())
+
+        return ret_list
+
+    def _record_store_event(self, node: TreeNode):
+        # One BlockStored per ``page_size`` chunk.
+        if self.enable_kv_cache_events:
+            # First chunk links to the last page of the parent node (if any).
+            if node.parent is None or node != self.root_node:
+                parent_block_hash = None
+            else:
+                last_page_start = (
+                    (len(node.parent.key) - 1) // self.page_size
+                ) * self.page_size
+                parent_parent_tokens = node.parent.key[last_page_start:]
+                parent_block_hash = hash(tuple(parent_parent_tokens))
+
+            for start in range(0, len(node.key), self.page_size):
+                page_tokens = node.key[start : start + self.page_size]
+                if not page_tokens:
+                    continue
+
+                block_hash = hash(tuple(page_tokens))
+
+                self.kv_event_queue.append(
+                    BlockStored(
+                        block_hashes=[block_hash],
+                        parent_block_hash=parent_block_hash,
+                        token_ids=page_tokens,
+                        block_size=len(page_tokens),
+                        lora_id=None,
+                    )
+                )
+
+                # Chain next chunk to this one.
+                parent_block_hash = block_hash
+
+    def _record_remove_event(self, node: TreeNode):
+        # One BlockRemoved per chunk.
+        if self.enable_kv_cache_events:
+            for start in range(0, len(node.key), self.page_size):
+                page_tokens = node.key[start : start + self.page_size]
+                if not page_tokens:
+                    continue
+                block_hash = hash(tuple(page_tokens))
+                self.kv_event_queue.append(BlockRemoved(block_hashes=[block_hash]))
+
+    def _record_all_cleared_event(self):
+        if self.enable_kv_cache_events:
+            self.kv_event_queue.append(AllBlocksCleared())
+
+    def take_events(self):
+        &#34;&#34;&#34;Atomically takes all events and clears the queue.
+
+        Returns:
+            A list of KV cache events.
+        &#34;&#34;&#34;
+        if not self.enable_kv_cache_events:
+            return []
+        events = self.kv_event_queue
+        self.kv_event_queue = []
+        return events</code></pre>
+</details>
+<div class="desc"><p>Cache can be indexed by either rid or key.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache">BasePrefixCache</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.hiradix_cache.HiRadixCache" href="hiradix_cache.html#sglang.srt.mem_cache.hiradix_cache.HiRadixCache">HiRadixCache</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.all_values_flatten"><code class="name flex">
+<span>def <span class="ident">all_values_flatten</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def all_values_flatten(self):
+    values = []
+
+    def _dfs_helper(node: TreeNode):
+        for _, child in node.children.items():
+            values.append(child.value)
+            _dfs_helper(child)
+
+    _dfs_helper(self.root_node)
+    return torch.cat(values)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.cache_finished_req"><code class="name flex">
+<span>def <span class="ident">cache_finished_req</span></span>(<span>self, req: Req)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache_finished_req(self, req: Req):
+    &#34;&#34;&#34;Cache request when it finishes.&#34;&#34;&#34;
+    if self.disable:
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx, : len(req.origin_input_ids) + len(req.output_ids) - 1
+        ]
+        self.token_to_kv_pool_allocator.free(kv_indices)
+        self.req_to_token_pool.free(req.req_pool_idx)
+        return
+
+    token_ids = (req.origin_input_ids + req.output_ids)[:-1]
+    kv_indices = self.req_to_token_pool.req_to_token[
+        req.req_pool_idx, : len(token_ids)
+    ]
+
+    if self.page_size != 1:
+        page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+        page_aligned_kv_indices = kv_indices[:page_aligned_len].to(
+            dtype=torch.int64, copy=True
+        )
+        self.token_to_kv_pool_allocator.free(kv_indices[page_aligned_len:])
+    else:
+        page_aligned_len = len(kv_indices)
+        page_aligned_kv_indices = kv_indices.to(dtype=torch.int64, copy=True)
+
+    # Radix Cache takes one ref in memory pool
+    new_prefix_len = self.insert(
+        token_ids[:page_aligned_len], page_aligned_kv_indices
+    )
+    self.token_to_kv_pool_allocator.free(
+        kv_indices[len(req.prefix_indices) : new_prefix_len]
+    )
+
+    # Remove req slot release the cache lock
+    self.req_to_token_pool.free(req.req_pool_idx)
+    self.dec_lock_ref(req.last_node)</code></pre>
+</details>
+<div class="desc"><p>Cache request when it finishes.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.cache_unfinished_req"><code class="name flex">
+<span>def <span class="ident">cache_unfinished_req</span></span>(<span>self, req: Req, chunked=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache_unfinished_req(self, req: Req, chunked=False):
+    &#34;&#34;&#34;Cache request when it is unfinished.&#34;&#34;&#34;
+    if self.disable:
+        return
+
+    token_ids = req.fill_ids
+    kv_indices = self.req_to_token_pool.req_to_token[
+        req.req_pool_idx, : len(token_ids)
+    ]
+
+    if self.page_size != 1:
+        page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+        page_aligned_kv_indices = kv_indices[:page_aligned_len].to(
+            dtype=torch.int64, copy=True
+        )
+    else:
+        page_aligned_len = len(kv_indices)
+        page_aligned_kv_indices = kv_indices.to(dtype=torch.int64, copy=True)
+    page_aligned_token_ids = token_ids[:page_aligned_len]
+
+    # Radix Cache takes one ref in memory pool
+    new_prefix_len = self.insert(
+        page_aligned_token_ids, page_aligned_kv_indices, chunked=chunked
+    )
+    self.token_to_kv_pool_allocator.free(
+        kv_indices[len(req.prefix_indices) : new_prefix_len]
+    )
+
+    # The prefix indices could be updated, reuse it
+    new_indices, new_last_node, _, _ = self.match_prefix(page_aligned_token_ids)
+    self.req_to_token_pool.write(
+        (req.req_pool_idx, slice(len(req.prefix_indices), len(new_indices))),
+        new_indices[len(req.prefix_indices) :],
+    )
+
+    self.dec_lock_ref(req.last_node)
+    self.inc_lock_ref(new_last_node)
+
+    # `req.prefix_indices` will be used in `PrefillAdder::add_chunked_req` later
+    if self.page_size != 1:
+        req.prefix_indices = torch.cat(
+            [new_indices, kv_indices[len(new_indices) :]]
+        )
+    else:
+        req.prefix_indices = new_indices
+    req.last_node = new_last_node</code></pre>
+</details>
+<div class="desc"><p>Cache request when it is unfinished.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.dec_lock_ref"><code class="name flex">
+<span>def <span class="ident">dec_lock_ref</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.radix_cache.TreeNode" href="#sglang.srt.mem_cache.radix_cache.TreeNode">TreeNode</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dec_lock_ref(self, node: TreeNode):
+    if self.disable:
+        return 0
+
+    delta = 0
+    while node != self.root_node:
+        if node.lock_ref == 1:
+            self.evictable_size_ += len(node.value)
+            self.protected_size_ -= len(node.value)
+            delta += len(node.value)
+        node.lock_ref -= 1
+        node = node.parent
+    return delta</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.evict"><code class="name flex">
+<span>def <span class="ident">evict</span></span>(<span>self, num_tokens: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evict(self, num_tokens: int):
+    if self.disable:
+        return
+
+    leaves = self._collect_leaves()
+    heapq.heapify(leaves)
+
+    num_evicted = 0
+    while num_evicted &lt; num_tokens and len(leaves):
+        x = heapq.heappop(leaves)
+
+        if x == self.root_node:
+            break
+        if x.lock_ref &gt; 0:
+            continue
+
+        self.token_to_kv_pool_allocator.free(x.value)
+        num_evicted += len(x.value)
+        self._delete_leaf(x)
+
+        if len(x.parent.children) == 0:
+            heapq.heappush(leaves, x.parent)
+
+        self._record_remove_event(x)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.evictable_size"><code class="name flex">
+<span>def <span class="ident">evictable_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evictable_size(self):
+    return self.evictable_size_</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.inc_lock_ref"><code class="name flex">
+<span>def <span class="ident">inc_lock_ref</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.radix_cache.TreeNode" href="#sglang.srt.mem_cache.radix_cache.TreeNode">TreeNode</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inc_lock_ref(self, node: TreeNode):
+    if self.disable:
+        return 0
+
+    delta = 0
+    while node != self.root_node:
+        if node.lock_ref == 0:
+            self.evictable_size_ -= len(node.value)
+            self.protected_size_ += len(node.value)
+            delta -= len(node.value)
+        node.lock_ref += 1
+        node = node.parent
+    return delta</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, key: List, value=None, chunked=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert(self, key: List, value=None, chunked=False):
+    if self.disable:
+        return 0
+
+    if value is None:
+        value = [x for x in key]
+    return self._insert_helper(self.root_node, key, value)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.match_prefix"><code class="name flex">
+<span>def <span class="ident">match_prefix</span></span>(<span>self, key: List[int], **kwargs) ‑> <a title="sglang.srt.mem_cache.base_prefix_cache.MatchResult" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.MatchResult">MatchResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_prefix(self, key: List[int], **kwargs) -&gt; MatchResult:
+    &#34;&#34;&#34;Find the matching prefix from the radix tree.
+    Args:
+        key: A list of token IDs to find a matching prefix.
+    Returns:
+        A tuple of a tensor of matching prefix token IDs and
+        the last node that contains the prefix values. Note that
+        this API can modify the internal state of the Radix tree.
+        The last node create a new child if the prefix is shorter
+        than the last node&#39;s value.
+    &#34;&#34;&#34;
+    if self.disable or len(key) == 0:
+        return MatchResult(
+            device_indices=torch.empty(
+                (0,),
+                dtype=torch.int64,
+                device=self.device,
+            ),
+            last_device_node=self.root_node,
+            last_host_node=self.root_node,
+        )
+
+    if self.page_size != 1:
+        page_aligned_len = len(key) // self.page_size * self.page_size
+        key = key[:page_aligned_len]
+
+    value, last_node = self._match_prefix_helper(self.root_node, key)
+    if value:
+        value = torch.cat(value)
+    else:
+        value = torch.empty((0,), dtype=torch.int64, device=self.device)
+    return MatchResult(
+        device_indices=value,
+        last_device_node=last_node,
+        last_host_node=last_node,
+    )</code></pre>
+</details>
+<div class="desc"><p>Find the matching prefix from the radix tree.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>key</code></strong></dt>
+<dd>A list of token IDs to find a matching prefix.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A tuple of a tensor of matching prefix token IDs and
+the last node that contains the prefix values. Note that
+this API can modify the internal state of the Radix tree.
+The last node create a new child if the prefix is shorter
+than the last node's value.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.pretty_print"><code class="name flex">
+<span>def <span class="ident">pretty_print</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pretty_print(self):
+    self._print_helper(self.root_node, 0)
+    print(f&#34;#tokens: {self.total_size()}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.protected_size"><code class="name flex">
+<span>def <span class="ident">protected_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def protected_size(self):
+    # protected size refers to the size of the cache that is locked
+    return self.protected_size_</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset(self):
+    self.root_node = TreeNode()
+    self.root_node.key = []
+    self.root_node.value = []
+    self.root_node.host_value = []
+    self.root_node.lock_ref = 1
+    self.evictable_size_ = 0
+    self.protected_size_ = 0
+    self._record_all_cleared_event()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.take_events"><code class="name flex">
+<span>def <span class="ident">take_events</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def take_events(self):
+    &#34;&#34;&#34;Atomically takes all events and clears the queue.
+
+    Returns:
+        A list of KV cache events.
+    &#34;&#34;&#34;
+    if not self.enable_kv_cache_events:
+        return []
+    events = self.kv_event_queue
+    self.kv_event_queue = []
+    return events</code></pre>
+</details>
+<div class="desc"><p>Atomically takes all events and clears the queue.</p>
+<h2 id="returns">Returns</h2>
+<p>A list of KV cache events.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.RadixCache.total_size"><code class="name flex">
+<span>def <span class="ident">total_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def total_size(self):
+    return self._total_size_helper()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache">BasePrefixCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.check_hicache_events" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.check_hicache_events">check_hicache_events</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.init_load_back" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.init_load_back">init_load_back</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.ready_to_load_host_cache" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.ready_to_load_host_cache">ready_to_load_host_cache</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode"><code class="flex name class">
+<span>class <span class="ident">TreeNode</span></span>
+<span>(</span><span>id: Optional[int] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreeNode:
+
+    counter = 0
+
+    def __init__(self, id: Optional[int] = None):
+        self.children = defaultdict(TreeNode)
+        self.parent: TreeNode = None
+        self.key: List[int] = None
+        self.value: Optional[torch.Tensor] = None
+        self.lock_ref = 0
+        self.last_access_time = time.monotonic()
+
+        self.hit_count = 0
+        # indicating the node is loading KV cache from host
+        self.loading = False
+        # indicating the node is locked to protect from eviction
+        # incremented when the node is referenced by a storage operation
+        self.host_ref_counter = 0
+        # store the host indices of KV cache
+        self.host_value: Optional[torch.Tensor] = None
+        # store hash values of each pages
+        self.hash_value: Optional[List[str]] = None
+
+        self.id = TreeNode.counter if id is None else id
+        TreeNode.counter += 1
+
+    @property
+    def evicted(self):
+        return self.value is None
+
+    @property
+    def backuped(self):
+        return self.host_value is not None
+
+    def protect_host(self):
+        &#34;&#34;&#34;Protect the host value from eviction.&#34;&#34;&#34;
+        self.host_ref_counter += 1
+
+    def release_host(self):
+        &#34;&#34;&#34;Release the host value, allowing it to be evicted.&#34;&#34;&#34;
+        if self.host_ref_counter &gt; 0:
+            self.host_ref_counter -= 1
+        else:
+            raise RuntimeError(&#34;Host reference counter is already zero.&#34;)
+
+    def get_last_hash_value(self) -&gt; Optional[str]:
+        &#34;&#34;&#34;Returns the hash value of the last page in this node.&#34;&#34;&#34;
+        if self.hash_value is None or len(self.hash_value) == 0:
+            return None
+        return self.hash_value[-1]
+
+    def __lt__(self, other: &#34;TreeNode&#34;):
+        return self.last_access_time &lt; other.last_access_time</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode.counter"><code class="name">var <span class="ident">counter</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode.backuped"><code class="name">prop <span class="ident">backuped</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def backuped(self):
+    return self.host_value is not None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode.evicted"><code class="name">prop <span class="ident">evicted</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def evicted(self):
+    return self.value is None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode.get_last_hash_value"><code class="name flex">
+<span>def <span class="ident">get_last_hash_value</span></span>(<span>self) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_last_hash_value(self) -&gt; Optional[str]:
+    &#34;&#34;&#34;Returns the hash value of the last page in this node.&#34;&#34;&#34;
+    if self.hash_value is None or len(self.hash_value) == 0:
+        return None
+    return self.hash_value[-1]</code></pre>
+</details>
+<div class="desc"><p>Returns the hash value of the last page in this node.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode.protect_host"><code class="name flex">
+<span>def <span class="ident">protect_host</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def protect_host(self):
+    &#34;&#34;&#34;Protect the host value from eviction.&#34;&#34;&#34;
+    self.host_ref_counter += 1</code></pre>
+</details>
+<div class="desc"><p>Protect the host value from eviction.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.radix_cache.TreeNode.release_host"><code class="name flex">
+<span>def <span class="ident">release_host</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def release_host(self):
+    &#34;&#34;&#34;Release the host value, allowing it to be evicted.&#34;&#34;&#34;
+    if self.host_ref_counter &gt; 0:
+        self.host_ref_counter -= 1
+    else:
+        raise RuntimeError(&#34;Host reference counter is already zero.&#34;)</code></pre>
+</details>
+<div class="desc"><p>Release the host value, allowing it to be evicted.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.mem_cache" href="index.html">sglang.srt.mem_cache</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache" href="#sglang.srt.mem_cache.radix_cache.RadixCache">RadixCache</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.all_values_flatten" href="#sglang.srt.mem_cache.radix_cache.RadixCache.all_values_flatten">all_values_flatten</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.cache_finished_req" href="#sglang.srt.mem_cache.radix_cache.RadixCache.cache_finished_req">cache_finished_req</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.cache_unfinished_req" href="#sglang.srt.mem_cache.radix_cache.RadixCache.cache_unfinished_req">cache_unfinished_req</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.dec_lock_ref" href="#sglang.srt.mem_cache.radix_cache.RadixCache.dec_lock_ref">dec_lock_ref</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.evict" href="#sglang.srt.mem_cache.radix_cache.RadixCache.evict">evict</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.evictable_size" href="#sglang.srt.mem_cache.radix_cache.RadixCache.evictable_size">evictable_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.inc_lock_ref" href="#sglang.srt.mem_cache.radix_cache.RadixCache.inc_lock_ref">inc_lock_ref</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.insert" href="#sglang.srt.mem_cache.radix_cache.RadixCache.insert">insert</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.match_prefix" href="#sglang.srt.mem_cache.radix_cache.RadixCache.match_prefix">match_prefix</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.pretty_print" href="#sglang.srt.mem_cache.radix_cache.RadixCache.pretty_print">pretty_print</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.protected_size" href="#sglang.srt.mem_cache.radix_cache.RadixCache.protected_size">protected_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.reset" href="#sglang.srt.mem_cache.radix_cache.RadixCache.reset">reset</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.take_events" href="#sglang.srt.mem_cache.radix_cache.RadixCache.take_events">take_events</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.RadixCache.total_size" href="#sglang.srt.mem_cache.radix_cache.RadixCache.total_size">total_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode" href="#sglang.srt.mem_cache.radix_cache.TreeNode">TreeNode</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode.backuped" href="#sglang.srt.mem_cache.radix_cache.TreeNode.backuped">backuped</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode.counter" href="#sglang.srt.mem_cache.radix_cache.TreeNode.counter">counter</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode.evicted" href="#sglang.srt.mem_cache.radix_cache.TreeNode.evicted">evicted</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode.get_last_hash_value" href="#sglang.srt.mem_cache.radix_cache.TreeNode.get_last_hash_value">get_last_hash_value</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode.protect_host" href="#sglang.srt.mem_cache.radix_cache.TreeNode.protect_host">protect_host</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.radix_cache.TreeNode.release_host" href="#sglang.srt.mem_cache.radix_cache.TreeNode.release_host">release_host</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

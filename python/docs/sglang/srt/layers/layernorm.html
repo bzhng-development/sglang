@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.layernorm API documentation</title>
+<meta name="description" content="Fused operators for normalization layers.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.layernorm</code></h1>
+</header>
+<section id="section-intro">
+<p>Fused operators for normalization layers.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.layernorm.Gemma3RMSNorm"><code class="flex name class">
+<span>class <span class="ident">Gemma3RMSNorm</span></span>
+<span>(</span><span>dim: int, eps: float = 1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Gemma3RMSNorm(CustomOp):
+    def __init__(self, dim: int, eps: float = 1e-6):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.zeros(dim))
+        # Re-dispatch
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+
+    def forward_native(self, x):
+        output = self._norm(x.float())
+        # Llama does x.to(float16) * w whilst Gemma3 is (x * w).to(float16)
+        # See https://github.com/huggingface/transformers/pull/29402
+        output = output * (1.0 + self.weight.float())
+        return output.type_as(x)
+
+    def forward_cuda(self, x):
+        return self.forward_native(x)
+
+    def forward_npu(self, x):
+        output, _ = torch_npu.npu_gemma_rms_norm(x, self.weight, self.eps)
+        return output
+
+    def extra_repr(self):
+        return f&#34;{tuple(self.weight.shape)}, eps={self.eps}&#34;</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.custom_op.CustomOp" href="../custom_op.html#sglang.srt.custom_op.CustomOp">CustomOp</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.layernorm.Gemma3RMSNorm.extra_repr"><code class="name flex">
+<span>def <span class="ident">extra_repr</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extra_repr(self):
+    return f&#34;{tuple(self.weight.shape)}, eps={self.eps}&#34;</code></pre>
+</details>
+<div class="desc"><p>Return the extra representation of the module.</p>
+<p>To print customized extra information, you should re-implement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_cuda"><code class="name flex">
+<span>def <span class="ident">forward_cuda</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_cuda(self, x):
+    return self.forward_native(x)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_native"><code class="name flex">
+<span>def <span class="ident">forward_native</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_native(self, x):
+    output = self._norm(x.float())
+    # Llama does x.to(float16) * w whilst Gemma3 is (x * w).to(float16)
+    # See https://github.com/huggingface/transformers/pull/29402
+    output = output * (1.0 + self.weight.float())
+    return output.type_as(x)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_npu"><code class="name flex">
+<span>def <span class="ident">forward_npu</span></span>(<span>self, x)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_npu(self, x):
+    output, _ = torch_npu.npu_gemma_rms_norm(x, self.weight, self.eps)
+    return output</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.custom_op.CustomOp" href="../custom_op.html#sglang.srt.custom_op.CustomOp">CustomOp</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.custom_op.CustomOp.forward" href="../custom_op.html#sglang.srt.custom_op.CustomOp.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.layernorm.GemmaRMSNorm"><code class="flex name class">
+<span>class <span class="ident">GemmaRMSNorm</span></span>
+<span>(</span><span>hidden_size: int, eps: float = 1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GemmaRMSNorm(CustomOp):
+    def __init__(
+        self,
+        hidden_size: int,
+        eps: float = 1e-6,
+    ) -&gt; None:
+        super().__init__()
+        self.weight = nn.Parameter(torch.zeros(hidden_size))
+        self.variance_epsilon = eps
+
+        # Re-dispatch
+        if _is_hip:
+            self._forward_method = self.forward_native
+
+    def forward_native(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        orig_dtype = x.dtype
+        if residual is not None:
+            x = x + residual
+            residual = x
+
+        x = x.float()
+        variance = x.pow(2).mean(dim=-1, keepdim=True)
+        x = x * torch.rsqrt(variance + self.variance_epsilon)
+        x = x * (1.0 + self.weight.float())
+        x = x.to(orig_dtype)
+        return x if residual is None else (x, residual)
+
+    def forward_cuda(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if residual is not None:
+            gemma_fused_add_rmsnorm(
+                x, residual, self.weight.data, self.variance_epsilon
+            )
+            return x, residual
+        out = gemma_rmsnorm(x, self.weight.data, self.variance_epsilon)
+        return out
+
+    def forward_npu(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        orig_dtype = x.dtype
+        if residual is not None:
+            x = x + residual
+            residual = x
+
+        x = x.float()
+        variance = torch_npu.mean(torch_npu.pow(x, 2), dim=-1, keepdim=True)
+        x = x * torch_npu.rsqrt(variance + self.variance_epsilon)
+        x = x * (1.0 + self.weight.float())
+        x = x.to(orig_dtype)
+        return x if residual is None else (x, residual)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.custom_op.CustomOp" href="../custom_op.html#sglang.srt.custom_op.CustomOp">CustomOp</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.layernorm.GemmaRMSNorm.forward_cuda"><code class="name flex">
+<span>def <span class="ident">forward_cuda</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_cuda(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if residual is not None:
+        gemma_fused_add_rmsnorm(
+            x, residual, self.weight.data, self.variance_epsilon
+        )
+        return x, residual
+    out = gemma_rmsnorm(x, self.weight.data, self.variance_epsilon)
+    return out</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.GemmaRMSNorm.forward_native"><code class="name flex">
+<span>def <span class="ident">forward_native</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_native(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    orig_dtype = x.dtype
+    if residual is not None:
+        x = x + residual
+        residual = x
+
+    x = x.float()
+    variance = x.pow(2).mean(dim=-1, keepdim=True)
+    x = x * torch.rsqrt(variance + self.variance_epsilon)
+    x = x * (1.0 + self.weight.float())
+    x = x.to(orig_dtype)
+    return x if residual is None else (x, residual)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.GemmaRMSNorm.forward_npu"><code class="name flex">
+<span>def <span class="ident">forward_npu</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_npu(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    orig_dtype = x.dtype
+    if residual is not None:
+        x = x + residual
+        residual = x
+
+    x = x.float()
+    variance = torch_npu.mean(torch_npu.pow(x, 2), dim=-1, keepdim=True)
+    x = x * torch_npu.rsqrt(variance + self.variance_epsilon)
+    x = x * (1.0 + self.weight.float())
+    x = x.to(orig_dtype)
+    return x if residual is None else (x, residual)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.custom_op.CustomOp" href="../custom_op.html#sglang.srt.custom_op.CustomOp">CustomOp</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.custom_op.CustomOp.forward" href="../custom_op.html#sglang.srt.custom_op.CustomOp.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm"><code class="flex name class">
+<span>class <span class="ident">RMSNorm</span></span>
+<span>(</span><span>hidden_size: int, eps: float = 1e-06, var_hidden_size: int | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RMSNorm(CustomOp):
+    def __init__(
+        self,
+        hidden_size: int,
+        eps: float = 1e-6,
+        var_hidden_size: Optional[int] = None,
+    ) -&gt; None:
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(hidden_size))
+        self.variance_epsilon = eps
+        self.hidden_size = hidden_size
+        self.variance_size_override = (
+            None if var_hidden_size == hidden_size else var_hidden_size
+        )
+        if _use_aiter:
+            self._forward_method = self.forward_aiter
+
+    def forward_cuda(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if self.variance_size_override is not None:
+            return self.forward_native(x, residual)
+        if residual is not None:
+            fused_add_rmsnorm(x, residual, self.weight.data, self.variance_epsilon)
+            return x, residual
+        out = rmsnorm(x, self.weight.data, self.variance_epsilon)
+        return out
+
+    def forward_npu(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if residual is not None:
+            out, _, residual_out = torch_npu.npu_add_rms_norm(
+                residual, x, self.weight.data, self.variance_epsilon
+            )
+            return out, residual_out
+        return torch_npu.npu_rms_norm(x, self.weight.data, self.variance_epsilon)[0]
+
+    def forward_aiter(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if residual is not None:
+            residual_out = torch.empty_like(x)
+            output = torch.empty_like(x)
+            fused_add_rms_norm(
+                output,
+                x,
+                residual,
+                residual_out,
+                self.weight.data,
+                self.variance_epsilon,
+            )
+            return output, residual_out
+        return rms_norm(x, self.weight.data, self.variance_epsilon)
+
+    def forward_hip(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if not x.is_contiguous():
+            # NOTE: Remove this if aiter kernel supports discontinuous input
+            x = x.contiguous()
+        if residual is not None:
+            fused_add_rms_norm(x, residual, self.weight.data, self.variance_epsilon)
+            return x, residual
+        out = torch.empty_like(x)
+        rms_norm(out, x, self.weight.data, self.variance_epsilon)
+        return out
+
+    def forward_native(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if not x.is_contiguous():
+            x = x.contiguous()
+        orig_dtype = x.dtype
+        x = x.to(torch.float32)
+        if residual is not None:
+            x = x + residual.to(torch.float32)
+            residual = x.to(orig_dtype)
+
+        hidden_size = x.shape[-1]
+        if hidden_size != self.hidden_size:
+            raise ValueError(
+                &#34;Expected hidden_size to be &#34;
+                f&#34;{self.hidden_size}, but found: {hidden_size}&#34;
+            )
+
+        if self.variance_size_override is None:
+            x_var = x
+        else:
+            if hidden_size &lt; self.variance_size_override:
+                raise ValueError(
+                    &#34;Expected hidden_size to be at least &#34;
+                    f&#34;{self.variance_size_override}, but found: {hidden_size}&#34;
+                )
+
+            x_var = x[..., : self.variance_size_override]
+
+        variance = x_var.pow(2).mean(dim=-1, keepdim=True)
+        x = x * torch.rsqrt(variance + self.variance_epsilon)
+        x = (x * self.weight).to(orig_dtype)
+        if residual is None:
+            return x
+        else:
+            return x, residual
+
+    def forward_cpu(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if _is_cpu_amx_available:
+            if residual is not None:
+                torch.ops.sgl_kernel.fused_add_rmsnorm_cpu(
+                    x, residual, self.weight.data, self.variance_epsilon
+                )
+                return x, residual
+            return torch.ops.sgl_kernel.rmsnorm_cpu(
+                x, self.weight.data, self.variance_epsilon
+            )
+        else:
+            return self.forward_native(x, residual)
+
+    def forward_with_allreduce_fusion(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        &#34;&#34;&#34;
+        Forward method with allreduce fusion, prioritizing flashinfer fused operations
+        &#34;&#34;&#34;
+        if residual is not None:
+            from sglang.srt.distributed import get_tensor_model_parallel_world_size
+            from sglang.srt.layers.flashinfer_comm_fusion import (
+                flashinfer_allreduce_residual_rmsnorm,
+            )
+
+            fused_op = (
+                torch.ops.sglang.flashinfer_allreduce_residual_rmsnorm
+                if supports_custom_op()
+                else flashinfer_allreduce_residual_rmsnorm
+            )
+
+            if get_tensor_model_parallel_world_size() &gt; 1:
+                fused_result = fused_op(
+                    input_tensor=x,
+                    residual=residual,
+                    weight=self.weight,
+                    eps=self.variance_epsilon,
+                )
+                if fused_result[0] is not None:
+                    return fused_result
+
+        return self.forward(x, residual)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.custom_op.CustomOp" href="../custom_op.html#sglang.srt.custom_op.CustomOp">CustomOp</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.gemma3n_causal.Gemma3nRMSNorm" href="../models/gemma3n_causal.html#sglang.srt.models.gemma3n_causal.Gemma3nRMSNorm">Gemma3nRMSNorm</a></li>
+<li><a title="sglang.srt.models.glm4v.Glm4vRMSNorm" href="../models/glm4v.html#sglang.srt.models.glm4v.Glm4vRMSNorm">Glm4vRMSNorm</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_aiter"><code class="name flex">
+<span>def <span class="ident">forward_aiter</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_aiter(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if residual is not None:
+        residual_out = torch.empty_like(x)
+        output = torch.empty_like(x)
+        fused_add_rms_norm(
+            output,
+            x,
+            residual,
+            residual_out,
+            self.weight.data,
+            self.variance_epsilon,
+        )
+        return output, residual_out
+    return rms_norm(x, self.weight.data, self.variance_epsilon)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_cpu"><code class="name flex">
+<span>def <span class="ident">forward_cpu</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_cpu(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if _is_cpu_amx_available:
+        if residual is not None:
+            torch.ops.sgl_kernel.fused_add_rmsnorm_cpu(
+                x, residual, self.weight.data, self.variance_epsilon
+            )
+            return x, residual
+        return torch.ops.sgl_kernel.rmsnorm_cpu(
+            x, self.weight.data, self.variance_epsilon
+        )
+    else:
+        return self.forward_native(x, residual)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_cuda"><code class="name flex">
+<span>def <span class="ident">forward_cuda</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_cuda(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if self.variance_size_override is not None:
+        return self.forward_native(x, residual)
+    if residual is not None:
+        fused_add_rmsnorm(x, residual, self.weight.data, self.variance_epsilon)
+        return x, residual
+    out = rmsnorm(x, self.weight.data, self.variance_epsilon)
+    return out</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_hip"><code class="name flex">
+<span>def <span class="ident">forward_hip</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_hip(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if not x.is_contiguous():
+        # NOTE: Remove this if aiter kernel supports discontinuous input
+        x = x.contiguous()
+    if residual is not None:
+        fused_add_rms_norm(x, residual, self.weight.data, self.variance_epsilon)
+        return x, residual
+    out = torch.empty_like(x)
+    rms_norm(out, x, self.weight.data, self.variance_epsilon)
+    return out</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_native"><code class="name flex">
+<span>def <span class="ident">forward_native</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_native(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if not x.is_contiguous():
+        x = x.contiguous()
+    orig_dtype = x.dtype
+    x = x.to(torch.float32)
+    if residual is not None:
+        x = x + residual.to(torch.float32)
+        residual = x.to(orig_dtype)
+
+    hidden_size = x.shape[-1]
+    if hidden_size != self.hidden_size:
+        raise ValueError(
+            &#34;Expected hidden_size to be &#34;
+            f&#34;{self.hidden_size}, but found: {hidden_size}&#34;
+        )
+
+    if self.variance_size_override is None:
+        x_var = x
+    else:
+        if hidden_size &lt; self.variance_size_override:
+            raise ValueError(
+                &#34;Expected hidden_size to be at least &#34;
+                f&#34;{self.variance_size_override}, but found: {hidden_size}&#34;
+            )
+
+        x_var = x[..., : self.variance_size_override]
+
+    variance = x_var.pow(2).mean(dim=-1, keepdim=True)
+    x = x * torch.rsqrt(variance + self.variance_epsilon)
+    x = (x * self.weight).to(orig_dtype)
+    if residual is None:
+        return x
+    else:
+        return x, residual</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_npu"><code class="name flex">
+<span>def <span class="ident">forward_npu</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_npu(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    if residual is not None:
+        out, _, residual_out = torch_npu.npu_add_rms_norm(
+            residual, x, self.weight.data, self.variance_epsilon
+        )
+        return out, residual_out
+    return torch_npu.npu_rms_norm(x, self.weight.data, self.variance_epsilon)[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.layernorm.RMSNorm.forward_with_allreduce_fusion"><code class="name flex">
+<span>def <span class="ident">forward_with_allreduce_fusion</span></span>(<span>self, x: torch.Tensor, residual: torch.Tensor | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_with_allreduce_fusion(
+    self,
+    x: torch.Tensor,
+    residual: Optional[torch.Tensor] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    &#34;&#34;&#34;
+    Forward method with allreduce fusion, prioritizing flashinfer fused operations
+    &#34;&#34;&#34;
+    if residual is not None:
+        from sglang.srt.distributed import get_tensor_model_parallel_world_size
+        from sglang.srt.layers.flashinfer_comm_fusion import (
+            flashinfer_allreduce_residual_rmsnorm,
+        )
+
+        fused_op = (
+            torch.ops.sglang.flashinfer_allreduce_residual_rmsnorm
+            if supports_custom_op()
+            else flashinfer_allreduce_residual_rmsnorm
+        )
+
+        if get_tensor_model_parallel_world_size() &gt; 1:
+            fused_result = fused_op(
+                input_tensor=x,
+                residual=residual,
+                weight=self.weight,
+                eps=self.variance_epsilon,
+            )
+            if fused_result[0] is not None:
+                return fused_result
+
+    return self.forward(x, residual)</code></pre>
+</details>
+<div class="desc"><p>Forward method with allreduce fusion, prioritizing flashinfer fused operations</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.custom_op.CustomOp" href="../custom_op.html#sglang.srt.custom_op.CustomOp">CustomOp</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.custom_op.CustomOp.forward" href="../custom_op.html#sglang.srt.custom_op.CustomOp.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers" href="index.html">sglang.srt.layers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.layernorm.Gemma3RMSNorm" href="#sglang.srt.layers.layernorm.Gemma3RMSNorm">Gemma3RMSNorm</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.layernorm.Gemma3RMSNorm.extra_repr" href="#sglang.srt.layers.layernorm.Gemma3RMSNorm.extra_repr">extra_repr</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_cuda" href="#sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_cuda">forward_cuda</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_native" href="#sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_native">forward_native</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_npu" href="#sglang.srt.layers.layernorm.Gemma3RMSNorm.forward_npu">forward_npu</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.layernorm.GemmaRMSNorm" href="#sglang.srt.layers.layernorm.GemmaRMSNorm">GemmaRMSNorm</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.layernorm.GemmaRMSNorm.forward_cuda" href="#sglang.srt.layers.layernorm.GemmaRMSNorm.forward_cuda">forward_cuda</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.GemmaRMSNorm.forward_native" href="#sglang.srt.layers.layernorm.GemmaRMSNorm.forward_native">forward_native</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.GemmaRMSNorm.forward_npu" href="#sglang.srt.layers.layernorm.GemmaRMSNorm.forward_npu">forward_npu</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.layernorm.RMSNorm" href="#sglang.srt.layers.layernorm.RMSNorm">RMSNorm</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_aiter" href="#sglang.srt.layers.layernorm.RMSNorm.forward_aiter">forward_aiter</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_cpu" href="#sglang.srt.layers.layernorm.RMSNorm.forward_cpu">forward_cpu</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_cuda" href="#sglang.srt.layers.layernorm.RMSNorm.forward_cuda">forward_cuda</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_hip" href="#sglang.srt.layers.layernorm.RMSNorm.forward_hip">forward_hip</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_native" href="#sglang.srt.layers.layernorm.RMSNorm.forward_native">forward_native</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_npu" href="#sglang.srt.layers.layernorm.RMSNorm.forward_npu">forward_npu</a></code></li>
+<li><code><a title="sglang.srt.layers.layernorm.RMSNorm.forward_with_allreduce_fusion" href="#sglang.srt.layers.layernorm.RMSNorm.forward_with_allreduce_fusion">forward_with_allreduce_fusion</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

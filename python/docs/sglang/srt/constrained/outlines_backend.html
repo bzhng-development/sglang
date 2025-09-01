@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.constrained.outlines_backend API documentation</title>
+<meta name="description" content="Constrained decoding with outlines backend.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.constrained.outlines_backend</code></h1>
+</header>
+<section id="section-intro">
+<p>Constrained decoding with outlines backend.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.constrained.outlines_backend.build_regex_from_object"><code class="name flex">
+<span>def <span class="ident">build_regex_from_object</span></span>(<span>object: str | pydantic.main.BaseModel | Dict,<br>whitespace_pattern: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_regex_from_object(
+    object: Union[str, BaseModel, Dict], whitespace_pattern: Optional[str] = None
+):
+    if isinstance(object, type(BaseModel)):
+        schema = json.dumps(object.model_json_schema())
+    elif isinstance(object, Dict):
+        schema = json.dumps(object)
+    else:
+        schema = object
+    return build_regex_from_schema(schema, whitespace_pattern)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammar"><code class="flex name class">
+<span>class <span class="ident">OutlinesGrammar</span></span>
+<span>(</span><span>guide: outlines.fsm.guide.RegexGuide,<br>jump_forward_map: <a title="sglang.srt.constrained.outlines_jump_forward.OutlinesJumpForwardMap" href="outlines_jump_forward.html#sglang.srt.constrained.outlines_jump_forward.OutlinesJumpForwardMap">OutlinesJumpForwardMap</a> | None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OutlinesGrammar(BaseGrammarObject):
+    def __init__(
+        self,
+        guide: RegexGuide,
+        jump_forward_map: Union[OutlinesJumpForwardMap, None],
+    ) -&gt; None:
+        super().__init__()
+        self.guide = guide
+        self.jump_forward_map = jump_forward_map
+        self.state = 0
+        self.finished = False
+
+    def accept_token(self, token: int):
+        self.state = self.guide.get_next_state(self.state, token)
+
+    def allocate_vocab_mask(
+        self, vocab_size: int, batch_size: int, device
+    ) -&gt; torch.Tensor:
+        return torch.zeros(batch_size, vocab_size, dtype=torch.bool, device=device)
+
+    @staticmethod
+    def move_vocab_mask(vocab_mask: torch.Tensor, device) -&gt; torch.Tensor:
+        return vocab_mask
+
+    def fill_vocab_mask(self, vocab_mask: torch.Tensor, idx: int) -&gt; None:
+        tokens = torch.tensor(
+            self.guide.get_next_instruction(self.state).tokens, dtype=torch.int64
+        ).to(vocab_mask.device, non_blocking=True)
+        vocab_mask = vocab_mask[idx]
+        vocab_mask.fill_(1)
+        vocab_mask.scatter_(0, tokens, torch.zeros_like(tokens, dtype=torch.bool))
+
+    @staticmethod
+    def apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor):
+        logits.masked_fill_(vocab_mask, float(&#34;-inf&#34;))
+
+    def copy(self):
+        return OutlinesGrammar(self.guide, self.jump_forward_map)
+
+    def try_jump_forward(self, tokenizer) -&gt; Optional[Tuple]:
+        if not self.jump_forward_map:
+            return None
+
+        jump_forward_bytes = self.jump_forward_map.jump_forward_byte(self.state)
+        if jump_forward_bytes is None or len(jump_forward_bytes) &lt;= 1:
+            return None
+
+        # preprocess the jump forward string
+        suffix_bytes = []
+        continuation_range = range(0x80, 0xC0)
+        cur_state = self.state
+        while (
+            len(jump_forward_bytes) and jump_forward_bytes[0][0] in continuation_range
+        ):
+            # continuation bytes
+            byte_edge = jump_forward_bytes.pop(0)
+            suffix_bytes.append(byte_edge[0])
+            cur_state = byte_edge[1]
+
+        suffix_tokens = [f&#34;&lt;0x{hex(b)[2:].upper()}&gt;&#34; for b in suffix_bytes]
+        suffix_ids = tokenizer.convert_tokens_to_ids(suffix_tokens)
+        return suffix_ids, cur_state
+
+    def jump_forward_str_state(self, helper: Tuple[List[int], str]) -&gt; Tuple[str, int]:
+        _, cur_state = helper
+        return self.jump_forward_map.jump_forward_symbol(cur_state)
+
+    def jump_and_retokenize(
+        self, old_output_ids: List[int], new_output_ids: List[int], next_state: int
+    ):
+        self.state = next_state</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammar.apply_vocab_mask"><code class="name flex">
+<span>def <span class="ident">apply_vocab_mask</span></span>(<span>logits: torch.Tensor, vocab_mask: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor):
+    logits.masked_fill_(vocab_mask, float(&#34;-inf&#34;))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammar.move_vocab_mask"><code class="name flex">
+<span>def <span class="ident">move_vocab_mask</span></span>(<span>vocab_mask: torch.Tensor, device) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def move_vocab_mask(vocab_mask: torch.Tensor, device) -&gt; torch.Tensor:
+    return vocab_mask</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammar.allocate_vocab_mask"><code class="name flex">
+<span>def <span class="ident">allocate_vocab_mask</span></span>(<span>self, vocab_size: int, batch_size: int, device) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def allocate_vocab_mask(
+    self, vocab_size: int, batch_size: int, device
+) -&gt; torch.Tensor:
+    return torch.zeros(batch_size, vocab_size, dtype=torch.bool, device=device)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammar.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self):
+    return OutlinesGrammar(self.guide, self.jump_forward_map)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammar.fill_vocab_mask"><code class="name flex">
+<span>def <span class="ident">fill_vocab_mask</span></span>(<span>self, vocab_mask: torch.Tensor, idx: int) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fill_vocab_mask(self, vocab_mask: torch.Tensor, idx: int) -&gt; None:
+    tokens = torch.tensor(
+        self.guide.get_next_instruction(self.state).tokens, dtype=torch.int64
+    ).to(vocab_mask.device, non_blocking=True)
+    vocab_mask = vocab_mask[idx]
+    vocab_mask.fill_(1)
+    vocab_mask.scatter_(0, tokens, torch.zeros_like(tokens, dtype=torch.bool))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.accept_token" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.accept_token">accept_token</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_and_retokenize" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_and_retokenize">jump_and_retokenize</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_forward_str_state" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_forward_str_state">jump_forward_str_state</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.try_jump_forward" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.try_jump_forward">try_jump_forward</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend"><code class="flex name class">
+<span>class <span class="ident">OutlinesGrammarBackend</span></span>
+<span>(</span><span>tokenizer, whitespace_pattern: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OutlinesGrammarBackend(BaseGrammarBackend):
+    def __init__(
+        self,
+        tokenizer,
+        whitespace_pattern: bool,
+    ):
+        super().__init__()
+
+        try:
+            self.outlines_tokenizer = TransformerTokenizer(tokenizer)
+        except AttributeError:
+            # FIXME: tmp fix for chatglm2 &amp; chatglm3 (pad_token_id=0)
+            origin_pad_token_id = tokenizer.pad_token_id
+
+            def fset(self, value):
+                self._value = value
+
+            type(tokenizer).pad_token_id = property(
+                fget=type(tokenizer).pad_token_id.fget, fset=fset
+            )
+            self.outlines_tokenizer = TransformerTokenizer(tokenizer)
+            self.outlines_tokenizer.tokenizer.pad_token_id = origin_pad_token_id
+            self.outlines_tokenizer.pad_token_id = origin_pad_token_id
+            self.outlines_tokenizer.pad_token = (
+                self.outlines_tokenizer.tokenizer.pad_token
+            )
+            self.outlines_tokenizer.vocabulary = (
+                self.outlines_tokenizer.tokenizer.get_vocab()
+            )
+        self.whitespace_pattern = whitespace_pattern
+
+    def _compile_regex(self, regex: str) -&gt; Optional[OutlinesGrammar]:
+        try:
+            if hasattr(RegexGuide, &#34;from_regex&#34;):
+                # outlines &gt;= 0.1.1
+                guide = RegexGuide.from_regex(regex, self.outlines_tokenizer)
+            else:
+                # outlines &lt;= 0.0.46
+                guide = RegexGuide(regex, self.outlines_tokenizer)
+        except interegular.patterns.InvalidSyntax as e:
+            logger.error(f&#34;Hit invalid regex schema: {regex=}, {e=}&#34;)
+            return INVALID_GRAMMAR_OBJ
+
+        jump_forward_map = None
+        return OutlinesGrammar(guide, jump_forward_map)
+
+    def dispatch_ebnf(self, key_string: str):
+        return super().dispatch_ebnf(key_string)
+
+    def dispatch_structural_tag(self, key_string: str):
+        return super().dispatch_structural_tag(key_string)
+
+    def dispatch_json(self, key_string: str):
+        try:
+            regex = build_regex_from_object(
+                key_string,
+                whitespace_pattern=self.whitespace_pattern,
+            )
+        except (NotImplementedError, json.decoder.JSONDecodeError, ValueError) as e:
+            logger.error(f&#34;Hit invalid json_schema: {key_string=}, {e=}&#34;)
+            return INVALID_GRAMMAR_OBJ
+        return self._compile_regex(regex)
+
+    def dispatch_regex(self, key_string: str):
+        return self._compile_regex(key_string)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend">BaseGrammarBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_ebnf"><code class="name flex">
+<span>def <span class="ident">dispatch_ebnf</span></span>(<span>self, key_string: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_ebnf(self, key_string: str):
+    return super().dispatch_ebnf(key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_json"><code class="name flex">
+<span>def <span class="ident">dispatch_json</span></span>(<span>self, key_string: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_json(self, key_string: str):
+    try:
+        regex = build_regex_from_object(
+            key_string,
+            whitespace_pattern=self.whitespace_pattern,
+        )
+    except (NotImplementedError, json.decoder.JSONDecodeError, ValueError) as e:
+        logger.error(f&#34;Hit invalid json_schema: {key_string=}, {e=}&#34;)
+        return INVALID_GRAMMAR_OBJ
+    return self._compile_regex(regex)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_regex"><code class="name flex">
+<span>def <span class="ident">dispatch_regex</span></span>(<span>self, key_string: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_regex(self, key_string: str):
+    return self._compile_regex(key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_structural_tag"><code class="name flex">
+<span>def <span class="ident">dispatch_structural_tag</span></span>(<span>self, key_string: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_structural_tag(self, key_string: str):
+    return super().dispatch_structural_tag(key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend">BaseGrammarBackend</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_fallback" href="base_grammar_backend.html#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_fallback">dispatch_fallback</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.constrained" href="index.html">sglang.srt.constrained</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.outlines_backend.build_regex_from_object" href="#sglang.srt.constrained.outlines_backend.build_regex_from_object">build_regex_from_object</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammar">OutlinesGrammar</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar.allocate_vocab_mask" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammar.allocate_vocab_mask">allocate_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar.apply_vocab_mask" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammar.apply_vocab_mask">apply_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar.copy" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammar.copy">copy</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar.fill_vocab_mask" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammar.fill_vocab_mask">fill_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar.move_vocab_mask" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammar.move_vocab_mask">move_vocab_mask</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend">OutlinesGrammarBackend</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_ebnf" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_ebnf">dispatch_ebnf</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_json" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_json">dispatch_json</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_regex" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_regex">dispatch_regex</a></code></li>
+<li><code><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_structural_tag" href="#sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend.dispatch_structural_tag">dispatch_structural_tag</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.multimodal.processors.base_processor API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.multimodal.processors.base_processor</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput"><code class="flex name class">
+<span>class <span class="ident">BaseMultiModalProcessorOutput</span></span>
+<span>(</span><span>input_text: str,<br>images: list[PIL.Image.Image | dict] | None = &lt;factory&gt;,<br>videos: list[torch.Tensor | dict] | None = &lt;factory&gt;,<br>audios: list[numpy.ndarray | dict] | None = &lt;factory&gt;)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class BaseMultiModalProcessorOutput:
+    # input_text, with each frame of video/image represented with a image_token
+    input_text: str
+
+    # frames loaded from image, in given order
+    images: Optional[list[Union[Image.Image, dict]]] = dataclasses.field(
+        default_factory=list
+    )
+
+    # videos
+    videos: Optional[list[Union[torch.Tensor, dict]]] = dataclasses.field(
+        default_factory=list
+    )
+
+    # audios
+    audios: Optional[list[Union[np.ndarray, dict]]] = dataclasses.field(
+        default_factory=list
+    )
+
+    def organize_results(self) -&gt; List[Tuple[Modality, Any]]:
+        &#34;&#34;&#34;
+
+        :return: a list of results, with their corresponding modalities
+        &#34;&#34;&#34;
+        return (
+            [(Modality.IMAGE, data) for data in self.images]
+            + [(Modality.VIDEO, data) for data in self.videos]
+            + [(Modality.AUDIO, data) for data in self.audios]
+        )</code></pre>
+</details>
+<div class="desc"><p>BaseMultiModalProcessorOutput(input_text: str, images: Optional[list[Union[PIL.Image.Image, dict]]] = <factory>, videos: Optional[list[Union[torch.Tensor, dict]]] = <factory>, audios: Optional[list[Union[numpy.ndarray, dict]]] = <factory>)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.audios"><code class="name">var <span class="ident">audios</span> : list[numpy.ndarray | dict] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.images"><code class="name">var <span class="ident">images</span> : list[PIL.Image.Image | dict] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.input_text"><code class="name">var <span class="ident">input_text</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.videos"><code class="name">var <span class="ident">videos</span> : list[torch.Tensor | dict] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.organize_results"><code class="name flex">
+<span>def <span class="ident">organize_results</span></span>(<span>self) ‑> List[Tuple[<a title="sglang.srt.managers.schedule_batch.Modality" href="../../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.Modality">Modality</a>, Any]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def organize_results(self) -&gt; List[Tuple[Modality, Any]]:
+    &#34;&#34;&#34;
+
+    :return: a list of results, with their corresponding modalities
+    &#34;&#34;&#34;
+    return (
+        [(Modality.IMAGE, data) for data in self.images]
+        + [(Modality.VIDEO, data) for data in self.videos]
+        + [(Modality.AUDIO, data) for data in self.audios]
+    )</code></pre>
+</details>
+<div class="desc"><p>:return: a list of results, with their corresponding modalities</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor"><code class="flex name class">
+<span>class <span class="ident">BaseMultimodalProcessor</span></span>
+<span>(</span><span>hf_config, server_args, _processor, transport_mode, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseMultimodalProcessor(ABC):
+    models = []
+
+    def __init__(
+        self, hf_config, server_args, _processor, transport_mode, *args, **kwargs
+    ):
+        self.hf_config = hf_config
+        self._processor = _processor
+        self.arch = hf_config.architectures[0]
+        self.server_args = server_args
+        self.transport_mode = transport_mode
+
+        # FIXME: not accurate, model and image specific
+        self.NUM_TOKEN_PER_FRAME = 330
+
+        self.io_executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=int(os.environ.get(&#34;SGLANG_IO_WORKERS&#34;, 4))
+        )
+        self.cpu_executor = concurrent.futures.ProcessPoolExecutor(
+            mp_context=mp.get_context(&#34;fork&#34;),
+            max_workers=int(os.environ.get(&#34;SGLANG_CPU_WORKERS&#34;, os.cpu_count())),
+        )
+
+        # Mapping from attribute names to modality types
+        self.ATTR_NAME_TO_MODALITY = {
+            # Image-related attributes
+            &#34;pixel_values&#34;: Modality.IMAGE,
+            &#34;image_sizes&#34;: Modality.IMAGE,
+            &#34;image_grid_thw&#34;: Modality.IMAGE,
+            &#34;image_attention_mask&#34;: Modality.IMAGE,
+            &#34;image_emb_mask&#34;: Modality.IMAGE,
+            &#34;images_spatial_crop&#34;: Modality.IMAGE,
+            &#34;tgt_size&#34;: Modality.IMAGE,
+            &#34;image_grid_hws&#34;: Modality.IMAGE,
+            &#34;aspect_ratio_ids&#34;: Modality.IMAGE,
+            &#34;aspect_ratio_mask&#34;: Modality.IMAGE,
+            &#34;num_patches&#34;: Modality.IMAGE,
+            &#34;patch_pixel_values&#34;: Modality.IMAGE,
+            # Audio-related attributes
+            &#34;audio_features&#34;: Modality.AUDIO,
+            &#34;audio_feature_lens&#34;: Modality.AUDIO,
+            &#34;input_features&#34;: Modality.AUDIO,
+            &#34;input_features_mask&#34;: Modality.AUDIO,
+            &#34;audio_attention_mask&#34;: Modality.AUDIO,
+            # Video-related attributes
+            &#34;pixel_values_videos&#34;: Modality.VIDEO,
+            &#34;second_per_grid_ts&#34;: Modality.VIDEO,
+            &#34;video_grid_thw&#34;: Modality.VIDEO,
+            # Generic attributes that could apply to multiple modalities
+            # &#34;precomputed_embeddings&#34; - handled specially as it can be any modality
+        }
+
+        # name of the feature filed
+        # TODO: pass from processors
+        self.FEATURE_NAMES = [
+            &#34;pixel_values&#34;,
+            &#34;pixel_values_videos&#34;,
+            &#34;audio_features&#34;,
+            &#34;input_features&#34;,
+        ]
+
+    def process_mm_data(
+        self, input_text, images=None, videos=None, audios=None, **kwargs
+    ) -&gt; dict:
+        &#34;&#34;&#34;
+        process multimodal data with transformers AutoProcessor
+        &#34;&#34;&#34;
+        if images:
+            kwargs[&#34;images&#34;] = images
+        if videos:
+            kwargs[&#34;videos&#34;] = videos
+        if audios:
+            if self._processor.__class__.__name__ in {
+                &#34;Gemma3nProcessor&#34;,
+                &#34;Qwen2AudioProcessor&#34;,
+            }:
+                # Note(Xinyuan): for gemma3n, ref: https://github.com/huggingface/transformers/blob/ccf2ca162e33f381e454cdb74bf4b41a51ab976d/src/transformers/models/gemma3n/processing_gemma3n.py#L107
+                kwargs[&#34;audio&#34;] = audios
+            else:
+                kwargs[&#34;audios&#34;] = audios
+
+        processor = self._processor
+        if (
+            hasattr(processor, &#34;image_processor&#34;)
+            and isinstance(processor.image_processor, BaseImageProcessorFast)
+            and not self.server_args.disable_fast_image_processor
+        ):
+            kwargs[&#34;device&#34;] = &#34;cuda&#34; if not _is_npu else &#34;npu&#34;
+        result = processor.__call__(
+            text=[input_text],
+            padding=True,
+            return_tensors=&#34;pt&#34;,
+            **kwargs,
+        )
+        # move feature tensors to cpu
+        for feature_name in self.FEATURE_NAMES:
+            if feature_name in result and isinstance(
+                result[feature_name], torch.Tensor
+            ):
+                result[feature_name] = result[feature_name].to(&#34;cpu&#34;)
+
+        return result
+
+    @abstractmethod
+    async def process_mm_data_async(
+        self,
+        image_data,
+        audio_data,
+        input_text,
+        request_obj,
+        **kwargs,
+    ) -&gt; Optional[Dict[str, Any]]:
+        pass
+
+    def get_estimated_frames_list(self, image_data):
+        &#34;&#34;&#34;
+        estimate the total frame count from all visual input
+        &#34;&#34;&#34;
+        # Lazy import because decord is not available on some arm platforms.
+        from decord import VideoReader, cpu
+
+        # Before processing inputs
+        if not image_data or len(image_data) == 0:
+            return []
+        estimated_frames_list = []
+        for image in image_data:
+            if isinstance(image, str) and image.startswith(&#34;video:&#34;):
+                path = image[len(&#34;video:&#34;) :]
+                # Estimate frames for the video
+                vr = VideoReader(path, ctx=cpu(0))
+                num_frames = len(vr)
+            else:
+                # For images, each contributes one frame
+                num_frames = 1
+            estimated_frames_list.append(num_frames)
+
+        return estimated_frames_list
+
+    @staticmethod
+    def _load_single_item(
+        data,
+        modality: Modality,
+        frame_count_limit=None,
+        audio_sample_rate: Optional[int] = None,
+        discard_alpha_channel=True,
+    ):
+        &#34;&#34;&#34;
+        Load a single multimodal data.
+
+        If data is precomputed, returns directly.
+
+        Static method that can be pickled for multiprocessing&#34;&#34;&#34;
+        if isinstance(data, dict):
+            return data
+        try:
+            if modality == Modality.IMAGE:
+                img, _ = load_image(data)
+                return img.convert(&#34;RGB&#34;) if discard_alpha_channel else img
+            elif modality == Modality.VIDEO:
+                return load_video(data, frame_count_limit)
+            elif modality == Modality.AUDIO:
+                return load_audio(data, audio_sample_rate)
+
+        except Exception as e:
+            raise RuntimeError(f&#34;Error while loading data {data}: {e}&#34;)
+
+    def submit_data_loading_tasks(
+        self,
+        text_parts: List[str],
+        multimodal_tokens: MultimodalSpecialTokens,
+        data_iterators: dict[Modality, Iterator[Any]],
+        discard_alpha_channel: bool = True,
+        image_estimated_frames_iter: Optional[iter] = None,
+        image_scaling_factor: float = 1.0,
+        max_image_frames: int = 30,
+        audio_sample_rate: Optional[int] = None,
+    ) -&gt; Tuple[List, List]:
+        &#34;&#34;&#34;
+        load multimodal data parallelly using iterators.
+        &#34;&#34;&#34;
+        futures = []
+        task_info = []
+
+        for text_part in text_parts:
+            modality = multimodal_tokens.get_modality_of_token(text_part)
+            if modality is not None:
+                data_iterator = data_iterators.get(modality)
+                if data_iterator is None:
+                    raise ValueError(f&#34;No data iterator found for token: {text_part}&#34;)
+
+                try:
+                    data = next(data_iterator)
+                except StopIteration:
+                    raise ValueError(
+                        f&#34;Mismatch: More &#39;{text_part}&#39; tokens found than corresponding data items provided.&#34;
+                    )
+
+                frame_count_limit = None
+                if modality == Modality.IMAGE and image_estimated_frames_iter:
+                    try:
+                        estimated_frames = next(image_estimated_frames_iter)
+                        # Use the pre-calculated scaling factor and max frames
+                        frame_count_limit = max(
+                            1, int(estimated_frames * image_scaling_factor)
+                        )
+                        # Ensure we don&#39;t exceed the absolute max (redundant if scaling_factor handles it)
+                        # frame_count_limit = min(frame_count_limit, max_image_frames)
+                    except StopIteration:
+                        raise ValueError(
+                            &#34;Mismatch between image tokens and estimated frame counts.&#34;
+                        )
+
+                futures.append(
+                    self.io_executor.submit(
+                        BaseMultimodalProcessor._load_single_item,
+                        data,
+                        modality,
+                        frame_count_limit,
+                        audio_sample_rate,
+                        discard_alpha_channel,
+                    )
+                )
+                task_info.append((modality, data, frame_count_limit))
+
+        for modality, iterator in data_iterators.items():
+            try:
+                next(iterator)
+                logger.warning(
+                    f&#34;Warning: More {modality.name.lower()} data items provided than corresponding tokens found in the prompt.&#34;
+                )
+            except StopIteration:
+                pass
+            except Exception:
+                pass
+
+        return futures, task_info
+
+    def load_mm_data(
+        self,
+        prompt: str,
+        multimodal_tokens: MultimodalSpecialTokens,
+        image_data: Optional[list] = None,
+        video_data: Optional[list] = None,
+        audio_data: Optional[list] = None,
+        return_text: Optional[bool] = True,
+        discard_alpha_channel: bool = True,
+        audio_sample_rate: Optional[int] = None,
+    ) -&gt; BaseMultiModalProcessorOutput:
+        &#34;&#34;&#34;
+        Each frame of video/image will be replaced by a single image token
+
+        Args:
+            multimodal_tokens (list[str]): list of special token which denoting a single multimodal data
+                e.g. image token or audio token
+            discard_alpha_channel: if True, discards the alpha channel in the returned images
+
+        &#34;&#34;&#34;
+        multimodal_tokens_pattern = multimodal_tokens.get_combined_regex()
+
+        if isinstance(prompt, list) and return_text:
+            assert len(prompt) and isinstance(prompt[0], int)
+            prompt = self._processor.tokenizer.decode(prompt)
+        else:
+            prompt = prompt
+
+        assert isinstance(prompt, str)
+        # split text into list of normal text and special tokens
+        text_parts = re.split(multimodal_tokens_pattern, prompt)
+
+        # collect all data
+        data_iterators = {}
+        if multimodal_tokens.image_token and image_data:
+            data_iterators[Modality.IMAGE] = iter(image_data)
+        if multimodal_tokens.video_token and video_data:
+            data_iterators[Modality.VIDEO] = iter(video_data)
+        if multimodal_tokens.audio_token and audio_data:
+            data_iterators[Modality.AUDIO] = iter(audio_data)
+
+        # futures: the futures of loaded data
+        # task_info: modality, raw_data, and other metadata of each data
+        futures, task_info = self.submit_data_loading_tasks(
+            text_parts=text_parts,
+            multimodal_tokens=multimodal_tokens,
+            data_iterators=data_iterators,
+            discard_alpha_channel=discard_alpha_channel,
+            audio_sample_rate=audio_sample_rate,
+        )
+        task_info_iter = iter(task_info)
+        futures_iter = iter(futures)
+
+        # Process results
+        images, videos, audios = [], [], []
+        new_text_parts = []
+        for text_part in text_parts:
+            try:
+                if multimodal_tokens_pattern.match(text_part):
+                    modality, raw_data, frame_limit = next(task_info_iter)
+                    is_precomputed = isinstance(raw_data, dict)
+                    result = next(futures_iter).result()
+
+                    if modality == Modality.IMAGE:
+                        # If data is already processed it will be a
+                        # dictionary(precomputed). In this case we want to keep the
+                        # expanded tokens in text_part. Otherwise, we will
+                        # call the processor code, so keep only a single image
+                        # token.
+                        mm_tokens = (
+                            text_part
+                            if is_precomputed
+                            else multimodal_tokens.image_token
+                        )
+                        frames = [result] if not isinstance(result, list) else result
+                        if frames:
+                            # only for minicpmv
+                            images += frames
+                            new_text_parts += mm_tokens * len(frames)
+                    elif modality == Modality.VIDEO:
+                        # load as video
+                        mm_tokens = (
+                            text_part
+                            if is_precomputed
+                            else multimodal_tokens.video_token
+                        )
+                        videos += [result]
+                        new_text_parts += mm_tokens
+                    elif modality == Modality.AUDIO:
+                        # audio
+                        mm_tokens = (
+                            text_part
+                            if is_precomputed
+                            else multimodal_tokens.audio_token
+                        )
+                        audios += [result]
+                        new_text_parts += mm_tokens
+                else:
+                    # normal text
+                    new_text_parts += [text_part]
+
+            except Exception as e:
+                raise RuntimeError(
+                    f&#34;An exception occurred while loading multimodal data: {e}&#34;
+                )
+        return BaseMultiModalProcessorOutput(
+            images=images,
+            audios=audios,
+            videos=videos,
+            input_text=&#34;&#34;.join(new_text_parts),
+        )
+
+    @staticmethod
+    def get_mm_items_offset(
+        input_ids: torch.Tensor, mm_token_id: int
+    ) -&gt; List[Tuple[int, int]]:
+        &#34;&#34;&#34;
+        Get a set of range for mm_items from input_ids
+        Example:
+            input_ids = [1, 2, 3, 3, 3, 4, 3, 3]
+            mm_token_id = 3
+            return result = [(2,4),(6,7)]
+        &#34;&#34;&#34;
+        mask = input_ids == mm_token_id
+        start_positions = (mask &amp; ~torch.roll(mask, 1)).nonzero(as_tuple=True)[0]
+        end_positions = (mask &amp; ~torch.roll(mask, -1)).nonzero(as_tuple=True)[0]
+
+        return list(zip(start_positions.tolist(), end_positions.tolist()))
+
+    @staticmethod
+    def get_mm_items_offset_by_pair(
+        input_ids: torch.Tensor, mm_start_id: int, mm_end_id: int
+    ) -&gt; List[Tuple[int, int]]:
+        indices_start = (input_ids == mm_start_id).nonzero(as_tuple=True)[0] + 1
+        indices_end = (input_ids == mm_end_id).nonzero(as_tuple=True)[0] - 1
+
+        return list(zip(indices_start.tolist(), indices_end.tolist()))
+
+    def collect_mm_items_from_processor_output(
+        self, data_dict: dict
+    ) -&gt; List[MultimodalDataItem]:
+        &#34;&#34;&#34;Create mm_items directly from processor output.&#34;&#34;&#34;
+        items: dict[Modality, MultimodalDataItem] = {}
+        for attr_name, value in data_dict.items():
+            if attr_name == &#34;input_ids&#34;:
+                continue
+
+            # Get modality for this attribute
+            modality = self.ATTR_NAME_TO_MODALITY.get(attr_name)
+
+            if attr_name == &#34;precomputed_embeddings&#34;:
+                modality_str = data_dict.get(&#34;modality&#34;)
+                modality = Modality.IMAGE
+                if modality_str:
+                    try:
+                        modality = Modality.from_str(modality_str)
+                    except ValueError:
+                        pass
+
+            if modality:
+                # Create item if needed
+                if modality not in items:
+                    items[modality] = MultimodalDataItem(modality=modality)
+
+                if attr_name in self.FEATURE_NAMES:
+                    attr_name = &#34;feature&#34;
+
+                items[modality].set(attr_name, value)
+
+        return list(items.values())
+
+    def _process_and_collect_mm_items(
+        self, input_text: str, images=None, audios=None, videos=None, **kwargs
+    ) -&gt; Tuple[List[MultimodalDataItem], torch.Tensor, dict]:
+        &#34;&#34;&#34;
+        Helper method to process multimodal data and create mm_items in one step.
+
+        Returns:
+            Tuple of (created mm_items, input_ids)
+        &#34;&#34;&#34;
+        ret = self.process_mm_data(
+            input_text=input_text, images=images, audios=audios, videos=videos, **kwargs
+        )
+
+        input_ids = ret[&#34;input_ids&#34;].flatten()
+        collected_items = self.collect_mm_items_from_processor_output(ret)
+
+        return collected_items, input_ids, ret
+
+    def process_and_combine_mm_data(
+        self,
+        base_output: BaseMultiModalProcessorOutput,
+        mm_tokens: MultimodalSpecialTokens,
+        **kwargs,
+    ) -&gt; Tuple[List[MultimodalDataItem], torch.Tensor, dict]:
+        &#34;&#34;&#34;
+        Process multimodal data and return the combined multimodal items and input_ids.
+        Supports mixed modalities (images and audio in the same request).
+
+        Returns:
+            Tuple of (list of mm_items, input_ids)
+        &#34;&#34;&#34;
+        # Collect all items and categorize them
+        all_items = base_output.organize_results()
+        # Handle text-only case
+        if not all_items:
+            input_ids = self._processor.tokenizer(
+                base_output.input_text,
+                return_tensors=&#34;pt&#34;,
+                add_special_tokens=True,
+            ).input_ids.flatten()
+            return [], input_ids, {}
+
+        dict_items, raw_images, raw_audios, raw_videos = [], [], [], []
+        for modality, item in all_items:
+            if isinstance(item, dict):
+                dict_items.append(item)
+            elif modality == Modality.IMAGE:
+                raw_images.append(item)
+            elif modality == Modality.AUDIO:
+                raw_audios.append(item)
+            elif modality == Modality.VIDEO:
+                raw_videos.append(item)
+            else:
+                raise ValueError(f&#34;Unknown multimodal item type: {type(item)}&#34;)
+        # Process items and get input_ids
+        all_collected_items: list[MultimodalDataItem] = []
+        input_ids = None
+
+        # Handle raw items (need processing)
+        if raw_images or raw_audios or raw_videos:
+            collected_items, input_ids, ret = self._process_and_collect_mm_items(
+                input_text=base_output.input_text,
+                images=raw_images,
+                audios=raw_audios,
+                videos=raw_videos,
+                **kwargs,
+            )
+            all_collected_items = collected_items
+        else:
+            ret = None
+
+        # Handle dict items (already processed)
+        for dict_item in dict_items:
+            all_collected_items.extend(
+                self.collect_mm_items_from_processor_output(dict_item)
+            )
+
+        # Fallback tokenization if no raw items were processed
+        if input_ids is None:
+            input_ids = self._processor.tokenizer(
+                base_output.input_text,
+                return_tensors=&#34;pt&#34;,
+                add_special_tokens=True,
+            ).input_ids.flatten()
+
+        # Add offsets to all items
+        for mm_item in all_collected_items:
+            mm_token_id = mm_tokens.get_token_id_by_modality(mm_item.modality)
+            if mm_token_id is None:
+                raise ValueError(f&#34;No token id found for modality: {mm_item.modality}&#34;)
+            mm_item.offsets = self.get_mm_items_offset(
+                input_ids=input_ids,
+                mm_token_id=mm_token_id,
+            )
+
+        return all_collected_items, input_ids, ret</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.multimodal.processors.clip.ClipImageProcessor" href="clip.html#sglang.srt.multimodal.processors.clip.ClipImageProcessor">ClipImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.deepseek_vl_v2.DeepseekVL2ImageProcessor" href="deepseek_vl_v2.html#sglang.srt.multimodal.processors.deepseek_vl_v2.DeepseekVL2ImageProcessor">DeepseekVL2ImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.gemma3.Gemma3SGLangImageProcessor" href="gemma3.html#sglang.srt.multimodal.processors.gemma3.Gemma3SGLangImageProcessor">Gemma3SGLangImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.gemma3n.Gemma3nSGLangProcessor" href="gemma3n.html#sglang.srt.multimodal.processors.gemma3n.Gemma3nSGLangProcessor">Gemma3nSGLangProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.internvl.InternVLImageProcessor" href="internvl.html#sglang.srt.multimodal.processors.internvl.InternVLImageProcessor">InternVLImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.janus_pro.JanusProImageProcessor" href="janus_pro.html#sglang.srt.multimodal.processors.janus_pro.JanusProImageProcessor">JanusProImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.kimi_vl.KimiVLImageProcessor" href="kimi_vl.html#sglang.srt.multimodal.processors.kimi_vl.KimiVLImageProcessor">KimiVLImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.llava.LlavaImageProcessor" href="llava.html#sglang.srt.multimodal.processors.llava.LlavaImageProcessor">LlavaImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.llava.LlavaMultimodalProcessor" href="llava.html#sglang.srt.multimodal.processors.llava.LlavaMultimodalProcessor">LlavaMultimodalProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.minicpm.MiniCPMMultimodalProcessor" href="minicpm.html#sglang.srt.multimodal.processors.minicpm.MiniCPMMultimodalProcessor">MiniCPMMultimodalProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.mlama.MllamaImageProcessor" href="mlama.html#sglang.srt.multimodal.processors.mlama.MllamaImageProcessor">MllamaImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.mllama4.Mllama4ImageProcessor" href="mllama4.html#sglang.srt.multimodal.processors.mllama4.Mllama4ImageProcessor">Mllama4ImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.phi4mm.Phi4MMMultimodalProcessor" href="phi4mm.html#sglang.srt.multimodal.processors.phi4mm.Phi4MMMultimodalProcessor">Phi4MMMultimodalProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.pixtral.PixtralProcessor" href="pixtral.html#sglang.srt.multimodal.processors.pixtral.PixtralProcessor">PixtralProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.qwen_audio.Qwen2AudioMultimodalProcessor" href="qwen_audio.html#sglang.srt.multimodal.processors.qwen_audio.Qwen2AudioMultimodalProcessor">Qwen2AudioMultimodalProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.qwen_vl.Qwen2_5VLImageProcessor" href="qwen_vl.html#sglang.srt.multimodal.processors.qwen_vl.Qwen2_5VLImageProcessor">Qwen2_5VLImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.step3_vl.Step3VLImageProcessor" href="step3_vl.html#sglang.srt.multimodal.processors.step3_vl.Step3VLImageProcessor">Step3VLImageProcessor</a></li>
+<li><a title="sglang.srt.multimodal.processors.vila.VILAMultimodalProcessor" href="vila.html#sglang.srt.multimodal.processors.vila.VILAMultimodalProcessor">VILAMultimodalProcessor</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.models"><code class="name">var <span class="ident">models</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_mm_items_offset"><code class="name flex">
+<span>def <span class="ident">get_mm_items_offset</span></span>(<span>input_ids: torch.Tensor, mm_token_id: int) ‑> List[Tuple[int, int]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_mm_items_offset(
+    input_ids: torch.Tensor, mm_token_id: int
+) -&gt; List[Tuple[int, int]]:
+    &#34;&#34;&#34;
+    Get a set of range for mm_items from input_ids
+    Example:
+        input_ids = [1, 2, 3, 3, 3, 4, 3, 3]
+        mm_token_id = 3
+        return result = [(2,4),(6,7)]
+    &#34;&#34;&#34;
+    mask = input_ids == mm_token_id
+    start_positions = (mask &amp; ~torch.roll(mask, 1)).nonzero(as_tuple=True)[0]
+    end_positions = (mask &amp; ~torch.roll(mask, -1)).nonzero(as_tuple=True)[0]
+
+    return list(zip(start_positions.tolist(), end_positions.tolist()))</code></pre>
+</details>
+<div class="desc"><p>Get a set of range for mm_items from input_ids</p>
+<h2 id="example">Example</h2>
+<p>input_ids = [1, 2, 3, 3, 3, 4, 3, 3]
+mm_token_id = 3
+return result = [(2,4),(6,7)]</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_mm_items_offset_by_pair"><code class="name flex">
+<span>def <span class="ident">get_mm_items_offset_by_pair</span></span>(<span>input_ids: torch.Tensor, mm_start_id: int, mm_end_id: int) ‑> List[Tuple[int, int]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_mm_items_offset_by_pair(
+    input_ids: torch.Tensor, mm_start_id: int, mm_end_id: int
+) -&gt; List[Tuple[int, int]]:
+    indices_start = (input_ids == mm_start_id).nonzero(as_tuple=True)[0] + 1
+    indices_end = (input_ids == mm_end_id).nonzero(as_tuple=True)[0] - 1
+
+    return list(zip(indices_start.tolist(), indices_end.tolist()))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.collect_mm_items_from_processor_output"><code class="name flex">
+<span>def <span class="ident">collect_mm_items_from_processor_output</span></span>(<span>self, data_dict: dict) ‑> List[<a title="sglang.srt.managers.schedule_batch.MultimodalDataItem" href="../../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalDataItem">MultimodalDataItem</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def collect_mm_items_from_processor_output(
+    self, data_dict: dict
+) -&gt; List[MultimodalDataItem]:
+    &#34;&#34;&#34;Create mm_items directly from processor output.&#34;&#34;&#34;
+    items: dict[Modality, MultimodalDataItem] = {}
+    for attr_name, value in data_dict.items():
+        if attr_name == &#34;input_ids&#34;:
+            continue
+
+        # Get modality for this attribute
+        modality = self.ATTR_NAME_TO_MODALITY.get(attr_name)
+
+        if attr_name == &#34;precomputed_embeddings&#34;:
+            modality_str = data_dict.get(&#34;modality&#34;)
+            modality = Modality.IMAGE
+            if modality_str:
+                try:
+                    modality = Modality.from_str(modality_str)
+                except ValueError:
+                    pass
+
+        if modality:
+            # Create item if needed
+            if modality not in items:
+                items[modality] = MultimodalDataItem(modality=modality)
+
+            if attr_name in self.FEATURE_NAMES:
+                attr_name = &#34;feature&#34;
+
+            items[modality].set(attr_name, value)
+
+    return list(items.values())</code></pre>
+</details>
+<div class="desc"><p>Create mm_items directly from processor output.</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_estimated_frames_list"><code class="name flex">
+<span>def <span class="ident">get_estimated_frames_list</span></span>(<span>self, image_data)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_estimated_frames_list(self, image_data):
+    &#34;&#34;&#34;
+    estimate the total frame count from all visual input
+    &#34;&#34;&#34;
+    # Lazy import because decord is not available on some arm platforms.
+    from decord import VideoReader, cpu
+
+    # Before processing inputs
+    if not image_data or len(image_data) == 0:
+        return []
+    estimated_frames_list = []
+    for image in image_data:
+        if isinstance(image, str) and image.startswith(&#34;video:&#34;):
+            path = image[len(&#34;video:&#34;) :]
+            # Estimate frames for the video
+            vr = VideoReader(path, ctx=cpu(0))
+            num_frames = len(vr)
+        else:
+            # For images, each contributes one frame
+            num_frames = 1
+        estimated_frames_list.append(num_frames)
+
+    return estimated_frames_list</code></pre>
+</details>
+<div class="desc"><p>estimate the total frame count from all visual input</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.load_mm_data"><code class="name flex">
+<span>def <span class="ident">load_mm_data</span></span>(<span>self,<br>prompt: str,<br>multimodal_tokens: <a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens">MultimodalSpecialTokens</a>,<br>image_data: list | None = None,<br>video_data: list | None = None,<br>audio_data: list | None = None,<br>return_text: bool | None = True,<br>discard_alpha_channel: bool = True,<br>audio_sample_rate: int | None = None) ‑> <a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput">BaseMultiModalProcessorOutput</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_mm_data(
+    self,
+    prompt: str,
+    multimodal_tokens: MultimodalSpecialTokens,
+    image_data: Optional[list] = None,
+    video_data: Optional[list] = None,
+    audio_data: Optional[list] = None,
+    return_text: Optional[bool] = True,
+    discard_alpha_channel: bool = True,
+    audio_sample_rate: Optional[int] = None,
+) -&gt; BaseMultiModalProcessorOutput:
+    &#34;&#34;&#34;
+    Each frame of video/image will be replaced by a single image token
+
+    Args:
+        multimodal_tokens (list[str]): list of special token which denoting a single multimodal data
+            e.g. image token or audio token
+        discard_alpha_channel: if True, discards the alpha channel in the returned images
+
+    &#34;&#34;&#34;
+    multimodal_tokens_pattern = multimodal_tokens.get_combined_regex()
+
+    if isinstance(prompt, list) and return_text:
+        assert len(prompt) and isinstance(prompt[0], int)
+        prompt = self._processor.tokenizer.decode(prompt)
+    else:
+        prompt = prompt
+
+    assert isinstance(prompt, str)
+    # split text into list of normal text and special tokens
+    text_parts = re.split(multimodal_tokens_pattern, prompt)
+
+    # collect all data
+    data_iterators = {}
+    if multimodal_tokens.image_token and image_data:
+        data_iterators[Modality.IMAGE] = iter(image_data)
+    if multimodal_tokens.video_token and video_data:
+        data_iterators[Modality.VIDEO] = iter(video_data)
+    if multimodal_tokens.audio_token and audio_data:
+        data_iterators[Modality.AUDIO] = iter(audio_data)
+
+    # futures: the futures of loaded data
+    # task_info: modality, raw_data, and other metadata of each data
+    futures, task_info = self.submit_data_loading_tasks(
+        text_parts=text_parts,
+        multimodal_tokens=multimodal_tokens,
+        data_iterators=data_iterators,
+        discard_alpha_channel=discard_alpha_channel,
+        audio_sample_rate=audio_sample_rate,
+    )
+    task_info_iter = iter(task_info)
+    futures_iter = iter(futures)
+
+    # Process results
+    images, videos, audios = [], [], []
+    new_text_parts = []
+    for text_part in text_parts:
+        try:
+            if multimodal_tokens_pattern.match(text_part):
+                modality, raw_data, frame_limit = next(task_info_iter)
+                is_precomputed = isinstance(raw_data, dict)
+                result = next(futures_iter).result()
+
+                if modality == Modality.IMAGE:
+                    # If data is already processed it will be a
+                    # dictionary(precomputed). In this case we want to keep the
+                    # expanded tokens in text_part. Otherwise, we will
+                    # call the processor code, so keep only a single image
+                    # token.
+                    mm_tokens = (
+                        text_part
+                        if is_precomputed
+                        else multimodal_tokens.image_token
+                    )
+                    frames = [result] if not isinstance(result, list) else result
+                    if frames:
+                        # only for minicpmv
+                        images += frames
+                        new_text_parts += mm_tokens * len(frames)
+                elif modality == Modality.VIDEO:
+                    # load as video
+                    mm_tokens = (
+                        text_part
+                        if is_precomputed
+                        else multimodal_tokens.video_token
+                    )
+                    videos += [result]
+                    new_text_parts += mm_tokens
+                elif modality == Modality.AUDIO:
+                    # audio
+                    mm_tokens = (
+                        text_part
+                        if is_precomputed
+                        else multimodal_tokens.audio_token
+                    )
+                    audios += [result]
+                    new_text_parts += mm_tokens
+            else:
+                # normal text
+                new_text_parts += [text_part]
+
+        except Exception as e:
+            raise RuntimeError(
+                f&#34;An exception occurred while loading multimodal data: {e}&#34;
+            )
+    return BaseMultiModalProcessorOutput(
+        images=images,
+        audios=audios,
+        videos=videos,
+        input_text=&#34;&#34;.join(new_text_parts),
+    )</code></pre>
+</details>
+<div class="desc"><p>Each frame of video/image will be replaced by a single image token</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>multimodal_tokens</code></strong> :&ensp;<code>list[str]</code></dt>
+<dd>list of special token which denoting a single multimodal data
+e.g. image token or audio token</dd>
+<dt><strong><code>discard_alpha_channel</code></strong></dt>
+<dd>if True, discards the alpha channel in the returned images</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_and_combine_mm_data"><code class="name flex">
+<span>def <span class="ident">process_and_combine_mm_data</span></span>(<span>self,<br>base_output: <a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput">BaseMultiModalProcessorOutput</a>,<br>mm_tokens: <a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens">MultimodalSpecialTokens</a>,<br>**kwargs) ‑> Tuple[List[<a title="sglang.srt.managers.schedule_batch.MultimodalDataItem" href="../../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalDataItem">MultimodalDataItem</a>], torch.Tensor, dict]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_and_combine_mm_data(
+    self,
+    base_output: BaseMultiModalProcessorOutput,
+    mm_tokens: MultimodalSpecialTokens,
+    **kwargs,
+) -&gt; Tuple[List[MultimodalDataItem], torch.Tensor, dict]:
+    &#34;&#34;&#34;
+    Process multimodal data and return the combined multimodal items and input_ids.
+    Supports mixed modalities (images and audio in the same request).
+
+    Returns:
+        Tuple of (list of mm_items, input_ids)
+    &#34;&#34;&#34;
+    # Collect all items and categorize them
+    all_items = base_output.organize_results()
+    # Handle text-only case
+    if not all_items:
+        input_ids = self._processor.tokenizer(
+            base_output.input_text,
+            return_tensors=&#34;pt&#34;,
+            add_special_tokens=True,
+        ).input_ids.flatten()
+        return [], input_ids, {}
+
+    dict_items, raw_images, raw_audios, raw_videos = [], [], [], []
+    for modality, item in all_items:
+        if isinstance(item, dict):
+            dict_items.append(item)
+        elif modality == Modality.IMAGE:
+            raw_images.append(item)
+        elif modality == Modality.AUDIO:
+            raw_audios.append(item)
+        elif modality == Modality.VIDEO:
+            raw_videos.append(item)
+        else:
+            raise ValueError(f&#34;Unknown multimodal item type: {type(item)}&#34;)
+    # Process items and get input_ids
+    all_collected_items: list[MultimodalDataItem] = []
+    input_ids = None
+
+    # Handle raw items (need processing)
+    if raw_images or raw_audios or raw_videos:
+        collected_items, input_ids, ret = self._process_and_collect_mm_items(
+            input_text=base_output.input_text,
+            images=raw_images,
+            audios=raw_audios,
+            videos=raw_videos,
+            **kwargs,
+        )
+        all_collected_items = collected_items
+    else:
+        ret = None
+
+    # Handle dict items (already processed)
+    for dict_item in dict_items:
+        all_collected_items.extend(
+            self.collect_mm_items_from_processor_output(dict_item)
+        )
+
+    # Fallback tokenization if no raw items were processed
+    if input_ids is None:
+        input_ids = self._processor.tokenizer(
+            base_output.input_text,
+            return_tensors=&#34;pt&#34;,
+            add_special_tokens=True,
+        ).input_ids.flatten()
+
+    # Add offsets to all items
+    for mm_item in all_collected_items:
+        mm_token_id = mm_tokens.get_token_id_by_modality(mm_item.modality)
+        if mm_token_id is None:
+            raise ValueError(f&#34;No token id found for modality: {mm_item.modality}&#34;)
+        mm_item.offsets = self.get_mm_items_offset(
+            input_ids=input_ids,
+            mm_token_id=mm_token_id,
+        )
+
+    return all_collected_items, input_ids, ret</code></pre>
+</details>
+<div class="desc"><p>Process multimodal data and return the combined multimodal items and input_ids.
+Supports mixed modalities (images and audio in the same request).</p>
+<h2 id="returns">Returns</h2>
+<p>Tuple of (list of mm_items, input_ids)</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_mm_data"><code class="name flex">
+<span>def <span class="ident">process_mm_data</span></span>(<span>self, input_text, images=None, videos=None, audios=None, **kwargs) ‑> dict</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_mm_data(
+    self, input_text, images=None, videos=None, audios=None, **kwargs
+) -&gt; dict:
+    &#34;&#34;&#34;
+    process multimodal data with transformers AutoProcessor
+    &#34;&#34;&#34;
+    if images:
+        kwargs[&#34;images&#34;] = images
+    if videos:
+        kwargs[&#34;videos&#34;] = videos
+    if audios:
+        if self._processor.__class__.__name__ in {
+            &#34;Gemma3nProcessor&#34;,
+            &#34;Qwen2AudioProcessor&#34;,
+        }:
+            # Note(Xinyuan): for gemma3n, ref: https://github.com/huggingface/transformers/blob/ccf2ca162e33f381e454cdb74bf4b41a51ab976d/src/transformers/models/gemma3n/processing_gemma3n.py#L107
+            kwargs[&#34;audio&#34;] = audios
+        else:
+            kwargs[&#34;audios&#34;] = audios
+
+    processor = self._processor
+    if (
+        hasattr(processor, &#34;image_processor&#34;)
+        and isinstance(processor.image_processor, BaseImageProcessorFast)
+        and not self.server_args.disable_fast_image_processor
+    ):
+        kwargs[&#34;device&#34;] = &#34;cuda&#34; if not _is_npu else &#34;npu&#34;
+    result = processor.__call__(
+        text=[input_text],
+        padding=True,
+        return_tensors=&#34;pt&#34;,
+        **kwargs,
+    )
+    # move feature tensors to cpu
+    for feature_name in self.FEATURE_NAMES:
+        if feature_name in result and isinstance(
+            result[feature_name], torch.Tensor
+        ):
+            result[feature_name] = result[feature_name].to(&#34;cpu&#34;)
+
+    return result</code></pre>
+</details>
+<div class="desc"><p>process multimodal data with transformers AutoProcessor</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_mm_data_async"><code class="name flex">
+<span>async def <span class="ident">process_mm_data_async</span></span>(<span>self, image_data, audio_data, input_text, request_obj, **kwargs) ‑> Dict[str, Any] | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+async def process_mm_data_async(
+    self,
+    image_data,
+    audio_data,
+    input_text,
+    request_obj,
+    **kwargs,
+) -&gt; Optional[Dict[str, Any]]:
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.submit_data_loading_tasks"><code class="name flex">
+<span>def <span class="ident">submit_data_loading_tasks</span></span>(<span>self,<br>text_parts: List[str],<br>multimodal_tokens: <a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens">MultimodalSpecialTokens</a>,<br>data_iterators: dict[<a title="sglang.srt.managers.schedule_batch.Modality" href="../../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.Modality">Modality</a>, typing.Iterator[typing.Any]],<br>discard_alpha_channel: bool = True,<br>image_estimated_frames_iter: <built-in function iter> | None = None,<br>image_scaling_factor: float = 1.0,<br>max_image_frames: int = 30,<br>audio_sample_rate: int | None = None) ‑> Tuple[List, List]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def submit_data_loading_tasks(
+    self,
+    text_parts: List[str],
+    multimodal_tokens: MultimodalSpecialTokens,
+    data_iterators: dict[Modality, Iterator[Any]],
+    discard_alpha_channel: bool = True,
+    image_estimated_frames_iter: Optional[iter] = None,
+    image_scaling_factor: float = 1.0,
+    max_image_frames: int = 30,
+    audio_sample_rate: Optional[int] = None,
+) -&gt; Tuple[List, List]:
+    &#34;&#34;&#34;
+    load multimodal data parallelly using iterators.
+    &#34;&#34;&#34;
+    futures = []
+    task_info = []
+
+    for text_part in text_parts:
+        modality = multimodal_tokens.get_modality_of_token(text_part)
+        if modality is not None:
+            data_iterator = data_iterators.get(modality)
+            if data_iterator is None:
+                raise ValueError(f&#34;No data iterator found for token: {text_part}&#34;)
+
+            try:
+                data = next(data_iterator)
+            except StopIteration:
+                raise ValueError(
+                    f&#34;Mismatch: More &#39;{text_part}&#39; tokens found than corresponding data items provided.&#34;
+                )
+
+            frame_count_limit = None
+            if modality == Modality.IMAGE and image_estimated_frames_iter:
+                try:
+                    estimated_frames = next(image_estimated_frames_iter)
+                    # Use the pre-calculated scaling factor and max frames
+                    frame_count_limit = max(
+                        1, int(estimated_frames * image_scaling_factor)
+                    )
+                    # Ensure we don&#39;t exceed the absolute max (redundant if scaling_factor handles it)
+                    # frame_count_limit = min(frame_count_limit, max_image_frames)
+                except StopIteration:
+                    raise ValueError(
+                        &#34;Mismatch between image tokens and estimated frame counts.&#34;
+                    )
+
+            futures.append(
+                self.io_executor.submit(
+                    BaseMultimodalProcessor._load_single_item,
+                    data,
+                    modality,
+                    frame_count_limit,
+                    audio_sample_rate,
+                    discard_alpha_channel,
+                )
+            )
+            task_info.append((modality, data, frame_count_limit))
+
+    for modality, iterator in data_iterators.items():
+        try:
+            next(iterator)
+            logger.warning(
+                f&#34;Warning: More {modality.name.lower()} data items provided than corresponding tokens found in the prompt.&#34;
+            )
+        except StopIteration:
+            pass
+        except Exception:
+            pass
+
+    return futures, task_info</code></pre>
+</details>
+<div class="desc"><p>load multimodal data parallelly using iterators.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens"><code class="flex name class">
+<span>class <span class="ident">MultimodalSpecialTokens</span></span>
+<span>(</span><span>image_token: List[str] | str | None = None,<br>video_token: List[str] | str | None = None,<br>audio_token: List[str] | str | None = None,<br>image_token_id: int | None = None,<br>video_token_id: int | None = None,<br>audio_token_id: int | None = None,<br>image_token_regex: re.Pattern | None = None,<br>video_token_regex: re.Pattern | None = None,<br>audio_token_regex: re.Pattern | None = None,<br>combined_regex: re.Pattern | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class MultimodalSpecialTokens:
+    image_token: Optional[Union[str, List[str]]] = None
+    video_token: Optional[Union[str, List[str]]] = None
+    audio_token: Optional[Union[str, List[str]]] = None
+
+    image_token_id: Optional[int] = None
+    video_token_id: Optional[int] = None
+    audio_token_id: Optional[int] = None
+
+    image_token_regex: Optional[re.Pattern] = None
+    video_token_regex: Optional[re.Pattern] = None
+    audio_token_regex: Optional[re.Pattern] = None
+
+    combined_regex: Optional[re.Pattern] = None
+
+    def build(self, processor):
+        self.convert_to_strs(processor)
+        self.parse_regex()
+        self.get_combined_regex()
+        return self
+
+    def convert_to_str(self, token: Union[str, int], processor) -&gt; str:
+        if token is None:
+            return token
+        if isinstance(token, str):
+            return token
+        return processor.tokenizer.convert_ids_to_tokens([token])[0]
+
+    def convert_to_strs(self, processor):
+        if not self.image_token:
+            self.image_token = self.convert_to_str(self.image_token_id, processor)
+        if not self.video_token:
+            self.video_token = self.convert_to_str(self.video_token_id, processor)
+        if not self.audio_token:
+            self.audio_token = self.convert_to_str(self.audio_token_id, processor)
+
+    def get_modality_of_token(self, token: str) -&gt; Optional[Modality]:
+        &#34;&#34;&#34;
+        :return: the modality associated with the given token, if the token is a special_token or matches with the multimodal token regex
+        &#34;&#34;&#34;
+        modality = {
+            self.image_token: Modality.IMAGE,
+            self.video_token: Modality.VIDEO,
+            self.audio_token: Modality.AUDIO,
+        }.get(token)
+        if modality:
+            return modality
+
+        for regex, modality in [
+            (self.image_token_regex, Modality.IMAGE),
+            (self.video_token_regex, Modality.VIDEO),
+            (self.audio_token_regex, Modality.AUDIO),
+        ]:
+            if regex and regex.match(token):
+                return modality
+
+        return None
+
+    def get_token_id_by_modality(self, modality: Modality) -&gt; Optional[int]:
+        return {
+            Modality.IMAGE: self.image_token_id,
+            Modality.MULTI_IMAGES: self.image_token_id,
+            Modality.VIDEO: self.video_token_id,
+            Modality.AUDIO: self.audio_token_id,
+        }.get(modality)
+
+    def parse_regex(self):
+        if self.image_token_regex is None and self.image_token is not None:
+            self.image_token_regex = re.compile(re.escape(self.image_token))
+        if self.video_token_regex is None and self.video_token is not None:
+            self.video_token_regex = re.compile(re.escape(self.video_token))
+        if self.audio_token_regex is None and self.audio_token is not None:
+            self.audio_token_regex = re.compile(re.escape(self.audio_token))
+
+    def get_combined_regex(self) -&gt; re.Pattern:
+        &#34;&#34;&#34;
+        Builds and returns a regex, used to split input str into tokens (with mm special tokens)
+        &#34;&#34;&#34;
+        if self.combined_regex:
+            return self.combined_regex
+        tokens = [
+            self.image_token_regex,
+            self.video_token_regex,
+            self.audio_token_regex,
+        ]
+        patterns = []
+        flags = 0
+        for t in tokens:
+            if t is not None:
+                patterns.append(t.pattern)
+                flags |= t.flags
+        combined = &#34;(&#34; + &#34;|&#34;.join(f&#34;(?:{p})&#34; for p in patterns) + &#34;)&#34;
+        self.combined_regex = re.compile(combined, flags)
+        return self.combined_regex</code></pre>
+</details>
+<div class="desc"><p>MultimodalSpecialTokens(image_token: Union[List[str], str, NoneType] = None, video_token: Union[List[str], str, NoneType] = None, audio_token: Union[List[str], str, NoneType] = None, image_token_id: Optional[int] = None, video_token_id: Optional[int] = None, audio_token_id: Optional[int] = None, image_token_regex: Optional[re.Pattern] = None, video_token_regex: Optional[re.Pattern] = None, audio_token_regex: Optional[re.Pattern] = None, combined_regex: Optional[re.Pattern] = None)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token"><code class="name">var <span class="ident">audio_token</span> : List[str] | str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token_id"><code class="name">var <span class="ident">audio_token_id</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token_regex"><code class="name">var <span class="ident">audio_token_regex</span> : re.Pattern | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.combined_regex"><code class="name">var <span class="ident">combined_regex</span> : re.Pattern | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token"><code class="name">var <span class="ident">image_token</span> : List[str] | str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token_id"><code class="name">var <span class="ident">image_token_id</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token_regex"><code class="name">var <span class="ident">image_token_regex</span> : re.Pattern | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token"><code class="name">var <span class="ident">video_token</span> : List[str] | str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token_id"><code class="name">var <span class="ident">video_token_id</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token_regex"><code class="name">var <span class="ident">video_token_regex</span> : re.Pattern | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.build"><code class="name flex">
+<span>def <span class="ident">build</span></span>(<span>self, processor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build(self, processor):
+    self.convert_to_strs(processor)
+    self.parse_regex()
+    self.get_combined_regex()
+    return self</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.convert_to_str"><code class="name flex">
+<span>def <span class="ident">convert_to_str</span></span>(<span>self, token: str | int, processor) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_to_str(self, token: Union[str, int], processor) -&gt; str:
+    if token is None:
+        return token
+    if isinstance(token, str):
+        return token
+    return processor.tokenizer.convert_ids_to_tokens([token])[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.convert_to_strs"><code class="name flex">
+<span>def <span class="ident">convert_to_strs</span></span>(<span>self, processor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_to_strs(self, processor):
+    if not self.image_token:
+        self.image_token = self.convert_to_str(self.image_token_id, processor)
+    if not self.video_token:
+        self.video_token = self.convert_to_str(self.video_token_id, processor)
+    if not self.audio_token:
+        self.audio_token = self.convert_to_str(self.audio_token_id, processor)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_combined_regex"><code class="name flex">
+<span>def <span class="ident">get_combined_regex</span></span>(<span>self) ‑> re.Pattern</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_combined_regex(self) -&gt; re.Pattern:
+    &#34;&#34;&#34;
+    Builds and returns a regex, used to split input str into tokens (with mm special tokens)
+    &#34;&#34;&#34;
+    if self.combined_regex:
+        return self.combined_regex
+    tokens = [
+        self.image_token_regex,
+        self.video_token_regex,
+        self.audio_token_regex,
+    ]
+    patterns = []
+    flags = 0
+    for t in tokens:
+        if t is not None:
+            patterns.append(t.pattern)
+            flags |= t.flags
+    combined = &#34;(&#34; + &#34;|&#34;.join(f&#34;(?:{p})&#34; for p in patterns) + &#34;)&#34;
+    self.combined_regex = re.compile(combined, flags)
+    return self.combined_regex</code></pre>
+</details>
+<div class="desc"><p>Builds and returns a regex, used to split input str into tokens (with mm special tokens)</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_modality_of_token"><code class="name flex">
+<span>def <span class="ident">get_modality_of_token</span></span>(<span>self, token: str) ‑> <a title="sglang.srt.managers.schedule_batch.Modality" href="../../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.Modality">Modality</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_modality_of_token(self, token: str) -&gt; Optional[Modality]:
+    &#34;&#34;&#34;
+    :return: the modality associated with the given token, if the token is a special_token or matches with the multimodal token regex
+    &#34;&#34;&#34;
+    modality = {
+        self.image_token: Modality.IMAGE,
+        self.video_token: Modality.VIDEO,
+        self.audio_token: Modality.AUDIO,
+    }.get(token)
+    if modality:
+        return modality
+
+    for regex, modality in [
+        (self.image_token_regex, Modality.IMAGE),
+        (self.video_token_regex, Modality.VIDEO),
+        (self.audio_token_regex, Modality.AUDIO),
+    ]:
+        if regex and regex.match(token):
+            return modality
+
+    return None</code></pre>
+</details>
+<div class="desc"><p>:return: the modality associated with the given token, if the token is a special_token or matches with the multimodal token regex</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_token_id_by_modality"><code class="name flex">
+<span>def <span class="ident">get_token_id_by_modality</span></span>(<span>self,<br>modality: <a title="sglang.srt.managers.schedule_batch.Modality" href="../../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.Modality">Modality</a>) ‑> int | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_token_id_by_modality(self, modality: Modality) -&gt; Optional[int]:
+    return {
+        Modality.IMAGE: self.image_token_id,
+        Modality.MULTI_IMAGES: self.image_token_id,
+        Modality.VIDEO: self.video_token_id,
+        Modality.AUDIO: self.audio_token_id,
+    }.get(modality)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.parse_regex"><code class="name flex">
+<span>def <span class="ident">parse_regex</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_regex(self):
+    if self.image_token_regex is None and self.image_token is not None:
+        self.image_token_regex = re.compile(re.escape(self.image_token))
+    if self.video_token_regex is None and self.video_token is not None:
+        self.video_token_regex = re.compile(re.escape(self.video_token))
+    if self.audio_token_regex is None and self.audio_token is not None:
+        self.audio_token_regex = re.compile(re.escape(self.audio_token))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.multimodal.processors" href="index.html">sglang.srt.multimodal.processors</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput">BaseMultiModalProcessorOutput</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.audios" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.audios">audios</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.images" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.images">images</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.input_text" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.input_text">input_text</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.organize_results" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.organize_results">organize_results</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.videos" href="#sglang.srt.multimodal.processors.base_processor.BaseMultiModalProcessorOutput.videos">videos</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor">BaseMultimodalProcessor</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.collect_mm_items_from_processor_output" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.collect_mm_items_from_processor_output">collect_mm_items_from_processor_output</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_estimated_frames_list" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_estimated_frames_list">get_estimated_frames_list</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_mm_items_offset" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_mm_items_offset">get_mm_items_offset</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_mm_items_offset_by_pair" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.get_mm_items_offset_by_pair">get_mm_items_offset_by_pair</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.load_mm_data" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.load_mm_data">load_mm_data</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.models" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.models">models</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_and_combine_mm_data" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_and_combine_mm_data">process_and_combine_mm_data</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_mm_data" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_mm_data">process_mm_data</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_mm_data_async" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.process_mm_data_async">process_mm_data_async</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.submit_data_loading_tasks" href="#sglang.srt.multimodal.processors.base_processor.BaseMultimodalProcessor.submit_data_loading_tasks">submit_data_loading_tasks</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens">MultimodalSpecialTokens</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token">audio_token</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token_id" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token_id">audio_token_id</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token_regex" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.audio_token_regex">audio_token_regex</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.build" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.build">build</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.combined_regex" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.combined_regex">combined_regex</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.convert_to_str" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.convert_to_str">convert_to_str</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.convert_to_strs" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.convert_to_strs">convert_to_strs</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_combined_regex" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_combined_regex">get_combined_regex</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_modality_of_token" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_modality_of_token">get_modality_of_token</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_token_id_by_modality" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.get_token_id_by_modality">get_token_id_by_modality</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token">image_token</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token_id" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token_id">image_token_id</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token_regex" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.image_token_regex">image_token_regex</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.parse_regex" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.parse_regex">parse_regex</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token">video_token</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token_id" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token_id">video_token_id</a></code></li>
+<li><code><a title="sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token_regex" href="#sglang.srt.multimodal.processors.base_processor.MultimodalSpecialTokens.video_token_regex">video_token_regex</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

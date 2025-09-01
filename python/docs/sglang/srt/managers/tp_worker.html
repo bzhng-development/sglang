@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.managers.tp_worker API documentation</title>
+<meta name="description" content="A tensor parallel worker.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.managers.tp_worker</code></h1>
+</header>
+<section id="section-intro">
+<p>A tensor parallel worker.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker"><code class="flex name class">
+<span>class <span class="ident">TpModelWorker</span></span>
+<span>(</span><span>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>gpu_id: int,<br>tp_rank: int,<br>moe_ep_rank: int,<br>pp_rank: int,<br>dp_rank: int | None,<br>nccl_port: int,<br>is_draft_worker: bool = False,<br>req_to_token_pool: <a title="sglang.srt.mem_cache.memory_pool.ReqToTokenPool" href="../mem_cache/memory_pool.html#sglang.srt.mem_cache.memory_pool.ReqToTokenPool">ReqToTokenPool</a> | None = None,<br>token_to_kv_pool_allocator: <a title="sglang.srt.mem_cache.allocator.BaseTokenToKVPoolAllocator" href="../mem_cache/allocator.html#sglang.srt.mem_cache.allocator.BaseTokenToKVPoolAllocator">BaseTokenToKVPoolAllocator</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TpModelWorker:
+    &#34;&#34;&#34;A tensor parallel model worker.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        server_args: ServerArgs,
+        gpu_id: int,
+        tp_rank: int,
+        moe_ep_rank: int,
+        pp_rank: int,
+        dp_rank: Optional[int],
+        nccl_port: int,
+        is_draft_worker: bool = False,
+        req_to_token_pool: Optional[ReqToTokenPool] = None,
+        token_to_kv_pool_allocator: Optional[BaseTokenToKVPoolAllocator] = None,
+    ):
+        # Parse args
+        self.tp_size = server_args.tp_size
+        self.tp_rank = tp_rank
+        self.moe_ep_rank = moe_ep_rank
+        self.pp_rank = pp_rank
+
+        # Init model and tokenizer
+        self.model_config = ModelConfig.from_server_args(
+            server_args,
+            model_path=(
+                server_args.model_path
+                if not is_draft_worker
+                else server_args.speculative_draft_model_path
+            ),
+            is_draft_model=is_draft_worker,
+        )
+
+        self.model_runner = ModelRunner(
+            model_config=self.model_config,
+            mem_fraction_static=server_args.mem_fraction_static,
+            gpu_id=gpu_id,
+            tp_rank=tp_rank,
+            tp_size=server_args.tp_size,
+            moe_ep_rank=moe_ep_rank,
+            moe_ep_size=server_args.ep_size,
+            pp_rank=pp_rank,
+            pp_size=server_args.pp_size,
+            nccl_port=nccl_port,
+            dp_rank=dp_rank,
+            server_args=server_args,
+            is_draft_worker=is_draft_worker,
+            req_to_token_pool=req_to_token_pool,
+            token_to_kv_pool_allocator=token_to_kv_pool_allocator,
+        )
+        if server_args.skip_tokenizer_init:
+            self.tokenizer = self.processor = None
+        else:
+            if self.model_config.is_multimodal:
+                self.processor = get_processor(
+                    server_args.tokenizer_path,
+                    tokenizer_mode=server_args.tokenizer_mode,
+                    trust_remote_code=server_args.trust_remote_code,
+                    revision=server_args.revision,
+                )
+                self.tokenizer = get_tokenizer_from_processor(self.processor)
+            else:
+                self.tokenizer = get_tokenizer(
+                    server_args.tokenizer_path,
+                    tokenizer_mode=server_args.tokenizer_mode,
+                    trust_remote_code=server_args.trust_remote_code,
+                    revision=server_args.revision,
+                )
+        self.device = self.model_runner.device
+
+        # Init nccl groups
+        self.pp_group = get_pp_group()
+        self.world_group = get_world_group()
+
+        # Profile number of tokens
+        self.max_total_num_tokens = self.model_runner.max_total_num_tokens
+        self.max_prefill_tokens = server_args.max_prefill_tokens
+        self.max_running_requests = min(
+            (
+                self.max_total_num_tokens // 2
+                if server_args.max_running_requests is None
+                else server_args.max_running_requests
+                // (server_args.dp_size if server_args.enable_dp_attention else 1)
+            ),
+            self.model_runner.req_to_token_pool.size,
+        )
+        assert self.max_running_requests &gt; 0, &#34;max_running_request is zero&#34;
+        self.max_queued_requests = server_args.max_queued_requests
+        assert (
+            self.max_running_requests &gt; 0
+        ), &#34;max_queued_requests is zero. We need to be at least 1 to schedule a request.&#34;
+        self.max_req_len = min(
+            self.model_config.context_len - 1,
+            self.max_total_num_tokens - 1,
+        )
+        self.max_req_input_len = self.max_req_len - 5
+        assert (
+            self.max_req_len &gt; 0 and self.max_req_input_len &gt; 0
+        ), &#34;Memory pool size is too small&#34;
+
+        # Sync random seed across TP workers
+        self.random_seed = broadcast_pyobj(
+            [server_args.random_seed],
+            self.tp_size * self.pp_rank + tp_rank,
+            self.world_group.cpu_group,
+            src=self.world_group.ranks[0],
+        )[0]
+        set_random_seed(self.random_seed)
+
+        # A reference make this class has the same member as TpModelWorkerClient
+        self.worker = self
+
+        self.hicache_layer_transfer_counter = None
+
+    def register_hicache_layer_transfer_counter(self, counter):
+        self.hicache_layer_transfer_counter = counter
+
+    def set_hicache_consumer(self, consumer_index):
+        if self.hicache_layer_transfer_counter is not None:
+            self.hicache_layer_transfer_counter.set_consumer(consumer_index)
+
+    def get_worker_info(self):
+        return (
+            self.max_total_num_tokens,
+            self.max_prefill_tokens,
+            self.max_running_requests,
+            self.max_queued_requests,
+            self.max_req_len,
+            self.max_req_input_len,
+            self.random_seed,
+            self.device,
+            global_server_args_dict,
+            self.model_runner.req_to_token_pool.size,
+            self.model_runner.req_to_token_pool.max_context_len,
+            self.model_runner.token_to_kv_pool.size,
+        )
+
+    @property
+    def sliding_window_size(self) -&gt; Optional[int]:
+        return self.model_runner.sliding_window_size
+
+    @property
+    def is_hybrid(self) -&gt; bool:
+        return self.model_runner.is_hybrid is not None
+
+    def get_tokens_per_layer_info(self):
+        return (
+            self.model_runner.full_max_total_num_tokens,
+            self.model_runner.swa_max_total_num_tokens,
+        )
+
+    def get_pad_input_ids_func(self):
+        return getattr(self.model_runner.model, &#34;pad_input_ids&#34;, None)
+
+    def get_tp_group(self):
+        return self.model_runner.tp_group
+
+    def get_attention_tp_group(self):
+        return self.model_runner.attention_tp_group
+
+    def get_attention_tp_cpu_group(self):
+        return getattr(self.model_runner.attention_tp_group, &#34;cpu_group&#34;, None)
+
+    def get_memory_pool(self):
+        return (
+            self.model_runner.req_to_token_pool,
+            self.model_runner.token_to_kv_pool_allocator,
+        )
+
+    def forward_batch_generation(
+        self,
+        model_worker_batch: ModelWorkerBatch,
+        launch_done: Optional[threading.Event] = None,
+        skip_sample: bool = False,
+    ) -&gt; Tuple[
+        Union[LogitsProcessorOutput, torch.Tensor], Optional[torch.Tensor], bool
+    ]:
+        forward_batch = ForwardBatch.init_new(model_worker_batch, self.model_runner)
+
+        pp_proxy_tensors = None
+        if not self.pp_group.is_first_rank:
+            pp_proxy_tensors = PPProxyTensors(
+                self.pp_group.recv_tensor_dict(
+                    all_gather_group=self.get_attention_tp_group()
+                )
+            )
+
+        if self.pp_group.is_last_rank:
+            logits_output, can_run_cuda_graph = self.model_runner.forward(
+                forward_batch, pp_proxy_tensors=pp_proxy_tensors
+            )
+            if launch_done is not None:
+                launch_done.set()
+
+            if skip_sample:
+                next_token_ids = None
+            else:
+                next_token_ids = self.model_runner.sample(
+                    logits_output, model_worker_batch
+                )
+
+            return logits_output, next_token_ids, can_run_cuda_graph
+        else:
+            pp_proxy_tensors, can_run_cuda_graph = self.model_runner.forward(
+                forward_batch,
+                pp_proxy_tensors=pp_proxy_tensors,
+            )
+            return pp_proxy_tensors.tensors, None, can_run_cuda_graph
+
+    def forward_batch_embedding(self, model_worker_batch: ModelWorkerBatch):
+        forward_batch = ForwardBatch.init_new(model_worker_batch, self.model_runner)
+        logits_output, _ = self.model_runner.forward(forward_batch)
+        embeddings = logits_output.embeddings
+        return embeddings
+
+    def update_weights_from_disk(self, recv_req: UpdateWeightFromDiskReqInput):
+        success, message = self.model_runner.update_weights_from_disk(
+            recv_req.model_path, recv_req.load_format
+        )
+        return success, message
+
+    def init_weights_update_group(self, recv_req: InitWeightsUpdateGroupReqInput):
+        success, message = self.model_runner.init_weights_update_group(
+            recv_req.master_address,
+            recv_req.master_port,
+            recv_req.rank_offset,
+            recv_req.world_size,
+            recv_req.group_name,
+            recv_req.backend,
+        )
+        return success, message
+
+    def update_weights_from_distributed(
+        self, recv_req: UpdateWeightsFromDistributedReqInput
+    ):
+        success, message = self.model_runner.update_weights_from_distributed(
+            recv_req.names, recv_req.dtypes, recv_req.shapes, recv_req.group_name
+        )
+        return success, message
+
+    def update_weights_from_tensor(self, recv_req: UpdateWeightsFromTensorReqInput):
+
+        monkey_patch_torch_reductions()
+        success, message = self.model_runner.update_weights_from_tensor(
+            named_tensors=MultiprocessingSerializer.deserialize(
+                recv_req.serialized_named_tensors[self.tp_rank]
+            ),
+            load_format=recv_req.load_format,
+        )
+        return success, message
+
+    def get_weights_by_name(self, recv_req: GetWeightsByNameReqInput):
+        parameter = self.model_runner.get_weights_by_name(
+            recv_req.name, recv_req.truncate_size
+        )
+        return parameter
+
+    def load_lora_adapter(self, recv_req: LoadLoRAAdapterReqInput):
+        result = self.model_runner.load_lora_adapter(recv_req.to_ref())
+        return result
+
+    def unload_lora_adapter(self, recv_req: UnloadLoRAAdapterReqInput):
+        result = self.model_runner.unload_lora_adapter(recv_req.to_ref())
+        return result
+
+    def can_run_lora_batch(self, lora_ids: list[str]) -&gt; bool:
+        return self.model_runner.lora_manager.validate_lora_batch(lora_ids)</code></pre>
+</details>
+<div class="desc"><p>A tensor parallel model worker.</p></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.speculative.eagle_worker.EAGLEWorker" href="../speculative/eagle_worker.html#sglang.srt.speculative.eagle_worker.EAGLEWorker">EAGLEWorker</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.is_hybrid"><code class="name">prop <span class="ident">is_hybrid</span> : bool</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def is_hybrid(self) -&gt; bool:
+    return self.model_runner.is_hybrid is not None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.sliding_window_size"><code class="name">prop <span class="ident">sliding_window_size</span> : int | None</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def sliding_window_size(self) -&gt; Optional[int]:
+    return self.model_runner.sliding_window_size</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.can_run_lora_batch"><code class="name flex">
+<span>def <span class="ident">can_run_lora_batch</span></span>(<span>self, lora_ids: list[str]) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_run_lora_batch(self, lora_ids: list[str]) -&gt; bool:
+    return self.model_runner.lora_manager.validate_lora_batch(lora_ids)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.forward_batch_embedding"><code class="name flex">
+<span>def <span class="ident">forward_batch_embedding</span></span>(<span>self,<br>model_worker_batch: <a title="sglang.srt.managers.schedule_batch.ModelWorkerBatch" href="schedule_batch.html#sglang.srt.managers.schedule_batch.ModelWorkerBatch">ModelWorkerBatch</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_batch_embedding(self, model_worker_batch: ModelWorkerBatch):
+    forward_batch = ForwardBatch.init_new(model_worker_batch, self.model_runner)
+    logits_output, _ = self.model_runner.forward(forward_batch)
+    embeddings = logits_output.embeddings
+    return embeddings</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.forward_batch_generation"><code class="name flex">
+<span>def <span class="ident">forward_batch_generation</span></span>(<span>self,<br>model_worker_batch: <a title="sglang.srt.managers.schedule_batch.ModelWorkerBatch" href="schedule_batch.html#sglang.srt.managers.schedule_batch.ModelWorkerBatch">ModelWorkerBatch</a>,<br>launch_done: threading.Event | None = None,<br>skip_sample: bool = False) ‑> Tuple[<a title="sglang.srt.layers.logits_processor.LogitsProcessorOutput" href="../layers/logits_processor.html#sglang.srt.layers.logits_processor.LogitsProcessorOutput">LogitsProcessorOutput</a> | torch.Tensor, torch.Tensor | None, bool]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_batch_generation(
+    self,
+    model_worker_batch: ModelWorkerBatch,
+    launch_done: Optional[threading.Event] = None,
+    skip_sample: bool = False,
+) -&gt; Tuple[
+    Union[LogitsProcessorOutput, torch.Tensor], Optional[torch.Tensor], bool
+]:
+    forward_batch = ForwardBatch.init_new(model_worker_batch, self.model_runner)
+
+    pp_proxy_tensors = None
+    if not self.pp_group.is_first_rank:
+        pp_proxy_tensors = PPProxyTensors(
+            self.pp_group.recv_tensor_dict(
+                all_gather_group=self.get_attention_tp_group()
+            )
+        )
+
+    if self.pp_group.is_last_rank:
+        logits_output, can_run_cuda_graph = self.model_runner.forward(
+            forward_batch, pp_proxy_tensors=pp_proxy_tensors
+        )
+        if launch_done is not None:
+            launch_done.set()
+
+        if skip_sample:
+            next_token_ids = None
+        else:
+            next_token_ids = self.model_runner.sample(
+                logits_output, model_worker_batch
+            )
+
+        return logits_output, next_token_ids, can_run_cuda_graph
+    else:
+        pp_proxy_tensors, can_run_cuda_graph = self.model_runner.forward(
+            forward_batch,
+            pp_proxy_tensors=pp_proxy_tensors,
+        )
+        return pp_proxy_tensors.tensors, None, can_run_cuda_graph</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_attention_tp_cpu_group"><code class="name flex">
+<span>def <span class="ident">get_attention_tp_cpu_group</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_attention_tp_cpu_group(self):
+    return getattr(self.model_runner.attention_tp_group, &#34;cpu_group&#34;, None)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_attention_tp_group"><code class="name flex">
+<span>def <span class="ident">get_attention_tp_group</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_attention_tp_group(self):
+    return self.model_runner.attention_tp_group</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_memory_pool"><code class="name flex">
+<span>def <span class="ident">get_memory_pool</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_memory_pool(self):
+    return (
+        self.model_runner.req_to_token_pool,
+        self.model_runner.token_to_kv_pool_allocator,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_pad_input_ids_func"><code class="name flex">
+<span>def <span class="ident">get_pad_input_ids_func</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_pad_input_ids_func(self):
+    return getattr(self.model_runner.model, &#34;pad_input_ids&#34;, None)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_tokens_per_layer_info"><code class="name flex">
+<span>def <span class="ident">get_tokens_per_layer_info</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tokens_per_layer_info(self):
+    return (
+        self.model_runner.full_max_total_num_tokens,
+        self.model_runner.swa_max_total_num_tokens,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_tp_group"><code class="name flex">
+<span>def <span class="ident">get_tp_group</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tp_group(self):
+    return self.model_runner.tp_group</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_weights_by_name"><code class="name flex">
+<span>def <span class="ident">get_weights_by_name</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.GetWeightsByNameReqInput" href="io_struct.html#sglang.srt.managers.io_struct.GetWeightsByNameReqInput">GetWeightsByNameReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weights_by_name(self, recv_req: GetWeightsByNameReqInput):
+    parameter = self.model_runner.get_weights_by_name(
+        recv_req.name, recv_req.truncate_size
+    )
+    return parameter</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.get_worker_info"><code class="name flex">
+<span>def <span class="ident">get_worker_info</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_worker_info(self):
+    return (
+        self.max_total_num_tokens,
+        self.max_prefill_tokens,
+        self.max_running_requests,
+        self.max_queued_requests,
+        self.max_req_len,
+        self.max_req_input_len,
+        self.random_seed,
+        self.device,
+        global_server_args_dict,
+        self.model_runner.req_to_token_pool.size,
+        self.model_runner.req_to_token_pool.max_context_len,
+        self.model_runner.token_to_kv_pool.size,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.init_weights_update_group"><code class="name flex">
+<span>def <span class="ident">init_weights_update_group</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.InitWeightsUpdateGroupReqInput" href="io_struct.html#sglang.srt.managers.io_struct.InitWeightsUpdateGroupReqInput">InitWeightsUpdateGroupReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_weights_update_group(self, recv_req: InitWeightsUpdateGroupReqInput):
+    success, message = self.model_runner.init_weights_update_group(
+        recv_req.master_address,
+        recv_req.master_port,
+        recv_req.rank_offset,
+        recv_req.world_size,
+        recv_req.group_name,
+        recv_req.backend,
+    )
+    return success, message</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.load_lora_adapter"><code class="name flex">
+<span>def <span class="ident">load_lora_adapter</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.LoadLoRAAdapterReqInput" href="io_struct.html#sglang.srt.managers.io_struct.LoadLoRAAdapterReqInput">LoadLoRAAdapterReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_lora_adapter(self, recv_req: LoadLoRAAdapterReqInput):
+    result = self.model_runner.load_lora_adapter(recv_req.to_ref())
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.register_hicache_layer_transfer_counter"><code class="name flex">
+<span>def <span class="ident">register_hicache_layer_transfer_counter</span></span>(<span>self, counter)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_hicache_layer_transfer_counter(self, counter):
+    self.hicache_layer_transfer_counter = counter</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.set_hicache_consumer"><code class="name flex">
+<span>def <span class="ident">set_hicache_consumer</span></span>(<span>self, consumer_index)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_hicache_consumer(self, consumer_index):
+    if self.hicache_layer_transfer_counter is not None:
+        self.hicache_layer_transfer_counter.set_consumer(consumer_index)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.unload_lora_adapter"><code class="name flex">
+<span>def <span class="ident">unload_lora_adapter</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.UnloadLoRAAdapterReqInput" href="io_struct.html#sglang.srt.managers.io_struct.UnloadLoRAAdapterReqInput">UnloadLoRAAdapterReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unload_lora_adapter(self, recv_req: UnloadLoRAAdapterReqInput):
+    result = self.model_runner.unload_lora_adapter(recv_req.to_ref())
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_disk"><code class="name flex">
+<span>def <span class="ident">update_weights_from_disk</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.UpdateWeightFromDiskReqInput" href="io_struct.html#sglang.srt.managers.io_struct.UpdateWeightFromDiskReqInput">UpdateWeightFromDiskReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_weights_from_disk(self, recv_req: UpdateWeightFromDiskReqInput):
+    success, message = self.model_runner.update_weights_from_disk(
+        recv_req.model_path, recv_req.load_format
+    )
+    return success, message</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_distributed"><code class="name flex">
+<span>def <span class="ident">update_weights_from_distributed</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.UpdateWeightsFromDistributedReqInput" href="io_struct.html#sglang.srt.managers.io_struct.UpdateWeightsFromDistributedReqInput">UpdateWeightsFromDistributedReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_weights_from_distributed(
+    self, recv_req: UpdateWeightsFromDistributedReqInput
+):
+    success, message = self.model_runner.update_weights_from_distributed(
+        recv_req.names, recv_req.dtypes, recv_req.shapes, recv_req.group_name
+    )
+    return success, message</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_tensor"><code class="name flex">
+<span>def <span class="ident">update_weights_from_tensor</span></span>(<span>self,<br>recv_req: <a title="sglang.srt.managers.io_struct.UpdateWeightsFromTensorReqInput" href="io_struct.html#sglang.srt.managers.io_struct.UpdateWeightsFromTensorReqInput">UpdateWeightsFromTensorReqInput</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_weights_from_tensor(self, recv_req: UpdateWeightsFromTensorReqInput):
+
+    monkey_patch_torch_reductions()
+    success, message = self.model_runner.update_weights_from_tensor(
+        named_tensors=MultiprocessingSerializer.deserialize(
+            recv_req.serialized_named_tensors[self.tp_rank]
+        ),
+        load_format=recv_req.load_format,
+    )
+    return success, message</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.managers" href="index.html">sglang.srt.managers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.managers.tp_worker.TpModelWorker" href="#sglang.srt.managers.tp_worker.TpModelWorker">TpModelWorker</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.can_run_lora_batch" href="#sglang.srt.managers.tp_worker.TpModelWorker.can_run_lora_batch">can_run_lora_batch</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.forward_batch_embedding" href="#sglang.srt.managers.tp_worker.TpModelWorker.forward_batch_embedding">forward_batch_embedding</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.forward_batch_generation" href="#sglang.srt.managers.tp_worker.TpModelWorker.forward_batch_generation">forward_batch_generation</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_attention_tp_cpu_group" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_attention_tp_cpu_group">get_attention_tp_cpu_group</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_attention_tp_group" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_attention_tp_group">get_attention_tp_group</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_memory_pool" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_memory_pool">get_memory_pool</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_pad_input_ids_func" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_pad_input_ids_func">get_pad_input_ids_func</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_tokens_per_layer_info" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_tokens_per_layer_info">get_tokens_per_layer_info</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_tp_group" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_tp_group">get_tp_group</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_weights_by_name" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_weights_by_name">get_weights_by_name</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.get_worker_info" href="#sglang.srt.managers.tp_worker.TpModelWorker.get_worker_info">get_worker_info</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.init_weights_update_group" href="#sglang.srt.managers.tp_worker.TpModelWorker.init_weights_update_group">init_weights_update_group</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.is_hybrid" href="#sglang.srt.managers.tp_worker.TpModelWorker.is_hybrid">is_hybrid</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.load_lora_adapter" href="#sglang.srt.managers.tp_worker.TpModelWorker.load_lora_adapter">load_lora_adapter</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.register_hicache_layer_transfer_counter" href="#sglang.srt.managers.tp_worker.TpModelWorker.register_hicache_layer_transfer_counter">register_hicache_layer_transfer_counter</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.set_hicache_consumer" href="#sglang.srt.managers.tp_worker.TpModelWorker.set_hicache_consumer">set_hicache_consumer</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.sliding_window_size" href="#sglang.srt.managers.tp_worker.TpModelWorker.sliding_window_size">sliding_window_size</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.unload_lora_adapter" href="#sglang.srt.managers.tp_worker.TpModelWorker.unload_lora_adapter">unload_lora_adapter</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_disk" href="#sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_disk">update_weights_from_disk</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_distributed" href="#sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_distributed">update_weights_from_distributed</a></code></li>
+<li><code><a title="sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_tensor" href="#sglang.srt.managers.tp_worker.TpModelWorker.update_weights_from_tensor">update_weights_from_tensor</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

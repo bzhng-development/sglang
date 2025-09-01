@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.interns1 API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.interns1</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration"><code class="flex name class">
+<span>class <span class="ident">InternS1ForConditionalGeneration</span></span>
+<span>(</span><span>config: transformers.configuration_utils.PretrainedConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>use_flash_attn=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InternS1ForConditionalGeneration(nn.Module):
+    def __init__(
+        self,
+        config: PretrainedConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        use_flash_attn=True,
+    ) -&gt; None:
+        super().__init__()
+        self.config = config
+        self.quant_config = quant_config
+        vision_utils.update_vit_attn_dummy_heads_config(self.config)
+        image_size = (
+            getattr(config, &#34;force_image_size&#34;, None) or config.vision_config.image_size
+        )
+        patch_size = config.vision_config.patch_size
+        if isinstance(image_size, list):
+            image_size = image_size[0]
+        if isinstance(patch_size, list):
+            patch_size = patch_size[0]
+        self.patch_size = patch_size
+        self.select_layer = config.vision_feature_layer
+        self.num_image_token = int(
+            (image_size // patch_size) ** 2 * (config.downsample_ratio**2)
+        )
+        self.downsample_ratio = config.downsample_ratio
+        self.ps_version = getattr(config, &#34;ps_version&#34;, &#34;v1&#34;)
+        # self.template = getattr(config, &#39;template&#39;, &#39;internvl2_5&#39;)
+
+        config.vision_config.use_flash_attn = True if use_flash_attn else False
+        config.text_config._attn_implementation = (
+            &#34;flash_attention_2&#34; if use_flash_attn else &#34;eager&#34;
+        )
+
+        logger.info(f&#34;num_image_token: {self.num_image_token}&#34;)
+        logger.info(f&#34;ps_version: {self.ps_version}&#34;)
+
+        self.vision_model = InternVisionModel(config.vision_config)
+        if config.text_config.architectures[0] == &#34;Qwen2ForCausalLM&#34;:
+            self.language_model = Qwen2ForCausalLM(
+                config=config.text_config, quant_config=quant_config
+            )
+        elif config.text_config.architectures[0] == &#34;Qwen3MoeForCausalLM&#34;:
+            self.language_model = Qwen3MoeForCausalLM(
+                config=config.text_config, quant_config=quant_config
+            )
+        elif config.text_config.architectures[0] == &#34;Qwen3ForCausalLM&#34;:
+            self.language_model = Qwen3ForCausalLM(
+                config=config.text_config, quant_config=quant_config
+            )
+        else:
+            raise NotImplementedError(
+                f&#34;{config.text_config.architectures[0]} is not implemented.&#34;
+            )
+
+        vit_hidden_size = config.vision_config.hidden_size
+        llm_hidden_size = config.text_config.hidden_size
+
+        self.mlp1 = nn.Sequential(
+            nn.LayerNorm(vit_hidden_size * int(1 / self.downsample_ratio) ** 2),
+            nn.Linear(
+                vit_hidden_size * int(1 / self.downsample_ratio) ** 2, llm_hidden_size
+            ),
+            nn.GELU(),
+            nn.Linear(llm_hidden_size, llm_hidden_size),
+        )
+
+    def pixel_shuffle(self, x, scale_factor=0.5):
+        n, w, h, c = x.size()
+        # N, W, H, C --&gt; N, W, H * scale, C // scale
+        x = x.view(n, w, int(h * scale_factor), int(c / scale_factor))
+        # N, W, H * scale, C // scale --&gt; N, H * scale, W, C // scale
+        x = x.permute(0, 2, 1, 3).contiguous()
+        # N, H * scale, W, C // scale --&gt; N, H * scale, W * scale, C // (scale ** 2)
+        x = x.view(
+            n,
+            int(h * scale_factor),
+            int(w * scale_factor),
+            int(c / (scale_factor * scale_factor)),
+        )
+        if self.ps_version == &#34;v1&#34;:
+            logger.warn(
+                &#34;In ps_version &#39;v1&#39;, the height and width have not been swapped back, &#34;
+                &#34;which results in a transposed image.&#34;
+            )
+        else:
+            x = x.permute(0, 2, 1, 3).contiguous()
+        return x
+
+    def extract_feature(self, pixel_values):
+        if self.select_layer == -1:
+            vit_embeds = self.vision_model(
+                pixel_values=pixel_values, output_hidden_states=False, return_dict=True
+            ).last_hidden_state
+        else:
+            vit_embeds = self.vision_model(
+                pixel_values=pixel_values, output_hidden_states=True, return_dict=True
+            ).hidden_states[self.select_layer]
+        vit_embeds = vit_embeds[:, 1:, :]
+
+        h = w = int(vit_embeds.shape[1] ** 0.5)
+        vit_embeds = vit_embeds.reshape(vit_embeds.shape[0], h, w, -1)
+        vit_embeds = self.pixel_shuffle(vit_embeds, scale_factor=self.downsample_ratio)
+        vit_embeds = vit_embeds.reshape(vit_embeds.shape[0], -1, vit_embeds.shape[-1])
+        vit_embeds = self.mlp1(vit_embeds)
+        return vit_embeds
+
+    def get_image_feature(self, items: List[MultimodalDataItem]):
+        &#34;&#34;&#34;
+        Projects the last hidden state from the vision model into language model space.
+
+        Returns:
+            image_features (`torch.Tensor`): Image feature tensor of shape `(num_images, image_length, embed_dim)`).
+        &#34;&#34;&#34;
+        pixel_values = torch.cat([item.feature for item in items])
+        image_features = self.extract_feature(pixel_values)
+        return image_features
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+    ) -&gt; torch.Tensor:
+
+        hs = general_mm_embed_routine(
+            input_ids=input_ids,
+            forward_batch=forward_batch,
+            language_model=self.language_model,
+            data_embedding_funcs={
+                Modality.IMAGE: self.get_image_feature,
+            },
+            positions=positions,
+        )
+
+        return hs
+
+    def pad_input_ids(self, input_ids: List[int], mm_inputs: MultimodalInputs):
+        # Get all special token IDs
+        im_start_id: int = mm_inputs.im_start_id
+        im_end_id: int = mm_inputs.im_end_id
+
+        media_token_pairs = [(im_start_id, im_end_id)]
+        helper = MultiModalityDataPaddingPatternTokenPairs(media_token_pairs)
+
+        return helper.pad_input_tokens(input_ids, mm_inputs)
+
+    def _mapping_interns1_name(self, name):
+        names_map = {
+            &#34;lm_head.weight&#34;: &#34;language_model.lm_head.weight&#34;,
+            &#34;model.multi_modal_projector.layer_norm.bias&#34;: &#34;mlp1.0.bias&#34;,
+            &#34;model.multi_modal_projector.layer_norm.weight&#34;: &#34;mlp1.0.weight&#34;,
+            &#34;model.multi_modal_projector.linear_1.bias&#34;: &#34;mlp1.1.bias&#34;,
+            &#34;model.multi_modal_projector.linear_1.weight&#34;: &#34;mlp1.1.weight&#34;,
+            &#34;model.multi_modal_projector.linear_2.bias&#34;: &#34;mlp1.3.bias&#34;,
+            &#34;model.multi_modal_projector.linear_2.weight&#34;: &#34;mlp1.3.weight&#34;,
+            &#34;model.vision_tower.embeddings.cls_token&#34;: &#34;vision_model.embeddings.class_embedding&#34;,
+            &#34;model.vision_tower.embeddings.patch_embeddings.projection.bias&#34;: &#34;vision_model.embeddings.patch_embedding.bias&#34;,
+            &#34;model.vision_tower.embeddings.patch_embeddings.projection.weight&#34;: &#34;vision_model.embeddings.patch_embedding.weight&#34;,
+            &#34;model.vision_tower.embeddings.position_embeddings&#34;: &#34;vision_model.embeddings.position_embedding&#34;,
+        }
+        if name in names_map:
+            name = names_map[name]
+        elif name.startswith(&#34;model.language_model.&#34;):
+            name = &#34;language_model.model.&#34; + name[len(&#34;model.language_model.&#34;) :]
+        elif name.startswith(&#34;model.vision_tower.&#34;):
+            name = &#34;vision_model.&#34; + name[len(&#34;model.vision_tower.&#34;) :]
+
+        if name.startswith(&#34;vision_model.encoder.layer&#34;):
+
+            name = name.replace(r&#34;.layer.&#34;, r&#34;.layers.&#34;)
+            name = name.replace(r&#34;.attention.&#34;, r&#34;.attn.attn.&#34;)
+            name = name.replace(r&#34;.projection_layer.&#34;, r&#34;.proj.&#34;)
+            name = name.replace(r&#34;.lambda_1&#34;, r&#34;.ls1&#34;)
+            name = name.replace(r&#34;.lambda_2&#34;, r&#34;.ls2&#34;)
+            name = name.replace(r&#34;.layernorm_before.&#34;, r&#34;.norm1.&#34;)
+            name = name.replace(r&#34;.layernorm_after.&#34;, r&#34;.norm2.&#34;)
+        return name
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;qkv_proj&#34;, &#34;q_proj&#34;, &#34;q&#34;),
+            (&#34;qkv_proj&#34;, &#34;k_proj&#34;, &#34;k&#34;),
+            (&#34;qkv_proj&#34;, &#34;v_proj&#34;, &#34;v&#34;),
+            (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+            (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+        ]
+        expert_params_mapping = []
+        if &#34;Qwen3MoeForCausalLM&#34; in self.config.text_config.architectures:
+            expert_params_mapping = FusedMoE.make_expert_params_mapping(
+                ckpt_gate_proj_name=&#34;gate_proj&#34;,
+                ckpt_down_proj_name=&#34;down_proj&#34;,
+                ckpt_up_proj_name=&#34;up_proj&#34;,
+                num_experts=self.config.num_experts,
+            )
+
+        params_dict = dict(self.named_parameters())
+        loaded_params: Set[str] = set()
+
+        for name, loaded_weight in weights:
+            if &#34;rotary_emb.inv_freq&#34; in name:
+                continue
+            name = self._mapping_interns1_name(name)
+            if &#34;vision_model&#34; in name:
+                loaded_weight = vision_utils.pad_vit_attn_dummy_heads(
+                    self.config, name, loaded_weight
+                )
+
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                # We have mlp.experts[0].gate_proj in the checkpoint.
+                # Since we handle the experts below in expert_params_mapping,
+                # we need to skip here BEFORE we update the name, otherwise
+                # name will be updated to mlp.experts[0].gate_up_proj, which
+                # will then be updated below in expert_params_mapping
+                # for mlp.experts[0].gate_gate_up_proj, which breaks load.
+                if &#34;mlp.experts&#34; in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                for mapping in expert_params_mapping:
+                    param_name, weight_name, expert_id, shard_id = mapping
+                    if weight_name not in name:
+                        continue
+                    name = name.replace(weight_name, param_name)
+                    param = params_dict[name]
+                    weight_loader = param.weight_loader
+                    weight_loader(
+                        param,
+                        loaded_weight,
+                        name,
+                        shard_id=shard_id,
+                        expert_id=expert_id,
+                    )
+                    break
+                else:
+                    # Skip loading extra bias for GPTQ models.
+                    if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                        continue
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+
+            loaded_params.add(name)
+        unloaded_params = params_dict.keys() - loaded_params
+        if unloaded_params:
+            raise RuntimeError(
+                f&#34;Some weights are not initialized from checkpoints: {unloaded_params}&#34;
+            )
+        return loaded_params</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration.extract_feature"><code class="name flex">
+<span>def <span class="ident">extract_feature</span></span>(<span>self, pixel_values)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_feature(self, pixel_values):
+    if self.select_layer == -1:
+        vit_embeds = self.vision_model(
+            pixel_values=pixel_values, output_hidden_states=False, return_dict=True
+        ).last_hidden_state
+    else:
+        vit_embeds = self.vision_model(
+            pixel_values=pixel_values, output_hidden_states=True, return_dict=True
+        ).hidden_states[self.select_layer]
+    vit_embeds = vit_embeds[:, 1:, :]
+
+    h = w = int(vit_embeds.shape[1] ** 0.5)
+    vit_embeds = vit_embeds.reshape(vit_embeds.shape[0], h, w, -1)
+    vit_embeds = self.pixel_shuffle(vit_embeds, scale_factor=self.downsample_ratio)
+    vit_embeds = vit_embeds.reshape(vit_embeds.shape[0], -1, vit_embeds.shape[-1])
+    vit_embeds = self.mlp1(vit_embeds)
+    return vit_embeds</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+) -&gt; torch.Tensor:
+
+    hs = general_mm_embed_routine(
+        input_ids=input_ids,
+        forward_batch=forward_batch,
+        language_model=self.language_model,
+        data_embedding_funcs={
+            Modality.IMAGE: self.get_image_feature,
+        },
+        positions=positions,
+    )
+
+    return hs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration.get_image_feature"><code class="name flex">
+<span>def <span class="ident">get_image_feature</span></span>(<span>self,<br>items: List[<a title="sglang.srt.managers.schedule_batch.MultimodalDataItem" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalDataItem">MultimodalDataItem</a>])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_image_feature(self, items: List[MultimodalDataItem]):
+    &#34;&#34;&#34;
+    Projects the last hidden state from the vision model into language model space.
+
+    Returns:
+        image_features (`torch.Tensor`): Image feature tensor of shape `(num_images, image_length, embed_dim)`).
+    &#34;&#34;&#34;
+    pixel_values = torch.cat([item.feature for item in items])
+    image_features = self.extract_feature(pixel_values)
+    return image_features</code></pre>
+</details>
+<div class="desc"><p>Projects the last hidden state from the vision model into language model space.</p>
+<h2 id="returns">Returns</h2>
+<p>image_features (<code>torch.Tensor</code>): Image feature tensor of shape <code>(num_images, image_length, embed_dim)</code>).</p></div>
+</dd>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;qkv_proj&#34;, &#34;q_proj&#34;, &#34;q&#34;),
+        (&#34;qkv_proj&#34;, &#34;k_proj&#34;, &#34;k&#34;),
+        (&#34;qkv_proj&#34;, &#34;v_proj&#34;, &#34;v&#34;),
+        (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+        (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+    ]
+    expert_params_mapping = []
+    if &#34;Qwen3MoeForCausalLM&#34; in self.config.text_config.architectures:
+        expert_params_mapping = FusedMoE.make_expert_params_mapping(
+            ckpt_gate_proj_name=&#34;gate_proj&#34;,
+            ckpt_down_proj_name=&#34;down_proj&#34;,
+            ckpt_up_proj_name=&#34;up_proj&#34;,
+            num_experts=self.config.num_experts,
+        )
+
+    params_dict = dict(self.named_parameters())
+    loaded_params: Set[str] = set()
+
+    for name, loaded_weight in weights:
+        if &#34;rotary_emb.inv_freq&#34; in name:
+            continue
+        name = self._mapping_interns1_name(name)
+        if &#34;vision_model&#34; in name:
+            loaded_weight = vision_utils.pad_vit_attn_dummy_heads(
+                self.config, name, loaded_weight
+            )
+
+        for param_name, weight_name, shard_id in stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            # We have mlp.experts[0].gate_proj in the checkpoint.
+            # Since we handle the experts below in expert_params_mapping,
+            # we need to skip here BEFORE we update the name, otherwise
+            # name will be updated to mlp.experts[0].gate_up_proj, which
+            # will then be updated below in expert_params_mapping
+            # for mlp.experts[0].gate_gate_up_proj, which breaks load.
+            if &#34;mlp.experts&#34; in name:
+                continue
+            name = name.replace(weight_name, param_name)
+            # Skip loading extra bias for GPTQ models.
+            if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                continue
+            param = params_dict[name]
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            for mapping in expert_params_mapping:
+                param_name, weight_name, expert_id, shard_id = mapping
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(
+                    param,
+                    loaded_weight,
+                    name,
+                    shard_id=shard_id,
+                    expert_id=expert_id,
+                )
+                break
+            else:
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = getattr(
+                    param, &#34;weight_loader&#34;, default_weight_loader
+                )
+                weight_loader(param, loaded_weight)
+
+        loaded_params.add(name)
+    unloaded_params = params_dict.keys() - loaded_params
+    if unloaded_params:
+        raise RuntimeError(
+            f&#34;Some weights are not initialized from checkpoints: {unloaded_params}&#34;
+        )
+    return loaded_params</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>mm_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(self, input_ids: List[int], mm_inputs: MultimodalInputs):
+    # Get all special token IDs
+    im_start_id: int = mm_inputs.im_start_id
+    im_end_id: int = mm_inputs.im_end_id
+
+    media_token_pairs = [(im_start_id, im_end_id)]
+    helper = MultiModalityDataPaddingPatternTokenPairs(media_token_pairs)
+
+    return helper.pad_input_tokens(input_ids, mm_inputs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.interns1.InternS1ForConditionalGeneration.pixel_shuffle"><code class="name flex">
+<span>def <span class="ident">pixel_shuffle</span></span>(<span>self, x, scale_factor=0.5)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pixel_shuffle(self, x, scale_factor=0.5):
+    n, w, h, c = x.size()
+    # N, W, H, C --&gt; N, W, H * scale, C // scale
+    x = x.view(n, w, int(h * scale_factor), int(c / scale_factor))
+    # N, W, H * scale, C // scale --&gt; N, H * scale, W, C // scale
+    x = x.permute(0, 2, 1, 3).contiguous()
+    # N, H * scale, W, C // scale --&gt; N, H * scale, W * scale, C // (scale ** 2)
+    x = x.view(
+        n,
+        int(h * scale_factor),
+        int(w * scale_factor),
+        int(c / (scale_factor * scale_factor)),
+    )
+    if self.ps_version == &#34;v1&#34;:
+        logger.warn(
+            &#34;In ps_version &#39;v1&#39;, the height and width have not been swapped back, &#34;
+            &#34;which results in a transposed image.&#34;
+        )
+    else:
+        x = x.permute(0, 2, 1, 3).contiguous()
+    return x</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration">InternS1ForConditionalGeneration</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration.extract_feature" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration.extract_feature">extract_feature</a></code></li>
+<li><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration.forward" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration.get_image_feature" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration.get_image_feature">get_image_feature</a></code></li>
+<li><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration.load_weights" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration.pad_input_ids" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration.pad_input_ids">pad_input_ids</a></code></li>
+<li><code><a title="sglang.srt.models.interns1.InternS1ForConditionalGeneration.pixel_shuffle" href="#sglang.srt.models.interns1.InternS1ForConditionalGeneration.pixel_shuffle">pixel_shuffle</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

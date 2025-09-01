@@ -1,0 +1,3317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.mllama API documentation</title>
+<meta name="description" content="PyTorch Mllama model.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.mllama</code></h1>
+</header>
+<section id="section-intro">
+<p>PyTorch Mllama model.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.mllama.ColumnParallelConv2dPatch"><code class="flex name class">
+<span>class <span class="ident">ColumnParallelConv2dPatch</span></span>
+<span>(</span><span>in_channels: int,<br>out_channels: int,<br>kernel_size: Tuple[int, int] | int,<br>stride: Tuple[int, int] | int,<br>bias: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ColumnParallelConv2dPatch(torch.nn.Module):
+    &#34;&#34;&#34;Conv2D Patching layer with model parallelism.
+    Column parallel over unfolded input.
+    Arguments:
+        in_channels: Input channels.
+        out_channels: Output channels.
+        kernel_size: Size of convolution kernel.
+        stride (default 1): Stride for convolution.
+        bias (default False): Use bias in Conv2d.
+    Input: (bsz, in_channels, width, height)
+    Output: (bsz, num_tokens, out_channels)
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: Union[int, Tuple[int, int]],
+        stride: Union[int, Tuple[int, int]],
+        bias: bool = False,
+    ) -&gt; None:
+        super().__init__()
+        if isinstance(kernel_size, int):
+            kernel_size = (kernel_size, kernel_size)
+        self._unfold = torch.nn.Unfold(kernel_size=kernel_size, stride=stride)
+        self._linear = ColumnParallelLinear(
+            in_channels * kernel_size[0] * kernel_size[1],
+            out_channels,
+            bias=bias,
+        )
+
+    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+        x = self._unfold(x)
+        x = x.permute(0, 2, 1)
+        x, _ = self._linear(x)
+        return x</code></pre>
+</details>
+<div class="desc"><p>Conv2D Patching layer with model parallelism.
+Column parallel over unfolded input.</p>
+<h2 id="arguments">Arguments</h2>
+<p>in_channels: Input channels.
+out_channels: Output channels.
+kernel_size: Size of convolution kernel.
+stride (default 1): Stride for convolution.
+bias (default False): Use bias in Conv2d.
+Input: (bsz, in_channels, width, height)
+Output: (bsz, num_tokens, out_channels)</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.ColumnParallelConv2dPatch.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+    x = self._unfold(x)
+    x = x.permute(0, 2, 1)
+    x, _ = self._linear(x)
+    return x</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaCrossAttentionDecoderLayer"><code class="flex name class">
+<span>class <span class="ident">MllamaCrossAttentionDecoderLayer</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaTextConfig,<br>layer_id: int,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaCrossAttentionDecoderLayer(torch.nn.Module):
+    &#34;&#34;&#34;Cross-attention transformer block with tanh-gated attention
+    and feedforward.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        config: config_mllama.MllamaTextConfig,
+        layer_id: int,
+        quant_config: Optional[QuantizationConfig],
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.layer_id = layer_id
+        self.cross_attn = MllamaTextCrossAttention(
+            config=config,
+            layer_id=layer_id,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;cross_attn&#34;, prefix),
+        )
+
+        self.input_layernorm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.cross_attn_attn_gate = torch.nn.Parameter(torch.zeros(1))
+
+        self.mlp = LlamaMLP(
+            hidden_size=config.hidden_size,
+            intermediate_size=config.intermediate_size,
+            hidden_act=config.hidden_act,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;mlp&#34;, prefix),
+        )
+        self.post_attention_layernorm = RMSNorm(
+            config.hidden_size, eps=config.rms_norm_eps
+        )
+        self.cross_attn_mlp_gate = torch.nn.Parameter(torch.zeros(1))
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        cross_attention_states: torch.Tensor,
+        cross_attention_mask: torch.Tensor,
+        full_text_row_masked_out_mask: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        residual = hidden_states
+        hidden_states = self.input_layernorm(hidden_states)
+
+        hidden_states = self.cross_attn(
+            hidden_states=hidden_states,
+            attention_mask=cross_attention_mask,
+            cross_attention_states=cross_attention_states,
+            forward_batch=forward_batch,
+        )
+        hidden_states = full_text_row_masked_out_mask * hidden_states
+        hidden_states = residual + self.cross_attn_attn_gate.tanh() * hidden_states
+
+        residual = hidden_states
+        hidden_states = self.post_attention_layernorm(hidden_states)
+        hidden_states = self.mlp(hidden_states)
+        hidden_states = full_text_row_masked_out_mask * hidden_states
+        hidden_states = residual + self.cross_attn_mlp_gate.tanh() * hidden_states
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Cross-attention transformer block with tanh-gated attention
+and feedforward.</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaCrossAttentionDecoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>hidden_states: torch.Tensor,<br>cross_attention_states: torch.Tensor,<br>cross_attention_mask: torch.Tensor,<br>full_text_row_masked_out_mask: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    hidden_states: torch.Tensor,
+    cross_attention_states: torch.Tensor,
+    cross_attention_mask: torch.Tensor,
+    full_text_row_masked_out_mask: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    residual = hidden_states
+    hidden_states = self.input_layernorm(hidden_states)
+
+    hidden_states = self.cross_attn(
+        hidden_states=hidden_states,
+        attention_mask=cross_attention_mask,
+        cross_attention_states=cross_attention_states,
+        forward_batch=forward_batch,
+    )
+    hidden_states = full_text_row_masked_out_mask * hidden_states
+    hidden_states = residual + self.cross_attn_attn_gate.tanh() * hidden_states
+
+    residual = hidden_states
+    hidden_states = self.post_attention_layernorm(hidden_states)
+    hidden_states = self.mlp(hidden_states)
+    hidden_states = full_text_row_masked_out_mask * hidden_states
+    hidden_states = residual + self.cross_attn_mlp_gate.tanh() * hidden_states
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForCausalLM"><code class="flex name class">
+<span>class <span class="ident">MllamaForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaTextConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaForCausalLM(nn.Module):
+    config_class = config_mllama.MllamaTextConfig
+    base_model_prefix = &#34;language_model&#34;
+    _no_split_modules = [
+        &#34;MllamaCrossAttentionDecoderLayer&#34;,
+        &#34;MllamaSelfAttentionDecoderLayer&#34;,
+    ]
+
+    def __init__(
+        self,
+        config: config_mllama.MllamaTextConfig,
+        quant_config: Optional[QuantizationConfig],
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.vocab_size = config.vocab_size
+        self.model = MllamaTextModel(
+            config, quant_config, prefix=add_prefix(&#34;model&#34;, prefix)
+        )
+        self.lm_head = ParallelLMHead(
+            config.vocab_size,
+            config.hidden_size,
+            org_num_embeddings=config.vocab_size,
+            padding_size=DEFAULT_VOCAB_PADDING_SIZE,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;lm_head&#34;, prefix),
+        )
+
+    def forward(
+        self,
+        input_ids: torch.LongTensor,
+        positions: Optional[torch.LongTensor],
+        cross_attention_states: Optional[torch.LongTensor],
+        cross_attention_mask: Optional[torch.LongTensor],
+        full_text_row_masked_out_mask: Optional[Tuple[torch.Tensor, torch.Tensor]],
+        forward_batch: ForwardBatch,
+        skip_cross_attention: bool,
+    ) -&gt; torch.Tensor:
+        hidden_states = self.model(
+            input_ids=input_ids,
+            positions=positions,
+            cross_attention_states=cross_attention_states,
+            cross_attention_mask=cross_attention_mask,
+            full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+            forward_batch=forward_batch,
+            skip_cross_attention=skip_cross_attention,
+        )
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaForCausalLM.base_model_prefix"><code class="name">var <span class="ident">base_model_prefix</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForCausalLM.config_class"><code class="name">var <span class="ident">config_class</span></code></dt>
+<dd>
+<div class="desc"><p>This is the configuration class to store the configuration of a [<code>MllamaTextModel</code>]. It is used to instantiate an
+Mllama text model according to the specified arguments, defining the model architecture. Instantiating a configuration
+with the defaults will yield a similar configuration to that of the Mllama-11B.</p>
+<p>e.g. <a href="https://huggingface.co/meta-llama/Llama-3.2-11B-Vision">meta-llama/Llama-3.2-11B-Vision</a></p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<p>vocab_size (<code>int</code>, <em>optional</em>, defaults to 128256):
+Vocabulary size of the Mllama text model. Defines the maximum number of different tokens that can be represented
+by the <code>inputs_ids</code> passed when calling [<code>MllamaTextModel</code>].
+hidden_size (<code>int</code>, <em>optional</em>, defaults to 4096):
+Dimensionality of the embeddings and hidden states.
+hidden_act (<code>str</code> or <code>Callable</code>, <em>optional</em>, defaults to <code>"silu"</code>):
+The non-linear activation function (function or string) in the encoder and pooler.
+num_hidden_layers (<code>int</code>, <em>optional</em>, defaults to 40):
+Number of hidden layers in the Transformer encoder.
+num_attention_heads (<code>int</code>, <em>optional</em>, defaults to 32):
+Number of attention heads for each attention layer in the Transformer encoder.
+num_key_value_heads (<code>int</code>, <em>optional</em>, defaults to 8):
+This is the number of key_value heads that should be used to implement Grouped Query Attention. If not
+specified, will default to <code>num_attention_heads</code>.
+intermediate_size (<code>int</code>, <em>optional</em>, defaults to 14336):
+Dimensionality of the "intermediate" (often named feed-forward) layer in the Transformer encoder.
+rope_theta (<code>float</code>, <em>optional</em>, defaults to <code>500000.0</code>):
+The base period of the RoPE embeddings.
+rope_scaling (<code>Dict</code>, <em>optional</em>):
+Dictionary containing the scaling configuration for the RoPE embeddings. NOTE: if you apply new rope type
+and you expect the model to work on longer <code>max_position_embeddings</code>, we recommend you to update this value
+accordingly.
+Expected contents:
+<code>rope_type</code> (<code>str</code>):
+The sub-variant of RoPE to use. Can be one of ['default', 'linear', 'dynamic', 'yarn', 'longrope',
+'llama3'], with 'default' being the original RoPE implementation.
+<code>factor</code> (<code>float</code>, <em>optional</em>):
+Used with all rope types except 'default'. The scaling factor to apply to the RoPE embeddings. In
+most scaling types, a <code>factor</code> of x will enable the model to handle sequences of length x *
+original maximum pre-trained length.
+<code>original_max_position_embeddings</code> (<code>int</code>, <em>optional</em>):
+Used with 'dynamic', 'longrope' and 'llama3'. The original max position embeddings used during
+pretraining.
+<code>attention_factor</code> (<code>float</code>, <em>optional</em>):
+Used with 'yarn' and 'longrope'. The scaling factor to be applied on the attention
+computation. If unspecified, it defaults to value recommended by the implementation, using the
+<code>factor</code> field to infer the suggested value.
+<code>beta_fast</code> (<code>float</code>, <em>optional</em>):
+Only used with 'yarn'. Parameter to set the boundary for extrapolation (only) in the linear
+ramp function. If unspecified, it defaults to 32.
+<code>beta_slow</code> (<code>float</code>, <em>optional</em>):
+Only used with 'yarn'. Parameter to set the boundary for interpolation (only) in the linear
+ramp function. If unspecified, it defaults to 1.
+<code>short_factor</code> (<code>list[float]</code>, <em>optional</em>):
+Only used with 'longrope'. The scaling factor to be applied to short contexts (&lt;
+<code>original_max_position_embeddings</code>). Must be a list of numbers with the same length as the hidden
+size divided by the number of attention heads divided by 2
+<code>long_factor</code> (<code>list[float]</code>, <em>optional</em>):
+Only used with 'longrope'. The scaling factor to be applied to long contexts (&lt;
+<code>original_max_position_embeddings</code>). Must be a list of numbers with the same length as the hidden
+size divided by the number of attention heads divided by 2
+<code>low_freq_factor</code> (<code>float</code>, <em>optional</em>):
+Only used with 'llama3'. Scaling factor applied to low frequency components of the RoPE
+<code>high_freq_factor</code> (<code>float</code>, <em>optional</em>):
+Only used with 'llama3'. Scaling factor applied to high frequency components of the RoPE
+rms_norm_eps (<code>float</code>, <em>optional</em>, defaults to 1e-05):
+The epsilon used by the rms normalization layers.
+max_position_embeddings (<code>int</code>, <em>optional</em>, defaults to 131072):
+The maximum sequence length that this model might ever be used with.
+initializer_range (<code>float</code>, <em>optional</em>, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+use_cache (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return the last key/values attentions.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to tie weight embeddings
+cross_attention_layers (<code>list[int]</code>, <em>optional</em>):
+Indices of the cross attention layers. If not specified, will default to [3, 8, 13, 18, 23, 28, 33, 38].
+dropout (<code>float</code>, <em>optional</em>, defaults to 0):
+The dropout probability for self- and cross-attention layers.
+bos_token_id (<code>int</code>, <em>optional</em>, defaults to 128000):
+The id of the beginning of sentence token.
+eos_token_id (<code>int</code>, <em>optional</em>, defaults to 128001):
+The id of the end of sentence token.
+pad_token_id (<code>int</code>, <em>optional</em>, defaults to 128004):
+The id of the padding token.
+Example:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from transformers import MllamaTextModel, MllamaTextConfig
+
+&gt;&gt;&gt; # Initializing a Mllama text config
+&gt;&gt;&gt; config = MllamaTextConfig()
+
+&gt;&gt;&gt; # Initializing a model from the Mllama text configuration
+&gt;&gt;&gt; model = MllamaTextModel(config)
+
+&gt;&gt;&gt; # Accessing the model configuration
+&gt;&gt;&gt; configuration = model.config
+</code></pre></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaForCausalLM.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.LongTensor,<br>positions: torch.LongTensor | None,<br>cross_attention_states: torch.LongTensor | None,<br>cross_attention_mask: torch.LongTensor | None,<br>full_text_row_masked_out_mask: Tuple[torch.Tensor, torch.Tensor] | None,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>skip_cross_attention: bool) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.LongTensor,
+    positions: Optional[torch.LongTensor],
+    cross_attention_states: Optional[torch.LongTensor],
+    cross_attention_mask: Optional[torch.LongTensor],
+    full_text_row_masked_out_mask: Optional[Tuple[torch.Tensor, torch.Tensor]],
+    forward_batch: ForwardBatch,
+    skip_cross_attention: bool,
+) -&gt; torch.Tensor:
+    hidden_states = self.model(
+        input_ids=input_ids,
+        positions=positions,
+        cross_attention_states=cross_attention_states,
+        cross_attention_mask=cross_attention_mask,
+        full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+        forward_batch=forward_batch,
+        skip_cross_attention=skip_cross_attention,
+    )
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration"><code class="flex name class">
+<span>class <span class="ident">MllamaForConditionalGeneration</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaForConditionalGeneration(nn.Module):
+    # BitandBytes specific attributes
+    default_bitsandbytes_target_modules = [
+        &#34;.gate_proj.&#34;,
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+    ]
+    # in TP, these weights are partitioned along the column dimension (dim=-1)
+    column_parallel_weights_modules = [&#34;.down_proj.&#34;, &#34;.o_proj.&#34;]
+    bitsandbytes_stacked_params_mapping = {
+        # shard_name, weight_name, index
+        &#34;q_proj&#34;: (&#34;qkv_proj&#34;, 0),
+        &#34;k_proj&#34;: (&#34;qkv_proj&#34;, 1),
+        &#34;v_proj&#34;: (&#34;qkv_proj&#34;, 2),
+        &#34;gate_proj&#34;: (&#34;gate_up_proj&#34;, 0),
+        &#34;up_proj&#34;: (&#34;gate_up_proj&#34;, 1),
+    }
+
+    def __init__(
+        self,
+        config: config_mllama.MllamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.quant_config = quant_config
+        self.vocab_size = config.text_config.vocab_size
+        self.hidden_size = config.text_config.hidden_size
+        self.max_num_tiles = config.vision_config.max_num_tiles
+        self.vision_output_dim = config.vision_config.vision_output_dim
+        self.pad_token_id = (
+            config.pad_token_id if config.pad_token_id is not None else -1
+        )
+        self.image_size = config.vision_config.image_size
+
+        self.vision_model = MllamaVisionModel(
+            config.vision_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;vision_model&#34;, prefix),
+        )
+        self.language_model = MllamaForCausalLM(
+            config.text_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        self.multi_modal_projector = ReplicatedLinear(
+            config.vision_config.vision_output_dim,
+            config.text_config.hidden_size,
+            bias=True,
+            quant_config=quant_config,
+            prefix=&#34;multi_modal_projector&#34;,
+        )
+        self.logits_processor = LogitsProcessor(config.text_config)
+
+    def pad_input_ids(self, input_ids: List[int], mm_inputs: MultimodalInputs):
+        pixel_values = torch.cat([item.feature for item in mm_inputs.mm_items], dim=0)
+        pad_values = [item.pad_value for item in mm_inputs.mm_items]
+
+        num_concurrent_media, num_tiles = pixel_values.shape[1:3]
+        num_patches = self.vision_model.num_patches
+        image_len = num_concurrent_media * num_tiles * num_patches
+        mm_inputs.num_image_tokens = image_len
+
+        pad_ids = pad_values * ((image_len + len(pad_values)) // len(pad_values))
+
+        return pad_ids[:image_len] + input_ids
+
+    def _batch_image_inputs(self, forward_batch: ForwardBatch):
+        if forward_batch.forward_mode.is_decode() or all(forward_batch.encoder_cached):
+            return None, None, None, None
+
+        # pixel_values: shape (bs, num_image, num_tiles, 3, image_res, image_res)
+        max_num_images = max_num_tiles = bs = 0
+        for i, mm_input in enumerate(forward_batch.mm_inputs):
+
+            if not forward_batch.encoder_cached[i] and mm_input is not None:
+                pixel_values = torch.cat(
+                    [item.feature for item in mm_input.mm_items], dim=0
+                )
+                max_num_images = max(max_num_images, pixel_values.shape[1])
+
+                max_num_tiles = max(max_num_tiles, pixel_values.shape[2])
+                bs += 1
+
+        if max_num_images * max_num_tiles * bs == 0:
+            return None, None, None, None
+
+        with forward_batch.out_cache_loc.device:
+            batched_images = torch.zeros(
+                bs,
+                max_num_images,
+                max_num_tiles,
+                3,
+                self.image_size,
+                self.image_size,
+                dtype=torch.float32,
+            )
+            batched_ar_ids = torch.ones(
+                bs, max_num_images, dtype=torch.int64, device=&#34;cuda&#34;
+            )
+            batched_ar_mask = torch.zeros(
+                bs, max_num_images, max_num_tiles, dtype=torch.int64
+            )
+            i = 0
+            encoder_lens_need = []
+
+            for k, mm_input in enumerate(forward_batch.mm_inputs):
+                if forward_batch.encoder_cached[k] or mm_input is None:
+                    continue
+
+                encoder_lens_need.append(forward_batch.encoder_lens[k])
+                pixel_values = torch.cat(
+                    [item.feature for item in mm_input.mm_items], dim=0
+                )
+                for j in range(pixel_values.shape[1]):
+                    img = pixel_values[0, j]
+                    num_tiles = img.shape[0]
+                    batched_images[i, j, :num_tiles] = img
+                    batched_ar_ids[i, j] = mm_input.mm_items[0].aspect_ratio_id[0, j]
+
+                    batched_ar_mask[i, j, :num_tiles] = mm_input.mm_items[
+                        0
+                    ].aspect_ratio_mask[0, j]
+                i += 1
+
+        return batched_images, batched_ar_ids, batched_ar_mask, encoder_lens_need
+
+    def flat_encoder_result(
+        self, cross_attention_states: torch.Tensor, encoder_lens_need: List[int]
+    ):
+        # NOTE: not all encoders need computation, some are cached
+        head_dim = cross_attention_states.shape[-1]
+        total_encoder_len = sum(encoder_lens_need)
+        cross_attention_states_flat = torch.zeros(
+            total_encoder_len,
+            head_dim,
+            device=cross_attention_states.device,
+            dtype=cross_attention_states.dtype,
+        )
+
+        i = start_pos = 0
+        for encoder_len in encoder_lens_need:
+            if encoder_len == 0:
+                continue
+            end_pos = start_pos + encoder_len
+            cross_attention_states_flat[start_pos:end_pos] = cross_attention_states[i][
+                :encoder_len
+            ]
+            i += 1
+            start_pos += encoder_len
+
+        return cross_attention_states_flat
+
+    def get_full_text_row_masked_out_mask(self, forward_batch: ForwardBatch):
+        if forward_batch.forward_mode.is_decode():
+            full_text_row_masked_out_mask = forward_batch.encoder_lens != 0
+        else:
+            full_text_row_masked_out_mask = torch.ones(
+                forward_batch.extend_seq_lens.sum(), dtype=torch.bool
+            )
+            start_pos = 0
+
+            for seq_len, encoder_len in zip(
+                forward_batch.seq_lens.tolist(), forward_batch.encoder_lens_cpu
+            ):
+                if encoder_len == 0:
+                    full_text_row_masked_out_mask[start_pos : start_pos + seq_len] = (
+                        False
+                    )
+                start_pos += encoder_len
+
+            full_text_row_masked_out_mask = full_text_row_masked_out_mask.to(
+                forward_batch.seq_lens.device
+            )
+
+        return full_text_row_masked_out_mask.reshape(-1, 1)
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; Union[Tuple, CausalLMOutputWithPast]:
+        from sglang.srt.model_executor.cuda_graph_runner import get_is_capture_mode
+
+        batched_images, batched_ar_ids, batched_ar_mask, encoder_lens_need = (
+            self._batch_image_inputs(forward_batch)
+        )
+
+        # TODO: support multi-image by this mask
+        cross_attention_mask = None
+        cross_attention_states = None
+
+        if get_is_capture_mode():
+            # NOTE: when doing cuda graph capture, we do not want to skip cross attention
+            # Make is a constant value to avoid cuda graph capture issue
+            skip_cross_attention = False
+        else:
+            # NOTE: we do not need image_inputs when prefill
+            assert len(forward_batch.encoder_lens) == len(forward_batch.seq_lens)
+            assert len(forward_batch.encoder_lens_cpu) == len(forward_batch.seq_lens)
+            skip_cross_attention = forward_batch.encoder_lens.max() == 0
+
+        if not skip_cross_attention:
+            full_text_row_masked_out_mask = self.get_full_text_row_masked_out_mask(
+                forward_batch
+            )
+        else:
+            full_text_row_masked_out_mask = None
+
+        if batched_images is not None:
+            # NOTE: llama&#39;s reference implementation runs vision model on CPU
+            cross_attention_states = self.vision_model(
+                batched_images, batched_ar_ids, batched_ar_mask
+            )
+            cross_attention_states, _ = self.multi_modal_projector(
+                cross_attention_states
+            )
+
+            bs, _, _, _, image_token_dim = cross_attention_states.shape
+            cross_attention_states = cross_attention_states.view(
+                bs, -1, image_token_dim
+            )
+
+            cross_attention_states = self.flat_encoder_result(
+                cross_attention_states, encoder_lens_need
+            )
+
+        hidden_states = self.language_model(
+            input_ids=input_ids,
+            positions=positions,
+            cross_attention_states=cross_attention_states,
+            cross_attention_mask=cross_attention_mask,
+            full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+            forward_batch=forward_batch,
+            skip_cross_attention=skip_cross_attention,
+        )
+        return self.logits_processor(
+            input_ids, hidden_states, self.language_model.lm_head, forward_batch
+        )
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+            (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+            (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+        ]
+        params_dict = dict(self.named_parameters())
+        updated_params = set()
+        for name, loaded_weight in weights:
+            if &#34;patch_embedding.weight&#34; in name:
+                name = name.replace(
+                    &#34;patch_embedding.weight&#34;, &#34;patch_embedding._linear.weight&#34;
+                )
+                loaded_weight = loaded_weight.view(loaded_weight.shape[0], -1)
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                param = params_dict[name]
+                updated_params.add(name)
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                if &#34;vision_model&#34; in name:
+                    # adapt to VisionAttention
+                    name = name.replace(&#34;self_attn.o_proj&#34;, &#34;self_attn.proj&#34;)
+                param = params_dict.pop(name)
+                weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+                weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.bitsandbytes_stacked_params_mapping"><code class="name">var <span class="ident">bitsandbytes_stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.column_parallel_weights_modules"><code class="name">var <span class="ident">column_parallel_weights_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.default_bitsandbytes_target_modules"><code class="name">var <span class="ident">default_bitsandbytes_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.flat_encoder_result"><code class="name flex">
+<span>def <span class="ident">flat_encoder_result</span></span>(<span>self, cross_attention_states: torch.Tensor, encoder_lens_need: List[int])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flat_encoder_result(
+    self, cross_attention_states: torch.Tensor, encoder_lens_need: List[int]
+):
+    # NOTE: not all encoders need computation, some are cached
+    head_dim = cross_attention_states.shape[-1]
+    total_encoder_len = sum(encoder_lens_need)
+    cross_attention_states_flat = torch.zeros(
+        total_encoder_len,
+        head_dim,
+        device=cross_attention_states.device,
+        dtype=cross_attention_states.dtype,
+    )
+
+    i = start_pos = 0
+    for encoder_len in encoder_lens_need:
+        if encoder_len == 0:
+            continue
+        end_pos = start_pos + encoder_len
+        cross_attention_states_flat[start_pos:end_pos] = cross_attention_states[i][
+            :encoder_len
+        ]
+        i += 1
+        start_pos += encoder_len
+
+    return cross_attention_states_flat</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> Tuple | transformers.modeling_outputs.CausalLMOutputWithPast</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; Union[Tuple, CausalLMOutputWithPast]:
+    from sglang.srt.model_executor.cuda_graph_runner import get_is_capture_mode
+
+    batched_images, batched_ar_ids, batched_ar_mask, encoder_lens_need = (
+        self._batch_image_inputs(forward_batch)
+    )
+
+    # TODO: support multi-image by this mask
+    cross_attention_mask = None
+    cross_attention_states = None
+
+    if get_is_capture_mode():
+        # NOTE: when doing cuda graph capture, we do not want to skip cross attention
+        # Make is a constant value to avoid cuda graph capture issue
+        skip_cross_attention = False
+    else:
+        # NOTE: we do not need image_inputs when prefill
+        assert len(forward_batch.encoder_lens) == len(forward_batch.seq_lens)
+        assert len(forward_batch.encoder_lens_cpu) == len(forward_batch.seq_lens)
+        skip_cross_attention = forward_batch.encoder_lens.max() == 0
+
+    if not skip_cross_attention:
+        full_text_row_masked_out_mask = self.get_full_text_row_masked_out_mask(
+            forward_batch
+        )
+    else:
+        full_text_row_masked_out_mask = None
+
+    if batched_images is not None:
+        # NOTE: llama&#39;s reference implementation runs vision model on CPU
+        cross_attention_states = self.vision_model(
+            batched_images, batched_ar_ids, batched_ar_mask
+        )
+        cross_attention_states, _ = self.multi_modal_projector(
+            cross_attention_states
+        )
+
+        bs, _, _, _, image_token_dim = cross_attention_states.shape
+        cross_attention_states = cross_attention_states.view(
+            bs, -1, image_token_dim
+        )
+
+        cross_attention_states = self.flat_encoder_result(
+            cross_attention_states, encoder_lens_need
+        )
+
+    hidden_states = self.language_model(
+        input_ids=input_ids,
+        positions=positions,
+        cross_attention_states=cross_attention_states,
+        cross_attention_mask=cross_attention_mask,
+        full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+        forward_batch=forward_batch,
+        skip_cross_attention=skip_cross_attention,
+    )
+    return self.logits_processor(
+        input_ids, hidden_states, self.language_model.lm_head, forward_batch
+    )</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.get_full_text_row_masked_out_mask"><code class="name flex">
+<span>def <span class="ident">get_full_text_row_masked_out_mask</span></span>(<span>self,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_full_text_row_masked_out_mask(self, forward_batch: ForwardBatch):
+    if forward_batch.forward_mode.is_decode():
+        full_text_row_masked_out_mask = forward_batch.encoder_lens != 0
+    else:
+        full_text_row_masked_out_mask = torch.ones(
+            forward_batch.extend_seq_lens.sum(), dtype=torch.bool
+        )
+        start_pos = 0
+
+        for seq_len, encoder_len in zip(
+            forward_batch.seq_lens.tolist(), forward_batch.encoder_lens_cpu
+        ):
+            if encoder_len == 0:
+                full_text_row_masked_out_mask[start_pos : start_pos + seq_len] = (
+                    False
+                )
+            start_pos += encoder_len
+
+        full_text_row_masked_out_mask = full_text_row_masked_out_mask.to(
+            forward_batch.seq_lens.device
+        )
+
+    return full_text_row_masked_out_mask.reshape(-1, 1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+        (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+    ]
+    params_dict = dict(self.named_parameters())
+    updated_params = set()
+    for name, loaded_weight in weights:
+        if &#34;patch_embedding.weight&#34; in name:
+            name = name.replace(
+                &#34;patch_embedding.weight&#34;, &#34;patch_embedding._linear.weight&#34;
+            )
+            loaded_weight = loaded_weight.view(loaded_weight.shape[0], -1)
+        for param_name, weight_name, shard_id in stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            name = name.replace(weight_name, param_name)
+            param = params_dict[name]
+            updated_params.add(name)
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            if &#34;vision_model&#34; in name:
+                # adapt to VisionAttention
+                name = name.replace(&#34;self_attn.o_proj&#34;, &#34;self_attn.proj&#34;)
+            param = params_dict.pop(name)
+            weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+            weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>mm_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(self, input_ids: List[int], mm_inputs: MultimodalInputs):
+    pixel_values = torch.cat([item.feature for item in mm_inputs.mm_items], dim=0)
+    pad_values = [item.pad_value for item in mm_inputs.mm_items]
+
+    num_concurrent_media, num_tiles = pixel_values.shape[1:3]
+    num_patches = self.vision_model.num_patches
+    image_len = num_concurrent_media * num_tiles * num_patches
+    mm_inputs.num_image_tokens = image_len
+
+    pad_ids = pad_values * ((image_len + len(pad_values)) // len(pad_values))
+
+    return pad_ids[:image_len] + input_ids</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration"><code class="flex name class">
+<span>class <span class="ident">EntryClass</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaForConditionalGeneration(nn.Module):
+    # BitandBytes specific attributes
+    default_bitsandbytes_target_modules = [
+        &#34;.gate_proj.&#34;,
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+    ]
+    # in TP, these weights are partitioned along the column dimension (dim=-1)
+    column_parallel_weights_modules = [&#34;.down_proj.&#34;, &#34;.o_proj.&#34;]
+    bitsandbytes_stacked_params_mapping = {
+        # shard_name, weight_name, index
+        &#34;q_proj&#34;: (&#34;qkv_proj&#34;, 0),
+        &#34;k_proj&#34;: (&#34;qkv_proj&#34;, 1),
+        &#34;v_proj&#34;: (&#34;qkv_proj&#34;, 2),
+        &#34;gate_proj&#34;: (&#34;gate_up_proj&#34;, 0),
+        &#34;up_proj&#34;: (&#34;gate_up_proj&#34;, 1),
+    }
+
+    def __init__(
+        self,
+        config: config_mllama.MllamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.quant_config = quant_config
+        self.vocab_size = config.text_config.vocab_size
+        self.hidden_size = config.text_config.hidden_size
+        self.max_num_tiles = config.vision_config.max_num_tiles
+        self.vision_output_dim = config.vision_config.vision_output_dim
+        self.pad_token_id = (
+            config.pad_token_id if config.pad_token_id is not None else -1
+        )
+        self.image_size = config.vision_config.image_size
+
+        self.vision_model = MllamaVisionModel(
+            config.vision_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;vision_model&#34;, prefix),
+        )
+        self.language_model = MllamaForCausalLM(
+            config.text_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        self.multi_modal_projector = ReplicatedLinear(
+            config.vision_config.vision_output_dim,
+            config.text_config.hidden_size,
+            bias=True,
+            quant_config=quant_config,
+            prefix=&#34;multi_modal_projector&#34;,
+        )
+        self.logits_processor = LogitsProcessor(config.text_config)
+
+    def pad_input_ids(self, input_ids: List[int], mm_inputs: MultimodalInputs):
+        pixel_values = torch.cat([item.feature for item in mm_inputs.mm_items], dim=0)
+        pad_values = [item.pad_value for item in mm_inputs.mm_items]
+
+        num_concurrent_media, num_tiles = pixel_values.shape[1:3]
+        num_patches = self.vision_model.num_patches
+        image_len = num_concurrent_media * num_tiles * num_patches
+        mm_inputs.num_image_tokens = image_len
+
+        pad_ids = pad_values * ((image_len + len(pad_values)) // len(pad_values))
+
+        return pad_ids[:image_len] + input_ids
+
+    def _batch_image_inputs(self, forward_batch: ForwardBatch):
+        if forward_batch.forward_mode.is_decode() or all(forward_batch.encoder_cached):
+            return None, None, None, None
+
+        # pixel_values: shape (bs, num_image, num_tiles, 3, image_res, image_res)
+        max_num_images = max_num_tiles = bs = 0
+        for i, mm_input in enumerate(forward_batch.mm_inputs):
+
+            if not forward_batch.encoder_cached[i] and mm_input is not None:
+                pixel_values = torch.cat(
+                    [item.feature for item in mm_input.mm_items], dim=0
+                )
+                max_num_images = max(max_num_images, pixel_values.shape[1])
+
+                max_num_tiles = max(max_num_tiles, pixel_values.shape[2])
+                bs += 1
+
+        if max_num_images * max_num_tiles * bs == 0:
+            return None, None, None, None
+
+        with forward_batch.out_cache_loc.device:
+            batched_images = torch.zeros(
+                bs,
+                max_num_images,
+                max_num_tiles,
+                3,
+                self.image_size,
+                self.image_size,
+                dtype=torch.float32,
+            )
+            batched_ar_ids = torch.ones(
+                bs, max_num_images, dtype=torch.int64, device=&#34;cuda&#34;
+            )
+            batched_ar_mask = torch.zeros(
+                bs, max_num_images, max_num_tiles, dtype=torch.int64
+            )
+            i = 0
+            encoder_lens_need = []
+
+            for k, mm_input in enumerate(forward_batch.mm_inputs):
+                if forward_batch.encoder_cached[k] or mm_input is None:
+                    continue
+
+                encoder_lens_need.append(forward_batch.encoder_lens[k])
+                pixel_values = torch.cat(
+                    [item.feature for item in mm_input.mm_items], dim=0
+                )
+                for j in range(pixel_values.shape[1]):
+                    img = pixel_values[0, j]
+                    num_tiles = img.shape[0]
+                    batched_images[i, j, :num_tiles] = img
+                    batched_ar_ids[i, j] = mm_input.mm_items[0].aspect_ratio_id[0, j]
+
+                    batched_ar_mask[i, j, :num_tiles] = mm_input.mm_items[
+                        0
+                    ].aspect_ratio_mask[0, j]
+                i += 1
+
+        return batched_images, batched_ar_ids, batched_ar_mask, encoder_lens_need
+
+    def flat_encoder_result(
+        self, cross_attention_states: torch.Tensor, encoder_lens_need: List[int]
+    ):
+        # NOTE: not all encoders need computation, some are cached
+        head_dim = cross_attention_states.shape[-1]
+        total_encoder_len = sum(encoder_lens_need)
+        cross_attention_states_flat = torch.zeros(
+            total_encoder_len,
+            head_dim,
+            device=cross_attention_states.device,
+            dtype=cross_attention_states.dtype,
+        )
+
+        i = start_pos = 0
+        for encoder_len in encoder_lens_need:
+            if encoder_len == 0:
+                continue
+            end_pos = start_pos + encoder_len
+            cross_attention_states_flat[start_pos:end_pos] = cross_attention_states[i][
+                :encoder_len
+            ]
+            i += 1
+            start_pos += encoder_len
+
+        return cross_attention_states_flat
+
+    def get_full_text_row_masked_out_mask(self, forward_batch: ForwardBatch):
+        if forward_batch.forward_mode.is_decode():
+            full_text_row_masked_out_mask = forward_batch.encoder_lens != 0
+        else:
+            full_text_row_masked_out_mask = torch.ones(
+                forward_batch.extend_seq_lens.sum(), dtype=torch.bool
+            )
+            start_pos = 0
+
+            for seq_len, encoder_len in zip(
+                forward_batch.seq_lens.tolist(), forward_batch.encoder_lens_cpu
+            ):
+                if encoder_len == 0:
+                    full_text_row_masked_out_mask[start_pos : start_pos + seq_len] = (
+                        False
+                    )
+                start_pos += encoder_len
+
+            full_text_row_masked_out_mask = full_text_row_masked_out_mask.to(
+                forward_batch.seq_lens.device
+            )
+
+        return full_text_row_masked_out_mask.reshape(-1, 1)
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; Union[Tuple, CausalLMOutputWithPast]:
+        from sglang.srt.model_executor.cuda_graph_runner import get_is_capture_mode
+
+        batched_images, batched_ar_ids, batched_ar_mask, encoder_lens_need = (
+            self._batch_image_inputs(forward_batch)
+        )
+
+        # TODO: support multi-image by this mask
+        cross_attention_mask = None
+        cross_attention_states = None
+
+        if get_is_capture_mode():
+            # NOTE: when doing cuda graph capture, we do not want to skip cross attention
+            # Make is a constant value to avoid cuda graph capture issue
+            skip_cross_attention = False
+        else:
+            # NOTE: we do not need image_inputs when prefill
+            assert len(forward_batch.encoder_lens) == len(forward_batch.seq_lens)
+            assert len(forward_batch.encoder_lens_cpu) == len(forward_batch.seq_lens)
+            skip_cross_attention = forward_batch.encoder_lens.max() == 0
+
+        if not skip_cross_attention:
+            full_text_row_masked_out_mask = self.get_full_text_row_masked_out_mask(
+                forward_batch
+            )
+        else:
+            full_text_row_masked_out_mask = None
+
+        if batched_images is not None:
+            # NOTE: llama&#39;s reference implementation runs vision model on CPU
+            cross_attention_states = self.vision_model(
+                batched_images, batched_ar_ids, batched_ar_mask
+            )
+            cross_attention_states, _ = self.multi_modal_projector(
+                cross_attention_states
+            )
+
+            bs, _, _, _, image_token_dim = cross_attention_states.shape
+            cross_attention_states = cross_attention_states.view(
+                bs, -1, image_token_dim
+            )
+
+            cross_attention_states = self.flat_encoder_result(
+                cross_attention_states, encoder_lens_need
+            )
+
+        hidden_states = self.language_model(
+            input_ids=input_ids,
+            positions=positions,
+            cross_attention_states=cross_attention_states,
+            cross_attention_mask=cross_attention_mask,
+            full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+            forward_batch=forward_batch,
+            skip_cross_attention=skip_cross_attention,
+        )
+        return self.logits_processor(
+            input_ids, hidden_states, self.language_model.lm_head, forward_batch
+        )
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+            (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+            (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+        ]
+        params_dict = dict(self.named_parameters())
+        updated_params = set()
+        for name, loaded_weight in weights:
+            if &#34;patch_embedding.weight&#34; in name:
+                name = name.replace(
+                    &#34;patch_embedding.weight&#34;, &#34;patch_embedding._linear.weight&#34;
+                )
+                loaded_weight = loaded_weight.view(loaded_weight.shape[0], -1)
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                param = params_dict[name]
+                updated_params.add(name)
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                if &#34;vision_model&#34; in name:
+                    # adapt to VisionAttention
+                    name = name.replace(&#34;self_attn.o_proj&#34;, &#34;self_attn.proj&#34;)
+                param = params_dict.pop(name)
+                weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+                weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.bitsandbytes_stacked_params_mapping"><code class="name">var <span class="ident">bitsandbytes_stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.column_parallel_weights_modules"><code class="name">var <span class="ident">column_parallel_weights_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.default_bitsandbytes_target_modules"><code class="name">var <span class="ident">default_bitsandbytes_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.flat_encoder_result"><code class="name flex">
+<span>def <span class="ident">flat_encoder_result</span></span>(<span>self, cross_attention_states: torch.Tensor, encoder_lens_need: List[int])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flat_encoder_result(
+    self, cross_attention_states: torch.Tensor, encoder_lens_need: List[int]
+):
+    # NOTE: not all encoders need computation, some are cached
+    head_dim = cross_attention_states.shape[-1]
+    total_encoder_len = sum(encoder_lens_need)
+    cross_attention_states_flat = torch.zeros(
+        total_encoder_len,
+        head_dim,
+        device=cross_attention_states.device,
+        dtype=cross_attention_states.dtype,
+    )
+
+    i = start_pos = 0
+    for encoder_len in encoder_lens_need:
+        if encoder_len == 0:
+            continue
+        end_pos = start_pos + encoder_len
+        cross_attention_states_flat[start_pos:end_pos] = cross_attention_states[i][
+            :encoder_len
+        ]
+        i += 1
+        start_pos += encoder_len
+
+    return cross_attention_states_flat</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> Tuple | transformers.modeling_outputs.CausalLMOutputWithPast</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; Union[Tuple, CausalLMOutputWithPast]:
+    from sglang.srt.model_executor.cuda_graph_runner import get_is_capture_mode
+
+    batched_images, batched_ar_ids, batched_ar_mask, encoder_lens_need = (
+        self._batch_image_inputs(forward_batch)
+    )
+
+    # TODO: support multi-image by this mask
+    cross_attention_mask = None
+    cross_attention_states = None
+
+    if get_is_capture_mode():
+        # NOTE: when doing cuda graph capture, we do not want to skip cross attention
+        # Make is a constant value to avoid cuda graph capture issue
+        skip_cross_attention = False
+    else:
+        # NOTE: we do not need image_inputs when prefill
+        assert len(forward_batch.encoder_lens) == len(forward_batch.seq_lens)
+        assert len(forward_batch.encoder_lens_cpu) == len(forward_batch.seq_lens)
+        skip_cross_attention = forward_batch.encoder_lens.max() == 0
+
+    if not skip_cross_attention:
+        full_text_row_masked_out_mask = self.get_full_text_row_masked_out_mask(
+            forward_batch
+        )
+    else:
+        full_text_row_masked_out_mask = None
+
+    if batched_images is not None:
+        # NOTE: llama&#39;s reference implementation runs vision model on CPU
+        cross_attention_states = self.vision_model(
+            batched_images, batched_ar_ids, batched_ar_mask
+        )
+        cross_attention_states, _ = self.multi_modal_projector(
+            cross_attention_states
+        )
+
+        bs, _, _, _, image_token_dim = cross_attention_states.shape
+        cross_attention_states = cross_attention_states.view(
+            bs, -1, image_token_dim
+        )
+
+        cross_attention_states = self.flat_encoder_result(
+            cross_attention_states, encoder_lens_need
+        )
+
+    hidden_states = self.language_model(
+        input_ids=input_ids,
+        positions=positions,
+        cross_attention_states=cross_attention_states,
+        cross_attention_mask=cross_attention_mask,
+        full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+        forward_batch=forward_batch,
+        skip_cross_attention=skip_cross_attention,
+    )
+    return self.logits_processor(
+        input_ids, hidden_states, self.language_model.lm_head, forward_batch
+    )</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.get_full_text_row_masked_out_mask"><code class="name flex">
+<span>def <span class="ident">get_full_text_row_masked_out_mask</span></span>(<span>self,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_full_text_row_masked_out_mask(self, forward_batch: ForwardBatch):
+    if forward_batch.forward_mode.is_decode():
+        full_text_row_masked_out_mask = forward_batch.encoder_lens != 0
+    else:
+        full_text_row_masked_out_mask = torch.ones(
+            forward_batch.extend_seq_lens.sum(), dtype=torch.bool
+        )
+        start_pos = 0
+
+        for seq_len, encoder_len in zip(
+            forward_batch.seq_lens.tolist(), forward_batch.encoder_lens_cpu
+        ):
+            if encoder_len == 0:
+                full_text_row_masked_out_mask[start_pos : start_pos + seq_len] = (
+                    False
+                )
+            start_pos += encoder_len
+
+        full_text_row_masked_out_mask = full_text_row_masked_out_mask.to(
+            forward_batch.seq_lens.device
+        )
+
+    return full_text_row_masked_out_mask.reshape(-1, 1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+        (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+    ]
+    params_dict = dict(self.named_parameters())
+    updated_params = set()
+    for name, loaded_weight in weights:
+        if &#34;patch_embedding.weight&#34; in name:
+            name = name.replace(
+                &#34;patch_embedding.weight&#34;, &#34;patch_embedding._linear.weight&#34;
+            )
+            loaded_weight = loaded_weight.view(loaded_weight.shape[0], -1)
+        for param_name, weight_name, shard_id in stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            name = name.replace(weight_name, param_name)
+            param = params_dict[name]
+            updated_params.add(name)
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            if &#34;vision_model&#34; in name:
+                # adapt to VisionAttention
+                name = name.replace(&#34;self_attn.o_proj&#34;, &#34;self_attn.proj&#34;)
+            param = params_dict.pop(name)
+            weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+            weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaForConditionalGeneration.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>mm_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(self, input_ids: List[int], mm_inputs: MultimodalInputs):
+    pixel_values = torch.cat([item.feature for item in mm_inputs.mm_items], dim=0)
+    pad_values = [item.pad_value for item in mm_inputs.mm_items]
+
+    num_concurrent_media, num_tiles = pixel_values.shape[1:3]
+    num_patches = self.vision_model.num_patches
+    image_len = num_concurrent_media * num_tiles * num_patches
+    mm_inputs.num_image_tokens = image_len
+
+    pad_ids = pad_values * ((image_len + len(pad_values)) // len(pad_values))
+
+    return pad_ids[:image_len] + input_ids</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaPrecomputedAspectRatioEmbedding"><code class="flex name class">
+<span>class <span class="ident">MllamaPrecomputedAspectRatioEmbedding</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaVisionConfig,<br>is_gated: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaPrecomputedAspectRatioEmbedding(nn.Module):
+
+    def __init__(self, config: config_mllama.MllamaVisionConfig, is_gated: bool = True):
+        super().__init__()
+        self.max_num_tiles = config.max_num_tiles
+        self.hidden_size = config.hidden_size
+        self.max_aspect_ratio_id = config.max_aspect_ratio_id
+        self.is_gated = is_gated
+
+        self.embedding = nn.Embedding(
+            self.max_aspect_ratio_id + 1, self.max_num_tiles * self.hidden_size
+        )
+        if is_gated:
+            self.gate = nn.Parameter(torch.zeros(1))
+
+    def forward(
+        self, hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor
+    ) -&gt; torch.Tensor:
+        embeddings = self.embedding(aspect_ratio_ids)
+        embeddings = embeddings.reshape(-1, self.max_num_tiles, 1, self.hidden_size)
+
+        if self.is_gated:
+            embeddings = embeddings * self.gate.tanh()
+
+        hidden_state = hidden_state + embeddings
+        return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaPrecomputedAspectRatioEmbedding.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self, hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor
+) -&gt; torch.Tensor:
+    embeddings = self.embedding(aspect_ratio_ids)
+    embeddings = embeddings.reshape(-1, self.max_num_tiles, 1, self.hidden_size)
+
+    if self.is_gated:
+        embeddings = embeddings * self.gate.tanh()
+
+    hidden_state = hidden_state + embeddings
+    return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaPrecomputedPositionEmbedding"><code class="flex name class">
+<span>class <span class="ident">MllamaPrecomputedPositionEmbedding</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaVisionConfig)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaPrecomputedPositionEmbedding(nn.Module):
+    def __init__(self, config: config_mllama.MllamaVisionConfig):
+        super().__init__()
+        self.max_num_tiles = config.max_num_tiles
+        self.max_aspect_ratio_id = config.max_aspect_ratio_id
+        self.num_patches = (config.image_size // config.patch_size) ** 2 + 1
+        self.hidden_size = config.hidden_size
+        self.scale = config.hidden_size**-0.5
+
+        self.gate = nn.Parameter(torch.zeros(1))
+
+        # position embedding
+        position_embedding = torch.randn(self.num_patches, self.hidden_size)
+        self.embedding = nn.Parameter(self.scale * position_embedding)
+
+        # tile position embedding
+        self.tile_embedding = nn.Embedding(
+            self.max_aspect_ratio_id + 1,
+            self.max_num_tiles * self.num_patches * self.hidden_size,
+        )
+
+    def forward(
+        self, hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor
+    ) -&gt; torch.Tensor:
+        # position embeddings
+        gated_position_embedding = (1 - self.gate.tanh()) * self.embedding
+        hidden_state = hidden_state + gated_position_embedding.view(
+            1, 1, self.num_patches, self.hidden_size
+        )
+
+        # precomputed tile position embeddings
+        tile_position_embedding = self.tile_embedding(aspect_ratio_ids)
+        batch_size = hidden_state.shape[0]
+        tile_position_embedding = tile_position_embedding.reshape(
+            batch_size, self.max_num_tiles, self.num_patches, self.hidden_size
+        )
+        gated_tile_position_embedding = self.gate.tanh() * tile_position_embedding
+        hidden_state = hidden_state + gated_tile_position_embedding
+
+        return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaPrecomputedPositionEmbedding.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self, hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor
+) -&gt; torch.Tensor:
+    # position embeddings
+    gated_position_embedding = (1 - self.gate.tanh()) * self.embedding
+    hidden_state = hidden_state + gated_position_embedding.view(
+        1, 1, self.num_patches, self.hidden_size
+    )
+
+    # precomputed tile position embeddings
+    tile_position_embedding = self.tile_embedding(aspect_ratio_ids)
+    batch_size = hidden_state.shape[0]
+    tile_position_embedding = tile_position_embedding.reshape(
+        batch_size, self.max_num_tiles, self.num_patches, self.hidden_size
+    )
+    gated_tile_position_embedding = self.gate.tanh() * tile_position_embedding
+    hidden_state = hidden_state + gated_tile_position_embedding
+
+    return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaTextCrossAttention"><code class="flex name class">
+<span>class <span class="ident">MllamaTextCrossAttention</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaTextConfig | None = None,<br>layer_id: int | None = None,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaTextCrossAttention(nn.Module):
+    def __init__(
+        self,
+        config: Optional[config_mllama.MllamaTextConfig] = None,
+        layer_id: Optional[int] = None,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.config = config
+        self.model_parallel_size = get_tensor_model_parallel_world_size()
+        self.num_heads = self.config.num_attention_heads
+        self.num_local_heads = self.num_heads // self.model_parallel_size
+        self.num_key_value_heads = self.config.num_key_value_heads
+        self.num_local_key_value_heads = (
+            self.num_key_value_heads // self.model_parallel_size
+        )
+        self.dropout = config.dropout
+        self.hidden_size = config.hidden_size
+        self.head_dim = config.hidden_size // self.num_heads
+        self.layer_id = layer_id
+        self.num_key_value_groups = self.num_heads // self.num_key_value_heads
+        self.q_local_size = self.num_local_heads * self.head_dim
+        self.kv_local_size = self.num_local_key_value_heads * self.head_dim
+
+        self.qkv_proj = QKVParallelLinear(
+            self.hidden_size,
+            self.head_dim,
+            self.num_heads,
+            self.num_key_value_heads,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;qkv_proj&#34;, prefix),
+        )
+        self.o_proj = RowParallelLinear(
+            self.num_heads * self.head_dim,
+            self.hidden_size,
+            bias=False,
+            input_is_parallel=True,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;o_proj&#34;, prefix),
+        )
+        # vllm.model_executor.layers.layernorm.RMSNorm has precision issue,
+        # use huggingface&#39;s instead
+        self.q_norm = MllamaTextRMSNorm(self.head_dim, eps=config.rms_norm_eps)
+        self.k_norm = MllamaTextRMSNorm(self.head_dim, eps=config.rms_norm_eps)
+        self.scaling = self.head_dim**-0.5
+
+        self.attn = RadixAttention(
+            self.num_local_heads,
+            self.head_dim,
+            self.scaling,
+            self.num_local_key_value_heads,
+            layer_id=layer_id,
+            is_cross_attention=True,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;attn&#34;, prefix),
+        )
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: Optional[torch.Tensor],
+        cross_attention_states: Optional[torch.Tensor],
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        qkv_dec, _ = self.qkv_proj(hidden_states)
+        q, _, _ = qkv_dec.split(
+            [self.q_local_size, self.kv_local_size, self.kv_local_size], dim=-1
+        )
+        if cross_attention_states is None:
+            k = None
+            v = None
+        else:
+            qkv_enc, _ = self.qkv_proj(cross_attention_states)
+            _, k, v = qkv_enc.split(
+                [self.q_local_size, self.kv_local_size, self.kv_local_size], dim=-1
+            )
+            k = k.view(-1, self.num_local_key_value_heads, self.head_dim)
+            v = v.view(-1, self.num_local_key_value_heads, self.head_dim)
+            k = self.k_norm(k)
+        q = q.view(-1, self.num_local_heads, self.head_dim)
+        q = self.q_norm(q)
+
+        output = self.attn(q, k, v, forward_batch)
+        out, _ = self.o_proj(output)
+        return out</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaTextCrossAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>hidden_states: torch.Tensor,<br>attention_mask: torch.Tensor | None,<br>cross_attention_states: torch.Tensor | None,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    hidden_states: torch.Tensor,
+    attention_mask: Optional[torch.Tensor],
+    cross_attention_states: Optional[torch.Tensor],
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    qkv_dec, _ = self.qkv_proj(hidden_states)
+    q, _, _ = qkv_dec.split(
+        [self.q_local_size, self.kv_local_size, self.kv_local_size], dim=-1
+    )
+    if cross_attention_states is None:
+        k = None
+        v = None
+    else:
+        qkv_enc, _ = self.qkv_proj(cross_attention_states)
+        _, k, v = qkv_enc.split(
+            [self.q_local_size, self.kv_local_size, self.kv_local_size], dim=-1
+        )
+        k = k.view(-1, self.num_local_key_value_heads, self.head_dim)
+        v = v.view(-1, self.num_local_key_value_heads, self.head_dim)
+        k = self.k_norm(k)
+    q = q.view(-1, self.num_local_heads, self.head_dim)
+    q = self.q_norm(q)
+
+    output = self.attn(q, k, v, forward_batch)
+    out, _ = self.o_proj(output)
+    return out</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaTextModel"><code class="flex name class">
+<span>class <span class="ident">MllamaTextModel</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaTextConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaTextModel(nn.Module):
+    config_class = config_mllama.MllamaTextConfig
+    base_model_prefix = &#34;model&#34;
+
+    def __init__(
+        self,
+        config: config_mllama.MllamaTextConfig,
+        quant_config: Optional[QuantizationConfig],
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.padding_id = config.pad_token_id
+        self.vocab_size = config.vocab_size
+        self.embed_tokens = VocabParallelEmbedding(
+            config.vocab_size + 8,
+            config.hidden_size,
+            prefix=add_prefix(&#34;embed_tokens&#34;, prefix),
+        )
+        self.cross_attention_layers = config.cross_attention_layers
+
+        layers = []
+        for layer_id in range(config.num_hidden_layers):
+            if layer_id in self.cross_attention_layers:
+                layers.append(
+                    MllamaCrossAttentionDecoderLayer(
+                        config,
+                        layer_id,
+                        quant_config=quant_config,
+                        prefix=add_prefix(f&#34;layers.{layer_id}&#34;, prefix),
+                    )
+                )
+            else:
+                # TODO: force LlamaDecoderLayer to config.attention_bias=False
+                layers.append(
+                    LlamaDecoderLayer(
+                        config,
+                        quant_config=quant_config,
+                        layer_id=layer_id,
+                        prefix=add_prefix(f&#34;layers.{layer_id}&#34;, prefix),
+                    )
+                )
+
+        self.layers = nn.ModuleList(layers)
+        self.norm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+
+    def forward(
+        self,
+        input_ids: torch.LongTensor,
+        positions: Optional[torch.LongTensor],
+        cross_attention_states: Optional[torch.LongTensor],
+        cross_attention_mask: Optional[torch.LongTensor],
+        full_text_row_masked_out_mask: Optional[Tuple[torch.Tensor, torch.Tensor]],
+        forward_batch: ForwardBatch,
+        skip_cross_attention: bool,
+    ) -&gt; torch.Tensor:
+        inputs_embeds = self.embed_tokens(input_ids)
+        hidden_states = inputs_embeds
+
+        for _, decoder_layer in enumerate(self.layers):
+            if isinstance(decoder_layer, MllamaCrossAttentionDecoderLayer):
+                if not skip_cross_attention:
+                    hidden_states = decoder_layer(
+                        hidden_states=hidden_states,
+                        cross_attention_states=cross_attention_states,
+                        cross_attention_mask=cross_attention_mask,
+                        full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+                        forward_batch=forward_batch,
+                    )
+            elif isinstance(decoder_layer, LlamaDecoderLayer):
+                hidden_states, residual = decoder_layer(
+                    positions=positions,
+                    hidden_states=hidden_states,
+                    forward_batch=forward_batch,
+                    residual=None,
+                )
+                hidden_states = hidden_states + residual
+            else:
+                raise ValueError(f&#34;Unknown decoder layer type {type(decoder_layer)}&#34;)
+        hidden_states = self.norm(hidden_states)
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaTextModel.base_model_prefix"><code class="name">var <span class="ident">base_model_prefix</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaTextModel.config_class"><code class="name">var <span class="ident">config_class</span></code></dt>
+<dd>
+<div class="desc"><p>This is the configuration class to store the configuration of a [<code>MllamaTextModel</code>]. It is used to instantiate an
+Mllama text model according to the specified arguments, defining the model architecture. Instantiating a configuration
+with the defaults will yield a similar configuration to that of the Mllama-11B.</p>
+<p>e.g. <a href="https://huggingface.co/meta-llama/Llama-3.2-11B-Vision">meta-llama/Llama-3.2-11B-Vision</a></p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<p>vocab_size (<code>int</code>, <em>optional</em>, defaults to 128256):
+Vocabulary size of the Mllama text model. Defines the maximum number of different tokens that can be represented
+by the <code>inputs_ids</code> passed when calling [<code>MllamaTextModel</code>].
+hidden_size (<code>int</code>, <em>optional</em>, defaults to 4096):
+Dimensionality of the embeddings and hidden states.
+hidden_act (<code>str</code> or <code>Callable</code>, <em>optional</em>, defaults to <code>"silu"</code>):
+The non-linear activation function (function or string) in the encoder and pooler.
+num_hidden_layers (<code>int</code>, <em>optional</em>, defaults to 40):
+Number of hidden layers in the Transformer encoder.
+num_attention_heads (<code>int</code>, <em>optional</em>, defaults to 32):
+Number of attention heads for each attention layer in the Transformer encoder.
+num_key_value_heads (<code>int</code>, <em>optional</em>, defaults to 8):
+This is the number of key_value heads that should be used to implement Grouped Query Attention. If not
+specified, will default to <code>num_attention_heads</code>.
+intermediate_size (<code>int</code>, <em>optional</em>, defaults to 14336):
+Dimensionality of the "intermediate" (often named feed-forward) layer in the Transformer encoder.
+rope_theta (<code>float</code>, <em>optional</em>, defaults to <code>500000.0</code>):
+The base period of the RoPE embeddings.
+rope_scaling (<code>Dict</code>, <em>optional</em>):
+Dictionary containing the scaling configuration for the RoPE embeddings. NOTE: if you apply new rope type
+and you expect the model to work on longer <code>max_position_embeddings</code>, we recommend you to update this value
+accordingly.
+Expected contents:
+<code>rope_type</code> (<code>str</code>):
+The sub-variant of RoPE to use. Can be one of ['default', 'linear', 'dynamic', 'yarn', 'longrope',
+'llama3'], with 'default' being the original RoPE implementation.
+<code>factor</code> (<code>float</code>, <em>optional</em>):
+Used with all rope types except 'default'. The scaling factor to apply to the RoPE embeddings. In
+most scaling types, a <code>factor</code> of x will enable the model to handle sequences of length x *
+original maximum pre-trained length.
+<code>original_max_position_embeddings</code> (<code>int</code>, <em>optional</em>):
+Used with 'dynamic', 'longrope' and 'llama3'. The original max position embeddings used during
+pretraining.
+<code>attention_factor</code> (<code>float</code>, <em>optional</em>):
+Used with 'yarn' and 'longrope'. The scaling factor to be applied on the attention
+computation. If unspecified, it defaults to value recommended by the implementation, using the
+<code>factor</code> field to infer the suggested value.
+<code>beta_fast</code> (<code>float</code>, <em>optional</em>):
+Only used with 'yarn'. Parameter to set the boundary for extrapolation (only) in the linear
+ramp function. If unspecified, it defaults to 32.
+<code>beta_slow</code> (<code>float</code>, <em>optional</em>):
+Only used with 'yarn'. Parameter to set the boundary for interpolation (only) in the linear
+ramp function. If unspecified, it defaults to 1.
+<code>short_factor</code> (<code>list[float]</code>, <em>optional</em>):
+Only used with 'longrope'. The scaling factor to be applied to short contexts (&lt;
+<code>original_max_position_embeddings</code>). Must be a list of numbers with the same length as the hidden
+size divided by the number of attention heads divided by 2
+<code>long_factor</code> (<code>list[float]</code>, <em>optional</em>):
+Only used with 'longrope'. The scaling factor to be applied to long contexts (&lt;
+<code>original_max_position_embeddings</code>). Must be a list of numbers with the same length as the hidden
+size divided by the number of attention heads divided by 2
+<code>low_freq_factor</code> (<code>float</code>, <em>optional</em>):
+Only used with 'llama3'. Scaling factor applied to low frequency components of the RoPE
+<code>high_freq_factor</code> (<code>float</code>, <em>optional</em>):
+Only used with 'llama3'. Scaling factor applied to high frequency components of the RoPE
+rms_norm_eps (<code>float</code>, <em>optional</em>, defaults to 1e-05):
+The epsilon used by the rms normalization layers.
+max_position_embeddings (<code>int</code>, <em>optional</em>, defaults to 131072):
+The maximum sequence length that this model might ever be used with.
+initializer_range (<code>float</code>, <em>optional</em>, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+use_cache (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return the last key/values attentions.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to tie weight embeddings
+cross_attention_layers (<code>list[int]</code>, <em>optional</em>):
+Indices of the cross attention layers. If not specified, will default to [3, 8, 13, 18, 23, 28, 33, 38].
+dropout (<code>float</code>, <em>optional</em>, defaults to 0):
+The dropout probability for self- and cross-attention layers.
+bos_token_id (<code>int</code>, <em>optional</em>, defaults to 128000):
+The id of the beginning of sentence token.
+eos_token_id (<code>int</code>, <em>optional</em>, defaults to 128001):
+The id of the end of sentence token.
+pad_token_id (<code>int</code>, <em>optional</em>, defaults to 128004):
+The id of the padding token.
+Example:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from transformers import MllamaTextModel, MllamaTextConfig
+
+&gt;&gt;&gt; # Initializing a Mllama text config
+&gt;&gt;&gt; config = MllamaTextConfig()
+
+&gt;&gt;&gt; # Initializing a model from the Mllama text configuration
+&gt;&gt;&gt; model = MllamaTextModel(config)
+
+&gt;&gt;&gt; # Accessing the model configuration
+&gt;&gt;&gt; configuration = model.config
+</code></pre></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaTextModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.LongTensor,<br>positions: torch.LongTensor | None,<br>cross_attention_states: torch.LongTensor | None,<br>cross_attention_mask: torch.LongTensor | None,<br>full_text_row_masked_out_mask: Tuple[torch.Tensor, torch.Tensor] | None,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>skip_cross_attention: bool) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.LongTensor,
+    positions: Optional[torch.LongTensor],
+    cross_attention_states: Optional[torch.LongTensor],
+    cross_attention_mask: Optional[torch.LongTensor],
+    full_text_row_masked_out_mask: Optional[Tuple[torch.Tensor, torch.Tensor]],
+    forward_batch: ForwardBatch,
+    skip_cross_attention: bool,
+) -&gt; torch.Tensor:
+    inputs_embeds = self.embed_tokens(input_ids)
+    hidden_states = inputs_embeds
+
+    for _, decoder_layer in enumerate(self.layers):
+        if isinstance(decoder_layer, MllamaCrossAttentionDecoderLayer):
+            if not skip_cross_attention:
+                hidden_states = decoder_layer(
+                    hidden_states=hidden_states,
+                    cross_attention_states=cross_attention_states,
+                    cross_attention_mask=cross_attention_mask,
+                    full_text_row_masked_out_mask=full_text_row_masked_out_mask,
+                    forward_batch=forward_batch,
+                )
+        elif isinstance(decoder_layer, LlamaDecoderLayer):
+            hidden_states, residual = decoder_layer(
+                positions=positions,
+                hidden_states=hidden_states,
+                forward_batch=forward_batch,
+                residual=None,
+            )
+            hidden_states = hidden_states + residual
+        else:
+            raise ValueError(f&#34;Unknown decoder layer type {type(decoder_layer)}&#34;)
+    hidden_states = self.norm(hidden_states)
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaTextRMSNorm"><code class="flex name class">
+<span>class <span class="ident">MllamaTextRMSNorm</span></span>
+<span>(</span><span>hidden_size, eps=1e-06)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaTextRMSNorm(nn.Module):
+    def __init__(self, hidden_size, eps=1e-6):
+        super().__init__()
+        self.weight = nn.Parameter(torch.ones(hidden_size))
+        self.variance_epsilon = eps
+
+    def forward(self, hidden_states):
+        input_dtype = hidden_states.dtype
+        hidden_states = hidden_states.to(torch.float32)
+        variance = hidden_states.pow(2).mean(-1, keepdim=True)
+        hidden_states = hidden_states * torch.rsqrt(variance + self.variance_epsilon)
+        return self.weight * hidden_states.to(input_dtype)
+
+    def extra_repr(self):
+        return f&#34;{tuple(self.weight.shape)}, eps={self.variance_epsilon}&#34;</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaTextRMSNorm.extra_repr"><code class="name flex">
+<span>def <span class="ident">extra_repr</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extra_repr(self):
+    return f&#34;{tuple(self.weight.shape)}, eps={self.variance_epsilon}&#34;</code></pre>
+</details>
+<div class="desc"><p>Return the extra representation of the module.</p>
+<p>To print customized extra information, you should re-implement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaTextRMSNorm.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, hidden_states):
+    input_dtype = hidden_states.dtype
+    hidden_states = hidden_states.to(torch.float32)
+    variance = hidden_states.pow(2).mean(-1, keepdim=True)
+    hidden_states = hidden_states * torch.rsqrt(variance + self.variance_epsilon)
+    return self.weight * hidden_states.to(input_dtype)</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaVisionEncoder"><code class="flex name class">
+<span>class <span class="ident">MllamaVisionEncoder</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaVisionConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>num_layers=32,<br>is_gated=False,<br>output_hidden_states=None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaVisionEncoder(nn.Module):
+    def __init__(
+        self,
+        config: config_mllama.MllamaVisionConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        num_layers=32,
+        is_gated=False,
+        output_hidden_states=None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.config = config
+        self.layers = nn.ModuleList(
+            [
+                MllamaVisionEncoderLayer(
+                    config,
+                    quant_config,
+                    is_gated,
+                    prefix=add_prefix(f&#34;layers.{i}&#34;, prefix),
+                )
+                for i in range(num_layers)
+            ]
+        )
+        self.output_hidden_states = output_hidden_states or []
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: Optional[torch.Tensor] = None,
+    ) -&gt; Union[Tuple, BaseModelOutput]:
+        encoder_states = ()
+
+        for i, encoder_layer in enumerate(self.layers):
+            if i in self.output_hidden_states:
+                encoder_states = encoder_states + (hidden_states,)
+            hidden_states = encoder_layer(
+                hidden_states,
+                attention_mask,
+            )
+
+        if len(self.layers) - 1 in self.output_hidden_states:
+            encoder_states = encoder_states + (hidden_states,)
+
+        return hidden_states, encoder_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaVisionEncoder.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states: torch.Tensor, attention_mask: torch.Tensor | None = None) ‑> Tuple | transformers.modeling_outputs.BaseModelOutput</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    hidden_states: torch.Tensor,
+    attention_mask: Optional[torch.Tensor] = None,
+) -&gt; Union[Tuple, BaseModelOutput]:
+    encoder_states = ()
+
+    for i, encoder_layer in enumerate(self.layers):
+        if i in self.output_hidden_states:
+            encoder_states = encoder_states + (hidden_states,)
+        hidden_states = encoder_layer(
+            hidden_states,
+            attention_mask,
+        )
+
+    if len(self.layers) - 1 in self.output_hidden_states:
+        encoder_states = encoder_states + (hidden_states,)
+
+    return hidden_states, encoder_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaVisionEncoderLayer"><code class="flex name class">
+<span>class <span class="ident">MllamaVisionEncoderLayer</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaVisionConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>is_gated: bool = False,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaVisionEncoderLayer(nn.Module):
+    def __init__(
+        self,
+        config: config_mllama.MllamaVisionConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        is_gated: bool = False,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+
+        self.hidden_size = config.hidden_size
+        self.num_attention_heads = config.attention_heads
+        self.is_gated = is_gated
+        self.intermediate_size = config.intermediate_size
+
+        self.self_attn = VisionAttention(
+            self.hidden_size,
+            self.num_attention_heads,
+            self.hidden_size,
+            use_qkv_parallel=True,
+            quant_config=quant_config,
+            dropout=0.0,
+            qkv_backend=&#34;sdpa&#34;,
+            softmax_in_single_precision=False,
+            flatten_batch=False,
+            prefix=add_prefix(&#34;self_attn&#34;, prefix),
+        )
+        self.mlp = MllamaVisionMLP(
+            config, quant_config, prefix=add_prefix(&#34;mlp&#34;, prefix)
+        )
+
+        self.input_layernorm = nn.LayerNorm(self.hidden_size, eps=config.norm_eps)
+        self.post_attention_layernorm = nn.LayerNorm(
+            self.hidden_size, eps=config.norm_eps
+        )
+
+        # there used to be an if else here, no code path
+        if is_gated:
+            self.gate_attn = nn.Parameter(torch.ones(1) * math.pi / 4)
+            self.gate_ffn = nn.Parameter(torch.ones(1) * math.pi / 4)
+
+    def forward(
+        self,
+        hidden_state: torch.Tensor,
+        attention_mask: Optional[torch.Tensor] = None,
+    ):
+        # Self Attention
+        residual = hidden_state
+        hidden_state = self.input_layernorm(hidden_state)
+        hidden_state = self.self_attn(hidden_state, attention_mask=attention_mask)
+        gate_attn = 1 if not self.is_gated else self.gate_attn.tanh()
+        hidden_state = residual + gate_attn * hidden_state
+
+        # Feed forward
+        residual = hidden_state
+        hidden_state = self.post_attention_layernorm(hidden_state)
+        hidden_state = self.mlp(hidden_state)
+        gate_ffn = 1 if not self.is_gated else self.gate_ffn.tanh()
+        hidden_state = residual + gate_ffn * hidden_state
+
+        return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaVisionEncoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_state: torch.Tensor, attention_mask: torch.Tensor | None = None) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    hidden_state: torch.Tensor,
+    attention_mask: Optional[torch.Tensor] = None,
+):
+    # Self Attention
+    residual = hidden_state
+    hidden_state = self.input_layernorm(hidden_state)
+    hidden_state = self.self_attn(hidden_state, attention_mask=attention_mask)
+    gate_attn = 1 if not self.is_gated else self.gate_attn.tanh()
+    hidden_state = residual + gate_attn * hidden_state
+
+    # Feed forward
+    residual = hidden_state
+    hidden_state = self.post_attention_layernorm(hidden_state)
+    hidden_state = self.mlp(hidden_state)
+    gate_ffn = 1 if not self.is_gated else self.gate_ffn.tanh()
+    hidden_state = residual + gate_ffn * hidden_state
+
+    return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaVisionMLP"><code class="flex name class">
+<span>class <span class="ident">MllamaVisionMLP</span></span>
+<span>(</span><span>config,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaVisionMLP(nn.Module):
+    def __init__(
+        self,
+        config,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.config = config
+        self.activation_fn = get_act_fn(config.hidden_act)
+        self.fc1 = ColumnParallelLinear(
+            config.hidden_size,
+            config.intermediate_size,
+            bias=True,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;fc1&#34;, prefix),
+        )
+        self.fc2 = RowParallelLinear(
+            config.intermediate_size,
+            config.hidden_size,
+            bias=True,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;fc2&#34;, prefix),
+        )
+
+    def forward(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+        hidden_states, _ = self.fc1(hidden_states)
+        hidden_states = self.activation_fn(hidden_states)
+        hidden_states, _ = self.fc2(hidden_states)
+
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaVisionMLP.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+    hidden_states, _ = self.fc1(hidden_states)
+    hidden_states = self.activation_fn(hidden_states)
+    hidden_states, _ = self.fc2(hidden_states)
+
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaVisionModel"><code class="flex name class">
+<span>class <span class="ident">MllamaVisionModel</span></span>
+<span>(</span><span>config: transformers.models.mllama.configuration_mllama.MllamaVisionConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MllamaVisionModel(nn.Module):
+    def __init__(
+        self,
+        config: config_mllama.MllamaVisionConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.image_size = config.image_size
+        self.patch_size = config.patch_size
+        self.max_num_tiles = config.max_num_tiles
+        self.hidden_size = config.hidden_size
+        self.in_channels = config.num_channels
+        self.intermediate_layers_indices = config.intermediate_layers_indices
+
+        self.num_patches = (self.image_size // self.patch_size) ** 2 + 1
+        self.scale = config.hidden_size**-0.5
+
+        self.patch_embedding = ColumnParallelConv2dPatch(
+            in_channels=config.num_channels,
+            out_channels=self.hidden_size,
+            kernel_size=self.patch_size,
+            stride=self.patch_size,
+            bias=False,
+        )
+
+        self.class_embedding = nn.Parameter(self.scale * torch.randn(self.hidden_size))
+        self.gated_positional_embedding = MllamaPrecomputedPositionEmbedding(config)
+
+        self.pre_tile_positional_embedding = MllamaPrecomputedAspectRatioEmbedding(
+            config, is_gated=True
+        )
+        self.post_tile_positional_embedding = MllamaPrecomputedAspectRatioEmbedding(
+            config, is_gated=True
+        )
+
+        # layer norms
+        self.layernorm_pre = nn.LayerNorm(self.hidden_size)
+        self.layernorm_post = nn.LayerNorm(self.hidden_size)
+
+        # encoders
+        self.transformer = MllamaVisionEncoder(
+            config,
+            quant_config,
+            config.num_hidden_layers,
+            is_gated=False,
+            output_hidden_states=config.intermediate_layers_indices,
+            prefix=add_prefix(&#34;transformer&#34;, prefix),
+        )
+        self.global_transformer = MllamaVisionEncoder(
+            config,
+            quant_config,
+            config.num_global_layers,
+            is_gated=True,
+            prefix=add_prefix(&#34;global_transformer&#34;, prefix),
+        )
+
+    def apply_class_embedding(self, hidden_state: torch.Tensor) -&gt; torch.Tensor:
+        batch_size, _, hidden_size = hidden_state.shape
+        class_embedding = self.class_embedding.expand(batch_size, 1, hidden_size)
+        hidden_state = torch.cat([class_embedding, hidden_state], dim=1)
+        return hidden_state
+
+    def forward(
+        self,
+        pixel_values: torch.Tensor,
+        aspect_ratio_ids: torch.Tensor,
+        aspect_ratio_mask: torch.Tensor,
+    ) -&gt; torch.Tensor:
+        batch_size, num_concurrent_media, num_tiles, num_channels, height, width = (
+            pixel_values.shape
+        )
+
+        pixel_values = pixel_values.reshape(
+            batch_size * num_concurrent_media * num_tiles, num_channels, height, width
+        )
+        aspect_ratio_ids = aspect_ratio_ids.reshape(
+            batch_size * num_concurrent_media, -1
+        )
+
+        # patch embedding
+        patch_embeds = self.patch_embedding(
+            pixel_values.to(self.layernorm_pre.weight.dtype)
+        )
+        hidden_state = patch_embeds
+        hidden_state = ps.get_tp_group().all_gather(hidden_state)
+
+        # tile embeddings
+        _, num_patches, dim = hidden_state.shape
+        hidden_state = hidden_state.reshape(
+            batch_size * num_concurrent_media, num_tiles, -1, dim
+        )
+        hidden_state = self.pre_tile_positional_embedding(
+            hidden_state, aspect_ratio_ids
+        )
+
+        # apply cls token
+        hidden_state = hidden_state.reshape(
+            batch_size * num_concurrent_media * num_tiles, num_patches, dim
+        )
+        hidden_state = self.apply_class_embedding(hidden_state)
+        num_patches += 1
+
+        # apply position embeddings
+        hidden_state = hidden_state.reshape(
+            batch_size * num_concurrent_media, num_tiles, num_patches, dim
+        )
+        hidden_state = self.gated_positional_embedding(hidden_state, aspect_ratio_ids)
+
+        # apply encoder
+        hidden_state = self.layernorm_pre(hidden_state)
+
+        # Compute the number of tokens to pad
+        num_padding_patches = (8 - (hidden_state.shape[-2] % 8)) % 8
+        # Compute padding tuple for pad function
+        padding = (
+            0,
+            0,
+            0,
+            num_padding_patches,
+        )  # (pad_left, pad_right, pad_left for dim -2, pad_right for dim -2)
+        # Pad the tensor
+        hidden_state = F.pad(hidden_state, padding, mode=&#34;constant&#34;, value=0)
+        slice_index = -num_padding_patches if num_padding_patches &gt; 0 else None
+
+        attention_mask = aspect_ratio_mask.reshape(
+            batch_size * num_concurrent_media, -1
+        )
+        attention_mask = _prepare_aspect_ratio_attention_mask(
+            aspect_ratio_mask=attention_mask,
+            num_patches=self.num_patches,
+            target_length=hidden_state.shape[2],
+            dtype=self.layernorm_pre.weight.dtype,
+        )
+
+        hidden_state = hidden_state.view(batch_size * num_concurrent_media, -1, dim)
+        output = self.transformer(
+            hidden_state,
+            attention_mask=attention_mask,
+        )
+        hidden_state, intermediate_hidden_states = output[0], output[1]
+        intermediate_hidden_states = torch.stack(intermediate_hidden_states, dim=-1)
+
+        # apply global encoder
+        hidden_state = self.layernorm_post(hidden_state)
+        hidden_state = hidden_state.reshape(
+            batch_size * num_concurrent_media,
+            num_tiles,
+            num_patches + num_padding_patches,
+            dim,
+        )
+        hidden_state = self.post_tile_positional_embedding(
+            hidden_state, aspect_ratio_ids
+        )
+        hidden_state = hidden_state.reshape(
+            batch_size * num_concurrent_media,
+            num_tiles * (num_patches + num_padding_patches),
+            dim,
+        )
+        hidden_state = self.global_transformer(
+            hidden_state, attention_mask=attention_mask
+        )[0]
+        hidden_state = hidden_state.reshape(
+            batch_size * num_concurrent_media,
+            num_tiles,
+            num_patches + num_padding_patches,
+            dim,
+        )
+        hidden_state = hidden_state[:, :, :slice_index]
+
+        # adding intermediate layer outputs
+        hidden_state = hidden_state.reshape(
+            batch_size, num_concurrent_media, num_tiles, num_patches, dim
+        )
+        intermediate_hidden_states = intermediate_hidden_states.reshape(
+            batch_size * num_concurrent_media,
+            num_tiles,
+            num_patches + num_padding_patches,
+            -1,
+        )
+        intermediate_hidden_states = intermediate_hidden_states[:, :, :slice_index]
+        intermediate_hidden_states = intermediate_hidden_states.reshape(
+            batch_size, num_concurrent_media, num_tiles, num_patches, -1
+        )
+        hidden_state = torch.cat([hidden_state, intermediate_hidden_states], dim=-1)
+        return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.mllama.MllamaVisionModel.apply_class_embedding"><code class="name flex">
+<span>def <span class="ident">apply_class_embedding</span></span>(<span>self, hidden_state: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_class_embedding(self, hidden_state: torch.Tensor) -&gt; torch.Tensor:
+    batch_size, _, hidden_size = hidden_state.shape
+    class_embedding = self.class_embedding.expand(batch_size, 1, hidden_size)
+    hidden_state = torch.cat([class_embedding, hidden_state], dim=1)
+    return hidden_state</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.mllama.MllamaVisionModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>pixel_values: torch.Tensor,<br>aspect_ratio_ids: torch.Tensor,<br>aspect_ratio_mask: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    pixel_values: torch.Tensor,
+    aspect_ratio_ids: torch.Tensor,
+    aspect_ratio_mask: torch.Tensor,
+) -&gt; torch.Tensor:
+    batch_size, num_concurrent_media, num_tiles, num_channels, height, width = (
+        pixel_values.shape
+    )
+
+    pixel_values = pixel_values.reshape(
+        batch_size * num_concurrent_media * num_tiles, num_channels, height, width
+    )
+    aspect_ratio_ids = aspect_ratio_ids.reshape(
+        batch_size * num_concurrent_media, -1
+    )
+
+    # patch embedding
+    patch_embeds = self.patch_embedding(
+        pixel_values.to(self.layernorm_pre.weight.dtype)
+    )
+    hidden_state = patch_embeds
+    hidden_state = ps.get_tp_group().all_gather(hidden_state)
+
+    # tile embeddings
+    _, num_patches, dim = hidden_state.shape
+    hidden_state = hidden_state.reshape(
+        batch_size * num_concurrent_media, num_tiles, -1, dim
+    )
+    hidden_state = self.pre_tile_positional_embedding(
+        hidden_state, aspect_ratio_ids
+    )
+
+    # apply cls token
+    hidden_state = hidden_state.reshape(
+        batch_size * num_concurrent_media * num_tiles, num_patches, dim
+    )
+    hidden_state = self.apply_class_embedding(hidden_state)
+    num_patches += 1
+
+    # apply position embeddings
+    hidden_state = hidden_state.reshape(
+        batch_size * num_concurrent_media, num_tiles, num_patches, dim
+    )
+    hidden_state = self.gated_positional_embedding(hidden_state, aspect_ratio_ids)
+
+    # apply encoder
+    hidden_state = self.layernorm_pre(hidden_state)
+
+    # Compute the number of tokens to pad
+    num_padding_patches = (8 - (hidden_state.shape[-2] % 8)) % 8
+    # Compute padding tuple for pad function
+    padding = (
+        0,
+        0,
+        0,
+        num_padding_patches,
+    )  # (pad_left, pad_right, pad_left for dim -2, pad_right for dim -2)
+    # Pad the tensor
+    hidden_state = F.pad(hidden_state, padding, mode=&#34;constant&#34;, value=0)
+    slice_index = -num_padding_patches if num_padding_patches &gt; 0 else None
+
+    attention_mask = aspect_ratio_mask.reshape(
+        batch_size * num_concurrent_media, -1
+    )
+    attention_mask = _prepare_aspect_ratio_attention_mask(
+        aspect_ratio_mask=attention_mask,
+        num_patches=self.num_patches,
+        target_length=hidden_state.shape[2],
+        dtype=self.layernorm_pre.weight.dtype,
+    )
+
+    hidden_state = hidden_state.view(batch_size * num_concurrent_media, -1, dim)
+    output = self.transformer(
+        hidden_state,
+        attention_mask=attention_mask,
+    )
+    hidden_state, intermediate_hidden_states = output[0], output[1]
+    intermediate_hidden_states = torch.stack(intermediate_hidden_states, dim=-1)
+
+    # apply global encoder
+    hidden_state = self.layernorm_post(hidden_state)
+    hidden_state = hidden_state.reshape(
+        batch_size * num_concurrent_media,
+        num_tiles,
+        num_patches + num_padding_patches,
+        dim,
+    )
+    hidden_state = self.post_tile_positional_embedding(
+        hidden_state, aspect_ratio_ids
+    )
+    hidden_state = hidden_state.reshape(
+        batch_size * num_concurrent_media,
+        num_tiles * (num_patches + num_padding_patches),
+        dim,
+    )
+    hidden_state = self.global_transformer(
+        hidden_state, attention_mask=attention_mask
+    )[0]
+    hidden_state = hidden_state.reshape(
+        batch_size * num_concurrent_media,
+        num_tiles,
+        num_patches + num_padding_patches,
+        dim,
+    )
+    hidden_state = hidden_state[:, :, :slice_index]
+
+    # adding intermediate layer outputs
+    hidden_state = hidden_state.reshape(
+        batch_size, num_concurrent_media, num_tiles, num_patches, dim
+    )
+    intermediate_hidden_states = intermediate_hidden_states.reshape(
+        batch_size * num_concurrent_media,
+        num_tiles,
+        num_patches + num_padding_patches,
+        -1,
+    )
+    intermediate_hidden_states = intermediate_hidden_states[:, :, :slice_index]
+    intermediate_hidden_states = intermediate_hidden_states.reshape(
+        batch_size, num_concurrent_media, num_tiles, num_patches, -1
+    )
+    hidden_state = torch.cat([hidden_state, intermediate_hidden_states], dim=-1)
+    return hidden_state</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.ColumnParallelConv2dPatch" href="#sglang.srt.models.mllama.ColumnParallelConv2dPatch">ColumnParallelConv2dPatch</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.ColumnParallelConv2dPatch.forward" href="#sglang.srt.models.mllama.ColumnParallelConv2dPatch.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaCrossAttentionDecoderLayer" href="#sglang.srt.models.mllama.MllamaCrossAttentionDecoderLayer">MllamaCrossAttentionDecoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaCrossAttentionDecoderLayer.forward" href="#sglang.srt.models.mllama.MllamaCrossAttentionDecoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaForCausalLM" href="#sglang.srt.models.mllama.MllamaForCausalLM">MllamaForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaForCausalLM.base_model_prefix" href="#sglang.srt.models.mllama.MllamaForCausalLM.base_model_prefix">base_model_prefix</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForCausalLM.config_class" href="#sglang.srt.models.mllama.MllamaForCausalLM.config_class">config_class</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForCausalLM.forward" href="#sglang.srt.models.mllama.MllamaForCausalLM.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration">MllamaForConditionalGeneration</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.bitsandbytes_stacked_params_mapping" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.bitsandbytes_stacked_params_mapping">bitsandbytes_stacked_params_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.column_parallel_weights_modules" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.column_parallel_weights_modules">column_parallel_weights_modules</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.default_bitsandbytes_target_modules" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.default_bitsandbytes_target_modules">default_bitsandbytes_target_modules</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.flat_encoder_result" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.flat_encoder_result">flat_encoder_result</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.forward" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.get_full_text_row_masked_out_mask" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.get_full_text_row_masked_out_mask">get_full_text_row_masked_out_mask</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.load_weights" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.pad_input_ids" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.pad_input_ids">pad_input_ids</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration">MllamaForConditionalGeneration</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.bitsandbytes_stacked_params_mapping" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.bitsandbytes_stacked_params_mapping">bitsandbytes_stacked_params_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.column_parallel_weights_modules" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.column_parallel_weights_modules">column_parallel_weights_modules</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.default_bitsandbytes_target_modules" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.default_bitsandbytes_target_modules">default_bitsandbytes_target_modules</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.flat_encoder_result" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.flat_encoder_result">flat_encoder_result</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.forward" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.get_full_text_row_masked_out_mask" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.get_full_text_row_masked_out_mask">get_full_text_row_masked_out_mask</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.load_weights" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaForConditionalGeneration.pad_input_ids" href="#sglang.srt.models.mllama.MllamaForConditionalGeneration.pad_input_ids">pad_input_ids</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaPrecomputedAspectRatioEmbedding" href="#sglang.srt.models.mllama.MllamaPrecomputedAspectRatioEmbedding">MllamaPrecomputedAspectRatioEmbedding</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaPrecomputedAspectRatioEmbedding.forward" href="#sglang.srt.models.mllama.MllamaPrecomputedAspectRatioEmbedding.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaPrecomputedPositionEmbedding" href="#sglang.srt.models.mllama.MllamaPrecomputedPositionEmbedding">MllamaPrecomputedPositionEmbedding</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaPrecomputedPositionEmbedding.forward" href="#sglang.srt.models.mllama.MllamaPrecomputedPositionEmbedding.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaTextCrossAttention" href="#sglang.srt.models.mllama.MllamaTextCrossAttention">MllamaTextCrossAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaTextCrossAttention.forward" href="#sglang.srt.models.mllama.MllamaTextCrossAttention.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaTextModel" href="#sglang.srt.models.mllama.MllamaTextModel">MllamaTextModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaTextModel.base_model_prefix" href="#sglang.srt.models.mllama.MllamaTextModel.base_model_prefix">base_model_prefix</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaTextModel.config_class" href="#sglang.srt.models.mllama.MllamaTextModel.config_class">config_class</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaTextModel.forward" href="#sglang.srt.models.mllama.MllamaTextModel.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaTextRMSNorm" href="#sglang.srt.models.mllama.MllamaTextRMSNorm">MllamaTextRMSNorm</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaTextRMSNorm.extra_repr" href="#sglang.srt.models.mllama.MllamaTextRMSNorm.extra_repr">extra_repr</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaTextRMSNorm.forward" href="#sglang.srt.models.mllama.MllamaTextRMSNorm.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaVisionEncoder" href="#sglang.srt.models.mllama.MllamaVisionEncoder">MllamaVisionEncoder</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaVisionEncoder.forward" href="#sglang.srt.models.mllama.MllamaVisionEncoder.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaVisionEncoderLayer" href="#sglang.srt.models.mllama.MllamaVisionEncoderLayer">MllamaVisionEncoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaVisionEncoderLayer.forward" href="#sglang.srt.models.mllama.MllamaVisionEncoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaVisionMLP" href="#sglang.srt.models.mllama.MllamaVisionMLP">MllamaVisionMLP</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaVisionMLP.forward" href="#sglang.srt.models.mllama.MllamaVisionMLP.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.mllama.MllamaVisionModel" href="#sglang.srt.models.mllama.MllamaVisionModel">MllamaVisionModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.mllama.MllamaVisionModel.apply_class_embedding" href="#sglang.srt.models.mllama.MllamaVisionModel.apply_class_embedding">apply_class_embedding</a></code></li>
+<li><code><a title="sglang.srt.models.mllama.MllamaVisionModel.forward" href="#sglang.srt.models.mllama.MllamaVisionModel.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

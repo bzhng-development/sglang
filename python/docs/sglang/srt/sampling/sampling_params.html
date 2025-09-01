@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.sampling.sampling_params API documentation</title>
+<meta name="description" content="Sampling parameters for text generation.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.sampling.sampling_params</code></h1>
+</header>
+<section id="section-intro">
+<p>Sampling parameters for text generation.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.sampling.sampling_params.SamplingParams"><code class="flex name class">
+<span>class <span class="ident">SamplingParams</span></span>
+<span>(</span><span>max_new_tokens: int = 128,<br>stop: List[str] | str | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float = 1.0,<br>top_p: float = 1.0,<br>top_k: int = -1,<br>min_p: float = 0.0,<br>frequency_penalty: float = 0.0,<br>presence_penalty: float = 0.0,<br>repetition_penalty: float = 1.0,<br>min_new_tokens: int = 0,<br>n: int = 1,<br>json_schema: str | None = None,<br>regex: str | None = None,<br>ebnf: str | None = None,<br>structural_tag: str | None = None,<br>ignore_eos: bool = False,<br>skip_special_tokens: bool = True,<br>spaces_between_special_tokens: bool = True,<br>no_stop_trim: bool = False,<br>custom_params: Dict[str, Any] | None = None,<br>stream_interval: int | None = None,<br>logit_bias: Dict[str, float] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SamplingParams:
+    &#34;&#34;&#34;
+    The sampling parameters.
+
+    See docs/backend/sampling_params.md or
+    https://docs.sglang.ai/backend/sampling_params.html
+    for the documentation.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        max_new_tokens: int = 128,
+        stop: Optional[Union[str, List[str]]] = None,
+        stop_token_ids: Optional[List[int]] = None,
+        temperature: float = 1.0,
+        top_p: float = 1.0,
+        top_k: int = -1,
+        min_p: float = 0.0,
+        frequency_penalty: float = 0.0,
+        presence_penalty: float = 0.0,
+        repetition_penalty: float = 1.0,
+        min_new_tokens: int = 0,
+        n: int = 1,
+        json_schema: Optional[str] = None,
+        regex: Optional[str] = None,
+        ebnf: Optional[str] = None,
+        structural_tag: Optional[str] = None,
+        ignore_eos: bool = False,
+        skip_special_tokens: bool = True,
+        spaces_between_special_tokens: bool = True,
+        no_stop_trim: bool = False,
+        custom_params: Optional[Dict[str, Any]] = None,
+        stream_interval: Optional[int] = None,
+        logit_bias: Optional[Dict[str, float]] = None,
+    ) -&gt; None:
+        self.max_new_tokens = max_new_tokens
+        self.stop_strs = stop
+        if stop_token_ids:
+            self.stop_token_ids = set(stop_token_ids)
+        else:
+            self.stop_token_ids = None
+        self.temperature = temperature
+        self.top_p = top_p
+        self.top_k = top_k
+        self.min_p = min_p
+        self.frequency_penalty = frequency_penalty
+        self.presence_penalty = presence_penalty
+        self.repetition_penalty = repetition_penalty
+        self.min_new_tokens = min_new_tokens
+        self.regex = regex
+        self.n = n
+        self.json_schema = json_schema
+        self.ebnf = ebnf
+        self.structural_tag = structural_tag
+        self.ignore_eos = ignore_eos
+        self.skip_special_tokens = skip_special_tokens
+        self.spaces_between_special_tokens = spaces_between_special_tokens
+        self.no_stop_trim = no_stop_trim
+        self.custom_params = custom_params
+        self.stream_interval = stream_interval
+        self.logit_bias = logit_bias
+
+        # Process some special cases
+        if 0 &lt;= self.temperature &lt; _SAMPLING_EPS:
+            # top_k = 1 means greedy sampling
+            self.temperature = 1.0
+            self.top_k = 1
+        if self.top_k == -1:
+            self.top_k = TOP_K_ALL  # whole vocabulary
+
+    def verify(self, vocab_size):
+        if self.temperature &lt; 0.0:
+            raise ValueError(
+                f&#34;temperature must be non-negative, got {self.temperature}.&#34;
+            )
+        if not 0.0 &lt; self.top_p &lt;= 1.0:
+            raise ValueError(f&#34;top_p must be in (0, 1], got {self.top_p}.&#34;)
+        if not 0.0 &lt;= self.min_p &lt;= 1.0:
+            raise ValueError(f&#34;min_p must be in [0, 1], got {self.min_p}.&#34;)
+        if self.top_k &lt; 1 or self.top_k == -1:
+            raise ValueError(
+                f&#34;top_k must be -1 (disable) or at least 1, got {self.top_k}.&#34;
+            )
+        if not -2.0 &lt;= self.frequency_penalty &lt;= 2.0:
+            raise ValueError(
+                &#34;frequency_penalty must be in [-2, 2], got &#34;
+                f&#34;{self.frequency_penalty}.&#34;
+            )
+        if not -2.0 &lt;= self.presence_penalty &lt;= 2.0:
+            raise ValueError(
+                &#34;presence_penalty must be in [-2, 2], got &#34; f&#34;{self.presence_penalty}.&#34;
+            )
+        if not 0.0 &lt;= self.repetition_penalty &lt;= 2.0:
+            raise ValueError(
+                &#34;repetition_penalty must be in [0, 2], got &#34;
+                f&#34;{self.repetition_penalty}.&#34;
+            )
+        if not 0 &lt;= self.min_new_tokens:
+            raise ValueError(
+                f&#34;min_new_tokens must be in [0, max_new_tokens], got &#34;
+                f&#34;{self.min_new_tokens}.&#34;
+            )
+        if self.max_new_tokens is not None:
+            if self.max_new_tokens &lt; 0:
+                raise ValueError(
+                    f&#34;max_new_tokens must be at least 0, got {self.max_new_tokens}.&#34;
+                )
+            if not self.min_new_tokens &lt;= self.max_new_tokens:
+                raise ValueError(
+                    f&#34;min_new_tokens must be in [0, max_new_tokens({self.max_new_tokens})], got &#34;
+                    f&#34;{self.min_new_tokens}.&#34;
+                )
+        if self.logit_bias is not None:
+            for token_id in self.logit_bias:
+                if not 0 &lt;= int(token_id) &lt; vocab_size:
+                    raise ValueError(
+                        f&#34;logit_bias must has keys in [0, {vocab_size - 1}], got &#34;
+                        f&#34;{token_id}.&#34;
+                    )
+        grammars = [
+            self.json_schema,
+            self.regex,
+            self.ebnf,
+        ]  # since mutually exclusive, only one can be set
+        if sum(x is not None for x in grammars) &gt; 1:
+            raise ValueError(&#34;Only one of regex, json_schema, or ebnf can be set.&#34;)
+
+    def normalize(self, tokenizer):
+        # Process stop strings
+        if self.stop_strs is None:
+            self.stop_strs = []
+            self.stop_str_max_len = 0
+        else:
+            if isinstance(self.stop_strs, str):
+                self.stop_strs = [self.stop_strs]
+
+            stop_str_max_len = 0
+            for stop_str in self.stop_strs:
+                if tokenizer is not None:
+                    stop_str_ids = tokenizer.encode(stop_str, add_special_tokens=False)
+                    stop_str_max_len = max(stop_str_max_len, len(stop_str_ids))
+                else:
+                    stop_str_max_len = max(stop_str_max_len, len(stop_str))
+            self.stop_str_max_len = stop_str_max_len</code></pre>
+</details>
+<div class="desc"><p>The sampling parameters.</p>
+<p>See docs/backend/sampling_params.md or
+<a href="https://docs.sglang.ai/backend/sampling_params.html">https://docs.sglang.ai/backend/sampling_params.html</a>
+for the documentation.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.sampling.sampling_params.SamplingParams.normalize"><code class="name flex">
+<span>def <span class="ident">normalize</span></span>(<span>self, tokenizer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normalize(self, tokenizer):
+    # Process stop strings
+    if self.stop_strs is None:
+        self.stop_strs = []
+        self.stop_str_max_len = 0
+    else:
+        if isinstance(self.stop_strs, str):
+            self.stop_strs = [self.stop_strs]
+
+        stop_str_max_len = 0
+        for stop_str in self.stop_strs:
+            if tokenizer is not None:
+                stop_str_ids = tokenizer.encode(stop_str, add_special_tokens=False)
+                stop_str_max_len = max(stop_str_max_len, len(stop_str_ids))
+            else:
+                stop_str_max_len = max(stop_str_max_len, len(stop_str))
+        self.stop_str_max_len = stop_str_max_len</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.sampling.sampling_params.SamplingParams.verify"><code class="name flex">
+<span>def <span class="ident">verify</span></span>(<span>self, vocab_size)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def verify(self, vocab_size):
+    if self.temperature &lt; 0.0:
+        raise ValueError(
+            f&#34;temperature must be non-negative, got {self.temperature}.&#34;
+        )
+    if not 0.0 &lt; self.top_p &lt;= 1.0:
+        raise ValueError(f&#34;top_p must be in (0, 1], got {self.top_p}.&#34;)
+    if not 0.0 &lt;= self.min_p &lt;= 1.0:
+        raise ValueError(f&#34;min_p must be in [0, 1], got {self.min_p}.&#34;)
+    if self.top_k &lt; 1 or self.top_k == -1:
+        raise ValueError(
+            f&#34;top_k must be -1 (disable) or at least 1, got {self.top_k}.&#34;
+        )
+    if not -2.0 &lt;= self.frequency_penalty &lt;= 2.0:
+        raise ValueError(
+            &#34;frequency_penalty must be in [-2, 2], got &#34;
+            f&#34;{self.frequency_penalty}.&#34;
+        )
+    if not -2.0 &lt;= self.presence_penalty &lt;= 2.0:
+        raise ValueError(
+            &#34;presence_penalty must be in [-2, 2], got &#34; f&#34;{self.presence_penalty}.&#34;
+        )
+    if not 0.0 &lt;= self.repetition_penalty &lt;= 2.0:
+        raise ValueError(
+            &#34;repetition_penalty must be in [0, 2], got &#34;
+            f&#34;{self.repetition_penalty}.&#34;
+        )
+    if not 0 &lt;= self.min_new_tokens:
+        raise ValueError(
+            f&#34;min_new_tokens must be in [0, max_new_tokens], got &#34;
+            f&#34;{self.min_new_tokens}.&#34;
+        )
+    if self.max_new_tokens is not None:
+        if self.max_new_tokens &lt; 0:
+            raise ValueError(
+                f&#34;max_new_tokens must be at least 0, got {self.max_new_tokens}.&#34;
+            )
+        if not self.min_new_tokens &lt;= self.max_new_tokens:
+            raise ValueError(
+                f&#34;min_new_tokens must be in [0, max_new_tokens({self.max_new_tokens})], got &#34;
+                f&#34;{self.min_new_tokens}.&#34;
+            )
+    if self.logit_bias is not None:
+        for token_id in self.logit_bias:
+            if not 0 &lt;= int(token_id) &lt; vocab_size:
+                raise ValueError(
+                    f&#34;logit_bias must has keys in [0, {vocab_size - 1}], got &#34;
+                    f&#34;{token_id}.&#34;
+                )
+    grammars = [
+        self.json_schema,
+        self.regex,
+        self.ebnf,
+    ]  # since mutually exclusive, only one can be set
+    if sum(x is not None for x in grammars) &gt; 1:
+        raise ValueError(&#34;Only one of regex, json_schema, or ebnf can be set.&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.sampling" href="index.html">sglang.srt.sampling</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.sampling.sampling_params.SamplingParams" href="#sglang.srt.sampling.sampling_params.SamplingParams">SamplingParams</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.sampling.sampling_params.SamplingParams.normalize" href="#sglang.srt.sampling.sampling_params.SamplingParams.normalize">normalize</a></code></li>
+<li><code><a title="sglang.srt.sampling.sampling_params.SamplingParams.verify" href="#sglang.srt.sampling.sampling_params.SamplingParams.verify">verify</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

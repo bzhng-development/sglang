@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.configs.dbrx API documentation</title>
+<meta name="description" content="Dbrx configuration.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.configs.dbrx</code></h1>
+</header>
+<section id="section-intro">
+<p>Dbrx configuration.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.configs.dbrx.DbrxAttentionConfig"><code class="flex name class">
+<span>class <span class="ident">DbrxAttentionConfig</span></span>
+<span>(</span><span>attn_pdrop: float = 0,<br>clip_qkv: float | None = None,<br>kv_n_heads: int = 1,<br>rope_theta: float = 10000.0,<br>**kwargs: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DbrxAttentionConfig(PretrainedConfig):
+    &#34;&#34;&#34;Configuration class for Dbrx Attention.
+
+    [`DbrxAttention`] class. It is used to instantiate attention layers
+    according to the specified arguments, defining the layers architecture.
+
+    Configuration objects inherit from [`PretrainedConfig`] and can be used to control the model outputs. Read the
+    documentation from [`PretrainedConfig`] for more information.
+
+    Args:
+        attn_pdrop (`float`, *optional*, defaults to 0.0):
+            The dropout probability for the attention layers.
+        clip_qkv (`float`, *optional*, defaults to None):
+            If not `None`, clip the queries, keys, and values in the attention layer to this value.
+        kv_n_heads (Optional[int]): For grouped_query_attention only, allow user to specify number of kv heads.
+        rope_theta (float): The base frequency for rope.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        attn_pdrop: float = 0,
+        clip_qkv: Optional[float] = None,
+        kv_n_heads: int = 1,
+        rope_theta: float = 10000.0,
+        **kwargs: Any,
+    ):
+        super().__init__(**kwargs)
+        self.attn_pdrop = attn_pdrop
+        self.clip_qkv = clip_qkv
+        self.kv_n_heads = kv_n_heads
+        self.rope_theta = rope_theta
+
+        for k in [&#34;model_type&#34;]:
+            if k in kwargs:
+                kwargs.pop(k)
+        if len(kwargs) != 0:
+            raise ValueError(f&#34;Found unknown {kwargs=}&#34;)
+
+    @classmethod
+    def from_pretrained(
+        cls, pretrained_model_name_or_path: str, **kwargs: Any
+    ) -&gt; &#34;PretrainedConfig&#34;:
+        cls._set_token_in_kwargs(kwargs)
+
+        config_dict, kwargs = cls.get_config_dict(
+            pretrained_model_name_or_path, **kwargs
+        )
+
+        if config_dict.get(&#34;model_type&#34;) == &#34;dbrx&#34;:
+            config_dict = config_dict[&#34;attn_config&#34;]
+
+        if (
+            &#34;model_type&#34; in config_dict
+            and hasattr(cls, &#34;model_type&#34;)
+            and config_dict[&#34;model_type&#34;] != cls.model_type
+        ):
+            logger.warning(
+                &#34;You are using a model of type %s to instantiate a model of &#34;
+                &#34;type %s. This is not supported for all configurations of &#34;
+                &#34;models and can yield errors.&#34;,
+                config_dict[&#34;model_type&#34;],
+                cls.model_type,
+            )
+
+        return cls.from_dict(config_dict, **kwargs)</code></pre>
+</details>
+<div class="desc"><p>Configuration class for Dbrx Attention.</p>
+<p>[<code>DbrxAttention</code>] class. It is used to instantiate attention layers
+according to the specified arguments, defining the layers architecture.</p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt>attn_pdrop (<code>float</code>, <em>optional</em>, defaults to 0.0):</dt>
+<dt>The dropout probability for the attention layers.</dt>
+<dt>clip_qkv (<code>float</code>, <em>optional</em>, defaults to None):</dt>
+<dt>If not <code>None</code>, clip the queries, keys, and values in the attention layer to this value.</dt>
+<dt><strong><code>kv_n_heads</code></strong> :&ensp;<code>Optional[int]</code></dt>
+<dd>For grouped_query_attention only, allow user to specify number of kv heads.</dd>
+<dt><strong><code>rope_theta</code></strong> :&ensp;<code>float</code></dt>
+<dd>The base frequency for rope.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.configs.dbrx.DbrxAttentionConfig.from_pretrained"><code class="name flex">
+<span>def <span class="ident">from_pretrained</span></span>(<span>pretrained_model_name_or_path: str, **kwargs: Any) ‑> transformers.configuration_utils.PretrainedConfig</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Instantiate a [<code>PretrainedConfig</code>] (or a derived class) from a pretrained model configuration.</p>
+<h2 id="args">Args</h2>
+<p>pretrained_model_name_or_path (<code>str</code> or <code>os.PathLike</code>):
+This can be either:</p>
+<pre><code>- a string, the *model id* of a pretrained model configuration hosted inside a model repo on
+  huggingface.co.
+- a path to a *directory* containing a configuration file saved using the
+  [`~PretrainedConfig.save_pretrained`] method, e.g., `./my_model_directory/`.
+- a path or url to a saved configuration JSON *file*, e.g., `./my_model_directory/configuration.json`.
+</code></pre>
+<p>cache_dir (<code>str</code> or <code>os.PathLike</code>, <em>optional</em>):
+Path to a directory in which a downloaded pretrained model configuration should be cached if the
+standard cache should not be used.
+force_download (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not to force to (re-)download the configuration files and override the cached versions if
+they exist.
+resume_download:
+Deprecated and ignored. All downloads are now resumed by default when possible.
+Will be removed in v5 of Transformers.
+proxies (<code>dict[str, str]</code>, <em>optional</em>):
+A dictionary of proxy servers to use by protocol or endpoint, e.g., <code>{'http': 'foo.bar:3128',
+'http://hostname': 'foo.bar:4012'}.</code> The proxies are used on each request.
+token (<code>str</code> or <code>bool</code>, <em>optional</em>):
+The token to use as HTTP bearer authorization for remote files. If <code>True</code>, or not specified, will use
+the token generated when running <code>hf auth login</code> (stored in <code>~/.huggingface</code>).
+revision (<code>str</code>, <em>optional</em>, defaults to <code>"main"</code>):
+The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
+git-based system for storing models and other artifacts on huggingface.co, so <code>revision</code> can be any
+identifier allowed by git.</p>
+<pre><code>&lt;Tip&gt;
+
+To test a pull request you made on the Hub, you can pass `revision="refs/pr/&lt;pr_number&gt;"`.
+
+&lt;/Tip&gt;
+</code></pre>
+<p>return_unused_kwargs (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+If <code>False</code>, then this function returns just the final configuration object.</p>
+<pre><code>If &lt;code&gt;True&lt;/code&gt;, then this functions returns a &lt;code&gt;Tuple(config, unused\_kwargs)&lt;/code&gt; where *unused_kwargs* is a
+dictionary consisting of the key/value pairs whose keys are not configuration attributes: i.e., the
+part of &lt;code&gt;kwargs&lt;/code&gt; which has not been used to update &lt;code&gt;config&lt;/code&gt; and is otherwise ignored.
+</code></pre>
+<p>subfolder (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+In case the relevant files are located inside a subfolder of the model repo on huggingface.co, you can
+specify the folder name here.
+kwargs (<code>dict[str, Any]</code>, <em>optional</em>):
+The values in kwargs of any keys which are configuration attributes will be used to override the loaded
+values. Behavior concerning key/value pairs whose keys are <em>not</em> configuration attributes is controlled
+by the <code>return_unused_kwargs</code> keyword parameter.</p>
+<h2 id="returns">Returns</h2>
+<p>[<code>PretrainedConfig</code>]: The configuration object instantiated from this pretrained model.
+Examples:</p>
+<pre><code class="language-python"># We can't instantiate directly the base class *PretrainedConfig* so let's show the examples on a
+# derived class: BertConfig
+config = BertConfig.from_pretrained(
+    &quot;google-bert/bert-base-uncased&quot;
+)  # Download configuration from huggingface.co and cache.
+config = BertConfig.from_pretrained(
+    &quot;./test/saved_model/&quot;
+)  # E.g. config (or model) was saved using *save_pretrained('./test/saved_model/')*
+config = BertConfig.from_pretrained(&quot;./test/saved_model/my_configuration.json&quot;)
+config = BertConfig.from_pretrained(&quot;google-bert/bert-base-uncased&quot;, output_attentions=True, foo=False)
+assert config.output_attentions == True
+config, unused_kwargs = BertConfig.from_pretrained(
+    &quot;google-bert/bert-base-uncased&quot;, output_attentions=True, foo=False, return_unused_kwargs=True
+)
+assert config.output_attentions == True
+assert unused_kwargs == {&quot;foo&quot;: False}
+</code></pre></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.dbrx.DbrxConfig"><code class="flex name class">
+<span>class <span class="ident">DbrxConfig</span></span>
+<span>(</span><span>d_model: int = 2048,<br>n_heads: int = 16,<br>n_layers: int = 24,<br>max_seq_len: int = 2048,<br>vocab_size: int = 32000,<br>resid_pdrop: float = 0.0,<br>emb_pdrop: float = 0.0,<br>attn_config: <a title="sglang.srt.configs.dbrx.DbrxAttentionConfig" href="#sglang.srt.configs.dbrx.DbrxAttentionConfig">DbrxAttentionConfig</a> | None = None,<br>ffn_config: <a title="sglang.srt.configs.dbrx.DbrxFFNConfig" href="#sglang.srt.configs.dbrx.DbrxFFNConfig">DbrxFFNConfig</a> | None = None,<br>use_cache: bool = True,<br>initializer_range: float = 0.02,<br>output_router_logits: bool = False,<br>router_aux_loss_coef: float = 0.05,<br>**kwargs: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DbrxConfig(PretrainedConfig):
+    &#34;&#34;&#34;Configuration class for Dbrx.
+
+    [`DbrxModel`]. It is used to instantiate a Dbrx model according to the
+    specified arguments, defining the model architecture.
+
+    Configuration objects inherit from [`PretrainedConfig`] and can be used to control the model outputs. Read the
+    documentation from [`PretrainedConfig`] for more information.
+
+
+    Args:
+        d_model (`int`, *optional*, defaults to 6144):
+            Dimensionality of the embeddings and hidden states.
+        n_heads (`int`, *optional*, defaults to 48):
+            Number of attention heads for each attention layer in the Transformer encoder.
+        n_layers (`int`, *optional*, defaults to 40):
+            Number of hidden layers in the Transformer encoder.
+        max_seq_len (`int`, *optional*, defaults to 32768):
+            The maximum sequence length of the model.
+        vocab_size (`int`, *optional*, defaults to 100352):
+            Vocabulary size of the Dbrx model. Defines the maximum number of different tokens that can be represented by
+            the `inputs_ids` passed when calling [`DbrxModel`].
+        resid_pdrop (`float`, *optional*, defaults to 0.0):
+            The dropout probability applied to the attention output before combining with residual.
+        emb_pdrop (`float`, *optional*, defaults to 0.0):
+            The dropout probability for the embedding layer.
+        attn_config (`dict`, *optional*):
+            A dictionary used to configure the model&#39;s attention module.
+        ffn_config (`dict`, *optional*):
+            A dictionary used to configure the model&#39;s FFN module.
+        use_cache (`bool`, *optional*, defaults to `False`):
+            Whether or not the model should return the last key/values attentions (not used by all models).
+        initializer_range (`float`, *optional*, defaults to 0.02):
+            The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+        output_router_logits (`bool`, *optional*, defaults to `False`):
+            Whether or not the router logits should be returned by the model. Enabling this will also
+            allow the model to output the auxiliary loss. See [here]() for more details
+        router_aux_loss_coef (`float`, *optional*, defaults to 0.001):
+            The aux loss factor for the total loss.
+
+
+    Example:
+    ```python
+    &gt;&gt;&gt; from transformers import DbrxConfig, DbrxModel
+
+    &gt;&gt;&gt; # Initializing a Dbrx configuration
+    &gt;&gt;&gt; configuration = DbrxConfig()
+
+    &gt;&gt;&gt; # Initializing a model (with random weights) from the configuration
+    &gt;&gt;&gt; model = DbrxModel(configuration)
+
+    &gt;&gt;&gt; # Accessing the model configuration
+    &gt;&gt;&gt; configuration = model.config
+    ```
+    &#34;&#34;&#34;
+
+    model_type = &#34;dbrx&#34;
+    attribute_map = {
+        &#34;num_attention_heads&#34;: &#34;n_heads&#34;,
+        &#34;hidden_size&#34;: &#34;d_model&#34;,
+        &#34;num_hidden_layers&#34;: &#34;n_layers&#34;,
+        &#34;max_position_embeddings&#34;: &#34;max_seq_len&#34;,
+    }
+
+    def __init__(
+        self,
+        d_model: int = 2048,
+        n_heads: int = 16,
+        n_layers: int = 24,
+        max_seq_len: int = 2048,
+        vocab_size: int = 32000,
+        resid_pdrop: float = 0.0,
+        emb_pdrop: float = 0.0,
+        attn_config: Optional[DbrxAttentionConfig] = None,
+        ffn_config: Optional[DbrxFFNConfig] = None,
+        use_cache: bool = True,
+        initializer_range: float = 0.02,
+        output_router_logits: bool = False,
+        router_aux_loss_coef: float = 0.05,
+        **kwargs: Any,
+    ):
+        if attn_config is None:
+            self.attn_config = DbrxAttentionConfig()
+        elif isinstance(attn_config, dict):
+            self.attn_config = DbrxAttentionConfig(**attn_config)
+        else:
+            self.attn_config = attn_config
+
+        if ffn_config is None:
+            self.ffn_config = DbrxFFNConfig()
+        elif isinstance(ffn_config, dict):
+            self.ffn_config = DbrxFFNConfig(**ffn_config)
+        else:
+            self.ffn_config = ffn_config
+
+        self.d_model = d_model
+        self.n_heads = n_heads
+        self.n_layers = n_layers
+        self.max_seq_len = max_seq_len
+        self.vocab_size = vocab_size
+        self.resid_pdrop = resid_pdrop
+        self.emb_pdrop = emb_pdrop
+        self.use_cache = use_cache
+        self.initializer_range = initializer_range
+        self.output_router_logits = output_router_logits
+        self.router_aux_loss_coef = router_aux_loss_coef
+
+        tie_word_embeddings = kwargs.pop(&#34;tie_word_embeddings&#34;, False)
+        if tie_word_embeddings:
+            raise ValueError(&#34;tie_word_embeddings is not supported for Dbrx models.&#34;)
+
+        super().__init__(
+            tie_word_embeddings=tie_word_embeddings,
+            **kwargs,
+        )</code></pre>
+</details>
+<div class="desc"><p>Configuration class for Dbrx.</p>
+<p>[<code>DbrxModel</code>]. It is used to instantiate a Dbrx model according to the
+specified arguments, defining the model architecture.</p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<p>d_model (<code>int</code>, <em>optional</em>, defaults to 6144):
+Dimensionality of the embeddings and hidden states.
+n_heads (<code>int</code>, <em>optional</em>, defaults to 48):
+Number of attention heads for each attention layer in the Transformer encoder.
+n_layers (<code>int</code>, <em>optional</em>, defaults to 40):
+Number of hidden layers in the Transformer encoder.
+max_seq_len (<code>int</code>, <em>optional</em>, defaults to 32768):
+The maximum sequence length of the model.
+vocab_size (<code>int</code>, <em>optional</em>, defaults to 100352):
+Vocabulary size of the Dbrx model. Defines the maximum number of different tokens that can be represented by
+the <code>inputs_ids</code> passed when calling [<code>DbrxModel</code>].
+resid_pdrop (<code>float</code>, <em>optional</em>, defaults to 0.0):
+The dropout probability applied to the attention output before combining with residual.
+emb_pdrop (<code>float</code>, <em>optional</em>, defaults to 0.0):
+The dropout probability for the embedding layer.
+attn_config (<code>dict</code>, <em>optional</em>):
+A dictionary used to configure the model's attention module.
+ffn_config (<code>dict</code>, <em>optional</em>):
+A dictionary used to configure the model's FFN module.
+use_cache (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return the last key/values attentions (not used by all models).
+initializer_range (<code>float</code>, <em>optional</em>, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+output_router_logits (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the router logits should be returned by the model. Enabling this will also
+allow the model to output the auxiliary loss. See <a href="">here</a> for more details
+router_aux_loss_coef (<code>float</code>, <em>optional</em>, defaults to 0.001):
+The aux loss factor for the total loss.
+Example:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from transformers import DbrxConfig, DbrxModel
+
+&gt;&gt;&gt; # Initializing a Dbrx configuration
+&gt;&gt;&gt; configuration = DbrxConfig()
+
+&gt;&gt;&gt; # Initializing a model (with random weights) from the configuration
+&gt;&gt;&gt; model = DbrxModel(configuration)
+
+&gt;&gt;&gt; # Accessing the model configuration
+&gt;&gt;&gt; configuration = model.config
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.dbrx.DbrxConfig.attribute_map"><code class="name">var <span class="ident">attribute_map</span> : dict[str, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.dbrx.DbrxConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.dbrx.DbrxFFNConfig"><code class="flex name class">
+<span>class <span class="ident">DbrxFFNConfig</span></span>
+<span>(</span><span>ffn_act_fn: dict | None = None,<br>ffn_hidden_size: int = 3584,<br>moe_num_experts: int = 4,<br>moe_top_k: int = 1,<br>moe_jitter_eps: float | None = None,<br>moe_loss_weight: float = 0.01,<br>moe_normalize_expert_weights: float | None = 1,<br>uniform_expert_assignment: bool = False,<br>**kwargs: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DbrxFFNConfig(PretrainedConfig):
+    &#34;&#34;&#34;Configuration class for Dbrx FFN.
+
+    [`DbrxFFN`] class. It is used to instantiate feedforward layers according to
+    the specified arguments, defining the layers architecture.
+
+    Configuration objects inherit from [`PretrainedConfig`] and can be used to control the model outputs. Read the
+    documentation from [`PretrainedConfig`] for more information.
+
+    Args:
+        ffn_act_fn (dict, optional): A dict specifying activation function for the FFN.
+            The dict should have a key &#39;name&#39; with the value being the name of
+            the activation function along with any additional keyword arguments.
+        ffn_hidden_size (int, optional): The hidden size of the feedforward network.
+        moe_num_experts (int, optional): The number of experts in the mixture of experts layer.
+        moe_top_k (int, optional): The number of experts to use in the mixture of experts layer.
+        moe_jitter_eps (float, optional): The jitter epsilon for the mixture of experts layer.
+        moe_loss_weight (float, optional): The loss weight for the mixture of experts layer.
+        moe_normalize_expert_weights (float, optional): The normalization factor for the expert weights.
+        uniform_expert_assignment (bool, optional): Whether to use uniform expert assignment.
+            This should only be used for benchmarking purposes.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        ffn_act_fn: Optional[dict] = None,
+        ffn_hidden_size: int = 3584,
+        moe_num_experts: int = 4,
+        moe_top_k: int = 1,
+        moe_jitter_eps: Optional[float] = None,
+        moe_loss_weight: float = 0.01,
+        moe_normalize_expert_weights: Optional[float] = 1,
+        uniform_expert_assignment: bool = False,
+        **kwargs: Any,
+    ):
+        super().__init__()
+        if ffn_act_fn is None:
+            ffn_act_fn = {&#34;name&#34;: &#34;silu&#34;}
+        self.ffn_act_fn = ffn_act_fn
+        self.ffn_hidden_size = ffn_hidden_size
+        self.moe_num_experts = moe_num_experts
+        self.moe_top_k = moe_top_k
+        self.moe_jitter_eps = moe_jitter_eps
+        self.moe_loss_weight = moe_loss_weight
+        self.moe_normalize_expert_weights = moe_normalize_expert_weights
+        self.uniform_expert_assignment = uniform_expert_assignment
+
+        for k in [&#34;model_type&#34;]:
+            if k in kwargs:
+                kwargs.pop(k)
+        if len(kwargs) != 0:
+            raise ValueError(f&#34;Found unknown {kwargs=}&#34;)
+
+    @classmethod
+    def from_pretrained(
+        cls, pretrained_model_name_or_path: str, **kwargs: Any
+    ) -&gt; &#34;PretrainedConfig&#34;:
+        cls._set_token_in_kwargs(kwargs)
+
+        config_dict, kwargs = cls.get_config_dict(
+            pretrained_model_name_or_path, **kwargs
+        )
+
+        if config_dict.get(&#34;model_type&#34;) == &#34;dbrx&#34;:
+            config_dict = config_dict[&#34;ffn_config&#34;]
+
+        if (
+            &#34;model_type&#34; in config_dict
+            and hasattr(cls, &#34;model_type&#34;)
+            and config_dict[&#34;model_type&#34;] != cls.model_type
+        ):
+            logger.warning(
+                &#34;You are using a model of type %s to instantiate a model of &#34;
+                &#34;type %s. This is not supported for all &#34;
+                &#34;configurations of models and can yield errors.&#34;,
+                config_dict[&#34;model_type&#34;],
+                cls.model_type,
+            )
+
+        return cls.from_dict(config_dict, **kwargs)</code></pre>
+</details>
+<div class="desc"><p>Configuration class for Dbrx FFN.</p>
+<p>[<code>DbrxFFN</code>] class. It is used to instantiate feedforward layers according to
+the specified arguments, defining the layers architecture.</p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>ffn_act_fn</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>A dict specifying activation function for the FFN.
+The dict should have a key 'name' with the value being the name of
+the activation function along with any additional keyword arguments.</dd>
+<dt><strong><code>ffn_hidden_size</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>The hidden size of the feedforward network.</dd>
+<dt><strong><code>moe_num_experts</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>The number of experts in the mixture of experts layer.</dd>
+<dt><strong><code>moe_top_k</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>The number of experts to use in the mixture of experts layer.</dd>
+<dt><strong><code>moe_jitter_eps</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>The jitter epsilon for the mixture of experts layer.</dd>
+<dt><strong><code>moe_loss_weight</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>The loss weight for the mixture of experts layer.</dd>
+<dt><strong><code>moe_normalize_expert_weights</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>The normalization factor for the expert weights.</dd>
+<dt><strong><code>uniform_expert_assignment</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to use uniform expert assignment.
+This should only be used for benchmarking purposes.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.configs.dbrx.DbrxFFNConfig.from_pretrained"><code class="name flex">
+<span>def <span class="ident">from_pretrained</span></span>(<span>pretrained_model_name_or_path: str, **kwargs: Any) ‑> transformers.configuration_utils.PretrainedConfig</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Instantiate a [<code>PretrainedConfig</code>] (or a derived class) from a pretrained model configuration.</p>
+<h2 id="args">Args</h2>
+<p>pretrained_model_name_or_path (<code>str</code> or <code>os.PathLike</code>):
+This can be either:</p>
+<pre><code>- a string, the *model id* of a pretrained model configuration hosted inside a model repo on
+  huggingface.co.
+- a path to a *directory* containing a configuration file saved using the
+  [`~PretrainedConfig.save_pretrained`] method, e.g., `./my_model_directory/`.
+- a path or url to a saved configuration JSON *file*, e.g., `./my_model_directory/configuration.json`.
+</code></pre>
+<p>cache_dir (<code>str</code> or <code>os.PathLike</code>, <em>optional</em>):
+Path to a directory in which a downloaded pretrained model configuration should be cached if the
+standard cache should not be used.
+force_download (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not to force to (re-)download the configuration files and override the cached versions if
+they exist.
+resume_download:
+Deprecated and ignored. All downloads are now resumed by default when possible.
+Will be removed in v5 of Transformers.
+proxies (<code>dict[str, str]</code>, <em>optional</em>):
+A dictionary of proxy servers to use by protocol or endpoint, e.g., <code>{'http': 'foo.bar:3128',
+'http://hostname': 'foo.bar:4012'}.</code> The proxies are used on each request.
+token (<code>str</code> or <code>bool</code>, <em>optional</em>):
+The token to use as HTTP bearer authorization for remote files. If <code>True</code>, or not specified, will use
+the token generated when running <code>hf auth login</code> (stored in <code>~/.huggingface</code>).
+revision (<code>str</code>, <em>optional</em>, defaults to <code>"main"</code>):
+The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
+git-based system for storing models and other artifacts on huggingface.co, so <code>revision</code> can be any
+identifier allowed by git.</p>
+<pre><code>&lt;Tip&gt;
+
+To test a pull request you made on the Hub, you can pass `revision="refs/pr/&lt;pr_number&gt;"`.
+
+&lt;/Tip&gt;
+</code></pre>
+<p>return_unused_kwargs (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+If <code>False</code>, then this function returns just the final configuration object.</p>
+<pre><code>If &lt;code&gt;True&lt;/code&gt;, then this functions returns a &lt;code&gt;Tuple(config, unused\_kwargs)&lt;/code&gt; where *unused_kwargs* is a
+dictionary consisting of the key/value pairs whose keys are not configuration attributes: i.e., the
+part of &lt;code&gt;kwargs&lt;/code&gt; which has not been used to update &lt;code&gt;config&lt;/code&gt; and is otherwise ignored.
+</code></pre>
+<p>subfolder (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+In case the relevant files are located inside a subfolder of the model repo on huggingface.co, you can
+specify the folder name here.
+kwargs (<code>dict[str, Any]</code>, <em>optional</em>):
+The values in kwargs of any keys which are configuration attributes will be used to override the loaded
+values. Behavior concerning key/value pairs whose keys are <em>not</em> configuration attributes is controlled
+by the <code>return_unused_kwargs</code> keyword parameter.</p>
+<h2 id="returns">Returns</h2>
+<p>[<code>PretrainedConfig</code>]: The configuration object instantiated from this pretrained model.
+Examples:</p>
+<pre><code class="language-python"># We can't instantiate directly the base class *PretrainedConfig* so let's show the examples on a
+# derived class: BertConfig
+config = BertConfig.from_pretrained(
+    &quot;google-bert/bert-base-uncased&quot;
+)  # Download configuration from huggingface.co and cache.
+config = BertConfig.from_pretrained(
+    &quot;./test/saved_model/&quot;
+)  # E.g. config (or model) was saved using *save_pretrained('./test/saved_model/')*
+config = BertConfig.from_pretrained(&quot;./test/saved_model/my_configuration.json&quot;)
+config = BertConfig.from_pretrained(&quot;google-bert/bert-base-uncased&quot;, output_attentions=True, foo=False)
+assert config.output_attentions == True
+config, unused_kwargs = BertConfig.from_pretrained(
+    &quot;google-bert/bert-base-uncased&quot;, output_attentions=True, foo=False, return_unused_kwargs=True
+)
+assert config.output_attentions == True
+assert unused_kwargs == {&quot;foo&quot;: False}
+</code></pre></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.configs" href="index.html">sglang.srt.configs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.configs.dbrx.DbrxAttentionConfig" href="#sglang.srt.configs.dbrx.DbrxAttentionConfig">DbrxAttentionConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.dbrx.DbrxAttentionConfig.from_pretrained" href="#sglang.srt.configs.dbrx.DbrxAttentionConfig.from_pretrained">from_pretrained</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.dbrx.DbrxConfig" href="#sglang.srt.configs.dbrx.DbrxConfig">DbrxConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.dbrx.DbrxConfig.attribute_map" href="#sglang.srt.configs.dbrx.DbrxConfig.attribute_map">attribute_map</a></code></li>
+<li><code><a title="sglang.srt.configs.dbrx.DbrxConfig.model_type" href="#sglang.srt.configs.dbrx.DbrxConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.dbrx.DbrxFFNConfig" href="#sglang.srt.configs.dbrx.DbrxFFNConfig">DbrxFFNConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.dbrx.DbrxFFNConfig.from_pretrained" href="#sglang.srt.configs.dbrx.DbrxFFNConfig.from_pretrained">from_pretrained</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

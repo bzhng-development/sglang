@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.bench_one_batch API documentation</title>
+<meta name="description" content="Benchmark the latency of running a single static batch without a server …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.bench_one_batch</code></h1>
+</header>
+<section id="section-intro">
+<p>Benchmark the latency of running a single static batch without a server.</p>
+<p>This script does not launch a server and uses the low-level APIs.
+It accepts server arguments (the same as launch_server.py) and benchmark arguments (e.g., batch size, input lengths).</p>
+<h1 id="usage-latency-test">Usage (latency test)</h1>
+<h2 id="with-dummy-weights">with dummy weights:</h2>
+<p>python -m sglang.bench_one_batch &ndash;model-path meta-llama/Meta-Llama-3-8B-Instruct &ndash;load-format dummy</p>
+<h2 id="sweep-through-multiple-data-points-and-store-append-the-results-in-a-jsonl-file">sweep through multiple data points and store (append) the results in a jsonl file:</h2>
+<p>python -m sglang.bench_one_batch &ndash;model-path meta-llama/Meta-Llama-3-8B-Instruct &ndash;batch 1 12 14 &ndash;input-len 256 512 &ndash;output-len 32 256 &ndash;run-name test_run</p>
+<h2 id="run-with-profiling">run with profiling:</h2>
+<p>python -m sglang.bench_one_batch &ndash;model-path meta-llama/Meta-Llama-3-8B-Instruct &ndash;batch 1 12 14 &ndash;input-len 256 512 &ndash;profile</p>
+<h1 id="usage-correctness-test">Usage (correctness test):</h1>
+<p>python -m sglang.bench_one_batch &ndash;model-path TinyLlama/TinyLlama-1.1B-Chat-v0.4 &ndash;correct</p>
+<h2 id="reference-output-of-the-correctness-test-above-can-be-gpu-dependent">Reference output (of the correctness test above, can be gpu dependent):</h2>
+<p>input_ids=[[1, 450, 7483, 310, 3444, 338], [1, 450, 7483, 310, 278, 3303, 13187, 290, 338], [1, 20628, 338, 263, 6575, 1460, 2462, 322, 306, 763]]</p>
+<p>prefill logits (first half): tensor([[-10.0312,
+-9.5000,
+0.8931,
+&hellip;,
+-4.9414,
+-3.2422,
+-3.3633],
+[-10.0312,
+-9.5000,
+0.8931,
+&hellip;,
+-4.9414,
+-3.2422,
+-3.3633],
+[ -9.1875, -10.2500,
+2.7129,
+&hellip;,
+-4.3359,
+-4.0664,
+-4.1328]],
+device='cuda:0')</p>
+<p>prefill logits (final): tensor([[-8.3125, -7.1172,
+3.3457,
+&hellip;, -4.9570, -4.1328, -3.4141],
+[-8.9141, -9.0156,
+4.1445,
+&hellip;, -4.9922, -4.4961, -4.0781],
+[-9.6328, -9.0547,
+4.0195,
+&hellip;, -5.3047, -4.7148, -4.4570]],
+device='cuda:0')</p>
+<p>========== Prompt 0 ==========
+<s> The capital of France is Paris.
+The capital of the United States is Washington, D.C.</p>
+<p>========== Prompt 1 ==========
+<s> The capital of the United Kindom is London.
+The capital of the United Kingdom is London.
+The capital of the</p>
+<p>========== Prompt 2 ==========
+<s> Today is a sunny day and I like to go for a walk in the park.
+I'm going to the park</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.bench_one_batch.correctness_test"><code class="name flex">
+<span>def <span class="ident">correctness_test</span></span>(<span>server_args, port_args, bench_args, tp_rank)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def correctness_test(
+    server_args,
+    port_args,
+    bench_args,
+    tp_rank,
+):
+    # Configure the logger
+    configure_logger(server_args, prefix=f&#34; TP{tp_rank}&#34;)
+    rank_print = print if tp_rank == 0 else lambda *args, **kwargs: None
+
+    # Load the model
+    model_runner, tokenizer = load_model(server_args, port_args, tp_rank)
+
+    # Prepare inputs
+    custom_prompts = _read_prompts_from_file(bench_args.prompt_filename, rank_print)
+    input_ids, reqs = prepare_inputs_for_correctness_test(
+        bench_args, tokenizer, custom_prompts
+    )
+    rank_print(f&#34;\n{input_ids=}\n&#34;)
+
+    if bench_args.cut_len &gt; 0:
+        # Prefill
+        next_token_ids, next_token_logits, batch = extend(reqs, model_runner)
+        rank_print(f&#34;prefill logits (first half): {next_token_logits} \n&#34;)
+
+    # Prepare extend inputs
+    reqs = prepare_extend_inputs_for_correctness_test(
+        bench_args, input_ids, reqs, model_runner
+    )
+
+    # Extend (prefill w/ KV cache)
+    next_token_ids, next_token_logits, batch = extend(reqs, model_runner)
+    rank_print(f&#34;prefill logits (final): {next_token_logits} \n&#34;)
+
+    # Decode
+    output_ids = [input_ids[i] + [next_token_ids[i]] for i in range(len(input_ids))]
+    for _ in range(bench_args.output_len[0] - 1):
+        next_token_ids, _ = decode(next_token_ids, batch, model_runner)
+        next_token_ids_list = next_token_ids.tolist()
+        for i in range(len(reqs)):
+            output_ids[i].append(next_token_ids_list[i])
+
+    # Print output texts
+    for i in range(len(reqs)):
+        rank_print(f&#34;========== Prompt {i} ==========&#34;)
+        rank_print(tokenizer.decode(output_ids[i]), &#34;\n&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.decode"><code class="name flex">
+<span>def <span class="ident">decode</span></span>(<span>input_token_ids, batch, model_runner)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad
+def decode(input_token_ids, batch, model_runner):
+    batch.output_ids = input_token_ids
+    batch.prepare_for_decode()
+    _maybe_prepare_mlp_sync_batch(batch, model_runner)
+    model_worker_batch = batch.get_model_worker_batch()
+    forward_batch = ForwardBatch.init_new(model_worker_batch, model_runner)
+    logits_output, _ = model_runner.forward(forward_batch)
+    next_token_ids = model_runner.sample(logits_output, forward_batch)
+    return next_token_ids, logits_output.next_token_logits</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.extend"><code class="name flex">
+<span>def <span class="ident">extend</span></span>(<span>reqs, model_runner)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad
+def extend(reqs, model_runner):
+    batch = ScheduleBatch.init_new(
+        reqs=reqs,
+        req_to_token_pool=model_runner.req_to_token_pool,
+        token_to_kv_pool_allocator=model_runner.token_to_kv_pool_allocator,
+        tree_cache=None,
+        model_config=model_runner.model_config,
+        enable_overlap=False,
+        spec_algorithm=SpeculativeAlgorithm.NONE,
+    )
+    batch.prepare_for_extend()
+    _maybe_prepare_mlp_sync_batch(batch, model_runner)
+    model_worker_batch = batch.get_model_worker_batch()
+    forward_batch = ForwardBatch.init_new(model_worker_batch, model_runner)
+    logits_output, _ = model_runner.forward(forward_batch)
+    next_token_ids = model_runner.sample(logits_output, forward_batch)
+    return next_token_ids, logits_output.next_token_logits, batch</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.latency_test"><code class="name flex">
+<span>def <span class="ident">latency_test</span></span>(<span>server_args, port_args, bench_args, tp_rank)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def latency_test(
+    server_args,
+    port_args,
+    bench_args,
+    tp_rank,
+):
+    initialize_moe_config(server_args)
+
+    # Set CPU affinity
+    if get_bool_env_var(&#34;SGLANG_SET_CPU_AFFINITY&#34;):
+        set_gpu_proc_affinity(server_args.tp_size, server_args.nnodes, tp_rank)
+
+    # Configure the logger
+    configure_logger(server_args, prefix=f&#34; TP{tp_rank}&#34;)
+    rank_print = print if tp_rank == 0 else lambda *args, **kwargs: None
+
+    # Load the model
+    model_runner, tokenizer = load_model(server_args, port_args, tp_rank)
+
+    # Prepare inputs for warm up
+    reqs = prepare_synthetic_inputs_for_latency_test(
+        bench_args.batch_size[0], bench_args.input_len[0]
+    )
+
+    # Warm up
+    rank_print(&#34;Warmup ...&#34;)
+    latency_test_run_once(
+        bench_args.run_name,
+        model_runner,
+        rank_print,
+        reqs,
+        bench_args.batch_size[0],
+        bench_args.input_len[0],
+        min(32, bench_args.output_len[0]),  # shorter decoding to speed up the warmup
+        server_args.device,
+        log_decode_step=0,
+        profile=False,
+        profile_record_shapes=False,
+        profile_filename_prefix=&#34;&#34;,  # not used
+    )
+
+    rank_print(&#34;Benchmark ...&#34;)
+
+    custom_inputs = _read_prompts_from_file(bench_args.prompt_filename, rank_print)
+    custom_inputs = [tokenizer.encode(p.strip()) for p in custom_inputs]
+    custom_input_len = len(custom_inputs)
+
+    # Run the sweep
+    result_list = []
+    for bs, il, ol in itertools.product(
+        bench_args.batch_size, bench_args.input_len, bench_args.output_len
+    ):
+        bs_aligned_inputs = []
+        if custom_inputs:
+            if custom_input_len == bs:
+                bs_aligned_inputs = custom_inputs
+            elif custom_input_len &gt; bs:
+                rank_print(
+                    f&#34;Custom input size ({custom_input_len}) is larger than batch_size ({bs}). &#34;
+                    f&#34;Using the first {bs} prompts.&#34;
+                )
+                bs_aligned_inputs = copy.deepcopy(custom_inputs[:bs])
+            else:
+                rank_print(
+                    f&#34;Custom input size ({custom_input_len}) is smaller than batch_size ({bs}). &#34;
+                    f&#34;Pad to the desired batch_size with the last prompt.&#34;
+                )
+                bs_aligned_inputs = copy.deepcopy(custom_inputs)
+                bs_aligned_inputs.extend(
+                    [bs_aligned_inputs[-1]] * (bs - custom_input_len)
+                )
+
+        reqs = prepare_synthetic_inputs_for_latency_test(bs, il, bs_aligned_inputs)
+        ret = latency_test_run_once(
+            bench_args.run_name,
+            model_runner,
+            rank_print,
+            reqs,
+            bs,
+            il,
+            ol,
+            server_args.device,
+            bench_args.log_decode_step,
+            bench_args.profile if tp_rank == 0 else None,
+            bench_args.profile_record_shapes if tp_rank == 0 else None,
+            bench_args.profile_filename_prefix,
+        )
+        if ret is not None:
+            result_list.append(ret)
+
+    # Write results in jsonlines format on rank 0.
+    if tp_rank == 0 and bench_args.result_filename:
+        with open(bench_args.result_filename, &#34;a&#34;) as fout:
+            for result in result_list:
+                fout.write(json.dumps(result) + &#34;\n&#34;)
+
+    if server_args.tp_size &gt; 1:
+        destroy_distributed_environment()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.latency_test_run_once"><code class="name flex">
+<span>def <span class="ident">latency_test_run_once</span></span>(<span>run_name,<br>model_runner,<br>rank_print,<br>reqs,<br>batch_size,<br>input_len,<br>output_len,<br>device,<br>log_decode_step,<br>profile,<br>profile_record_shapes,<br>profile_filename_prefix)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def latency_test_run_once(
+    run_name,
+    model_runner,
+    rank_print,
+    reqs,
+    batch_size,
+    input_len,
+    output_len,
+    device,
+    log_decode_step,
+    profile,
+    profile_record_shapes,
+    profile_filename_prefix,
+):
+    max_batch_size = model_runner.max_total_num_tokens // (input_len + output_len)
+    if batch_size &gt; max_batch_size:
+        rank_print(
+            f&#34;skipping ({batch_size}, {input_len}, {output_len}) due to max batch size limit&#34;
+        )
+        return
+
+    # Clear the pools.
+    model_runner.req_to_token_pool.clear()
+    model_runner.token_to_kv_pool_allocator.clear()
+
+    measurement_results = {
+        &#34;run_name&#34;: run_name,
+        &#34;batch_size&#34;: batch_size,
+        &#34;input_len&#34;: input_len,
+        &#34;output_len&#34;: output_len,
+    }
+
+    tot_latency = 0
+
+    profiler = None
+    if profile:
+        profiler = torch.profiler.profile(
+            activities=[
+                torch.profiler.ProfilerActivity.CPU,
+                torch.profiler.ProfilerActivity.CUDA,
+            ],
+            with_stack=True,
+            record_shapes=profile_record_shapes,
+        )
+        profiler.start()
+
+    # Prefill
+    synchronize(device)
+    tic = time.perf_counter()
+    next_token_ids, _, batch = extend(reqs, model_runner)
+    synchronize(device)
+    prefill_latency = time.perf_counter() - tic
+    tot_latency += prefill_latency
+    throughput = input_len * batch_size / prefill_latency
+    rank_print(
+        f&#34;Prefill. latency: {prefill_latency:6.5f} s, throughput: {throughput:9.2f} token/s&#34;
+    )
+    measurement_results[&#34;prefill_latency&#34;] = prefill_latency
+    measurement_results[&#34;prefill_throughput&#34;] = throughput
+
+    if profile:
+        profiler.stop()
+        profile_filename = f&#34;{profile_filename_prefix}_batch{batch_size}_input{input_len}_output{output_len}_prefill.trace.json.gz&#34;
+        _save_profile_trace_results(profiler, profile_filename)
+        rank_print(
+            f&#34;torch profiler chrome trace for prefill saved to {profile_filename}&#34;
+        )
+
+    # Decode
+    decode_latencies = []
+    for i in range(output_len - 1):
+        synchronize(device)
+        if profile and i == output_len / 2:
+            profiler = None
+            profiler = torch.profiler.profile(
+                activities=[
+                    torch.profiler.ProfilerActivity.CPU,
+                    torch.profiler.ProfilerActivity.CUDA,
+                ],
+                with_stack=True,
+                record_shapes=profile_record_shapes,
+            )
+            profiler.start()
+
+        tic = time.perf_counter()
+        next_token_ids, _ = decode(next_token_ids, batch, model_runner)
+        synchronize(device)
+        latency = time.perf_counter() - tic
+        tot_latency += latency
+        throughput = batch_size / latency
+        decode_latencies.append(latency)
+        if i &lt; 5 or (log_decode_step &gt; 0 and i % log_decode_step == 0):
+            rank_print(
+                f&#34;Decode {i}. Batch size: {batch_size}, latency: {latency:6.5f} s, throughput: {throughput:9.2f} token/s&#34;
+            )
+
+        if profile and i == output_len / 2:
+            profiler.stop()
+            profile_filename = f&#34;{profile_filename_prefix}_batch{batch_size}_input{input_len}_output{output_len}_decode.trace.json.gz&#34;
+            _save_profile_trace_results(profiler, profile_filename)
+            rank_print(
+                f&#34;torch profiler chrome trace for decoding 1 token saved to {profile_filename}&#34;
+            )
+
+    # Record decode timing from 2nd output
+    if output_len &gt; 1:
+        med_decode_latency = np.median(decode_latencies)
+        med_decode_throughput = batch_size / med_decode_latency
+        rank_print(
+            f&#34;Decode.  median latency: {med_decode_latency:6.5f} s, median throughput: {med_decode_throughput:9.2f} token/s&#34;
+        )
+        measurement_results[&#34;median_decode_latency&#34;] = med_decode_latency
+        measurement_results[&#34;median_decode_throughput&#34;] = med_decode_throughput
+
+    throughput = (input_len + output_len) * batch_size / tot_latency
+    rank_print(
+        f&#34;Total. latency: {tot_latency:6.3f} s, throughput: {throughput:9.2f} token/s&#34;
+    )
+    measurement_results[&#34;total_latency&#34;] = tot_latency
+    measurement_results[&#34;overall_throughput&#34;] = throughput
+    return measurement_results</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.load_model"><code class="name flex">
+<span>def <span class="ident">load_model</span></span>(<span>server_args, port_args, tp_rank)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_model(server_args, port_args, tp_rank):
+    suppress_other_loggers()
+    rank_print = print if tp_rank == 0 else lambda *args, **kwargs: None
+    moe_ep_rank = tp_rank // (server_args.tp_size // server_args.ep_size)
+
+    model_config = ModelConfig.from_server_args(server_args)
+    model_runner = ModelRunner(
+        model_config=model_config,
+        mem_fraction_static=server_args.mem_fraction_static,
+        gpu_id=tp_rank,
+        tp_rank=tp_rank,
+        tp_size=server_args.tp_size,
+        moe_ep_rank=moe_ep_rank,
+        moe_ep_size=server_args.ep_size,
+        pp_rank=0,
+        pp_size=1,
+        nccl_port=port_args.nccl_port,
+        server_args=server_args,
+    )
+    rank_print(f&#34;max_total_num_tokens={model_runner.max_total_num_tokens}&#34;)
+    tokenizer = get_tokenizer(
+        server_args.tokenizer_path,
+        tokenizer_mode=server_args.tokenizer_mode,
+        trust_remote_code=server_args.trust_remote_code,
+    )
+    if server_args.tp_size &gt; 1:
+        dist.barrier()
+    return model_runner, tokenizer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>server_args, bench_args)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main(server_args, bench_args):
+    server_args.cuda_graph_max_bs = max(bench_args.batch_size)
+
+    _set_envs_and_config(server_args)
+
+    if server_args.model_path:
+        if bench_args.correctness_test:
+            work_func = correctness_test
+        else:
+            work_func = latency_test
+    else:
+        raise ValueError(
+            &#34;Provide --model-path for running the tests or &#34;
+            &#34;provide --result-filename for plotting the results&#34;
+        )
+
+    port_args = PortArgs.init_new(server_args)
+
+    if server_args.tp_size == 1:
+        work_func(server_args, port_args, bench_args, 0)
+    else:
+        workers = []
+        for tp_rank in range(server_args.tp_size):
+            proc = multiprocessing.Process(
+                target=work_func,
+                args=(
+                    server_args,
+                    port_args,
+                    bench_args,
+                    tp_rank,
+                ),
+            )
+            proc.start()
+            workers.append(proc)
+
+        for proc in workers:
+            proc.join()
+
+        proc.terminate()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.prepare_extend_inputs_for_correctness_test"><code class="name flex">
+<span>def <span class="ident">prepare_extend_inputs_for_correctness_test</span></span>(<span>bench_args, input_ids, reqs, model_runner)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_extend_inputs_for_correctness_test(
+    bench_args, input_ids, reqs, model_runner
+):
+    for i in range(len(reqs)):
+        req = reqs[i]
+        req.fill_ids += input_ids[i][bench_args.cut_len :]
+        req.prefix_indices = model_runner.req_to_token_pool.req_to_token[
+            i, : bench_args.cut_len
+        ]
+        req.extend_input_len = len(req.fill_ids) - len(req.prefix_indices)
+        req.logprob_start_len = len(req.origin_input_ids) - 1
+    return reqs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.prepare_inputs_for_correctness_test"><code class="name flex">
+<span>def <span class="ident">prepare_inputs_for_correctness_test</span></span>(<span>bench_args, tokenizer, custom_prompts)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_inputs_for_correctness_test(bench_args, tokenizer, custom_prompts):
+    prompts = (
+        custom_prompts
+        if custom_prompts
+        else [
+            &#34;The capital of France is&#34;,
+            &#34;The capital of the United Kindom is&#34;,
+            &#34;Today is a sunny day and I like&#34;,
+        ]
+    )
+    input_ids = [tokenizer.encode(p) for p in prompts]
+    sampling_params = SamplingParams(
+        temperature=0,
+        max_new_tokens=BenchArgs.output_len,
+    )
+
+    reqs = []
+    for i in range(len(prompts)):
+        assert len(input_ids[i]) &gt; bench_args.cut_len
+
+        tmp_input_ids = input_ids[i][: bench_args.cut_len]
+        req = Req(
+            rid=i,
+            origin_input_text=prompts[i],
+            origin_input_ids=tmp_input_ids,
+            sampling_params=sampling_params,
+        )
+        req.prefix_indices = []
+        req.fill_ids = req.origin_input_ids
+        req.extend_input_len = len(req.fill_ids) - len(req.prefix_indices)
+        req.logprob_start_len = len(req.origin_input_ids) - 1
+        reqs.append(req)
+
+    return input_ids, reqs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.prepare_synthetic_inputs_for_latency_test"><code class="name flex">
+<span>def <span class="ident">prepare_synthetic_inputs_for_latency_test</span></span>(<span>batch_size, input_len, custom_inputs=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_synthetic_inputs_for_latency_test(
+    batch_size, input_len, custom_inputs=None
+):
+    input_ids = (
+        custom_inputs
+        if custom_inputs
+        else np.random.randint(0, 10000, (batch_size, input_len), dtype=np.int32)
+    )
+    sampling_params = SamplingParams(
+        temperature=0,
+        max_new_tokens=BenchArgs.output_len,
+    )
+
+    reqs = []
+    for i in range(len(input_ids)):
+        req = Req(
+            rid=i,
+            origin_input_text=&#34;&#34;,
+            origin_input_ids=list(input_ids[i]),
+            sampling_params=sampling_params,
+        )
+        req.prefix_indices = []
+        req.fill_ids = req.origin_input_ids
+        req.extend_input_len = len(req.fill_ids) - len(req.prefix_indices)
+        req.logprob_start_len = len(req.origin_input_ids) - 1
+        reqs.append(req)
+
+    return reqs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.synchronize"><code class="name flex">
+<span>def <span class="ident">synchronize</span></span>(<span>device)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def synchronize(device):
+    torch.get_device_module(device).synchronize()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.bench_one_batch.BenchArgs"><code class="flex name class">
+<span>class <span class="ident">BenchArgs</span></span>
+<span>(</span><span>run_name: str = 'default',<br>batch_size: Tuple[int] = (1,),<br>input_len: Tuple[int] = (1024,),<br>output_len: Tuple[int] = (16,),<br>prompt_filename: str = '',<br>result_filename: str = 'result.jsonl',<br>correctness_test: bool = False,<br>cut_len: int = 4,<br>log_decode_step: int = 0,<br>profile: bool = False,<br>profile_record_shapes: bool = False,<br>profile_filename_prefix: str = 'profile')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class BenchArgs:
+    run_name: str = &#34;default&#34;
+    batch_size: Tuple[int] = (1,)
+    input_len: Tuple[int] = (1024,)
+    output_len: Tuple[int] = (16,)
+    prompt_filename: str = &#34;&#34;
+    result_filename: str = &#34;result.jsonl&#34;
+    correctness_test: bool = False
+    # This is only used for correctness test
+    cut_len: int = 4
+    log_decode_step: int = 0
+    profile: bool = False
+    profile_record_shapes: bool = False
+    profile_filename_prefix: str = &#34;profile&#34;
+
+    @staticmethod
+    def add_cli_args(parser: argparse.ArgumentParser):
+        parser.add_argument(&#34;--run-name&#34;, type=str, default=BenchArgs.run_name)
+        parser.add_argument(
+            &#34;--batch-size&#34;, type=int, nargs=&#34;+&#34;, default=BenchArgs.batch_size
+        )
+        parser.add_argument(
+            &#34;--input-len&#34;, type=int, nargs=&#34;+&#34;, default=BenchArgs.input_len
+        )
+        parser.add_argument(
+            &#34;--output-len&#34;, type=int, nargs=&#34;+&#34;, default=BenchArgs.output_len
+        )
+        parser.add_argument(
+            &#34;--prompt-filename&#34;, type=str, default=BenchArgs.prompt_filename
+        )
+        parser.add_argument(
+            &#34;--result-filename&#34;, type=str, default=BenchArgs.result_filename
+        )
+        parser.add_argument(&#34;--correctness-test&#34;, action=&#34;store_true&#34;)
+        parser.add_argument(&#34;--cut-len&#34;, type=int, default=BenchArgs.cut_len)
+        parser.add_argument(
+            &#34;--log-decode-step&#34;,
+            type=int,
+            default=BenchArgs.log_decode_step,
+            help=&#34;Log decode latency by step, default is set to zero to disable.&#34;,
+        )
+        parser.add_argument(
+            &#34;--profile&#34;, action=&#34;store_true&#34;, help=&#34;Use Torch Profiler.&#34;
+        )
+        parser.add_argument(
+            &#34;--profile-record-shapes&#34;,
+            action=&#34;store_true&#34;,
+            help=&#34;Record tensor shapes in profiling results.&#34;,
+        )
+        parser.add_argument(
+            &#34;--profile-filename-prefix&#34;,
+            type=str,
+            default=BenchArgs.profile_filename_prefix,
+            help=&#34;Prefix of the profiling file names. The full profiling result file(s) be &#34;
+            &#39;&#34;[profile_filename_prefix]_batch[batch_size]_input[input_len]_output[output_len].trace.json.gz&#34;&#39;,
+        )
+
+    @classmethod
+    def from_cli_args(cls, args: argparse.Namespace):
+        # use the default value&#39;s type to cast the args into correct types.
+        attrs = [(attr.name, type(attr.default)) for attr in dataclasses.fields(cls)]
+        return cls(
+            **{attr: attr_type(getattr(args, attr)) for attr, attr_type in attrs}
+        )</code></pre>
+</details>
+<div class="desc"><p>BenchArgs(run_name: str = 'default', batch_size: Tuple[int] = (1,), input_len: Tuple[int] = (1024,), output_len: Tuple[int] = (16,), prompt_filename: str = '', result_filename: str = 'result.jsonl', correctness_test: bool = False, cut_len: int = 4, log_decode_step: int = 0, profile: bool = False, profile_record_shapes: bool = False, profile_filename_prefix: str = 'profile')</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.bench_one_batch.BenchArgs.add_cli_args"><code class="name flex">
+<span>def <span class="ident">add_cli_args</span></span>(<span>parser: argparse.ArgumentParser)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def add_cli_args(parser: argparse.ArgumentParser):
+    parser.add_argument(&#34;--run-name&#34;, type=str, default=BenchArgs.run_name)
+    parser.add_argument(
+        &#34;--batch-size&#34;, type=int, nargs=&#34;+&#34;, default=BenchArgs.batch_size
+    )
+    parser.add_argument(
+        &#34;--input-len&#34;, type=int, nargs=&#34;+&#34;, default=BenchArgs.input_len
+    )
+    parser.add_argument(
+        &#34;--output-len&#34;, type=int, nargs=&#34;+&#34;, default=BenchArgs.output_len
+    )
+    parser.add_argument(
+        &#34;--prompt-filename&#34;, type=str, default=BenchArgs.prompt_filename
+    )
+    parser.add_argument(
+        &#34;--result-filename&#34;, type=str, default=BenchArgs.result_filename
+    )
+    parser.add_argument(&#34;--correctness-test&#34;, action=&#34;store_true&#34;)
+    parser.add_argument(&#34;--cut-len&#34;, type=int, default=BenchArgs.cut_len)
+    parser.add_argument(
+        &#34;--log-decode-step&#34;,
+        type=int,
+        default=BenchArgs.log_decode_step,
+        help=&#34;Log decode latency by step, default is set to zero to disable.&#34;,
+    )
+    parser.add_argument(
+        &#34;--profile&#34;, action=&#34;store_true&#34;, help=&#34;Use Torch Profiler.&#34;
+    )
+    parser.add_argument(
+        &#34;--profile-record-shapes&#34;,
+        action=&#34;store_true&#34;,
+        help=&#34;Record tensor shapes in profiling results.&#34;,
+    )
+    parser.add_argument(
+        &#34;--profile-filename-prefix&#34;,
+        type=str,
+        default=BenchArgs.profile_filename_prefix,
+        help=&#34;Prefix of the profiling file names. The full profiling result file(s) be &#34;
+        &#39;&#34;[profile_filename_prefix]_batch[batch_size]_input[input_len]_output[output_len].trace.json.gz&#34;&#39;,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.from_cli_args"><code class="name flex">
+<span>def <span class="ident">from_cli_args</span></span>(<span>args: argparse.Namespace)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.bench_one_batch.BenchArgs.batch_size"><code class="name">var <span class="ident">batch_size</span> : Tuple[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.correctness_test"><code class="name">var <span class="ident">correctness_test</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.cut_len"><code class="name">var <span class="ident">cut_len</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.input_len"><code class="name">var <span class="ident">input_len</span> : Tuple[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.log_decode_step"><code class="name">var <span class="ident">log_decode_step</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.output_len"><code class="name">var <span class="ident">output_len</span> : Tuple[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.profile"><code class="name">var <span class="ident">profile</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.profile_filename_prefix"><code class="name">var <span class="ident">profile_filename_prefix</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.profile_record_shapes"><code class="name">var <span class="ident">profile_record_shapes</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.prompt_filename"><code class="name">var <span class="ident">prompt_filename</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.result_filename"><code class="name">var <span class="ident">result_filename</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.bench_one_batch.BenchArgs.run_name"><code class="name">var <span class="ident">run_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul>
+<li><a href="#usage-latency-test">Usage (latency test)</a><ul>
+<li><a href="#with-dummy-weights">with dummy weights:</a></li>
+<li><a href="#sweep-through-multiple-data-points-and-store-append-the-results-in-a-jsonl-file">sweep through multiple data points and store (append) the results in a jsonl file:</a></li>
+<li><a href="#run-with-profiling">run with profiling:</a></li>
+</ul>
+</li>
+<li><a href="#usage-correctness-test">Usage (correctness test):</a><ul>
+<li><a href="#reference-output-of-the-correctness-test-above-can-be-gpu-dependent">Reference output (of the correctness test above, can be gpu dependent):</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang" href="index.html">sglang</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.bench_one_batch.correctness_test" href="#sglang.bench_one_batch.correctness_test">correctness_test</a></code></li>
+<li><code><a title="sglang.bench_one_batch.decode" href="#sglang.bench_one_batch.decode">decode</a></code></li>
+<li><code><a title="sglang.bench_one_batch.extend" href="#sglang.bench_one_batch.extend">extend</a></code></li>
+<li><code><a title="sglang.bench_one_batch.latency_test" href="#sglang.bench_one_batch.latency_test">latency_test</a></code></li>
+<li><code><a title="sglang.bench_one_batch.latency_test_run_once" href="#sglang.bench_one_batch.latency_test_run_once">latency_test_run_once</a></code></li>
+<li><code><a title="sglang.bench_one_batch.load_model" href="#sglang.bench_one_batch.load_model">load_model</a></code></li>
+<li><code><a title="sglang.bench_one_batch.main" href="#sglang.bench_one_batch.main">main</a></code></li>
+<li><code><a title="sglang.bench_one_batch.prepare_extend_inputs_for_correctness_test" href="#sglang.bench_one_batch.prepare_extend_inputs_for_correctness_test">prepare_extend_inputs_for_correctness_test</a></code></li>
+<li><code><a title="sglang.bench_one_batch.prepare_inputs_for_correctness_test" href="#sglang.bench_one_batch.prepare_inputs_for_correctness_test">prepare_inputs_for_correctness_test</a></code></li>
+<li><code><a title="sglang.bench_one_batch.prepare_synthetic_inputs_for_latency_test" href="#sglang.bench_one_batch.prepare_synthetic_inputs_for_latency_test">prepare_synthetic_inputs_for_latency_test</a></code></li>
+<li><code><a title="sglang.bench_one_batch.synchronize" href="#sglang.bench_one_batch.synchronize">synchronize</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.bench_one_batch.BenchArgs" href="#sglang.bench_one_batch.BenchArgs">BenchArgs</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.bench_one_batch.BenchArgs.add_cli_args" href="#sglang.bench_one_batch.BenchArgs.add_cli_args">add_cli_args</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.batch_size" href="#sglang.bench_one_batch.BenchArgs.batch_size">batch_size</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.correctness_test" href="#sglang.bench_one_batch.BenchArgs.correctness_test">correctness_test</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.cut_len" href="#sglang.bench_one_batch.BenchArgs.cut_len">cut_len</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.from_cli_args" href="#sglang.bench_one_batch.BenchArgs.from_cli_args">from_cli_args</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.input_len" href="#sglang.bench_one_batch.BenchArgs.input_len">input_len</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.log_decode_step" href="#sglang.bench_one_batch.BenchArgs.log_decode_step">log_decode_step</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.output_len" href="#sglang.bench_one_batch.BenchArgs.output_len">output_len</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.profile" href="#sglang.bench_one_batch.BenchArgs.profile">profile</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.profile_filename_prefix" href="#sglang.bench_one_batch.BenchArgs.profile_filename_prefix">profile_filename_prefix</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.profile_record_shapes" href="#sglang.bench_one_batch.BenchArgs.profile_record_shapes">profile_record_shapes</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.prompt_filename" href="#sglang.bench_one_batch.BenchArgs.prompt_filename">prompt_filename</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.result_filename" href="#sglang.bench_one_batch.BenchArgs.result_filename">result_filename</a></code></li>
+<li><code><a title="sglang.bench_one_batch.BenchArgs.run_name" href="#sglang.bench_one_batch.BenchArgs.run_name">run_name</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

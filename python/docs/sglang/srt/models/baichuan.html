@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.baichuan API documentation</title>
+<meta name="description" content="Inference-only BaiChuan model compatible with HuggingFace weights.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.baichuan</code></h1>
+</header>
+<section id="section-intro">
+<p>Inference-only BaiChuan model compatible with HuggingFace weights.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanAttention"><code class="flex name class">
+<span>class <span class="ident">BaiChuanAttention</span></span>
+<span>(</span><span>hidden_size: int,<br>num_heads: int,<br>position_embedding: str,<br>rope_theta: float = 10000,<br>max_position_embeddings: int = 8192,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>layer_id: int = 0,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaiChuanAttention(nn.Module):
+    &#34;&#34;&#34;Multi-headed attention from &#39;Attention Is All You Need&#39; paper&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        position_embedding: str,
+        rope_theta: float = 10000,
+        max_position_embeddings: int = 8192,
+        quant_config: Optional[QuantizationConfig] = None,
+        layer_id: int = 0,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.hidden_size = hidden_size
+        tensor_model_parallel_world_size = get_tensor_model_parallel_world_size()
+        tp_size = get_tensor_model_parallel_world_size()
+        self.total_num_heads = num_heads
+        assert self.total_num_heads % tensor_model_parallel_world_size == 0
+        self.num_heads = self.total_num_heads // tensor_model_parallel_world_size
+        self.head_dim = hidden_size // self.total_num_heads
+        self.postion_embedding = position_embedding
+        self.rope_theta = rope_theta
+        self.max_position_embeddings = max_position_embeddings
+        self.total_num_kv_heads = self.num_heads
+        if self.total_num_kv_heads &gt;= tp_size:
+            # Number of KV heads is greater than TP size, so we partition
+            # the KV heads across multiple tensor parallel GPUs.
+            assert self.total_num_kv_heads % tp_size == 0
+        else:
+            # Number of KV heads is less than TP size, so we replicate
+            # the KV heads across multiple tensor parallel GPUs.
+            assert tp_size % self.total_num_kv_heads == 0
+        self.num_kv_heads = max(1, self.total_num_kv_heads // tp_size)
+
+        # pylint: disable=invalid-name
+        self.W_pack = QKVParallelLinear(
+            hidden_size,
+            self.head_dim,
+            self.total_num_heads,
+            self.total_num_heads,
+            bias=False,
+            quant_config=quant_config,
+        )
+        self.o_proj = RowParallelLinear(
+            self.total_num_heads * self.head_dim,
+            hidden_size,
+            bias=False,
+            quant_config=quant_config,
+        )
+        # Create the alibi slopes and slice them.
+        if self.postion_embedding == &#34;ALIBI&#34;:
+            tp_rank = get_tensor_model_parallel_rank()
+            head_start = tp_rank * self.num_heads
+            head_end = (tp_rank + 1) * self.num_heads
+            alibi_slopes = _get_alibi_slopes(self.total_num_heads)
+            alibi_slopes = alibi_slopes[head_start:head_end].tolist()
+
+            scaling = self.head_dim**-0.5
+            self.attn = RadixAttention(
+                self.num_heads,
+                self.head_dim,
+                scaling,
+                num_kv_heads=self.num_kv_heads,
+                layer_id=layer_id,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;attn&#34;, prefix),
+            )
+        else:
+            self.rotary_emb = get_rope(
+                self.head_dim,
+                rotary_dim=self.head_dim,
+                max_position=self.max_position_embeddings,
+                base=self.rope_theta,
+            )
+            self.scaling = self.head_dim**-0.5
+            self.attn = RadixAttention(
+                self.num_heads,
+                self.head_dim,
+                self.scaling,
+                num_kv_heads=self.num_kv_heads,
+                layer_id=layer_id,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;attn&#34;, prefix),
+            )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        qkv, _ = self.W_pack(hidden_states)
+        q, k, v = qkv.chunk(chunks=3, dim=-1)
+        if self.postion_embedding != &#34;ALIBI&#34;:
+            q, k = self.rotary_emb(positions, q, k)
+        attn_output = self.attn(q, k, v, forward_batch)
+        output, _ = self.o_proj(attn_output)
+        return output</code></pre>
+</details>
+<div class="desc"><p>Multi-headed attention from 'Attention Is All You Need' paper</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    qkv, _ = self.W_pack(hidden_states)
+    q, k, v = qkv.chunk(chunks=3, dim=-1)
+    if self.postion_embedding != &#34;ALIBI&#34;:
+        q, k = self.rotary_emb(positions, q, k)
+    attn_output = self.attn(q, k, v, forward_batch)
+    output, _ = self.o_proj(attn_output)
+    return output</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM"><code class="flex name class">
+<span>class <span class="ident">BaiChuanBaseForCausalLM</span></span>
+<span>(</span><span>config: transformers.configuration_utils.PretrainedConfig,<br>position_embedding: str,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaiChuanBaseForCausalLM(nn.Module):
+    packed_modules_mapping = {
+        &#34;W_pack&#34;: [&#34;W_pack&#34;],
+        &#34;gate_up_proj&#34;: [
+            &#34;gate_proj&#34;,
+            &#34;up_proj&#34;,
+        ],
+    }
+    # LoRA specific attributes
+    supported_lora_modules = [
+        &#34;W_pack&#34;,
+        &#34;o_proj&#34;,
+        &#34;gate_up_proj&#34;,
+        &#34;down_proj&#34;,
+    ]
+    embedding_modules = {}
+    embedding_padding_modules = []
+
+    def __init__(
+        self,
+        config: PretrainedConfig,
+        position_embedding: str,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+
+        self.config = config
+
+        self.quant_config = quant_config
+        self.model = BaiChuanModel(
+            config, position_embedding, quant_config, prefix=add_prefix(&#34;model&#34;, prefix)
+        )
+        if self.config.tie_word_embeddings:
+            self.lm_head = self.model.embed_tokens
+        else:
+            self.lm_head = ParallelLMHead(
+                config.vocab_size,
+                config.hidden_size,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;lm_head&#34;, prefix),
+            )
+        self.logits_processor = LogitsProcessor(config)
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        hidden_states = self.model(input_ids, positions, forward_batch)
+        return self.logits_processor(
+            input_ids, hidden_states, self.lm_head, forward_batch
+        )
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+            (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+        ]
+        params_dict = dict(self.named_parameters())
+        for name, loaded_weight in weights:
+            if &#34;rotary_emb.inv_freq&#34; in name:
+                continue
+            if name == &#34;lm_head.weight&#34;:
+                # Unlike Baichuan, Baichuan2 normalizes the head weights.
+                # Refer to:
+                # https://huggingface.co/baichuan-inc/Baichuan2-7B-Chat/blob/84603cde5ebffb6084e476cfaeceaf0b8b91fe54/modeling_baichuan.py#L508
+                # Distinguish between Baichuan and Baichuan2 by checking the
+                # vocab size. This is suggested by
+                # https://github.com/vllm-project/vllm/pull/1022#discussion_r1325652704
+                is_baichuan2 = self.config.vocab_size == 125696
+                if is_baichuan2:
+                    loaded_weight = torch.nn.functional.normalize(loaded_weight)
+
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+                weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.baichuan.BaichuanForCausalLM" href="#sglang.srt.models.baichuan.BaichuanForCausalLM">BaichuanForCausalLM</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.embedding_modules"><code class="name">var <span class="ident">embedding_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.embedding_padding_modules"><code class="name">var <span class="ident">embedding_padding_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.packed_modules_mapping"><code class="name">var <span class="ident">packed_modules_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.supported_lora_modules"><code class="name">var <span class="ident">supported_lora_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    hidden_states = self.model(input_ids, positions, forward_batch)
+    return self.logits_processor(
+        input_ids, hidden_states, self.lm_head, forward_batch
+    )</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+        (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+    ]
+    params_dict = dict(self.named_parameters())
+    for name, loaded_weight in weights:
+        if &#34;rotary_emb.inv_freq&#34; in name:
+            continue
+        if name == &#34;lm_head.weight&#34;:
+            # Unlike Baichuan, Baichuan2 normalizes the head weights.
+            # Refer to:
+            # https://huggingface.co/baichuan-inc/Baichuan2-7B-Chat/blob/84603cde5ebffb6084e476cfaeceaf0b8b91fe54/modeling_baichuan.py#L508
+            # Distinguish between Baichuan and Baichuan2 by checking the
+            # vocab size. This is suggested by
+            # https://github.com/vllm-project/vllm/pull/1022#discussion_r1325652704
+            is_baichuan2 = self.config.vocab_size == 125696
+            if is_baichuan2:
+                loaded_weight = torch.nn.functional.normalize(loaded_weight)
+
+        for param_name, weight_name, shard_id in stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            name = name.replace(weight_name, param_name)
+            # Skip loading extra bias for GPTQ models.
+            if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                continue
+            param = params_dict[name]
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            # Skip loading extra bias for GPTQ models.
+            if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                continue
+            param = params_dict[name]
+            weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+            weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanDecoderLayer"><code class="flex name class">
+<span>class <span class="ident">BaiChuanDecoderLayer</span></span>
+<span>(</span><span>config: transformers.configuration_utils.PretrainedConfig,<br>position_embedding: str,<br>layer_id: int = 0,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaiChuanDecoderLayer(nn.Module):
+
+    def __init__(
+        self,
+        config: PretrainedConfig,
+        position_embedding: str,
+        layer_id: int = 0,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.hidden_size = config.hidden_size
+        rope_theta = getattr(config, &#34;rope_theta&#34;, 10000)
+        max_position_embeddings = getattr(config, &#34;max_position_embeddings&#34;, 8192)
+        self.self_attn = BaiChuanAttention(
+            hidden_size=self.hidden_size,
+            num_heads=config.num_attention_heads,
+            position_embedding=position_embedding,
+            rope_theta=rope_theta,
+            layer_id=layer_id,
+            max_position_embeddings=max_position_embeddings,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;self_attn&#34;, prefix),
+        )
+        self.mlp = BaiChuanMLP(
+            hidden_size=self.hidden_size,
+            intermediate_size=config.intermediate_size,
+            hidden_act=config.hidden_act,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;mlp&#34;, prefix),
+        )
+        self.input_layernorm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.post_attention_layernorm = RMSNorm(
+            config.hidden_size, eps=config.rms_norm_eps
+        )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+        residual: Optional[torch.Tensor],
+    ) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+        # Self Attention
+        if residual is None:
+            residual = hidden_states
+            hidden_states = self.input_layernorm(hidden_states)
+        else:
+            hidden_states, residual = self.input_layernorm(hidden_states, residual)
+        hidden_states = self.self_attn(
+            positions=positions,
+            hidden_states=hidden_states,
+            forward_batch=forward_batch,
+        )
+
+        # Fully Connected
+        hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+        hidden_states = self.mlp(hidden_states)
+        return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanDecoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>residual: torch.Tensor | None) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+    residual: Optional[torch.Tensor],
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    # Self Attention
+    if residual is None:
+        residual = hidden_states
+        hidden_states = self.input_layernorm(hidden_states)
+    else:
+        hidden_states, residual = self.input_layernorm(hidden_states, residual)
+    hidden_states = self.self_attn(
+        positions=positions,
+        hidden_states=hidden_states,
+        forward_batch=forward_batch,
+    )
+
+    # Fully Connected
+    hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+    hidden_states = self.mlp(hidden_states)
+    return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanMLP"><code class="flex name class">
+<span>class <span class="ident">BaiChuanMLP</span></span>
+<span>(</span><span>hidden_size: int,<br>intermediate_size: int,<br>hidden_act: str,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaiChuanMLP(nn.Module):
+
+    def __init__(
+        self,
+        hidden_size: int,
+        intermediate_size: int,
+        hidden_act: str,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.gate_up_proj = MergedColumnParallelLinear(
+            hidden_size,
+            [intermediate_size] * 2,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;gate_up_proj&#34;, prefix),
+        )
+        self.down_proj = RowParallelLinear(
+            intermediate_size,
+            hidden_size,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;down_proj&#34;, prefix),
+        )
+        if hidden_act != &#34;silu&#34;:
+            raise ValueError(
+                f&#34;Unsupported activation: {hidden_act}. &#34;
+                &#34;Only silu is supported for now.&#34;
+            )
+        self.act_fn = SiluAndMul()
+
+    def forward(self, x):
+        gate_up, _ = self.gate_up_proj(x)
+        x = self.act_fn(gate_up)
+        x, _ = self.down_proj(x)
+        return x</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanMLP.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x):
+    gate_up, _ = self.gate_up_proj(x)
+    x = self.act_fn(gate_up)
+    x, _ = self.down_proj(x)
+    return x</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaiChuanModel"><code class="flex name class">
+<span>class <span class="ident">BaiChuanModel</span></span>
+<span>(</span><span>config: transformers.configuration_utils.PretrainedConfig,<br>position_embedding: str,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaiChuanModel(nn.Module):
+
+    def __init__(
+        self,
+        config: PretrainedConfig,
+        position_embedding: str,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.config = config
+        self.padding_idx = config.pad_token_id
+        self.vocab_size = config.vocab_size
+
+        self.embed_tokens = VocabParallelEmbedding(
+            config.vocab_size,
+            config.hidden_size,
+        )
+        self.layers = nn.ModuleList(
+            [
+                BaiChuanDecoderLayer(
+                    config,
+                    layer_id=i,
+                    position_embedding=position_embedding,
+                    quant_config=quant_config,
+                    prefix=add_prefix(f&#34;layers.{i}&#34;, prefix),
+                )
+                for i in range(config.num_hidden_layers)
+            ]
+        )
+        self.norm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        hidden_states = self.embed_tokens(input_ids)
+        residual = None
+        for i in range(len(self.layers)):
+            layer = self.layers[i]
+            hidden_states, residual = layer(
+                positions,
+                hidden_states,
+                forward_batch,
+                residual,
+            )
+        hidden_states, _ = self.norm(hidden_states, residual)
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.baichuan.BaiChuanModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    hidden_states = self.embed_tokens(input_ids)
+    residual = None
+    for i in range(len(self.layers)):
+        layer = self.layers[i]
+        hidden_states, residual = layer(
+            positions,
+            hidden_states,
+            forward_batch,
+            residual,
+        )
+    hidden_states, _ = self.norm(hidden_states, residual)
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.baichuan.BaichuanForCausalLM"><code class="flex name class">
+<span>class <span class="ident">BaichuanForCausalLM</span></span>
+<span>(</span><span>config,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaichuanForCausalLM(BaiChuanBaseForCausalLM):
+    &#34;&#34;&#34;Baichuan 13B and Baichuan2 7B/13B.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        config,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        if config.hidden_size == 4096:  # baichuan2 7b
+            super().__init__(config, &#34;ROPE&#34;, quant_config, prefix=prefix)
+        else:  # baichuan 13b, baichuan2 13b
+            super().__init__(config, &#34;ALIBI&#34;, quant_config, prefix=prefix)</code></pre>
+</details>
+<div class="desc"><p>Baichuan 13B and Baichuan2 7B/13B.</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM">BaiChuanBaseForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM">BaiChuanBaseForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.forward" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.baichuan.BaiChuanAttention" href="#sglang.srt.models.baichuan.BaiChuanAttention">BaiChuanAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanAttention.forward" href="#sglang.srt.models.baichuan.BaiChuanAttention.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM">BaiChuanBaseForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.embedding_modules" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.embedding_modules">embedding_modules</a></code></li>
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.embedding_padding_modules" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.embedding_padding_modules">embedding_padding_modules</a></code></li>
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.forward" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.load_weights" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.packed_modules_mapping" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.packed_modules_mapping">packed_modules_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.supported_lora_modules" href="#sglang.srt.models.baichuan.BaiChuanBaseForCausalLM.supported_lora_modules">supported_lora_modules</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.baichuan.BaiChuanDecoderLayer" href="#sglang.srt.models.baichuan.BaiChuanDecoderLayer">BaiChuanDecoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanDecoderLayer.forward" href="#sglang.srt.models.baichuan.BaiChuanDecoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.baichuan.BaiChuanMLP" href="#sglang.srt.models.baichuan.BaiChuanMLP">BaiChuanMLP</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanMLP.forward" href="#sglang.srt.models.baichuan.BaiChuanMLP.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.baichuan.BaiChuanModel" href="#sglang.srt.models.baichuan.BaiChuanModel">BaiChuanModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.baichuan.BaiChuanModel.forward" href="#sglang.srt.models.baichuan.BaiChuanModel.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.baichuan.BaichuanForCausalLM" href="#sglang.srt.models.baichuan.BaichuanForCausalLM">BaichuanForCausalLM</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

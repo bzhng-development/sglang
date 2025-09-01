@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.arcee API documentation</title>
+<meta name="description" content="Inference-only Arcee Foundational Model (AFM) compatible with HuggingFace weights.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.arcee</code></h1>
+</header>
+<section id="section-intro">
+<p>Inference-only Arcee Foundational Model (AFM) compatible with HuggingFace weights.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeAttention"><code class="flex name class">
+<span>class <span class="ident">ArceeAttention</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>hidden_size: int,<br>num_heads: int,<br>num_kv_heads: int,<br>layer_id: int = 0,<br>rope_theta: float = 10000,<br>rope_scaling: Dict[str, Any] | None = None,<br>rope_is_neox_style: bool = True,<br>max_position_embeddings: int = 8192,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '',<br>bias: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArceeAttention(nn.Module):
+    def __init__(
+        self,
+        config: LlamaConfig,
+        hidden_size: int,
+        num_heads: int,
+        num_kv_heads: int,
+        layer_id: int = 0,
+        rope_theta: float = 10000,
+        rope_scaling: Optional[Dict[str, Any]] = None,
+        rope_is_neox_style: bool = True,
+        max_position_embeddings: int = 8192,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+        bias: bool = False,
+    ) -&gt; None:
+        super().__init__()
+        self.hidden_size = hidden_size
+        tp_size = get_tensor_model_parallel_world_size()
+        self.total_num_heads = num_heads
+        assert self.total_num_heads % tp_size == 0
+        self.num_heads = self.total_num_heads // tp_size
+        self.total_num_kv_heads = num_kv_heads
+        if self.total_num_kv_heads &gt;= tp_size:
+            assert self.total_num_kv_heads % tp_size == 0
+        else:
+            assert tp_size % self.total_num_kv_heads == 0
+        self.num_kv_heads = max(1, self.total_num_kv_heads // tp_size)
+        self.head_dim = getattr(config, &#34;head_dim&#34;, None)
+        if self.head_dim is None:
+            self.head_dim = self.hidden_size // self.total_num_heads
+        self.partial_rotary_factor = getattr(config, &#34;partial_rotary_factor&#34;, 1)
+        self.rotary_dim = int(self.partial_rotary_factor * self.head_dim)
+        self.q_size = self.num_heads * self.head_dim
+        self.kv_size = self.num_kv_heads * self.head_dim
+        self.scaling = self.head_dim**-0.5
+        self.rope_theta = rope_theta
+        self.max_position_embeddings = max_position_embeddings
+
+        self.qkv_proj = QKVParallelLinear(
+            hidden_size,
+            self.head_dim,
+            self.total_num_heads,
+            self.total_num_kv_heads,
+            bias=bias,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;qkv_proj&#34;, prefix),
+        )
+        self.o_proj = RowParallelLinear(
+            self.total_num_heads * self.head_dim,
+            hidden_size,
+            bias=bias,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;o_proj&#34;, prefix),
+        )
+
+        self.rotary_emb = get_rope(
+            self.head_dim,
+            rotary_dim=self.rotary_dim,
+            max_position=max_position_embeddings,
+            base=rope_theta,
+            rope_scaling=rope_scaling,
+            is_neox_style=rope_is_neox_style,
+        )
+        self.attn = RadixAttention(
+            self.num_heads,
+            self.head_dim,
+            self.scaling,
+            num_kv_heads=self.num_kv_heads,
+            layer_id=layer_id,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;attn&#34;, prefix),
+        )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        qkv, _ = self.qkv_proj(hidden_states)
+        q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+        q, k = self.rotary_emb(positions, q, k)
+        attn_output = self.attn(q, k, v, forward_batch)
+        output, _ = self.o_proj(attn_output)
+        return output</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    qkv, _ = self.qkv_proj(hidden_states)
+    q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+    q, k = self.rotary_emb(positions, q, k)
+    attn_output = self.attn(q, k, v, forward_batch)
+    output, _ = self.o_proj(attn_output)
+    return output</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeDecoderLayer"><code class="flex name class">
+<span>class <span class="ident">ArceeDecoderLayer</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>layer_id: int = 0,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArceeDecoderLayer(nn.Module):
+    def __init__(
+        self,
+        config: LlamaConfig,
+        layer_id: int = 0,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.hidden_size = config.hidden_size
+        rope_theta = getattr(config, &#34;rope_theta&#34;, 10000)
+        rope_scaling = getattr(config, &#34;rope_scaling&#34;, None)
+        if rope_scaling is not None and getattr(
+            config, &#34;original_max_position_embeddings&#34;, None
+        ):
+            rope_scaling[&#34;original_max_position_embeddings&#34;] = (
+                config.original_max_position_embeddings
+            )
+        rope_is_neox_style = getattr(config, &#34;rope_is_neox_style&#34;, True)
+        max_position_embeddings = getattr(config, &#34;max_position_embeddings&#34;, 8192)
+        attention_bias = getattr(config, &#34;attention_bias&#34;, False) or getattr(
+            config, &#34;bias&#34;, False
+        )
+        self.self_attn = ArceeAttention(
+            config=config,
+            hidden_size=self.hidden_size,
+            num_heads=config.num_attention_heads,
+            num_kv_heads=config.num_key_value_heads,
+            layer_id=layer_id,
+            rope_theta=rope_theta,
+            rope_scaling=rope_scaling,
+            rope_is_neox_style=rope_is_neox_style,
+            max_position_embeddings=max_position_embeddings,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;self_attn&#34;, prefix),
+            bias=attention_bias,
+        )
+        self.mlp = ArceeMLP(
+            hidden_size=self.hidden_size,
+            intermediate_size=config.intermediate_size,
+            hidden_act=config.hidden_act,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;mlp&#34;, prefix),
+        )
+        self.input_layernorm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.post_attention_layernorm = RMSNorm(
+            config.hidden_size, eps=config.rms_norm_eps
+        )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+        residual: Optional[torch.Tensor],
+    ) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+        # Self Attention
+        if residual is None:
+            residual = hidden_states
+            hidden_states = self.input_layernorm(hidden_states)
+        else:
+            hidden_states, residual = self.input_layernorm(hidden_states, residual)
+        hidden_states = self.self_attn(
+            positions=positions,
+            hidden_states=hidden_states,
+            forward_batch=forward_batch,
+        )
+
+        # Fully Connected
+        hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+        hidden_states = self.mlp(hidden_states)
+        return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeDecoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>residual: torch.Tensor | None) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+    residual: Optional[torch.Tensor],
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    # Self Attention
+    if residual is None:
+        residual = hidden_states
+        hidden_states = self.input_layernorm(hidden_states)
+    else:
+        hidden_states, residual = self.input_layernorm(hidden_states, residual)
+    hidden_states = self.self_attn(
+        positions=positions,
+        hidden_states=hidden_states,
+        forward_batch=forward_batch,
+    )
+
+    # Fully Connected
+    hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+    hidden_states = self.mlp(hidden_states)
+    return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM"><code class="flex name class">
+<span>class <span class="ident">ArceeForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArceeForCausalLM(nn.Module):
+    # BitandBytes specific attributes
+    default_bitsandbytes_target_modules = [
+        # Note: gate_proj is removed compared to Llama
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+    ]
+    # in TP, these weights are partitioned along the column dimension (dim=-1)
+    column_parallel_weights_modules = [&#34;.down_proj.&#34;, &#34;.o_proj.&#34;]
+    bitsandbytes_stacked_params_mapping = {
+        # shard_name, weight_name, index
+        # Note: gate_proj and up_proj are removed as they are not stacked in ArceeMLP
+        &#34;.q_proj&#34;: (&#34;.qkv_proj&#34;, 0),
+        &#34;.k_proj&#34;: (&#34;.qkv_proj&#34;, 1),
+        &#34;.v_proj&#34;: (&#34;.qkv_proj&#34;, 2),
+    }
+
+    def __init__(
+        self,
+        config: LlamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.pp_group = get_pp_group()
+        self.config = config
+        self.quant_config = quant_config
+        self.model = self._init_model(config, quant_config, add_prefix(&#34;model&#34;, prefix))
+        # Arcee does not tie word embeddings
+        self.lm_head = ParallelLMHead(
+            config.vocab_size,
+            config.hidden_size,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;lm_head&#34;, prefix),
+            use_attn_tp_group=global_server_args_dict[&#34;enable_dp_lm_head&#34;],
+        )
+        self.logits_processor = LogitsProcessor(config)
+        self.pooler = Pooler(pooling_type=PoolingType.LAST, normalize=True)
+        # Parameters that are stacked in a single tensor in this model
+        self.stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        ]
+        self.capture_aux_hidden_states = False
+
+    def _init_model(
+        self,
+        config: LlamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        return ArceeModel(config, quant_config=quant_config, prefix=prefix)
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+        get_embedding: bool = False,
+        pp_proxy_tensors: Optional[PPProxyTensors] = None,
+    ) -&gt; LogitsProcessorOutput:
+        hidden_states = self.model(
+            input_ids,
+            positions,
+            forward_batch,
+            input_embeds,
+            pp_proxy_tensors=pp_proxy_tensors,
+        )
+
+        aux_hidden_states = None
+        if self.capture_aux_hidden_states:
+            hidden_states, aux_hidden_states = hidden_states
+
+        if self.pp_group.is_last_rank:
+            if not get_embedding:
+                return self.logits_processor(
+                    input_ids,
+                    hidden_states,
+                    self.lm_head,
+                    forward_batch,
+                    aux_hidden_states,
+                )
+            else:
+                return self.pooler(hidden_states, forward_batch)
+        else:
+            return hidden_states
+
+    @property
+    def start_layer(self):
+        return self.model.start_layer
+
+    @property
+    def end_layer(self):
+        return self.model.end_layer
+
+    def get_input_embeddings(self) -&gt; nn.Embedding:
+        return self.model.embed_tokens
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        params_dict = dict(self.named_parameters())
+
+        for name, loaded_weight in weights:
+            layer_id = get_layer_id(name)
+            if (
+                layer_id is not None
+                and hasattr(self.model, &#34;start_layer&#34;)
+                and (
+                    layer_id &lt; self.model.start_layer
+                    or layer_id &gt;= self.model.end_layer
+                )
+            ):
+                continue
+            if &#34;rotary_emb.inv_freq&#34; in name or &#34;projector&#34; in name:
+                continue
+            if &#34;rotary_emb.cos_cached&#34; in name or &#34;rotary_emb.sin_cached&#34; in name:
+                continue
+
+            # Handle FP8 kv-scale remapping
+            if &#34;scale&#34; in name:
+                name = maybe_remap_kv_scale_name(name, params_dict)
+                if name is None:
+                    continue
+
+            is_stacked = False
+            for param_name, weight_name, shard_id in self.stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+
+                name = name.replace(weight_name, param_name)
+                if name not in params_dict:
+                    continue
+
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                is_stacked = True
+                break
+
+            if not is_stacked:
+                if name in params_dict:
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+                else:
+                    logger.warning(f&#34;Parameter {name} not found in model.&#34;)
+
+    def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+        self.model.load_kv_cache_scales(quantization_param_path)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.bitsandbytes_stacked_params_mapping"><code class="name">var <span class="ident">bitsandbytes_stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.column_parallel_weights_modules"><code class="name">var <span class="ident">column_parallel_weights_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.default_bitsandbytes_target_modules"><code class="name">var <span class="ident">default_bitsandbytes_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.end_layer"><code class="name">prop <span class="ident">end_layer</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def end_layer(self):
+    return self.model.end_layer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.start_layer"><code class="name">prop <span class="ident">start_layer</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_layer(self):
+    return self.model.start_layer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None,<br>get_embedding: bool = False,<br>pp_proxy_tensors: <a title="sglang.srt.model_executor.forward_batch_info.PPProxyTensors" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.PPProxyTensors">PPProxyTensors</a> | None = None) ‑> <a title="sglang.srt.layers.logits_processor.LogitsProcessorOutput" href="../layers/logits_processor.html#sglang.srt.layers.logits_processor.LogitsProcessorOutput">LogitsProcessorOutput</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+    get_embedding: bool = False,
+    pp_proxy_tensors: Optional[PPProxyTensors] = None,
+) -&gt; LogitsProcessorOutput:
+    hidden_states = self.model(
+        input_ids,
+        positions,
+        forward_batch,
+        input_embeds,
+        pp_proxy_tensors=pp_proxy_tensors,
+    )
+
+    aux_hidden_states = None
+    if self.capture_aux_hidden_states:
+        hidden_states, aux_hidden_states = hidden_states
+
+    if self.pp_group.is_last_rank:
+        if not get_embedding:
+            return self.logits_processor(
+                input_ids,
+                hidden_states,
+                self.lm_head,
+                forward_batch,
+                aux_hidden_states,
+            )
+        else:
+            return self.pooler(hidden_states, forward_batch)
+    else:
+        return hidden_states</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.get_input_embeddings"><code class="name flex">
+<span>def <span class="ident">get_input_embeddings</span></span>(<span>self) ‑> torch.nn.modules.sparse.Embedding</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_embeddings(self) -&gt; nn.Embedding:
+    return self.model.embed_tokens</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.load_kv_cache_scales"><code class="name flex">
+<span>def <span class="ident">load_kv_cache_scales</span></span>(<span>self, quantization_param_path: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+    self.model.load_kv_cache_scales(quantization_param_path)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeForCausalLM.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    params_dict = dict(self.named_parameters())
+
+    for name, loaded_weight in weights:
+        layer_id = get_layer_id(name)
+        if (
+            layer_id is not None
+            and hasattr(self.model, &#34;start_layer&#34;)
+            and (
+                layer_id &lt; self.model.start_layer
+                or layer_id &gt;= self.model.end_layer
+            )
+        ):
+            continue
+        if &#34;rotary_emb.inv_freq&#34; in name or &#34;projector&#34; in name:
+            continue
+        if &#34;rotary_emb.cos_cached&#34; in name or &#34;rotary_emb.sin_cached&#34; in name:
+            continue
+
+        # Handle FP8 kv-scale remapping
+        if &#34;scale&#34; in name:
+            name = maybe_remap_kv_scale_name(name, params_dict)
+            if name is None:
+                continue
+
+        is_stacked = False
+        for param_name, weight_name, shard_id in self.stacked_params_mapping:
+            if weight_name not in name:
+                continue
+
+            name = name.replace(weight_name, param_name)
+            if name not in params_dict:
+                continue
+
+            param = params_dict[name]
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            is_stacked = True
+            break
+
+        if not is_stacked:
+            if name in params_dict:
+                param = params_dict[name]
+                weight_loader = getattr(
+                    param, &#34;weight_loader&#34;, default_weight_loader
+                )
+                weight_loader(param, loaded_weight)
+            else:
+                logger.warning(f&#34;Parameter {name} not found in model.&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeMLP"><code class="flex name class">
+<span>class <span class="ident">ArceeMLP</span></span>
+<span>(</span><span>hidden_size: int,<br>intermediate_size: int,<br>hidden_act: str,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '',<br>reduce_results: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArceeMLP(nn.Module):
+    &#34;&#34;&#34;
+    MLP block for the Arcee model, using a ReLU-squared activation function.
+    This differs from the Llama SwiGLU activation.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        hidden_size: int,
+        intermediate_size: int,
+        hidden_act: str,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+        reduce_results: bool = True,
+    ) -&gt; None:
+        super().__init__()
+        # Arcee uses a single up-projection, not a merged gate/up projection.
+        self.up_proj = ColumnParallelLinear(
+            hidden_size,
+            intermediate_size,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;up_proj&#34;, prefix),
+        )
+        self.down_proj = RowParallelLinear(
+            intermediate_size,
+            hidden_size,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;down_proj&#34;, prefix),
+            reduce_results=reduce_results,
+        )
+        if hidden_act != &#34;relu2&#34;:
+            raise ValueError(
+                f&#34;Unsupported activation: {hidden_act}. &#34;
+                &#34;Arcee model in SGLang only supports &#39;relu2&#39;.&#34;
+            )
+        # The activation function is relu(x)^2
+        self.act_fn = get_act_fn(&#34;relu2&#34;)
+
+    def forward(self, x, forward_batch=None):
+        x, _ = self.up_proj(x)
+        x = self.act_fn(x)
+        x, _ = self.down_proj(x)
+        return x</code></pre>
+</details>
+<div class="desc"><p>MLP block for the Arcee model, using a ReLU-squared activation function.
+This differs from the Llama SwiGLU activation.</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeMLP.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x, forward_batch=None) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x, forward_batch=None):
+    x, _ = self.up_proj(x)
+    x = self.act_fn(x)
+    x, _ = self.down_proj(x)
+    return x</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeModel"><code class="flex name class">
+<span>class <span class="ident">ArceeModel</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ArceeModel(nn.Module):
+    def __init__(
+        self,
+        config: LlamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.config = config
+        self.padding_idx = config.pad_token_id
+        self.vocab_size = config.vocab_size
+        self.pp_group = get_pp_group()
+        if self.pp_group.is_first_rank:
+            self.embed_tokens = VocabParallelEmbedding(
+                config.vocab_size,
+                config.hidden_size,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;embed_tokens&#34;, prefix),
+            )
+        else:
+            self.embed_tokens = PPMissingLayer()
+
+        self.layers, self.start_layer, self.end_layer = make_layers(
+            config.num_hidden_layers,
+            lambda idx, prefix: ArceeDecoderLayer(
+                config=config, quant_config=quant_config, layer_id=idx, prefix=prefix
+            ),
+            pp_rank=self.pp_group.rank_in_group,
+            pp_size=self.pp_group.world_size,
+            prefix=&#34;model.layers&#34;,
+        )
+
+        if self.pp_group.is_last_rank:
+            self.norm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        else:
+            self.norm = PPMissingLayer(return_tuple=True)
+        self.layers_to_capture = []
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+        pp_proxy_tensors: Optional[PPProxyTensors] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]], PPProxyTensors]:
+        if self.pp_group.is_first_rank:
+            if input_embeds is None:
+                hidden_states = self.embed_tokens(input_ids)
+            else:
+                hidden_states = input_embeds
+            residual = None
+        else:
+            assert pp_proxy_tensors is not None
+            hidden_states = pp_proxy_tensors[&#34;hidden_states&#34;]
+            residual = pp_proxy_tensors[&#34;residual&#34;]
+
+        aux_hidden_states = []
+        for i in range(self.start_layer, self.end_layer):
+            if i in self.layers_to_capture:
+                aux_hidden_states.append(hidden_states + residual)
+            layer = self.layers[i]
+            hidden_states, residual = layer(
+                positions,
+                hidden_states,
+                forward_batch,
+                residual,
+            )
+
+        if not self.pp_group.is_last_rank:
+            return PPProxyTensors(
+                {
+                    &#34;hidden_states&#34;: hidden_states,
+                    &#34;residual&#34;: residual,
+                }
+            )
+        else:
+            hidden_states, _ = self.norm(hidden_states, residual)
+
+        if len(aux_hidden_states) == 0:
+            return hidden_states
+
+        return hidden_states, aux_hidden_states
+
+    def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+        tp_size = get_tensor_model_parallel_world_size()
+        tp_rank = get_tensor_model_parallel_rank()
+        for layer_idx, scaling_factor in kv_cache_scales_loader(
+            quantization_param_path,
+            tp_rank,
+            tp_size,
+            self.config.num_hidden_layers,
+            self.config.__class__.model_type,
+        ):
+            if not isinstance(self.layers[layer_idx], nn.Identity):
+                layer_self_attn = self.layers[layer_idx].self_attn
+
+            if hasattr(layer_self_attn.attn, &#34;k_scale&#34;):
+                layer_self_attn.attn.k_scale = scaling_factor
+                layer_self_attn.attn.v_scale = scaling_factor
+            else:
+                raise RuntimeError(
+                    &#34;Self attention has no KV cache scaling factor attribute!&#34;
+                )</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.arcee.ArceeModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None,<br>pp_proxy_tensors: <a title="sglang.srt.model_executor.forward_batch_info.PPProxyTensors" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.PPProxyTensors">PPProxyTensors</a> | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, List[torch.Tensor]] | <a title="sglang.srt.model_executor.forward_batch_info.PPProxyTensors" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.PPProxyTensors">PPProxyTensors</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+    pp_proxy_tensors: Optional[PPProxyTensors] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]], PPProxyTensors]:
+    if self.pp_group.is_first_rank:
+        if input_embeds is None:
+            hidden_states = self.embed_tokens(input_ids)
+        else:
+            hidden_states = input_embeds
+        residual = None
+    else:
+        assert pp_proxy_tensors is not None
+        hidden_states = pp_proxy_tensors[&#34;hidden_states&#34;]
+        residual = pp_proxy_tensors[&#34;residual&#34;]
+
+    aux_hidden_states = []
+    for i in range(self.start_layer, self.end_layer):
+        if i in self.layers_to_capture:
+            aux_hidden_states.append(hidden_states + residual)
+        layer = self.layers[i]
+        hidden_states, residual = layer(
+            positions,
+            hidden_states,
+            forward_batch,
+            residual,
+        )
+
+    if not self.pp_group.is_last_rank:
+        return PPProxyTensors(
+            {
+                &#34;hidden_states&#34;: hidden_states,
+                &#34;residual&#34;: residual,
+            }
+        )
+    else:
+        hidden_states, _ = self.norm(hidden_states, residual)
+
+    if len(aux_hidden_states) == 0:
+        return hidden_states
+
+    return hidden_states, aux_hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.arcee.ArceeModel.load_kv_cache_scales"><code class="name flex">
+<span>def <span class="ident">load_kv_cache_scales</span></span>(<span>self, quantization_param_path: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+    tp_size = get_tensor_model_parallel_world_size()
+    tp_rank = get_tensor_model_parallel_rank()
+    for layer_idx, scaling_factor in kv_cache_scales_loader(
+        quantization_param_path,
+        tp_rank,
+        tp_size,
+        self.config.num_hidden_layers,
+        self.config.__class__.model_type,
+    ):
+        if not isinstance(self.layers[layer_idx], nn.Identity):
+            layer_self_attn = self.layers[layer_idx].self_attn
+
+        if hasattr(layer_self_attn.attn, &#34;k_scale&#34;):
+            layer_self_attn.attn.k_scale = scaling_factor
+            layer_self_attn.attn.v_scale = scaling_factor
+        else:
+            raise RuntimeError(
+                &#34;Self attention has no KV cache scaling factor attribute!&#34;
+            )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.arcee.ArceeAttention" href="#sglang.srt.models.arcee.ArceeAttention">ArceeAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.arcee.ArceeAttention.forward" href="#sglang.srt.models.arcee.ArceeAttention.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.arcee.ArceeDecoderLayer" href="#sglang.srt.models.arcee.ArceeDecoderLayer">ArceeDecoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.arcee.ArceeDecoderLayer.forward" href="#sglang.srt.models.arcee.ArceeDecoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.arcee.ArceeForCausalLM" href="#sglang.srt.models.arcee.ArceeForCausalLM">ArceeForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.bitsandbytes_stacked_params_mapping" href="#sglang.srt.models.arcee.ArceeForCausalLM.bitsandbytes_stacked_params_mapping">bitsandbytes_stacked_params_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.column_parallel_weights_modules" href="#sglang.srt.models.arcee.ArceeForCausalLM.column_parallel_weights_modules">column_parallel_weights_modules</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.default_bitsandbytes_target_modules" href="#sglang.srt.models.arcee.ArceeForCausalLM.default_bitsandbytes_target_modules">default_bitsandbytes_target_modules</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.end_layer" href="#sglang.srt.models.arcee.ArceeForCausalLM.end_layer">end_layer</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.forward" href="#sglang.srt.models.arcee.ArceeForCausalLM.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.get_input_embeddings" href="#sglang.srt.models.arcee.ArceeForCausalLM.get_input_embeddings">get_input_embeddings</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.load_kv_cache_scales" href="#sglang.srt.models.arcee.ArceeForCausalLM.load_kv_cache_scales">load_kv_cache_scales</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.load_weights" href="#sglang.srt.models.arcee.ArceeForCausalLM.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeForCausalLM.start_layer" href="#sglang.srt.models.arcee.ArceeForCausalLM.start_layer">start_layer</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.arcee.ArceeMLP" href="#sglang.srt.models.arcee.ArceeMLP">ArceeMLP</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.arcee.ArceeMLP.forward" href="#sglang.srt.models.arcee.ArceeMLP.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.arcee.ArceeModel" href="#sglang.srt.models.arcee.ArceeModel">ArceeModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.arcee.ArceeModel.forward" href="#sglang.srt.models.arcee.ArceeModel.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.arcee.ArceeModel.load_kv_cache_scales" href="#sglang.srt.models.arcee.ArceeModel.load_kv_cache_scales">load_kv_cache_scales</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

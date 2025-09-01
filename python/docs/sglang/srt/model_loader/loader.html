@@ -1,0 +1,1965 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.model_loader.loader API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.model_loader.loader</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.model_loader.loader.device_loading_context"><code class="name flex">
+<span>def <span class="ident">device_loading_context</span></span>(<span>module: torch.nn.modules.module.Module, target_device: torch.device)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@contextmanager
+def device_loading_context(module: torch.nn.Module, target_device: torch.device):
+    if target_device.type == &#34;cpu&#34;:
+        # If target is CPU, no need to move anything
+        yield module
+        return
+
+    original_infos: Dict[str, Dict] = {}
+
+    # Store original device states and move parameters to GPU if they&#39;re on CPU
+    for name, p in module.named_parameters():
+        if p.device.type == &#34;cpu&#34;:
+            original_data = p.data
+            device_data = p.data.to(target_device)
+            original_infos[name] = dict(
+                device=p.device,
+                original_data=original_data,
+                device_data=device_data,
+            )
+            p.data = device_data
+        # Parameters already on target device are not touched
+
+    try:
+        yield module
+
+    finally:
+        # Restore parameters to their original devices, ignoring new parameters
+        pin_memory = is_pin_memory_available()
+        for name, p in module.named_parameters():
+            if name in original_infos:
+                original_info = original_infos[name]
+                device_data = original_info[&#34;device_data&#34;]
+                original_data = original_info[&#34;original_data&#34;]
+                original_device: torch.device = original_info[&#34;device&#34;]
+
+                if (
+                    (device_data.device == p.data.device)
+                    and (device_data.data_ptr() == p.data.data_ptr())
+                    and (device_data.shape == p.data.shape)
+                    and (device_data.dtype == p.data.dtype)
+                ):
+                    original_data.copy_(p.data.to(original_data.device))
+                    p.data = original_data
+                elif original_device.type == &#34;cpu&#34;:
+                    # `torch.empty_like` does not support `pin_memory` argument
+                    cpu_data = torch.empty_strided(
+                        size=p.data.size(),
+                        stride=p.data.stride(),
+                        dtype=p.data.dtype,
+                        layout=p.data.layout,
+                        device=&#34;cpu&#34;,
+                        pin_memory=pin_memory,
+                    )
+                    cpu_data.copy_(p.data)
+                    p.data = cpu_data
+                else:
+                    p.data = p.data.to(original_device)
+        # New parameters or parameters already on target device are untouched</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.loader.get_model_loader"><code class="name flex">
+<span>def <span class="ident">get_model_loader</span></span>(<span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>) ‑> <a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_model_loader(load_config: LoadConfig) -&gt; BaseModelLoader:
+    &#34;&#34;&#34;Get a model loader based on the load format.&#34;&#34;&#34;
+
+    if isinstance(load_config.load_format, type):
+        return load_config.load_format(load_config)
+
+    if load_config.load_format == LoadFormat.DUMMY:
+        return DummyModelLoader(load_config)
+
+    if load_config.load_format == LoadFormat.SHARDED_STATE:
+        return ShardedStateLoader(load_config)
+
+    if load_config.load_format == LoadFormat.BITSANDBYTES:
+        return BitsAndBytesModelLoader(load_config)
+
+    if load_config.load_format == LoadFormat.GGUF:
+        return GGUFModelLoader(load_config)
+
+    if load_config.load_format == LoadFormat.LAYERED:
+        return LayeredModelLoader(load_config)
+
+    if load_config.load_format == LoadFormat.REMOTE:
+        return RemoteModelLoader(load_config)
+
+    return DefaultModelLoader(load_config)</code></pre>
+</details>
+<div class="desc"><p>Get a model loader based on the load format.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.loader.load_model_with_cpu_quantization"><code class="name flex">
+<span>def <span class="ident">load_model_with_cpu_quantization</span></span>(<span>self,<br>*,<br>model_config: <a title="sglang.srt.configs.model_config.ModelConfig" href="../configs/model_config.html#sglang.srt.configs.model_config.ModelConfig">ModelConfig</a>,<br>device_config: <a title="sglang.srt.configs.device_config.DeviceConfig" href="../configs/device_config.html#sglang.srt.configs.device_config.DeviceConfig">DeviceConfig</a>) ‑> torch.nn.modules.module.Module</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_model_with_cpu_quantization(
+    self,
+    *,
+    model_config: ModelConfig,
+    device_config: DeviceConfig,
+) -&gt; nn.Module:
+    target_device = torch.device(device_config.device)
+    with set_default_torch_dtype(model_config.dtype):
+        model = _initialize_model(
+            model_config,
+            self.load_config,
+        )
+
+        if not isinstance(self, DummyModelLoader):
+            model.load_weights(self._get_all_weights(model_config, model))
+
+        for _, module in model.named_modules():
+            quant_method = getattr(module, &#34;quant_method&#34;, None)
+            if quant_method is not None:
+                # When quant methods need to process weights after loading
+                # (for repacking, quantizing, etc), they expect parameters
+                # to be on the global target device. This scope is for the
+                # case where cpu offloading is used, where we will move the
+                # parameters onto device for processing and back off after.
+                with device_loading_context(module, target_device):
+                    quant_method.process_weights_after_loading(module)
+
+        model.to(target_device)
+
+    return model.eval()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.model_loader.loader.BaseModelLoader"><code class="flex name class">
+<span>class <span class="ident">BaseModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseModelLoader(ABC):
+    &#34;&#34;&#34;Base class for model loaders.&#34;&#34;&#34;
+
+    def __init__(self, load_config: LoadConfig):
+        self.load_config = load_config
+
+    @abstractmethod
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        &#34;&#34;&#34;Download a model so that it can be immediately loaded.&#34;&#34;&#34;
+        raise NotImplementedError
+
+    @abstractmethod
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+        &#34;&#34;&#34;Load a model with the given configurations.&#34;&#34;&#34;
+        raise NotImplementedError</code></pre>
+</details>
+<div class="desc"><p>Base class for model loaders.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BitsAndBytesModelLoader" href="#sglang.srt.model_loader.loader.BitsAndBytesModelLoader">BitsAndBytesModelLoader</a></li>
+<li><a title="sglang.srt.model_loader.loader.DefaultModelLoader" href="#sglang.srt.model_loader.loader.DefaultModelLoader">DefaultModelLoader</a></li>
+<li><a title="sglang.srt.model_loader.loader.DummyModelLoader" href="#sglang.srt.model_loader.loader.DummyModelLoader">DummyModelLoader</a></li>
+<li><a title="sglang.srt.model_loader.loader.GGUFModelLoader" href="#sglang.srt.model_loader.loader.GGUFModelLoader">GGUFModelLoader</a></li>
+<li><a title="sglang.srt.model_loader.loader.RemoteModelLoader" href="#sglang.srt.model_loader.loader.RemoteModelLoader">RemoteModelLoader</a></li>
+<li><a title="sglang.srt.model_loader.loader.ShardedStateLoader" href="#sglang.srt.model_loader.loader.ShardedStateLoader">ShardedStateLoader</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.BaseModelLoader.download_model"><code class="name flex">
+<span>def <span class="ident">download_model</span></span>(<span>self,<br>model_config: <a title="sglang.srt.configs.model_config.ModelConfig" href="../configs/model_config.html#sglang.srt.configs.model_config.ModelConfig">ModelConfig</a>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def download_model(self, model_config: ModelConfig) -&gt; None:
+    &#34;&#34;&#34;Download a model so that it can be immediately loaded.&#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+<div class="desc"><p>Download a model so that it can be immediately loaded.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.loader.BaseModelLoader.load_model"><code class="name flex">
+<span>def <span class="ident">load_model</span></span>(<span>self,<br>*,<br>model_config: <a title="sglang.srt.configs.model_config.ModelConfig" href="../configs/model_config.html#sglang.srt.configs.model_config.ModelConfig">ModelConfig</a>,<br>device_config: <a title="sglang.srt.configs.device_config.DeviceConfig" href="../configs/device_config.html#sglang.srt.configs.device_config.DeviceConfig">DeviceConfig</a>) ‑> torch.nn.modules.module.Module</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def load_model(
+    self,
+    *,
+    model_config: ModelConfig,
+    device_config: DeviceConfig,
+) -&gt; nn.Module:
+    &#34;&#34;&#34;Load a model with the given configurations.&#34;&#34;&#34;
+    raise NotImplementedError</code></pre>
+</details>
+<div class="desc"><p>Load a model with the given configurations.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.model_loader.loader.BitsAndBytesModelLoader"><code class="flex name class">
+<span>class <span class="ident">BitsAndBytesModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BitsAndBytesModelLoader(BaseModelLoader):
+    &#34;&#34;&#34;Model loader to load model weights with BitAndBytes quantization.&#34;&#34;&#34;
+
+    possible_config_file_names = [&#34;adapter_config.json&#34;]
+
+    default_target_modules = [
+        &#34;.gate_proj.&#34;,
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+        &#34;.fc1.&#34;,
+        &#34;.fc2.&#34;,
+        &#34;.dense.&#34;,
+        &#34;.query_key_value.&#34;,
+        &#34;.qkv_proj.&#34;,
+        &#34;.dense_h_to_4h.&#34;,
+        &#34;.dense_4h_to_h.&#34;,
+        &#34;.out_proj.&#34;,
+    ]
+
+    def __init__(self, load_config: LoadConfig):
+        super().__init__(load_config)
+
+        # we don&#39;t need to quantize the whole model, only the target modules
+        # that are specified in the adapter config file. If the adapter config
+        # file is not provided, we will quantize the default modules.
+        if (
+            not load_config.model_loader_extra_config
+            or &#34;qlora_adapter_name_or_path&#34; not in load_config.model_loader_extra_config
+        ):
+            self.target_modules = []
+            return
+
+        qlora_adapter = load_config.model_loader_extra_config[
+            &#34;qlora_adapter_name_or_path&#34;
+        ]
+
+        config_file_path = self._get_config_file(qlora_adapter)
+
+        with open(config_file_path, &#34;r&#34;) as f:
+            config = json.load(f)
+            self.target_modules = config[&#34;target_modules&#34;]
+
+    def _get_config_file(self, qlora_adapter: str) -&gt; str:
+        is_local = os.path.isdir(qlora_adapter)
+        config_file_path = None
+        if is_local:
+            for file in self.possible_config_file_names:
+                config_file_path = os.path.join(qlora_adapter, file)
+                if os.path.exists(config_file_path):
+                    break
+        else:
+            hf_api = HfApi()
+            repo_files = hf_api.list_repo_files(repo_id=qlora_adapter)
+            for file in self.possible_config_file_names:
+                if file in repo_files:
+                    config_file_path = hf_hub_download(
+                        repo_id=qlora_adapter, filename=file
+                    )
+                    break
+
+        if not config_file_path:
+            raise ValueError(f&#34;Cannot find adapter config file in {qlora_adapter}&#34;)
+
+        return config_file_path
+
+    def _get_weight_files(
+        self,
+        model_name_or_path: str,
+        allowed_patterns: List[str],
+        revision: Optional[str] = None,
+    ) -&gt; Tuple[List[str], str]:
+        &#34;&#34;&#34;Retrieve weight files. Download the files if necessary.
+
+        Return the weight files and the file pattern.&#34;&#34;&#34;
+        is_local = os.path.isdir(model_name_or_path)
+
+        if is_local:
+            for pattern in allowed_patterns:
+                weight_files = glob.glob(os.path.join(model_name_or_path, pattern))
+                if weight_files:
+                    return weight_files, pattern
+        else:
+            hf_api = HfApi()
+            repo_files = hf_api.list_repo_files(repo_id=model_name_or_path)
+            for pattern in allowed_patterns:
+                matching_files = fnmatch.filter(repo_files, pattern)
+                if matching_files:
+                    hf_folder = download_weights_from_hf(
+                        model_name_or_path,
+                        self.load_config.download_dir,
+                        [pattern],
+                        revision,
+                        ignore_patterns=self.load_config.ignore_patterns,
+                    )
+                    return glob.glob(os.path.join(hf_folder, pattern)), pattern
+
+        raise RuntimeError(f&#34;No model weights found in: `{model_name_or_path}`&#34;)
+
+    def _prepare_weights(
+        self, model_name_or_path: str, revision: Optional[str]
+    ) -&gt; Tuple[List[str], bool]:
+        &#34;&#34;&#34;Prepare weight files for the model.&#34;&#34;&#34;
+
+        allowed_patterns = [&#34;*.safetensors&#34;, &#34;*.bin&#34;, &#34;*.pt&#34;]
+
+        hf_weights_files, matched_pattern = self._get_weight_files(
+            model_name_or_path, allowed_patterns, revision
+        )
+
+        if matched_pattern != &#34;*.safetensors&#34;:
+            hf_weights_files = filter_files_not_needed_for_inference(hf_weights_files)
+
+        if len(hf_weights_files) == 0:
+            raise RuntimeError(
+                f&#34;Cannot find any model weights with `{model_name_or_path}`&#34;
+            )
+
+        return hf_weights_files, matched_pattern == &#34;*.safetensors&#34;
+
+    def _hf_weight_iter(self, hf_weights_files, use_safetensors: bool):
+        if use_safetensors:
+            return safetensors_weights_iterator(hf_weights_files)
+        else:
+            return pt_weights_iterator(hf_weights_files)
+
+    def _get_quantized_weights_iterator(
+        self,
+        model_name_or_path: str,
+        revision: Optional[str],
+        pre_quant: bool,
+        load_8bit: bool,
+    ) -&gt; Tuple[Generator[Tuple[str, torch.Tensor], None, None], Dict[str, Any]]:
+        &#34;&#34;&#34;Get an iterator to the model weights with bitsandbytes quantization,
+        as well as the quantization state dictionary.&#34;&#34;&#34;
+
+        # only load the bitsandbytes module when needed
+        try:
+            import bitsandbytes
+
+            if bitsandbytes.__version__ &lt; &#34;0.44.0&#34;:
+                raise ImportError(
+                    &#34;bitsandbytes version is wrong. Please &#34;
+                    &#34;install bitsandbytes&gt;=0.44.0.&#34;
+                )
+        except ImportError as err:
+            raise ImportError(
+                &#34;Please install bitsandbytes&gt;=0.44.0 via &#34;
+                &#34;`pip install bitsandbytes&gt;=0.44.0` to use &#34;
+                &#34;bitsandbytes quantizer.&#34;
+            ) from err
+
+        hf_weights_files, use_safetensors = self._prepare_weights(
+            model_name_or_path, revision
+        )
+
+        quant_state_dict: Dict[str, Any] = {}
+
+        if pre_quant:
+            if load_8bit:
+                return (
+                    self._quantized_8bit_generator(
+                        hf_weights_files, use_safetensors, quant_state_dict
+                    ),
+                    quant_state_dict,
+                )
+            else:
+                return (
+                    self._quantized_4bit_generator(
+                        hf_weights_files, use_safetensors, quant_state_dict
+                    ),
+                    quant_state_dict,
+                )
+
+        return (
+            self._unquantized_generator(
+                hf_weights_files, use_safetensors, quant_state_dict
+            ),
+            quant_state_dict,
+        )
+
+    def _is_8bit_weight_name(self, weight_name: str):
+        quantized_suffix = {&#34;.scb&#34;, &#34;.weight_format&#34;}
+        return any(weight_name.lower().endswith(suffix) for suffix in quantized_suffix)
+
+    def _is_4bit_weight_name(self, weight_name: str):
+        quantized_suffix = {
+            &#34;absmax&#34;,
+            &#34;quant_map&#34;,
+            &#34;nested_absmax&#34;,
+            &#34;nested_quant_map&#34;,
+            &#34;bitsandbytes&#34;,
+        }
+        suffix = weight_name.split(&#34;.&#34;)[-1]
+        return any(q_suffix in suffix for q_suffix in quantized_suffix)
+
+    def _quantized_8bit_generator(
+        self, hf_weights_files, use_safetensors, quant_state_dict
+    ) -&gt; Generator:
+        for weight_name, weight_tensor in self._hf_weight_iter(
+            hf_weights_files, use_safetensors
+        ):
+            if not weight_name.lower().endswith(&#34;.scb&#34;):
+                continue
+
+            weight_key = weight_name.lower().replace(&#34;.scb&#34;, &#34;.weight&#34;)
+            quant_state_dict[weight_key] = weight_tensor
+
+        for weight_name, weight_tensor in self._hf_weight_iter(
+            hf_weights_files, use_safetensors
+        ):
+            if self._is_8bit_weight_name(weight_name):
+                continue
+
+            if weight_name in quant_state_dict:
+                set_weight_attrs(weight_tensor, {&#34;load_in_8bit&#34;: True})
+                yield weight_name, weight_tensor
+            else:
+                yield weight_name, weight_tensor
+
+    def _quantized_4bit_generator(
+        self, hf_weights_files, use_safetensors, quant_state_dict
+    ) -&gt; Generator:
+        from bitsandbytes.functional import QuantState
+
+        # First iterate over all quant state weights
+        weight_iterator = self._hf_weight_iter(hf_weights_files, use_safetensors)
+        temp_state_dict = {}
+        for weight_name, weight_tensor in weight_iterator:
+            if not self._is_4bit_weight_name(weight_name):
+                continue
+            # bitsandbytes library requires
+            # weight.quant_state.bitsandbytes__* in CPU
+            if &#34;quant_state.bitsandbytes&#34; in weight_name:
+                temp_state_dict[weight_name] = weight_tensor.cpu().data
+            else:
+                temp_state_dict[weight_name] = weight_tensor
+
+        # Closure to parse quant_state for each prequant weight
+        def _parse_quant_state(param_name: str, temp_state_dict: Dict) -&gt; QuantState:
+            quant_state = {}
+            for k in temp_state_dict:
+                if param_name + &#34;.&#34; in k:
+                    quant_state[k] = temp_state_dict[k]
+
+            return QuantState.from_dict(quant_state, device=&#34;cuda&#34;)
+
+        # Second iterate over all prequant and normal weights
+        # pre quantized weights would have a quant_state
+        for weight_name, weight_tensor in self._hf_weight_iter(
+            hf_weights_files, use_safetensors
+        ):
+
+            if self._is_4bit_weight_name(weight_name):
+                continue
+
+            if (f&#34;{weight_name}.quant_state.bitsandbytes__nf4&#34; in temp_state_dict) or (
+                f&#34;{weight_name}.quant_state.bitsandbytes__fp4&#34; in temp_state_dict
+            ):
+                quant_state = _parse_quant_state(weight_name, temp_state_dict)
+                quant_state_dict[weight_name] = quant_state
+                yield weight_name, weight_tensor
+            else:
+                yield weight_name, weight_tensor
+
+    def _unquantized_generator(
+        self, hf_weights_files, use_safetensors, quant_state_dict
+    ) -&gt; Generator:
+        from bitsandbytes.functional import quantize_4bit
+
+        tp_size = get_tensor_model_parallel_world_size()
+        tp_rank = get_tensor_model_parallel_rank()
+
+        for weight_name, weight_tensor in self._hf_weight_iter(
+            hf_weights_files, use_safetensors
+        ):
+
+            if any(
+                target_module in weight_name for target_module in self.target_modules
+            ) and weight_name.endswith(&#34;.weight&#34;):
+                weight_name = weight_name.replace(&#34;.weight&#34;, &#34;.qweight&#34;)
+
+                if any(
+                    module in weight_name
+                    for module in self.column_parallel_weights_modules
+                ):
+
+                    total_size = weight_tensor.size(-1)
+                    start_index = total_size // tp_size * tp_rank
+                    end_index = total_size // tp_size * (tp_rank + 1)
+                    weight_sub_tensor = weight_tensor[..., start_index:end_index]
+
+                else:
+                    total_size = weight_tensor.size(0)
+                    start_index = total_size // tp_size * tp_rank
+                    end_index = total_size // tp_size * (tp_rank + 1)
+                    weight_sub_tensor = weight_tensor[start_index:end_index, ...]
+
+                # bitsandbytes requires data in GPU
+                if weight_sub_tensor.is_cuda:
+                    loaded_weight = weight_sub_tensor
+                else:
+                    loaded_weight = weight_sub_tensor.cuda()
+
+                # remove the following after the issue is fixed:
+                # https://github.com/bitsandbytes-foundation/bitsandbytes/issues/1342
+                if loaded_weight.is_contiguous() is False:
+                    loaded_weight = loaded_weight.contiguous()
+
+                with set_default_torch_dtype(torch.float32):
+                    processed_weight, quant_state = quantize_4bit(
+                        loaded_weight, compress_statistics=True, quant_type=&#34;nf4&#34;
+                    )
+
+                quant_state_dict[weight_name] = quant_state
+            else:
+                processed_weight = weight_tensor
+
+            yield weight_name, processed_weight
+
+    def _load_weights(self, model_config: ModelConfig, model: nn.Module) -&gt; None:
+        if not hasattr(model, &#34;load_weights&#34;):
+            raise AttributeError(
+                &#34;The required method &#39;load_weights&#39; is not defined in class&#34;
+                f&#34; {type(model).__name__}.&#34;
+            )
+
+        if not hasattr(model, &#34;bitsandbytes_stacked_params_mapping&#34;):
+            raise AttributeError(
+                f&#34;Model {type(model).__name__} does not support BitsAndBytes &#34;
+                &#34;quantization yet.&#34;
+            )
+
+        if len(self.target_modules) == 0:
+            if hasattr(model, &#34;default_bitsandbytes_target_modules&#34;):
+                self.target_modules = model.default_bitsandbytes_target_modules
+            else:
+                self.target_modules = self.default_target_modules
+
+        if hasattr(model, &#34;column_parallel_weights_modules&#34;):
+            self.column_parallel_weights_modules = model.column_parallel_weights_modules
+        else:
+            self.column_parallel_weights_modules = []
+
+        self.model_type = type(model).__name__
+
+        logger.info(
+            &#34;Loading weights with BitsAndBytes quantization. &#34; &#34; May take a while ...&#34;
+        )
+
+        quant_config = getattr(model_config.hf_config, &#34;quantization_config&#34;, None)
+
+        pre_quant = False
+        if quant_config is not None:
+            quant_method = quant_config.get(&#34;quant_method&#34;)
+            if quant_method == &#34;bitsandbytes&#34;:
+                pre_quant = True
+            else:
+                raise ValueError(
+                    f&#34;BitsAndBytes loader does not support {quant_method} &#34;
+                    &#34;quantization&#34;
+                )
+
+        # The quant_states in pre_quantized models cannot work with a split
+        # weight tensor. So TP does not work with pre_quantized bnb models.
+        if pre_quant and get_tensor_model_parallel_world_size() &gt; 1:
+            raise ValueError(
+                &#34;Prequant BitsAndBytes models with TP is not supported.&#34;
+                &#34;Please try with PP.&#34;
+            )
+
+        load_8bit = False
+        if pre_quant:
+            load_8bit = quant_config.get(&#34;load_in_8bit&#34;, False)
+
+        qweight_iterator, quant_state_dict = self._get_quantized_weights_iterator(
+            model_config.model_path, model_config.revision, pre_quant, load_8bit
+        )
+
+        model.load_weights(qweight_iterator)
+
+        torch.cuda.empty_cache()
+
+        param_dict = dict(model.named_parameters())
+        stacked_quant_state_dict: Dict[str, Dict[int, Any]] = {}
+        model_type = model_config.hf_config.model_type
+        for quant_param_name in quant_state_dict:
+            non_stacked_param_name = quant_param_name
+            if model_type == &#34;mllama&#34; and &#34;vision_model&#34; in quant_param_name:
+                # adapt to VisionAttention
+                quant_param_name = quant_param_name.replace(
+                    &#34;self_attn.o_proj&#34;, &#34;self_attn.proj&#34;
+                )
+            shard_index = 0
+            for shard_name, (
+                weight_name,
+                index,
+            ) in model.bitsandbytes_stacked_params_mapping.items():
+                if (
+                    model_type in [&#34;qwen2_vl&#34;, &#34;qwen2_5_vl&#34;]
+                    and &#34;visual&#34; in quant_param_name
+                ):
+                    break
+                if shard_name in quant_param_name:
+                    shard_index = index
+                    quant_param_name = quant_param_name.replace(shard_name, weight_name)
+                    break
+
+            if (
+                model_type in [&#34;qwen2_vl&#34;, &#34;qwen2_5_vl&#34;]
+                and &#34;visual&#34; in quant_param_name
+            ):
+                quant_param_name = quant_param_name.replace(
+                    r&#34;attn.qkv.&#34;, r&#34;attn.qkv_proj.&#34;
+                )
+
+            if quant_param_name not in param_dict:
+                raise ValueError(
+                    f&#34;Parameter {quant_param_name} not found in the model.&#34;
+                )
+
+            if quant_param_name not in stacked_quant_state_dict:
+                stacked_quant_state_dict[quant_param_name] = {}
+
+            stacked_quant_state_dict[quant_param_name][shard_index] = quant_state_dict[
+                non_stacked_param_name
+            ]
+
+        # save quant_states and offsets as the attributes of the parameters
+        for param_name, param in param_dict.items():
+            if param_name in stacked_quant_state_dict:
+                quant_states = stacked_quant_state_dict[param_name]
+                set_weight_attrs(param, {&#34;bnb_quant_state&#34;: quant_states})
+
+                pack_ratio = getattr(param, &#34;pack_factor&#34;, -1)
+                if pack_ratio == -1:
+                    raise ValueError(f&#34;pack_factor not set for parameter {param_name}.&#34;)
+
+                num_elements = [0] * len(quant_states)
+                for seq, quant_state in quant_states.items():
+                    num_elements[seq] = math.prod(quant_state.shape) // pack_ratio
+
+                offsets = np.concatenate(([0], np.cumsum(num_elements)))
+                # Make torch infer_schema happy(Compatible with vLLM)
+                offsets = torch.tensor(offsets).cpu()
+                set_weight_attrs(param, {&#34;bnb_shard_offsets&#34;: offsets})
+
+                if load_8bit:
+                    set_weight_attrs(
+                        param, {&#34;matmul_state&#34;: [None] * len(quant_states)}
+                    )
+
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        self._prepare_weights(model_config.model_path, model_config.revision)
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+        with set_default_torch_dtype(model_config.dtype):
+            with torch.device(device_config.device):
+                model = _initialize_model(
+                    model_config,
+                    self.load_config,
+                )
+
+                self._load_weights(model_config, model)
+
+        return model.eval()</code></pre>
+</details>
+<div class="desc"><p>Model loader to load model weights with BitAndBytes quantization.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.BitsAndBytesModelLoader.default_target_modules"><code class="name">var <span class="ident">default_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.loader.BitsAndBytesModelLoader.possible_config_file_names"><code class="name">var <span class="ident">possible_config_file_names</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.loader.DefaultModelLoader"><code class="flex name class">
+<span>class <span class="ident">DefaultModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DefaultModelLoader(BaseModelLoader):
+    &#34;&#34;&#34;Model loader that can load different file types from disk.&#34;&#34;&#34;
+
+    # default number of thread when enable multithread weight loading
+    DEFAULT_NUM_THREADS = 8
+
+    @dataclasses.dataclass
+    class Source:
+        &#34;&#34;&#34;A source for weights.&#34;&#34;&#34;
+
+        model_or_path: str
+        &#34;&#34;&#34;The model ID or path.&#34;&#34;&#34;
+
+        revision: Optional[str]
+        &#34;&#34;&#34;The optional model revision.&#34;&#34;&#34;
+
+        prefix: str = &#34;&#34;
+        &#34;&#34;&#34;A prefix to prepend to all weights.&#34;&#34;&#34;
+
+        fall_back_to_pt: bool = True
+        &#34;&#34;&#34;Whether .pt weights can be used.&#34;&#34;&#34;
+
+        @classmethod
+        def init_new(cls, model_config: ModelConfig, model):
+            return cls(
+                model_config.model_path,
+                model_config.revision,
+                prefix=&#34;&#34;,
+                fall_back_to_pt=getattr(model, &#34;fall_back_to_pt_during_load&#34;, True),
+            )
+
+    def __init__(self, load_config: LoadConfig):
+        super().__init__(load_config)
+        extra_config = load_config.model_loader_extra_config
+        allowed_keys = {&#34;enable_multithread_load&#34;, &#34;num_threads&#34;}
+        unexpected_keys = set(extra_config.keys()) - allowed_keys
+
+        if unexpected_keys:
+            raise ValueError(
+                f&#34;Unexpected extra config keys for load format &#34;
+                f&#34;{load_config.load_format}: &#34;
+                f&#34;{unexpected_keys}&#34;
+            )
+
+    def _maybe_download_from_modelscope(
+        self, model: str, revision: Optional[str]
+    ) -&gt; Optional[str]:
+        &#34;&#34;&#34;Download model from ModelScope hub if SGLANG_USE_MODELSCOPE is True.
+
+        Returns the path to the downloaded model, or None if the model is not
+        downloaded from ModelScope.&#34;&#34;&#34;
+        if get_bool_env_var(&#34;SGLANG_USE_MODELSCOPE&#34;):
+            # download model from ModelScope hub,
+            # lazy import so that modelscope is not required for normal use.
+            # pylint: disable=C.
+            from modelscope.hub.snapshot_download import snapshot_download
+
+            if not os.path.exists(model):
+                model_path = snapshot_download(
+                    model_id=model,
+                    cache_dir=self.load_config.download_dir,
+                    local_files_only=huggingface_hub.constants.HF_HUB_OFFLINE,
+                    revision=revision,
+                    ignore_file_pattern=self.load_config.ignore_patterns,
+                )
+            else:
+                model_path = model
+            return model_path
+        return None
+
+    def _prepare_weights(
+        self, model_name_or_path: str, revision: Optional[str], fall_back_to_pt: bool
+    ) -&gt; Tuple[str, List[str], bool]:
+        &#34;&#34;&#34;Prepare weights for the model.
+
+        If the model is not local, it will be downloaded.&#34;&#34;&#34;
+        model_name_or_path = (
+            self._maybe_download_from_modelscope(model_name_or_path, revision)
+            or model_name_or_path
+        )
+
+        is_local = os.path.isdir(model_name_or_path)
+        load_format = self.load_config.load_format
+        use_safetensors = False
+        index_file = SAFE_WEIGHTS_INDEX_NAME
+        # Some quantized models use .pt files for storing the weights.
+        if load_format == LoadFormat.AUTO:
+            allow_patterns = [&#34;*.safetensors&#34;, &#34;*.bin&#34;]
+        elif load_format == LoadFormat.SAFETENSORS:
+            use_safetensors = True
+            allow_patterns = [&#34;*.safetensors&#34;]
+        elif load_format == LoadFormat.MISTRAL:
+            use_safetensors = True
+            allow_patterns = [&#34;consolidated*.safetensors&#34;]
+            index_file = &#34;consolidated.safetensors.index.json&#34;
+        elif load_format == LoadFormat.PT:
+            allow_patterns = [&#34;*.pt&#34;]
+        elif load_format == LoadFormat.NPCACHE:
+            allow_patterns = [&#34;*.bin&#34;]
+        else:
+            raise ValueError(f&#34;Unknown load_format: {load_format}&#34;)
+
+        if fall_back_to_pt:
+            allow_patterns += [&#34;*.pt&#34;]
+
+        if not is_local:
+            hf_folder = download_weights_from_hf(
+                model_name_or_path,
+                self.load_config.download_dir,
+                allow_patterns,
+                revision,
+                ignore_patterns=self.load_config.ignore_patterns,
+            )
+        else:
+            hf_folder = model_name_or_path
+
+        hf_weights_files: List[str] = []
+        for pattern in allow_patterns:
+            hf_weights_files += glob.glob(os.path.join(hf_folder, pattern))
+            if len(hf_weights_files) &gt; 0:
+                if pattern == &#34;*.safetensors&#34;:
+                    use_safetensors = True
+                break
+
+        if use_safetensors:
+            # For models like Mistral-7B-Instruct-v0.3
+            # there are both sharded safetensors files and a consolidated
+            # safetensors file. Using both breaks.
+            # Here, we download the `model.safetensors.index.json` and filter
+            # any files not found in the index.
+            if not is_local:
+                download_safetensors_index_file_from_hf(
+                    model_name_or_path,
+                    index_file,
+                    self.load_config.download_dir,
+                    revision,
+                )
+            hf_weights_files = filter_duplicate_safetensors_files(
+                hf_weights_files, hf_folder, index_file
+            )
+        else:
+            hf_weights_files = filter_files_not_needed_for_inference(hf_weights_files)
+
+        if len(hf_weights_files) == 0:
+            raise RuntimeError(
+                f&#34;Cannot find any model weights with `{model_name_or_path}`&#34;
+            )
+
+        return hf_folder, hf_weights_files, use_safetensors
+
+    def _get_weights_iterator(
+        self, source: &#34;Source&#34;
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+        &#34;&#34;&#34;Get an iterator for the model weights based on the load format.&#34;&#34;&#34;
+        extra_config = self.load_config.model_loader_extra_config
+        hf_folder, hf_weights_files, use_safetensors = self._prepare_weights(
+            source.model_or_path, source.revision, source.fall_back_to_pt
+        )
+        if self.load_config.load_format == LoadFormat.NPCACHE:
+            # Currently np_cache only support *.bin checkpoints
+            assert use_safetensors is False
+            weights_iterator = np_cache_weights_iterator(
+                source.model_or_path,
+                self.load_config.download_dir,
+                hf_folder,
+                hf_weights_files,
+            )
+        elif use_safetensors:
+            from sglang.srt.managers.schedule_batch import global_server_args_dict
+
+            weight_loader_disable_mmap = global_server_args_dict.get(
+                &#34;weight_loader_disable_mmap&#34;
+            )
+
+            if extra_config.get(&#34;enable_multithread_load&#34;):
+                weights_iterator = multi_thread_safetensors_weights_iterator(
+                    hf_weights_files,
+                    max_workers=extra_config.get(
+                        &#34;num_threads&#34;, self.DEFAULT_NUM_THREADS
+                    ),
+                    disable_mmap=weight_loader_disable_mmap,
+                )
+            else:
+                weights_iterator = safetensors_weights_iterator(
+                    hf_weights_files, disable_mmap=weight_loader_disable_mmap
+                )
+
+        else:
+            if extra_config.get(&#34;enable_multithread_load&#34;):
+                weights_iterator = multi_thread_pt_weights_iterator(
+                    hf_weights_files,
+                    max_workers=extra_config.get(
+                        &#34;num_threads&#34;, self.DEFAULT_NUM_THREADS
+                    ),
+                )
+            else:
+                weights_iterator = pt_weights_iterator(hf_weights_files)
+
+        # Apply the prefix.
+        return ((source.prefix + name, tensor) for (name, tensor) in weights_iterator)
+
+    def _get_all_weights(
+        self,
+        model_config: ModelConfig,
+        model: nn.Module,
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+
+        primary_weights = DefaultModelLoader.Source.init_new(model_config, model)
+        yield from self._get_weights_iterator(primary_weights)
+
+        secondary_weights = cast(
+            Iterable[DefaultModelLoader.Source], getattr(model, &#34;secondary_weights&#34;, ())
+        )
+        for source in secondary_weights:
+            yield from self._get_weights_iterator(source)
+
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        self._prepare_weights(
+            model_config.model_path, model_config.revision, fall_back_to_pt=True
+        )
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+        target_device = torch.device(device_config.device)
+        with set_default_torch_dtype(model_config.dtype):
+            with target_device:
+                model = _initialize_model(
+                    model_config,
+                    self.load_config,
+                )
+
+        self.load_weights_and_postprocess(
+            model, self._get_all_weights(model_config, model), target_device
+        )
+
+        return model.eval()
+
+    @staticmethod
+    def load_weights_and_postprocess(model, weights, target_device):
+        model.load_weights(weights)
+
+        for _, module in model.named_modules():
+            quant_method = getattr(module, &#34;quant_method&#34;, None)
+            if quant_method is not None:
+                # When quant methods need to process weights after loading
+                # (for repacking, quantizing, etc), they expect parameters
+                # to be on the global target device. This scope is for the
+                # case where cpu offloading is used, where we will move the
+                # parameters onto device for processing and back off after.
+                with device_loading_context(module, target_device):
+                    quant_method.process_weights_after_loading(module)</code></pre>
+</details>
+<div class="desc"><p>Model loader that can load different file types from disk.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.LayeredModelLoader" href="#sglang.srt.model_loader.loader.LayeredModelLoader">LayeredModelLoader</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.DefaultModelLoader.DEFAULT_NUM_THREADS"><code class="name">var <span class="ident">DEFAULT_NUM_THREADS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.loader.DefaultModelLoader.Source"><code class="name">var <span class="ident">Source</span></code></dt>
+<dd>
+<div class="desc"><p>A source for weights.</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.DefaultModelLoader.load_weights_and_postprocess"><code class="name flex">
+<span>def <span class="ident">load_weights_and_postprocess</span></span>(<span>model, weights, target_device)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def load_weights_and_postprocess(model, weights, target_device):
+    model.load_weights(weights)
+
+    for _, module in model.named_modules():
+        quant_method = getattr(module, &#34;quant_method&#34;, None)
+        if quant_method is not None:
+            # When quant methods need to process weights after loading
+            # (for repacking, quantizing, etc), they expect parameters
+            # to be on the global target device. This scope is for the
+            # case where cpu offloading is used, where we will move the
+            # parameters onto device for processing and back off after.
+            with device_loading_context(module, target_device):
+                quant_method.process_weights_after_loading(module)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.loader.DummyModelLoader"><code class="flex name class">
+<span>class <span class="ident">DummyModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DummyModelLoader(BaseModelLoader):
+    &#34;&#34;&#34;Model loader that will set model weights to random values.&#34;&#34;&#34;
+
+    def __init__(self, load_config: LoadConfig):
+        super().__init__(load_config)
+        if load_config.model_loader_extra_config:
+            raise ValueError(
+                f&#34;Model loader extra config is not supported for &#34;
+                f&#34;load format {load_config.load_format}&#34;
+            )
+
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        pass  # Nothing to download
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+
+        if get_bool_env_var(&#34;SGL_CPU_QUANTIZATION&#34;):
+            return load_model_with_cpu_quantization(
+                self, model_config=model_config, device_config=device_config
+            )
+
+        with set_default_torch_dtype(model_config.dtype):
+            with torch.device(device_config.device):
+                model = _initialize_model(
+                    model_config,
+                    self.load_config,
+                )
+
+            for _, module in model.named_modules():
+                quant_method = getattr(module, &#34;quant_method&#34;, None)
+                if quant_method is not None:
+                    quant_method.process_weights_after_loading(module)
+
+            # NOTE(woosuk): For accurate performance evaluation, we assign
+            # random values to the weights.
+            initialize_dummy_weights(model)
+
+            post_load_weights(model, model_config)
+
+        return model.eval()</code></pre>
+</details>
+<div class="desc"><p>Model loader that will set model weights to random values.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.loader.GGUFModelLoader"><code class="flex name class">
+<span>class <span class="ident">GGUFModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GGUFModelLoader(BaseModelLoader):
+    &#34;&#34;&#34;
+    Model loader that can load GGUF files. This is useful for loading models
+    that are quantized with GGUF and saved in the GGUF format. This loader
+    supports loading both full models and sharded models.
+    &#34;&#34;&#34;
+
+    def __init__(self, load_config: LoadConfig):
+        super().__init__(load_config)
+        if load_config.model_loader_extra_config:
+            raise ValueError(
+                f&#34;Model loader extra config is not supported for &#34;
+                f&#34;load format {load_config.load_format}&#34;
+            )
+
+    def _prepare_weights(self, model_name_or_path: str):
+        if os.path.isfile(model_name_or_path):
+            return model_name_or_path
+        else:
+            raise ValueError(f&#34;{model_name_or_path} is not a file.&#34;)
+
+    def _get_gguf_weights_map(self, model_config: ModelConfig):
+        &#34;&#34;&#34;
+        GGUF uses this naming convention for their tensors from HF checkpoint:
+        `blk.N.BB.weight` and `blk.N.BB.bias`
+        where N signifies the block number of a layer, and BB signifies the
+        attention/mlp layer components.
+        See &#34;Standardized tensor names&#34; in
+        https://github.com/ggerganov/ggml/blob/master/docs/gguf.md for details.
+        &#34;&#34;&#34;
+
+        # only load the gguf module when needed
+        try:
+            import gguf
+
+            # FIXME: add version check for gguf
+        except ImportError as err:
+            raise ImportError(
+                &#34;Please install gguf via `pip install gguf` to use gguf quantizer.&#34;
+            ) from err
+
+        config = model_config.hf_config
+        model_type = config.model_type
+        # hack: ggufs have a different name than transformers
+        if model_type == &#34;cohere&#34;:
+            model_type = &#34;command-r&#34;
+        arch = None
+        for key, value in gguf.MODEL_ARCH_NAMES.items():
+            if value == model_type:
+                arch = key
+                break
+        if arch is None:
+            raise RuntimeError(f&#34;Unknown gguf model_type: {model_type}&#34;)
+        num_layers = config.num_hidden_layers
+        name_map = gguf.get_tensor_name_map(arch, num_layers)
+        with torch.device(&#34;meta&#34;):
+            dummy_model = AutoModelForCausalLM.from_config(config)
+        state_dict = dummy_model.state_dict()
+
+        gguf_to_hf_name_map = {}
+        for hf_name in state_dict:
+            name, suffix = hf_name.rsplit(&#34;.&#34;, 1)
+            gguf_name = name_map.get_name(name)
+            gguf_to_hf_name_map[f&#34;{gguf_name}.{suffix}&#34;] = hf_name
+        return gguf_to_hf_name_map
+
+    def _get_weights_iterator(
+        self, model_name_or_path: str, gguf_to_hf_name_map: Dict[str, str]
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+        return gguf_quant_weights_iterator(model_name_or_path, gguf_to_hf_name_map)
+
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        self._prepare_weights(model_config.model_path)
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+
+        local_model_path = self._prepare_weights(model_config.model_path)
+        gguf_weights_map = self._get_gguf_weights_map(model_config)
+        # we can only know if tie word embeddings after mapping weights
+        if &#34;lm_head.weight&#34; in get_gguf_extra_tensor_names(
+            local_model_path, gguf_weights_map
+        ):
+            model_config.hf_config.update({&#34;tie_word_embeddings&#34;: True})
+
+        target_device = torch.device(device_config.device)
+        with set_default_torch_dtype(model_config.dtype):
+            with target_device:
+                model = _initialize_model(model_config, self.load_config)
+            model.load_weights(
+                self._get_weights_iterator(local_model_path, gguf_weights_map)
+            )
+
+            for _, module in model.named_modules():
+                quant_method = getattr(module, &#34;quant_method&#34;, None)
+                if quant_method is not None:
+                    with device_loading_context(module, target_device):
+                        quant_method.process_weights_after_loading(module)
+        return model</code></pre>
+</details>
+<div class="desc"><p>Model loader that can load GGUF files. This is useful for loading models
+that are quantized with GGUF and saved in the GGUF format. This loader
+supports loading both full models and sharded models.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.loader.LayeredModelLoader"><code class="flex name class">
+<span>class <span class="ident">LayeredModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LayeredModelLoader(DefaultModelLoader):
+    &#34;&#34;&#34;Model loader that loads weights layer by layer so that one can quantize a
+    layer before loading another to make the peak memory envelope smaller.&#34;&#34;&#34;
+
+    def __init__(self, load_config: LoadConfig):
+        # Back to the default load format
+        load_config.load_format = LoadFormat.AUTO
+        super().__init__(load_config)
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+        from sglang.srt.layers.torchao_utils import apply_torchao_config_to_model
+        from sglang.srt.managers.schedule_batch import global_server_args_dict
+
+        torchao_config = global_server_args_dict.get(&#34;torchao_config&#34;)
+        target_device = torch.device(device_config.device)
+
+        with set_default_torch_dtype(model_config.dtype):
+            # Create model on meta device
+            with torch.device(&#34;meta&#34;):
+                model = _initialize_model(
+                    model_config,
+                    self.load_config,
+                )
+
+            # Check model&#39;s layered load support
+            if not hasattr(model, &#34;load_weights_to_module&#34;):
+                raise ValueError(
+                    &#34;LayeredModelLoader requires the model to have a &#34;
+                    &#34;`load_weights_to_module` method. &#34;
+                    f&#34;{model_config.model_path} does not support it.&#34;
+                )
+
+            # Get all weights from disk
+            weights = self._get_all_weights(model_config, model)
+
+            # Helper function to recursively fill the weights of a module
+            def fill_module(module, fqn: List[str], weights):
+                &#34;&#34;&#34;
+                fqn: list of strings representing the fully qualified name of `module`.
+                &#34;&#34;&#34;
+                # Layer by layer
+                for name, submod in module.named_children():
+                    fill_module(submod, fqn + [name], weights)
+
+                # First materialize on target device
+                module.to_empty(device=target_device, recurse=False)
+                fqn_path = &#34;.&#34;.join(fqn)
+                # Fill weights
+                model.load_weights_to_module(
+                    fqn_path,
+                    weights,
+                )
+                # Quantize weights if applicable
+                if torchao_config and &#34;proj&#34; in fqn_path:
+                    # Note: `None` here is needed to indicate no filter, see
+                    # `apply_torchao_config_to_model` for details.
+                    apply_torchao_config_to_model(module, torchao_config, None)
+
+            # Start calling on root module
+            fill_module(model, [], weights)
+
+        if torchao_config:
+            model.torchao_applied = True
+
+        return model.eval()</code></pre>
+</details>
+<div class="desc"><p>Model loader that loads weights layer by layer so that one can quantize a
+layer before loading another to make the peak memory envelope smaller.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.DefaultModelLoader" href="#sglang.srt.model_loader.loader.DefaultModelLoader">DefaultModelLoader</a></li>
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.DefaultModelLoader" href="#sglang.srt.model_loader.loader.DefaultModelLoader">DefaultModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader.Source" href="#sglang.srt.model_loader.loader.DefaultModelLoader.Source">Source</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.loader.RemoteModelLoader"><code class="flex name class">
+<span>class <span class="ident">RemoteModelLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RemoteModelLoader(BaseModelLoader):
+    &#34;&#34;&#34;Model loader that can load Tensors from remote database.&#34;&#34;&#34;
+
+    def __init__(self, load_config: LoadConfig):
+        super().__init__(load_config)
+        # TODO @DellCurry: move to s3 connector only
+        set_runai_streamer_env(load_config)
+
+    def _get_weights_iterator_kv(
+        self,
+        client,
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+        &#34;&#34;&#34;Get an iterator for the model weights from remote storage.&#34;&#34;&#34;
+        assert get_connector_type(client) == ConnectorType.KV
+        rank = get_tensor_model_parallel_rank()
+        return client.weight_iterator(rank)
+
+    def _get_weights_iterator_fs(
+        self,
+        client,
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+        &#34;&#34;&#34;Get an iterator for the model weights from remote storage.&#34;&#34;&#34;
+        assert get_connector_type(client) == ConnectorType.FS
+        return client.weight_iterator()
+
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        pass
+
+    @staticmethod
+    def save_model(
+        model: torch.nn.Module,
+        model_path: str,
+        url: str,
+    ) -&gt; None:
+        with create_remote_connector(url) as client:
+            assert get_connector_type(client) == ConnectorType.KV
+            model_name = parse_model_name(url)
+            rank = get_tensor_model_parallel_rank()
+            state_dict = ShardedStateLoader._filter_subtensors(model.state_dict())
+            for key, tensor in state_dict.items():
+                r_key = f&#34;{model_name}/keys/rank_{rank}/{key}&#34;
+                client.set(r_key, tensor)
+
+            for root, _, files in os.walk(model_path):
+                for file_name in files:
+                    # ignore hidden files
+                    if file_name.startswith(&#34;.&#34;):
+                        continue
+                    if os.path.splitext(file_name)[1] in (&#34;.json&#34;, &#34;.py&#34;):
+                        file_path = os.path.join(root, file_name)
+                        with open(file_path, encoding=&#34;utf-8&#34;) as file:
+                            file_content = file.read()
+                            f_key = f&#34;{model_name}/files/{file_name}&#34;
+                            client.setstr(f_key, file_content)
+
+    def _load_model_from_remote_kv(
+        self, model: nn.Module, model_config: ModelConfig, client
+    ):
+        for _, module in model.named_modules():
+            quant_method = getattr(module, &#34;quant_method&#34;, None)
+            if quant_method is not None:
+                quant_method.process_weights_after_loading(module)
+        weights_iterator = self._get_weights_iterator_kv(client)
+        state_dict = ShardedStateLoader._filter_subtensors(model.state_dict())
+        for key, tensor in weights_iterator:
+            # If loading with LoRA enabled, additional padding may
+            # be added to certain parameters. We only load into a
+            # narrowed view of the parameter data.
+            param_data = state_dict[key].data
+            param_shape = state_dict[key].shape
+            for dim, size in enumerate(tensor.shape):
+                if size &lt; param_shape[dim]:
+                    param_data = param_data.narrow(dim, 0, size)
+            if tensor.shape != param_shape:
+                logger.warning(
+                    &#34;loading tensor of shape %s into &#34; &#34;parameter &#39;%s&#39; of shape %s&#34;,
+                    tensor.shape,
+                    key,
+                    param_shape,
+                )
+            param_data.copy_(tensor)
+            state_dict.pop(key)
+        if state_dict:
+            raise ValueError(f&#34;Missing keys {tuple(state_dict)} in loaded state!&#34;)
+
+        post_load_weights(model, model_config)
+
+    def _load_model_from_remote_fs(
+        self, model, client, model_config: ModelConfig, device_config: DeviceConfig
+    ) -&gt; nn.Module:
+
+        target_device = torch.device(device_config.device)
+        with set_default_torch_dtype(model_config.dtype):
+            model.load_weights(self._get_weights_iterator_fs(client))
+
+            for _, module in model.named_modules():
+                quant_method = getattr(module, &#34;quant_method&#34;, None)
+                if quant_method is not None:
+                    # When quant methods need to process weights after loading
+                    # (for repacking, quantizing, etc), they expect parameters
+                    # to be on the global target device. This scope is for the
+                    # case where cpu offloading is used, where we will move the
+                    # parameters onto device for processing and back off after.
+                    with device_loading_context(module, target_device):
+                        quant_method.process_weights_after_loading(module)
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+        logger.info(&#34;Loading weights from remote storage ...&#34;)
+        start = time.perf_counter()
+        load_config = self.load_config
+
+        assert load_config.load_format == LoadFormat.REMOTE, (
+            f&#34;Model loader {self.load_config.load_format} is not supported for &#34;
+            f&#34;load format {load_config.load_format}&#34;
+        )
+
+        model_weights = model_config.model_path
+        if hasattr(model_config, &#34;model_weights&#34;):
+            model_weights = model_config.model_weights
+
+        with set_default_torch_dtype(model_config.dtype):
+            with torch.device(device_config.device):
+                model = _initialize_model(model_config, self.load_config)
+
+            with create_remote_connector(
+                model_weights, device=device_config.device
+            ) as client:
+                connector_type = get_connector_type(client)
+                if connector_type == ConnectorType.KV:
+                    self._load_model_from_remote_kv(model, model_config, client)
+                elif connector_type == ConnectorType.FS:
+                    self._load_model_from_remote_fs(
+                        model, client, model_config, device_config
+                    )
+
+        end = time.perf_counter()
+        logger.info(&#34;Loaded weights from remote storage in %.2f seconds.&#34;, end - start)
+        return model.eval()</code></pre>
+</details>
+<div class="desc"><p>Model loader that can load Tensors from remote database.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.RemoteModelLoader.save_model"><code class="name flex">
+<span>def <span class="ident">save_model</span></span>(<span>model: torch.nn.modules.module.Module, model_path: str, url: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def save_model(
+    model: torch.nn.Module,
+    model_path: str,
+    url: str,
+) -&gt; None:
+    with create_remote_connector(url) as client:
+        assert get_connector_type(client) == ConnectorType.KV
+        model_name = parse_model_name(url)
+        rank = get_tensor_model_parallel_rank()
+        state_dict = ShardedStateLoader._filter_subtensors(model.state_dict())
+        for key, tensor in state_dict.items():
+            r_key = f&#34;{model_name}/keys/rank_{rank}/{key}&#34;
+            client.set(r_key, tensor)
+
+        for root, _, files in os.walk(model_path):
+            for file_name in files:
+                # ignore hidden files
+                if file_name.startswith(&#34;.&#34;):
+                    continue
+                if os.path.splitext(file_name)[1] in (&#34;.json&#34;, &#34;.py&#34;):
+                    file_path = os.path.join(root, file_name)
+                    with open(file_path, encoding=&#34;utf-8&#34;) as file:
+                        file_content = file.read()
+                        f_key = f&#34;{model_name}/files/{file_name}&#34;
+                        client.setstr(f_key, file_content)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.loader.ShardedStateLoader"><code class="flex name class">
+<span>class <span class="ident">ShardedStateLoader</span></span>
+<span>(</span><span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ShardedStateLoader(BaseModelLoader):
+    &#34;&#34;&#34;
+    Model loader that directly loads each worker&#39;s model state dict, which
+    enables a fast load path for large tensor-parallel models where each worker
+    only needs to read its own shard rather than the entire checkpoint. See
+    `examples/runtime/engine/save_sharded_state.py` for creating a sharded checkpoint.
+    &#34;&#34;&#34;
+
+    DEFAULT_PATTERN = &#34;model-rank-{rank}-part-{part}.safetensors&#34;
+
+    def __init__(self, load_config: LoadConfig):
+        super().__init__(load_config)
+        extra_config = (
+            {}
+            if load_config.model_loader_extra_config is None
+            else load_config.model_loader_extra_config.copy()
+        )
+        self.pattern = extra_config.pop(&#34;pattern&#34;, self.DEFAULT_PATTERN)
+        if extra_config:
+            raise ValueError(
+                f&#34;Unexpected extra config keys for load format &#34;
+                f&#34;{load_config.load_format}: &#34;
+                f&#34;{load_config.model_loader_extra_config.keys()}&#34;
+            )
+
+    @staticmethod
+    def _filter_subtensors(tensors: Dict[str, torch.Tensor]) -&gt; Dict[str, torch.Tensor]:
+        &#34;&#34;&#34;
+        Filter out all tensors that share the same memory or a subset of the
+        memory of another tensor.
+        &#34;&#34;&#34;
+        same_storage_groups: Dict[Any, List[Tuple[str, torch.Tensor]]] = (
+            collections.defaultdict(list)
+        )
+        for key, tensor in tensors.items():
+            if tensor.numel():
+                ptr = tensor.untyped_storage().data_ptr()
+                same_storage_groups[tensor.device, ptr].append((key, tensor))
+
+        def get_end_ptr(tensor: torch.Tensor) -&gt; int:
+            return tensor.view(-1)[-1].data_ptr() + tensor.element_size()
+
+        result: Dict[str, torch.Tensor] = {}
+        for group in same_storage_groups.values():
+            for k, t in group:
+                a, b = t.data_ptr(), get_end_ptr(t)
+                for k2, t2 in group:
+                    if not t2.is_contiguous():
+                        continue
+                    a2, b2 = t2.data_ptr(), get_end_ptr(t2)
+                    if a &lt; a2 or b2 &lt; b:
+                        continue
+                    if a2 &lt; a or b &lt; b2 or not t.is_contiguous():
+                        break  # t2 covers strictly more memory than t.
+                    if k2 &lt; k:
+                        # Same tensors, keep the one with the smaller key.
+                        break
+                else:
+                    result[k] = t
+        return result
+
+    def _prepare_weights(self, model_name_or_path: str, revision: Optional[str]):
+        if os.path.isdir(model_name_or_path):
+            return model_name_or_path
+        else:
+            allow_patterns = [&#34;*.safetensors&#34;]
+            return download_weights_from_hf(
+                model_name_or_path,
+                self.load_config.download_dir,
+                allow_patterns,
+                revision,
+                ignore_patterns=self.load_config.ignore_patterns,
+            )
+
+    def download_model(self, model_config: ModelConfig) -&gt; None:
+        self._prepare_weights(model_config.model_path, model_config.revision)
+
+    def load_model(
+        self,
+        *,
+        model_config: ModelConfig,
+        device_config: DeviceConfig,
+    ) -&gt; nn.Module:
+        from safetensors.torch import safe_open
+
+        from sglang.srt.distributed import get_tensor_model_parallel_rank
+
+        local_model_path = self._prepare_weights(
+            model_config.model_path, model_config.revision
+        )
+
+        with set_default_torch_dtype(model_config.dtype):
+            with torch.device(device_config.device):
+                model = _initialize_model(model_config, self.load_config)
+                for _, module in model.named_modules():
+                    quant_method = getattr(module, &#34;quant_method&#34;, None)
+                    if quant_method is not None:
+                        quant_method.process_weights_after_loading(module)
+            rank = get_tensor_model_parallel_rank()
+            pattern = os.path.join(
+                local_model_path,
+                self.pattern.format(rank=rank, part=&#34;*&#34;),
+            )
+            filepaths = glob.glob(pattern)
+            if not filepaths:
+                # TODO: support un-sharded checkpoints too
+                raise ValueError(
+                    f&#34;Could not find checkpoint files &#39;{pattern}&#39;, only &#34;
+                    f&#34;pre-sharded checkpoints are currently supported!&#34;
+                )
+            state_dict = self._filter_subtensors(model.state_dict())
+            for path in filepaths:
+                with safe_open(path, framework=&#34;pt&#34;) as f:
+                    for key in f.keys():  # noqa: SIM118
+                        tensor = f.get_tensor(key)
+                        # If loading with LoRA enabled, additional padding may
+                        # be added to certain parameters. We only load into a
+                        # narrowed view of the parameter data.
+                        param_data = state_dict[key].data
+                        param_shape = state_dict[key].shape
+                        for dim, size in enumerate(tensor.shape):
+                            if size &lt; param_shape[dim]:
+                                param_data = param_data.narrow(dim, 0, size)
+                        if tensor.shape != param_shape:
+                            logger.warning(
+                                &#34;loading tensor of shape %s into &#34;
+                                &#34;parameter &#39;%s&#39; of shape %s&#34;,
+                                tensor.shape,
+                                key,
+                                param_shape,
+                            )
+                        param_data.copy_(tensor)
+                        state_dict.pop(key)
+            if state_dict:
+                raise ValueError(f&#34;Missing keys {tuple(state_dict)} in loaded state!&#34;)
+
+            post_load_weights(model, model_config)
+
+        return model.eval()
+
+    @staticmethod
+    def save_model(
+        model: torch.nn.Module,
+        path: str,
+        pattern: Optional[str] = None,
+        max_size: Optional[int] = None,
+    ) -&gt; None:
+        from safetensors.torch import save_file
+
+        from sglang.srt.distributed import get_tensor_model_parallel_rank
+
+        if pattern is None:
+            pattern = ShardedStateLoader.DEFAULT_PATTERN
+        rank = get_tensor_model_parallel_rank()
+        part_idx = 0
+        total_size = 0
+        state_dict = ShardedStateLoader._filter_subtensors(model.state_dict())
+        state_dict_part: Dict[str, torch.Tensor] = {}
+        for key, tensor in state_dict.items():
+            param_size = tensor.nelement() * tensor.element_size()
+            if max_size is not None and total_size + param_size &gt; max_size:
+                filename = pattern.format(rank=rank, part=part_idx)
+                save_file(
+                    state_dict_part,
+                    os.path.join(path, filename),
+                )
+                part_idx += 1
+                total_size = 0
+                state_dict_part = {}
+            state_dict_part[key] = tensor
+            total_size += param_size
+        if len(state_dict_part) &gt; 0:
+            filename = pattern.format(rank=rank, part=part_idx)
+            save_file(
+                state_dict_part,
+                os.path.join(path, filename),
+            )</code></pre>
+</details>
+<div class="desc"><p>Model loader that directly loads each worker's model state dict, which
+enables a fast load path for large tensor-parallel models where each worker
+only needs to read its own shard rather than the entire checkpoint. See
+<code>examples/runtime/engine/save_sharded_state.py</code> for creating a sharded checkpoint.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.ShardedStateLoader.DEFAULT_PATTERN"><code class="name">var <span class="ident">DEFAULT_PATTERN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.model_loader.loader.ShardedStateLoader.save_model"><code class="name flex">
+<span>def <span class="ident">save_model</span></span>(<span>model: torch.nn.modules.module.Module,<br>path: str,<br>pattern: str | None = None,<br>max_size: int | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def save_model(
+    model: torch.nn.Module,
+    path: str,
+    pattern: Optional[str] = None,
+    max_size: Optional[int] = None,
+) -&gt; None:
+    from safetensors.torch import save_file
+
+    from sglang.srt.distributed import get_tensor_model_parallel_rank
+
+    if pattern is None:
+        pattern = ShardedStateLoader.DEFAULT_PATTERN
+    rank = get_tensor_model_parallel_rank()
+    part_idx = 0
+    total_size = 0
+    state_dict = ShardedStateLoader._filter_subtensors(model.state_dict())
+    state_dict_part: Dict[str, torch.Tensor] = {}
+    for key, tensor in state_dict.items():
+        param_size = tensor.nelement() * tensor.element_size()
+        if max_size is not None and total_size + param_size &gt; max_size:
+            filename = pattern.format(rank=rank, part=part_idx)
+            save_file(
+                state_dict_part,
+                os.path.join(path, filename),
+            )
+            part_idx += 1
+            total_size = 0
+            state_dict_part = {}
+        state_dict_part[key] = tensor
+        total_size += param_size
+    if len(state_dict_part) &gt; 0:
+        filename = pattern.format(rank=rank, part=part_idx)
+        save_file(
+            state_dict_part,
+            os.path.join(path, filename),
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.model_loader" href="index.html">sglang.srt.model_loader</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.loader.device_loading_context" href="#sglang.srt.model_loader.loader.device_loading_context">device_loading_context</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.get_model_loader" href="#sglang.srt.model_loader.loader.get_model_loader">get_model_loader</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.load_model_with_cpu_quantization" href="#sglang.srt.model_loader.loader.load_model_with_cpu_quantization">load_model_with_cpu_quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.BaseModelLoader" href="#sglang.srt.model_loader.loader.BaseModelLoader">BaseModelLoader</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.download_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.download_model">download_model</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BaseModelLoader.load_model" href="#sglang.srt.model_loader.loader.BaseModelLoader.load_model">load_model</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.BitsAndBytesModelLoader" href="#sglang.srt.model_loader.loader.BitsAndBytesModelLoader">BitsAndBytesModelLoader</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.loader.BitsAndBytesModelLoader.default_target_modules" href="#sglang.srt.model_loader.loader.BitsAndBytesModelLoader.default_target_modules">default_target_modules</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.BitsAndBytesModelLoader.possible_config_file_names" href="#sglang.srt.model_loader.loader.BitsAndBytesModelLoader.possible_config_file_names">possible_config_file_names</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader" href="#sglang.srt.model_loader.loader.DefaultModelLoader">DefaultModelLoader</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader.DEFAULT_NUM_THREADS" href="#sglang.srt.model_loader.loader.DefaultModelLoader.DEFAULT_NUM_THREADS">DEFAULT_NUM_THREADS</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader.Source" href="#sglang.srt.model_loader.loader.DefaultModelLoader.Source">Source</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.DefaultModelLoader.load_weights_and_postprocess" href="#sglang.srt.model_loader.loader.DefaultModelLoader.load_weights_and_postprocess">load_weights_and_postprocess</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.DummyModelLoader" href="#sglang.srt.model_loader.loader.DummyModelLoader">DummyModelLoader</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.GGUFModelLoader" href="#sglang.srt.model_loader.loader.GGUFModelLoader">GGUFModelLoader</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.LayeredModelLoader" href="#sglang.srt.model_loader.loader.LayeredModelLoader">LayeredModelLoader</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.RemoteModelLoader" href="#sglang.srt.model_loader.loader.RemoteModelLoader">RemoteModelLoader</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.loader.RemoteModelLoader.save_model" href="#sglang.srt.model_loader.loader.RemoteModelLoader.save_model">save_model</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.loader.ShardedStateLoader" href="#sglang.srt.model_loader.loader.ShardedStateLoader">ShardedStateLoader</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.loader.ShardedStateLoader.DEFAULT_PATTERN" href="#sglang.srt.model_loader.loader.ShardedStateLoader.DEFAULT_PATTERN">DEFAULT_PATTERN</a></code></li>
+<li><code><a title="sglang.srt.model_loader.loader.ShardedStateLoader.save_model" href="#sglang.srt.model_loader.loader.ShardedStateLoader.save_model">save_model</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

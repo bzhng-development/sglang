@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.siglip API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.siglip</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipEncoder"><code class="flex name class">
+<span>class <span class="ident">SiglipEncoder</span></span>
+<span>(</span><span>config: transformers.models.siglip.configuration_siglip.SiglipVisionConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiglipEncoder(nn.Module):
+    &#34;&#34;&#34;
+    Transformer encoder consisting of `config.num_hidden_layers` self
+    attention layers. Each layer is a [`SiglipEncoderLayer`].
+
+    Args:
+        config: SiglipConfig
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        config: SiglipVisionConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+
+        self.config = config
+
+        num_hidden_layers = config.num_hidden_layers
+        norm_layer = partial(nn.LayerNorm, eps=config.layer_norm_eps)
+        self.layers = nn.ModuleList(
+            [
+                SiglipEncoderLayer(
+                    config=config,
+                    norm_layer=norm_layer,
+                    attn_implementation=&#34;sdpa&#34;,
+                    quant_config=quant_config,
+                    prefix=add_prefix(f&#34;layers.{layer_idx}&#34;, prefix),
+                )
+                for layer_idx in range(num_hidden_layers)
+            ]
+        )
+
+    def forward(
+        self,
+        inputs_embeds: torch.Tensor,
+        attention_mask: torch.Tensor = None,
+        causal_attention_mask: torch.Tensor = None,
+        return_all_hidden_states: bool = False,
+    ) -&gt; Union[torch.Tensor, list[torch.Tensor]]:
+        hidden_states_pool = [inputs_embeds]
+        hidden_states = inputs_embeds
+
+        for encoder_layer in self.layers:
+            hidden_states = encoder_layer(
+                hidden_states, attention_mask, causal_attention_mask
+            )
+            if return_all_hidden_states:
+                hidden_states_pool.append(hidden_states)
+        if return_all_hidden_states:
+            return hidden_states_pool
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Transformer encoder consisting of <code>config.num_hidden_layers</code> self
+attention layers. Each layer is a [<code>SiglipEncoderLayer</code>].</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>config</code></strong></dt>
+<dd>SiglipConfig</dd>
+</dl>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipEncoder.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>inputs_embeds: torch.Tensor,<br>attention_mask: torch.Tensor = None,<br>causal_attention_mask: torch.Tensor = None,<br>return_all_hidden_states: bool = False) ‑> torch.Tensor | list[torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    inputs_embeds: torch.Tensor,
+    attention_mask: torch.Tensor = None,
+    causal_attention_mask: torch.Tensor = None,
+    return_all_hidden_states: bool = False,
+) -&gt; Union[torch.Tensor, list[torch.Tensor]]:
+    hidden_states_pool = [inputs_embeds]
+    hidden_states = inputs_embeds
+
+    for encoder_layer in self.layers:
+        hidden_states = encoder_layer(
+            hidden_states, attention_mask, causal_attention_mask
+        )
+        if return_all_hidden_states:
+            hidden_states_pool.append(hidden_states)
+    if return_all_hidden_states:
+        return hidden_states_pool
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.siglip.SiglipEncoderLayer"><code class="flex name class">
+<span>class <span class="ident">SiglipEncoderLayer</span></span>
+<span>(</span><span>config: transformers.models.siglip.configuration_siglip.SiglipVisionConfig,<br>act_layer: Type[torch.nn.modules.module.Module] = sglang.srt.layers.activation.QuickGELU,<br>norm_layer: Type[torch.nn.modules.module.Module] = None,<br>attn_implementation: str | None = 'sdpa',<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiglipEncoderLayer(nn.Module):
+
+    def __init__(
+        self,
+        config: SiglipVisionConfig,
+        act_layer: Type[nn.Module] = QuickGELU,
+        norm_layer: Type[nn.Module] = None,
+        attn_implementation: Optional[str] = &#34;sdpa&#34;,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        if norm_layer is None:
+            norm_layer = partial(nn.LayerNorm, eps=config.layer_norm_eps)
+        self.layer_norm1 = norm_layer(config.hidden_size)
+        self.layer_norm2 = norm_layer(config.hidden_size)
+        if attn_implementation == &#34;sdpa&#34;:
+            qkv_backend = &#34;sdpa&#34;
+            softmax_in_single_precision = False
+        elif attn_implementation == &#34;flash_attention_2&#34;:
+            qkv_backend = &#34;triton_attn&#34;
+            softmax_in_single_precision = False
+        elif attn_implementation == &#34;eager&#34;:
+            qkv_backend = &#34;sdpa&#34;
+            softmax_in_single_precision = True
+        self.self_attn = VisionAttention(
+            embed_dim=config.hidden_size,
+            num_heads=config.num_attention_heads,
+            projection_size=config.hidden_size,
+            use_qkv_parallel=True,
+            qkv_backend=qkv_backend,
+            softmax_in_single_precision=softmax_in_single_precision,
+            flatten_batch=True,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;self_attn&#34;, prefix),
+        )
+        self.mlp = SiglipMLP(
+            config,
+            act_layer=act_layer,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;mlp&#34;, prefix),
+        )
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        attention_mask: torch.Tensor,
+        causal_attention_mask: torch.Tensor,
+    ) -&gt; torch.Tensor:
+
+        residual = hidden_states
+        hidden_states = self.layer_norm1(hidden_states)
+        # Siglip text model uses both `causal_attention_mask` and `attention_mask`
+        if attention_mask is not None and causal_attention_mask is not None:
+            attn_mask = attention_mask + causal_attention_mask
+        elif causal_attention_mask is not None:
+            attn_mask = causal_attention_mask
+        else:
+            attn_mask = attention_mask
+        hidden_states = self.self_attn(
+            hidden_states,
+            attention_mask=attn_mask,
+            # causal_attention_mask=causal_attention_mask,
+        )
+
+        hidden_states = residual + hidden_states
+        residual = hidden_states
+        hidden_states = self.layer_norm2(hidden_states)
+        hidden_states = self.mlp(hidden_states)
+        hidden_states = residual + hidden_states
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipEncoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>hidden_states: torch.Tensor,<br>attention_mask: torch.Tensor,<br>causal_attention_mask: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    hidden_states: torch.Tensor,
+    attention_mask: torch.Tensor,
+    causal_attention_mask: torch.Tensor,
+) -&gt; torch.Tensor:
+
+    residual = hidden_states
+    hidden_states = self.layer_norm1(hidden_states)
+    # Siglip text model uses both `causal_attention_mask` and `attention_mask`
+    if attention_mask is not None and causal_attention_mask is not None:
+        attn_mask = attention_mask + causal_attention_mask
+    elif causal_attention_mask is not None:
+        attn_mask = causal_attention_mask
+    else:
+        attn_mask = attention_mask
+    hidden_states = self.self_attn(
+        hidden_states,
+        attention_mask=attn_mask,
+        # causal_attention_mask=causal_attention_mask,
+    )
+
+    hidden_states = residual + hidden_states
+    residual = hidden_states
+    hidden_states = self.layer_norm2(hidden_states)
+    hidden_states = self.mlp(hidden_states)
+    hidden_states = residual + hidden_states
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.siglip.SiglipMLP"><code class="flex name class">
+<span>class <span class="ident">SiglipMLP</span></span>
+<span>(</span><span>config,<br>act_layer: Type[torch.nn.modules.module.Module] = sglang.srt.layers.activation.QuickGELU,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiglipMLP(nn.Module):
+
+    def __init__(
+        self,
+        config,
+        act_layer: Type[nn.Module] = QuickGELU,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.fc1 = ColumnParallelLinear(
+            config.hidden_size,
+            config.intermediate_size,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;fc1&#34;, prefix),
+        )
+        self.act = act_layer()
+        self.fc2 = RowParallelLinear(
+            config.intermediate_size,
+            config.hidden_size,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;fc2&#34;, prefix),
+        )
+
+    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+        x_parallel, _ = self.fc1(x)
+        x_parallel = self.act(x_parallel)
+        x, _ = self.fc2(x_parallel)
+        return x</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipMLP.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+    x_parallel, _ = self.fc1(x)
+    x_parallel = self.act(x_parallel)
+    x, _ = self.fc2(x_parallel)
+    return x</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.siglip.SiglipVisionEmbeddings"><code class="flex name class">
+<span>class <span class="ident">SiglipVisionEmbeddings</span></span>
+<span>(</span><span>config: transformers.models.siglip.configuration_siglip.SiglipVisionConfig)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiglipVisionEmbeddings(nn.Module):
+
+    def __init__(self, config: SiglipVisionConfig):
+        super().__init__()
+        self.config = config
+        self.embed_dim = config.hidden_size
+        self.image_size = config.image_size
+        self.patch_size = config.patch_size
+
+        self.patch_embedding = nn.Conv2d(
+            in_channels=config.num_channels,
+            out_channels=self.embed_dim,
+            kernel_size=self.patch_size,
+            stride=self.patch_size,
+            padding=&#34;valid&#34;,
+        )
+
+        self.num_patches = (self.image_size // self.patch_size) ** 2
+        self.num_positions = self.num_patches
+        self.position_embedding = VocabParallelEmbedding(
+            self.num_positions, self.embed_dim
+        )
+        self.register_buffer(
+            &#34;position_ids&#34;,
+            torch.arange(self.num_positions).expand((1, -1)),
+            persistent=False,
+        )
+
+    def forward(self, pixel_values: torch.Tensor) -&gt; torch.Tensor:
+        target_dtype = self.patch_embedding.weight.dtype
+        patch_embeds = self.patch_embedding(
+            pixel_values.to(dtype=target_dtype)
+        )  # shape = [*, width, grid, grid]
+        embeddings = patch_embeds.flatten(2).transpose(1, 2)
+        # interpolate_pos_encoding is never used in sglang
+        embeddings = embeddings + self.position_embedding(self.position_ids)
+
+        return embeddings</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipVisionEmbeddings.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, pixel_values: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, pixel_values: torch.Tensor) -&gt; torch.Tensor:
+    target_dtype = self.patch_embedding.weight.dtype
+    patch_embeds = self.patch_embedding(
+        pixel_values.to(dtype=target_dtype)
+    )  # shape = [*, width, grid, grid]
+    embeddings = patch_embeds.flatten(2).transpose(1, 2)
+    # interpolate_pos_encoding is never used in sglang
+    embeddings = embeddings + self.position_embedding(self.position_ids)
+
+    return embeddings</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.siglip.SiglipVisionModel"><code class="flex name class">
+<span>class <span class="ident">SiglipVisionModel</span></span>
+<span>(</span><span>config: transformers.models.siglip.configuration_siglip.SiglipVisionConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiglipVisionModel(nn.Module):
+    def __init__(
+        self,
+        config: SiglipVisionConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.vision_model = SiglipVisionTransformer(
+            config, quant_config, prefix=add_prefix(&#34;vision_model&#34;, prefix)
+        )
+
+    @property
+    def device(self) -&gt; torch.device:
+        return self.vision_model.device
+
+    def forward(self, pixel_values: torch.Tensor):
+        return self.vision_model(pixel_values)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipVisionModel.device"><code class="name">prop <span class="ident">device</span> : torch.device</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def device(self) -&gt; torch.device:
+    return self.vision_model.device</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipVisionModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, pixel_values: torch.Tensor) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, pixel_values: torch.Tensor):
+    return self.vision_model(pixel_values)</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.siglip.SiglipVisionTransformer"><code class="flex name class">
+<span>class <span class="ident">SiglipVisionTransformer</span></span>
+<span>(</span><span>config: transformers.models.siglip.configuration_siglip.SiglipVisionConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SiglipVisionTransformer(nn.Module):
+
+    def __init__(
+        self,
+        config: SiglipVisionConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+
+        self.config = config
+        embed_dim = config.hidden_size
+
+        self.embeddings = SiglipVisionEmbeddings(config)
+
+        self.encoder = SiglipEncoder(
+            config=config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;encoder&#34;, prefix),
+        )
+
+        num_hidden_layers = config.num_hidden_layers
+        if len(self.encoder.layers) &gt; config.num_hidden_layers:
+            raise ValueError(
+                f&#34;The original encoder only has {num_hidden_layers} &#34;
+                f&#34;layers, but you requested {len(self.encoder.layers)} layers.&#34;
+            )
+
+        # VisionAttention in SiglipEncoderLayer is multihead attention
+        self.post_layernorm = nn.LayerNorm(embed_dim, eps=config.layer_norm_eps)
+
+    @property
+    def device(self) -&gt; torch.device:
+        return self.encoder.layers[0].layer_norm1.weight.device
+
+    def forward(
+        self,
+        pixel_values: torch.Tensor,
+    ) -&gt; torch.Tensor:
+        hidden_states = self.embeddings(pixel_values.to(self.device))
+
+        return_all_hidden_states = False
+
+        last_hidden_state = self.encoder(
+            inputs_embeds=hidden_states,
+            return_all_hidden_states=return_all_hidden_states,
+        )
+
+        last_hidden_state = self.post_layernorm(last_hidden_state)
+
+        return last_hidden_state</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipVisionTransformer.device"><code class="name">prop <span class="ident">device</span> : torch.device</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def device(self) -&gt; torch.device:
+    return self.encoder.layers[0].layer_norm1.weight.device</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.siglip.SiglipVisionTransformer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, pixel_values: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    pixel_values: torch.Tensor,
+) -&gt; torch.Tensor:
+    hidden_states = self.embeddings(pixel_values.to(self.device))
+
+    return_all_hidden_states = False
+
+    last_hidden_state = self.encoder(
+        inputs_embeds=hidden_states,
+        return_all_hidden_states=return_all_hidden_states,
+    )
+
+    last_hidden_state = self.post_layernorm(last_hidden_state)
+
+    return last_hidden_state</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.siglip.SiglipEncoder" href="#sglang.srt.models.siglip.SiglipEncoder">SiglipEncoder</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.siglip.SiglipEncoder.forward" href="#sglang.srt.models.siglip.SiglipEncoder.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.siglip.SiglipEncoderLayer" href="#sglang.srt.models.siglip.SiglipEncoderLayer">SiglipEncoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.siglip.SiglipEncoderLayer.forward" href="#sglang.srt.models.siglip.SiglipEncoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.siglip.SiglipMLP" href="#sglang.srt.models.siglip.SiglipMLP">SiglipMLP</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.siglip.SiglipMLP.forward" href="#sglang.srt.models.siglip.SiglipMLP.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.siglip.SiglipVisionEmbeddings" href="#sglang.srt.models.siglip.SiglipVisionEmbeddings">SiglipVisionEmbeddings</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.siglip.SiglipVisionEmbeddings.forward" href="#sglang.srt.models.siglip.SiglipVisionEmbeddings.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.siglip.SiglipVisionModel" href="#sglang.srt.models.siglip.SiglipVisionModel">SiglipVisionModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.siglip.SiglipVisionModel.device" href="#sglang.srt.models.siglip.SiglipVisionModel.device">device</a></code></li>
+<li><code><a title="sglang.srt.models.siglip.SiglipVisionModel.forward" href="#sglang.srt.models.siglip.SiglipVisionModel.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.siglip.SiglipVisionTransformer" href="#sglang.srt.models.siglip.SiglipVisionTransformer">SiglipVisionTransformer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.siglip.SiglipVisionTransformer.device" href="#sglang.srt.models.siglip.SiglipVisionTransformer.device">device</a></code></li>
+<li><code><a title="sglang.srt.models.siglip.SiglipVisionTransformer.forward" href="#sglang.srt.models.siglip.SiglipVisionTransformer.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

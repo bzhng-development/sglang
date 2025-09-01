@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.lora.utils API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.lora.utils</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.lora.utils.get_hidden_dim"><code class="name flex">
+<span>def <span class="ident">get_hidden_dim</span></span>(<span>module_name: str,<br>config: transformers.models.auto.configuration_auto.AutoConfig,<br>base_model: torch.nn.modules.module.Module) ‑> Tuple[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_hidden_dim(
+    module_name: str, config: AutoConfig, base_model: torch.nn.Module
+) -&gt; Tuple[int]:
+    &#34;&#34;&#34;
+    Given a module_name (might be a stacked name), return the hidden dims of modules&#39; input and output.
+    &#34;&#34;&#34;
+
+    if hasattr(base_model, &#34;get_hidden_dim&#34;):
+        return base_model.get_hidden_dim(module_name)
+    else:
+        &#34;&#34;&#34;
+        WARNING: get_hidden_dim() is not defined,
+        which is used to get the hidden dim for different lora modules
+        Use the default one, but please check if it is correct for your model.
+        Please implement the function in the model class if it is not.
+        You can reference this function in llama.py.
+        &#34;&#34;&#34;
+        head_dim = getattr(
+            config, &#34;head_dim&#34;, config.hidden_size // config.num_attention_heads
+        )
+        if module_name == &#34;qkv_proj&#34;:
+            return config.hidden_size, head_dim * (
+                config.num_attention_heads + config.num_key_value_heads * 2
+            )
+        elif module_name == &#34;o_proj&#34;:
+            return (
+                head_dim * config.num_attention_heads,
+                config.hidden_size,
+            )
+        elif module_name == &#34;gate_up_proj&#34;:
+            return config.hidden_size, config.intermediate_size * 2
+        elif module_name == &#34;down_proj&#34;:
+            return config.intermediate_size, config.hidden_size
+        else:
+            raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Given a module_name (might be a stacked name), return the hidden dims of modules' input and output.</p></div>
+</dd>
+<dt id="sglang.srt.lora.utils.get_layer_id"><code class="name flex">
+<span>def <span class="ident">get_layer_id</span></span>(<span>name: str) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_layer_id(name: str) -&gt; int:
+    &#34;&#34;&#34;
+    Extract integer id of layer from its name in string.
+    &#34;&#34;&#34;
+    match = re.search(r&#34;layers\.(\d+)\.&#34;, name)
+    if match is None:
+        return None
+    return int(match.group(1))</code></pre>
+</details>
+<div class="desc"><p>Extract integer id of layer from its name in string.</p></div>
+</dd>
+<dt id="sglang.srt.lora.utils.get_normalized_target_modules"><code class="name flex">
+<span>def <span class="ident">get_normalized_target_modules</span></span>(<span>target_modules: Iterable[str]) ‑> set[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_normalized_target_modules(
+    target_modules: Iterable[str],
+) -&gt; set[str]:
+    &#34;&#34;&#34;
+    Mapping a list of target module name to names of the normalized LoRA weights.
+    &#34;&#34;&#34;
+    params_mapping = {
+        &#34;q_proj&#34;: &#34;qkv_proj&#34;,
+        &#34;k_proj&#34;: &#34;qkv_proj&#34;,
+        &#34;v_proj&#34;: &#34;qkv_proj&#34;,
+        &#34;gate_proj&#34;: &#34;gate_up_proj&#34;,
+        &#34;up_proj&#34;: &#34;gate_up_proj&#34;,
+    }
+
+    result = set()
+    for name in target_modules:
+        normalized_name = params_mapping.get(name, name)
+        result.add(normalized_name)
+    return result</code></pre>
+</details>
+<div class="desc"><p>Mapping a list of target module name to names of the normalized LoRA weights.</p></div>
+</dd>
+<dt id="sglang.srt.lora.utils.get_stacked_multiply"><code class="name flex">
+<span>def <span class="ident">get_stacked_multiply</span></span>(<span>module_name: str) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_stacked_multiply(module_name: str) -&gt; int:
+    &#34;&#34;&#34;
+    Mapping a lora module name to its magnification at output dimension
+    &#34;&#34;&#34;
+    stacked_rank = {
+        &#34;qkv_proj&#34;: 3,
+        &#34;gate_up_proj&#34;: 2,
+    }
+    return stacked_rank[module_name] if module_name in stacked_rank else 1</code></pre>
+</details>
+<div class="desc"><p>Mapping a lora module name to its magnification at output dimension</p></div>
+</dd>
+<dt id="sglang.srt.lora.utils.get_target_module_name"><code class="name flex">
+<span>def <span class="ident">get_target_module_name</span></span>(<span>full_module_name: str, target_modules: Set[str]) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_target_module_name(full_module_name: str, target_modules: Set[str]) -&gt; str:
+    &#34;&#34;&#34;
+    Get the target module name in target_modules that can match full_module_name.
+
+    If there is a target module name in target_modules that can match full_module_name, return this name
+    Else raise ValueError.
+    &#34;&#34;&#34;
+    for target_module in target_modules:
+        if target_module in full_module_name:
+            return target_module
+    raise ValueError(
+        f&#34;Cannot find target module name for {full_module_name} in {target_modules}&#34;
+    )</code></pre>
+</details>
+<div class="desc"><p>Get the target module name in target_modules that can match full_module_name.</p>
+<p>If there is a target module name in target_modules that can match full_module_name, return this name
+Else raise ValueError.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo"><code class="flex name class">
+<span>class <span class="ident">LoRABatchInfo</span></span>
+<span>(</span><span>bs: int,<br>seg_lens: torch.Tensor,<br>seg_indptr: torch.Tensor,<br>max_len: int,<br>weight_indices: torch.Tensor,<br>lora_ranks: torch.Tensor,<br>scalings: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class LoRABatchInfo:
+    # Batch size
+    bs: int
+
+    # Lengths of each sequence in shape (bs,)
+    seg_lens: torch.Tensor
+
+    # Indice pointers of each sequence in shape (bs + 1, )
+    seg_indptr: torch.Tensor
+
+    # Maximum sequence length of current batch
+    max_len: int
+
+    # The index of lora adapter used by each sequence, in shape (bs,)
+    weight_indices: torch.Tensor
+
+    # ranks of each lora adapter, in shape (lora_num,)
+    lora_ranks: torch.Tensor
+
+    # scaling of each lora adapter, in shape (lora_num,)
+    scalings: torch.Tensor</code></pre>
+</details>
+<div class="desc"><p>LoRABatchInfo(bs: int, seg_lens: torch.Tensor, seg_indptr: torch.Tensor, max_len: int, weight_indices: torch.Tensor, lora_ranks: torch.Tensor, scalings: torch.Tensor)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.bs"><code class="name">var <span class="ident">bs</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.lora_ranks"><code class="name">var <span class="ident">lora_ranks</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.max_len"><code class="name">var <span class="ident">max_len</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.scalings"><code class="name">var <span class="ident">scalings</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.seg_indptr"><code class="name">var <span class="ident">seg_indptr</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.seg_lens"><code class="name">var <span class="ident">seg_lens</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRABatchInfo.weight_indices"><code class="name">var <span class="ident">weight_indices</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRAType"><code class="flex name class">
+<span>class <span class="ident">LoRAType</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoRAType(Enum):
+    LORA_A = 0
+    LORA_B = 1</code></pre>
+</details>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color.RED
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>value lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color(1)
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>name lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color['RED']
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.lora.utils.LoRAType.LORA_A"><code class="name">var <span class="ident">LORA_A</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.lora.utils.LoRAType.LORA_B"><code class="name">var <span class="ident">LORA_B</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.lora" href="index.html">sglang.srt.lora</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.lora.utils.get_hidden_dim" href="#sglang.srt.lora.utils.get_hidden_dim">get_hidden_dim</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.get_layer_id" href="#sglang.srt.lora.utils.get_layer_id">get_layer_id</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.get_normalized_target_modules" href="#sglang.srt.lora.utils.get_normalized_target_modules">get_normalized_target_modules</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.get_stacked_multiply" href="#sglang.srt.lora.utils.get_stacked_multiply">get_stacked_multiply</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.get_target_module_name" href="#sglang.srt.lora.utils.get_target_module_name">get_target_module_name</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.lora.utils.LoRABatchInfo" href="#sglang.srt.lora.utils.LoRABatchInfo">LoRABatchInfo</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.bs" href="#sglang.srt.lora.utils.LoRABatchInfo.bs">bs</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.lora_ranks" href="#sglang.srt.lora.utils.LoRABatchInfo.lora_ranks">lora_ranks</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.max_len" href="#sglang.srt.lora.utils.LoRABatchInfo.max_len">max_len</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.scalings" href="#sglang.srt.lora.utils.LoRABatchInfo.scalings">scalings</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.seg_indptr" href="#sglang.srt.lora.utils.LoRABatchInfo.seg_indptr">seg_indptr</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.seg_lens" href="#sglang.srt.lora.utils.LoRABatchInfo.seg_lens">seg_lens</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRABatchInfo.weight_indices" href="#sglang.srt.lora.utils.LoRABatchInfo.weight_indices">weight_indices</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.lora.utils.LoRAType" href="#sglang.srt.lora.utils.LoRAType">LoRAType</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.lora.utils.LoRAType.LORA_A" href="#sglang.srt.lora.utils.LoRAType.LORA_A">LORA_A</a></code></li>
+<li><code><a title="sglang.srt.lora.utils.LoRAType.LORA_B" href="#sglang.srt.lora.utils.LoRAType.LORA_B">LORA_B</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

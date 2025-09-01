@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.multimodal.mm_utils API documentation</title>
+<meta name="description" content="Utilities for multi-modal models …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.multimodal.mm_utils</code></h1>
+</header>
+<section id="section-intro">
+<p>Utilities for multi-modal models.</p>
+<p>This python file mainly contains utilities that were used in the
+image processing logic of llava-next including operations such as
+anyres and anyres_max</p>
+<p>Currently supports the anyres and anyres_max operation for CLIP and
+SigLip. For more information, you may refer to the paper or the blog</p>
+<p>LLaVA-NeXT : <a href="https://llava-vl.github.io/blog/2024-01-30-llava-next/">https://llava-vl.github.io/blog/2024-01-30-llava-next/</a>
+LLaVA-Onevision : <a href="https://arxiv.org/pdf/2408.03326">https://arxiv.org/pdf/2408.03326</a></p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.multimodal.mm_utils.divide_to_patches"><code class="name flex">
+<span>def <span class="ident">divide_to_patches</span></span>(<span>image, patch_size)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def divide_to_patches(image, patch_size):
+    &#34;&#34;&#34;
+    Divides an image into patches of a specified size.
+
+    Args:
+        image (PIL.Image.Image): The input image.
+        patch_size (int): The size of each patch.
+
+    Returns:
+        list: A list of PIL.Image.Image objects representing the patches.
+    &#34;&#34;&#34;
+    patches = []
+    width, height = image.size
+    for i in range(0, height, patch_size):
+        for j in range(0, width, patch_size):
+            box = (j, i, j + patch_size, i + patch_size)
+            patch = image.crop(box)
+            patches.append(patch)
+
+    return patches</code></pre>
+</details>
+<div class="desc"><p>Divides an image into patches of a specified size.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image</code></strong> :&ensp;<code>PIL.Image.Image</code></dt>
+<dd>The input image.</dd>
+<dt><strong><code>patch_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>The size of each patch.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>A list of PIL.Image.Image objects representing the patches.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.expand2square"><code class="name flex">
+<span>def <span class="ident">expand2square</span></span>(<span>pil_img, background_color)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def expand2square(pil_img, background_color):
+    width, height = pil_img.size
+    if width == height:
+        return pil_img
+    if pil_img.mode == &#34;L&#34;:
+        pil_img = pil_img.convert(&#34;RGB&#34;)
+    if width &gt; height:
+        result = Image.new(pil_img.mode, (width, width), background_color)
+        result.paste(pil_img, (0, (width - height) // 2))
+        return result
+    else:
+        result = Image.new(pil_img.mode, (height, height), background_color)
+        result.paste(pil_img, ((height - width) // 2, 0))
+        return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.get_anyres_image_grid_shape"><code class="name flex">
+<span>def <span class="ident">get_anyres_image_grid_shape</span></span>(<span>image_size, grid_pinpoints, patch_size)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_anyres_image_grid_shape(image_size, grid_pinpoints, patch_size):
+    &#34;&#34;&#34;
+    Calculate the shape of the image patch grid after the preprocessing for images of any resolution.
+
+    Args:
+        image_size (tuple): The size of the input image in the format (width, height).
+        grid_pinpoints (str): A string representation of a list of possible resolutions.
+        patch_size (int): The size of each image patch.
+
+    Returns:
+        tuple: The shape of the image patch grid in the format (width, height).
+    &#34;&#34;&#34;
+    if isinstance(grid_pinpoints, str) and &#34;x&#34; in grid_pinpoints:
+        assert patch_size in [
+            224,
+            336,
+            384,
+            448,
+            512,
+        ], &#34;patch_size should be in [224, 336, 384, 448, 512]&#34;
+        # Use regex to extract the range from the input string
+        matches = re.findall(r&#34;\((\d+)x(\d+)\)&#34;, grid_pinpoints)
+        range_start = tuple(map(int, matches[0]))
+        range_end = tuple(map(int, matches[-1]))
+        # Generate a matrix of tuples from (range_start[0], range_start[1]) to (range_end[0], range_end[1])
+        grid_pinpoints = [
+            (i, j)
+            for i in range(range_start[0], range_end[0] + 1)
+            for j in range(range_start[1], range_end[1] + 1)
+        ]
+        # Multiply all elements by patch_size
+        grid_pinpoints = [[dim * patch_size for dim in pair] for pair in grid_pinpoints]
+    if type(grid_pinpoints) is list:
+        possible_resolutions = grid_pinpoints
+    else:
+        possible_resolutions = ast.literal_eval(grid_pinpoints)
+    width, height = select_best_resolution(image_size, possible_resolutions)
+    return width // patch_size, height // patch_size</code></pre>
+</details>
+<div class="desc"><p>Calculate the shape of the image patch grid after the preprocessing for images of any resolution.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image_size</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>The size of the input image in the format (width, height).</dd>
+<dt><strong><code>grid_pinpoints</code></strong> :&ensp;<code>str</code></dt>
+<dd>A string representation of a list of possible resolutions.</dd>
+<dt><strong><code>patch_size</code></strong> :&ensp;<code>int</code></dt>
+<dd>The size of each image patch.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>The shape of the image patch grid in the format (width, height).</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.has_valid_data"><code class="name flex">
+<span>def <span class="ident">has_valid_data</span></span>(<span>data) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_valid_data(data) -&gt; bool:
+    if data is None:
+        return False
+    if isinstance(data, list):
+        return any(has_valid_data(item) for item in flatten_nested_list(data))
+    return True</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.load_image_from_base64"><code class="name flex">
+<span>def <span class="ident">load_image_from_base64</span></span>(<span>image)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_image_from_base64(image):
+    return Image.open(BytesIO(pybase64.b64decode(image, validate=True)))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.process_anyres_image"><code class="name flex">
+<span>def <span class="ident">process_anyres_image</span></span>(<span>image, processor, grid_pinpoints)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_anyres_image(image, processor, grid_pinpoints):
+    &#34;&#34;&#34;
+    Process an image with variable resolutions.
+
+    Args:
+        image (PIL.Image.Image): The input image to be processed.
+        processor: The image processor object.
+        grid_pinpoints (str): A string representation of a list of possible resolutions.
+
+    Returns:
+        np.array: An np array containing the processed image patches.
+    &#34;&#34;&#34;
+    if isinstance(grid_pinpoints, str) and &#34;x&#34; in grid_pinpoints:
+        try:
+            patch_size = processor.size[0]
+        except Exception as e:
+            patch_size = processor.size[&#34;shortest_edge&#34;]
+        assert patch_size in [
+            224,
+            336,
+            384,
+            448,
+            512,
+        ], &#34;patch_size should be in [224, 336, 384, 448, 512]&#34;
+        # Use regex to extract the range from the input string
+        matches = re.findall(r&#34;\((\d+)x(\d+)\)&#34;, grid_pinpoints)
+        range_start = tuple(map(int, matches[0]))
+        range_end = tuple(map(int, matches[-1]))
+        # Generate a matrix of tuples from (range_start[0], range_start[1]) to (range_end[0], range_end[1])
+        grid_pinpoints = [
+            (i, j)
+            for i in range(range_start[0], range_end[0] + 1)
+            for j in range(range_start[1], range_end[1] + 1)
+        ]
+        # Multiply all elements by patch_size
+        grid_pinpoints = [[dim * patch_size for dim in pair] for pair in grid_pinpoints]
+
+    if type(grid_pinpoints) is list:
+        possible_resolutions = grid_pinpoints
+    else:
+        possible_resolutions = ast.literal_eval(grid_pinpoints)
+    best_resolution = select_best_resolution(image.size, possible_resolutions)
+    image_padded = resize_and_pad_image(image, best_resolution)
+
+    # For Siglip processor, only have size but no crop size
+    crop_size = (
+        processor.crop_size[&#34;height&#34;]
+        if &#34;crop_size&#34; in processor.__dict__
+        else processor.size[&#34;height&#34;]
+    )
+    shortest_edge = (
+        processor.size[&#34;shortest_edge&#34;]
+        if &#34;shortest_edge&#34; in processor.size
+        else processor.size[&#34;height&#34;]
+    )
+    patches = divide_to_patches(image_padded, crop_size)
+
+    image_original_resize = image.resize((shortest_edge, shortest_edge))
+
+    image_patches = [image_original_resize] + patches
+    image_patches = [
+        processor.preprocess(image_patch.convert(&#34;RGB&#34;))[&#34;pixel_values&#34;][0]
+        for image_patch in image_patches
+    ]
+    return np.stack(image_patches, axis=0)</code></pre>
+</details>
+<div class="desc"><p>Process an image with variable resolutions.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image</code></strong> :&ensp;<code>PIL.Image.Image</code></dt>
+<dd>The input image to be processed.</dd>
+<dt><strong><code>processor</code></strong></dt>
+<dd>The image processor object.</dd>
+<dt><strong><code>grid_pinpoints</code></strong> :&ensp;<code>str</code></dt>
+<dd>A string representation of a list of possible resolutions.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.array</code></dt>
+<dd>An np array containing the processed image patches.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.process_images"><code class="name flex">
+<span>def <span class="ident">process_images</span></span>(<span>images, image_processor, model_cfg)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_images(images, image_processor, model_cfg):
+    image_aspect_ratio = getattr(model_cfg, &#34;image_aspect_ratio&#34;, None)
+    new_images = []
+    if image_aspect_ratio == &#34;pad&#34;:
+        for image in images:
+            image = expand2square(
+                image, tuple(int(x * 255) for x in image_processor.image_mean)
+            )
+            image = image_processor.preprocess(image)[&#34;pixel_values&#34;][0]
+            new_images.append(image)
+    elif &#34;anyres&#34; in image_aspect_ratio:
+        for image in images:
+            image = process_anyres_image(
+                image, image_processor, model_cfg.image_grid_pinpoints
+            )
+            new_images.append(image)
+    else:
+        return image_processor(images)[&#34;pixel_values&#34;]
+    if all(x.shape == new_images[0].shape for x in new_images):
+        new_images = np.stack(new_images, axis=0)
+    return new_images</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.resize_and_pad_image"><code class="name flex">
+<span>def <span class="ident">resize_and_pad_image</span></span>(<span>image, target_resolution)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resize_and_pad_image(image, target_resolution):
+    &#34;&#34;&#34;
+    Resize and pad an image to a target resolution while maintaining aspect ratio.
+
+    Args:
+        image (PIL.Image.Image): The input image.
+        target_resolution (tuple): The target resolution (width, height) of the image.
+
+    Returns:
+        PIL.Image.Image: The resized and padded image.
+    &#34;&#34;&#34;
+    original_width, original_height = image.size
+    target_width, target_height = target_resolution
+
+    scale_w = target_width / original_width
+    scale_h = target_height / original_height
+
+    if scale_w &lt; scale_h:
+        new_width = target_width
+        new_height = min(math.ceil(original_height * scale_w), target_height)
+    else:
+        new_height = target_height
+        new_width = min(math.ceil(original_width * scale_h), target_width)
+
+    # Resize the image
+    resized_image = image.resize((new_width, new_height))
+
+    new_image = Image.new(&#34;RGB&#34;, (target_width, target_height), (0, 0, 0))
+    paste_x = (target_width - new_width) // 2
+    paste_y = (target_height - new_height) // 2
+    new_image.paste(resized_image, (paste_x, paste_y))
+
+    return new_image</code></pre>
+</details>
+<div class="desc"><p>Resize and pad an image to a target resolution while maintaining aspect ratio.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image</code></strong> :&ensp;<code>PIL.Image.Image</code></dt>
+<dd>The input image.</dd>
+<dt><strong><code>target_resolution</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>The target resolution (width, height) of the image.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>PIL.Image.Image</code></dt>
+<dd>The resized and padded image.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.select_best_resolution"><code class="name flex">
+<span>def <span class="ident">select_best_resolution</span></span>(<span>original_size, possible_resolutions)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select_best_resolution(original_size, possible_resolutions):
+    &#34;&#34;&#34;
+    Selects the best resolution from a list of possible resolutions based on the original size.
+
+    Args:
+        original_size (tuple): The original size of the image in the format (width, height).
+        possible_resolutions (list): A list of possible resolutions in the format [(width1, height1), (width2, height2), ...].
+
+    Returns:
+        tuple: The best fit resolution in the format (width, height).
+    &#34;&#34;&#34;
+    original_width, original_height = original_size
+    best_fit = None
+    max_effective_resolution = 0
+    min_wasted_resolution = float(&#34;inf&#34;)
+
+    for width, height in possible_resolutions:
+        # Calculate the downscaled size to keep the aspect ratio
+        scale = min(width / original_width, height / original_height)
+        downscaled_width, downscaled_height = int(original_width * scale), int(
+            original_height * scale
+        )
+
+        # Calculate effective and wasted resolutions
+        effective_resolution = min(
+            downscaled_width * downscaled_height, original_width * original_height
+        )
+        wasted_resolution = (width * height) - effective_resolution
+
+        if effective_resolution &gt; max_effective_resolution or (
+            effective_resolution == max_effective_resolution
+            and wasted_resolution &lt; min_wasted_resolution
+        ):
+            max_effective_resolution = effective_resolution
+            min_wasted_resolution = wasted_resolution
+            best_fit = (width, height)
+
+    return best_fit</code></pre>
+</details>
+<div class="desc"><p>Selects the best resolution from a list of possible resolutions based on the original size.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>original_size</code></strong> :&ensp;<code>tuple</code></dt>
+<dd>The original size of the image in the format (width, height).</dd>
+<dt><strong><code>possible_resolutions</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of possible resolutions in the format [(width1, height1), (width2, height2), &hellip;].</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>The best fit resolution in the format (width, height).</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.unpad_image"><code class="name flex">
+<span>def <span class="ident">unpad_image</span></span>(<span>tensor, original_size)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unpad_image(tensor, original_size):
+    &#34;&#34;&#34;
+    Unpads a PyTorch tensor of a padded and resized image.
+
+    Args:
+    tensor (torch.Tensor): The image tensor, assumed to be in CxHxW format.
+    original_size (tuple): The original size of the image (height, width).
+
+    Returns:
+    torch.Tensor: The unpadded image tensor.
+    &#34;&#34;&#34;
+    original_width, original_height = original_size
+    current_height, current_width = tensor.shape[1:]
+
+    original_aspect_ratio = original_width / original_height
+    current_aspect_ratio = current_width / current_height
+
+    if original_aspect_ratio &gt; current_aspect_ratio:
+        scale_factor = current_width / original_width
+        new_height = int(original_height * scale_factor)
+        padding = (current_height - new_height) // 2
+        unpadded_tensor = tensor[:, padding : current_height - padding, :]
+    else:
+        scale_factor = current_height / original_height
+        new_width = int(original_width * scale_factor)
+        padding = (current_width - new_width) // 2
+        unpadded_tensor = tensor[:, :, padding : current_width - padding]
+
+    return unpadded_tensor</code></pre>
+</details>
+<div class="desc"><p>Unpads a PyTorch tensor of a padded and resized image.</p>
+<p>Args:
+tensor (torch.Tensor): The image tensor, assumed to be in CxHxW format.
+original_size (tuple): The original size of the image (height, width).</p>
+<p>Returns:
+torch.Tensor: The unpadded image tensor.</p></div>
+</dd>
+<dt id="sglang.srt.multimodal.mm_utils.unpad_image_shape"><code class="name flex">
+<span>def <span class="ident">unpad_image_shape</span></span>(<span>current_height, current_width, original_size)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unpad_image_shape(current_height, current_width, original_size):
+    &#34;&#34;&#34;
+    Unpads a PyTorch tensor of a padded and resized image
+    and returns the new shape.
+    &#34;&#34;&#34;
+    original_width, original_height = original_size
+
+    original_aspect_ratio = original_width / original_height
+    current_aspect_ratio = current_width / current_height
+
+    if original_aspect_ratio &gt; current_aspect_ratio:
+        scale_factor = current_width / original_width
+        new_height = int(original_height * scale_factor)
+        padding = (current_height - new_height) // 2
+        new_shape = (current_height - 2 * padding, current_width)
+    else:
+        scale_factor = current_height / original_height
+        new_width = int(original_width * scale_factor)
+        padding = (current_width - new_width) // 2
+        new_shape = (current_height, current_width - 2 * padding)
+
+    return new_shape</code></pre>
+</details>
+<div class="desc"><p>Unpads a PyTorch tensor of a padded and resized image
+and returns the new shape.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.multimodal" href="index.html">sglang.srt.multimodal</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.multimodal.mm_utils.divide_to_patches" href="#sglang.srt.multimodal.mm_utils.divide_to_patches">divide_to_patches</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.expand2square" href="#sglang.srt.multimodal.mm_utils.expand2square">expand2square</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.get_anyres_image_grid_shape" href="#sglang.srt.multimodal.mm_utils.get_anyres_image_grid_shape">get_anyres_image_grid_shape</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.has_valid_data" href="#sglang.srt.multimodal.mm_utils.has_valid_data">has_valid_data</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.load_image_from_base64" href="#sglang.srt.multimodal.mm_utils.load_image_from_base64">load_image_from_base64</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.process_anyres_image" href="#sglang.srt.multimodal.mm_utils.process_anyres_image">process_anyres_image</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.process_images" href="#sglang.srt.multimodal.mm_utils.process_images">process_images</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.resize_and_pad_image" href="#sglang.srt.multimodal.mm_utils.resize_and_pad_image">resize_and_pad_image</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.select_best_resolution" href="#sglang.srt.multimodal.mm_utils.select_best_resolution">select_best_resolution</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.unpad_image" href="#sglang.srt.multimodal.mm_utils.unpad_image">unpad_image</a></code></li>
+<li><code><a title="sglang.srt.multimodal.mm_utils.unpad_image_shape" href="#sglang.srt.multimodal.mm_utils.unpad_image_shape">unpad_image_shape</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
