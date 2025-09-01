@@ -2,7 +2,7 @@
 #
 # SGLang API Documentation Generator
 #
-# This script generates comprehensive API documentation using pdoc3
+# This script generates comprehensive API documentation using pdoc
 # Usage: ./generate_api_docs.sh [--clean] [--serve]
 #
 
@@ -57,11 +57,11 @@ check_dependencies() {
         }
     fi
 
-    # Check if pdoc3 is installed
-    if ! command -v pdoc3 &> /dev/null; then
-        print_warning "pdoc3 not found. Installing..."
-        pip install pdoc3 || {
-            print_error "Failed to install pdoc3"
+    # Check if pdoc is installed
+    if ! command -v pdoc &> /dev/null; then
+        print_warning "pdoc not found. Installing..."
+        pip install pdoc || {
+            print_error "Failed to install pdoc"
             exit 1
         }
     fi
@@ -83,7 +83,7 @@ generate_docs() {
     mkdir -p "$(dirname "$OUTPUT_DIR")"
 
     # Generate documentation
-    pdoc3 --html --output-dir "$OUTPUT_DIR" --skip-errors "$PYTHON_MODULE" || {
+    pdoc "$PYTHON_MODULE" -o "$OUTPUT_DIR" || {
         print_error "Failed to generate documentation"
         exit 1
     }

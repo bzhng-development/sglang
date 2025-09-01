@@ -56,7 +56,7 @@ sglang-code/
 | `docs/` | User guides, tutorials | End users | ❌ Manual |
 | `docs/dev/refs/api/` | Clean API reference | Developers | ✅ pdoc |
 | `docs/dev/refs/code-index/` | Code analysis | Contributors | ✅ Custom tool |
-| `python/docs/` | Raw API dump | None (cleanup target) | ✅ pdoc3 |
+| `python/docs/` | Raw API dump | None (cleanup target) | ✅ pdoc |
 
 ---
 
@@ -101,7 +101,6 @@ bash serve.sh # Alternative serving method
 ### 2. API Documentation (Developer Reference)
 
 **Purpose**: Clean, curated API reference for developers
-
 **Technology Stack**:
 - Modern pdoc (v15.0.4)
 - Selective module inclusion
@@ -118,12 +117,12 @@ cd docs
 
 # Method 2: Direct pdoc command
 pip install -e ../python/
-pip install pdoc3
+pip install pdoc
 rm -rf dev/refs/api
-pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+pdoc sglang -o dev/refs/api
 
-# Method 3: Using newer pdoc
-PDOC_ALLOW_EXEC=1 pdoc ./sglang -o dev/refs/api
+# Method 3: With environment variable
+PDOC_ALLOW_EXEC=1 pdoc sglang -o dev/refs/api
 ```
 
 **Key Entry Points**:
@@ -270,8 +269,8 @@ cd docs
 # Ensure sglang is installed
 pip install -e ../python/
 
-# Use --skip-errors flag
-pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+# Generate documentation
+pdoc sglang -o dev/refs/api
 ```
 
 #### 3. Function Index Failures
@@ -307,12 +306,12 @@ jupyter nbconvert --to notebook --execute problematic_notebook.ipynb --inplace
 #### pdoc vs pdoc3 Confusion
 **Current Status**:
 - `docs/dev/refs/api/` uses pdoc 15.0.4 (newer, cleaner)
-- `python/docs/` uses pdoc3 0.11.6 (older, includes everything)
+- `python/docs/` used pdoc3 0.11.6 (older, now removed)
 
-**Recommendation**: Use pdoc3 for consistency:
+**Recommendation**: Use modern pdoc for consistency:
 ```bash
-pip install pdoc3  # Not just 'pdoc'
-pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+pip install pdoc  # Modern version
+pdoc sglang -o dev/refs/api
 ```
 
 ---

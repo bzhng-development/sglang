@@ -55,7 +55,7 @@ pre-commit run --all-files
 
 ## API Documentation Generation
 
-### Generate API Documentation (pdoc3)
+### Generate API Documentation (pdoc)
 
 For developers who want to generate comprehensive API documentation:
 
@@ -63,11 +63,11 @@ For developers who want to generate comprehensive API documentation:
 # Install sglang from source (required)
 pip install -e python/
 
-# Install pdoc3
-pip install pdoc3
+# Install pdoc
+pip install pdoc
 
 # Generate API documentation
-pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+pdoc sglang -o dev/refs/api
 
 # View the generated documentation
 # Open dev/refs/api/sglang/index.html in your browser
@@ -93,7 +93,7 @@ python3 ../tools/devdocs/function_index/generate_function_index.py
 ```bash
 # Clean before regenerating to avoid duplication
 rm -rf dev/refs/api
-pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+pdoc sglang -o dev/refs/api
 ```
 
 ---
