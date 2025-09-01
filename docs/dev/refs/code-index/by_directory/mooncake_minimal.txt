@@ -1,0 +1,53 @@
+
+# python/sglang/srt/disaggregation/mooncake/conn.py
+  KVTransferError.__init__(bootstrap_room: int, failure_reason: str)
+  KVTransferError.__str__()
+  TransferInfo.from_zmq(cls, msg: List[bytes])
+  KVArgsRegisterInfo.from_zmq(cls, msg: List[bytes])
+  AuxDataCodec.serialize_data_from_buffer(src_addr, data_length)
+  AuxDataCodec.deserialize_data_to_buffer(kv_args, buffer_index, aux_index, data)
+  MooncakeKVManager.__init__(args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool])
+  MooncakeKVManager.init_engine()
+  MooncakeKVManager.register_buffer_to_engine()
+  MooncakeKVManager.send_kvcache(mooncake_session_id: str, prefill_kv_indices: npt.NDArray[np.int32], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int32], executor: concurrent.futures.ThreadPoolExecutor)
+  MooncakeKVManager.send_kvcache_slice(mooncake_session_id: str, prefill_kv_indices: npt.NDArray[np.int64], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int64], dst_tp_rank: int, dst_attn_tp_size: int, dst_kv_item_len: int, executor: concurrent.futures.ThreadPoolExecutor)
+  MooncakeKVManager.send_aux(req: TransferInfo, prefill_aux_index: int, dst_aux_ptrs: list[int])
+  MooncakeKVManager.send_aux_tcp(req: TransferInfo, prefill_aux_index: int, dst_aux_ptrs: list[int])
+  MooncakeKVManager.send_aux_data_to_endpoint(remote: str, dst_port: int, room: int, buffer_index: int, aux_index: int, data: bytes)
+  MooncakeKVManager.sync_status_to_decode_endpoint(remote: str, dst_port: int, room: int, status: int, prefill_rank: int)
+  MooncakeKVManager.transfer_worker(queue: FastQueue, executor: concurrent.futures.ThreadPoolExecutor)
+  MooncakeKVManager.start_prefill_thread()
+  MooncakeKVManager.start_decode_thread()
+  MooncakeKVManager.add_transfer_request(bootstrap_room: int, kv_indices: npt.NDArray[np.int32], index_slice: slice, is_last: bool, aux_index: Optional[int])
+  MooncakeKVManager.check_status(bootstrap_room: int)
+  MooncakeKVManager.update_status(bootstrap_room: int, status: KVPoll)
+  MooncakeKVManager.record_failure(bootstrap_room: int, failure_reason: str)
+  MooncakeKVManager.get_session_id()
+  MooncakeKVSender.__init__(mgr: MooncakeKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+  MooncakeKVSender.init(num_kv_indices: int, aux_index: Optional[int])
+  MooncakeKVSender.send(kv_indices: npt.NDArray[np.int32])
+  MooncakeKVSender.poll() -> KVPoll
+  MooncakeKVSender.clear() -> None
+  MooncakeKVSender.failure_exception()
+  MooncakeKVSender.abort()
+  MooncakeKVReceiver.__init__(mgr: MooncakeKVManager, bootstrap_addr: str, bootstrap_room: Optional[int], data_parallel_rank: Optional[int])
+  MooncakeKVReceiver.init(kv_indices: npt.NDArray[np.int32], aux_index: Optional[int])
+  MooncakeKVReceiver.poll() -> KVPoll
+  MooncakeKVReceiver.clear() -> None
+  MooncakeKVReceiver.failure_exception()
+  MooncakeKVReceiver.abort()
+  MooncakeKVBootstrapServer.__init__(port: int)
+  MooncakeKVBootstrapServer.run()
+  MooncakeKVBootstrapServer.close()
+  MooncakeKVBootstrapServer.poll() -> KVPoll
+
+# python/sglang/srt/disaggregation/mooncake/transfer_engine.py
+  MooncakeTransferEngine.__init__(hostname: str, gpu_id: int, ib_device: Optional[str])
+  MooncakeTransferEngine.register(ptr, length)
+  MooncakeTransferEngine.deregister(ptr)
+  MooncakeTransferEngine.batch_register(ptrs: List[int], lengths: List[int]) -> int
+  MooncakeTransferEngine.batch_deregister(ptrs: List[int]) -> int
+  MooncakeTransferEngine.initialize(hostname: str, device_name: Optional[str]) -> None
+  MooncakeTransferEngine.transfer_sync(session_id: str, buffer: int, peer_buffer_address: int, length: int) -> int
+  MooncakeTransferEngine.batch_transfer_sync(session_id: str, buffers: List[int], peer_buffer_addresses: List[int], lengths: List[int]) -> int
+  MooncakeTransferEngine.get_session_id()

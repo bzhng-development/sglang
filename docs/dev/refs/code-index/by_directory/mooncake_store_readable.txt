@@ -1,0 +1,80 @@
+================================================================================
+FUNCTION INDEX: mooncake_store module
+================================================================================
+Total Functions: 19
+Documented: 2
+
+
+============================================================
+FILE: python/sglang/srt/mem_cache/storage/mooncake_store/mooncake_store.py
+Functions: 15
+============================================================
+
+
+CLASS: MooncakeStore
+----------------------------------------
+  L  87: __init__(self, storage_config: HiCacheStorageConfig)
+
+  L 132: warmup(self)
+
+  L 139: register_buffer(self, buffer: torch.Tensor)
+         → None
+
+  L 150: set(self, key, value: Optional[Any], target_location: Optional[List[int]], target_sizes: Optional[List[int]])
+         → bool
+
+  L 159: batch_set(self, keys: List[str], values: Optional[List[torch.Tensor]], target_location: Optional[List[int]], target_sizes: Optional[List[int]])
+         → bool
+
+  L 201: get(self, key, target_location: Optional[Any], target_sizes: Optional[Any])
+         → bool
+
+  L 209: batch_get(self, keys: List[str], target_location: Optional[Any], target_sizes: Optional[Any])
+         → int
+
+  L 228: exists(self, key)
+         → bool
+
+  L 231: batch_exists(self, keys)
+         → int
+
+  L 248: delete(self, key)
+         → None
+
+  L 251: close(self)
+
+  L 256: clear(self)
+         → None
+
+
+CLASS: MooncakeStoreConfig
+----------------------------------------
+  L  32: from_file()
+         → 'MooncakeStoreConfig'
+         📝 Load the config from a JSON file.
+
+  L  55: load_from_env()
+         → 'MooncakeStoreConfig'
+         📝 Load config from a file specified in the environment variable.
+            export MOONCAKE_MASTER=10.13.3.232:50051
+            export MOONCAKE_PROTOCOL="rdma"
+            export MOONCAKE_DEVICE="auto"
+            export MOONCAKE_TE_META_DATA_SERVER="P2PHANDSHAKE"
+
+  L  78: __post_init__(self)
+
+
+============================================================
+FILE: python/sglang/srt/mem_cache/storage/mooncake_store/unit_test.py
+Functions: 4
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L   5: def test_init_and_warmup()
+
+  L  10: def test_register_buffer()
+
+  L  16: def test_set_and_get()
+
+  L  28: def test_exists()

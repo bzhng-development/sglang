@@ -1,0 +1,19 @@
+
+# python/sglang/srt/metrics/collector.py
+  TimeStats.__str__() -> str
+  TimeStats.format_duration(duration: float) -> str
+  TimeStats.get_type() -> RequestType
+  SchedulerMetricsCollector.__init__(labels: Dict[str, str]) -> None
+  SchedulerMetricsCollector.increment_bootstrap_failed_reqs() -> None
+  SchedulerMetricsCollector.increment_transfer_failed_reqs() -> None
+  SchedulerMetricsCollector.log_stats(stats: SchedulerStats) -> None
+  TokenizerMetricsCollector.__init__(labels: Dict[str, str], bucket_time_to_first_token: Optional[List[float]], bucket_inter_token_latency: Optional[List[float]], bucket_e2e_request_latency: Optional[List[float]], collect_tokens_histogram: bool) -> None
+  TokenizerMetricsCollector.observe_one_finished_request(prompt_tokens: int, generation_tokens: int, cached_tokens: int, e2e_latency: float, has_grammar: bool)
+  TokenizerMetricsCollector.observe_time_to_first_token(value: float)
+  TokenizerMetricsCollector.observe_inter_token_latency(internval: float, num_new_tokens: int)
+  TokenizerMetricsCollector.observe_one_aborted_request()
+
+# python/sglang/srt/metrics/func_timer.py
+enable_func_timer()
+exponential_buckets(start: float, width: float, length: int) -> List[float]
+time_func_latency(func: Callable, name: Optional[str]) -> Callable[..., Any]

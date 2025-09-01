@@ -1,0 +1,389 @@
+================================================================================
+FUNCTION INDEX: disaggregation module
+================================================================================
+Total Functions: 86
+Documented: 21
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/decode.py
+Functions: 21
+============================================================
+
+
+CLASS: DecodePreallocQueue
+----------------------------------------
+  L 139: __init__(self, req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, draft_token_to_kv_pool: Optional[KVCache], req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, metadata_buffers: MetadataBuffers, scheduler: Scheduler, transfer_queue: DecodeTransferQueue, tree_cache: BasePrefixCache, gloo_group: ProcessGroup, tp_rank: int, tp_size: int, dp_size: int, gpu_id: int, bootstrap_port: int, max_total_num_tokens: int, prefill_pp_size: int, num_reserved_decode_tokens: int, transfer_backend: TransferBackend)
+
+  L 230: add(self, req: Req, is_retracted: bool)
+         → None
+         📝 Add a request to the pending queue.
+
+  L 267: extend(self, reqs: List[Req], is_retracted: bool)
+         → None
+         📝 Add a request to the pending queue.
+
+  L 272: resume_retracted_reqs(self)
+         → List[Req]
+
+  L 342: pop_preallocated(self)
+         → List[DecodeRequest]
+         📝 Pop the preallocated requests from the pending queue (FIFO).
+
+  L 432: num_tokens_pre_allocated(self)
+
+
+CLASS: DecodeReqToTokenPool
+----------------------------------------
+  L  77: __init__(self, size: int, max_context_len: int, device: str, enable_memory_saver: bool, pre_alloc_size: int)
+
+  L 102: write(self, indices, values)
+
+  L 105: available_size(self)
+
+  L 108: alloc(self, need_size: int)
+         → List[int]
+
+  L 116: free(self, free_index: Union[int, List[int]])
+
+  L 122: clear(self)
+
+
+CLASS: DecodeTransferQueue
+----------------------------------------
+  L 548: __init__(self, gloo_group: ProcessGroup, req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, tp_rank: int, metadata_buffers: MetadataBuffers, scheduler: Scheduler, tree_cache: BasePrefixCache)
+
+  L 566: add(self, decode_req: DecodeRequest)
+         → None
+
+  L 569: extend(self, decode_reqs: List[DecodeRequest])
+         → None
+
+  L 572: pop_transferred(self)
+         → List[Req]
+
+
+CLASS: SchedulerDisaggregationDecodeMixin
+----------------------------------------
+  L 675: event_loop_normal_disagg_decode(self: Scheduler)
+         📝 A normal scheduler loop for decode worker in disaggregation mode.
+
+  L 716: event_loop_overlap_disagg_decode(self: Scheduler)
+
+  L 799: get_next_disagg_decode_batch_to_run(self: Scheduler)
+         → Optional[Tuple[ScheduleBatch, bool]]
+         📝 Create fake completed prefill if possible and merge with running batch
+
+  L 831: get_new_prebuilt_batch(self: Scheduler)
+         → Optional[ScheduleBatch]
+         📝 Create a schedulebatch for fake completed prefill
+
+  L 879: process_decode_queue(self: Scheduler)
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/decode_schedule_batch_mixin.py
+Functions: 2
+============================================================
+
+
+CLASS: ScheduleBatchDisaggregationDecodeMixin
+----------------------------------------
+  L  23: prepare_for_prebuilt_extend(self: ScheduleBatch)
+         📝 Prepare a prebuilt extend by populate metadata
+            Adapted from .prepare_for_extend().
+
+  L 102: process_prebuilt_extend(self: ScheduleBatch, server_args: ServerArgs, model_config: ModelConfig)
+         📝 Assign the buffered last input id to schedule batch
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/kv_events.py
+Functions: 12
+============================================================
+
+
+CLASS: EventPublisher
+----------------------------------------
+  L  93: __init__(self, attn_dp_rank: int)
+
+  L  97: publish(self, events: EventBatch)
+         → None
+         📝 Emit events in order.
+            Implementations should guarantee at-least-once delivery and
+            monotonic ordering (e.g., via sequence numbers).
+
+  L 105: shutdown(self)
+         → None
+         📝 Shutdown the publisher.
+
+
+CLASS: EventPublisherFactory
+----------------------------------------
+  L 394: register_publisher(cls, name: str, ctor: Callable[..., EventPublisher])
+         → None
+
+  L 400: create(cls, config: Optional[str], attn_dp_rank: int)
+         → EventPublisher
+         📝 Create publisher from a config mapping.
+
+
+CLASS: KVEventsConfig
+----------------------------------------
+  L 382: from_cli(cls, cli_value: str)
+         → 'KVEventsConfig'
+         📝 Parse the CLI value for the event publisher config.
+
+
+CLASS: NullEventPublisher
+----------------------------------------
+  L 112: publish(self, events)
+         → None
+
+  L 115: shutdown(self)
+         → None
+
+
+CLASS: ZmqEventPublisher
+----------------------------------------
+  L 146: __init__(self, attn_dp_rank: int, endpoint: str, replay_endpoint: Optional[str], buffer_steps: int, hwm: int, max_queue_size: int, topic: str)
+         → None
+
+  L 188: publish(self, events: EventBatch)
+         → None
+
+  L 195: shutdown(self)
+         → None
+         📝 Stop the publisher thread and clean up resources.
+
+  L 314: offset_endpoint_port(endpoint: Optional[str], data_parallel_rank: int)
+         → Optional[str]
+         📝 Helper function to offset the port in an endpoint by
+            the data parallel rank.
+            Args:
+            endpoint: The endpoint string
+            (e.g., "tcp://*:5557" or "inproc://cache")
+            data_parallel_rank: The data parallel rank to offset by
+            Returns:
+            The endpoint with the port offset by data_parallel_rank
+            or suffix appended
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/launch_lb.py
+Functions: 3
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  99: def main()
+
+
+CLASS: LBArgs
+----------------------------------------
+  L  18: add_cli_args(parser: argparse.ArgumentParser)
+
+  L  72: from_cli_args(cls, args: argparse.Namespace)
+         → 'LBArgs'
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/mini_lb.py
+Functions: 18
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  28: def setup_logger()
+
+  L 185: async def health_check()
+         @app.get('/health')
+
+  L 190: async def health_check()
+         @app.get('/health_generate')
+
+  L 206: async def flush_cache()
+         @app.post('/flush_cache')
+
+  L 222: async def get_server_info()
+         @app.get('/get_server_info')
+
+  L 265: async def get_model_info()
+         @app.get('/get_model_info')
+
+  L 301: async def handle_generate_request(request_data: dict)
+         @app.post('/generate')
+
+  L 371: async def handle_chat_completion_request(request_data: dict)
+         @app.post('/v1/chat/completions')
+
+  L 376: async def handle_completion_request(request_data: dict)
+         @app.post('/v1/completions')
+
+  L 394: async def get_models()
+         @app.get('/v1/models')
+
+  L 410: async def register(obj: PDRegistryRequest)
+         @app.post('/register')
+
+  L 435: def run(prefill_configs, decode_addrs, host, port, timeout)
+
+
+CLASS: MiniLoadBalancer
+----------------------------------------
+  L  54: __init__(self, prefill_configs: List[PrefillConfig], decode_servers: List[str], timeout: int)
+
+  L  65: add_prefill_server(self, new_prefill_config: PrefillConfig)
+
+  L  69: add_decode_server(self, new_decode_server: str)
+
+  L  72: select_pair(self)
+
+  L  81: generate(self, modified_request, prefill_server, decode_server, endpoint)
+         → ORJSONResponse
+
+  L 119: generate_stream(self, modified_request, prefill_server, decode_server, endpoint)
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/prefill.py
+Functions: 14
+============================================================
+
+
+CLASS: PrefillBootstrapQueue
+----------------------------------------
+  L  68: __init__(self, token_to_kv_pool: KVCache, draft_token_to_kv_pool: Optional[KVCache], req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, metadata_buffers: MetadataBuffers, tp_rank: int, tp_size: int, gpu_id: int, bootstrap_port: int, gloo_group: ProcessGroup, max_total_num_tokens: int, decode_tp_size: int, decode_dp_size: int, scheduler: Scheduler, pp_rank: int, pp_size: int, transfer_backend: TransferBackend)
+
+  L 152: add(self, req: Req, num_kv_heads: int)
+         → None
+
+  L 173: extend(self, reqs: List[Req], num_kv_heads: int)
+         → None
+
+  L 192: pop_bootstrapped(self, return_failed_reqs: bool, rids_to_check: Optional[List[str]])
+         → List[Req]
+         📝 pop the reqs which has finished bootstrapping
+            return_failed_reqs: For PP, on rank 0, also return the failed reqs to notify the next rank
+            rids_to_check: For PP, on rank > 0, check the rids from the previous rank has consensus with the current rank.
+
+
+CLASS: SchedulerDisaggregationPrefillMixin
+----------------------------------------
+  L 276: event_loop_normal_disagg_prefill(self: Scheduler)
+         → None
+         📝 A normal scheduler loop for prefill worker in disaggregation mode.
+
+  L 308: event_loop_overlap_disagg_prefill(self: Scheduler)
+         → None
+
+  L 355: process_batch_result_disagg_prefill(self: Scheduler, batch: ScheduleBatch, result: GenerationBatchResult, launch_done: Optional[threading.Event])
+         → None
+         📝 Transfer kv for prefill completed requests and add it into disagg_prefill_inflight_queue
+            Adapted from process_batch_result_prefill
+
+  L 478: process_disagg_prefill_inflight_queue(self: Scheduler, rids_to_check: Optional[List[str]])
+         → List[Req]
+         📝 Poll the requests in the middle of transfer. If done, return the request.
+            rids_to_check: For PP, on rank > 0, check the rids from the previous rank has consensus with the current rank.
+
+  L 547: get_transferred_rids(self: Scheduler)
+         → List[str]
+         📝 Used by PP, get the transferred rids but **do not pop**
+
+  L 564: process_prefill_chunk(self: Scheduler)
+         → None
+
+  L 583: send_kv_chunk(self: Scheduler, req: Req, last_chunk: bool, end_idx: Optional[int])
+         → None
+         📝 Send a prefilled chunk to the decode server
+
+  L 622: event_loop_pp_disagg_prefill(self: Scheduler)
+         📝 An event loop for the prefill server in pipeline parallelism.
+            Rules:
+            1. Each stage runs in the same order and is notified by the previous stage.
+            2. Each send/recv operation is blocking and matched by the neighboring stage.
+            Regular Schedule:
+            ====================================================================
+            Stage i                   | Stage i+1
+            send ith req              | recv ith req
+            send ith proxy            | recv ith proxy
+            send prev (i+1)th carry   | recv prev (i+1)th carry
+            ====================================================================
+            Prefill Server Schedule:
+            ====================================================================
+            Stage i                        | Stage i+1
+            send ith req                   | recv ith req
+            send ith bootstrap req         | recv ith bootstrap req
+            send ith transferred req       | recv ith transferred req
+            send ith proxy                 | recv ith proxy
+            send prev (i+1)th carry        | recv prev (i+1)th carry
+            send prev (i+1)th release req  | recv prev (i+1)th release req
+            ====================================================================
+            There are two additional elements compared to the regular schedule:
+            1. Bootstrap Requests:
+            a. Instead of polling the status on the current workers, we should wait for the previous stage to notify to avoid desynchronization.
+            b. The first stage polls the status and propagates the bootstrapped requests down to all other stages.
+            c. If the first stage polls successfully, by nature, other ranks are also successful because they performed a handshake together.
+            2. Transferred Requests + Release Requests:
+            a. The first stage polls the transfer finished requests, performs an intersection with the next stage's finished requests, and propagates down to the last stage.
+            b. The last stage receives the requests that have finished transfer on all stages (consensus), then sends them to the first stage to release the memory.
+            c. The first stage receives the release requests, releases the memory, and then propagates the release requests down to the last stage.
+
+  L 837: send_pyobj_to_next_stage(self, data)
+
+  L 848: recv_pyobj_from_prev_stage(self)
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/utils.py
+Functions: 16
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  43: def poll_and_all_reduce(pollers, gloo_group)
+
+  L 220: def get_kv_class(transfer_backend: TransferBackend, class_type: KVClassType)
+
+  L 293: def kv_to_page_indices(kv_indices: np.ndarray, page_size: int)
+
+  L 303: def kv_to_page_num(num_kv_indices: int, page_size: int)
+
+  L 332: def register_disaggregation_server(mode: str,
+        server_port: int,
+        bootstrap_port: int,
+        pdlb_url: str)
+
+  L 356: def is_mla_backend(target_kv_pool)
+         → bool
+
+  L 362: def prepare_abort(req: Req, error_message: str, status_code)
+
+
+CLASS: MetadataBuffers
+----------------------------------------
+  L  88: __init__(self, size: int, hidden_size: int, dtype: torch.dtype, max_top_logprobs_num: int, custom_mem_pool: torch.cuda.MemPool)
+
+  L 131: get_buf_infos(self)
+
+  L 158: get_buf(self, idx: int)
+
+  L 168: set_buf(self, req: Req)
+
+
+CLASS: PDRegistryRequest
+----------------------------------------
+  L 321: __post_init__(self)
+
+
+CLASS: ReqToMetadataIdxAllocator
+----------------------------------------
+  L  67: __init__(self, size: int)
+
+  L  74: available_size(self)
+
+  L  77: alloc(self)
+         → Optional[int]
+
+  L  83: free(self, free_index: int)

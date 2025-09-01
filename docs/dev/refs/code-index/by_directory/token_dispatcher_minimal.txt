@@ -1,0 +1,51 @@
+
+# python/sglang/srt/layers/moe/token_dispatcher/base_dispatcher.py
+  DispatchOutputChecker.format_is_standard(dispatch_output: DispatchOutput) -> TypeGuard[StandardDispatchOutput]
+  DispatchOutputChecker.format_is_deepep_normal(dispatch_output: DispatchOutput) -> TypeGuard[DeepEPNormalOutput]
+  DispatchOutputChecker.format_is_deepep_ll(dispatch_output: DispatchOutput) -> TypeGuard[DeepEPLLOutput]
+  DispatchOutputChecker.format_is_deepep(dispatch_output: DispatchOutput) -> TypeGuard[Union[DeepEPNormalOutput, DeepEPLLOutput]]
+  DispatchOutputChecker.format_is_ascent_ll(dispatch_output: DispatchOutput) -> TypeGuard[AscendDeepEPLLOutput]
+  DispatchOutputFormat.is_standard() -> bool
+  DispatchOutputFormat.is_deepep_normal() -> bool
+  DispatchOutputFormat.is_deepep_ll() -> bool
+  DispatchOutputFormat.is_deepep() -> bool
+  DispatchOutputFormat.is_ascent_ll() -> bool
+  DispatchOutput.format() -> DispatchOutputFormat
+  BaseDispatcher.dispatch() -> DispatchOutput
+  BaseDispatcher.combine() -> torch.Tensor
+
+# python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+  DeepEPNormalOutput.format() -> DispatchOutputFormat
+  DeepEPLLOutput.format() -> DispatchOutputFormat
+  AscendDeepEPLLOutput.format() -> DispatchOutputFormat
+  DeepEPBuffer.get_deepep_buffer(cls, group: dist.ProcessGroup, hidden_size: int, param_bytes: int, deepep_mode: DeepEPMode, num_max_dispatch_tokens_per_rank: int, num_experts: int)
+  DeepEPBuffer.clean_buffer(cls)
+  DeepEPBuffer.set_dispatch_mode_as_normal(cls)
+  DeepEPBuffer.set_dispatch_mode_as_low_latency(cls)
+  DeepEPConfig.__init__()
+  DeepEPConfig.get_instance(cls)
+  _DeepEPDispatcherImplBase.__init__(group: torch.distributed.ProcessGroup, router_topk: int, permute_fusion: bool, num_experts: int, num_local_experts: int, hidden_size: int, params_dtype: torch.dtype, deepep_mode: DeepEPMode)
+  _DeepEPDispatcherImplBase.dispatch_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+  _DeepEPDispatcherImplBase.dispatch_b()
+  _DeepEPDispatcherImplBase.combine_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+  _DeepEPDispatcherImplBase.combine_b()
+  _DeepEPDispatcherImplNormal.__init__(async_finish: bool)
+  _DeepEPDispatcherImplNormal.dispatch_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+  _DeepEPDispatcherImplNormal.dispatch_b(hidden_states, topk_idx, topk_weights, previous_event)
+  _DeepEPDispatcherImplNormal.combine_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+  _DeepEPDispatcherImplNormal.combine_b(output, previous_event)
+  _DeepEPDispatcherImplLowLatency.__init__(return_recv_hook: bool)
+  _DeepEPDispatcherImplLowLatency.dispatch_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+  _DeepEPDispatcherImplLowLatency.dispatch_b(hidden_states, topk_idx, topk_weights, masked_m, expected_m, event, hook)
+  _DeepEPDispatcherImplLowLatency.combine_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+  _DeepEPDispatcherImplLowLatency.combine_b(hidden_states, event, hook)
+  DeepEPDispatcher.__init__(group: torch.distributed.ProcessGroup, router_topk: int, permute_fusion: bool, num_experts: int, num_local_experts: int, hidden_size: int, params_dtype: torch.dtype, deepep_mode: DeepEPMode, async_finish: bool, return_recv_hook: bool)
+  DeepEPDispatcher.dispatch() -> DispatchOutput
+  DeepEPDispatcher.dispatch_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+  DeepEPDispatcher.dispatch_b()
+  DeepEPDispatcher.combine() -> Tuple
+  DeepEPDispatcher.combine_a(hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+  DeepEPDispatcher.combine_b()
+
+# python/sglang/srt/layers/moe/token_dispatcher/standard.py
+  StandardDispatchOutput.format() -> DispatchOutputFormat

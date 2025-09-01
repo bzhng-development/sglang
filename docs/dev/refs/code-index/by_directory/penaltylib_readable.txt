@@ -1,0 +1,107 @@
+================================================================================
+FUNCTION INDEX: penaltylib module
+================================================================================
+Total Functions: 20
+Documented: 4
+
+
+============================================================
+FILE: python/sglang/srt/sampling/penaltylib/frequency_penalty.py
+Functions: 1
+============================================================
+
+
+CLASS: BatchedFrequencyPenalizer
+----------------------------------------
+  L  14: __init__(self, orchestrator: BatchedPenalizerOrchestrator)
+
+
+============================================================
+FILE: python/sglang/srt/sampling/penaltylib/min_new_tokens.py
+Functions: 1
+============================================================
+
+
+CLASS: BatchedMinNewTokensPenalizer
+----------------------------------------
+  L  14: __init__(self, orchestrator: BatchedPenalizerOrchestrator)
+
+
+============================================================
+FILE: python/sglang/srt/sampling/penaltylib/orchestrator.py
+Functions: 17
+============================================================
+
+
+CLASS: BatchedPenalizerOrchestrator
+----------------------------------------
+  L  14: __init__(self, vocab_size: int, batch: ScheduleBatch, penalizers: Set[Type['_BatchedPenalizer']])
+
+  L  32: batch(self)
+         → ScheduleBatch | None
+
+  L  36: batch(self, value: Optional[ScheduleBatch])
+
+  L  42: reqs(self)
+
+  L  45: cumulate_output_tokens(self, output_ids: torch.Tensor)
+         📝 Feed the output tokens to the penalizers.
+            Args:
+            output_ids (torch.Tensor): The output tokens.
+
+  L  55: apply(self, logits: torch.Tensor)
+         → torch.Tensor
+         📝 Apply the penalizers to the logits.
+            Note that it may apply the penalizers in-place.
+            Args:
+            logits (torch.Tensor): The logits to apply the penalizers to.
+            Returns:
+            torch.Tensor: The logits after applying the penalizers.
+
+  L  69: filter(self, keep_indices: torch.Tensor)
+         📝 Filter the penalizers based on the indices to keep in the batch.
+            Args:
+            keep_indices (torch.Tensor): Tensor of indices to keep in the batch.
+
+  L  95: merge(self, their: 'BatchedPenalizerOrchestrator')
+         📝 Merge the penalizers of another orchestrator into this one.
+            Note that this function **must** be called _before_ self.batch.reqs is updated (filtered).
+            Each unprepared penalizers would have to be prepared (creating tensors, etc.) first before merging.
+            This step requires the original batch.reqs, before it gets merged with other batch.reqs.
+            Args:
+            their (BatchedPenalizerOrchestrator): The orchestrator to merge into this one.
+
+
+CLASS: _BatchedPenalizer
+----------------------------------------
+  L 119: is_prepared(self)
+         → bool
+
+  L 122: is_required(self)
+         → bool
+
+  L 125: prepare(self)
+
+  L 130: prepare_if_required(self)
+
+  L 137: teardown(self)
+
+  L 140: cumulate_output_tokens(self, output_ids: torch.Tensor)
+
+  L 146: apply(self, logits: torch.Tensor)
+         → torch.Tensor
+
+  L 152: filter(self, keep_indices: torch.Tensor)
+
+  L 158: merge(self, their: '_BatchedPenalizer')
+
+
+============================================================
+FILE: python/sglang/srt/sampling/penaltylib/presence_penalty.py
+Functions: 1
+============================================================
+
+
+CLASS: BatchedPresencePenalizer
+----------------------------------------
+  L  14: __init__(self, orchestrator: BatchedPenalizerOrchestrator)

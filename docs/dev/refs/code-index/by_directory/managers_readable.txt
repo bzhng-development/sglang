@@ -1,0 +1,1401 @@
+================================================================================
+FUNCTION INDEX: managers module
+================================================================================
+Total Functions: 392
+Documented: 64
+
+
+============================================================
+FILE: python/sglang/srt/managers/cache_controller.py
+Functions: 40
+============================================================
+
+
+CLASS: CacheOperation
+----------------------------------------
+  L  84: __init__(self, host_indices: torch.Tensor, device_indices: torch.Tensor, node_id: int, priority: Optional[int])
+
+  L 101: merge(self, other: 'CacheOperation')
+         → None
+
+  L 108: split(self, factor)
+         → List['CacheOperation']
+
+  L 129: __lt__(self, other: 'CacheOperation')
+
+
+CLASS: HiCacheController
+----------------------------------------
+  L 233: __init__(self, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, mem_pool_host: HostKVCache, page_size: int, tp_group: torch.distributed.ProcessGroup, load_cache_event: threading.Event, write_policy: str, io_backend: str, storage_backend: Optional[str], prefetch_threshold: int, model_name: Optional[str], storage_backend_extra_config: Optional[str])
+
+  L 414: reset(self)
+
+  L 453: write(self, device_indices: torch.Tensor, priority: Optional[int], node_id: int)
+         → Optional[torch.Tensor]
+         📝 Back up KV caches from device memory to host memory.
+
+  L 472: load(self, host_indices: torch.Tensor, priority: Optional[int], node_id: int)
+         → Optional[torch.Tensor]
+         📝 Load KV caches from host memory to device memory.
+
+  L 492: move_indices(self, host_indices, device_indices)
+
+  L 503: write_thread_func_direct(self)
+         📝 Directly write through KV caches to host memory without buffering.
+
+  L 527: load_thread_func_layer_by_layer(self)
+         📝 Load KV caches from host memory to device memory layer by layer.
+
+  L 570: evict_device(self, device_indices: torch.Tensor, host_indices: torch.Tensor)
+         → int
+
+  L 582: evict_host(self, host_indices: torch.Tensor, backup_only: bool)
+         → int
+
+  L 594: prefetch(self, request_id: str, host_indices: torch.Tensor, new_input_tokens: List[int], last_hash: Optional[str])
+         → PrefetchOperation
+         📝 Prefetch KV caches from storage backend to host memory.
+
+  L 610: terminate_prefetch(self, operation)
+
+  L 614: append_host_mem_release(self, host_indices: torch.Tensor)
+
+  L 702: prefetch_io_aux_func(self)
+         📝 Auxiliary function conducting IO operations for prefetching.
+
+  L 717: prefetch_rate_limited(self)
+         → bool
+         📝 Rate limit the prefetching operations to avoid overwhelming the storage backend.
+
+  L 754: prefetch_thread_func(self)
+         📝 Manage prefetching operations from storage backend to host memory.
+
+  L 803: write_storage(self, host_indices: torch.Tensor, token_ids: List[int], hash_value: Optional[List[str]])
+         → int
+         📝 Write KV caches from host memory to storage backend.
+
+  L 873: backup_thread_func(self)
+         📝 Manage backup operations from host memory to storage backend.
+
+
+CLASS: LayerDoneCounter
+----------------------------------------
+  L  46: __init__(self, num_layers)
+
+  L  55: next_producer(self)
+
+  L  58: update_producer(self)
+
+  L  62: set_consumer(self, index)
+
+  L  65: increment(self)
+
+  L  70: wait_until(self, threshold)
+
+  L  75: reset(self)
+
+
+CLASS: PrefetchOperation
+----------------------------------------
+  L 200: __init__(self, request_id: str, host_indices: torch.Tensor, token_ids: List[int], last_hash: Optional[str])
+
+  L 216: increment(self, num_tokens: int)
+
+  L 223: mark_done(self)
+
+  L 227: is_done(self)
+         → bool
+
+
+CLASS: StorageOperation
+----------------------------------------
+  L 179: __init__(self, host_indices: torch.Tensor, token_ids: List[int], last_hash: Optional[str], hash_value: Optional[List[str]])
+
+  L 195: __lt__(self, other: 'StorageOperation')
+
+
+CLASS: TransferBuffer
+----------------------------------------
+  L 138: __init__(self, stop_event, buffer_count: int, max_buffer_size: int)
+         → None
+
+  L 146: full(self)
+         → bool
+
+  L 149: empty(self)
+         → bool
+
+  L 152: put(self, item, block, timeout)
+         → None
+
+  L 164: get(self, block, timeout)
+         → Optional[CacheOperation]
+
+  L 172: clear(self)
+
+
+============================================================
+FILE: python/sglang/srt/managers/data_parallel_controller.py
+Functions: 11
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 341: def run_data_parallel_controller_process(server_args: ServerArgs,
+        port_args: PortArgs,
+        pipe_writer)
+
+
+CLASS: DataParallelController
+----------------------------------------
+  L  67: __init__(self, server_args: ServerArgs, port_args: PortArgs, dp_balance_meta: DPBalanceMeta)
+         → None
+
+  L 124: launch_dp_schedulers(self, server_args, port_args)
+
+  L 164: launch_tensor_parallel_group_thread(self, server_args: ServerArgs, port_args: PortArgs, base_gpu_id: int, dp_rank: int, ready_event: threading.Event)
+
+  L 180: launch_dp_attention_schedulers(self, server_args, port_args)
+
+  L 187: launch_tensor_parallel_group(self, server_args: ServerArgs, port_args: PortArgs, base_gpu_id: int, dp_rank: int)
+
+  L 269: round_robin_scheduler(self, req: Req)
+
+  L 286: shortest_queue_scheduler(self, input_requests)
+
+  L 289: minimum_tokens_scheduler(self, req)
+
+  L 316: event_loop(self)
+
+
+CLASS: LoadBalanceMethod
+----------------------------------------
+  L  56: from_str(cls, method: str)
+
+
+============================================================
+FILE: python/sglang/srt/managers/detokenizer_manager.py
+Functions: 10
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 277: def run_detokenizer_process(server_args: ServerArgs, port_args: PortArgs)
+
+
+CLASS: DetokenizerManager
+----------------------------------------
+  L  73: __init__(self, server_args: ServerArgs, port_args: PortArgs)
+
+  L 111: event_loop(self)
+         📝 The event loop that handles requests
+
+  L 119: trim_matched_stop(self, output: Union[str, List[int]], finished_reason: Dict, no_stop_trim: bool)
+
+  L 145: handle_batch_embedding_out(self, recv_obj: BatchEmbeddingOut)
+
+  L 149: handle_batch_token_id_out(self, recv_obj: BatchTokenIDOut)
+
+  L 248: handle_multimodal_decode_req(self, recv_obj: BatchMultimodalDecodeReq)
+
+  L 259: handle_freeze_gc_req(self, recv_req: FreezeGCReq)
+
+
+CLASS: LimitedCapacityDict
+----------------------------------------
+  L 265: __init__(self, capacity: int)
+
+  L 269: __setitem__(self, key, value)
+
+
+============================================================
+FILE: python/sglang/srt/managers/io_struct.py
+Functions: 16
+============================================================
+
+
+CLASS: BatchTokenizedEmbeddingReqInput
+----------------------------------------
+  L 691: __len__(self)
+
+  L 694: __getitem__(self, i)
+
+  L 697: __iter__(self)
+
+
+CLASS: BatchTokenizedGenerateReqInput
+----------------------------------------
+  L 541: __len__(self)
+
+  L 544: __getitem__(self, i)
+
+  L 547: __iter__(self)
+
+
+CLASS: EmbeddingReqInput
+----------------------------------------
+  L 584: normalize_batch_and_arguments(self)
+
+  L 635: regenerate_rid(self)
+
+  L 639: contains_mm_input(self)
+         → bool
+
+  L 646: __getitem__(self, i)
+
+
+CLASS: GenerateReqInput
+----------------------------------------
+  L 131: contains_mm_input(self)
+         → bool
+
+  L 138: normalize_batch_and_arguments(self)
+         📝 Normalize the batch size and arguments for the request.
+            This method resolves various input formats and ensures all parameters
+            are properly formatted as either single values or batches depending on the input.
+            It also handles parallel sampling expansion and sets default values for
+            unspecified parameters.
+            Raises:
+            ValueError: If inputs are not properly specified (e.g., none or all of
+            text, input_ids, input_embeds are provided)
+
+  L 432: regenerate_rid(self)
+         📝 Generate a new request ID and return it.
+
+  L 437: __getitem__(self, i)
+
+
+CLASS: LoadLoRAAdapterReqInput
+----------------------------------------
+  L1153: to_ref(self)
+         → LoRARef
+
+
+CLASS: UnloadLoRAAdapterReqInput
+----------------------------------------
+  L1169: to_ref(self)
+         → LoRARef
+
+
+============================================================
+FILE: python/sglang/srt/managers/mm_utils.py
+Functions: 20
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 290: def init_embedding_cache(max_size: int)
+
+  L 295: def get_embedding_hash(embedding_items: List[MultimodalDataItem])
+         → int
+
+  L 300: def get_embedding_chunk(embedding: torch.Tensor,
+        extend_prefix_len: int,
+        extend_seq_len: int,
+        items_offset: List[Tuple[int,
+        int]])
+         → Tuple[torch.Tensor, int, int]
+         📝 Extract a chunk of embeddings based on the specified prefix length, sequence length, and offset ranges.
+            Args:
+            embedding: The full embedding tensor to extract a chunk from
+            extend_prefix_len: The starting position (prefix length) for extraction
+            extend_seq_len: The number of tokens to extract
+            items_offset: List of [start, end] offset ranges for multimodal items in the input sequence
+            Returns:
+            A tuple containing:
+            - The extracted embedding chunk as a tensor
+            - The start index used for extraction
+            - The end index used for extraction
+            Note:
+            If there's no overlap between the requested range and the offset ranges,
+            an empty tensor is returned with zeros for start and end indices.
+
+  L 449: def get_embedding_and_mask(data_embedding_func: Callable[[List[MultimodalDataItem]],
+        torch.Tensor],
+        embedding_items: List[MultimodalDataItem],
+        placeholder_tensor: torch.Tensor,
+        input_ids: torch.Tensor,
+        items_size: List[int],
+        prefix_length: List[int],
+        extend_length: List[int],
+        items_offset_list: List[List[Tuple[int,
+        int]]])
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 Generate multimodal embeddings and create a mask for identifying their positions in the input sequence.
+            Args:
+            data_embedding_func: Function that generates embeddings for multimodal items
+            embedding_items: List of multimodal items to embed
+            placeholder_tensor: Tensor containing token IDs that serve as placeholders for multimodal content
+            input_ids: The input token IDs tensor
+            items_size: Cumulative sizes of multimodal items per request
+            prefix_length: Prefix lengths for each request
+            extend_length: Sequence lengths for each request
+            items_offset_list: List of offset ranges for multimodal items in each request
+            Returns:
+            A tuple containing:
+            - The generated embeddings tensor
+            - A boolean mask tensor indicating where these embeddings should be placed
+
+  L 499: def embed_mm_inputs(mm_inputs_list: List[MultimodalInputs],
+        extend_prefix_lens: List[int],
+        extend_seq_lens: List[int],
+        input_ids: torch.Tensor,
+        input_embedding: nn.Embedding,
+        multimodal_model: nn.Module,
+        data_embedding_func_mapping: Dict[Modality,
+        Callable[[List[MultimodalDataItem]],
+        torch.Tensor]],
+        placeholder_tokens: dict[Modality,
+        List[int]])
+         → Optional[torch.Tensor]
+         📝 Embed multimodal inputs and integrate them with text token embeddings.
+            Args:
+            mm_inputs_list: List of multimodal inputs to process
+            extend_prefix_lens: Prefix lengths for each request
+            extend_seq_lens: Sequence lengths for each request
+            input_ids: Input token IDs tensor
+            input_embedding: Embedding layer for text tokens
+            placeholder_tokens: Token IDs for multimodal placeholders (uses pad_values if None)
+            Returns:
+            Combined embedding tensor with multimodal content integrated
+
+  L 603: def general_mm_embed_routine(input_ids: torch.Tensor,
+        forward_batch: ForwardBatch,
+        language_model: nn.Module,
+        multimodal_model: Optional[nn.Module],
+        data_embedding_funcs: Dict[Modality,
+        Callable[[List[MultimodalDataItem]],
+        torch.Tensor]],
+        placeholder_tokens: Optional[dict[Modality,
+        List[int]]])
+         → torch.Tensor
+         📝 Process multimodal inputs and forward through language model.
+            Args:
+            input_ids: Input token IDs tensor
+            forward_batch: Batch information for model forward pass
+            language_model: Base language model to use
+            data_embedding_funcs: A dictionary mapping from modality type to the corresponding embedding function.
+            placeholder_tokens: Token IDs for multimodal placeholders
+            **kwargs: Additional arguments passed to language model
+            Returns:
+            Hidden states from language model forward pass
+
+  L 672: def get_multimodal_data_bounds(input_ids: torch.Tensor,
+        pad_values: List[int],
+        token_pairs: List[Tuple[int,
+        int]])
+         → torch.Tensor
+         📝 Returns a tensor indicating the bounds of multimodal data (images, video, audio, etc.)
+            Returns:
+            [bounds_count, 2]
+
+  L 732: def data_hash(data)
+         → int
+
+  L 737: def tensor_hash(tensor_list)
+         → int
+         📝 hash a tensor or a tensor list
+
+  L 763: def hash_feature(f)
+
+
+CLASS: MultiModalityDataPaddingPattern
+----------------------------------------
+  L 164: pad_input_tokens(self, input_ids: List[int], mm_inputs: MultimodalInputs)
+         → List[int]
+         📝 Pad the input ids sequence containing data tokens, and replace them with pad_values
+
+
+CLASS: MultiModalityDataPaddingPatternMultimodalTokens
+----------------------------------------
+  L 253: pad_input_tokens(self, input_ids: List[int], mm_inputs: MultimodalInputs)
+         → List[int]
+         📝 Replaces multimodal tokens in input_ids with corresponding pad_values from mm_items.
+            Each modality (image, audio, video) is handled separately based on its token_id.
+
+
+CLASS: MultiModalityDataPaddingPatternTokenPairs
+----------------------------------------
+  L 181: __init__(self, data_token_pairs: Optional[List[Tuple[int, int]]], data_start_token_ids: Optional[List[int]])
+         → None
+         📝 Args:
+            data_start_token_ids marks the start of a single multimodal data
+            See Minicpmo's slice_start_id for example
+
+  L 197: pad_input_tokens(self, input_ids: List[int], mm_inputs: MultimodalInputs)
+         → List[int]
+         📝 This function will replace the data-tokens in between with pad_values accordingly
+
+
+CLASS: TransportProxyTensor
+----------------------------------------
+  L  45: __new__(cls, data: torch.Tensor, name: Optional[str], fields: Optional[Dict[str, Any]], transport_mode: TensorTransportMode)
+
+  L  70: __getstate__(self)
+         📝 Called during pickling. Implements the serialization logic.
+
+  L 106: __setstate__(self, state: Dict[str, Any])
+         📝 Called during unpickling. Implements the deserialization logic.
+
+  L 144: name(self)
+         → Optional[str]
+
+  L 148: fields(self)
+         → Dict[str, Any]
+
+  L 152: transport_mode(self)
+         → TensorTransportMode
+
+
+============================================================
+FILE: python/sglang/srt/managers/multimodal_processor.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  15: def import_processors()
+
+  L  39: def get_mm_processor(hf_config,
+        server_args: ServerArgs,
+        processor,
+        transport_mode)
+         → BaseMultimodalProcessor
+
+
+============================================================
+FILE: python/sglang/srt/managers/schedule_batch.py
+Functions: 72
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L1927: def write_req_to_token_pool_triton(req_to_token_ptr,
+        req_pool_indices,
+        pre_lens,
+        seq_lens,
+        extend_lens,
+        out_cache_loc,
+        req_to_token_ptr_stride: tl.constexpr)
+         @triton.jit
+
+  L1963: def get_last_loc(req_to_token: torch.Tensor,
+        req_pool_indices_tensor: torch.Tensor,
+        prefix_lens_tensor: torch.Tensor)
+         → torch.Tensor
+
+  L1979: def get_last_loc_torch(req_to_token: torch.Tensor,
+        req_pool_indices_tensor: torch.Tensor,
+        prefix_lens_tensor: torch.Tensor)
+         → torch.Tensor
+
+  L1992: def get_last_loc_kernel(req_to_token,
+        req_pool_indices_tensor,
+        prefix_lens_tensor,
+        result,
+        num_tokens,
+        req_to_token_stride,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L2015: def get_last_loc_triton(req_to_token: torch.Tensor,
+        req_pool_indices_tensor: torch.Tensor,
+        prefix_lens_tensor: torch.Tensor)
+         → torch.Tensor
+
+
+CLASS: BaseFinishReason
+----------------------------------------
+  L 120: __init__(self, is_error: bool)
+
+  L 123: to_json(self)
+
+
+CLASS: FINISH_ABORT
+----------------------------------------
+  L 164: __init__(self, message, status_code, err_type)
+
+  L 170: to_json(self)
+
+
+CLASS: FINISH_LENGTH
+----------------------------------------
+  L 152: __init__(self, length: int)
+
+  L 156: to_json(self)
+
+
+CLASS: FINISH_MATCHED_STR
+----------------------------------------
+  L 140: __init__(self, matched: str)
+
+  L 144: to_json(self)
+
+
+CLASS: FINISH_MATCHED_TOKEN
+----------------------------------------
+  L 128: __init__(self, matched: Union[int, List[int]])
+
+  L 132: to_json(self)
+
+
+CLASS: Modality
+----------------------------------------
+  L 186: from_str(modality_str: str)
+
+  L 195: all()
+
+
+CLASS: MultimodalDataItem
+----------------------------------------
+  L 223: __getattr__(self, name: str)
+
+  L 234: __setitem__(self, key: str, value: Any)
+
+  L 240: set(self, key: str, value: Any)
+
+  L 244: is_empty_list(l)
+
+  L 249: set_pad_value(self)
+         📝 Set the pad value after first hashing the data
+
+  L 264: is_modality(self, modality: Modality)
+         → bool
+
+  L 267: is_audio(self)
+
+  L 270: is_image(self)
+
+  L 273: is_video(self)
+
+  L 276: is_valid(self)
+         → bool
+
+  L 279: validate(self)
+
+  L 284: from_dict(obj: dict)
+
+  L 293: merge(self, other)
+
+
+CLASS: MultimodalInputs
+----------------------------------------
+  L 329: from_dict(obj: dict)
+
+  L 358: contains_image_inputs(self)
+         → bool
+
+  L 361: contains_video_inputs(self)
+         → bool
+
+  L 364: contains_audio_inputs(self)
+         → bool
+
+  L 367: contains_mm_input(self)
+         → bool
+
+  L 370: merge(self, other: MultimodalInputs)
+         📝 merge image inputs when requests are being merged
+
+
+CLASS: Req
+----------------------------------------
+  L 414: __init__(self, rid: str, origin_input_text: str, origin_input_ids: List[int], sampling_params: SamplingParams, return_logprob: bool, top_logprobs_num: int, token_ids_logprob: List[int], stream: bool, origin_input_ids_unpadded: Optional[Tuple[int]], lora_id: Optional[str], input_embeds: Optional[List[List[float]]], token_type_ids: List[int], session_id: Optional[str], custom_logit_processor: Optional[str], return_hidden_states: bool, eos_token_ids: Optional[Set[int]], bootstrap_host: Optional[str], bootstrap_port: Optional[int], bootstrap_room: Optional[int], data_parallel_rank: Optional[int], vocab_size: Optional[int])
+
+  L 619: seqlen(self)
+
+  L 622: extend_image_inputs(self, image_inputs)
+
+  L 628: finished(self)
+         → bool
+
+  L 632: init_next_round_input(self, tree_cache: Optional[BasePrefixCache])
+
+  L 660: adjust_max_prefix_ids(self)
+
+  L 679: init_incremental_detokenize(self)
+
+  L 691: check_finished(self)
+
+  L 751: reset_for_retract(self)
+
+  L 765: offload_kv_cache(self, req_to_token_pool, token_to_kv_pool_allocator)
+
+  L 771: load_kv_cache(self, req_to_token_pool, token_to_kv_pool_allocator)
+
+  L 778: log_time_stats(self)
+
+  L 790: set_finish_with_abort(self, error_msg: str)
+
+  L 801: __repr__(self)
+
+
+CLASS: ScheduleBatch
+----------------------------------------
+  L 917: init_new(cls, reqs: List[Req], req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, tree_cache: BasePrefixCache, model_config: ModelConfig, enable_overlap: bool, spec_algorithm: SpeculativeAlgorithm, chunked_req: Optional[Req])
+
+  L 959: batch_size(self)
+
+  L 962: is_empty(self)
+
+  L 965: alloc_req_slots(self, num_reqs: int)
+
+  L 976: alloc_token_slots(self, num_tokens: int, backup_state: bool)
+
+  L1000: alloc_paged_token_slots_extend(self, prefix_lens: torch.Tensor, seq_lens: torch.Tensor, last_loc: torch.Tensor, extend_num_tokens: int, backup_state: bool)
+
+  L1035: alloc_paged_token_slots_decode(self, seq_lens: torch.Tensor, last_loc: torch.Tensor, backup_state: bool)
+
+  L1063: prepare_encoder_info_extend(self, input_ids: List[int], seq_lens: List[int])
+
+  L1136: prepare_for_extend(self)
+
+  L1340: prepare_for_split_prefill(self)
+
+  L1345: mix_with_running(self, running_batch: 'ScheduleBatch')
+
+  L1375: new_page_count_next_decode(self)
+
+  L1387: check_decode_mem(self, buf_multiplier)
+
+  L1397: retract_decode(self, server_args: ServerArgs)
+         📝 Retract the decoding requests when there is not enough memory.
+
+  L1521: prepare_encoder_info_decode(self)
+
+  L1525: prepare_for_idle(self)
+
+  L1539: prepare_for_decode(self)
+
+  L1613: filter_batch(self, chunked_req_to_exclude: Optional[Union[Req, List[Req]]], keep_indices: Optional[List[int]])
+
+  L1671: merge_batch(self, other: 'ScheduleBatch')
+
+  L1711: get_model_worker_batch(self, seq_lens_cpu_cache: Optional[torch.Tensor])
+         → ModelWorkerBatch
+
+  L1785: copy(self)
+
+  L1846: __str__(self)
+
+
+============================================================
+FILE: python/sglang/srt/managers/schedule_policy.py
+Functions: 10
+============================================================
+
+
+CLASS: PrefillAdder
+----------------------------------------
+  L 272: __init__(self, page_size: int, tree_cache: BasePrefixCache, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, running_batch: ScheduleBatch, new_token_ratio: float, rem_input_tokens: int, rem_chunk_tokens: Optional[int], mixed_with_decode_tokens: int)
+
+  L 320: rem_total_tokens(self)
+
+  L 337: cur_rem_tokens(self)
+
+  L 353: ceil_paged_tokens(self, tokens: int)
+         → int
+
+  L 356: budget_state(self)
+
+  L 382: add_chunked_req(self, req: Req)
+
+  L 415: add_one_req_ignore_eos(self, req: Req, has_chunked_req: bool)
+
+  L 497: add_one_req(self, req: Req, has_chunked_req: bool)
+
+
+CLASS: SchedulePolicy
+----------------------------------------
+  L  80: __init__(self, policy: str, tree_cache: BasePrefixCache, enable_hierarchical_cache: bool)
+
+  L  98: calc_priority(self, waiting_queue: List[Req])
+         → bool
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler.py
+Functions: 54
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L2571: def is_health_check_generate_req(recv_req)
+
+  L2575: def is_work_request(recv_req)
+
+  L2587: def run_scheduler_process(server_args: ServerArgs,
+        port_args: PortArgs,
+        gpu_id: int,
+        tp_rank: int,
+        moe_ep_rank: int,
+        pp_rank: int,
+        dp_rank: Optional[int],
+        pipe_writer,
+        balance_meta: Optional[DPBalanceMeta])
+
+
+CLASS: IdleSleeper
+----------------------------------------
+  L2554: __init__(self, sockets)
+
+  L2560: maybe_sleep(self)
+
+
+CLASS: Scheduler
+----------------------------------------
+  L 205: __init__(self, server_args: ServerArgs, port_args: PortArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], dp_balance_meta: Optional[DPBalanceMeta])
+
+  L 555: init_tokenizer(self)
+
+  L 579: init_memory_pool_and_cache(self)
+
+  L 687: init_disaggregation(self)
+
+  L 780: init_moe_config(self)
+
+  L 785: event_loop_normal(self)
+         📝 A normal scheduler loop.
+
+  L 804: event_loop_overlap(self)
+         📝 A scheduler loop that overlaps the CPU processing and GPU computation.
+
+  L 847: event_loop_pp(self)
+         📝 A non-overlap scheduler loop for pipeline parallelism.
+
+  L 979: recv_requests(self)
+         → List[Req]
+         📝 Receive results at tp_rank = 0 and broadcast it to all other TP ranks.
+
+  L1080: process_input_requests(self, recv_reqs: List)
+
+  L1112: handle_generate_request(self, recv_req: TokenizedGenerateReqInput)
+
+  L1277: handle_batch_generate_request(self, recv_req: BatchTokenizedGenerateReqInput)
+         📝 Handle optimized batch generate request.
+
+  L1325: handle_embedding_request(self, recv_req: TokenizedEmbeddingReqInput)
+
+  L1371: handle_batch_embedding_request(self, recv_req: BatchTokenizedEmbeddingReqInput)
+         📝 Handle optimized batch embedding request.
+
+  L1384: self_check_during_idle(self)
+
+  L1390: check_memory(self)
+
+  L1467: check_tree_cache(self)
+
+  L1502: get_next_batch_to_run(self)
+         → Optional[ScheduleBatch]
+
+  L1567: get_num_allocatable_reqs(self, running_bs)
+
+  L1573: get_new_batch_prefill(self)
+         → Optional[ScheduleBatch]
+
+  L1725: update_running_batch(self, batch: ScheduleBatch)
+         → Optional[ScheduleBatch]
+         📝 Update the current running decoding batch.
+
+  L1765: run_batch(self, batch: ScheduleBatch)
+         → Union[GenerationBatchResult, EmbeddingBatchResult]
+         📝 Run a batch.
+
+  L1846: process_batch_result(self, batch: ScheduleBatch, result: Union[GenerationBatchResult, EmbeddingBatchResult], launch_done: Optional[threading.Event])
+
+  L1865: maybe_send_health_check_signal(self)
+
+  L1873: prepare_mlp_sync_batch(self, local_batch: ScheduleBatch)
+
+  L1887: handle_dp_balance_data(self, local_batch: ScheduleBatch)
+
+  L1968: prepare_mlp_sync_batch_raw(local_batch: ScheduleBatch, dp_size, attn_tp_size: int, tp_group, get_idle_batch, disable_cuda_graph: bool, spec_algorithm, speculative_num_draft_tokens, require_mlp_tp_gather: bool, disable_overlap_schedule: bool)
+
+  L2071: get_idle_batch(self)
+
+  L2084: move_ready_grammar_requests(self)
+         📝 Move requests whose grammar objects are ready from grammar_queue to waiting_queue.
+
+  L2149: set_next_batch_sampling_info_done(self, batch: ScheduleBatch)
+
+  L2156: watchdog_thread(self)
+         📝 A watch dog thread that will try to kill the server itself if one forward batch takes too long.
+
+  L2209: flush_cache_wrapped(self, recv_req: FlushCacheReqInput)
+
+  L2213: clear_hicache_storage_wrapped(self, recv_req: ClearHiCacheReqInput)
+
+  L2223: flush_cache(self)
+         📝 Flush the memory pool and cache.
+
+  L2260: get_load(self)
+
+  L2294: get_internal_state(self, recv_req: GetInternalStateReq)
+
+  L2323: set_internal_state(self, recv_req: SetInternalStateReq)
+
+  L2361: handle_rpc_request(self, recv_req: RpcReqInput)
+
+  L2380: abort_request(self, recv_req: AbortReq)
+
+  L2461: load_lora_adapter(self, recv_req: LoadLoRAAdapterReqInput)
+         → LoadLoRAAdapterReqOutput
+         📝 In-place loading a new lora adapter from disk or huggingface.
+
+  L2469: unload_lora_adapter(self, recv_req: UnloadLoRAAdapterReqInput)
+         → UnloadLoRAAdapterReqOutput
+         📝 Unload the lora adapter.
+
+  L2477: slow_down(self, recv_req: SlowDownReqInput)
+
+  L2484: expert_distribution_handle(self, recv_req: ExpertDistributionReq)
+
+  L2495: open_session(self, recv_req: OpenSessionReqInput)
+
+  L2510: close_session(self, recv_req: CloseSessionReqInput)
+
+  L2518: get_print_prefix(self)
+
+  L2528: current_scheduler_metrics_enabled(self)
+
+  L2531: maybe_sleep_on_idle(self)
+
+  L2535: handle_freeze_gc(self, recv_req: FreezeGCReq)
+         📝 Handle freeze_gc request: freeze scheduler's GC and forward to detokenizer.
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler_input_blocker.py
+Functions: 3
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 101: def input_blocker_guard_region(send_to_scheduler)
+         @contextmanager
+
+
+CLASS: SchedulerInputBlocker
+----------------------------------------
+  L  26: __init__(self, noop: bool)
+
+  L  32: handle(self, recv_reqs: Optional[List[Any]])
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler_metrics_mixin.py
+Functions: 5
+============================================================
+
+
+CLASS: KvMetrics
+----------------------------------------
+  L  19: __init__(self)
+
+
+CLASS: SchedulerMetricsMixin
+----------------------------------------
+  L  31: init_metrics(self, tp_rank: int, pp_rank: int, dp_rank: Optional[int])
+
+  L  53: init_kv_events(self, kv_events_config: Optional[str])
+
+  L  59: log_prefill_stats(self, adder: PrefillAdder, can_run_list: List[Req], running_bs: int)
+
+  L 140: log_decode_stats(self, can_run_cuda_graph: bool, running_batch: ScheduleBatch)
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler_output_processor_mixin.py
+Functions: 7
+============================================================
+
+
+CLASS: SchedulerOutputProcessorMixin
+----------------------------------------
+  L  32: process_batch_result_prefill(self: Scheduler, batch: ScheduleBatch, result: Union[GenerationBatchResult, EmbeddingBatchResult], launch_done: Optional[threading.Event])
+
+  L 196: process_batch_result_decode(self: Scheduler, batch: ScheduleBatch, result: GenerationBatchResult, launch_done: Optional[threading.Event])
+
+  L 300: add_input_logprob_return_values(self: Scheduler, i: int, req: Req, output: LogitsProcessorOutput, logprob_pt: int, num_input_logprobs: int, last_prefill_chunk: bool)
+         📝 Incrementally add input logprobs to `req`.
+            Args:
+            i: The request index in a batch.
+            req: The request. Input logprobs inside req are modified as a
+            consequence of the API
+            fill_ids: The prefill ids processed.
+            output: Logit processor output that's used to compute input logprobs
+            last_prefill_chunk: True if it is the last prefill (when chunked).
+            Some of input logprob operation should only happen at the last
+            prefill (e.g., computing input token logprobs).
+
+  L 434: add_logprob_return_values(self: Scheduler, i: int, req: Req, pt: int, next_token_ids: List[int], num_input_logprobs: int, output: LogitsProcessorOutput)
+         📝 Attach logprobs to the return values.
+
+  L 465: stream_output(self: Scheduler, reqs: List[Req], return_logprob: bool, skip_req: Optional[Req])
+         📝 Stream the output to detokenizer.
+
+  L 477: stream_output_generation(self: Scheduler, reqs: List[Req], return_logprob: bool, skip_req: Optional[Req])
+
+  L 706: stream_output_embedding(self: Scheduler, reqs: List[Req])
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler_profiler_mixin.py
+Functions: 5
+============================================================
+
+
+CLASS: SchedulerProfilerMixin
+----------------------------------------
+  L  29: init_profier(self)
+
+  L  45: init_profile(self, output_dir: Optional[str], start_step: Optional[int], num_steps: Optional[int], activities: Optional[List[str]], with_stack: Optional[bool], record_shapes: Optional[bool], profile_by_stage: bool, profile_id: str)
+         → ProfileReqOutput
+
+  L  97: start_profile(self, stage: Optional[ForwardMode])
+         → ProfileReqOutput | None
+
+  L 172: stop_profile(self, stage: Optional[ForwardMode])
+         → ProfileReqOutput | None
+
+  L 273: profile(self, recv_req: ProfileReq)
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler_recv_skipper.py
+Functions: 3
+============================================================
+
+
+CLASS: SchedulerRecvSkipper
+----------------------------------------
+  L   7: maybe_create(server_args: ServerArgs)
+
+  L  12: __init__(self, server_args: ServerArgs)
+
+  L  18: handle(self, last_forward_mode: ForwardMode)
+
+
+============================================================
+FILE: python/sglang/srt/managers/scheduler_update_weights_mixin.py
+Functions: 9
+============================================================
+
+
+CLASS: SchedulerUpdateWeightsMixin
+----------------------------------------
+  L  29: update_weights_from_disk(self, recv_req: UpdateWeightFromDiskReqInput)
+         📝 In-place update of the weights from disk.
+
+  L  39: init_weights_update_group(self, recv_req: InitWeightsUpdateGroupReqInput)
+         📝 Initialize the online model parameter update group.
+
+  L  44: update_weights_from_distributed(self, recv_req: UpdateWeightsFromDistributedReqInput)
+         → Tuple[bool, str]
+         📝 Update the online model parameter.
+
+  L  58: update_weights_from_tensor(self, recv_req: UpdateWeightsFromTensorReqInput)
+         📝 Update the online model parameter from tensors.
+
+  L  71: get_weights_by_name(self, recv_req: GetWeightsByNameReqInput)
+
+  L  75: release_memory_occupation(self, recv_req: ReleaseMemoryOccupationReqInput)
+
+  L  97: resume_memory_occupation(self, recv_req: ResumeMemoryOccupationReqInput)
+
+  L 120: save_remote_model(self, params)
+
+  L 134: save_sharded_model(self, params)
+
+
+============================================================
+FILE: python/sglang/srt/managers/session_controller.py
+Functions: 7
+============================================================
+
+
+CLASS: Session
+----------------------------------------
+  L  63: __init__(self, capacity_of_str_len: int, session_id: Optional[str])
+
+  L  68: create_req(self, req: TokenizedGenerateReqInput, tokenizer)
+
+
+CLASS: SessionReqNode
+----------------------------------------
+  L  22: __init__(self, req, parent, childs)
+
+  L  29: clear_childs(self, req_dict)
+
+  L  34: clear(self, req_dict)
+
+  L  42: abort(self)
+
+  L  46: __str__(self)
+
+
+============================================================
+FILE: python/sglang/srt/managers/template_manager.py
+Functions: 9
+============================================================
+
+
+CLASS: TemplateManager
+----------------------------------------
+  L  54: __init__(self)
+
+  L  61: chat_template_name(self)
+         → Optional[str]
+         📝 Get the current chat template name.
+
+  L  66: completion_template_name(self)
+         → Optional[str]
+         📝 Get the current completion template name.
+
+  L  71: jinja_template_content_format(self)
+         → Optional[str]
+         📝 Get the detected template content format ('string' or 'openai' or None).
+
+  L  76: force_reasoning(self)
+         → bool
+         📝 Check if the current chat template enforces reasoning/thinking.
+            Returns:
+            True if the template contains reasoning patterns like <think> tags
+
+  L 101: load_chat_template(self, tokenizer_manager, chat_template_arg: Optional[str], model_path: str)
+         → None
+         📝 Load a chat template from various sources.
+            Args:
+            tokenizer_manager: The tokenizer manager instance
+            chat_template_arg: Template name, file path, or None to auto-detect
+            model_path: Path to the model
+
+  L 166: guess_chat_template_from_model_path(self, model_path: str)
+         → None
+         📝 Infer chat template name from model path.
+            Args:
+            model_path: Path to the model
+
+  L 178: load_completion_template(self, completion_template_arg: str)
+         → None
+         📝 Load completion template for code completion.
+            Args:
+            completion_template_arg: Template name or file path
+
+  L 198: initialize_templates(self, tokenizer_manager, model_path: str, chat_template: Optional[str], completion_template: Optional[str])
+         → None
+         📝 Initialize all templates based on provided configuration.
+            Args:
+            tokenizer_manager: The tokenizer manager instance
+            model_path: Path to the model
+            chat_template: Optional chat template name/path
+            completion_template: Optional completion template name/path
+
+
+============================================================
+FILE: python/sglang/srt/managers/tokenizer_manager.py
+Functions: 49
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L2079: async def print_exception_wrapper(func)
+         📝 Sometimes an asyncio function does not print exception.
+            We do another wrapper to handle the exception.
+
+
+CLASS: SignalHandler
+----------------------------------------
+  L2096: __init__(self, tokenizer_manager: TokenizerManager)
+
+  L2099: sigterm_handler(self, signum, frame)
+
+  L2105: running_phase_sigquit_handler(self, signum, frame)
+
+
+CLASS: TokenizerManager
+----------------------------------------
+  L 184: __init__(self, server_args: ServerArgs, port_args: PortArgs)
+
+  L 491: generate_request(self, obj: Union[GenerateReqInput, EmbeddingReqInput], request: Optional[fastapi.Request])
+
+  L 997: flush_cache(self)
+         → FlushCacheReqOutput
+
+  L1000: clear_hicache_storage(self)
+         → ClearHiCacheReqOutput
+         📝 Clear the hierarchical cache storage.
+
+  L1007: abort_request(self, rid: str, abort_all: bool)
+
+  L1016: start_profile(self, output_dir: Optional[str], start_step: Optional[int], num_steps: Optional[int], activities: Optional[List[str]], with_stack: Optional[bool], record_shapes: Optional[bool], profile_by_stage: bool)
+
+  L1042: stop_profile(self)
+
+  L1053: start_expert_distribution_record(self)
+
+  L1057: stop_expert_distribution_record(self)
+
+  L1061: dump_expert_distribution_record(self)
+
+  L1065: pause_generation(self)
+
+  L1070: continue_generation(self)
+
+  L1075: update_weights_from_disk(self, obj: UpdateWeightFromDiskReqInput, request: Optional[fastapi.Request])
+         → Tuple[bool, str]
+
+  L1123: init_weights_update_group(self, obj: InitWeightsUpdateGroupReqInput, request: Optional[fastapi.Request])
+         → Tuple[bool, str]
+
+  L1135: update_weights_from_distributed(self, obj: UpdateWeightsFromDistributedReqInput, request: Optional[fastapi.Request])
+         → Tuple[bool, str]
+
+  L1154: update_weights_from_tensor(self, obj: UpdateWeightsFromTensorReqInput, request: Optional[fastapi.Request])
+         → Tuple[bool, str]
+
+  L1173: load_lora_adapter(self, obj: LoadLoRAAdapterReqInput, _: Optional[fastapi.Request])
+         → LoadLoRAAdapterReqOutput
+
+  L1231: unload_lora_adapter(self, obj: UnloadLoRAAdapterReqInput, _: Optional[fastapi.Request])
+         → UnloadLoRAAdapterReqOutput
+
+  L1273: get_weights_by_name(self, obj: GetWeightsByNameReqInput, request: Optional[fastapi.Request])
+
+  L1284: release_memory_occupation(self, obj: ReleaseMemoryOccupationReqInput, request: Optional[fastapi.Request])
+
+  L1292: resume_memory_occupation(self, obj: ResumeMemoryOccupationReqInput, request: Optional[fastapi.Request])
+
+  L1300: slow_down(self, obj: SlowDownReqInput, request: Optional[fastapi.Request])
+
+  L1308: open_session(self, obj: OpenSessionReqInput, request: Optional[fastapi.Request])
+
+  L1325: close_session(self, obj: CloseSessionReqInput, request: Optional[fastapi.Request])
+
+  L1330: get_internal_state(self)
+         → List[Dict[Any, Any]]
+
+  L1338: set_internal_state(self, obj: SetInternalStateReq)
+         → List[bool]
+
+  L1344: get_load(self)
+         → dict
+
+  L1352: get_log_request_metadata(self)
+
+  L1406: configure_logging(self, obj: ConfigureLoggingReq)
+
+  L1420: freeze_gc(self)
+         📝 Send a freeze_gc message to the scheduler first, then freeze locally.
+
+  L1426: create_abort_task(self, obj: GenerateReqInput)
+
+  L1440: auto_create_handle_loop(self)
+
+  L1471: dump_requests_before_crash(self)
+
+  L1554: sigterm_watchdog(self)
+
+  L1591: handle_loop(self)
+         📝 The event loop that handles requests
+
+  L1704: convert_logprob_style(self, meta_info: dict, state: ReqState, top_logprobs_num: int, token_ids_logprob: List[int], return_text_in_logprobs: bool, recv_obj: BatchStrOut, recv_obj_index: int)
+
+  L1793: detokenize_logprob_tokens(self, token_logprobs_val: List[float], token_logprobs_idx: List[int], decode_to_text: bool)
+
+  L1809: detokenize_top_logprobs_tokens(self, token_logprobs_val: List[float], token_logprobs_idx: List[int], decode_to_text: bool)
+
+  L1829: collect_metrics(self, state: ReqState, recv_obj: BatchStrOut, i: int)
+
+  L1872: dump_requests(self, state: ReqState, out_dict: dict)
+
+  L1889: record_request_for_crash_dump(self, state: ReqState, out_dict: dict)
+
+  L1959: score_request(self, query: Optional[Union[str, List[int]]], items: Optional[Union[str, List[str], List[List[int]]]], label_token_ids: Optional[List[int]], apply_softmax: bool, item_first: bool, request: Optional[Any])
+         → List[List[float]]
+         📝 See Engine.score() for more details.
+
+
+CLASS: _Communicator
+----------------------------------------
+  L2119: __init__(self, sender, fan_out: int)
+
+  L2126: __call__(self, obj)
+
+  L2148: handle_recv(self, recv_obj: T)
+
+
+============================================================
+FILE: python/sglang/srt/managers/tp_worker.py
+Functions: 22
+============================================================
+
+
+CLASS: TpModelWorker
+----------------------------------------
+  L  54: __init__(self, server_args: ServerArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], nccl_port: int, is_draft_worker: bool, req_to_token_pool: Optional[ReqToTokenPool], token_to_kv_pool_allocator: Optional[BaseTokenToKVPoolAllocator])
+
+  L 165: register_hicache_layer_transfer_counter(self, counter)
+
+  L 168: set_hicache_consumer(self, consumer_index)
+
+  L 172: get_worker_info(self)
+
+  L 189: sliding_window_size(self)
+         → Optional[int]
+
+  L 193: is_hybrid(self)
+         → bool
+
+  L 196: get_tokens_per_layer_info(self)
+
+  L 202: get_pad_input_ids_func(self)
+
+  L 205: get_tp_group(self)
+
+  L 208: get_attention_tp_group(self)
+
+  L 211: get_attention_tp_cpu_group(self)
+
+  L 214: get_memory_pool(self)
+
+  L 220: forward_batch_generation(self, model_worker_batch: ModelWorkerBatch, launch_done: Optional[threading.Event], skip_sample: bool)
+         → Tuple[Union[LogitsProcessorOutput, torch.Tensor], Optional[torch.Tensor], bool]
+
+  L 260: forward_batch_embedding(self, model_worker_batch: ModelWorkerBatch)
+
+  L 266: update_weights_from_disk(self, recv_req: UpdateWeightFromDiskReqInput)
+
+  L 272: init_weights_update_group(self, recv_req: InitWeightsUpdateGroupReqInput)
+
+  L 283: update_weights_from_distributed(self, recv_req: UpdateWeightsFromDistributedReqInput)
+
+  L 291: update_weights_from_tensor(self, recv_req: UpdateWeightsFromTensorReqInput)
+
+  L 302: get_weights_by_name(self, recv_req: GetWeightsByNameReqInput)
+
+  L 308: load_lora_adapter(self, recv_req: LoadLoRAAdapterReqInput)
+
+  L 312: unload_lora_adapter(self, recv_req: UnloadLoRAAdapterReqInput)
+
+  L 316: can_run_lora_batch(self, lora_ids: list[str])
+         → bool
+
+
+============================================================
+FILE: python/sglang/srt/managers/tp_worker_overlap_thread.py
+Functions: 27
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  45: def resolve_future_token_ids(input_ids, future_token_ids_map)
+         @torch.compile(dynamic=True, backend=get_compiler_backend())
+
+
+CLASS: TpModelWorkerClient
+----------------------------------------
+  L  56: __init__(self, server_args: ServerArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], nccl_port: int)
+
+  L  96: register_hicache_layer_transfer_counter(self, counter)
+
+  L  99: set_hicache_consumer(self, consumer_index)
+
+  L 103: get_worker_info(self)
+
+  L 106: get_tokens_per_layer_info(self)
+
+  L 110: sliding_window_size(self)
+         → Optional[int]
+
+  L 114: is_hybrid(self)
+         → bool
+
+  L 117: get_pad_input_ids_func(self)
+
+  L 120: get_tp_group(self)
+
+  L 123: get_attention_tp_group(self)
+
+  L 126: get_attention_tp_cpu_group(self)
+
+  L 129: get_memory_pool(self)
+
+  L 135: get_kv_cache(self)
+
+  L 138: forward_thread_func(self)
+
+  L 148: forward_thread_func_(self)
+
+  L 207: resolve_last_batch_result(self, launch_done: Optional[threading.Event])
+         📝 This function is called to resolve the last batch result and
+            wait for the current batch to be launched. Used in overlap mode.
+
+  L 231: forward_batch_generation(self, model_worker_batch: ModelWorkerBatch)
+         → Tuple[None, torch.Tensor, bool]
+
+  L 264: update_weights_from_disk(self, recv_req: UpdateWeightFromDiskReqInput)
+
+  L 268: init_weights_update_group(self, recv_req: InitWeightsUpdateGroupReqInput)
+
+  L 272: update_weights_from_distributed(self, recv_req: UpdateWeightsFromDistributedReqInput)
+
+  L 278: update_weights_from_tensor(self, recv_req: UpdateWeightsFromTensorReqInput)
+
+  L 282: get_weights_by_name(self, recv_req: GetWeightsByNameReqInput)
+
+  L 285: load_lora_adapter(self, recv_req: LoadLoRAAdapterReqInput)
+
+  L 288: unload_lora_adapter(self, recv_req: UnloadLoRAAdapterReqInput)
+
+  L 291: can_run_lora_batch(self, lora_ids: list[str])
+         → bool
+
+  L 294: __delete__(self)
+
+
+============================================================
+FILE: python/sglang/srt/managers/utils.py
+Functions: 11
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  18: def validate_input_length(req: Req,
+        max_req_input_len: int,
+        allow_auto_truncate: bool)
+         → Optional[str]
+         📝 Validate and potentially truncate input length.
+            Args:
+            req: The request containing input_ids to validate
+            max_req_input_len: Maximum allowed input length
+            allow_auto_truncate: Whether to truncate long inputs
+            Returns:
+            Error message if validation fails, None if successful
+
+  L  51: def get_logprob_dict_from_result(result: GenerationBatchResult)
+         → dict
+
+  L  72: def get_logprob_from_pp_outputs(next_pp_outputs: PPProxyTensors)
+         → tuple[LogitsProcessorOutput, list[int], list[int]]
+
+
+CLASS: DPBalanceMeta
+----------------------------------------
+  L 107: __init__(self, num_workers: int)
+
+  L 119: destructor(self)
+
+  L 123: get_shared_onfly(self)
+         → List[Dict[int, int]]
+
+  L 126: set_shared_onfly_info(self, data: List[Dict[int, int]])
+
+  L 129: get_shared_local_tokens(self)
+         → List[int]
+
+  L 132: set_shared_local_tokens(self, data: List[int])
+
+  L 135: __getstate__(self)
+
+  L 140: __setstate__(self, state)

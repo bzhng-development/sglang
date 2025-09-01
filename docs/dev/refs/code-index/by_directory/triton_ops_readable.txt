@@ -1,0 +1,388 @@
+================================================================================
+FUNCTION INDEX: triton_ops module
+================================================================================
+Total Functions: 28
+Documented: 4
+
+
+============================================================
+FILE: python/sglang/srt/constrained/triton_ops/bitmask_ops.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  14: def apply_token_bitmask_inplace_kernel(logits_ptr,
+        bitmask_ptr,
+        indices_ptr,
+        num_rows,
+        vocab_size,
+        logits_strides,
+        bitmask_strides,
+        NUM_SMS: tl.constexpr,
+        BLOCK_SIZE: tl.constexpr)
+         📝 Apply a bitmask to logits in-place using Triton. The bitmask is a 01 bitwise compressed tensor,
+            where 0 means the token is masked and 1 means the token is not masked. After applying the bitmask,
+            the masked logits will be set to -inf.
+            Parameters
+            ----------
+            logits_ptr : tl.tensor
+            Pointer to the logits tensor to apply the bitmask to.
+            bitmask_ptr : tl.tensor
+            Pointer to the bitmask tensor to apply.
+            indices_ptr : Optional[tl.tensor]
+            Optional pointer to indices tensor specifying which rows to apply the mask to.
+            num_rows : int
+            Number of rows to process. If indices_ptr is provided, this is the number of unique indices.
+            vocab_size : int
+            Size of the vocabulary dimension. If the logits does not have a vocab padding, this is the
+            same as the logits's second dimension. Otherwise, this is the actual size of the vocabulary.
+            logits_strides : int
+            Stride between rows in the logits tensor.
+            bitmask_strides : int
+            Stride between rows in the bitmask tensor.
+            NUM_SMS : int
+            Number of streaming multiprocessors to use.
+            BLOCK_SIZE : int
+            Size of processing blocks.
+         @triton.jit
+
+  L  84: def apply_token_bitmask_inplace_triton(logits: torch.Tensor,
+        bitmask: torch.Tensor,
+        indices: Optional[Union[List[int],
+        torch.Tensor]])
+
+
+============================================================
+FILE: python/sglang/srt/layers/attention/triton_ops/decode_attention.py
+Functions: 4
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  39: def tanh(x)
+         @triton.jit
+
+  L 633: def decode_attention_fwd_normal(q,
+        k_buffer,
+        v_buffer,
+        o,
+        kv_indptr,
+        kv_indices,
+        attn_logits,
+        attn_lse,
+        num_kv_splits,
+        max_kv_splits,
+        sm_scale,
+        logit_cap,
+        sinks,
+        xai_temperature_len)
+
+  L 676: def decode_attention_fwd_grouped(q,
+        k_buffer,
+        v_buffer,
+        o,
+        kv_indptr,
+        kv_indices,
+        attn_logits,
+        attn_lse,
+        num_kv_splits,
+        max_kv_splits,
+        sm_scale,
+        logit_cap,
+        sinks,
+        xai_temperature_len)
+
+  L 719: def decode_attention_fwd(q,
+        k_buffer,
+        v_buffer,
+        o,
+        kv_indptr,
+        kv_indices,
+        attn_logits,
+        attn_lse,
+        num_kv_splits,
+        max_kv_splits,
+        sm_scale,
+        logit_cap,
+        sinks,
+        xai_temperature_len)
+
+
+============================================================
+FILE: python/sglang/srt/layers/attention/triton_ops/double_sparsity_attention.py
+Functions: 9
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  23: def tanh(x)
+         @triton.jit
+
+  L 192: def flash_decode_stage1(q,
+        k,
+        v,
+        Req_to_tokens,
+        B_req_idx,
+        B_Seqlen,
+        max_len_in_batch,
+        mid_out,
+        mid_out_logsumexp,
+        block_seq)
+         @torch.no_grad()
+
+  L 255: def flash_decode_stage2(mid_out, mid_out_logexpsum, B_Seqlen, O, block_seq)
+         @torch.no_grad()
+
+  L 284: def flash_decode_attention_fwd(q,
+        k_buffer,
+        v_buffer,
+        o,
+        req_to_token,
+        b_req_idx,
+        b_start_loc,
+        b_seq_len,
+        attn_logits,
+        max_len_in_batch,
+        sm_scale,
+        logit_cap)
+
+  L 561: def sparse_flash_decode_stage1(q_label,
+        k_label_buffer,
+        att_out,
+        Req_to_tokens,
+        B_Seqlen,
+        max_len_in_batch,
+        sm_scale,
+        logit_cap)
+
+  L 613: def sparse_flash_decode_stage2(q,
+        k,
+        v,
+        Req_to_tokens,
+        Topk_token_indices,
+        heavy_token_num,
+        mid_out,
+        mid_out_logsumexp,
+        block_seq,
+        sm_scale)
+         @torch.no_grad()
+
+  L 674: def sparse_flash_decode_stage3(Seqlen, mid_out, mid_out_logexpsum, O, block_seq)
+         @torch.no_grad()
+
+  L 700: def flash_decode_sparse_attention_fwd(q,
+        k_buffer,
+        v_buffer,
+        o,
+        q_label,
+        k_label_buffer,
+        req_to_token,
+        b_seq_len,
+        max_len_in_batch,
+        sm_scale,
+        logit_cap,
+        heavy_token_num,
+        att_out_approx,
+        mid_out,
+        mid_o_logexpsum,
+        BLOCK_SEQ)
+
+  L 994: def extend_attention_fwd(q_extend,
+        k_extend,
+        v_extend,
+        o_extend,
+        k_buffer,
+        v_buffer,
+        req_to_tokens,
+        b_req_idx,
+        b_seq_len,
+        b_seq_len_extend,
+        b_start_loc_extend,
+        max_len_extend,
+        sm_scale,
+        logit_cap)
+         📝 q_extend, k_extend, v_extend, o_extend: contiguous tensors
+            k_buffer, v_buffer: (prefix + extend) tensors in mem_manager
+
+
+============================================================
+FILE: python/sglang/srt/layers/attention/triton_ops/extend_attention.py
+Functions: 3
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  36: def tanh(x)
+         @triton.jit
+
+  L 372: def extend_attention_fwd(q_extend,
+        k_extend,
+        v_extend,
+        o_extend,
+        k_buffer,
+        v_buffer,
+        qo_indptr,
+        kv_indptr,
+        kv_indices,
+        custom_mask,
+        is_causal,
+        mask_indptr,
+        max_len_extend,
+        sm_scale,
+        logit_cap,
+        skip_prefix_custom_mask,
+        sliding_window_size,
+        sinks,
+        window_kv_offsets,
+        xai_temperature_len)
+         📝 q_extend, k_extend, v_extend, o_extend: contiguous tensors
+            k_buffer, v_buffer: (prefix + extend) tensors in mem_manager
+
+  L 516: def redundant_attention(q_extend,
+        o_extend,
+        k_buffer,
+        v_buffer,
+        b_req_idx,
+        b_start_loc,
+        b_seq_len,
+        b_seq_len_prefix,
+        max_len_in_batch)
+
+
+============================================================
+FILE: python/sglang/srt/layers/attention/triton_ops/merge_state.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L   9: def merge_state_kernel(output,
+        output_lse,
+        prefix_output,
+        prefix_lse,
+        suffix_output,
+        suffix_lse,
+        HEAD_SIZE: tl.constexpr,
+        PADDED_HEAD_SIZE: tl.constexpr,
+        OUTPUT_LSE: tl.constexpr)
+         @triton.jit
+
+  L  66: def merge_state_triton(prefix_output: torch.Tensor,
+        prefix_lse: torch.Tensor,
+        suffix_output: torch.Tensor,
+        suffix_lse: torch.Tensor,
+        output: Optional[torch.Tensor],
+        output_lse: Optional[torch.Tensor])
+         → Tuple[torch.Tensor, Optional[torch.Tensor]]
+
+
+============================================================
+FILE: python/sglang/srt/layers/attention/triton_ops/prefill_attention.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 170: def context_attention_fwd(q,
+        k,
+        v,
+        o,
+        b_start_loc,
+        b_seq_len,
+        max_input_len,
+        is_causal)
+         📝 q, k, v: [b * s, head, head_dim]
+            b_start_loc: [b]
+            b_seq_len: [b]
+            out: [b * s, head, head_dim]
+
+
+============================================================
+FILE: python/sglang/srt/layers/attention/triton_ops/rocm_mla_decode_rope.py
+Functions: 3
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  31: def is_hip()
+
+  L  39: def tanh(x)
+         @triton.jit
+
+  L 402: def decode_attention_fwd_grouped_rope(q,
+        k_buffer,
+        v_buffer,
+        o,
+        kv_indptr,
+        kv_indices,
+        k_pe_tokens,
+        kv_lora_rank,
+        rotary_dim,
+        cos_sin_cache,
+        positions,
+        attn_logits,
+        num_kv_splits,
+        sm_scale,
+        logit_cap,
+        use_rope,
+        is_neox_style)
+
+
+============================================================
+FILE: python/sglang/srt/lora/triton_ops/gate_up_lora_b.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 126: def gate_up_lora_b_fwd(x: torch.Tensor,
+        gate_up_lora_b: torch.Tensor,
+        batch_info: LoRABatchInfo,
+        output_dim: int,
+        base_output: torch.Tensor)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/lora/triton_ops/qkv_lora_b.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 127: def qkv_lora_b_fwd(x: torch.Tensor,
+        qkv_lora_b: torch.Tensor,
+        batch_info: LoRABatchInfo,
+        output_offset: torch.Tensor,
+        max_qkv_out_dim: int,
+        base_output: torch.Tensor)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/lora/triton_ops/sgemm_lora_a.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 114: def sgemm_lora_a_fwd(x: torch.Tensor,
+        weights: torch.Tensor,
+        batch_info: LoRABatchInfo,
+        stack_num: int)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/lora/triton_ops/sgemm_lora_b.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 118: def sgemm_lora_b_fwd(x: torch.Tensor,
+        weights: torch.Tensor,
+        batch_info: LoRABatchInfo,
+        base_output: torch.Tensor)
+         → torch.Tensor

@@ -1,0 +1,566 @@
+================================================================================
+FUNCTION INDEX: configs module
+================================================================================
+Total Functions: 110
+Documented: 21
+
+
+============================================================
+FILE: python/sglang/srt/configs/chatglm.py
+Functions: 1
+============================================================
+
+
+CLASS: ChatGLMConfig
+----------------------------------------
+  L  19: __init__(self, num_layers, padded_vocab_size, hidden_size, ffn_hidden_size, kv_channels, num_attention_heads, seq_length, hidden_dropout, attention_dropout, layernorm_epsilon, rmsnorm, apply_residual_connection_post_layernorm, post_layer_norm, add_bias_linear, add_qkv_bias, interleaved_qkv, bias_dropout_fusion, multi_query_attention, multi_query_group_num, apply_query_key_layer_scaling, attention_softmax_in_fp32, fp32_residual_connection, quantization_bit, pre_seq_len, prefix_projection)
+
+
+============================================================
+FILE: python/sglang/srt/configs/dbrx.py
+Functions: 5
+============================================================
+
+
+CLASS: DbrxAttentionConfig
+----------------------------------------
+  L  34: __init__(self, attn_pdrop: float, clip_qkv: Optional[float], kv_n_heads: int, rope_theta: float)
+
+  L  55: from_pretrained(cls, pretrained_model_name_or_path: str)
+         → 'PretrainedConfig'
+
+
+CLASS: DbrxConfig
+----------------------------------------
+  L 229: __init__(self, d_model: int, n_heads: int, n_layers: int, max_seq_len: int, vocab_size: int, resid_pdrop: float, emb_pdrop: float, attn_config: Optional[DbrxAttentionConfig], ffn_config: Optional[DbrxFFNConfig], use_cache: bool, initializer_range: float, output_router_logits: bool, router_aux_loss_coef: float)
+
+
+CLASS: DbrxFFNConfig
+----------------------------------------
+  L 106: __init__(self, ffn_act_fn: Optional[dict], ffn_hidden_size: int, moe_num_experts: int, moe_top_k: int, moe_jitter_eps: Optional[float], moe_loss_weight: float, moe_normalize_expert_weights: Optional[float], uniform_expert_assignment: bool)
+
+  L 137: from_pretrained(cls, pretrained_model_name_or_path: str)
+         → 'PretrainedConfig'
+
+
+============================================================
+FILE: python/sglang/srt/configs/deepseekvl2.py
+Functions: 24
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  16: def select_best_resolution(image_size, candidate_resolutions)
+
+
+CLASS: DeepseekV2Config
+----------------------------------------
+  L 555: __init__(self, vocab_size, hidden_size, intermediate_size, moe_intermediate_size, num_hidden_layers, num_attention_heads, num_key_value_heads, n_shared_experts, n_routed_experts, ep_size, routed_scaling_factor, kv_lora_rank, q_lora_rank, qk_rope_head_dim, v_head_dim, qk_nope_head_dim, topk_method, n_group, topk_group, num_experts_per_tok, moe_layer_freq, first_k_dense_replace, norm_topk_prob, scoring_func, aux_loss_alpha, seq_aux, hidden_act, max_position_embeddings, initializer_range, rms_norm_eps, use_cache, pad_token_id, bos_token_id, eos_token_id, pretraining_tp, tie_word_embeddings, rope_theta, rope_scaling, attention_bias, attention_dropout, use_mla)
+
+
+CLASS: DeepseekVL2Config
+----------------------------------------
+  L 661: __init__(self, tile_tag: str, global_view_pos: str, candidate_resolutions: Tuple[Tuple[int, int]])
+
+
+CLASS: DeepseekVL2MlpProjectorConfig
+----------------------------------------
+  L 530: __init__(self, projector_type: str, input_dim: int, n_embed: int, depth: int, mlp_ratio: int, downsample_ratio: int)
+
+
+CLASS: DeepseekVL2VisionEncoderConfig
+----------------------------------------
+  L 488: __init__(self, model_name: str, image_size: int, patch_size: int, width: int, layers: int, heads: int, mlp_ratio: int, global_pool: str, ignore_head: bool, class_token: bool, num_classes: int, use_checkpoint: bool)
+
+
+CLASS: DeepseekVLV2Processor
+----------------------------------------
+  L 112: __init__(self, tokenizer: LlamaTokenizerFast, candidate_resolutions: Tuple[Tuple[int, int]], patch_size: int, downsample_ratio: int, image_mean: Tuple[float, float, float], image_std: Tuple[float, float, float], normalize: bool, image_token: str, pad_token: str, add_special_token: bool, sft_format: str, mask_prompt: bool, ignore_id: int)
+
+  L 180: format_messages_v2(self, messages, pil_images, max_req_input_len)
+         📝 play the role of format_messages_v2 and get_images_info in the last version
+
+  L 222: bos_id(self)
+
+  L 226: eos_id(self)
+
+  L 230: pad_id(self)
+
+  L 233: encode(self, text: str, bos: bool, eos: bool)
+
+  L 243: decode(self, t: List[int])
+         → str
+
+  L 246: process_one(self, prompt: str, conversations: List[Dict[str, str]], images: List[Image.Image], apply_sft_format: bool, inference_mode: bool, system_prompt: str, max_req_input_len: int)
+         📝 Args:
+            prompt (str): the formatted prompt;
+            conversations (List[Dict]): conversations with a list of messages;
+            images (List[ImageType]): the list of images;
+            apply_sft_format (bool): if prompt is not None, then apply the SFT format to prompt;
+            if conversations is not None, then it will always apply the SFT format to conversations;
+            inference_mode (bool): if True, then remove the last eos token;
+            system_prompt (str): the system prompt;
+            **kwargs:
+            Returns:
+            outputs (BaseProcessorOutput): the output of the processor,
+            - input_ids (torch.LongTensor): [N + image tokens]
+            - target_ids (torch.LongTensor): [N + image tokens]
+            - images (torch.FloatTensor): [n_images, 3, H, W]
+            - image_id (int): the id of the image token
+            - num_image_tokens (List[int]): the number of image tokens
+
+  L 334: __call__(self)
+
+  L 358: find_all_indices(self, messages, target_value)
+
+  L 365: tokenize_with_images(self, conversation: str, images: List[Image.Image], bos: bool, eos: bool, cropping: bool, max_req_input_len: int)
+         📝 Tokenize text with <image> tags.
+
+
+CLASS: DictOutput
+----------------------------------------
+  L  45: items(self)
+
+  L  48: keys(self)
+
+  L  51: __getitem__(self, item)
+
+  L  54: __contains__(self, key)
+
+  L  57: __setitem__(self, key, value)
+
+
+CLASS: ImageTransform
+----------------------------------------
+  L  76: __init__(self, mean: Optional[Tuple[float, float, float]], std: Optional[Tuple[float, float, float]], normalize: bool)
+
+  L 103: __call__(self, pil_img: Image.Image)
+
+
+CLASS: VLChatProcessorOutput
+----------------------------------------
+  L  71: __len__(self)
+
+
+============================================================
+FILE: python/sglang/srt/configs/device_config.py
+Functions: 1
+============================================================
+
+
+CLASS: DeviceConfig
+----------------------------------------
+  L  12: __init__(self, device: str)
+         → None
+
+
+============================================================
+FILE: python/sglang/srt/configs/exaone.py
+Functions: 1
+============================================================
+
+
+CLASS: ExaoneConfig
+----------------------------------------
+  L 143: __init__(self, vocab_size, max_position_embeddings, hidden_size, num_layers, num_attention_heads, num_key_value_heads, intermediate_size, activation_function, rope_theta, rope_scaling, embed_dropout, attention_dropout, layer_norm_epsilon, initializer_range, use_cache, bos_token_id, eos_token_id, tie_word_embeddings)
+
+
+============================================================
+FILE: python/sglang/srt/configs/internvl.py
+Functions: 16
+============================================================
+
+
+CLASS: InternLM2Config
+----------------------------------------
+  L  78: __init__(self, vocab_size, hidden_size, intermediate_size, num_hidden_layers, num_attention_heads, num_key_value_heads, hidden_act, max_position_embeddings, initializer_range, rms_norm_eps, use_cache, pad_token_id, bos_token_id, eos_token_id, tie_word_embeddings, bias, rope_theta, rope_scaling, attn_implementation)
+
+
+CLASS: InternLM2Tokenizer
+----------------------------------------
+  L 494: __init__(self, vocab_file, unk_token, bos_token, eos_token, pad_token, sp_model_kwargs: Optional[Dict[str, Any]], add_bos_token, add_eos_token, decode_with_prefix_space, clean_up_tokenization_spaces)
+
+  L 527: no_prefix_space_tokens(self)
+
+  L 536: vocab_size(self)
+         📝 Returns vocab size
+
+  L 541: bos_token_id(self)
+         → Optional[int]
+
+  L 545: eos_token_id(self)
+         → Optional[int]
+
+  L 548: get_vocab(self)
+         📝 Returns vocab as a dict
+
+  L 573: convert_tokens_to_string(self, tokens)
+         📝 Converts a sequence of tokens (string) in a single string.
+
+  L 594: save_vocabulary(self, save_directory, filename_prefix: Optional[str])
+         → Tuple[str]
+         📝 Save the vocabulary and special tokens file to a directory.
+            Args:
+            save_directory (`str`):
+            The directory in which to save the vocabulary.
+            Returns:
+            `Tuple(str)`: Paths to the files saved.
+
+  L 627: build_inputs_with_special_tokens(self, token_ids_0, token_ids_1)
+
+  L 643: get_special_tokens_mask(self, token_ids_0: List[int], token_ids_1: Optional[List[int]], already_has_special_tokens: bool)
+         → List[int]
+         📝 Retrieve sequence ids from a token list that has no special tokens added. This method is called when adding
+            special tokens using the tokenizer `prepare_for_model` method.
+            Args:
+            token_ids_0 (`List[int]`):
+            List of IDs.
+            token_ids_1 (`List[int]`, *optional*):
+            Optional second list of IDs for sequence pairs.
+            already_has_special_tokens (`bool`, *optional*, defaults to `False`):
+            Whether or not the token list is already formatted with special tokens for the model.
+            Returns:
+            `List[int]`: A list of integers in the range [0, 1]: 1 for a special token, 0 for a sequence token.
+
+  L 675: create_token_type_ids_from_sequences(self, token_ids_0: List[int], token_ids_1: Optional[List[int]])
+         → List[int]
+         📝 Create a mask from the two sequences passed to be used in a sequence-pair classification task. T5 does not make
+            use of token type ids, therefore a list of zeros is returned.
+            Args:
+            token_ids_0 (`List[int]`):
+            List of IDs.
+            token_ids_1 (`List[int]`, *optional*):
+            Optional second list of IDs for sequence pairs.
+            Returns:
+            `List[int]`: List of zeros.
+
+
+CLASS: InternVLChatConfig
+----------------------------------------
+  L 279: __init__(self, vision_config, llm_config, use_backbone_lora, use_llm_lora, pad2square, select_layer, force_image_size, downsample_ratio, template, dynamic_image_size, use_thumbnail, ps_version, min_dynamic_patch, max_dynamic_patch)
+
+  L 345: to_dict(self)
+         📝 Serializes this instance to a Python dictionary. Override the default [`~PretrainedConfig.to_dict`].
+            Returns:
+            `Dict[str, any]`: Dictionary of all the attributes that make up this configuration instance,
+
+
+CLASS: InternVisionConfig
+----------------------------------------
+  L 210: __init__(self, num_channels, patch_size, image_size, qkv_bias, hidden_size, num_attention_heads, intermediate_size, qk_normalization, num_hidden_layers, use_flash_attn, hidden_act, layer_norm_eps, dropout, drop_path_rate, attention_dropout, initializer_range, initializer_factor)
+
+  L 252: from_pretrained(cls, pretrained_model_name_or_path: Union[str, os.PathLike])
+         → 'PretrainedConfig'
+
+
+============================================================
+FILE: python/sglang/srt/configs/janus_pro.py
+Functions: 30
+============================================================
+
+
+CLASS: AlignerConfig
+----------------------------------------
+  L  85: __init__(self)
+
+
+CLASS: DictOutput
+----------------------------------------
+  L 287: items(self)
+
+  L 290: keys(self)
+
+  L 293: __getitem__(self, item)
+
+  L 296: __contains__(self, key)
+
+  L 299: __setitem__(self, key, value)
+
+
+CLASS: DictToObject
+----------------------------------------
+  L  26: __init__(self, dictionary)
+
+
+CLASS: GenAlignerConfig
+----------------------------------------
+  L  55: __init__(self)
+
+
+CLASS: GenHeadConfig
+----------------------------------------
+  L  70: __init__(self)
+
+
+CLASS: GenVisionConfig
+----------------------------------------
+  L 100: __init__(self)
+
+
+CLASS: MultiModalityConfig
+----------------------------------------
+  L 135: __init__(self)
+
+
+CLASS: VLChatProcessor
+----------------------------------------
+  L 332: __init__(self, image_processor: VLMImageProcessor, tokenizer: LlamaTokenizerFast, image_tag: str, image_start_tag: str, image_end_tag: str, pad_tag: str, num_image_tokens: int, add_special_token: bool, sft_format: str, mask_prompt: bool, ignore_id: int)
+
+  L 374: image_token(self)
+
+  L 378: image_id(self)
+         → int
+
+  L 383: image_start_id(self)
+
+  L 388: image_end_id(self)
+
+  L 393: image_start_token(self)
+
+  L 397: image_end_token(self)
+
+  L 401: pad_id(self)
+
+  L 405: add_image_token(self, image_indices: List[int], input_ids: torch.LongTensor)
+         📝 Args:
+            image_indices (List[int]): [index_0, index_1, ..., index_j]
+            input_ids (torch.LongTensor): [N]
+            Returns:
+            input_ids (torch.LongTensor): [N + image tokens]
+            num_image_tokens (torch.IntTensor): [n_images]
+
+  L 450: process_one(self, prompt: str, images: List[Image])
+         📝 Args:
+            prompt (str): the formatted prompt;
+            images (List[ImageType]): the list of images;
+            **kwargs:
+            Returns:
+            outputs (BaseProcessorOutput): the output of the processor,
+            - input_ids (torch.LongTensor): [N + image tokens]
+            - target_ids (torch.LongTensor): [N + image tokens]
+            - images (torch.FloatTensor): [n_images, 3, H, W]
+            - image_id (int): the id of the image token
+            - num_image_tokens (List[int]): the number of image tokens
+
+  L 497: __call__(self)
+         📝 Args:
+            prompt (str): the formatted prompt;
+            conversations (List[Dict]): conversations with a list of messages;
+            images (List[ImageType]): the list of images;
+            force_batchify (bool): force batchify the inputs;
+            **kwargs:
+            Returns:
+            outputs (BaseProcessorOutput): the output of the processor,
+            - input_ids (torch.LongTensor): [N + image tokens]
+            - images (torch.FloatTensor): [n_images, 3, H, W]
+            - image_id (int): the id of the image token
+            - num_image_tokens (List[int]): the number of image tokens
+
+  L 532: batchify(self, prepare_list: List[VLChatProcessorOutput])
+         → BatchedVLChatProcessorOutput
+         📝 Preprocesses the inputs for multimodal inference.
+            Args:
+            prepare_list (List[VLChatProcessorOutput]): A list of VLChatProcessorOutput.
+            Returns:
+            BatchedVLChatProcessorOutput: A dictionary of the inputs to use for multimodal inference.
+
+
+CLASS: VLChatProcessorOutput
+----------------------------------------
+  L 310: __len__(self)
+
+
+CLASS: VLMImageProcessor
+----------------------------------------
+  L 162: __init__(self, image_size: int, min_size: int, image_mean: Union[Tuple[float, float, float], List[float]], image_std: Union[Tuple[float, float, float], List[float]], rescale_factor: float, do_normalize: bool)
+
+  L 194: resize(self, pil_img: Image)
+         → np.ndarray
+         📝 Args:
+            pil_img (PIL.Image): [H, W, 3] in PIL.Image in RGB
+            Returns:
+            x (np.ndarray): [3, self.image_size, self.image_size]
+
+  L 249: preprocess(self, images, return_tensors: str)
+         → BatchFeature
+
+  L 282: default_shape(self)
+
+
+CLASS: VLMImageProcessorConfig
+----------------------------------------
+  L 605: __init__(self, image_size: int, min_size: int, image_mean: Union[Tuple[float, float, float], List[float]], image_std: Union[Tuple[float, float, float], List[float]], rescale_factor: float, do_normalize: bool)
+
+
+CLASS: VisionConfig
+----------------------------------------
+  L  40: __init__(self)
+
+
+============================================================
+FILE: python/sglang/srt/configs/kimi_vl.py
+Functions: 1
+============================================================
+
+
+CLASS: KimiVLConfig
+----------------------------------------
+  L  14: __init__(self, vision_config: Optional[Union[dict, MoonViTConfig]], text_config: Optional[Union[dict, DeepseekV2Config]], ignore_index: int, media_placeholder_token_id: int, pad_token_id: int)
+
+
+============================================================
+FILE: python/sglang/srt/configs/kimi_vl_moonvit.py
+Functions: 1
+============================================================
+
+
+CLASS: MoonViTConfig
+----------------------------------------
+  L   9: __init__(self, patch_size: int, init_pos_emb_height: int, init_pos_emb_width: int, num_attention_heads: int, num_hidden_layers: int, hidden_size: int, intermediate_size: int, merge_kernel_size: tuple[int, int])
+
+
+============================================================
+FILE: python/sglang/srt/configs/load_config.py
+Functions: 1
+============================================================
+
+
+CLASS: LoadConfig
+----------------------------------------
+  L  57: __post_init__(self)
+
+
+============================================================
+FILE: python/sglang/srt/configs/longcat_flash.py
+Functions: 1
+============================================================
+
+
+CLASS: LongcatFlashConfig
+----------------------------------------
+  L  13: __init__(self, vocab_size, hidden_size, intermediate_size, ffn_hidden_size, expert_ffn_hidden_size, num_layers, num_hidden_layers, num_attention_heads, ep_size, kv_lora_rank, q_lora_rank, qk_rope_head_dim, qk_nope_head_dim, v_head_dim, n_routed_experts, moe_topk, norm_topk_prob, max_position_embeddings, rms_norm_eps, use_cache, pad_token_id, bos_token_id, eos_token_id, pretraining_tp, tie_word_embeddings, rope_theta, rope_scaling, attention_bias, attention_dropout, mla_scale_q_lora, mla_scale_kv_lora, torch_dtype, params_dtype, rounter_params_dtype, router_bias, topk_method, routed_scaling_factor, zero_expert_num, zero_expert_type, nextn_use_scmoe, num_nextn_predict_layers)
+
+
+============================================================
+FILE: python/sglang/srt/configs/model_config.py
+Functions: 18
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 659: def is_generation_model(model_architectures: List[str], is_embedding: bool)
+
+  L 717: def is_multimodal_model(model_architectures: List[str])
+
+  L 727: def is_multimodal_gen_model(model_architectures: List[str])
+
+  L 731: def is_image_gen_model(model_architectures: List[str])
+
+  L 735: def is_audio_model(model_architectures: List[str])
+
+  L 739: def is_encoder_decoder_model(model_architectures: List[str])
+
+  L 743: def is_multimodal_chunked_prefill_supported(model_architectures: List[str])
+         📝 Check if chunked prefill is supported for a MultiModal model.
+
+  L 758: def yarn_get_mscale(scale: float, mscale: float)
+         → float
+
+  L 764: def is_hybrid_model(model_architectures: List[str],
+        hybrid_kvcache_ratio: Optional[float],
+        context_length: Optional[int],
+        attention_chunk_size: Optional[int])
+
+  L 782: def get_hybrid_layer_ids(model_architectures: List[str], num_hidden_layers: int)
+
+
+CLASS: ModelConfig
+----------------------------------------
+  L  52: __init__(self, model_path: str, trust_remote_code: bool, revision: Optional[str], context_length: Optional[int], model_override_args: str, is_embedding: Optional[bool], enable_multimodal: Optional[bool], dtype: str, quantization: Optional[str], override_config_file: Optional[str], is_draft_model: bool, hybrid_kvcache_ratio: Optional[float], model_impl: Union[str, ModelImpl])
+         → None
+
+  L 305: from_server_args(server_args: ServerArgs, model_path: str)
+
+  L 321: get_total_num_attention_heads(self)
+         → int
+
+  L 324: get_num_attention_heads(self, tensor_parallel_size)
+         → int
+
+  L 329: get_total_num_kv_heads(self)
+         → int
+         📝 Returns the total number of KV heads.
+
+  L 392: get_num_kv_heads(self, tensor_parallel_size)
+         → int
+         📝 Returns the number of KV heads per GPU.
+
+  L 545: get_hf_eos_token_id(self)
+         → Optional[Set[int]]
+
+  L 565: maybe_pull_model_tokenizer_from_remote(self)
+         → None
+         📝 Pull the model config files to a temporary
+            directory in case of remote.
+            Args:
+            model: The model name or path.
+
+
+============================================================
+FILE: python/sglang/srt/configs/step3_vl.py
+Functions: 3
+============================================================
+
+
+CLASS: Step3TextConfig
+----------------------------------------
+  L  40: __init__(self, hidden_size: int, intermediate_size: int, num_attention_heads: int, num_attention_groups: int, num_hidden_layers: int, max_seq_len: int, vocab_size: int, rms_norm_eps: float, moe_intermediate_size: int, moe_num_experts: int, moe_top_k: int, rope_theta: float, rope_scaling: Optional[dict[str, Any]], max_position_embedding: int, share_expert_dim: int, share_q_dim: int, head_dim: int, norm_expert_weight: bool, moe_layers_enum: tuple[int])
+         → None
+
+
+CLASS: Step3VLConfig
+----------------------------------------
+  L 146: __init__(self, vision_config: Optional[Union[dict, Step3VisionEncoderConfig]], text_config: Optional[Union[dict, Step3TextConfig]], understand_projector_stride: int, projector_bias: bool, image_token_id: int)
+         → None
+
+
+CLASS: Step3VisionEncoderConfig
+----------------------------------------
+  L   9: __init__(self, hidden_size, intermediate_size, output_hidden_size, num_hidden_layers, num_attention_heads, num_channels, image_size, patch_size, hidden_act, layer_norm_eps)
+
+
+============================================================
+FILE: python/sglang/srt/configs/update_config.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  13: def may_get_weight_block_size(model_config, load_config)
+
+  L  29: def get_moe_padding_size(weight_block_size)
+
+  L  44: def get_num_heads_padding_size(tp_size, weight_block_size)
+
+  L  51: def update_intermediate_size(model_config, attr_name, intermediate_padding_size)
+
+  L  74: def adjust_config_with_unaligned_cpu_tp(model_config: ModelConfig,
+        load_config: LoadConfig,
+        tp_size: int)
+         → ModelConfig
+
+
+============================================================
+FILE: python/sglang/srt/configs/utils.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  12: def register_image_processor(config: Type[PretrainedConfig],
+        image_processor: Type[BaseImageProcessor])
+         📝 register customized hf image processor while removing hf impl
+
+  L  21: def register_processor(config: Type[PretrainedConfig],
+        processor: Type[ProcessorMixin])
+         📝 register customized hf processor while removing hf impl

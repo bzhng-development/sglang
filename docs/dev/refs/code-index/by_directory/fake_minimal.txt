@@ -1,0 +1,11 @@
+
+# python/sglang/srt/disaggregation/fake/conn.py
+  FakeKVSender.__init__(mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+  FakeKVSender.poll() -> KVPoll
+  FakeKVSender.init(kv_indices: list[int], aux_index: Optional[int])
+  FakeKVSender.send(kv_indices: npt.NDArray[np.int32])
+  FakeKVSender.failure_exception()
+  FakeKVReceiver.__init__(mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: Optional[int], data_parallel_rank: Optional[int])
+  FakeKVReceiver.poll() -> KVPoll
+  FakeKVReceiver.init(kv_indices: list[int], aux_index: Optional[int])
+  FakeKVReceiver.failure_exception()

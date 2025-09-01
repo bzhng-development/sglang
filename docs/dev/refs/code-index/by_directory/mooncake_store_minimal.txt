@@ -1,0 +1,23 @@
+
+# python/sglang/srt/mem_cache/storage/mooncake_store/mooncake_store.py
+  MooncakeStoreConfig.from_file() -> 'MooncakeStoreConfig'
+  MooncakeStoreConfig.load_from_env() -> 'MooncakeStoreConfig'
+  MooncakeStoreConfig.__post_init__()
+  MooncakeStore.__init__(storage_config: HiCacheStorageConfig)
+  MooncakeStore.warmup()
+  MooncakeStore.register_buffer(buffer: torch.Tensor) -> None
+  MooncakeStore.set(key, value: Optional[Any], target_location: Optional[List[int]], target_sizes: Optional[List[int]]) -> bool
+  MooncakeStore.batch_set(keys: List[str], values: Optional[List[torch.Tensor]], target_location: Optional[List[int]], target_sizes: Optional[List[int]]) -> bool
+  MooncakeStore.get(key, target_location: Optional[Any], target_sizes: Optional[Any]) -> bool
+  MooncakeStore.batch_get(keys: List[str], target_location: Optional[Any], target_sizes: Optional[Any]) -> int
+  MooncakeStore.exists(key) -> bool
+  MooncakeStore.batch_exists(keys) -> int
+  MooncakeStore.delete(key) -> None
+  MooncakeStore.close()
+  MooncakeStore.clear() -> None
+
+# python/sglang/srt/mem_cache/storage/mooncake_store/unit_test.py
+test_init_and_warmup()
+test_register_buffer()
+test_set_and_get()
+test_exists()

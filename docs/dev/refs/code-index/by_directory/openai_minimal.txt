@@ -1,0 +1,57 @@
+
+# python/sglang/srt/entrypoints/openai/protocol.py
+  CompletionRequest.validate_max_tokens_positive(cls, v)
+  ChatCompletionRequest.set_tool_choice_default(cls, values)
+  ChatCompletionRequest.normalize_reasoning_inputs(cls, values: Dict)
+  ChatCompletionRequest.set_json_schema(cls, values)
+  ResponsesRequest.to_sampling_params(default_max_tokens: int, default_params: Optional[Dict]) -> Dict[str, Any]
+  ResponsesResponse.from_request(cls, request: ResponsesRequest, sampling_params: Any, model_name: str, created_time: int, output: List[Union[ResponseOutputItem, ResponseReasoningItem, ResponseFunctionToolCall]], status: str, usage: Optional[UsageInfo]) -> 'ResponsesResponse'
+
+# python/sglang/srt/entrypoints/openai/serving_base.py
+  OpenAIServingBase.__init__(tokenizer_manager: TokenizerManager)
+  OpenAIServingBase.handle_request(request: OpenAIServingRequest, raw_request: Request) -> Union[Any, StreamingResponse, ErrorResponse]
+  OpenAIServingBase.create_error_response(message: str, err_type: str, status_code: int, param: Optional[str]) -> ORJSONResponse
+  OpenAIServingBase.create_streaming_error_response(message: str, err_type: str, status_code: int) -> str
+
+# python/sglang/srt/entrypoints/openai/serving_chat.py
+  OpenAIServingChat.__init__(tokenizer_manager: TokenizerManager, template_manager: TemplateManager)
+
+# python/sglang/srt/entrypoints/openai/serving_completions.py
+  OpenAIServingCompletion.__init__(tokenizer_manager: TokenizerManager, template_manager: TemplateManager)
+
+# python/sglang/srt/entrypoints/openai/serving_embedding.py
+  OpenAIServingEmbedding.__init__(tokenizer_manager: TokenizerManager, template_manager: TemplateManager)
+
+# python/sglang/srt/entrypoints/openai/serving_responses.py
+  OpenAIServingResponses.__init__(tokenizer_manager: TokenizerManager, template_manager: TemplateManager) -> None
+  OpenAIServingResponses.create_responses(request: ResponsesRequest, raw_request: Optional[Request]) -> Union[AsyncGenerator[str, None], ResponsesResponse, ORJSONResponse]
+  OpenAIServingResponses.responses_full_generator(request: ResponsesRequest, sampling_params: Any, result_generator: AsyncIterator[Any], context: ConversationContext, model_name: str, tokenizer: Any, request_metadata: RequestResponseMetadata, created_time: Optional[int]) -> Union[ResponsesResponse, ORJSONResponse]
+  OpenAIServingResponses.retrieve_responses(response_id: str) -> Union[ResponsesResponse, ORJSONResponse]
+  OpenAIServingResponses.cancel_responses(response_id: str) -> Union[ResponsesResponse, ORJSONResponse]
+  OpenAIServingResponses.responses_stream_generator(request: ResponsesRequest, sampling_params: Any, result_generator: AsyncIterator[StreamingHarmonyContext], context: StreamingHarmonyContext, model_name: str, tokenizer: Any, request_metadata: RequestResponseMetadata, created_time: Optional[int]) -> AsyncGenerator[str, None]
+
+# python/sglang/srt/entrypoints/openai/tool_server.py
+list_server_and_tools(server_url: str)
+trim_schema(schema: dict) -> dict
+post_process_tools_description(list_tools_result: 'ListToolsResult') -> 'ListToolsResult'
+  ToolServer.has_tool(tool_name: str)
+  ToolServer.get_tool_description(tool_name: str)
+  ToolServer.get_tool_session(tool_name: str) -> AbstractAsyncContextManager[Any]
+  MCPToolServer.__init__()
+  MCPToolServer.add_tool_server(server_url: str)
+  MCPToolServer.has_tool(tool_name: str)
+  MCPToolServer.get_tool_description(tool_name: str)
+  MCPToolServer.get_tool_session(tool_name: str)
+  DemoToolServer.__init__()
+  DemoToolServer.has_tool(tool_name: str)
+  DemoToolServer.get_tool_description(tool_name: str)
+  DemoToolServer.get_tool_session(tool_name: str)
+
+# python/sglang/srt/entrypoints/openai/usage_processor.py
+  UsageProcessor.calculate_response_usage(responses: List[Dict[str, Any]], n_choices: int, enable_cache_report: bool) -> UsageInfo
+  UsageProcessor.calculate_streaming_usage(prompt_tokens: Mapping[int, int], completion_tokens: Mapping[int, int], cached_tokens: Mapping[int, int], n_choices: int, enable_cache_report: bool) -> UsageInfo
+  UsageProcessor.calculate_token_usage(prompt_tokens: int, completion_tokens: int, cached_tokens: Optional[Dict[str, int]]) -> UsageInfo
+
+# python/sglang/srt/entrypoints/openai/utils.py
+to_openai_style_logprobs(input_token_logprobs, output_token_logprobs, input_top_logprobs, output_top_logprobs)
+process_hidden_states_from_ret(ret_item: Dict[str, Any], request: Union[ChatCompletionRequest, CompletionRequest]) -> Optional[List]

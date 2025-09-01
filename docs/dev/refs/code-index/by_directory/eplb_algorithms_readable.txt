@@ -1,0 +1,124 @@
+================================================================================
+FUNCTION INDEX: eplb_algorithms module
+================================================================================
+Total Functions: 11
+Documented: 4
+
+
+============================================================
+FILE: python/sglang/srt/eplb/eplb_algorithms/__init__.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  17: def rebalance_experts(tokens_per_expert: torch.Tensor,
+        num_physical_experts: int,
+        num_local_physical_experts: int,
+        num_groups: Optional[int],
+        num_nodes: int,
+        algorithm: EplbAlgorithm)
+
+  L  51: def compute_algorithm(raw_algorithm: str,
+        num_groups: Optional[int],
+        num_nodes: int)
+         → EplbAlgorithm
+
+
+============================================================
+FILE: python/sglang/srt/eplb/eplb_algorithms/deepseek.py
+Functions: 4
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L   9: def balanced_packing(weight: torch.Tensor, num_packs: int)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 Pack n weighted objects to m packs, such that each bin contains exactly n/m objects and the weights of all packs
+            are as balanced as possible.
+            Parameters:
+            weight: [X, n], the weight of each item
+            num_packs: number of packs
+            Returns:
+            pack_index: [X, n], the pack index of each item
+            rank_in_pack: [X, n], the rank of the item in the pack
+
+  L  54: def replicate_experts(weight: torch.Tensor, num_phy: int)
+         → Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+         📝 Replicate `num_log` experts to `num_phy` replicas, such that the maximum load of all replicas is minimized.
+            Parameters:
+            weight: [X, num_log]
+            num_phy: total number of experts after replication
+            Returns:
+            phy2log: [X, num_phy], logical expert id of each physical expert
+            rank: [X, num_phy], the replica rank
+            logcnt: [X, num_log], number of replicas for each logical expert
+
+  L  85: def rebalance_experts_hierarchical(weight: torch.Tensor,
+        num_physical_experts: int,
+        num_groups: int,
+        num_nodes: int,
+        num_gpus: int)
+         📝 Parameters:
+            weight: [num_moe_layers, num_logical_experts]
+            num_physical_experts: number of physical experts after replication
+            num_groups: number of expert groups
+            num_nodes: number of server nodes, where the intra-node network (e.g, NVLink) is faster
+            num_gpus: number of GPUs, must be a multiple of `num_nodes`
+            Returns:
+            physical_to_logical_map: [num_moe_layers, num_physical_experts]
+            logical_to_physical_map: [num_moe_layers, num_logical_experts, X]
+            logical_count: [num_moe_layers, num_logical_experts]
+
+  L 170: def rebalance_experts(weight: torch.Tensor,
+        num_replicas: int,
+        num_groups: int,
+        num_nodes: int,
+        num_gpus: int,
+        enable_hierarchical: bool)
+         → Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+         📝 Entry point for expert-parallelism load balancer.
+            Parameters:
+            weight: [layers, num_logical_experts], the load statistics for all logical experts
+            num_replicas: number of physical experts, must be a multiple of `num_gpus`
+            num_groups: number of expert groups
+            num_nodes: number of server nodes, where the intra-node network (e.g, NVLink) is faster
+            num_gpus: number of GPUs, must be a multiple of `num_nodes`
+            Returns:
+            physical_to_logical_map: [layers, num_replicas], the expert index of each replica
+            logical_to_physical_map: [layers, num_logical_experts, X], the replica indices for each expert
+            expert_count: [layers, num_logical_experts], number of physical replicas for each logical expert
+
+
+============================================================
+FILE: python/sglang/srt/eplb/eplb_algorithms/deepseek_vec.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L   7: def pack_groups(tokens_per_group: torch.Tensor, num_nodes: int)
+         → torch.Tensor
+
+  L  35: def make_redundant_experts_chunkwise(tokens_per_expert: torch.Tensor,
+        num_physical_experts: int,
+        num_local_physical_experts: int,
+        num_physical_experts_per_chunk: int)
+         → Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+
+  L 184: def decode_rebalance_experts(tokens_per_expert: torch.Tensor,
+        num_physical_experts: int,
+        num_local_physical_experts: int)
+
+  L 197: def prefill_rebalance_experts(tokens_per_expert: torch.Tensor,
+        num_physical_experts: int,
+        num_local_physical_experts: int,
+        num_groups: int,
+        num_nodes: int)
+
+  L 255: def rebalance_experts(tokens_per_expert: torch.Tensor,
+        num_physical_experts: int,
+        num_local_physical_experts: int,
+        num_groups: Optional[int],
+        num_nodes: int,
+        enable_hierarchical: bool)

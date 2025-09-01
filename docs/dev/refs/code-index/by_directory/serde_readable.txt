@@ -1,0 +1,73 @@
+================================================================================
+FUNCTION INDEX: serde module
+================================================================================
+Total Functions: 9
+Documented: 2
+
+
+============================================================
+FILE: python/sglang/srt/connector/serde/__init__.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  12: def create_serde(serde_type: str)
+         → Tuple[Serializer, Deserializer]
+
+
+============================================================
+FILE: python/sglang/srt/connector/serde/safe_serde.py
+Functions: 5
+============================================================
+
+
+CLASS: SafeDeserializer
+----------------------------------------
+  L  22: __init__(self)
+
+  L  26: from_bytes_normal(self, b: Union[bytearray, bytes])
+         → torch.Tensor
+
+  L  29: from_bytes(self, b: Union[bytearray, bytes])
+         → torch.Tensor
+
+
+CLASS: SafeSerializer
+----------------------------------------
+  L  13: __init__(self)
+
+  L  16: to_bytes(self, t: torch.Tensor)
+         → bytes
+
+
+============================================================
+FILE: python/sglang/srt/connector/serde/serde.py
+Functions: 3
+============================================================
+
+
+CLASS: Deserializer
+----------------------------------------
+  L  29: __init__(self, dtype)
+
+  L  33: from_bytes(self, bs: bytes)
+         → torch.Tensor
+         📝 Deserialize a pytorch tensor from bytes.
+            Input:
+            bytes: a stream of bytes
+            Output:
+            torch.Tensor: the deserialized pytorch tensor
+
+
+CLASS: Serializer
+----------------------------------------
+  L  12: to_bytes(self, t: torch.Tensor)
+         → bytes
+         📝 Serialize a pytorch tensor to bytes. The serialized bytes should contain
+            both the data and the metadata (shape, dtype, etc.) of the tensor.
+            Input:
+            t: the input pytorch tensor, can be on any device, in any shape,
+            with any dtype
+            Returns:
+            bytes: the serialized bytes

@@ -1,0 +1,1729 @@
+
+# python/sglang/srt/models/arcee.py
+  ArceeMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str, reduce_results: bool) -> None
+  ArceeMLP.forward(x, forward_batch)
+  ArceeAttention.__init__(config: LlamaConfig, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], rope_is_neox_style: bool, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str, bias: bool) -> None
+  ArceeAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  ArceeDecoderLayer.__init__(config: LlamaConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ArceeDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  ArceeModel.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ArceeModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]], PPProxyTensors]
+  ArceeModel.load_kv_cache_scales(quantization_param_path: str) -> None
+  ArceeForCausalLM.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ArceeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> LogitsProcessorOutput
+  ArceeForCausalLM.start_layer()
+  ArceeForCausalLM.end_layer()
+  ArceeForCausalLM.get_input_embeddings() -> nn.Embedding
+  ArceeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  ArceeForCausalLM.load_kv_cache_scales(quantization_param_path: str) -> None
+
+# python/sglang/srt/models/baichuan.py
+  BaiChuanMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str)
+  BaiChuanMLP.forward(x)
+  BaiChuanAttention.__init__(hidden_size: int, num_heads: int, position_embedding: str, rope_theta: float, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], layer_id: int, prefix: str)
+  BaiChuanAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BaiChuanDecoderLayer.__init__(config: PretrainedConfig, position_embedding: str, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BaiChuanDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  BaiChuanModel.__init__(config: PretrainedConfig, position_embedding: str, quant_config: Optional[QuantizationConfig], prefix: str)
+  BaiChuanModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BaiChuanBaseForCausalLM.__init__(config: PretrainedConfig, position_embedding: str, quant_config: Optional[QuantizationConfig], prefix: str)
+  BaiChuanBaseForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BaiChuanBaseForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  BaichuanForCausalLM.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str)
+
+# python/sglang/srt/models/bailing_moe.py
+  BailingAttention.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BailingAttention.forward(hidden_states: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BailingMLP.__init__(intermediate_size: int, config: PretrainedConfig, quant_config: Optional[QuantizationConfig], reduce_results: Optional[bool], prefix: str) -> None
+  BailingMLP.forward(x)
+  BailingMoE.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BailingMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  BailingMoeBlock.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BailingMoeBlock.forward(hidden_states: torch.Tensor, position_ids: torch.Tensor, residual: Optional[torch.Tensor], forward_batch: ForwardBatch) -> Tuple[torch.Tensor, torch.Tensor]
+  BailingMoeModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  BailingMoeModel.forward(input_ids: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch, input_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  BailingMoeForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig]) -> None
+  BailingMoeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  BailingMoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/bert.py
+  BertEmbedding.__init__(config: BertConfig)
+  BertEmbedding.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BertPooler.__init__(config: BertConfig)
+  BertPooler.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BertEncoder.__init__(config: BertConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertEncoder.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BertLayer.__init__(config: BertConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertLayer.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch)
+  BertAttention.__init__(hidden_size: int, num_attention_heads: int, layer_norm_eps: float, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertAttention.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BertSelfAttention.__init__(hidden_size: int, num_attention_heads: int, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertSelfAttention.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  BertSelfOutput.__init__(hidden_size: int, layer_norm_eps: float, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertSelfOutput.forward(hidden_states: torch.Tensor, input_tensor: torch.Tensor) -> torch.Tensor
+  BertIntermediate.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertIntermediate.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  BertOutput.__init__(hidden_size: int, intermediate_size: int, layer_norm_eps: float, quant_config: Optional[QuantizationConfig], prefix: str)
+  BertOutput.forward(hidden_states: torch.Tensor, input_tensor: torch.Tensor) -> torch.Tensor
+  BertModel.__init__()
+  BertModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> torch.Tensor
+  BertModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]]) -> Set[str]
+  BertForSequenceClassification.__init__()
+  BertForSequenceClassification.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  BertForSequenceClassification.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> torch.Tensor
+
+# python/sglang/srt/models/chatglm.py
+  GLMAttention.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  GLMAttention.forward(hidden_states: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GLMMLP.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str)
+  GLMMLP.forward(hidden_states)
+  GLMBlock.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  GLMBlock.forward(hidden_states: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GLMTransformer.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str)
+  GLMTransformer.forward(hidden_states: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  ChatGLMM.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str)
+  ChatGLMM.forward(input_ids: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  ChatGLMForCausalLM.__init__(config: ChatGLMConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  ChatGLMForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  ChatGLMForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/clip.py
+  CLIPVisionEmbeddings.__init__(config: CLIPVisionConfig)
+  CLIPVisionEmbeddings.forward(pixel_values: torch.Tensor) -> torch.Tensor
+  CLIPTextEmbeddings.__init__(config: CLIPTextConfig)
+  CLIPTextEmbeddings.forward(input_ids: Optional[torch.LongTensor], position_ids: Optional[torch.LongTensor], inputs_embeds: Optional[torch.FloatTensor]) -> torch.Tensor
+  CLIPMLP.__init__(config, act_layer: Type[nn.Module], quant_config: Optional[QuantizationConfig], prefix: str)
+  CLIPMLP.forward(x: torch.Tensor) -> torch.Tensor
+  CLIPEncoderLayer.__init__(config: CLIPVisionConfig, act_layer: Type[nn.Module], norm_layer: Type[nn.Module], attn_implementation: Optional[str], quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CLIPEncoderLayer.forward(hidden_states: torch.Tensor, attention_mask: torch.Tensor, causal_attention_mask: torch.Tensor) -> torch.Tensor
+  CLIPEncoder.__init__(config: CLIPVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CLIPEncoder.forward(inputs_embeds: torch.Tensor, attention_mask: torch.Tensor, causal_attention_mask: torch.Tensor, return_all_hidden_states: bool) -> Union[torch.Tensor, list[torch.Tensor]]
+  CLIPTextTransformer.__init__(config: CLIPTextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CLIPTextTransformer.device() -> torch.device
+  CLIPTextTransformer.forward(input_ids: torch.Tensor, attention_mask: Optional[torch.Tensor], position_ids: Optional[torch.Tensor])
+  CLIPTextModel.__init__(config: CLIPTextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CLIPTextModel.forward(input_ids: torch.Tensor, position_ids: torch.Tensor)
+  CLIPVisionTransformer.__init__(config: CLIPVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CLIPVisionTransformer.device() -> torch.device
+  CLIPVisionTransformer.forward(pixel_values: torch.Tensor) -> torch.Tensor
+  CLIPVisionModel.__init__(config: CLIPVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  CLIPVisionModel.device() -> torch.device
+  CLIPVisionModel.forward(pixel_values: torch.Tensor)
+  CLIPModel.__init__(config: CLIPConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CLIPModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, get_embedding: bool)
+  CLIPModel.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs)
+  CLIPModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+monkey_patch_weight_loader()
+
+# python/sglang/srt/models/commandr.py
+layer_norm_func(hidden_states, weight, variance_epsilon)
+  LayerNorm.__init__(param_shape, eps)
+  LayerNorm.forward(hidden_states, residuals)
+  LayerNorm.weight_loader(param: Parameter, loaded_weight: torch.Tensor)
+  CohereMLP.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str)
+  CohereMLP.forward(x)
+  CohereAttention.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  CohereAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  CohereDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  CohereDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  CohereModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  CohereModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  CohereForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  CohereForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  CohereForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/dbrx.py
+  DbrxRouter.__init__(config: DbrxConfig, params_dtype: Optional[torch.dtype], prefix: str)
+  DbrxRouter.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  DbrxExperts.__init__(config: DbrxConfig, quant_config: Optional[QuantizationConfig], params_dtype: Optional[torch.dtype], prefix: str)
+  DbrxExperts.weight_loader(param: nn.Parameter, loaded_weight: torch.Tensor, weight_name: str)
+  DbrxExperts.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  DbrxAttention.__init__(config: DbrxConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  DbrxAttention.forward(position_ids: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  DbrxFusedNormAttention.__init__(config: DbrxConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  DbrxFusedNormAttention.forward(position_ids: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> Tuple[torch.Tensor, torch.Tensor]
+  DbrxBlock.__init__(config: DbrxConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  DbrxBlock.forward(position_ids: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  DbrxModel.__init__(config: DbrxConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  DbrxModel.forward(input_ids: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  DbrxForCausalLM.__init__(config: DbrxConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  DbrxForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  DbrxForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/deepseek.py
+  DeepseekMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], reduce_results: bool, prefix: str) -> None
+  DeepseekMLP.forward(x)
+  DeepseekMoE.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  DeepseekMoE.pack_params()
+  DeepseekMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  DeepseekAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  DeepseekDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> torch.Tensor
+  DeepseekModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  DeepseekForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekForCausalLM.get_input_embeddings() -> nn.Embedding
+  DeepseekForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  DeepseekForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/deepseek_janus_pro.py
+named_apply(fn: Callable, module: nn.Module, name, depth_first: bool, include_root: bool) -> nn.Module
+VQ_16()
+trunc_normal_tf_(tensor: torch.Tensor, mean: float, std: float, a: float, b: float)
+nchw_to(x: torch.Tensor, fmt: Format)
+resample_patch_embed(patch_embed, new_size: List[int], interpolation: str, antialias: bool, verbose: bool)
+  PatchEmbed.__init__(img_size: Optional[int], patch_size: int, in_chans: int, embed_dim: int, norm_layer: Optional[Callable], flatten: bool, output_fmt: Optional[str], bias: bool, strict_img_size: bool, dynamic_img_pad: bool)
+  PatchEmbed.set_input_size(img_size: Optional[Union[int, Tuple[int, int]]], patch_size: Optional[Union[int, Tuple[int, int]]])
+  PatchEmbed.feat_ratio(as_scalar) -> Union[Tuple[int, int], int]
+  PatchEmbed.dynamic_feat_size(img_size: Tuple[int, int]) -> Tuple[int, int]
+  PatchEmbed.forward(x)
+  Mlp.__init__(in_features, hidden_features, out_features, act_layer, norm_layer, bias, drop, use_conv)
+  Mlp.forward(x)
+drop_path(x, drop_prob: float, training: bool, scale_by_keep: bool)
+  DropPath.__init__(drop_prob: float, scale_by_keep: bool)
+  DropPath.forward(x)
+  DropPath.extra_repr()
+  VisionTransformerBlock.__init__(dim: int, num_heads: int, mlp_ratio: float, qkv_bias: bool, qk_norm: bool, proj_drop: float, attn_drop: float, init_values: Optional[float], drop_path: float, act_layer: nn.Module, norm_layer: nn.Module, mlp_layer: nn.Module) -> None
+  VisionTransformerBlock.forward(x: torch.Tensor) -> torch.Tensor
+  PatchDropout.__init__(prob: float, num_prefix_tokens: int, ordered: bool, return_indices: bool)
+  PatchDropout.forward(x) -> Union[torch.Tensor, Tuple[torch.Tensor, Optional[torch.Tensor]]]
+resample_abs_pos_embed(posemb: torch.Tensor, new_size: List[int], old_size: Optional[List[int]], num_prefix_tokens: int, interpolation: str, antialias: bool, verbose: bool)
+init_weights()
+init_weights_vit_timm(module: nn.Module, name: str) -> None
+  VisionTransformer.__init__(img_size: Union[int, Tuple[int, int]], patch_size: Union[int, Tuple[int, int]], in_chans: int, num_classes: int, global_pool: Literal['', 'avg', 'token', 'map'], embed_dim: int, depth: int, num_heads: int, mlp_ratio: float, qkv_bias: bool, qk_norm: bool, init_values: Optional[float], class_token: bool, no_embed_class: bool, reg_tokens: int, pre_norm: bool, fc_norm: Optional[bool], dynamic_img_size: bool, dynamic_img_pad: bool, drop_rate: float, pos_drop_rate: float, patch_drop_rate: float, proj_drop_rate: float, attn_drop_rate: float, drop_path_rate: float, weight_init: Literal['skip', 'jax', 'jax_nlhb', 'moco', ''], embed_layer: Callable, _norm_layer: Optional[LayerType], _act_layer: Optional[LayerType], block_fn: Type[nn.Module], mlp_layer: Type[nn.Module], ignore_head: bool) -> None
+  VisionTransformer.init_weights(mode: Literal['jax', 'jax_nlhb', 'moco', '']) -> None
+  VisionTransformer.no_weight_decay() -> Set
+  VisionTransformer.group_matcher(coarse: bool) -> Dict
+  VisionTransformer.get_classifier() -> nn.Module
+  VisionTransformer.reset_classifier(num_classes: int, global_pool) -> None
+  VisionTransformer.forward_features(x: torch.Tensor) -> torch.Tensor
+  VisionTransformer.forward_head(x: torch.Tensor, pre_logits: bool) -> torch.Tensor
+  VisionTransformer.forward(x: torch.Tensor) -> torch.Tensor
+model_name_to_cls(cls_name)
+  vision_head.__init__(params)
+  vision_head.forward(x)
+create_siglip_vit(model_name: str, image_size: int, select_layer: int, ckpt_path: str)
+  Normalize.__init__(mean, std, inplace)
+  Normalize.forward(tensor: Tensor) -> Tensor
+  Normalize.__repr__() -> str
+  CLIPVisionTower.__init__(model_name: str, image_size: Union[Tuple[int, int], int], select_feature: str, select_layer: int, select_layers: list, ckpt_path: str, pixel_mean: Optional[List[float]], pixel_std: Optional[List[float]])
+  CLIPVisionTower.device() -> torch.device
+  CLIPVisionTower.dtype()
+  CLIPVisionTower.build_vision_tower(vision_tower_params)
+  CLIPVisionTower.feature_select(image_forward_outs)
+  CLIPVisionTower.forward(images)
+  MlpProjector.__init__(cfg)
+  MlpProjector.forward(x_or_tuple: Union[Tuple[torch.Tensor, torch.Tensor], torch.Tensor])
+  LayerScale.__init__(dim: int, init_values: float, inplace: bool) -> None
+  LayerScale.forward(x: torch.Tensor) -> torch.Tensor
+use_fused_attn(experimental: bool) -> bool
+  AttentionPoolLatent.__init__(in_features: int, out_features: int, embed_dim: int, num_heads: int, feat_size: Optional[int], mlp_ratio: float, qkv_bias: bool, qk_norm: bool, latent_len: int, latent_dim: int, pos_embed: str, pool_type: str, norm_layer: Optional[nn.Module], drop: float)
+  AttentionPoolLatent.init_weights()
+  AttentionPoolLatent.forward(x)
+  Encoder.__init__(in_channels, ch, ch_mult, num_res_blocks, norm_type, dropout, resamp_with_conv, z_channels)
+  Encoder.forward(x)
+  Decoder.__init__(z_channels, ch, ch_mult, num_res_blocks, norm_type, dropout, resamp_with_conv, out_channels)
+  Decoder.last_layer()
+  Decoder.forward(z)
+  VectorQuantizer.__init__(n_e, e_dim, beta, entropy_loss_ratio, l2_norm, show_usage)
+  VectorQuantizer.forward(z)
+  VectorQuantizer.get_codebook_entry(indices, shape, channel_first)
+  ResnetBlock.__init__(in_channels, out_channels, conv_shortcut, dropout, norm_type)
+  ResnetBlock.forward(x)
+  AttnBlock.__init__(in_channels, norm_type)
+  AttnBlock.forward(x)
+nonlinearity(x)
+Normalize(in_channels, norm_type)
+  Upsample.__init__(in_channels, with_conv)
+  Upsample.forward(x)
+  Downsample.__init__(in_channels, with_conv)
+  Downsample.forward(x)
+compute_entropy_loss(affinity, loss_type, temperature)
+  VQModel.__init__(config: ModelArgs)
+  VQModel.encode(x)
+  VQModel.decode(quant)
+  VQModel.decode_code(code_b, shape, channel_first)
+  VQModel.forward(input)
+  MultiModalityCausalLM.__init__(config: MultiModalityConfig, quant_config: Optional[QuantizationConfig])
+  MultiModalityCausalLM.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  MultiModalityCausalLM.get_input_embeddings() -> nn.Embedding
+  MultiModalityCausalLM.forward(input_ids: torch.LongTensor, positions: torch.Tensor, forward_batch: ForwardBatch, get_embedding: bool) -> torch.Tensor
+  MultiModalityCausalLM.prepare_gen_img_embeds(image_ids: torch.LongTensor)
+  MultiModalityCausalLM.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs)
+  MultiModalityCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/deepseek_nextn.py
+  DeepseekModelNextN.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekModelNextN.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  DeepseekV3ForCausalLMNextN.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekV3ForCausalLMNextN.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  DeepseekV3ForCausalLMNextN.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/deepseek_v2.py
+  DeepseekV2MLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], reduce_results: bool, prefix: str, tp_rank: Optional[int], tp_size: Optional[int]) -> None
+  DeepseekV2MLP.forward(x, forward_batch, should_allreduce_fusion: bool, use_reduce_scatter: bool)
+  MoEGate.__init__(config, prefix: str, is_nextn: bool)
+  MoEGate.forward(hidden_states)
+  DeepseekV2MoE.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream], is_nextn: bool)
+  DeepseekV2MoE.get_moe_weights()
+  DeepseekV2MoE.forward(hidden_states: torch.Tensor, forward_batch: Optional[ForwardBatch], should_allreduce_fusion: bool, use_reduce_scatter: bool) -> torch.Tensor
+  DeepseekV2MoE.forward_normal_dual_stream(hidden_states: torch.Tensor, should_allreduce_fusion: bool, use_reduce_scatter: bool) -> torch.Tensor
+  DeepseekV2MoE.forward_normal(hidden_states: torch.Tensor, should_allreduce_fusion: bool, use_reduce_scatter: bool) -> torch.Tensor
+  DeepseekV2MoE.forward_cpu(hidden_states: torch.Tensor, should_allreduce_fusion: bool) -> torch.Tensor
+  DeepseekV2MoE.forward_deepep(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  DeepseekV2MoE.op_gate(state)
+  DeepseekV2MoE.op_shared_experts(state)
+  DeepseekV2MoE.op_select_experts(state)
+  DeepseekV2MoE.op_dispatch_a(state)
+  DeepseekV2MoE.op_dispatch_b(state)
+  DeepseekV2MoE.op_experts(state)
+  DeepseekV2MoE.op_combine_a(state)
+  DeepseekV2MoE.op_combine_b(state)
+  DeepseekV2MoE.op_output(state)
+yarn_get_mscale(scale: float, mscale: float) -> float
+  DeepseekV2AttentionMLA.__init__(config: PretrainedConfig, hidden_size: int, num_heads: int, qk_nope_head_dim: int, qk_rope_head_dim: int, v_head_dim: int, q_lora_rank: int, kv_lora_rank: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], reduce_results: bool, layer_id: int, prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  DeepseekV2AttentionMLA.dispatch_attn_forward_method(forward_batch: ForwardBatch) -> AttnForwardMethod
+  DeepseekV2AttentionMLA.op_prepare(state)
+  DeepseekV2AttentionMLA.op_core(state)
+  DeepseekV2AttentionMLA.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_core(intermediate_state)
+  DeepseekV2AttentionMLA.forward_normal_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_normal_core(q, k, v, forward_batch)
+  DeepseekV2AttentionMLA.forward_absorb_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_absorb_core(q_pe, k_pe, q_nope_out, k_nope, forward_batch, zero_allocator)
+  DeepseekV2AttentionMLA.forward_absorb_fused_mla_rope_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_absorb_fused_mla_rope_cpu_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_absorb_fused_mla_rope_core(q_input, key_cache_buf, val_cache_buf, attn_output, kv_indptr, kv_indices, k_pe_output, cos_sin_cache, positions, attn_logits, num_kv_split, sm_scale, enable_rope_fusion, k_input, forward_batch, zero_allocator)
+  DeepseekV2AttentionMLA.forward_absorb_fused_mla_rope_cpu_core(q_input, k_input, v_input, forward_batch, zero_allocator)
+  DeepseekV2AttentionMLA.forward_normal_chunked_kv_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, zero_allocator: BumpAllocator)
+  DeepseekV2AttentionMLA.forward_normal_chunked_kv_core(q, k, v, forward_batch)
+  DeepseekV2DecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], is_nextn: bool, prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  DeepseekV2DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], zero_allocator: BumpAllocator) -> torch.Tensor
+  DeepseekV2DecoderLayer.op_comm_prepare_attn(state, positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], zero_allocator: BumpAllocator, tbo_subbatch_index: Optional[int])
+  DeepseekV2DecoderLayer.op_comm_prepare_mlp(state)
+  DeepseekV2DecoderLayer.op_mlp(state)
+  DeepseekV2DecoderLayer.op_comm_postprocess_layer(state)
+  DeepseekV2Model.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekV2Model.get_input_embeddings() -> torch.Tensor
+  DeepseekV2Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, PPProxyTensors]
+  DeepseekV2ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeepseekV2ForCausalLM.routed_experts_weights_of_layer()
+  DeepseekV2ForCausalLM.determine_num_fused_shared_experts(architecture: str)
+  DeepseekV2ForCausalLM.get_input_embeddings() -> nn.Embedding
+  DeepseekV2ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  DeepseekV2ForCausalLM.start_layer()
+  DeepseekV2ForCausalLM.end_layer()
+  DeepseekV2ForCausalLM.post_load_weights(is_nextn, weight_names)
+  DeepseekV2ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]], is_nextn)
+  DeepseekV2ForCausalLM.get_embed_and_head()
+  DeepseekV2ForCausalLM.set_embed_and_head(embed, head)
+  DeepseekV2ForCausalLM.get_model_config_for_expert_location(cls, config)
+
+# python/sglang/srt/models/deepseek_vl2.py
+  DeepseekVL2MlpProjector.__init__(config: DeepseekVL2MlpProjectorConfig, quant_config: Optional[QuantizationConfig])
+  DeepseekVL2MlpProjector.forward(x)
+  DeepseekVL2ForCausalLM.__init__(config: DeepseekVL2Config, quant_config: Optional[QuantizationConfig])
+  DeepseekVL2ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch)
+  DeepseekVL2ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  DeepseekVL2ForCausalLM.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  DeepseekVL2ForCausalLM.get_image_feature(items: List[MultimodalDataItem])
+
+# python/sglang/srt/models/ernie4.py
+  MoEGate.__init__(config, prefix: str)
+  MoEGate.forward(hidden_states)
+  Ernie4Moe.__init__(config: Ernie4_5_MoeConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Ernie4Moe.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  Ernie4Moe.forward_normal(hidden_states: torch.Tensor) -> torch.Tensor
+  Ernie4DecoderLayer.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, is_mtp: bool)
+  Ernie4DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Ernie4Model.__init__(config: Ernie4_5_MoeConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Ernie4Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]
+  Ernie4_5_ForCausalLM.__init__(config: Ernie4_5_MoeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Ernie4_5_ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Ernie4_5_ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Ernie4_5_ForCausalLM.get_embed_and_head()
+  Ernie4_5_MoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/ernie4_eagle.py
+  Ernie4ModelMTP.__init__(config: Ernie4_5_MoeConfig, layer_id: int, prefix: str, quant_config: Optional[QuantizationConfig]) -> None
+  Ernie4ModelMTP.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Ernie4_5_MoeForCausalLMMTP.__init__(config: Ernie4_5_MoeConfig, quant_config: Optional[QuantizationConfig], prefix: str, mtp_layer_id: int) -> None
+  Ernie4_5_MoeForCausalLMMTP.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Ernie4_5_MoeForCausalLMMTP.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Ernie4_5_MoeForCausalLMMTP.get_embed_and_head()
+  Ernie4_5_MoeForCausalLMMTP.set_embed_and_head(embed, head)
+
+# python/sglang/srt/models/exaone.py
+  ExaoneGatedMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ExaoneGatedMLP.forward(x)
+  ExaoneAttention.__init__(config, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], rope_is_neox_style: bool, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ExaoneAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  ExaoneDecoderLayer.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ExaoneDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  ExaoneModel.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ExaoneModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  ExaoneForCausalLM.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  ExaoneForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> LogitsProcessorOutput
+  ExaoneForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma.py
+  GemmaMLP.__init__(hidden_size: int, intermediate_size: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GemmaMLP.forward(x)
+  GemmaAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, head_dim: int, layer_id: int, max_position_embeddings: int, rope_theta: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GemmaAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GemmaDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GemmaDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  GemmaModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GemmaModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  GemmaForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GemmaForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  GemmaForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  GemmaForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma2.py
+get_attention_sliding_window_size(config)
+  Gemma2MLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, hidden_activation: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma2MLP.forward(x: torch.Tensor) -> torch.Tensor
+  Gemma2Attention.__init__(layer_id: int, config: PretrainedConfig, hidden_size: int, num_heads: int, num_kv_heads: int, head_dim: int, max_position_embeddings: int, rope_theta: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma2Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Gemma2DecoderLayer.__init__(layer_id: int, config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma2DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Gemma2Model.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma2Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Gemma2ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma2ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Gemma2ForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  Gemma2ForCausalLM.get_attention_sliding_window_size()
+  Gemma2ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma2_reward.py
+  Gemma2ForSequenceClassification.__init__(config: Gemma2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma2ForSequenceClassification.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  Gemma2ForSequenceClassification.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma3_causal.py
+get_attention_sliding_window_size(config)
+extract_layer_index(prefix: str) -> int
+  Gemma3MLP.__init__(hidden_size: int, intermediate_size: int, hidden_activation: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3MLP.forward(x: torch.Tensor) -> torch.Tensor
+  Gemma3Attention.__init__(layer_id: int, config: Gemma3TextConfig, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3Attention.naive_attn_with_masks(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, out: torch.Tensor) -> torch.Tensor
+  Gemma3Attention.forward(hidden_states: torch.Tensor, position_embeddings: Tuple[torch.Tensor, torch.Tensor], forward_batch: ForwardBatch) -> torch.Tensor
+  Gemma3DecoderLayer.__init__(layer_id: int, config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, position_embeddings_global: torch.Tensor, position_embeddings_local: torch.Tensor, forward_batch: ForwardBatch) -> tuple[torch.FloatTensor, Optional[tuple[torch.FloatTensor, torch.FloatTensor]]]
+  Gemma3RotaryEmbedding.__init__(config: Gemma3TextConfig, device)
+  Gemma3RotaryEmbedding.forward(x, position_ids)
+  Gemma3TextScaledWordEmbedding.__init__(num_embeddings: int, embedding_dim: int, padding_idx: int, embed_scale: Optional[float])
+  Gemma3TextScaledWordEmbedding.forward(input_ids: torch.Tensor)
+  Gemma3TextModel.__init__(config: Gemma3TextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3TextModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Gemma3ForCausalLM.__init__(config: Gemma3TextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3ForCausalLM.get_input_embeddings() -> nn.Embedding
+  Gemma3ForCausalLM.get_attention_sliding_window_size()
+  Gemma3ForCausalLM.dtype() -> torch.dtype
+  Gemma3ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> LogitsProcessor
+  Gemma3ForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  Gemma3ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma3_mm.py
+  Gemma3MultiModalProjector.__init__(config: Gemma3Config)
+  Gemma3MultiModalProjector.forward(vision_outputs: torch.Tensor) -> torch.Tensor
+  Gemma3ForConditionalGeneration.__init__(config: Gemma3Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3ForConditionalGeneration.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs) -> List[int]
+  Gemma3ForConditionalGeneration.prepare_attn_masks(input_ids: torch.Tensor, positions: torch.Tensor, mask_dtype: torch.dtype) -> Dict
+  Gemma3ForConditionalGeneration.get_input_embeddings() -> nn.Embedding
+  Gemma3ForConditionalGeneration.get_attention_sliding_window_size()
+  Gemma3ForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem])
+  Gemma3ForConditionalGeneration.forward(input_ids: torch.LongTensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> LogitsProcessor
+  Gemma3ForConditionalGeneration.tie_weights()
+  Gemma3ForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma3n_audio.py
+  Gemma3nCumulativeGroupNorm.__init__(num_channels: int, feature_dims: Sequence[int], eps: float)
+  Gemma3nCumulativeGroupNorm.forward(x: torch.Tensor, mask: Optional[torch.Tensor]) -> torch.Tensor
+  Gemma3nAudioRelativePositionEmbedding.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioRelativePositionEmbedding.forward(queries: torch.Tensor, keys: torch.Tensor) -> torch.Tensor
+  Gemma3nAudioAttention.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioAttention.forward(x: torch.Tensor, mask: torch.BoolTensor) -> torch.Tensor
+  Gemma3nAudioSSCPConvBlock.__init__(config: Gemma3nAudioConfig, idx: int, input_freq_dim: int, manual_padding: Tuple[int, int, int, int], quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioSSCPConvBlock.forward(audio_encodings: torch.Tensor) -> torch.Tensor
+  Gemma3nAudioSubSampleConvProjection.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioSubSampleConvProjection.forward(audio_encodings: torch.Tensor) -> torch.Tensor
+  Gemma3nAudioConformerAttention.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioConformerAttention.forward(audio_encodings: torch.Tensor, audio_mel_mask: torch.BoolTensor) -> torch.Tensor
+  Gemma3nAudioConformerFeedForward.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioConformerFeedForward.forward(audio_encodings: torch.Tensor) -> torch.Tensor
+  Gemma3nAudioConformerLightConv1d.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioConformerLightConv1d.forward(audio_encodings: torch.Tensor) -> torch.Tensor
+  Gemma3nAudioConformerBlock.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioConformerBlock.forward(audio_encodings: torch.Tensor, audio_mel_mask: torch.BoolTensor) -> torch.Tensor
+  Gemma3nAudioEncoder.__init__(config: Gemma3nAudioConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAudioEncoder.forward(audio_mel: torch.Tensor, audio_mel_mask: torch.BoolTensor) -> Tuple[torch.Tensor, torch.BoolTensor]
+
+# python/sglang/srt/models/gemma3n_causal.py
+get_attention_sliding_window_size(config)
+  Gemma3nRMSNorm.__init__(dim: int, eps: float, with_scale: bool) -> None
+  Gemma3nRMSNorm.forward(x: torch.Tensor) -> torch.Tensor
+  Gemma3nTextMLP.__init__(hidden_size: int, intermediate_size: int, hidden_activation: str, activation_sparsity: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3nTextMLP.forward(x: torch.Tensor) -> torch.Tensor
+  Gemma3nLaurelBlock.__init__(config: Gemma3nTextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nLaurelBlock.forward(x: torch.Tensor) -> torch.Tensor
+  Gemma3nAltUp.__init__(config: Gemma3nTextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nAltUp.compute_router_modalities(x: torch.Tensor) -> torch.Tensor
+  Gemma3nAltUp.predict(hidden_states: torch.Tensor) -> torch.Tensor
+  Gemma3nAltUp.correct(predictions: torch.Tensor, activated: torch.Tensor) -> torch.Tensor
+  Gemma3nAltUp.scale_corrected_output(corrected: torch.Tensor) -> torch.Tensor
+  Gemma3nAltUp.forward(hidden_states: torch.Tensor, activated: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+  Gemma3nAttention.__init__(layer_id: int, config: Gemma3nTextConfig, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3nAttention.forward(hidden_states: torch.Tensor, positions: Tuple[torch.Tensor, torch.Tensor], forward_batch: ForwardBatch) -> torch.Tensor
+  Gemma3nDecoderLayer.__init__(layer_id: int, config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3nDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, per_layer_input: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Gemma3nTextModel.__init__(config: Gemma3nTextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3nTextModel.get_input_embeddings() -> nn.Embedding
+  Gemma3nTextModel.dtype() -> torch.dtype
+  Gemma3nTextModel.get_per_layer_inputs(input_ids: torch.LongTensor) -> torch.Tensor
+  Gemma3nTextModel.project_per_layer_inputs(inputs_embeds: torch.Tensor, per_layer_inputs: Optional[torch.Tensor]) -> torch.Tensor
+  Gemma3nTextModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, per_layer_inputs: Optional[torch.Tensor]) -> torch.Tensor
+  Gemma3nForCausalLM.__init__(config: Gemma3nTextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3nForCausalLM.get_input_embeddings() -> nn.Embedding
+  Gemma3nForCausalLM.get_attention_sliding_window_size()
+  Gemma3nForCausalLM.dtype() -> torch.dtype
+  Gemma3nForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, per_layer_inputs: Optional[torch.Tensor]) -> LogitsProcessor
+  Gemma3nForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gemma3n_mm.py
+  Gemma3nMultimodalEmbedder.__init__(multimodal_config: Union[Gemma3nAudioConfig, Gemma3nVisionConfig], text_config: Gemma3nTextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Gemma3nMultimodalEmbedder.forward(input_ids: Optional[torch.LongTensor], inputs_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  Gemma3nForConditionalGeneration.__init__(config: Gemma3nConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Gemma3nForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs) -> List[int]
+  Gemma3nForConditionalGeneration.get_input_embeddings() -> nn.Embedding
+  Gemma3nForConditionalGeneration.get_attention_sliding_window_size()
+  Gemma3nForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem])
+  Gemma3nForConditionalGeneration.get_audio_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Gemma3nForConditionalGeneration.get_per_layer_inputs(input_ids: torch.LongTensor) -> Optional[torch.Tensor]
+  Gemma3nForConditionalGeneration.project_per_layer_inputs(inputs_embeds: torch.Tensor, per_layer_inputs: Optional[torch.Tensor]) -> torch.Tensor
+  Gemma3nForConditionalGeneration.forward(input_ids: torch.LongTensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> LogitsProcessor
+  Gemma3nForConditionalGeneration.tie_weights()
+  Gemma3nForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Gemma3nForConditionalGeneration.should_apply_lora(module_name: str) -> bool
+  Gemma3nForConditionalGeneration.get_hidden_dim(module_name)
+
+# python/sglang/srt/models/glm4.py
+  Glm4Attention.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Glm4Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Glm4DecoderLayer.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Glm4DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Glm4Model.__init__(config: Glm4Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4Model.get_input_embeddings() -> nn.Embedding
+  Glm4Model.dtype() -> torch.dtype
+  Glm4Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]
+  Glm4ForCausalLM.__init__(config: Glm4Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  Glm4ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Glm4ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/glm4_moe.py
+  Glm4MoeMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], reduce_results: bool, prefix: str, tp_rank: Optional[int], tp_size: Optional[int]) -> None
+  Glm4MoeMLP.forward(x, forward_batch, should_allreduce_fusion)
+  Glm4MoeAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, partial_rotary_factor: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, head_dim: Optional[int], rms_norm_eps: float, attention_bias: bool, quant_config: Optional[QuantizationConfig], use_qk_norm: bool, prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Glm4MoeAttention.op_prepare(state)
+  Glm4MoeAttention.op_core(state)
+  Glm4MoeAttention.forward_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch)
+  Glm4MoeAttention.forward_core(intermediate_state)
+  Glm4MoeAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Glm4MoeGate.__init__(config, prefix: str, is_nextn: bool)
+  Glm4MoeGate.forward(hidden_states)
+  Glm4MoeSparseMoeBlock.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream], is_nextn: bool)
+  Glm4MoeSparseMoeBlock.forward_normal_dual_stream(hidden_states: torch.Tensor, should_allreduce_fusion: bool, use_reduce_scatter: bool) -> torch.Tensor
+  Glm4MoeSparseMoeBlock.forward_normal(hidden_states: torch.Tensor, should_allreduce_fusion: bool, use_reduce_scatter: bool) -> torch.Tensor
+  Glm4MoeDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], is_nextn: bool, prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Glm4MoeDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], zero_allocator: BumpAllocator) -> torch.Tensor
+  Glm4MoeModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4MoeForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4MoeForCausalLM.determine_num_fused_shared_experts(architecture: str)
+  Glm4MoeForCausalLM.get_input_embeddings() -> nn.Embedding
+  Glm4MoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]], is_nextn)
+
+# python/sglang/srt/models/glm4_moe_nextn.py
+  Glm4MoeModelNextN.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4MoeModelNextN.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Glm4MoeForCausalLMNextN.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4MoeForCausalLMNextN.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Glm4MoeForCausalLMNextN.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/glm4v.py
+  Glm4vRMSNorm.forward(x: torch.Tensor) -> torch.Tensor
+  Glm4vVisionMLP.__init__(in_features: int, hidden_features: int, bias: bool, quant_config: Optional[QuantizationConfig], prefix: str)
+  Glm4vVisionMLP.forward(x: torch.Tensor)
+  Glm4vVisionBlock.__init__(config: Glm4vVisionConfig, norm_layer: Optional[nn.Module], quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4vVisionPatchEmbed.__init__(patch_size: int, temporal_patch_size: int, in_channels: int, hidden_size: int) -> None
+  Glm4vVisionPatchEmbed.forward(x: torch.Tensor) -> torch.Tensor
+  Glm4vPatchMerger.__init__(d_model: int, context_dim: int, quant_config: Optional[QuantizationConfig], bias: bool, prefix: str) -> None
+  Glm4vPatchMerger.forward(x: torch.Tensor)
+  Glm4vVisionEmbeddings.__init__(config: Glm4vVisionConfig)
+  Glm4vVisionEmbeddings.forward(embeddings, lengths, image_shapes, h_coords, w_coords) -> torch.Tensor
+  Glm4vVisionRotaryEmbedding.__init__(dim: int, theta: float) -> None
+  Glm4vVisionRotaryEmbedding.update_freqs_cache(seqlen: int) -> None
+  Glm4vVisionRotaryEmbedding.forward(seqlen: int) -> torch.Tensor
+  Glm4vVisionModel.__init__(vision_config: Glm4vVisionConfig, norm_eps: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4vVisionModel.dtype() -> torch.dtype
+  Glm4vVisionModel.device() -> torch.device
+  Glm4vVisionModel.rot_pos_emb(grid_thw: torch.Tensor) -> torch.Tensor
+  Glm4vVisionModel.forward(x: torch.Tensor, grid_thw: torch.Tensor) -> torch.Tensor
+  Glm4vForConditionalGeneration.__init__(config: Glm4vConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4vForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Glm4vForConditionalGeneration.get_video_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Glm4vForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/glm4v_moe.py
+  Glm4vMoeForConditionalGeneration.__init__(config: Glm4vMoeConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Glm4vMoeForConditionalGeneration.determine_num_fused_shared_experts(architecture: str)
+  Glm4vMoeForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]], is_nextn)
+
+# python/sglang/srt/models/gpt2.py
+  GPT2Attention.__init__(layer_id: int, config: GPT2Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPT2Attention.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPT2MLP.__init__(intermediate_size: int, config: GPT2Config, act_layer: Type[nn.Module], quant_config: Optional[QuantizationConfig], prefix: str)
+  GPT2MLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  GPT2Block.__init__(layer_id: int, config: GPT2Config, act_layer: Type[nn.Module], quant_config: Optional[QuantizationConfig], prefix: str)
+  GPT2Block.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPT2Model.__init__(config: GPT2Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPT2Model.forward(input_ids: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPT2LMHeadModel.__init__(config: GPT2Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPT2LMHeadModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPT2LMHeadModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gpt_bigcode.py
+  GPTBigCodeAttention.__init__(layer_id: int, config: GPTBigCodeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPTBigCodeAttention.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPTBigMLP.__init__(intermediate_size: int, config: GPTBigCodeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPTBigMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  GPTBigCodeBlock.__init__(layer_id: int, config: GPTBigCodeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPTBigCodeBlock.forward(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPTBigCodeModel.__init__(config: GPTBigCodeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPTBigCodeModel.forward(input_ids: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPTBigCodeForCausalLM.__init__(config: GPTBigCodeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GPTBigCodeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GPTBigCodeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/gpt_oss.py
+  GptOssConfig.__init__()
+get_attention_sliding_window_size(config)
+  GptOssSparseMoeBlock.__init__(layer_id: int, config: GptOssConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GptOssSparseMoeBlock.forward(hidden_states: torch.Tensor, forward_batch: Optional[ForwardBatch], should_allreduce_fusion: bool) -> torch.Tensor
+  GptOssSparseMoeBlock.get_moe_weights()
+  GptOssSparseMoeBlock.forward_normal(hidden_states: torch.Tensor, should_allreduce_fusion: bool) -> torch.Tensor
+  GptOssAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, head_dim: Optional[int], rms_norm_eps: float, attention_bias: bool, quant_config: Optional[QuantizationConfig], prefix: str, sliding_window_size: int, layer_type: str, params_dtype: torch.dtype) -> None
+  GptOssAttention.forward_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch)
+  GptOssAttention.forward_core(intermediate_state)
+  GptOssAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GptOssDecoderLayer.__init__(config: GptOssConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, sliding_window_size: int | None) -> None
+  GptOssDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  GptOssModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str, decoder_layer_type: type[nn.Module]) -> None
+  GptOssModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, PPProxyTensors]
+  GptOssForCausalLM.__init__(config: GptOssConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GptOssForCausalLM.routed_experts_weights_of_layer()
+  GptOssForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  GptOssForCausalLM.start_layer()
+  GptOssForCausalLM.end_layer()
+  GptOssForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]], is_nextn: bool, weight_name_mapping: dict)
+  GptOssForCausalLM.get_embed_and_head()
+  GptOssForCausalLM.set_embed_and_head(embed, head)
+  GptOssForCausalLM.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+  GptOssForCausalLM.get_model_config_for_expert_location(cls, config)
+  GptOssForCausalLM.get_attention_sliding_window_size()
+  _WeightCreator.__init__(fn)
+  _WeightCreator.maybe_materialize(obj)
+
+# python/sglang/srt/models/granite.py
+  GraniteMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GraniteMLP.forward(x)
+  GraniteAttention.__init__(config: GraniteConfig, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], rope_is_neox_style: bool, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GraniteAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GraniteDecoderLayer.__init__(config: GraniteConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GraniteDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  GraniteModel.__init__(config: GraniteConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GraniteModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  GraniteForCausalLM.__init__(config: GraniteConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GraniteForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> LogitsProcessorOutput
+  GraniteForCausalLM.get_module_name_from_weight_name(name)
+  GraniteForCausalLM.get_num_params()
+  GraniteForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  GraniteForCausalLM.get_weights_by_name(name: str, truncate_size: int, tp_size: int) -> Optional[torch.Tensor]
+
+# python/sglang/srt/models/granitemoe.py
+  GraniteMoeMoE.__init__(num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, layer_id: int, params_dtype: Optional[torch.dtype], quant_config: Optional[QuantizationConfig], tp_size: Optional[int], prefix: str)
+  GraniteMoeMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  GraniteMoeAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, max_position: int, layer_id: int, rope_theta: float, quant_config: Optional[QuantizationConfig], attention_multiplier: Optional[float], prefix: str) -> None
+  GraniteMoeAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GraniteMoeDecoderLayer.__init__(config: GraniteConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  GraniteMoeDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  GraniteMoeModel.__init__(config: GraniteConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GraniteMoeModel.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  GraniteMoeModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  GraniteMoeForCausalLM.__init__(config: GraniteConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  GraniteMoeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> LogitsProcessorOutput
+  GraniteMoeForCausalLM.load_weights(weights: Iterable[tuple[str, torch.Tensor]]) -> set[str]
+
+# python/sglang/srt/models/grok.py
+  Grok1MLP.__init__(hidden_size: int, intermediate_size: int, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, reduce_results, use_presharded_weights: bool, split_gate_up: bool) -> None
+  Grok1MLP.forward(x)
+  Grok1MoE.__init__(config: PretrainedConfig, layer_id: int, num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, params_dtype: Optional[torch.dtype], quant_config: Optional[QuantizationConfig], tp_size: Optional[int], reduce_results: bool, use_presharded_weights: bool, inplace: bool, no_combine: bool, prefix: str)
+  Grok1MoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+get_rope_scaling(config)
+  ScalingRotaryEmbedding.__init__(head_size: int, rotary_dim: int, max_position_embeddings: int, base: int, is_neox_style: bool, scaling_factor: float, dtype: torch.dtype) -> None
+  Grok1Attention.__init__(config: PretrainedConfig, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, max_position: int, rope_theta: float, quant_config: Optional[QuantizationConfig], reduce_results: bool, alt_stream: Optional[torch.cuda.Stream], load_presharded_attn: bool, prefix: str) -> None
+  Grok1Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Grok1DecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], load_presharded_moe: bool, load_presharded_attn: bool, load_presharded_mlp: bool, alt_stream: Optional[torch.cuda.Stream], skip_moe: bool, prefix: str) -> None
+  Grok1DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], deferred_norm: Optional[RMSNorm]) -> Tuple[torch.Tensor, torch.Tensor, RMSNorm]
+  Grok1DecoderLayer.moe_with_rmoe(x)
+  Grok1Model.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], load_presharded_moe: bool, load_presharded_embedding: bool, load_presharded_attn: bool, load_presharded_mlp: bool, replicate_embedding: bool, prefix: str) -> None
+  Grok1Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Grok1ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Grok1ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Grok1ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]], ignore_parent_name: bool, check_hit_names: bool, model_config: PretrainedConfig | None) -> dict[str, torch.Tensor]
+  Grok1ForCausalLM.get_num_params_analytical()
+  Grok1ForCausalLM.get_num_params_torch()
+
+# python/sglang/srt/models/hunyuan.py
+  HunYuanMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], bias: bool, prefix: str, reduce_results: bool) -> None
+  HunYuanMLP.forward(x)
+  HunYuanSparseMoeBlock.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], layer_id: int)
+  HunYuanSparseMoeBlock.forward(hidden_states: torch.Tensor) -> torch.Tensor
+get_head_dim(config)
+check_head_dim(config)
+  HunYuanAttention.__init__(config: PretrainedConfig, hidden_size: int, num_heads: int, num_kv_heads: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], bias: bool, prefix: str, attention_type: str, layer_id: int) -> None
+  HunYuanAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, kv_states: Optional[Tuple[torch.Tensor]]) -> torch.Tensor
+  HunYuanDecoderLayer.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str, layer_id: int) -> None
+  HunYuanDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], kv_states: Optional[Tuple[torch.Tensor]]) -> Tuple[torch.Tensor, torch.Tensor]
+  HunYuanModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  HunYuanModel.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  HunYuanModel.forward(input_ids: Optional[torch.Tensor], positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  HunYuanMoEV1ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig]) -> None
+  HunYuanMoEV1ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  HunYuanMoEV1ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  HunYuanMoEV1ForCausalLM.load_kv_cache_scales(quantization_param_path: str) -> None
+
+# python/sglang/srt/models/idefics2.py
+  Idefics2VisionMLP.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Idefics2VisionMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  Idefics2EncoderLayer.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Idefics2EncoderLayer.forward(hidden_states: torch.Tensor, cu_seqlens: torch.Tensor) -> torch.Tensor
+  Idefics2Encoder.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Idefics2Encoder.forward(inputs_embeds: torch.Tensor, cu_seqlens: torch.Tensor) -> torch.Tensor
+  Idefics2VisionEmbeddings.__init__(config: PretrainedConfig)
+  Idefics2VisionEmbeddings.get_position_ids(pixel_values: torch.FloatTensor, patch_attention_mask: torch.BoolTensor, tgt_sizes: Optional[torch.IntTensor])
+  Idefics2VisionEmbeddings.forward(pixel_values: torch.FloatTensor, patch_attention_mask: torch.BoolTensor, tgt_sizes: Optional[torch.IntTensor]) -> torch.Tensor
+  Idefics2VisionTransformer.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], require_post_norm: bool, prefix: str) -> None
+  Idefics2VisionTransformer.get_input_embeddings() -> nn.Embedding
+  Idefics2VisionTransformer.compute_cu_seqlens(tgt_sizes: Optional[torch.Tensor], input_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  Idefics2VisionTransformer.forward(pixel_values, patch_attention_mask: Optional[torch.BoolTensor], tgt_sizes: Optional[torch.IntTensor]) -> torch.Tensor
+
+# python/sglang/srt/models/internlm2.py
+  InternLM2MLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  InternLM2MLP.forward(x)
+  InternLM2Attention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  InternLM2Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  InternLMDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  InternLMDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  InternLM2Model.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  InternLM2Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  InternLM2ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  InternLM2ForCausalLM.get_input_embeddings() -> nn.Embedding
+  InternLM2ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  InternLM2ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/internlm2_reward.py
+  InternLM2ForRewardModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  InternLM2ForRewardModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  InternLM2ForRewardModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/interns1.py
+  InternS1ForConditionalGeneration.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], use_flash_attn) -> None
+  InternS1ForConditionalGeneration.pixel_shuffle(x, scale_factor)
+  InternS1ForConditionalGeneration.extract_feature(pixel_values)
+  InternS1ForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem])
+  InternS1ForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  InternS1ForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  InternS1ForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/internvl.py
+  InternAttention.__init__(config, quant_config: QuantizationConfig)
+  InternAttention.forward(hidden_states: torch.Tensor, cu_seqlens: torch.Tensor) -> torch.Tensor
+  InternVisionEmbeddings.__init__(config: PretrainedConfig)
+  InternVisionEmbeddings.forward(pixel_values: torch.FloatTensor) -> torch.Tensor
+  InternRMSNorm.__init__(hidden_size, eps)
+  InternRMSNorm.forward(hidden_states)
+  InternMLP.__init__(config: PretrainedConfig)
+  InternMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  InternVisionEncoderLayer.__init__(config: PretrainedConfig, drop_path_rate: float, quant_config: QuantizationConfig)
+  InternVisionEncoderLayer.forward(hidden_states: torch.Tensor, cu_seqlens: torch.Tensor) -> Tuple[torch.FloatTensor, Optional[torch.FloatTensor], Optional[Tuple[torch.FloatTensor]]]
+  InternVisionEncoder.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig])
+  InternVisionEncoder.forward(inputs_embeds, output_hidden_states: Optional[bool], return_dict: Optional[bool]) -> Union[Tuple, BaseModelOutput]
+  InternVisionModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig])
+  InternVisionModel.resize_pos_embeddings(old_size, new_size, patch_size)
+  InternVisionModel.get_input_embeddings()
+  InternVisionModel.forward(pixel_values: Optional[torch.FloatTensor], output_hidden_states: Optional[bool], return_dict: Optional[bool], pixel_embeds: Optional[torch.FloatTensor]) -> Union[Tuple, BaseModelOutputWithPooling]
+  InternVLChatModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], use_flash_attn) -> None
+  InternVLChatModel.pixel_shuffle(x, scale_factor)
+  InternVLChatModel.extract_feature(pixel_values)
+  InternVLChatModel.get_image_feature(items: List[MultimodalDataItem])
+  InternVLChatModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  InternVLChatModel.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  InternVLChatModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/kimi_vl.py
+  KimiVLMultiModalProjector.__init__(config: KimiVLConfig)
+  KimiVLMultiModalProjector.forward(image_features: torch.Tensor) -> torch.Tensor
+  KimiVLForConditionalGeneration.__init__(config: KimiVLConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  KimiVLForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  KimiVLForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  KimiVLForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, get_embedding: bool)
+  KimiVLForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+get_spec_layer_idx_from_weight_name(config: DeepseekV2Config, weight_name: str) -> Optional[int]
+
+# python/sglang/srt/models/kimi_vl_moonvit.py
+multihead_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, q_cu_seqlens: Optional[torch.Tensor], k_cu_seqlens: Optional[torch.Tensor])
+sdpa_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, q_cu_seqlens: Optional[torch.Tensor], k_cu_seqlens: Optional[torch.Tensor]) -> torch.Tensor
+apply_rope(xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]
+  Learnable2DInterpPosEmb.__init__(height: int, width: int, dim: int, interpolation_mode: str) -> None
+  Learnable2DInterpPosEmb.reset_parameters()
+  Learnable2DInterpPosEmb.forward(x: torch.Tensor, grid_hws: torch.Tensor) -> torch.Tensor
+  MoonVisionPatchEmbed.__init__(out_dim: int, in_dim: int, patch_size: Union[int, Tuple[int, int]], pos_emb_height: int, pos_emb_width: int)
+  MoonVisionPatchEmbed.forward(x: torch.Tensor, grid_hw: torch.Tensor) -> torch.Tensor
+  Rope2DPosEmb.__init__(dim: int, max_height: int, max_width: int, theta_base, device)
+  Rope2DPosEmb.extra_repr()
+  Rope2DPosEmb.precomputed_freqs_cis() -> torch.Tensor
+  Rope2DPosEmb.get_freqs_cis_by_seqlens(grid_hws: torch.Tensor) -> torch.Tensor
+  Rope2DPosEmb.get_freqs_cis_by_idx(pos_idx: torch.Tensor, pos_idx_mask: torch.Tensor) -> torch.Tensor
+  MLP2.__init__(dims: list[int], activation, bias)
+  MLP2.forward(x: torch.Tensor) -> torch.Tensor
+  MoonVitEncoderLayer.__init__(num_heads: int, hidden_dim: int, mlp_dim: int)
+  MoonVitEncoderLayer.attention_qkvpacked(x: torch.Tensor, cu_seqlens: torch.Tensor, rope_freqs_cis: Optional[torch.Tensor])
+  MoonVitEncoderLayer.forward(hidden_states: torch.Tensor, cu_seqlens: torch.Tensor, rope_freqs_cis: Union[torch.Tensor, None]) -> torch.Tensor
+  MoonVitEncoder.__init__(hidden_dim: int, num_layers: int, block_cfg: dict) -> None
+  MoonVitEncoder.forward(hidden_states: torch.Tensor, grid_hw: torch.Tensor) -> torch.Tensor
+patch_merger(x: torch.Tensor, grid_hw: torch.Tensor, merge_kernel_size: list[int, int]) -> List[torch.Tensor]
+  MoonVitVLProjector.__init__(in_channels: int, merge_kernel_size: list[int, int], hidden_act: str, ln_eps: float, out_dim: int)
+  MoonVitVLProjector.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  MoonVitPretrainedModel.__init__(config: MoonViTConfig)
+  MoonVitPretrainedModel.forward(pixel_values: torch.Tensor, grid_hw: torch.Tensor) -> torch.Tensor
+
+# python/sglang/srt/models/llama.py
+  LlamaMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str, reduce_results: bool) -> None
+  LlamaMLP.forward(x, forward_batch, use_reduce_scatter: bool)
+  LlamaAttention.__init__(config: LlamaConfig, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], rope_is_neox_style: bool, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str, bias: bool) -> None
+  LlamaAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  LlamaDecoderLayer.__init__(config: LlamaConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  LlamaModel.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]], PPProxyTensors]
+  LlamaModel.load_kv_cache_scales(quantization_param_path: str) -> None
+  LlamaForCausalLM.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> LogitsProcessorOutput
+  LlamaForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor) -> Optional[LogitsProcessorOutput]
+  LlamaForCausalLM.start_layer()
+  LlamaForCausalLM.end_layer()
+  LlamaForCausalLM.get_input_embeddings() -> nn.Embedding
+  LlamaForCausalLM.get_module_name_from_weight_name(name)
+  LlamaForCausalLM.get_num_params()
+  LlamaForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  LlamaForCausalLM.get_weights_by_name(name: str, truncate_size: int, tp_size: int) -> Optional[torch.Tensor]
+  LlamaForCausalLM.get_embed_and_head()
+  LlamaForCausalLM.set_embed_and_head(embed, head)
+  LlamaForCausalLM.get_embed()
+  LlamaForCausalLM.set_embed(embed)
+  LlamaForCausalLM.load_kv_cache_scales(quantization_param_path: str) -> None
+  LlamaForCausalLM.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+
+# python/sglang/srt/models/llama4.py
+  Llama4MoE.custom_routing_function(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool) -> Tuple[torch.Tensor, torch.Tensor]
+  Llama4MoE.__init__(config: Llama4TextConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Llama4MoE.forward(hidden_states, forward_batch: ForwardBatch, use_reduce_scatter: bool)
+  Llama4Attention.__init__(config: Llama4TextConfig, layer_id: int, hidden_size: int, num_heads: int, num_kv_heads: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], bias: bool, bias_o_proj: bool, prefix: str) -> None
+  Llama4Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Llama4DecoderLayer.__init__(config: Llama4TextConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Llama4DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Llama4Model.__init__(config: Llama4TextConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Llama4Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]
+  Llama4ForCausalLM.__init__(config: Llama4TextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Llama4ForCausalLM.get_input_embeddings()
+
+# python/sglang/srt/models/llama_classification.py
+  LlamaForClassification.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaForClassification.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  LlamaForClassification.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/llama_eagle.py
+  LlamaDecoderLayer.__init__(config: LlamaConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaModel.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  LlamaForCausalLMEagle.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaForCausalLMEagle.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/llama_eagle3.py
+  LlamaDecoderLayer.__init__(config: LlamaConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaDecoderLayer.forward(positions: torch.Tensor, embeds: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  LlamaModel.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  LlamaForCausalLMEagle3.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaForCausalLMEagle3.load_weights(weights: Iterable[Tuple[str, torch.Tensor]]) -> None
+  LlamaForCausalLMEagle3.get_hot_token_id()
+
+# python/sglang/srt/models/llama_embedding.py
+  LlamaEmbeddingModel.__init__(config: LlamaConfig, quant_config, prefix: str) -> None
+  LlamaEmbeddingModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  LlamaEmbeddingModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/llama_reward.py
+  LlamaForSequenceClassification.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaForSequenceClassification.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  LlamaForSequenceClassification.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Weights.__init__(hidden_size, num_label)
+  Weights.forward(x)
+  LlamaForSequenceClassificationWithNormal_Weights.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaForSequenceClassificationWithNormal_Weights.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  LlamaForSequenceClassificationWithNormal_Weights.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/llava.py
+  LlavaBaseForCausalLM.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs)
+  LlavaBaseForCausalLM.encode_images(pixel_values: Union[torch.Tensor, List[torch.Tensor]]) -> torch.Tensor
+  LlavaBaseForCausalLM.forward(input_ids: torch.LongTensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  LlavaBaseForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  LlavaBaseForCausalLM.num_patches_per_side()
+  LlavaLlamaForCausalLM.__init__(config: LlavaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlavaQwenForCausalLM.__init__(config: LlavaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlavaMistralForCausalLM.__init__(config: LlavaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlavaForConditionalGeneration.dtype()
+  LlavaForConditionalGeneration.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs)
+  LlavaForConditionalGeneration.__init__(config: LlavaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlavaForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  LlavaForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, get_embedding: bool)
+  LlavaForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/llavavid.py
+  LlavaVidForCausalLM.__init__(config: LlavaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlavaVidForCausalLM.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs)
+  LlavaVidForCausalLM.encode_images(pixel_values: torch.Tensor) -> torch.Tensor
+  LlavaVidForCausalLM.forward(input_ids: torch.LongTensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  LlavaVidForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  LlavaVidForCausalLM.num_patches_per_side()
+
+# python/sglang/srt/models/longcat_flash.py
+  LongcatFlashMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], reduce_results: bool, prefix: str) -> None
+  LongcatFlashMLP.forward(x)
+  LongcatFlashRouter.__init__(config, zero_expert_num, rounter_params_dtype, prefix: str)
+  LongcatFlashRouter.forward(hidden_states)
+  LongcatFlashMoE.__init__(config: LongcatFlashConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  LongcatFlashMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  LongcatFlashMoE.get_moe_weights()
+  LongcatFlashDecoderLayer.__init__(config: LongcatFlashConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  LongcatFlashDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], zero_allocator: BumpAllocator) -> torch.Tensor
+  LongcatFlashDecoderLayer.forward_mlp(hidden_states, positions, residual, forward_batch, zero_allocator)
+  LongcatFlashModel.__init__(config: LongcatFlashConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LongcatFlashModel.get_input_embeddings() -> torch.Tensor
+  LongcatFlashModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  LongcatFlashForCausalLM.__init__(config: LongcatFlashConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LongcatFlashForCausalLM.get_input_embeddings() -> nn.Embedding
+  LongcatFlashForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  LongcatFlashForCausalLM.post_load_weights(weight_names)
+  LongcatFlashForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  LongcatFlashForCausalLM.get_embed_and_head()
+  LongcatFlashForCausalLM.set_embed_and_head(embed, head)
+  LongcatFlashForCausalLM.get_model_config_for_expert_location(cls, config)
+
+# python/sglang/srt/models/longcat_flash_nextn.py
+  LongcatFlashDenseDecoderLayer.__init__(config: LongcatFlashConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  LongcatFlashDenseDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], zero_allocator: BumpAllocator) -> torch.Tensor
+  LongcatFlashModelNextN.__init__(config: LongcatFlashConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LongcatFlashModelNextN.get_input_embeddings() -> torch.Tensor
+  LongcatFlashModelNextN.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  LongcatFlashForCausalLMNextN.__init__(config: LongcatFlashConfig, quant_config: Optional[QuantizationConfig]) -> None
+  LongcatFlashForCausalLMNextN.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  LongcatFlashForCausalLMNextN.post_load_weights()
+  LongcatFlashForCausalLMNextN.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/mimo.py
+  MiMoModel.__init__(config: MiMoConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiMoForCausalLM.__init__(config: MiMoConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiMoForCausalLM.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  MiMoForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> torch.Tensor
+  MiMoForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  MiMoForCausalLM.get_embed_and_head()
+  MiMoForCausalLM.set_embed_and_head(embed, head)
+  MiMoForCausalLM.load_kv_cache_scales(quantization_param_path: str) -> None
+
+# python/sglang/srt/models/mimo_mtp.py
+  MiMoMultiTokenPredictorLayer.__init__(config: PretrainedConfig, prefix: str, quant_config: Optional[QuantizationConfig]) -> None
+  MiMoMultiTokenPredictorLayer.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  MiMoMTP.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiMoMTP.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MiMoMTP.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  MiMoMTP.map_model_name_to_mtp_param_name(name: str) -> str
+  MiMoMTP.get_embed_and_head()
+  MiMoMTP.set_embed_and_head(embed, head)
+
+# python/sglang/srt/models/minicpm.py
+  MiniCPMMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPMMLP.forward(x)
+  MiniCPMAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPMAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MiniCPMDecoderLayer.__init__(config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPMDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  MiniCPMModel.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPMModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  MiniCPMForCausalLM.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPMForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  MiniCPMForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/minicpm3.py
+  MiniCPM3MLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPM3MLP.forward(x)
+input_to_float8(x, dtype)
+  MiniCPM3AttentionMLA.__init__(config: PretrainedConfig, hidden_size: int, num_heads: int, qk_nope_head_dim: int, qk_rope_head_dim: int, v_head_dim: int, q_lora_rank: int, kv_lora_rank: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], layer_id, prefix: str) -> None
+  MiniCPM3AttentionMLA.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MiniCPM3DecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPM3DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  MiniCPM3Model.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPM3Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  MiniCPM3ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPM3ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  MiniCPM3ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/minicpmo.py
+apply_spk_emb(input_ids: torch.Tensor, spk_emb: torch.Tensor, input_embeds: torch.Tensor, spk_emb_token_id: int, num_spk_embs: int)
+make_streaming_chunk_mask_generation(inputs_embeds: torch.Tensor, past_seen_tokens: int, streaming_tts_text_mask: torch.Tensor, streaming_reserved_length: int, streaming_audio_chunk_size: int, streaming_text_chunk_size: int, num_spk_emb: int, use_spk_emb: bool) -> torch.Tensor
+  ConvNeXtBlock.__init__(dim: int, intermediate_dim: int, kernel: int, dilation: int, layer_scale_init_value: float)
+  ConvNeXtBlock.forward(x: torch.Tensor, cond) -> torch.Tensor
+  DVAEDecoder.__init__(idim: int, odim: int, n_layer, bn_dim, hidden, kernel, dilation, up)
+  DVAEDecoder.forward(x: torch.Tensor, conditioning) -> torch.Tensor
+  GFSQ.__init__(dim: int, levels: List[int], G: int, R: int, eps, transpose)
+  GFSQ.__call__(x: torch.Tensor) -> torch.Tensor
+  GFSQ.forward(x: torch.Tensor) -> torch.Tensor
+  DVAE.__init__()
+  DVAE.forward(inp: torch.Tensor, mode: Literal['encode', 'decode']) -> torch.Tensor
+  CustomRepetitionPenaltyLogitsProcessorRepeat.__init__(penalty: float, max_input_ids: int, past_window: int)
+  CustomRepetitionPenaltyLogitsProcessorRepeat.__call__(input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor
+  ConditionalChatTTS.__init__(config: PretrainedConfig)
+  ConditionalChatTTS.merge_inputs_embeds(input_ids: torch.Tensor, lm_spk_emb_last_hidden_states: Optional[torch.Tensor])
+  ConditionalChatTTS.prefill_text(input_ids: torch.Tensor, position_ids: torch.LongTensor, past_key_values: List[Tuple[torch.Tensor, torch.Tensor]], lm_spk_emb_last_hidden_states: Optional[torch.Tensor])
+  ConditionalChatTTS.prefill_audio_ids(input_ids: torch.Tensor, past_key_values: List[Tuple[torch.Tensor, torch.Tensor]], streaming_tts_text_mask, add_audio_bos: bool)
+  ConditionalChatTTS.generate(input_ids: torch.Tensor, past_key_values: List[Tuple[torch.Tensor, torch.Tensor]], temperature: torch.Tensor, eos_token: Union[int, torch.Tensor], streaming_tts_text_mask, force_no_stop, min_new_token, max_new_token, logits_warpers: List[LogitsWarper], logits_processors: List[CustomRepetitionPenaltyLogitsProcessorRepeat], show_tqdm)
+  ConditionalChatTTS.decode_to_mel_specs(result_list: List[torch.Tensor])
+  MiniCPMWhisperEncoderLayer.__init__(config: WhisperConfig, layer_idx: int)
+  MiniCPMWhisperEncoderLayer.forward(hidden_states: torch.Tensor, attention_mask: torch.Tensor, layer_head_mask: torch.Tensor, output_attentions: bool, past_key_values: Optional[EncoderDecoderCache], use_cache: Optional[bool]) -> torch.Tensor
+  MiniCPMWhisperEncoder.__init__(config: WhisperConfig)
+  MiniCPMWhisperEncoder.forward(input_features, attention_mask, head_mask, output_attentions, output_hidden_states, return_dict, past_key_values: Optional[EncoderDecoderCache], use_cache: Optional[bool])
+  MultiModalProjector.__init__(in_dim, out_dim)
+  MultiModalProjector.forward(audio_features)
+  MiniCPMO.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig]) -> None
+  MiniCPMO.init_tts_module()
+  MiniCPMO.init_audio_module()
+  MiniCPMO.init_llm(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMO.init_vision_module(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MiniCPMO.init_resampler(embed_dim: int, vision_dim: int, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMO.pad_input_ids(input_ids: List[int], mm_input: MultimodalInputs)
+  MiniCPMO.get_audio_embedding_streaming(items: List[MultimodalDataItem])
+  MiniCPMO.subsequent_chunk_mask(size: int, chunk_size: int, num_left_chunks: int, device: torch.device, num_lookhead: int) -> torch.Tensor
+  MiniCPMO.get_audio_embedding(items: List[MultimodalDataItem], chunk_length)
+  MiniCPMO.get_audio_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  MiniCPMO.get_omni_embedding(items: List[MultimodalDataItem], chunk_length, stream_input)
+  MiniCPMO.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  MiniCPMO.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MiniCPMO.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/minicpmv.py
+get_1d_sincos_pos_embed_from_grid(embed_dim: int, pos: np.ndarray, version: Tuple[int, int]) -> torch.Tensor
+get_2d_sincos_pos_embed_from_grid(embed_dim: int, grid: np.ndarray, version: Tuple[int, int]) -> torch.Tensor
+get_2d_sincos_pos_embed(embed_dim: int, grid_size: Union[int, Tuple[int, int]], cls_token: bool, version: Tuple[int, int]) -> torch.Tensor
+  BaseResampler.__init__(num_queries: int, embed_dim: int, num_heads: int, kv_dim: Optional[int], norm_layer: Callable[[int], nn.LayerNorm], do_post_projection: bool, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Resampler2_5.__init__(num_queries: int, embed_dim: int, num_heads: int, kv_dim: Optional[int], norm_layer: Callable[[int], nn.LayerNorm], max_size: Tuple[int, int], quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Resampler2_5.forward(x: torch.Tensor, tgt_sizes: torch.Tensor) -> torch.Tensor
+get_version_by_config(config: PretrainedConfig) -> Tuple[int, ...]
+  MiniCPMBaseModel.__init__()
+  MiniCPMBaseModel.get_embedding(input_ids: torch.Tensor, image_inputs: Optional[MiniCPMVImageInputs]) -> Tuple[torch.Tensor, torch.Tensor]
+  MiniCPMBaseModel.get_input_embeddings() -> nn.Embedding
+  MiniCPMBaseModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MiniCPMBaseModel.init_llm(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMBaseModel.init_vision_module(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMBaseModel.init_resampler(embed_dim: int, vision_dim: int, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMBaseModel.get_vision_embedding(pixel_values: List[torch.Tensor], patch_attn_mask: Optional[torch.Tensor], tgt_sizes: Optional[torch.Tensor]) -> torch.Tensor
+  MiniCPMBaseModel.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  MiniCPMV2_6.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MiniCPMV2_6.init_llm(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMV2_6.init_vision_module(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMV2_6.init_resampler(embed_dim: int, vision_dim: int, quant_config: Optional[QuantizationConfig], prefix: str) -> nn.Module
+  MiniCPMV2_6.get_vision_embedding(pixel_values: List[torch.Tensor], patch_attn_mask: Optional[torch.Tensor], tgt_sizes: Optional[torch.Tensor]) -> torch.Tensor
+  MiniCPMV2_6.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  MiniCPMV2_6.pad_input_ids(input_ids: List[int], image_inputs: MultimodalInputs)
+  MiniCPMV.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MiniCPMV.__getattr__(name)
+  MiniCPMV.__call__()
+  MiniCPMV.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/mistral.py
+  Mistral3ForConditionalGeneration.__init__()
+  Mistral3ForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Mistral3ForConditionalGeneration.__getattr__(name)
+  Mistral3ForConditionalGeneration.__hasattr__(name)
+  Mistral3ForConditionalGeneration.__call__()
+
+# python/sglang/srt/models/mixtral.py
+  MixtralMoE.__init__(num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, layer_id: int, params_dtype: Optional[torch.dtype], quant_config: Optional[QuantizationConfig], tp_size: Optional[int], prefix: str)
+  MixtralMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  MixtralAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, max_position: int, rope_theta: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MixtralDecoderLayer.__init__(config: MixtralConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> torch.Tensor
+  MixtralModel.__init__(config: MixtralConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, PPProxyTensors]
+  MixtralForCausalLM.__init__(config: MixtralConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  MixtralForCausalLM.start_layer()
+  MixtralForCausalLM.end_layer()
+  MixtralForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/mixtral_quant.py
+  MixtralMLP.__init__(num_experts: int, hidden_size: int, intermediate_size: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  MixtralMoE.__init__(config: MixtralConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MixtralMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  MixtralAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, max_position: int, rope_theta: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MixtralDecoderLayer.__init__(config: MixtralConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> torch.Tensor
+  MixtralModel.__init__(config: MixtralConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MixtralModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  QuantMixtralForCausalLM.__init__(config: MixtralConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  QuantMixtralForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  QuantMixtralForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/mllama.py
+  ColumnParallelConv2dPatch.__init__(in_channels: int, out_channels: int, kernel_size: Union[int, Tuple[int, int]], stride: Union[int, Tuple[int, int]], bias: bool) -> None
+  ColumnParallelConv2dPatch.forward(x: torch.Tensor) -> torch.Tensor
+  MllamaPrecomputedAspectRatioEmbedding.__init__(config: config_mllama.MllamaVisionConfig, is_gated: bool)
+  MllamaPrecomputedAspectRatioEmbedding.forward(hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor) -> torch.Tensor
+  MllamaPrecomputedPositionEmbedding.__init__(config: config_mllama.MllamaVisionConfig)
+  MllamaPrecomputedPositionEmbedding.forward(hidden_state: torch.Tensor, aspect_ratio_ids: torch.Tensor) -> torch.Tensor
+  MllamaVisionMLP.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str)
+  MllamaVisionMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  MllamaVisionEncoderLayer.__init__(config: config_mllama.MllamaVisionConfig, quant_config: Optional[QuantizationConfig], is_gated: bool, prefix: str)
+  MllamaVisionEncoderLayer.forward(hidden_state: torch.Tensor, attention_mask: Optional[torch.Tensor])
+  MllamaVisionEncoder.__init__(config: config_mllama.MllamaVisionConfig, quant_config: Optional[QuantizationConfig], num_layers, is_gated, output_hidden_states, prefix: str)
+  MllamaVisionEncoder.forward(hidden_states: torch.Tensor, attention_mask: Optional[torch.Tensor]) -> Union[Tuple, BaseModelOutput]
+  MllamaVisionModel.__init__(config: config_mllama.MllamaVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MllamaVisionModel.apply_class_embedding(hidden_state: torch.Tensor) -> torch.Tensor
+  MllamaVisionModel.forward(pixel_values: torch.Tensor, aspect_ratio_ids: torch.Tensor, aspect_ratio_mask: torch.Tensor) -> torch.Tensor
+  MllamaTextRMSNorm.__init__(hidden_size, eps)
+  MllamaTextRMSNorm.forward(hidden_states)
+  MllamaTextRMSNorm.extra_repr()
+  MllamaTextCrossAttention.__init__(config: Optional[config_mllama.MllamaTextConfig], layer_id: Optional[int], quant_config: Optional[QuantizationConfig], prefix: str)
+  MllamaTextCrossAttention.forward(hidden_states: torch.Tensor, attention_mask: Optional[torch.Tensor], cross_attention_states: Optional[torch.Tensor], forward_batch: ForwardBatch) -> torch.Tensor
+  MllamaCrossAttentionDecoderLayer.__init__(config: config_mllama.MllamaTextConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  MllamaCrossAttentionDecoderLayer.forward(hidden_states: torch.Tensor, cross_attention_states: torch.Tensor, cross_attention_mask: torch.Tensor, full_text_row_masked_out_mask: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  MllamaTextModel.__init__(config: config_mllama.MllamaTextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MllamaTextModel.forward(input_ids: torch.LongTensor, positions: Optional[torch.LongTensor], cross_attention_states: Optional[torch.LongTensor], cross_attention_mask: Optional[torch.LongTensor], full_text_row_masked_out_mask: Optional[Tuple[torch.Tensor, torch.Tensor]], forward_batch: ForwardBatch, skip_cross_attention: bool) -> torch.Tensor
+  MllamaForCausalLM.__init__(config: config_mllama.MllamaTextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MllamaForCausalLM.forward(input_ids: torch.LongTensor, positions: Optional[torch.LongTensor], cross_attention_states: Optional[torch.LongTensor], cross_attention_mask: Optional[torch.LongTensor], full_text_row_masked_out_mask: Optional[Tuple[torch.Tensor, torch.Tensor]], forward_batch: ForwardBatch, skip_cross_attention: bool) -> torch.Tensor
+  MllamaForConditionalGeneration.__init__(config: config_mllama.MllamaConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  MllamaForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  MllamaForConditionalGeneration.flat_encoder_result(cross_attention_states: torch.Tensor, encoder_lens_need: List[int])
+  MllamaForConditionalGeneration.get_full_text_row_masked_out_mask(forward_batch: ForwardBatch)
+  MllamaForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> Union[Tuple, CausalLMOutputWithPast]
+  MllamaForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/mllama4.py
+  Llama4VisionMLP.__init__(input_size: int, intermediate_size: int, output_size: int, bias: bool, output_activation: bool, quant_config: Optional[QuantizationConfig], prefix: str, use_data_parallel: bool)
+  Llama4VisionMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+pixel_shuffle(input_tensor, shuffle_ratio)
+  Llama4VisionPixelShuffleMLP.__init__(config, quant_config: Optional[QuantizationConfig], prefix: str, use_data_parallel: bool)
+  Llama4VisionPixelShuffleMLP.forward(encoded_patches: torch.Tensor) -> torch.Tensor
+apply_position_embedding(q, k, freqs_ci, shape)
+  Llama4VisionEncoderLayer.__init__(config: Llama4VisionConfig, quant_config: Optional[QuantizationConfig], prefix: str, use_data_parallel: bool)
+  Llama4VisionEncoderLayer.forward(hidden_state: torch.Tensor, freqs_ci: torch.Tensor)
+  Llama4VisionEncoder.__init__(config: Llama4VisionConfig, quant_config: Optional[QuantizationConfig], prefix: str, use_data_parallel: bool)
+  Llama4VisionEncoder.forward(hidden_states: torch.Tensor, freqs_ci: torch.Tensor) -> torch.Tensor
+  Llama4UnfoldConvolution.__init__(config: Llama4VisionConfig, quant_config: Optional[QuantizationConfig], prefix: str, use_data_parallel: bool)
+  Llama4UnfoldConvolution.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  Llama4VisionRotaryEmbedding.__init__(config)
+  Llama4VisionRotaryEmbedding.forward(hidden_states)
+  Llama4VisionModel.__init__(config: Llama4VisionConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Llama4VisionModel.forward(pixel_values: torch.Tensor) -> torch.Tensor
+  Llama4ForConditionalGeneration.__init__(config: Llama4Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  Llama4ForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  Llama4ForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Llama4ForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Llama4ForConditionalGeneration.permute_qk_weight_for_rotary(name: str, loaded_weight: torch.Tensor) -> Tuple[str, torch.Tensor]
+  Llama4ForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]]) -> Set[str]
+  Llama4ForConditionalGeneration.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+  Llama4ForConditionalGeneration.get_embed_and_head()
+  Llama4ForConditionalGeneration.set_embed_and_head(embed, head)
+  Llama4ForConditionalGeneration.get_embed()
+  Llama4ForConditionalGeneration.set_embed(embed)
+
+# python/sglang/srt/models/nemotron_nas.py
+  DeciLMDecoderLayer.__init__(config: LlamaConfig, layer_idx: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  DeciLMDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  DeciModel.__init__()
+  DeciModel.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  DeciModel.forward(input_ids: Optional[torch.Tensor], positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor], pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, PPProxyTensors]
+  DeciLMForCausalLM.__init__()
+  DeciLMForCausalLM.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  DeciLMForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor], get_embedding: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> LogitsProcessorOutput
+  DeciLMForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]]) -> None
+
+# python/sglang/srt/models/olmo.py
+  OlmoAttention.__init__(config: OlmoConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  OlmoAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  OlmoMLP.__init__(config: OlmoConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  OlmoMLP.forward(x: torch.Tensor) -> torch.Tensor
+  OlmoDecoderLayer.__init__(config: OlmoConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  OlmoDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]
+  OlmoModel.__init__(config: OlmoConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  OlmoModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  OlmoForCausalLM.__init__(config: OlmoConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  OlmoForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  OlmoForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/olmo2.py
+  Olmo2Attention.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Olmo2Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Olmo2MLP.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Olmo2MLP.forward(x: torch.Tensor) -> torch.Tensor
+  Olmo2DecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Olmo2DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Olmo2Model.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Olmo2Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Olmo2ForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Olmo2ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Olmo2ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/olmoe.py
+  OlmoeMoE.__init__(num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, params_dtype: Optional[torch.dtype], quant_config: Optional[QuantizationConfig], tp_size: Optional[int], layer_id: int, prefix: str)
+  OlmoeMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  OlmoeAttention.__init__(layer_id: int, hidden_size: int, num_heads: int, num_kv_heads: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  OlmoeAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  OlmoeDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  OlmoeDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> torch.Tensor
+  OlmoeModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  OlmoeModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  OlmoeForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  OlmoeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  OlmoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/persimmon.py
+  PersimmonMLP.__init__(config: PersimmonConfig, quant_config: Optional[QuantizationConfig])
+  PersimmonMLP.forward(hidden_states) -> torch.Tensor
+  PersimmonAttention.__init__(config: PersimmonConfig, quant_config: Optional[QuantizationConfig], prefix: str, layer_id: int)
+  PersimmonAttention.forward(position_ids: torch.Tensor, forward_batch: ForwardBatch, hidden_states: torch.Tensor) -> torch.Tensor
+  PersimmonDecoderLayer.__init__(config: PersimmonConfig, quant_config: Optional[QuantizationConfig], prefix: str, idx: int)
+  PersimmonDecoderLayer.forward(position_ids: torch.Tensor, forward_batch: ForwardBatch, hidden_states: torch.Tensor) -> torch.Tensor
+  PersimmonModel.__init__(config: PersimmonConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  PersimmonModel.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  PersimmonModel.forward(input_ids: torch.Tensor, forward_batch: ForwardBatch, positions: torch.Tensor, inputs_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  PersimmonForCausalLM.__init__(config: PersimmonConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  PersimmonForCausalLM.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  PersimmonForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor]) -> LogitsProcessorOutput
+  PersimmonForCausalLM.load_weights(weights: Iterable[tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/phi.py
+  PhiAttention.__init__(config: PhiConfig, quant_config: Optional[QuantizationConfig], prefix: str, layer_id: int)
+  PhiAttention.forward(position_ids: torch.Tensor, forward_batch: ForwardBatch, hidden_states: torch.Tensor) -> torch.Tensor
+  PhiMLP.__init__(config: PhiConfig, quant_config: Optional[QuantizationConfig])
+  PhiMLP.forward(hidden_states)
+  PhiLayer.__init__(config: PhiConfig, quant_config: Optional[QuantizationConfig], prefix: str, idx: int)
+  PhiLayer.forward(position_ids: torch.Tensor, forward_batch: ForwardBatch, hidden_states: torch.Tensor) -> torch.Tensor
+  PhiModel.__init__(config: PhiConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  PhiModel.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  PhiModel.forward(input_ids: torch.Tensor, forward_batch: ForwardBatch, positions: torch.Tensor, inputs_embeds: Optional[torch.Tensor]) -> torch.Tensor
+  PhiForCausalLM.__init__(config: PhiConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  PhiForCausalLM.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  PhiForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor]) -> LogitsProcessorOutput
+  PhiForCausalLM.load_weights(weights: Iterable[tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/phi3_small.py
+quick_gelu(x)
+gegelu(input, limit: Optional[float])
+  Phi3SmallMLP.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Phi3SmallMLP.forward(x)
+  Phi3SmallSelfAttention.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Phi3SmallSelfAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]
+  Phi3SmallDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  Phi3SmallDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Phi3SmallModel.__init__(config: Phi3Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  Phi3SmallModel.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  Phi3SmallModel.forward(input_ids: torch.LongTensor, positions: Optional[torch.LongTensor], forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor]) -> Union[torch.Tensor]
+  Phi3SmallForCausalLM.__init__(config: Phi3Config, quant_config: Optional[QuantizationConfig], prefix: str)
+  Phi3SmallForCausalLM.get_input_embeddings(input_ids: torch.Tensor) -> torch.Tensor
+  Phi3SmallForCausalLM.set_input_embeddings(value)
+  Phi3SmallForCausalLM.get_output_embeddings()
+  Phi3SmallForCausalLM.set_output_embeddings(value)
+  Phi3SmallForCausalLM.set_decoder(decoder)
+  Phi3SmallForCausalLM.get_decoder()
+  Phi3SmallForCausalLM.compute_logits(input_ids: torch.LongTensor, hidden_states: torch.Tensor, sampling_metadata) -> Optional[torch.Tensor]
+  Phi3SmallForCausalLM.forward(input_ids: torch.LongTensor, positions: Optional[torch.LongTensor], forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor], get_embedding: bool) -> LogitsProcessorOutput
+  Phi3SmallForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/phi4mm.py
+  Phi4MMImageEncoder.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str, model_dir: str) -> None
+  Phi4MMImageEncoder.get_img_features(img_embeds: torch.FloatTensor, attention_mask) -> torch.FloatTensor
+  Phi4MMImageEncoder.forward(pixel_values: torch.FloatTensor, image_sizes: torch.Tensor, image_attention_mask: torch.Tensor) -> list[torch.FloatTensor]
+  Phi4MMForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Phi4MMForCausalLM.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Phi4MMForCausalLM.get_audio_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Phi4MMForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Phi4MMForCausalLM.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  Phi4MMForCausalLM.should_apply_lora(module_name: str) -> bool
+  Phi4MMForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/phi4mm_audio.py
+  ConformerEncoderLayer.__init__(d_model, ext_pw_out_channel, depthwise_seperable_out_channel, depthwise_multiplier, n_head, d_ffn, ext_pw_kernel_size, kernel_size, dropout_rate, causal, batch_norm, activation, chunk_se, chunk_size, conv_activation, conv_glu_type, bias_in_glu, linear_glu_in_convm, attention_inner_dim, attention_glu_type, activation_checkpointing, export, use_pt_scaled_dot_product_attention, attn_group_sizes: int)
+  ConformerEncoderLayer.forward(x, pos_k, pos_v, mask, relative_attention_bias: Optional[Tensor])
+  TransformerEncoderBase.__init__(input_size, chunk_size, left_chunk, attention_dim, attention_heads, input_layer, cnn_out, cnn_layer_norm, time_reduction, dropout_rate, padding_idx, relative_attention_bias_args, positional_dropout_rate, nemo_conv_settings, conv2d_extra_padding: Literal['feat', 'feat_time', 'none', True], attention_group_size, encoder_embedding_config)
+  TransformerEncoderBase.compute_lens_change(feature_lens)
+  TransformerEncoderBase.forward()
+  TransformerEncoderBase.forward_embeddings(xs_pad, masks, chunk_size_nc, left_chunk_nc)
+  TransformerEncoderBase.get_offset()
+  ConformerEncoder.__init__(input_size, chunk_size, left_chunk, num_lang, attention_dim, attention_heads, linear_units, num_blocks, dropout_rate, input_layer, causal, batch_norm, cnn_out, cnn_layer_norm, ext_pw_out_channel, ext_pw_kernel_size, depthwise_seperable_out_channel, depthwise_multiplier, chunk_se, kernel_size, activation, conv_activation, conv_glu_type, bias_in_glu, linear_glu_in_convm, attention_glu_type, export, extra_layer_output_idx, extra_multi_layer_output_idxs, activation_checkpointing, relative_attention_bias_args, time_reduction, use_pt_scaled_dot_product_attention, nemo_conv_settings, conv2d_extra_padding: Literal['feat', 'feat_time', 'none', True], replication_pad_for_subsample_embedding, attention_group_size, encoder_embedding_config)
+  ConformerEncoder.init_relative_attention_bias(input_tensor)
+  ConformerEncoder.calculate_hs_mask(xs_pad, device, mask)
+  ConformerEncoder.forward(xs_pad, masks)
+  WindowQformer.__init__(window_size: int, num_queries: int, num_blocks: int, attention_dim: int, attention_heads: int, linear_units: int, dropout_rate: float, normalize_before: bool)
+  WindowQformer.forward(audio_embed, mask, embed_len)
+  AudioEmbedding.__init__(config: PretrainedConfig) -> None
+  AudioEmbedding.set_audio_embeds(input_embeds: torch.FloatTensor) -> None
+  AudioEmbedding.set_audio_embed_sizes(audio_embed_sizes: torch.LongTensor) -> None
+  AudioEmbedding.get_audio_features(input_embeds: torch.FloatTensor, audio_attention_mask: torch.Tensor, audio_projection_mode: str) -> torch.FloatTensor
+  AudioEmbedding.forward(audio_features: torch.FloatTensor, audio_attention_mask: torch.Tensor, audio_projection_mode: str) -> torch.FloatTensor
+
+# python/sglang/srt/models/phi4mm_utils.py
+  BlockBase.__init__(input_size, output_size)
+get_activation(name)
+adaptive_enc_mask(x_len, chunk_start_idx, left_window, right_window)
+  Swish.__init__() -> None
+  Swish.forward(x: Tensor) -> Tensor
+  GLU.__init__(dim: int, act_name: str) -> None
+  GLU.forward(x: Tensor) -> Tensor
+  GLUPointWiseConv.__init__(input_dim, output_dim, kernel_size, glu_type, bias_in_glu, causal)
+  GLUPointWiseConv.forward(x)
+  DepthWiseSeperableConv1d.__init__(input_dim, depthwise_seperable_out_channel, kernel_size, depthwise_multiplier, padding)
+  DepthWiseSeperableConv1d.forward(x)
+  ConvModule.__init__(input_dim, ext_pw_out_channel, depthwise_seperable_out_channel, ext_pw_kernel_size, kernel_size, depthwise_multiplier, dropout_rate, causal, batch_norm, chunk_se, chunk_size, activation, glu_type, bias_in_glu, linear_glu_in_convm, export)
+  ConvModule.forward(x)
+  GLULinear.__init__(input_dim, output_dim, glu_type, bias_in_glu)
+  GLULinear.forward(x)
+  FeedForward.__init__(d_model, d_inner, dropout_rate, activation, bias_in_glu)
+  FeedForward.forward(x)
+  T5RelativeAttentionLogitBias.__init__(num_heads, num_buckets, max_distance, symmetric)
+  T5RelativeAttentionLogitBias.forward(x)
+  AbsolutePositionalEncoding.__init__(d_model, dropout_rate, max_len)
+  AbsolutePositionalEncoding.extend_pe(x)
+  AbsolutePositionalEncoding.forward(x: torch.Tensor)
+  MeanVarianceNormLayer.__init__(input_size)
+  MeanVarianceNormLayer.forward(input_: Tensor) -> Tensor
+  CausalConv1D.__init__(in_channels: int, out_channels: int, kernel_size: int, stride: int, padding: Union[str, int], dilation: int, groups: int, bias: bool, padding_mode: str, device, dtype) -> None
+  CausalConv1D.update_cache(x, cache)
+  CausalConv1D.forward(x, cache)
+  CausalConv2D.__init__(in_channels: int, out_channels: int, kernel_size: int, stride: int, padding: Union[str, int], dilation: int, groups: int, bias: bool, padding_mode: str, device, dtype) -> None
+  CausalConv2D.forward(x)
+  NemoConvSubsampling.__init__(feat_in, feat_out, subsampling_factor, subsampling, conv_channels, subsampling_conv_chunking_factor, activation, is_causal)
+  NemoConvSubsampling.get_sampling_frames()
+  NemoConvSubsampling.get_streaming_cache_size()
+  NemoConvSubsampling.forward(x, mask)
+  NemoConvSubsampling.reset_parameters()
+  NemoConvSubsampling.conv_split_by_batch(x)
+  NemoConvSubsampling.conv_split_by_channel(x)
+  NemoConvSubsampling.channel_chunked_conv(conv, chunk_size, x)
+  NemoConvSubsampling.change_subsampling_conv_chunking_factor(subsampling_conv_chunking_factor: int)
+calc_length(lengths, all_paddings, kernel_size, stride, ceil_mode, repeat_num)
+  AttModule.__init__()
+  AttModule.set_export(mode)
+  AttModule.forward(x: Tensor, memory: Optional[Tensor], pos_emb: Optional[Tensor], att_mask: Optional[Tensor]) -> tuple[Tensor, Tensor, Optional[Tensor], Optional[Tensor]]
+  AttBlock.memory_dims(max_len)
+masked_softmax(scores, mask: Optional[Tensor])
+  MultiHeadedAttention.__init__(n_head, n_feat, dropout_rate, attention_inner_dim, glu_type, bias_in_glu, use_pt_scaled_dot_product_attention, n_value, group_size: int)
+  MultiHeadedAttention.forward(query: Tensor, key: Tensor, value: Tensor, pos_k: Tensor, pos_v: Tensor, mask: Optional[Tensor], relative_attention_bias: Optional[Tensor])
+  MultiSequential.forward()
+get_offset(input_layer: str, time_reduction: int)
+unfold_tensor(xs_pad, max_seq_len)
+
+# python/sglang/srt/models/phimoe.py
+  PhiMoEConfig.__init__(vocab_size, hidden_size, intermediate_size, num_hidden_layers, num_attention_heads, num_key_value_heads, head_dim, hidden_act, max_position_embeddings, initializer_range, rms_norm_eps, use_cache, pad_token_id, bos_token_id, eos_token_id, tie_word_embeddings, rope_theta, sliding_window, attention_dropout, num_experts_per_tok, num_local_experts, output_router_logits, router_aux_loss_coef, router_jitter_noise, attention_bias, lm_head_bias)
+sparsemixer(scores, jitter_eps)
+phimoe_routing_function(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool)
+  PhiMoE.__init__(num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str)
+  PhiMoE.forward(hidden_states: torch.Tensor, forward_batch: Optional[ForwardBatch]) -> torch.Tensor
+  PhiMoEAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, head_dim: Optional[int], max_position: int, rope_theta: float, layer_id: int, attention_bias: bool, quant_config: Optional[QuantizationConfig], rope_scaling: Optional[dict], prefix: str) -> None
+  PhiMoEAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  PhiMoEDecoderLayer.__init__(config: PhiMoEConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  PhiMoEDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, residual: Optional[torch.Tensor], forward_batch: ForwardBatch) -> Tuple[torch.Tensor, torch.Tensor]
+  PhiMoEModel.__init__(config: PhiMoEConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  PhiMoEModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: Optional[torch.Tensor]) -> Union[torch.Tensor]
+  PhiMoEForCausalLM.__init__(config: PhiMoEConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  PhiMoEForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, inputs_embeds: Optional[torch.Tensor], get_embedding: bool) -> LogitsProcessorOutput
+  PhiMoEForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/pixtral.py
+  PixtralHFMLP.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig]) -> None
+  PixtralHFMLP.forward(x: torch.Tensor) -> torch.Tensor
+  PixtralHFTransformerBlock.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig]) -> None
+  PixtralHFTransformerBlock.forward(hidden_states: torch.Tensor, attention_mask: Optional[torch.Tensor], position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]]) -> torch.Tensor
+  PixtralHFTransformer.__init__(config: PixtralVisionConfig, quant_config: Optional[QuantizationConfig]) -> None
+  PixtralHFTransformer.forward(x: torch.Tensor, attention_mask: Optional[torch.Tensor], position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]], return_all_hidden_states: bool) -> Union[torch.Tensor, List[torch.Tensor]]
+resolve_visual_encoder_outputs(outputs: Union[torch.Tensor, List[torch.Tensor]], feature_sample_layers: Optional[List[int]], post_norm: Optional[nn.Module], num_hidden_layers: int) -> torch.Tensor
+  PixtralHFVisionModel.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  PixtralHFVisionModel.__init__(config: PixtralVisionConfig, quant_config: Optional[QuantizationConfig]) -> None
+  PixtralHFVisionModel.dtype()
+  PixtralHFVisionModel.device()
+  PixtralHFVisionModel.forward(pixel_values: torch.Tensor, image_sizes: list[tuple[int, int]], output_hidden_states: bool, feature_sample_layers: Optional[list[int]]) -> Union[torch.Tensor, tuple]
+  PixtralHFVisionModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]]) -> Set[str]
+
+# python/sglang/srt/models/qwen.py
+  QWenMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str)
+  QWenMLP.forward(x)
+  QWenAttention.__init__(hidden_size: int, num_heads: int, max_position_embeddings: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], quant_config: Optional[QuantizationConfig], prefix: str)
+  QWenAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  QWenBlock.__init__(config: PretrainedConfig, layer_id, quant_config: Optional[QuantizationConfig], prefix: str)
+  QWenBlock.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  QWenModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  QWenModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  QWenLMHeadModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  QWenLMHeadModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch)
+  QWenLMHeadModel.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int])
+  QWenLMHeadModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen2.py
+  Qwen2MLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2MLP.forward(x)
+  Qwen2Attention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, head_dim: Optional[int], layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], dual_chunk_attention_config: Optional[dict[str, Any]], prefix: str) -> None
+  Qwen2Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Qwen2DecoderLayer.__init__(config: Qwen2Config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen2DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Qwen2Model.__init__(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str, decoder_layer_type: type[nn.Module], alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen2Model.get_input_embedding(input_ids: torch.Tensor) -> torch.Tensor
+  Qwen2Model.get_input_embeddings() -> nn.Embedding
+  Qwen2Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, PPProxyTensors]
+  Qwen2Model.load_kv_cache_scales(quantization_param_path: str) -> None
+  Qwen2ForCausalLM.__init__(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2ForCausalLM.get_input_embedding(input_ids: torch.Tensor) -> torch.Tensor
+  Qwen2ForCausalLM.get_input_embeddings() -> nn.Embedding
+  Qwen2ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  Qwen2ForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  Qwen2ForCausalLM.start_layer()
+  Qwen2ForCausalLM.end_layer()
+  Qwen2ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Qwen2ForCausalLM.get_embed_and_head()
+  Qwen2ForCausalLM.set_embed_and_head(embed, head)
+  Qwen2ForCausalLM.load_kv_cache_scales(quantization_param_path: str) -> None
+  Qwen2ForCausalLM.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+
+# python/sglang/srt/models/qwen2_5_vl.py
+  Qwen2_5_VLMLP.__init__(in_features: int, hidden_features: int, bias: bool, hidden_act, quant_config: Optional[QuantizationConfig], prefix: str)
+  Qwen2_5_VLMLP.forward(x: torch.Tensor) -> torch.Tensor
+  Qwen2_5_VisionBlock.__init__(dim: int, intermediate_dim: int, num_heads: int, hidden_act, norm_layer: Type[nn.Module], attn_implementation: Optional[str], quant_config: Optional[QuantizationConfig], prefix: str, num_dummy_heads: int) -> None
+  Qwen2_5_VisionBlock.forward(x: torch.Tensor, cu_seqlens: torch.Tensor, position_embeddings: torch.Tensor) -> torch.Tensor
+  Qwen2_5_VisionPatchMerger.__init__(dim: int, context_dim: int, spatial_merge_size: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2_5_VisionPatchMerger.forward(x: torch.Tensor) -> torch.Tensor
+  Qwen2_5_VisionTransformer.__init__(vision_config: Qwen2_5_VLVisionConfig, norm_eps: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2_5_VisionTransformer.get_window_index(grid_thw)
+  Qwen2_5_VisionTransformer.dtype() -> torch.dtype
+  Qwen2_5_VisionTransformer.device() -> torch.device
+  Qwen2_5_VisionTransformer.rot_pos_emb(grid_thw: torch.Tensor) -> torch.Tensor
+  Qwen2_5_VisionTransformer.forward(x: torch.Tensor, grid_thw: torch.Tensor) -> torch.Tensor
+  Qwen2_5_VLForConditionalGeneration.__init__(config: Qwen2_5_VLConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2_5_VLForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  Qwen2_5_VLForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Qwen2_5_VLForConditionalGeneration.get_video_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Qwen2_5_VLForConditionalGeneration.get_input_embeddings()
+  Qwen2_5_VLForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, get_embedding: bool)
+  Qwen2_5_VLForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen2_audio.py
+  Qwen2AudioForConditionalGeneration.__init__(config: Qwen2AudioConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2AudioForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  Qwen2AudioForConditionalGeneration.get_audio_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Qwen2AudioForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Qwen2AudioForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen2_eagle.py
+  Qwen2DecoderLayer.__init__(config: Qwen2Config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2Model.__init__(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2Model.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  Qwen2ForCausalLMEagle.__init__(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2ForCausalLMEagle.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen2_moe.py
+  Qwen2MoeMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], reduce_results: bool, prefix: str) -> None
+  Qwen2MoeMLP.forward(x, use_reduce_scatter: bool)
+  Qwen2MoeSparseMoeBlock.__init__(layer_id: int, config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Qwen2MoeSparseMoeBlock.forward(hidden_states: torch.Tensor, forward_batch: Optional[ForwardBatch], use_reduce_scatter: bool) -> torch.Tensor
+  Qwen2MoeAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, qkv_bias: int, quant_config: Optional[QuantizationConfig], dual_chunk_attention_config: Optional[dict[str, Any]], prefix: str) -> None
+  Qwen2MoeAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Qwen2MoeDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen2MoeDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Qwen2MoeModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str, decoder_layer_type: type[nn.Module], alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen2MoeModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[torch.Tensor, PPProxyTensors]
+  Qwen2MoeForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2MoeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  Qwen2MoeForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  Qwen2MoeForCausalLM.start_layer()
+  Qwen2MoeForCausalLM.end_layer()
+  Qwen2MoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Qwen2MoeForCausalLM.get_model_config_for_expert_location(cls, config)
+  Qwen2MoeForCausalLM.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+
+# python/sglang/srt/models/qwen2_rm.py
+  Qwen2ForRewardModel.__init__(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2ForRewardModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> EmbeddingPoolerOutput
+  Qwen2ForRewardModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen2_vl.py
+  Qwen2VisionMLP.__init__(in_features: int, hidden_features: int, act_layer: Type[nn.Module], quant_config: Optional[QuantizationConfig], prefix: str)
+  Qwen2VisionMLP.forward(x: torch.Tensor) -> torch.Tensor
+  Qwen2VisionBlock.__init__(dim: int, num_heads: int, mlp_ratio: float, act_layer: Type[nn.Module], norm_layer: Type[nn.Module], attn_implementation: Optional[str], quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2VisionBlock.forward(x: torch.Tensor, cu_seqlens: torch.Tensor, position_embeddings: torch.Tensor) -> torch.Tensor
+  Qwen2VisionPatchEmbed.__init__(patch_size: int, temporal_patch_size: int, in_chans: int, embed_dim: int) -> None
+  Qwen2VisionPatchEmbed.forward(x: torch.Tensor) -> torch.Tensor
+  Qwen2VisionPatchMerger.__init__(d_model: int, context_dim: int, norm_layer: Type[nn.Module], spatial_merge_size: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2VisionPatchMerger.forward(x: torch.Tensor) -> torch.Tensor
+  Qwen2VisionRotaryEmbedding.__init__(dim: int, theta: float) -> None
+  Qwen2VisionRotaryEmbedding.update_freqs_cache(seqlen: int) -> None
+  Qwen2VisionRotaryEmbedding.forward(seqlen: int) -> torch.Tensor
+  Qwen2VisionTransformer.__init__(vision_config: Qwen2VLVisionConfig, norm_eps: float, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2VisionTransformer.dtype() -> torch.dtype
+  Qwen2VisionTransformer.device() -> torch.device
+  Qwen2VisionTransformer.rot_pos_emb(grid_thw: torch.Tensor) -> torch.Tensor
+  Qwen2VisionTransformer.forward(x: torch.Tensor, grid_thw: torch.Tensor) -> torch.Tensor
+  Qwen2VLForConditionalGeneration.__init__(config: Qwen2VLConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen2VLForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  Qwen2VLForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Qwen2VLForConditionalGeneration.get_video_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Qwen2VLForConditionalGeneration.get_input_embeddings()
+  Qwen2VLForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, get_embedding: bool)
+  Qwen2VLForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen3.py
+  Qwen3Attention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], head_dim: Optional[int], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], rms_norm_eps: float, attention_bias: bool, prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen3Attention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Qwen3DecoderLayer.__init__(config: Qwen3Config, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen3DecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Qwen3Model.__init__(config: Qwen3Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen3ForCausalLM.__init__(config: Qwen3Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen3ForCausalLM.get_input_embeddings() -> nn.Embedding
+  Qwen3ForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  Qwen3ForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  Qwen3ForCausalLM.start_layer()
+  Qwen3ForCausalLM.end_layer()
+  Qwen3ForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Qwen3ForCausalLM.get_embed_and_head()
+  Qwen3ForCausalLM.set_embed_and_head(embed, head)
+  Qwen3ForCausalLM.load_kv_cache_scales(quantization_param_path: str) -> None
+  Qwen3ForCausalLM.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+
+# python/sglang/srt/models/qwen3_classification.py
+  Qwen3ForSequenceClassification.__init__(config: Qwen2Config, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen3ForSequenceClassification.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: Optional[torch.Tensor], get_embedding: bool) -> EmbeddingPoolerOutput
+  Qwen3ForSequenceClassification.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/qwen3_moe.py
+  Qwen3MoeSparseMoeBlock.__init__(layer_id: int, config: Qwen3MoeConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Qwen3MoeSparseMoeBlock.forward(hidden_states: torch.Tensor, forward_batch: Optional[ForwardBatch], use_reduce_scatter: bool) -> torch.Tensor
+  Qwen3MoeSparseMoeBlock.get_moe_weights()
+  Qwen3MoeSparseMoeBlock.forward_normal(hidden_states: torch.Tensor, use_reduce_scatter: bool) -> torch.Tensor
+  Qwen3MoeSparseMoeBlock.forward_deepep(hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Qwen3MoeSparseMoeBlock.op_gate(state)
+  Qwen3MoeSparseMoeBlock.op_select_experts(state)
+  Qwen3MoeSparseMoeBlock.op_dispatch_a(state)
+  Qwen3MoeSparseMoeBlock.op_dispatch_b(state)
+  Qwen3MoeSparseMoeBlock.op_experts(state)
+  Qwen3MoeSparseMoeBlock.op_combine_a(state)
+  Qwen3MoeSparseMoeBlock.op_combine_b(state)
+  Qwen3MoeSparseMoeBlock.op_output(state)
+  Qwen3MoeAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, head_dim: Optional[int], rms_norm_eps: float, attention_bias: bool, quant_config: Optional[QuantizationConfig], prefix: str, dual_chunk_attention_config: Optional[dict[str, Any]], alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen3MoeAttention.op_prepare(state)
+  Qwen3MoeAttention.op_core(state)
+  Qwen3MoeAttention.forward_prepare(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch)
+  Qwen3MoeAttention.forward_core(intermediate_state)
+  Qwen3MoeAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Qwen3MoeDecoderLayer.__init__(config: Qwen3MoeConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str, alt_stream: Optional[torch.cuda.Stream]) -> None
+  Qwen3MoeDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Qwen3MoeDecoderLayer.op_comm_prepare_attn(state, positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor], tbo_subbatch_index: Optional[int])
+  Qwen3MoeDecoderLayer.op_comm_prepare_mlp(state)
+  Qwen3MoeDecoderLayer.op_mlp(state)
+  Qwen3MoeDecoderLayer.op_comm_postprocess_layer(state)
+  Qwen3MoeModel.__init__(config: Qwen3MoeConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen3MoeForCausalLM.__init__(config: Qwen3MoeConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Qwen3MoeForCausalLM.get_input_embeddings() -> nn.Embedding
+  Qwen3MoeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, pp_proxy_tensors: Optional[PPProxyTensors]) -> torch.Tensor
+  Qwen3MoeForCausalLM.forward_split_prefill(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, split_interval: Tuple[int, int], input_embeds: torch.Tensor)
+  Qwen3MoeForCausalLM.start_layer()
+  Qwen3MoeForCausalLM.end_layer()
+  Qwen3MoeForCausalLM.get_embed_and_head()
+  Qwen3MoeForCausalLM.set_eagle3_layers_to_capture(layer_ids: Optional[List[int]])
+  Qwen3MoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Qwen3MoeForCausalLM.get_model_config_for_expert_location(cls, config)
+
+# python/sglang/srt/models/registry.py
+  _ModelRegistry.get_supported_archs() -> AbstractSet[str]
+  _ModelRegistry.resolve_model_cls(architectures: Union[str, List[str]]) -> Tuple[Type[nn.Module], str]
+import_model_classes()
+
+# python/sglang/srt/models/roberta.py
+  RobertaClassificationHead.__init__(config: RobertaConfig)
+  RobertaClassificationHead.forward(features)
+  RobertaEmbedding.__init__(config: RobertaConfig)
+  RobertaEmbedding.forward(input_ids: torch.Tensor, seq_lens: torch.Tensor, position_ids: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  XLMRobertaBaseModel.__init__()
+  XLMRobertaBaseModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> torch.Tensor
+  XLMRobertaBaseModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+create_position_ids_from_input_ids(input_ids, padding_idx, past_key_values_length)
+  XLMRobertaModel.__init__()
+  XLMRobertaModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> torch.Tensor
+  XLMRobertaModel.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  XLMRobertaForSequenceClassification.__init__()
+  XLMRobertaForSequenceClassification.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> torch.Tensor
+  XLMRobertaForSequenceClassification.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/siglip.py
+  SiglipVisionEmbeddings.__init__(config: SiglipVisionConfig)
+  SiglipVisionEmbeddings.forward(pixel_values: torch.Tensor) -> torch.Tensor
+  SiglipMLP.__init__(config, act_layer: Type[nn.Module], quant_config: Optional[QuantizationConfig], prefix: str)
+  SiglipMLP.forward(x: torch.Tensor) -> torch.Tensor
+  SiglipEncoderLayer.__init__(config: SiglipVisionConfig, act_layer: Type[nn.Module], norm_layer: Type[nn.Module], attn_implementation: Optional[str], quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  SiglipEncoderLayer.forward(hidden_states: torch.Tensor, attention_mask: torch.Tensor, causal_attention_mask: torch.Tensor) -> torch.Tensor
+  SiglipEncoder.__init__(config: SiglipVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  SiglipEncoder.forward(inputs_embeds: torch.Tensor, attention_mask: torch.Tensor, causal_attention_mask: torch.Tensor, return_all_hidden_states: bool) -> Union[torch.Tensor, list[torch.Tensor]]
+  SiglipVisionTransformer.__init__(config: SiglipVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  SiglipVisionTransformer.device() -> torch.device
+  SiglipVisionTransformer.forward(pixel_values: torch.Tensor) -> torch.Tensor
+  SiglipVisionModel.__init__(config: SiglipVisionConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  SiglipVisionModel.device() -> torch.device
+  SiglipVisionModel.forward(pixel_values: torch.Tensor)
+
+# python/sglang/srt/models/stablelm.py
+  StablelmMLP.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  StablelmMLP.forward(x: torch.Tensor) -> torch.Tensor
+  StablelmAttention.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  StablelmAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  StablelmDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  StablelmDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> Tuple[torch.Tensor, torch.Tensor]
+  StableLMEpochModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  StableLMEpochModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  StableLmForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  StableLmForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  StableLmForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/step3_vl.py
+  Step3TextMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Step3TextMLP.forward(x)
+  Step3TextMoEMLP.__init__(layer_id: int, config: Step3TextConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  Step3TextMoEMLP.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  Step3TextAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, head_dim: int, share_q_dim: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], rms_norm_eps, prefix: str) -> None
+  Step3TextAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  Step3TextDecoderLayer.__init__(config: Step3TextConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Step3TextDecoderLayer.moe_mlp_forward(hidden_states)
+  Step3TextDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  Step3TextModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Step3TextModel.get_input_embeddings()
+  Step3TextModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+get_abs_pos(abs_pos, tgt_size)
+  Step3VisionMLP.__init__(dim: int, intermediate_size: int, bias: bool, hidden_act, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Step3VisionMLP.forward(hidden_states) -> torch.Tensor
+  Step3VisionAttention.__init__(dim: int, num_heads: int, qkv_backend, quant_config, prefix: str) -> None
+  Step3VisionAttention.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  Step3VisionEmbeddings.__init__(config: Step3VisionEncoderConfig)
+  Step3VisionEmbeddings.forward(pixel_values: torch.Tensor) -> torch.Tensor
+  Step3VisionEncoderLayer.__init__(config, attn_implementation: str) -> None
+  Step3VisionEncoderLayer.forward(hidden_states) -> torch.Tensor
+  Step3VisionTransformer.__init__(config: Step3VisionEncoderConfig)
+  Step3VisionTransformer.dtype() -> torch.dtype
+  Step3VisionTransformer.forward(pixel_values: torch.Tensor)
+  Step3VisionEncoder.__init__(config: Step3VisionEncoderConfig)
+  Step3VisionEncoder.forward(inputs_embeds) -> torch.Tensor
+  Step3VLForConditionalGeneration.__init__(config: Step3VLConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  Step3VLForConditionalGeneration.get_image_feature(items: List[MultimodalDataItem]) -> torch.Tensor
+  Step3VLForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs)
+  Step3VLForConditionalGeneration.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  Step3VLForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  Step3VLForConditionalGeneration.get_model_config_for_expert_location(cls, config: Step3VLConfig)
+
+# python/sglang/srt/models/torch_native_llama.py
+gate_up_proj_weight_loader(param: Parameter, loaded_weight: torch.Tensor, loaded_shard_id: int)
+  LlamaMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaMLP.forward(x)
+qkv_proj_weight_loader(param: Parameter, loaded_weight: torch.Tensor, loaded_shard_id: str)
+  LlamaAttention.__init__(config: LlamaConfig, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], rope_is_neox_style: bool, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  LlamaDecoderLayer.__init__(config: LlamaConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  LlamaDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  LlamaModel.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig]) -> None
+  LlamaModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  TorchNativeLlamaForCausalLM.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig]) -> None
+  TorchNativeLlamaForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> LogitsProcessorOutput
+  TorchNativeLlamaForCausalLM.get_module_name_from_weight_name(name)
+  TorchNativeLlamaForCausalLM.get_num_params()
+  TorchNativeLlamaForCausalLM.load_weights_to_module(fqn: str, weights: Iterable[Tuple[str, torch.Tensor]])
+  TorchNativeLlamaForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/transformers.py
+maybe_prefix(prefix: str, name: str) -> str
+sglang_flash_attention_forward(module: torch.nn.Module, query: torch.Tensor, key: torch.Tensor, value: torch.Tensor, attention_mask: torch.Tensor, forward_batch: ForwardBatch, scaling: float, attention_instances: list[RadixAttention])
+  HFColumnParallelLinear.forward(input: torch.Tensor) -> torch.Tensor
+  HFRowParallelLinear.forward(input: torch.Tensor) -> torch.Tensor
+replace_linear_class(linear: nn.Linear, style: Literal['colwise', 'rowwise'], quant_config: QuantizationConfig) -> Union[ColumnParallelLinear, RowParallelLinear]
+  TransformersForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  TransformersForCausalLM.log_replacement(name: str, old_module: nn.Module, new_module: nn.Module)
+  TransformersForCausalLM.tensor_parallel(tp_size: int)
+  TransformersForCausalLM.replace_vocab_embed_class(module: nn.Module)
+  TransformersForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor, get_embedding: bool) -> LogitsProcessorOutput
+  TransformersForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/vila.py
+  VILAConfig.__init__(text_config: Optional[Dict[str, Any]], vision_config: Optional[Dict[str, Any]])
+  DownSample3x3BlockFix.forward(x: Tensor) -> Tensor
+  MultimodalProjector.__init__(config: VILAConfig)
+  MultimodalProjector.device() -> torch.device
+  MultimodalProjector.dtype() -> torch.dtype
+  MultimodalProjector.forward(x: Tensor) -> Tensor
+  VILAForConditionalGeneration.__init__(config: VILAConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  VILAForConditionalGeneration.dtype() -> torch.dtype
+  VILAForConditionalGeneration.forward(input_ids: Tensor, positions: Tensor, forward_batch: ForwardBatch, get_embedding: bool) -> LogitsProcessorOutput
+  VILAForConditionalGeneration.get_image_feature(mm_input: List[MultimodalDataItem]) -> Tensor
+  VILAForConditionalGeneration.load_weights(weights: Iterable[Tuple[str, Tensor]]) -> None
+  VILAForConditionalGeneration.pad_input_ids(input_ids: List[int], mm_inputs: MultimodalInputs) -> List[int]
+
+# python/sglang/srt/models/xverse.py
+  XverseMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseMLP.forward(x)
+  XverseAttention.__init__(config: LlamaConfig, hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], rope_is_neox_style: bool, max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  XverseDecoderLayer.__init__(config: LlamaConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> Tuple[torch.Tensor, torch.Tensor]
+  XverseModel.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  XverseForCausalLM.__init__(config: LlamaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch, input_embeds: torch.Tensor) -> torch.Tensor
+  XverseForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]], name, loaded_weight)
+
+# python/sglang/srt/models/xverse_moe.py
+  XverseMLP.__init__(hidden_size: int, intermediate_size: int, hidden_act: str, quant_config: Optional[QuantizationConfig], reduce_results: bool, prefix: str) -> None
+  XverseMLP.forward(x)
+  XverseMoE.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str)
+  XverseMoE.pack_params()
+  XverseMoE.forward(hidden_states: torch.Tensor) -> torch.Tensor
+  XverseAttention.__init__(hidden_size: int, num_heads: int, num_kv_heads: int, layer_id: int, rope_theta: float, rope_scaling: Optional[Dict[str, Any]], max_position_embeddings: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseAttention.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  XverseDecoderLayer.__init__(config: PretrainedConfig, layer_id: int, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseDecoderLayer.forward(positions: torch.Tensor, hidden_states: torch.Tensor, forward_batch: ForwardBatch, residual: Optional[torch.Tensor]) -> torch.Tensor
+  XverseModel.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseModel.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  XverseMoeForCausalLM.__init__(config: PretrainedConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  XverseMoeForCausalLM.forward(input_ids: torch.Tensor, positions: torch.Tensor, forward_batch: ForwardBatch) -> torch.Tensor
+  XverseMoeForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+
+# python/sglang/srt/models/yivl.py
+  YiVLForCausalLM.__init__(config: LlavaConfig, quant_config: Optional[QuantizationConfig], prefix: str) -> None
+  YiVLForCausalLM.load_weights(weights: Iterable[Tuple[str, torch.Tensor]])
+  YiVLMultiModalProjector.__init__(config: LlavaConfig)
+  YiVLMultiModalProjector.forward(image_features)

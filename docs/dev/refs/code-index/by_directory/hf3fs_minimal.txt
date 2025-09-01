@@ -1,0 +1,78 @@
+
+# python/sglang/srt/mem_cache/storage/hf3fs/client_hf3fs.py
+rsynchronized()
+wsynchronized()
+  Hf3fsClient.__init__(path: str, size: int, bytes_per_page: int, entries: int)
+  Hf3fsClient.batch_read(offsets: List[int], tensors: List[torch.Tensor]) -> List[int]
+  Hf3fsClient.batch_write(offsets: List[int], tensors: List[torch.Tensor]) -> List[int]
+  Hf3fsClient.check(offsets: List[int], tensors: List[torch.Tensor]) -> None
+  Hf3fsClient.get_size() -> int
+  Hf3fsClient.close() -> None
+  Hf3fsClient.flush() -> None
+
+# python/sglang/srt/mem_cache/storage/hf3fs/mini_3fs_metadata_server.py
+  RankMetadata.__init__(num_pages: int)
+  RankMetadata.exists_keys(keys: List[str]) -> List[bool]
+  RankMetadata.reserve_and_allocate_page_indices(keys: List[Tuple[str, str]]) -> List[Tuple[bool, int]]
+  RankMetadata.confirm_write(written_keys_to_confirm: List[Tuple[str, int]], pages_to_release: List[int]) -> None
+  RankMetadata.delete_keys(keys: List[str]) -> int
+  RankMetadata.clear_all() -> None
+  RankMetadata.get_page_indices(keys: List[str]) -> List[Optional[int]]
+  GlobalMetadataState.__init__(persistence_path: Optional[str], save_interval: int)
+  GlobalMetadataState.load_from_disk()
+  GlobalMetadataState.save_to_disk()
+  GlobalMetadataState.schedule_save()
+  GlobalMetadataState.shutdown()
+  Hf3fsMetadataServer.__init__(persistence_path: Optional[str], save_interval: int)
+  Hf3fsMetadataServer.get_rank_metadata(rank: int) -> RankMetadata
+  Hf3fsMetadataServer.initialize(rank: int, request: Request)
+  Hf3fsMetadataServer.exists(rank: int, request: Request)
+  Hf3fsMetadataServer.reserve_and_allocate_page_indices(rank: int, request: Request)
+  Hf3fsMetadataServer.confirm_write(rank: int, request: Request)
+  Hf3fsMetadataServer.delete_keys(rank: int, request: Request)
+  Hf3fsMetadataServer.clear(rank: int)
+  Hf3fsMetadataServer.get_page_indices(rank: int, request: Request)
+  Hf3fsMetadataServer.run(host: str, port: int)
+  Hf3fsGlobalMetadataClient.__init__(base_url: str, max_retries: int)
+  Hf3fsGlobalMetadataClient.initialize(rank: int, num_pages: int) -> None
+  Hf3fsGlobalMetadataClient.reserve_and_allocate_page_indices(rank: int, keys: List[Tuple[str, str]]) -> List[Tuple[bool, int]]
+  Hf3fsGlobalMetadataClient.confirm_write(rank: int, written_keys_to_confirm: List[Tuple[str, int]], pages_to_release: List[int]) -> None
+  Hf3fsGlobalMetadataClient.delete_keys(rank: int, keys: List[str]) -> None
+  Hf3fsGlobalMetadataClient.exists(rank: int, keys: List[str]) -> List[bool]
+  Hf3fsGlobalMetadataClient.clear(rank: int) -> None
+  Hf3fsGlobalMetadataClient.get_page_indices(rank: int, keys: List[str]) -> List[Optional[int]]
+  Hf3fsLocalMetadataClient.__init__()
+  Hf3fsLocalMetadataClient.initialize(rank: int, num_pages: int) -> None
+  Hf3fsLocalMetadataClient.reserve_and_allocate_page_indices(rank: int, keys: List[Tuple[str, str]]) -> List[Tuple[bool, int]]
+  Hf3fsLocalMetadataClient.confirm_write(rank: int, written_keys_to_confirm: List[Tuple[str, int]], pages_to_release: List[int]) -> None
+  Hf3fsLocalMetadataClient.delete_keys(rank: int, keys: List[str]) -> None
+  Hf3fsLocalMetadataClient.exists(rank: int, keys: List[str]) -> List[bool]
+  Hf3fsLocalMetadataClient.clear(rank: int) -> None
+  Hf3fsLocalMetadataClient.get_page_indices(rank: int, keys: List[str]) -> List[Optional[int]]
+run_metadata_server(host: str, port: int, persistence_path: Optional[str], save_interval: int)
+
+# python/sglang/srt/mem_cache/storage/hf3fs/storage_hf3fs.py
+  Hf3fsMetadataInterface.initialize(rank: int, num_pages: int) -> None
+  Hf3fsMetadataInterface.reserve_and_allocate_page_indices(rank: int, keys: List[Tuple[str, str]]) -> List[Tuple[bool, int]]
+  Hf3fsMetadataInterface.confirm_write(rank: int, written_keys_to_confirm: List[Tuple[str, int]], pages_to_release: List[int]) -> None
+  Hf3fsMetadataInterface.get_page_indices(rank: int, keys: List[str]) -> List[Optional[int]]
+  Hf3fsMetadataInterface.delete_keys(rank: int, keys: List[str]) -> None
+  Hf3fsMetadataInterface.exists(rank: int, keys: List[str]) -> List[bool]
+  Hf3fsMetadataInterface.clear(rank: int) -> None
+  AtomicCounter.__init__(n: int)
+  AtomicCounter.next() -> int
+synchronized()
+  HiCacheHF3FS.__init__(rank: int, file_path: str, file_size: int, numjobs: int, bytes_per_page: int, entries: int, dtype: torch.dtype, metadata_client: Hf3fsMetadataInterface, is_mla_model: bool)
+  HiCacheHF3FS.from_env_config(bytes_per_page: int, dtype: torch.dtype, storage_config: HiCacheStorageConfig) -> 'HiCacheHF3FS'
+  HiCacheHF3FS.get(key: str, target_location: Optional[Any], target_sizes: Optional[Any]) -> torch.Tensor | None
+  HiCacheHF3FS.batch_get(keys: List[str], target_locations: Optional[Any], target_sizes: Optional[Any]) -> List[torch.Tensor | None]
+  HiCacheHF3FS.set(key: str, value: Optional[Any], target_location: Optional[Any], target_sizes: Optional[Any]) -> bool
+  HiCacheHF3FS.batch_set(keys: List[str], values: Optional[Any], target_locations: Optional[Any], target_sizes: Optional[Any]) -> bool
+  HiCacheHF3FS.delete(key: str) -> None
+  HiCacheHF3FS.exists(key: str) -> bool
+  HiCacheHF3FS.batch_exists(keys: List[str]) -> int
+  HiCacheHF3FS.clear() -> bool
+  HiCacheHF3FS.close() -> None
+
+# python/sglang/srt/mem_cache/storage/hf3fs/test_hf3fs_utils.py
+test_rw_shm()

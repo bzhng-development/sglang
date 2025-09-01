@@ -1,0 +1,133 @@
+================================================================================
+FUNCTION INDEX: schemes module
+================================================================================
+Total Functions: 25
+Documented: 8
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_scheme.py
+Functions: 4
+============================================================
+
+
+CLASS: CompressedTensorsScheme
+----------------------------------------
+  L  20: get_min_capability(cls)
+         → int
+         📝 Get minimum device capability.
+
+  L  27: create_weights(self)
+         📝 Weight creation for the particular scheme. Inputs to this function
+
+  L  35: apply_weights(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         📝 Run the forward pass for the particular scheme. This is where
+            scheme-specific dequant/quant steps/kernels should be applied.
+            :param layer: torch.nn.Module with the registered weights and
+            other parameters relevant to the particular scheme.
+            :param x: input to the layer
+            :param bias: bias parameter
+
+  L  51: process_weights_after_loading(self, layer: torch.nn.Module)
+         📝 Called after weight loading is complete for any cleanup that
+            needs to occur.
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a16_fp8.py
+Functions: 7
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  29: def apply_fp8_marlin_linear()
+
+  L  32: def prepare_fp8_layer_for_marlin()
+
+
+CLASS: CompressedTensorsW8A16Fp8
+----------------------------------------
+  L  42: __init__(self, strategy: str, is_static_input_scheme: bool)
+
+  L  52: get_min_capability(cls)
+         → int
+
+  L  59: process_weights_after_loading(self, layer)
+         → None
+
+  L  81: create_weights(self, layer: torch.nn.Module, input_size: int, output_partition_sizes: List[int], input_size_per_partition: int, params_dtype: torch.dtype, weight_loader: Callable)
+
+  L 139: apply_weights(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py
+Functions: 5
+============================================================
+
+
+CLASS: CompressedTensorsW8A8Fp8
+----------------------------------------
+  L  30: __init__(self, strategy: str, is_static_input_scheme: bool)
+
+  L  35: get_min_capability(cls)
+         → int
+
+  L  39: process_weights_after_loading(self, layer)
+         → None
+
+  L  92: create_weights(self, layer: torch.nn.Module, output_partition_sizes: List[int], input_size_per_partition: int, params_dtype: torch.dtype, weight_loader: Callable)
+
+  L 146: apply_weights(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/quark/schemes/quark_scheme.py
+Functions: 4
+============================================================
+
+
+CLASS: QuarkScheme
+----------------------------------------
+  L  19: get_min_capability(cls)
+         → int
+         📝 Get minimum device capability.
+
+  L  26: create_weights(self)
+         📝 Weight creation for the particular scheme. Inputs to this function
+
+  L  34: apply_weights(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         📝 Run the forward pass for the particular scheme. This is where
+            scheme-specific dequant/quant steps/kernels should be applied.
+            :param layer: torch.nn.Module with the registered weights and
+            other parameters relevant to the particular scheme.
+            :param x: input to the layer
+            :param bias: bias parameter
+
+  L  50: process_weights_after_loading(self, layer: torch.nn.Module)
+         📝 Called after weight loading is complete for any cleanup that
+            needs to occur.
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/quark/schemes/quark_w4a4_mxfp4.py
+Functions: 5
+============================================================
+
+
+CLASS: QuarkW4A4MXFP4
+----------------------------------------
+  L  26: __init__(self, weight_quant_spec: dict[str, Any], input_quant_spec: dict[str, Any])
+
+  L  35: get_min_capability(cls)
+         → int
+
+  L  38: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L  50: create_weights(self, layer: torch.nn.Module, output_partition_sizes: list[int], input_size_per_partition: int, params_dtype: torch.dtype, weight_loader: Callable)
+
+  L  90: apply_weights(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor

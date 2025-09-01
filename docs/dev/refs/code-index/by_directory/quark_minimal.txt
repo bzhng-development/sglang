@@ -1,0 +1,31 @@
+
+# python/sglang/srt/layers/quantization/quark/quark.py
+  QuarkConfig.__init__(quant_config: dict[str, Any], kv_cache_group: Optional[list[str]], kv_cache_config: Optional[dict[str, Any]], pack_method: str)
+  QuarkConfig.get_linear_method() -> 'QuarkLinearMethod'
+  QuarkConfig.get_supported_act_dtypes(cls) -> list[torch.dtype]
+  QuarkConfig.get_min_capability(cls) -> int
+  QuarkConfig.get_name() -> str
+  QuarkConfig.get_quant_method(layer: torch.nn.Module, prefix: str) -> Optional['QuantizeMethodBase']
+  QuarkConfig.from_config(cls, config: dict[str, Any]) -> 'QuarkConfig'
+  QuarkConfig.get_config_filenames(cls) -> list[str]
+  QuarkConfig.get_scheme(layer: torch.nn.Module, layer_name: str) -> 'QuarkScheme'
+  QuarkConfig.get_scaled_act_names() -> List[str]
+  QuarkLinearMethod.__init__(quantization_config: QuarkConfig)
+  QuarkLinearMethod.process_weights_after_loading(layer: torch.nn.Module) -> None
+  QuarkLinearMethod.create_weights(layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: list[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+  QuarkLinearMethod.apply(layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+  QuarkKVCacheMethod.__init__(quant_config: QuarkConfig)
+  QuarkKVCacheMethod.validate_kv_cache_config(kv_cache_config: Optional[dict[str, Any]])
+
+# python/sglang/srt/layers/quantization/quark/quark_moe.py
+  QuarkMoEMethod.__new__(cls)
+  QuarkMoEMethod.get_moe_method(quant_config: 'QuarkConfig', module: torch.nn.Module, layer_name: str) -> 'QuarkMoEMethod'
+  QuarkW4A4MXFp4MoEMethod.__init__(weight_config: dict[str, Any], input_config: dict[str, Any])
+  QuarkW4A4MXFp4MoEMethod.create_weights(layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+  QuarkW4A4MXFp4MoEMethod.process_weights_after_loading(layer: torch.nn.Module) -> None
+  QuarkW4A4MXFp4MoEMethod.apply(layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig) -> torch.Tensor
+
+# python/sglang/srt/layers/quantization/quark/utils.py
+deep_compare(dict1: Any, dict2: Any) -> bool
+should_ignore_layer(layer_name: Optional[str], ignore: Iterable[str], fused_mapping: Mapping[str, list[str]]) -> bool
+check_equal_or_regex_match(layer_name: str, targets: Iterable[str]) -> bool

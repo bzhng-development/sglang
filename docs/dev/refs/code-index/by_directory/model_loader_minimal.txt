@@ -1,0 +1,79 @@
+
+# python/sglang/srt/model_loader/__init__.py
+get_model() -> nn.Module
+
+# python/sglang/srt/model_loader/loader.py
+device_loading_context(module: torch.nn.Module, target_device: torch.device)
+  BaseModelLoader.__init__(load_config: LoadConfig)
+  BaseModelLoader.download_model(model_config: ModelConfig) -> None
+  BaseModelLoader.load_model() -> nn.Module
+  Source.init_new(cls, model_config: ModelConfig, model)
+  DefaultModelLoader.__init__(load_config: LoadConfig)
+  DefaultModelLoader.download_model(model_config: ModelConfig) -> None
+  DefaultModelLoader.load_model() -> nn.Module
+  DefaultModelLoader.load_weights_and_postprocess(model, weights, target_device)
+  LayeredModelLoader.__init__(load_config: LoadConfig)
+  LayeredModelLoader.load_model() -> nn.Module
+  DummyModelLoader.__init__(load_config: LoadConfig)
+  DummyModelLoader.download_model(model_config: ModelConfig) -> None
+  DummyModelLoader.load_model() -> nn.Module
+  ShardedStateLoader.__init__(load_config: LoadConfig)
+  ShardedStateLoader.download_model(model_config: ModelConfig) -> None
+  ShardedStateLoader.load_model() -> nn.Module
+  ShardedStateLoader.save_model(model: torch.nn.Module, path: str, pattern: Optional[str], max_size: Optional[int]) -> None
+  BitsAndBytesModelLoader.__init__(load_config: LoadConfig)
+  BitsAndBytesModelLoader.download_model(model_config: ModelConfig) -> None
+  BitsAndBytesModelLoader.load_model() -> nn.Module
+  GGUFModelLoader.__init__(load_config: LoadConfig)
+  GGUFModelLoader.download_model(model_config: ModelConfig) -> None
+  GGUFModelLoader.load_model() -> nn.Module
+  RemoteModelLoader.__init__(load_config: LoadConfig)
+  RemoteModelLoader.download_model(model_config: ModelConfig) -> None
+  RemoteModelLoader.save_model(model: torch.nn.Module, model_path: str, url: str) -> None
+  RemoteModelLoader.load_model() -> nn.Module
+load_model_with_cpu_quantization() -> nn.Module
+get_model_loader(load_config: LoadConfig) -> BaseModelLoader
+
+# python/sglang/srt/model_loader/utils.py
+set_default_torch_dtype(dtype: torch.dtype)
+resolve_transformers_arch(model_config: ModelConfig, architectures: list[str])
+get_model_architecture(model_config: ModelConfig) -> Tuple[Type[nn.Module], str]
+get_architecture_class_name(model_config: ModelConfig) -> str
+post_load_weights(model: nn.Module, model_config: ModelConfig)
+
+# python/sglang/srt/model_loader/weight_utils.py
+enable_hf_transfer()
+  DisabledTqdm.__init__()
+get_lock(model_name_or_path: str, cache_dir: Optional[str])
+convert_bin_to_safetensor_file(pt_filename: str, sf_filename: str) -> None
+get_quant_config(model_config: ModelConfig, load_config: LoadConfig, packed_modules_mapping: Dict[str, List[str]]) -> QuantizationConfig
+download_weights_from_hf(model_name_or_path: str, cache_dir: Optional[str], allow_patterns: List[str], revision: Optional[str], ignore_patterns: Optional[Union[str, List[str]]]) -> str
+download_safetensors_index_file_from_hf(model_name_or_path: str, index_file: str, cache_dir: Optional[str], revision: Optional[str]) -> None
+filter_duplicate_safetensors_files(hf_weights_files: List[str], hf_folder: str, index_file: str) -> List[str]
+filter_files_not_needed_for_inference(hf_weights_files: List[str]) -> List[str]
+np_cache_weights_iterator(model_name_or_path: str, cache_dir: Optional[str], hf_folder: str, hf_weights_files: List[str]) -> Generator[Tuple[str, torch.Tensor], None, None]
+decrypt(fn, key)
+safetensors_encrypted_weights_iterator(hf_weights_files: List[str], is_all_weights_sharded: bool, decryption_key: Optional[str])
+safetensors_weights_iterator(hf_weights_files: List[str], is_all_weights_sharded: bool, decryption_key: Optional[str], disable_mmap: bool) -> Generator[Tuple[str, torch.Tensor], None, None]
+multi_thread_safetensors_weights_iterator(hf_weights_files: List[str], is_all_weights_sharded: bool, decryption_key: Optional[str], max_workers: int, disable_mmap: bool) -> Generator[Tuple[str, torch.Tensor], None, None]
+pt_weights_iterator(hf_weights_files: List[str]) -> Generator[Tuple[str, torch.Tensor], None, None]
+multi_thread_pt_weights_iterator(hf_weights_files: List[str], max_workers: int) -> Generator[Tuple[str, torch.Tensor], None, None]
+get_gguf_extra_tensor_names(gguf_file: str, gguf_to_hf_name_map: Dict[str, str]) -> List[str]
+gguf_quant_weights_iterator(gguf_file: str, gguf_to_hf_name_map: Dict[str, str]) -> Generator[Tuple[str, torch.Tensor], None, None]
+convert_pyslice_to_tensor(x: Any) -> torch.Tensor
+default_weight_loader(param: torch.Tensor, loaded_weight: torch.Tensor) -> None
+row_parallel_weight_loader(param: torch.Tensor, loaded_weight: torch.Tensor) -> None
+sharded_weight_loader(shard_axis: int) -> LoaderFunction
+composed_weight_loader(loader: LoaderFunction, fn: Callable[[torch.Tensor], torch.Tensor]) -> LoaderFunction
+runai_safetensors_weights_iterator(hf_weights_files: List[str]) -> Generator[Tuple[str, torch.Tensor], None, None]
+set_runai_streamer_env(load_config: LoadConfig)
+initialize_dummy_weights(model: torch.nn.Module, low: float, high: float, seed: int) -> None
+maybe_remap_kv_scale_name(name: str, params_dict: dict) -> Optional[str]
+  KVCacheQuantSchema.check_is_fp8() -> 'KVCacheQuantSchema'
+  KVCacheQuantSchema.check_tp_ranks(info: ValidationInfo) -> 'KVCacheQuantSchema'
+  KVCacheQuantSchema.check_current_rank(info: ValidationInfo) -> 'KVCacheQuantSchema'
+  QuantParamSchema.check_model_type(info: ValidationInfo) -> 'QuantParamSchema'
+kv_cache_scales_loader(filename: str, tp_rank: int, tp_size: int, num_hidden_layers: int, model_type: Optional[str]) -> Iterable[Tuple[int, float]]
+get_actual_shard_size(shard_size, weight_start, weight_end)
+reset_param_data_if_needed(param_data, dim, start, length)
+narrow_padded_param_and_loaded_weight(param_data, loaded_weight, param_data_start, weight_start, dim, shard_size, narrow_weight)

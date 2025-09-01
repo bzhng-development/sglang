@@ -1,0 +1,286 @@
+
+# python/sglang/srt/layers/attention/aiter_backend.py
+  AiterAttnBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor])
+  AiterAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  AiterAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  AiterAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo])
+  AiterAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo], seq_lens_cpu: Optional[torch.Tensor])
+  AiterAttnBackend.get_cuda_graph_seq_len_fill_value()
+  AiterAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  AiterAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  AiterIndicesUpdaterPrefill.__init__(model_runner: ModelRunner, attn_backend: AttentionBackend)
+  AiterIndicesUpdaterPrefill.update(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, prefix_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], spec_info: Optional[SpecInfo])
+  AiterIndicesUpdaterPrefill.update_single_wrapper(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, prefix_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], spec_info: Optional[SpecInfo])
+  AiterMlaIndicesUpdaterPrefill.__init__(model_runner: ModelRunner, attn_backend: AttentionBackend)
+  AiterMlaIndicesUpdaterPrefill.update(req_pool_indices: torch.Tensor, kv_lens: torch.Tensor, kv_lens_sum: int, extend_lens: torch.Tensor, max_q_len: int, max_kv_len: int, spec_info: Optional[SpecInfo])
+  AiterMlaIndicesUpdaterPrefill.update_single_wrapper(req_pool_indices: torch.Tensor, kv_lens: torch.Tensor, kv_lens_sum: int, extend_lens: torch.Tensor, max_q_len: int, max_kv_len: int, spec_info: Optional[SpecInfo])
+  AiterMultiStepDraftBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  AiterMultiStepDraftBackend.common_template(forward_batch: ForwardBatch, kv_indices_buffer: torch.Tensor, call_fn: int)
+  AiterMultiStepDraftBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  AiterMultiStepDraftBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  AiterMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  AiterMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+
+# python/sglang/srt/layers/attention/ascend_backend.py
+  AscendAttnBackend.gen_attention_mask(max_seq_len: int, dtype)
+  AscendAttnBackend.__init__(model_runner: ModelRunner)
+  AscendAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  AscendAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  AscendAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  AscendAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  AscendAttnBackend.get_cuda_graph_seq_len_fill_value()
+  AscendAttnBackend.forward_extend(q, k, v, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  AscendAttnBackend.forward_decode_graph(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor])
+  AscendAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor])
+
+# python/sglang/srt/layers/attention/base_attn_backend.py
+  AttentionBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  AttentionBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  AttentionBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  AttentionBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  AttentionBackend.get_cuda_graph_seq_len_fill_value()
+  AttentionBackend.forward(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  AttentionBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  AttentionBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  AttentionBackend.support_triton()
+
+# python/sglang/srt/layers/attention/cutlass_mla_backend.py
+  CutlassMLADecodeMetadata.__init__(workspace: Optional[torch.Tensor], block_kv_indices: Optional[torch.Tensor])
+  CutlassMLABackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor], kv_last_page_len_buf: Optional[torch.Tensor])
+  CutlassMLABackend.init_forward_metadata(forward_batch: ForwardBatch)
+  CutlassMLABackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, block_kv_indices: Optional[torch.Tensor])
+  CutlassMLABackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo])
+  CutlassMLABackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo], seq_lens_cpu: Optional[torch.Tensor])
+  CutlassMLABackend.get_cuda_graph_seq_len_fill_value()
+  CutlassMLABackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor])
+
+# python/sglang/srt/layers/attention/double_sparsity_backend.py
+  DoubleSparseAttnBackend.__init__(model_runner: ModelRunner)
+  DoubleSparseAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  DoubleSparseAttnBackend.forward_extend(q, k, v, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  DoubleSparseAttnBackend.forward_decode(q, k, v, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+
+# python/sglang/srt/layers/attention/dual_chunk_flashattention_backend.py
+  DualChunkFlashAttentionBackend.__init__(model_runner: 'ModelRunner') -> None
+  DualChunkFlashAttentionBackend.get_sparse_attention_config(layer_idx) -> List[Dict[str, Any]]
+  DualChunkFlashAttentionBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  DualChunkFlashAttentionBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: 'RadixAttention', forward_batch: ForwardBatch, save_kv_cache)
+  DualChunkFlashAttentionBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: 'RadixAttention', forward_batch: ForwardBatch, save_kv_cache) -> torch.Tensor
+  DualChunkFlashAttentionBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  DualChunkFlashAttentionBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[None])
+  DualChunkFlashAttentionBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[None], seq_lens_cpu: Optional[torch.Tensor], out_cache_loc: torch.Tensor)
+  DualChunkFlashAttentionBackend.get_cuda_graph_seq_len_fill_value()
+
+# python/sglang/srt/layers/attention/flashattention_backend.py
+make_local_attention_virtual_batches(attn_chunk_size: int, query_start_loc_np: np.ndarray, seq_lens_np: np.ndarray, block_table: torch.Tensor, page_size: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, torch.Tensor]
+cdiv(a: int, b: int) -> int
+merge_state_v2_wrapper(o, s_a, o_exp, s_b)
+  FlashAttentionBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, speculative_step_id, topk, speculative_num_steps)
+  FlashAttentionBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashAttentionBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor], sinks: Optional[torch.Tensor])
+  FlashAttentionBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor], sinks: Optional[torch.Tensor]) -> torch.Tensor
+  FlashAttentionBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  FlashAttentionBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashAttentionBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor], out_cache_loc: Optional[torch.Tensor])
+  FlashAttentionBackend.get_cuda_graph_seq_len_fill_value()
+prepare_swa_spec_page_table_triton(page_table_dst: torch.Tensor, page_table_a: torch.Tensor, page_table_b: torch.Tensor, seq_len_a: torch.Tensor, seq_len_b: torch.Tensor, speculative_num_draft_tokens: int)
+  FlashAttentionMultiStepBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  FlashAttentionMultiStepBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashAttentionMultiStepBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  FlashAttentionMultiStepBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  FlashAttentionMultiStepBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+normal_decode_set_metadata(cache_seqlens_int32: torch.Tensor, cu_seqlens_k: torch.Tensor, page_table: torch.Tensor, req_to_token: torch.Tensor, req_pool_indices: torch.Tensor, strided_indices: torch.Tensor, max_seq_pages: torch.Tensor, seq_lens: torch.Tensor, seq_len_delta: int, page_size: int)
+
+# python/sglang/srt/layers/attention/flashinfer_backend.py
+  FlashInferAttnBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor], kv_last_page_len_buf: Optional[torch.Tensor])
+  FlashInferAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashInferAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  FlashInferAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  FlashInferAttnBackend.get_cuda_graph_seq_len_fill_value()
+  FlashInferAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  FlashInferAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  FlashInferIndicesUpdaterDecode.__init__(model_runner: ModelRunner, attn_backend: FlashInferAttnBackend)
+  FlashInferIndicesUpdaterDecode.update(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, decode_wrappers: List[BatchDecodeWithPagedKVCacheWrapper], encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterDecode.update_single_wrapper(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, decode_wrappers: List[BatchDecodeWithPagedKVCacheWrapper], encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterDecode.update_sliding_window(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, decode_wrappers: List[BatchDecodeWithPagedKVCacheWrapper], encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterDecode.update_cross_attention(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, decode_wrappers: List[BatchDecodeWithPagedKVCacheWrapper], encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterDecode.call_begin_forward(wrapper: BatchDecodeWithPagedKVCacheWrapper, req_pool_indices: torch.Tensor, paged_kernel_lens: torch.Tensor, paged_kernel_lens_sum: int, kv_indptr: torch.Tensor, kv_start_idx: torch.Tensor, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor], use_sliding_window_kv_pool: bool)
+  FlashInferIndicesUpdaterPrefill.__init__(model_runner: ModelRunner, attn_backend: FlashInferAttnBackend)
+  FlashInferIndicesUpdaterPrefill.update(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, prefix_lens: torch.Tensor, prefill_wrappers: List[BatchPrefillWithPagedKVCacheWrapper], use_ragged: bool, encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterPrefill.update_single_wrapper(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, prefix_lens: torch.Tensor, prefill_wrappers: List[BatchPrefillWithPagedKVCacheWrapper], use_ragged: bool, encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterPrefill.update_sliding_window(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, prefix_lens: torch.Tensor, prefill_wrappers: List[BatchPrefillWithPagedKVCacheWrapper], use_ragged: bool, encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterPrefill.update_cross_attention(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_cpu: Optional[torch.Tensor], seq_lens_sum: int, prefix_lens: torch.Tensor, prefill_wrappers: List[BatchPrefillWithPagedKVCacheWrapper], use_ragged: bool, encoder_lens: Optional[torch.Tensor], spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferIndicesUpdaterPrefill.call_begin_forward(wrapper_ragged: BatchPrefillWithRaggedKVCacheWrapper, wrapper_paged: BatchPrefillWithPagedKVCacheWrapper, req_pool_indices: torch.Tensor, paged_kernel_lens: torch.Tensor, paged_kernel_lens_sum: int, seq_lens: torch.Tensor, prefix_lens: torch.Tensor, kv_start_idx: torch.Tensor, kv_indptr: torch.Tensor, qo_indptr: torch.Tensor, use_ragged: bool, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], use_sliding_window_kv_pool: bool)
+  FlashInferMultiStepDraftBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  FlashInferMultiStepDraftBackend.common_template(forward_batch: ForwardBatch, kv_indices_buffer: torch.Tensor, call_fn: Callable)
+  FlashInferMultiStepDraftBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashInferMultiStepDraftBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  FlashInferMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  FlashInferMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+should_use_tensor_core(kv_cache_dtype: torch.dtype, num_attention_heads: int, num_kv_heads: int) -> bool
+fast_decode_plan(indptr: torch.Tensor, indices: torch.Tensor, last_page_len: torch.Tensor, num_qo_heads: int, num_kv_heads: int, head_dim: int, page_size: int, pos_encoding_mode: str, window_left: int, logits_soft_cap: Optional[float], q_data_type: Optional[Union[str, torch.dtype]], kv_data_type: Optional[Union[str, torch.dtype]], data_type: Optional[Union[str, torch.dtype]], sm_scale: Optional[float], rope_scale: Optional[float], rope_theta: Optional[float], non_blocking: bool) -> None
+
+# python/sglang/srt/layers/attention/flashinfer_mla_backend.py
+  FlashInferMhaChunkKVRunner.__init__(model_runner: ModelRunner, attn_backend: 'FlashInferMlaAttnBackend')
+  FlashInferMhaChunkKVRunner.update_prefix_chunks(num_prefix_chunks: int)
+  FlashInferMhaChunkKVRunner.update_wrapper(forward_batch: ForwardBatch)
+  FlashInferMhaChunkKVRunner.forward(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch)
+  FlashInferMLAAttnBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor], q_indptr_decode_buf: Optional[torch.Tensor])
+  FlashInferMLAAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashInferMLAAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  FlashInferMLAAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo])
+  FlashInferMLAAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo], seq_lens_cpu: Optional[torch.Tensor])
+  FlashInferMLAAttnBackend.get_cuda_graph_seq_len_fill_value()
+  FlashInferMLAAttnBackend.init_mha_chunk_metadata(forward_batch: ForwardBatch)
+  FlashInferMLAAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor])
+  FlashInferMLAAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor])
+  FlashInferMLAIndicesUpdaterDecode.__init__(model_runner: ModelRunner, attn_backend: AttentionBackend)
+  FlashInferMLAIndicesUpdaterDecode.update(req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, decode_wrapper: BatchMLAPagedAttentionWrapper, init_metadata_replay: bool, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferMLAIndicesUpdaterDecode.call_begin_forward(wrapper: BatchMLAPagedAttentionWrapper, req_pool_indices: torch.Tensor, paged_kernel_lens: torch.Tensor, paged_kernel_lens_sum: int, q_indptr: torch.Tensor, kv_indptr: torch.Tensor, init_metadata_replay: bool, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferMLAIndicesUpdaterPrefill.__init__(model_runner: ModelRunner, attn_backend: AttentionBackend)
+  FlashInferMLAIndicesUpdaterPrefill.update(req_pool_indices: torch.Tnesor, seq_lens: torch.Tensor, seq_lens_sum: int, prefix_lens: torch.Tensor, prefill_wrapper_paged: BatchMLAPagedAttentionWrapper, use_ragged: bool, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferMLAIndicesUpdaterPrefill.call_begin_forward(wrapper_ragged: BatchPrefillWithRaggedKVCacheWrapper, wrapper_paged: BatchMLAPagedAttentionWrapper, req_pool_indices: torch.Tensor, paged_kernel_lens: torch.Tensor, paged_kernel_lens_sum: int, seq_lens: torch.Tensor, prefix_lens: torch.Tensor, kv_indptr: torch.Tensor, qo_indptr: torch.Tensor, use_ragged: bool, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  FlashInferMLAMultiStepDraftBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  FlashInferMLAMultiStepDraftBackend.common_template(forward_batch: ForwardBatch, kv_indices_buffer: torch.Tensor, call_fn: Callable)
+  FlashInferMLAMultiStepDraftBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashInferMLAMultiStepDraftBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  FlashInferMLAMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  FlashInferMLAMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+fast_mla_decode_plan(qo_indptr_cpu: torch.Tensor, kv_indptr_cpu: torch.Tensor, kv_indices: torch.Tensor, kv_len_arr_cpu: torch.Tensor, num_heads: int, head_dim_ckv: int, head_dim_kpe: int, page_size: int, causal: bool, sm_scale: float, q_data_type: torch.dtype, kv_data_type: torch.dtype) -> None
+
+# python/sglang/srt/layers/attention/flashmla_backend.py
+  FlashMLADecodeMetadata.__init__(flashmla_metadata: Optional[Tuple[torch.Tensor, torch.Tensor]], num_splits: Optional[torch.Tensor], block_kv_indices: Optional[torch.Tensor])
+  FlashMLABackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor], kv_last_page_len_buf: Optional[torch.Tensor])
+  FlashMLABackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashMLABackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, block_kv_indices: Optional[torch.Tensor])
+  FlashMLABackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo])
+  FlashMLABackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo], seq_lens_cpu: Optional[torch.Tensor])
+  FlashMLABackend.get_cuda_graph_seq_len_fill_value()
+  FlashMLABackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  FlashMLABackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  FlashMLAMultiStepDraftBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  FlashMLAMultiStepDraftBackend.common_template(forward_batch: ForwardBatch, call_fn: Callable)
+  FlashMLAMultiStepDraftBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  FlashMLAMultiStepDraftBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  FlashMLAMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  FlashMLAMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+
+# python/sglang/srt/layers/attention/hybrid_attn_backend.py
+  HybridAttnBackend.__init__(model_runner: ModelRunner, prefill_backend: AttentionBackend, decode_backend: AttentionBackend)
+  HybridAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  HybridAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  HybridAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  HybridAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  HybridAttnBackend.get_cuda_graph_seq_len_fill_value()
+  HybridAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+  HybridAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool)
+
+# python/sglang/srt/layers/attention/intel_amx_backend.py
+  IntelAMXAttnBackend.__init__(model_runner: ModelRunner)
+  IntelAMXAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  IntelAMXAttnBackend.forward_extend(q, k, v, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  IntelAMXAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  IntelAMXAttnBackend.support_triton()
+
+# python/sglang/srt/layers/attention/merge_state.py
+merge_state(prefix_output: torch.Tensor, prefix_lse: torch.Tensor, suffix_output: torch.Tensor, suffix_lse: torch.Tensor, output: Optional[torch.Tensor], output_lse: Optional[torch.Tensor]) -> Tuple[torch.Tensor, Optional[torch.Tensor]]
+
+# python/sglang/srt/layers/attention/tbo_backend.py
+  TboAttnBackend.__init__(primary: AttentionBackend, children: List[AttentionBackend])
+  TboAttnBackend.init_new(cls, creator: Callable[[], AttentionBackend])
+  TboAttnBackend.init_forward_metadata(forward_batch: 'ForwardBatch')
+  TboAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  TboAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: 'ForwardMode', spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  TboAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: 'ForwardMode', spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  TboAttnBackend.get_cuda_graph_seq_len_fill_value()
+  TboAttnBackend.forward_extend()
+  TboAttnBackend.forward_decode()
+
+# python/sglang/srt/layers/attention/torch_native_backend.py
+  TorchNativeAttnBackend.__init__(model_runner: ModelRunner)
+  TorchNativeAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  TorchNativeAttnBackend.forward_extend(q, k, v, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  TorchNativeAttnBackend.forward_decode(q, k, v, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  TorchNativeAttnBackend.support_triton()
+
+# python/sglang/srt/layers/attention/triton_backend.py
+logit_capping_mod(logit_capping_method, logit_cap)
+  TritonAttnBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor])
+  TritonAttnBackend.get_num_kv_splits(num_kv_splits: torch.Tensor, seq_lens: torch.Tensor)
+  TritonAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  TritonAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  TritonAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  TritonAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  TritonAttnBackend.get_cuda_graph_seq_len_fill_value()
+  TritonAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache, sinks)
+  TritonAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache, sinks)
+  TritonMultiStepDraftBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  TritonMultiStepDraftBackend.common_template(forward_batch: ForwardBatch, kv_indices_buffer: torch.Tensor, call_fn: int)
+  TritonMultiStepDraftBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  TritonMultiStepDraftBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  TritonMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  TritonMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+get_num_kv_splits_triton(num_kv_splits_ptr, seq_lens_ptr, num_seq, num_group, num_head, num_kv_head, max_kv_splits, device_core_count, MAX_NUM_SEQ: tl.constexpr)
+update_sliding_window_buffer(window_kv_indptr, req_to_token, sliding_window_size, seq_lens, req_pool_indices, bs, device, token_to_kv_pool_allocator)
+update_sliding_window_buffer_cuda_graph(window_kv_indptr, window_kv_indices, req_to_token, sliding_window_size, seq_lens, req_pool_indices, bs, token_to_kv_pool_allocator)
+
+# python/sglang/srt/layers/attention/trtllm_mha_backend.py
+  TRTLLMHAAttnBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor], kv_last_page_len_buf: Optional[torch.Tensor], speculative_step_id: int)
+  TRTLLMHAAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  TRTLLMHAAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo])
+  TRTLLMHAAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo], seq_lens_cpu: Optional[torch.Tensor])
+  TRTLLMHAAttnBackend.get_cuda_graph_seq_len_fill_value() -> int
+  TRTLLMHAAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  TRTLLMHAAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool) -> torch.Tensor
+  TRTLLMHAAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  TRTLLMHAAttnMultiStepDraftBackend.__init__(model_runner: ModelRunner, topk: int, speculative_num_steps: int)
+  TRTLLMHAAttnMultiStepDraftBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  TRTLLMHAAttnMultiStepDraftBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int)
+  TRTLLMHAAttnMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph(forward_batch: ForwardBatch)
+  TRTLLMHAAttnMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph(forward_batch: ForwardBatch, bs: int)
+
+# python/sglang/srt/layers/attention/trtllm_mla_backend.py
+  TRTLLMMLABackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor], q_indptr_decode_buf: Optional[torch.Tensor])
+  TRTLLMMLABackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  TRTLLMMLABackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo])
+  TRTLLMMLABackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[SpecInfo], seq_lens_cpu: Optional[torch.Tensor])
+  TRTLLMMLABackend.get_cuda_graph_seq_len_fill_value() -> int
+  TRTLLMMLABackend.init_forward_metadata(forward_batch: ForwardBatch)
+  TRTLLMMLABackend.quantize_and_rope_for_fp8(q_nope: torch.Tensor, q_rope: torch.Tensor, k_nope: torch.Tensor, k_rope: torch.Tensor, forward_batch: ForwardBatch, cos_sin_cache: torch.Tensor, is_neox: bool) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+  TRTLLMMLABackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache: bool, q_rope: Optional[torch.Tensor], k_rope: Optional[torch.Tensor], cos_sin_cache: Optional[torch.Tensor], is_neox: Optional[bool]) -> torch.Tensor
+  TRTLLMMLAMultiStepDraftBackend.__init__(model_runner: 'ModelRunner', topk: int, speculative_num_steps: int)
+
+# python/sglang/srt/layers/attention/utils.py
+create_flashinfer_kv_indices_triton(req_to_token_ptr, req_pool_indices_ptr, page_kernel_lens_ptr, kv_indptr, kv_start_idx, kv_indices_ptr, req_to_token_ptr_stride: tl.constexpr)
+create_flashmla_kv_indices_triton(req_to_token_ptr, req_pool_indices_ptr, page_kernel_lens_ptr, kv_start_idx, kv_indices_ptr, req_to_token_ptr_stride: tl.constexpr, kv_indices_ptr_stride: tl.constexpr, NUM_PAGE_PER_BLOCK: tl.constexpr, PAGED_SIZE: tl.constexpr)
+
+# python/sglang/srt/layers/attention/vision.py
+  SingletonCache.set_data(value: Any) -> None
+  SingletonCache.get_data() -> Optional[Any]
+  SingletonCache.empty() -> bool
+  VisionSdpaAttention.__init__(head_dim: int, num_heads: int, num_kv_heads: int, dropout: float, flatten_batch: bool, softmax_in_single_precision: bool)
+  VisionSdpaAttention.generate_patch_attention_mask(s: int, cu_seqlens: Optional[torch.Tensor], flatten_batch: bool) -> Optional[torch.Tensor]
+  VisionSdpaAttention.forward(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, bsz: int, cu_seqlens: Optional[torch.Tensor], attention_mask: Optional[torch.Tensor]) -> torch.Tensor
+  VisionTritonAttention.__init__()
+  VisionTritonAttention.forward(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, cu_seqlens: Optional[torch.Tensor], bsz: int, seq_len: int) -> torch.Tensor
+  VisionFlash3Attention.__init__()
+  VisionFlash3Attention.forward(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, cu_seqlens: Optional[Union[SingletonCache, torch.Tensor]], bsz: int, seq_len: int) -> torch.Tensor
+  VisionAttention.__init__(embed_dim: int, num_heads: int, projection_size: int, use_qkv_parallel: bool, qkv_backend: Optional[str], quant_config: Optional[QuantizationConfig], dropout: float, softmax_in_single_precision: bool, flatten_batch: bool, prefix: str, proj_bias: bool, num_dummy_heads: int, qkv_bias: bool, qk_normalization: bool, layer_norm_eps: float, customized_position_embedding_applier: Callable[[torch.Tensor, torch.Tensor, Any, Any], Tuple[torch.Tensor, torch.Tensor]])
+  VisionAttention.forward(x: torch.Tensor, cu_seqlens: Optional[torch.Tensor], position_embeddings: Optional[Tuple[torch.Tensor, torch.Tensor]], attention_mask: Optional[torch.Tensor]) -> torch.Tensor
+
+# python/sglang/srt/layers/attention/vision_utils.py
+update_vit_attn_dummy_heads_config(config)
+pad_vit_attn_dummy_heads(config, name: str, loaded_weight: torch.Tensor)
+
+# python/sglang/srt/layers/attention/wave_backend.py
+get_num_kv_splits_triton(num_kv_splits_ptr, seq_lens_ptr, num_seq, num_group, num_head, num_kv_head, max_kv_splits, device_core_count, MAX_NUM_SEQ: tl.constexpr)
+  WaveAttnBackend.__init__(model_runner: ModelRunner, skip_prefill: bool, kv_indptr_buf: Optional[torch.Tensor])
+  WaveAttnBackend.get_num_kv_splits(num_kv_splits: torch.Tensor, seq_lens: torch.Tensor)
+  WaveAttnBackend.init_forward_metadata(forward_batch: ForwardBatch)
+  WaveAttnBackend.init_cuda_graph_state(max_bs: int, max_num_tokens: int, kv_indices_buf: Optional[torch.Tensor])
+  WaveAttnBackend.init_forward_metadata_capture_cuda_graph(bs: int, num_tokens: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])
+  WaveAttnBackend.init_forward_metadata_replay_cuda_graph(bs: int, req_pool_indices: torch.Tensor, seq_lens: torch.Tensor, seq_lens_sum: int, encoder_lens: Optional[torch.Tensor], forward_mode: ForwardMode, spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]], seq_lens_cpu: Optional[torch.Tensor])
+  WaveAttnBackend.get_cuda_graph_seq_len_fill_value()
+  WaveAttnBackend.forward_extend(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)
+  WaveAttnBackend.forward_decode(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, layer: RadixAttention, forward_batch: ForwardBatch, save_kv_cache)

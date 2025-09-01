@@ -1,0 +1,59 @@
+================================================================================
+FUNCTION INDEX: weight_sync module
+================================================================================
+Total Functions: 5
+Documented: 5
+
+
+============================================================
+FILE: python/sglang/srt/weight_sync/tensor_bucket.py
+Functions: 4
+============================================================
+
+
+CLASS: FlattenedTensorBucket
+----------------------------------------
+  L  25: __init__(self, named_tensors: List[Tuple[str, torch.Tensor]], flattened_tensor: torch.Tensor, metadata: List[FlattenedTensorMetadata])
+         📝 Initialize a tensor bucket from a list of named tensors OR from pre-flattened data.
+            Args:
+            named_tensors: List of (name, tensor) tuples (for creating new bucket)
+            flattened_tensor: Pre-flattened tensor (for reconstruction)
+            metadata: Pre-computed metadata (for reconstruction)
+
+  L  79: get_flattened_tensor(self)
+         → torch.Tensor
+         📝 Get the flattened tensor containing all bucket tensors
+
+  L  83: get_metadata(self)
+         → List[FlattenedTensorMetadata]
+         📝 Get metadata for all tensors in the bucket
+
+  L  87: reconstruct_tensors(self)
+         → List[Tuple[str, torch.Tensor]]
+         📝 Reconstruct original tensors from flattened tensor with optimized performance.
+            Uses memory-efficient operations to minimize allocations and copies.
+
+
+============================================================
+FILE: python/sglang/srt/weight_sync/utils.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  14: async def update_weights(engine: Engine,
+        params_batch: list[tuple[str,
+        torch.Tensor]],
+        device_mesh_key: str,
+        device_mesh: DeviceMesh,
+        load_format: Optional[str])
+         📝 Update weights for the inference engine.
+            This function is designed to be stateless, so that the caller process could keep the stateful engine.
+            Example Use Case:
+            - Multiple Producer Process will call this function in a SPMD style
+            Args:
+            engine: The inference engine created by the caller process.
+            params_batch: A list of (name, tensor) tuples. We batched the tensors to avoid the overhead of cpu call.
+            device_mesh_key: The key of the device mesh. Typically "tp" or "infer_tp"
+            device_mesh: The device mesh.
+            load_format: The format of the weights.

@@ -1,0 +1,16 @@
+
+# python/sglang/srt/lora/backend/base_backend.py
+  BaseLoRABackend.__init__(name: str, batch_info: LoRABatchInfo)
+  BaseLoRABackend.run_lora_a_sgemm(x: torch.Tensor, weights: torch.Tensor) -> torch.Tensor
+  BaseLoRABackend.run_lora_b_sgemm(x: torch.Tensor, weights: torch.Tensor) -> torch.Tensor
+  BaseLoRABackend.run_qkv_lora(x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]]) -> torch.Tensor
+  BaseLoRABackend.run_gate_up_lora(x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]]) -> torch.Tensor
+  BaseLoRABackend.set_batch_info(batch_info: LoRABatchInfo)
+get_backend_from_name(name: str) -> BaseLoRABackend
+
+# python/sglang/srt/lora/backend/triton_backend.py
+  TritonLoRABackend.__init__(name: str, batch_info: LoRABatchInfo)
+  TritonLoRABackend.run_lora_a_sgemm(x: torch.Tensor, weights: torch.Tensor) -> torch.Tensor
+  TritonLoRABackend.run_lora_b_sgemm(x: torch.Tensor, weights: torch.Tensor, base_output: torch.Tensor) -> torch.Tensor
+  TritonLoRABackend.run_qkv_lora(x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: torch.Tensor, output_offset: torch.Tensor, max_qkv_out_dim: int, base_output: torch.Tensor) -> torch.Tensor
+  TritonLoRABackend.run_gate_up_lora(x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: torch.Tensor, base_output: torch.Tensor) -> torch.Tensor
