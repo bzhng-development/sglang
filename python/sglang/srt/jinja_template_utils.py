@@ -13,6 +13,8 @@ from sglang.srt.utils import ImageData
 
 logger = logging.getLogger(__name__)
 
+from functools import lru_cache
+
 # ============================================================================
 # JINJA TEMPLATE CONTENT FORMAT DETECTION
 # ============================================================================
@@ -78,6 +80,7 @@ def _try_extract_ast(chat_template: str):
         return None
 
 
+@lru_cache(maxsize=128)
 def detect_jinja_template_content_format(chat_template: str) -> str:
     """
     Detect whether a chat template expects 'string' or 'openai' content format.
