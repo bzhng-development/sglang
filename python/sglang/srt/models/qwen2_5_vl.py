@@ -418,13 +418,13 @@ class Qwen2_5_VisionTransformer(nn.Module):
         )
         rotary_pos_emb = rotary_pos_emb[window_index, :, :]
         rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1)
-        emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
-        position_embeddings = (emb.cos(), emb.sin())
-        # After building position_embeddings, make sure both cos and sin are on the same device/dtype as the attention input
-        position_embeddings = (
-            position_embeddings[0].to(x.device, x.dtype),
-            position_embeddings[1].to(x.device, x.dtype),
-        )
+        # emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
+        # position_embeddings = (emb.cos(), emb.sin())
+        cos_half = torch.cos(rotary_pos_emb)
+        sin_half = torch.sin(rotary_pos_emb)
+        cos_full = torch.cat((cos_half, cos_half), dim=-1)
+        sin_full = torch.cat((sin_half, sin_half), dim=-1)
+        position_embeddings = (cos_full, sin_full)
 
         # compute cu_seqlens - move cu_seqlens to GPU and make it int32
         cu_seqlens = torch.cat(
