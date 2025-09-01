@@ -1,9 +1,0 @@
-
-# python/sglang/srt/weight_sync/tensor_bucket.py
-  FlattenedTensorBucket.__init__(named_tensors: List[Tuple[str, torch.Tensor]], flattened_tensor: torch.Tensor, metadata: List[FlattenedTensorMetadata])
-  FlattenedTensorBucket.get_flattened_tensor() -> torch.Tensor
-  FlattenedTensorBucket.get_metadata() -> List[FlattenedTensorMetadata]
-  FlattenedTensorBucket.reconstruct_tensors() -> List[Tuple[str, torch.Tensor]]
-
-# python/sglang/srt/weight_sync/utils.py
-update_weights(engine: Engine, params_batch: list[tuple[str, torch.Tensor]], device_mesh_key: str, device_mesh: DeviceMesh, load_format: Optional[str])
