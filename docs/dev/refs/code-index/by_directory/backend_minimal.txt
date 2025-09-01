@@ -1,0 +1,16 @@
+
+# python/sglang/srt/lora/backend/base_backend.py
+  BaseLoRABackend.__init__(name, batch_info)
+  BaseLoRABackend.run_lora_a_sgemm(x, weights)
+  BaseLoRABackend.run_lora_b_sgemm(x, weights)
+  BaseLoRABackend.run_qkv_lora(x, qkv_lora_a, qkv_lora_b, Tuple[torch.Tensor]])
+  BaseLoRABackend.run_gate_up_lora(x, gate_up_lora_a, gate_up_lora_b, Tuple[torch.Tensor]])
+  BaseLoRABackend.set_batch_info(batch_info)
+get_backend_from_name(name)
+
+# python/sglang/srt/lora/backend/triton_backend.py
+  TritonLoRABackend.__init__(name, batch_info)
+  TritonLoRABackend.run_lora_a_sgemm(x, weights)
+  TritonLoRABackend.run_lora_b_sgemm(x, weights, base_output)
+  TritonLoRABackend.run_qkv_lora(x, qkv_lora_a, qkv_lora_b, output_offset, max_qkv_out_dim, base_output)
+  TritonLoRABackend.run_gate_up_lora(x, gate_up_lora_a, gate_up_lora_b, base_output)

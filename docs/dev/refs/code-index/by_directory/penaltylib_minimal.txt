@@ -1,0 +1,28 @@
+
+# python/sglang/srt/sampling/penaltylib/frequency_penalty.py
+  BatchedFrequencyPenalizer.__init__(orchestrator)
+
+# python/sglang/srt/sampling/penaltylib/min_new_tokens.py
+  BatchedMinNewTokensPenalizer.__init__(orchestrator)
+
+# python/sglang/srt/sampling/penaltylib/orchestrator.py
+  BatchedPenalizerOrchestrator.__init__(vocab_size, batch, penalizers)
+  BatchedPenalizerOrchestrator.batch()
+  BatchedPenalizerOrchestrator.batch(value)
+  BatchedPenalizerOrchestrator.reqs()
+  BatchedPenalizerOrchestrator.cumulate_output_tokens(output_ids)
+  BatchedPenalizerOrchestrator.apply(logits)
+  BatchedPenalizerOrchestrator.filter(keep_indices)
+  BatchedPenalizerOrchestrator.merge(their)
+  _BatchedPenalizer.is_prepared()
+  _BatchedPenalizer.is_required()
+  _BatchedPenalizer.prepare()
+  _BatchedPenalizer.prepare_if_required()
+  _BatchedPenalizer.teardown()
+  _BatchedPenalizer.cumulate_output_tokens(output_ids)
+  _BatchedPenalizer.apply(logits)
+  _BatchedPenalizer.filter(keep_indices)
+  _BatchedPenalizer.merge(their)
+
+# python/sglang/srt/sampling/penaltylib/presence_penalty.py
+  BatchedPresencePenalizer.__init__(orchestrator)

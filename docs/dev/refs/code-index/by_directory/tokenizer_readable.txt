@@ -1,0 +1,35 @@
+================================================================================
+FUNCTION INDEX: tokenizer module
+================================================================================
+Total Functions: 9
+Documented: 0
+
+
+============================================================
+FILE: python/sglang/srt/tokenizer/tiktoken_tokenizer.py
+Functions: 9
+============================================================
+
+
+CLASS: TiktokenProcessor
+----------------------------------------
+  L   7: __init__(self, name: str)
+
+  L  10: image_processor(self, image)
+
+
+CLASS: TiktokenTokenizer
+----------------------------------------
+  L  30: __init__(self, tokenizer_path)
+
+  L 110: encode(self, x, add_special_tokens)
+
+  L 113: decode(self, x)
+
+  L 116: batch_decode(self, batch, skip_special_tokens, spaces_between_special_tokens)
+
+  L 123: apply_chat_template(self, messages, tokenize, add_generation_prompt, tools, reasoning_effort)
+
+  L 136: __call__(self, text)
+
+  L 141: init_xgrammar(self)

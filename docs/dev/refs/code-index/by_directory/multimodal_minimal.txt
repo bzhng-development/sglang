@@ -1,0 +1,13 @@
+
+# python/sglang/srt/multimodal/mm_utils.py
+has_valid_data(data)
+select_best_resolution(original_size, possible_resolutions)
+resize_and_pad_image(image, target_resolution)
+divide_to_patches(image, patch_size)
+get_anyres_image_grid_shape(image_size, grid_pinpoints, patch_size)
+process_anyres_image(image, processor, grid_pinpoints)
+load_image_from_base64(image)
+expand2square(pil_img, background_color)
+unpad_image(tensor, original_size)
+unpad_image_shape(current_height, current_width, original_size)
+process_images(images, image_processor, model_cfg)

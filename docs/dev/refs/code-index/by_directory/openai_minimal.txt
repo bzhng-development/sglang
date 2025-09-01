@@ -1,0 +1,55 @@
+
+# python/sglang/srt/entrypoints/openai/protocol.py
+  CompletionRequest.validate_max_tokens_positive(cls, v)
+  ChatCompletionRequest.set_tool_choice_default(cls, values)
+  ResponsesRequest.to_sampling_params(default_max_tokens, default_params)
+  ResponsesResponse.from_request(cls, request, sampling_params, model_name, created_time, output, ResponseReasoningItem, ResponseFunctionToolCall]], status, usage)
+
+# python/sglang/srt/entrypoints/openai/serving_base.py
+  OpenAIServingBase.__init__(tokenizer_manager)
+  OpenAIServingBase.handle_request(request, raw_request)
+  OpenAIServingBase.create_error_response(message, err_type, status_code, param)
+  OpenAIServingBase.create_streaming_error_response(message, err_type, status_code)
+
+# python/sglang/srt/entrypoints/openai/serving_chat.py
+  OpenAIServingChat.__init__(tokenizer_manager, template_manager)
+
+# python/sglang/srt/entrypoints/openai/serving_completions.py
+  OpenAIServingCompletion.__init__(tokenizer_manager, template_manager)
+
+# python/sglang/srt/entrypoints/openai/serving_embedding.py
+  OpenAIServingEmbedding.__init__(tokenizer_manager, template_manager)
+
+# python/sglang/srt/entrypoints/openai/serving_responses.py
+  OpenAIServingResponses.__init__(tokenizer_manager, template_manager)
+  OpenAIServingResponses.create_responses(request, raw_request)
+  OpenAIServingResponses.responses_full_generator(request, sampling_params, result_generator, context, model_name, tokenizer, request_metadata, created_time)
+  OpenAIServingResponses.retrieve_responses(response_id)
+  OpenAIServingResponses.cancel_responses(response_id)
+  OpenAIServingResponses.responses_stream_generator(request, sampling_params, result_generator, context, model_name, tokenizer, request_metadata, created_time)
+
+# python/sglang/srt/entrypoints/openai/tool_server.py
+list_server_and_tools(server_url)
+trim_schema(schema)
+post_process_tools_description(list_tools_result)
+  ToolServer.has_tool(tool_name)
+  ToolServer.get_tool_description(tool_name)
+  ToolServer.get_tool_session(tool_name)
+  MCPToolServer.__init__()
+  MCPToolServer.add_tool_server(server_url)
+  MCPToolServer.has_tool(tool_name)
+  MCPToolServer.get_tool_description(tool_name)
+  MCPToolServer.get_tool_session(tool_name)
+  DemoToolServer.__init__()
+  DemoToolServer.has_tool(tool_name)
+  DemoToolServer.get_tool_description(tool_name)
+  DemoToolServer.get_tool_session(tool_name)
+
+# python/sglang/srt/entrypoints/openai/usage_processor.py
+  UsageProcessor.calculate_response_usage(responses, Any]], n_choices, enable_cache_report)
+  UsageProcessor.calculate_streaming_usage(prompt_tokens, int], completion_tokens, int], cached_tokens, int], n_choices, enable_cache_report)
+  UsageProcessor.calculate_token_usage(prompt_tokens, completion_tokens, cached_tokens, int]])
+
+# python/sglang/srt/entrypoints/openai/utils.py
+to_openai_style_logprobs(input_token_logprobs, output_token_logprobs, input_top_logprobs, output_top_logprobs)
+process_hidden_states_from_ret(ret_item, Any], request, CompletionRequest])

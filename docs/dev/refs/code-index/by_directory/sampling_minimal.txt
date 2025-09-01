@@ -1,0 +1,22 @@
+
+# python/sglang/srt/sampling/custom_logit_processor.py
+  CustomLogitProcessor.__call__(logits, custom_param_list, Any]]])
+  CustomLogitProcessor.to_str(cls)
+  CustomLogitProcessor.from_str(cls, json_str)
+  DisallowedTokensLogitsProcessor.__call__(logits, custom_param_list, Any]]])
+
+# python/sglang/srt/sampling/sampling_batch_info.py
+  SamplingBatchInfo.from_schedule_batch(cls, batch, vocab_size)
+  SamplingBatchInfo.__len__()
+  SamplingBatchInfo.update_regex_vocab_mask()
+  SamplingBatchInfo.update_penalties()
+  SamplingBatchInfo.apply_logits_bias(logits)
+  SamplingBatchInfo.filter_batch(keep_indices, keep_indices_device)
+  SamplingBatchInfo.merge_custom_logit_processor(lhs, Tuple[CustomLogitProcessor, torch.Tensor]]], rhs, Tuple[CustomLogitProcessor, torch.Tensor]]], bs1, bs2, device)
+  SamplingBatchInfo.merge_batch(other)
+merge_bias_tensor(lhs, rhs, bs1, bs2, device, default)
+
+# python/sglang/srt/sampling/sampling_params.py
+  SamplingParams.__init__(max_new_tokens, stop, List[str]]], stop_token_ids, temperature, top_p, top_k, min_p, frequency_penalty, presence_penalty, repetition_penalty, min_new_tokens, n, json_schema, regex, ebnf, structural_tag, ignore_eos, skip_special_tokens, spaces_between_special_tokens, no_stop_trim, custom_params, Any]], stream_interval, logit_bias, float]])
+  SamplingParams.verify(vocab_size)
+  SamplingParams.normalize(tokenizer)

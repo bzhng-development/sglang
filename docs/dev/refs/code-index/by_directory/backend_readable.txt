@@ -1,0 +1,63 @@
+================================================================================
+FUNCTION INDEX: backend module
+================================================================================
+Total Functions: 12
+Documented: 5
+
+
+============================================================
+FILE: python/sglang/srt/lora/backend/base_backend.py
+Functions: 7
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 100: def get_backend_from_name(name: str)
+         → BaseLoRABackend
+         📝 Get corresponding backend class from backend's name
+
+
+CLASS: BaseLoRABackend
+----------------------------------------
+  L  17: __init__(self, name: str, batch_info: LoRABatchInfo)
+
+  L  21: run_lora_a_sgemm(self, x: torch.Tensor, weights: torch.Tensor)
+         → torch.Tensor
+         📝 Run segment Gemm of lora a modules with current backend.
+
+  L  37: run_lora_b_sgemm(self, x: torch.Tensor, weights: torch.Tensor)
+         → torch.Tensor
+         📝 Run segment Gemm of lora b modules with current backend.
+
+  L  52: run_qkv_lora(self, x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]])
+         → torch.Tensor
+         📝 Run the lora pass for QKV Layer.
+
+  L  75: run_gate_up_lora(self, x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]])
+         → torch.Tensor
+         📝 Run the lora pass for gate_up_proj, usually attached to MergedColumnPa
+
+  L  96: set_batch_info(self, batch_info: LoRABatchInfo)
+
+
+============================================================
+FILE: python/sglang/srt/lora/backend/triton_backend.py
+Functions: 5
+============================================================
+
+
+CLASS: TritonLoRABackend
+----------------------------------------
+  L  15: __init__(self, name: str, batch_info: LoRABatchInfo)
+
+  L  18: run_lora_a_sgemm(self, x: torch.Tensor, weights: torch.Tensor)
+         → torch.Tensor
+
+  L  23: run_lora_b_sgemm(self, x: torch.Tensor, weights: torch.Tensor, base_output: torch.Tensor)
+         → torch.Tensor
+
+  L  33: run_qkv_lora(self, x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: torch.Tensor, output_offset: torch.Tensor, max_qkv_out_dim: int, base_output: torch.Tensor)
+         → torch.Tensor
+
+  L  61: run_gate_up_lora(self, x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: torch.Tensor, base_output: torch.Tensor)
+         → torch.Tensor

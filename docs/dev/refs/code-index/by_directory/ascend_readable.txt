@@ -1,0 +1,35 @@
+================================================================================
+FUNCTION INDEX: ascend module
+================================================================================
+Total Functions: 5
+Documented: 1
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/ascend/conn.py
+Functions: 2
+============================================================
+
+
+CLASS: AscendKVManager
+----------------------------------------
+  L  16: init_engine(self)
+
+  L  25: register_buffer_to_engine(self)
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/ascend/transfer_engine.py
+Functions: 3
+============================================================
+
+
+CLASS: AscendTransferEngine
+----------------------------------------
+  L  13: __init__(self, hostname: str, npu_id: int, disaggregation_mode: DisaggregationMode)
+
+  L  39: initialize(self)
+         → None
+         📝 Initialize the ascend transfer instance.
+
+  L  51: batch_register(self, ptrs: List[int], lengths: List[int])

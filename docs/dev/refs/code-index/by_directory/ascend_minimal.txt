@@ -1,0 +1,9 @@
+
+# python/sglang/srt/disaggregation/ascend/conn.py
+  AscendKVManager.init_engine()
+  AscendKVManager.register_buffer_to_engine()
+
+# python/sglang/srt/disaggregation/ascend/transfer_engine.py
+  AscendTransferEngine.__init__(hostname, npu_id, disaggregation_mode)
+  AscendTransferEngine.initialize()
+  AscendTransferEngine.batch_register(ptrs, lengths)

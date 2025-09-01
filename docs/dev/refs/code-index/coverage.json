@@ -1,0 +1,12 @@
+{
+  "total_functions": 5594,
+  "documented": 914,
+  "undocumented": 4680,
+  "documentation_rate": "16.3%",
+  "public_functions": 4518,
+  "private_functions": 1076,
+  "methods": 4575,
+  "async_functions": 166,
+  "files_analyzed": 431,
+  "functions_per_file": "13.0"
+}

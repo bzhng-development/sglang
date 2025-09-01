@@ -1,0 +1,174 @@
+================================================================================
+FUNCTION INDEX: token_dispatcher module
+================================================================================
+Total Functions: 45
+Documented: 0
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/token_dispatcher/base_dispatcher.py
+Functions: 13
+============================================================
+
+
+CLASS: BaseDispatcher
+----------------------------------------
+  L  95: dispatch(self)
+         → DispatchOutput
+
+  L  99: combine(self)
+         → torch.Tensor
+
+
+CLASS: DispatchOutput
+----------------------------------------
+  L  82: format(self)
+         → DispatchOutputFormat
+
+
+CLASS: DispatchOutputChecker
+----------------------------------------
+  L  21: format_is_standard(dispatch_output: DispatchOutput)
+         → TypeGuard[StandardDispatchOutput]
+
+  L  27: format_is_deepep_normal(dispatch_output: DispatchOutput)
+         → TypeGuard[DeepEPNormalOutput]
+
+  L  33: format_is_deepep_ll(dispatch_output: DispatchOutput)
+         → TypeGuard[DeepEPLLOutput]
+
+  L  39: format_is_deepep(dispatch_output: DispatchOutput)
+         → TypeGuard[Union[DeepEPNormalOutput, DeepEPLLOutput]]
+
+  L  45: format_is_ascent_ll(dispatch_output: DispatchOutput)
+         → TypeGuard[AscendDeepEPLLOutput]
+
+
+CLASS: DispatchOutputFormat
+----------------------------------------
+  L  58: is_standard(self)
+         → bool
+
+  L  61: is_deepep_normal(self)
+         → bool
+
+  L  64: is_deepep_ll(self)
+         → bool
+
+  L  67: is_deepep(self)
+         → bool
+
+  L  73: is_ascent_ll(self)
+         → bool
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+Functions: 31
+============================================================
+
+
+CLASS: AscendDeepEPLLOutput
+----------------------------------------
+  L  93: format(self)
+         → DispatchOutputFormat
+
+
+CLASS: DeepEPBuffer
+----------------------------------------
+  L 115: get_deepep_buffer(cls, group: dist.ProcessGroup, hidden_size: int, param_bytes: int, deepep_mode: DeepEPMode, num_max_dispatch_tokens_per_rank: int, num_experts: int)
+
+  L 195: clean_buffer(cls)
+
+  L 205: set_dispatch_mode_as_normal(cls)
+
+  L 209: set_dispatch_mode_as_low_latency(cls)
+
+
+CLASS: DeepEPConfig
+----------------------------------------
+  L 218: __init__(self)
+
+  L 238: get_instance(cls)
+
+
+CLASS: DeepEPDispatcher
+----------------------------------------
+  L 625: __init__(self, group: torch.distributed.ProcessGroup, router_topk: int, permute_fusion: bool, num_experts: int, num_local_experts: int, hidden_size: int, params_dtype: torch.dtype, deepep_mode: DeepEPMode, async_finish: bool, return_recv_hook: bool)
+
+  L 664: dispatch(self)
+         → DispatchOutput
+
+  L 669: dispatch_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+
+  L 684: dispatch_b(self)
+
+  L 690: combine(self)
+         → Tuple
+
+  L 695: combine_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+
+  L 710: combine_b(self)
+
+
+CLASS: DeepEPLLOutput
+----------------------------------------
+  L  78: format(self)
+         → DispatchOutputFormat
+
+
+CLASS: DeepEPNormalOutput
+----------------------------------------
+  L  64: format(self)
+         → DispatchOutputFormat
+
+
+CLASS: _DeepEPDispatcherImplBase
+----------------------------------------
+  L 245: __init__(self, group: torch.distributed.ProcessGroup, router_topk: int, permute_fusion: bool, num_experts: int, num_local_experts: int, hidden_size: int, params_dtype: torch.dtype, deepep_mode: DeepEPMode)
+
+  L 278: dispatch_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+
+  L 286: dispatch_b(self)
+
+  L 289: combine_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+
+  L 297: combine_b(self)
+
+
+CLASS: _DeepEPDispatcherImplLowLatency
+----------------------------------------
+  L 474: __init__(self, return_recv_hook: bool)
+
+  L 483: dispatch_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+
+  L 510: dispatch_b(self, hidden_states, topk_idx, topk_weights, masked_m, expected_m, event, hook)
+
+  L 569: combine_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+
+  L 582: combine_b(self, hidden_states, event, hook)
+
+
+CLASS: _DeepEPDispatcherImplNormal
+----------------------------------------
+  L 305: __init__(self, async_finish: bool)
+
+  L 311: dispatch_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+
+  L 330: dispatch_b(self, hidden_states, topk_idx, topk_weights, previous_event)
+
+  L 406: combine_a(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor)
+
+  L 441: combine_b(self, output, previous_event)
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/token_dispatcher/standard.py
+Functions: 1
+============================================================
+
+
+CLASS: StandardDispatchOutput
+----------------------------------------
+  L  15: format(self)
+         → DispatchOutputFormat

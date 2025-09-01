@@ -1,0 +1,293 @@
+================================================================================
+FUNCTION INDEX: ep_moe module
+================================================================================
+Total Functions: 41
+Documented: 2
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/ep_moe/kernels.py
+Functions: 28
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  23: def deepep_permute_triton_kernel(input_ptr,
+        gateup_input_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        a1_scales_ptr,
+        topk,
+        hidden_size,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L  54: def deepep_post_reorder_triton_kernel(down_output_ptr,
+        output_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        topk_weights_ptr,
+        topk,
+        hidden_size,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L  87: def compute_src2dst_triton_kernel(reorder_ids,
+        src2dst,
+        num_toks,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L  98: def deepep_compute_src2dst_triton_kernel(reorder_ids,
+        src2dst,
+        num_toks,
+        num_minus_one,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 109: def deepep_run_moe_deep_preprocess(topk_ids: torch.Tensor, num_experts: int)
+
+  L 132: def compute_seg_indptr_triton_kernel(reorder_topk_ids, seg_indptr, num_toks)
+         @triton.jit
+
+  L 148: def run_moe_ep_preproess(topk_ids: torch.Tensor, num_experts: int)
+
+  L 167: def run_cutlass_moe_ep_preproess(local_topk_ids: torch.Tensor,
+        local_num_experts: int)
+
+  L 187: def pre_reorder_triton_kernel_for_cutlass_moe(input_ptr,
+        gateup_input_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        a1_scales_ptr,
+        num_experts,
+        topk,
+        hidden_size,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 224: def pre_reorder_triton_kernel(input_ptr,
+        gateup_input_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        a1_scales_ptr,
+        start_expert_id,
+        end_expert_id,
+        topk,
+        hidden_size,
+        BLOCK_SIZE: tl.constexpr,
+        use_per_token_if_dynamic: tl.constexpr)
+         @triton.jit
+
+  L 271: def silu_and_mul_triton_kernel(gateup_output,
+        down_input,
+        hidden_size,
+        reorder_topk_ids,
+        scales,
+        start_expert_id,
+        end_expert_id,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 395: def silu_and_mul_masked_post_quant_fwd(input: torch.Tensor,
+        output: torch.Tensor,
+        output_scale: torch.Tensor,
+        quant_group_size: int,
+        masked_m: torch.Tensor,
+        scale_ue8m0: bool)
+         📝 input shape [expert_num, token_num_padded, hidden_dim]
+
+  L 464: def tanh(x)
+         @triton.jit
+
+  L 469: def gelu_and_mul_triton_kernel(gateup_output,
+        down_input,
+        hidden_size,
+        reorder_topk_ids,
+        scales,
+        start_expert_id,
+        end_expert_id,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 531: def post_reorder_triton_kernel(down_output_ptr,
+        output_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        topk_weights_ptr,
+        start_expert_id,
+        end_expert_id,
+        topk,
+        hidden_size,
+        dst_start,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 585: def post_reorder_triton_kernel_for_cutlass_moe(down_output_ptr,
+        output_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        topk_weights_ptr,
+        num_experts,
+        topk,
+        hidden_size,
+        dst_start,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 628: def compute_m_range(pid,
+        batch_size,
+        seg_indptr,
+        weight_indices,
+        m_num_tiles_indptr,
+        BLOCK_SIZE_M: tl.constexpr)
+         @triton.jit
+
+  L 651: def grouped_gemm_triton_kernel(a,
+        b,
+        c,
+        batch_size,
+        N,
+        K,
+        seg_indptr,
+        weight_indices,
+        m_num_tiles_indptr,
+        scale_a,
+        scale_b,
+        use_fp8_w8a8: tl.constexpr,
+        group_n: tl.constexpr,
+        group_k: tl.constexpr,
+        a_stride_0: tl.constexpr,
+        b_stride_0: tl.constexpr,
+        b_stride_1: tl.constexpr,
+        as_stride_0: tl.constexpr,
+        as_stride_1: tl.constexpr,
+        bs_stride_0: tl.constexpr,
+        bs_stride_2: tl.constexpr,
+        bs_stride_1: tl.constexpr,
+        use_per_token_if_dynamic: tl.constexpr,
+        BLOCK_SIZE_M: tl.constexpr,
+        BLOCK_SIZE_N: tl.constexpr,
+        BLOCK_SIZE_K: tl.constexpr)
+         @triton.jit
+
+  L 755: def compute_m_num_tiles_indptr(m_num_tiles_indptr,
+        seg_indptr,
+        batch_size: tl.constexpr,
+        BLOCK_SIZE_M: tl.constexpr)
+         @triton.jit
+
+  L 765: def grouped_gemm_triton(a: torch.Tensor,
+        b: torch.Tensor,
+        c: torch.Tensor,
+        batch_size: int,
+        weight_column_major: bool,
+        seg_indptr: Optional[torch.Tensor],
+        weight_indices: Optional[torch.Tensor],
+        use_fp8_w8a8: bool,
+        scale_a: torch.Tensor,
+        scale_b: torch.Tensor,
+        block_shape: Optional[List[int]],
+        c_dtype,
+        use_per_token_if_dynamic: bool)
+
+  L 960: def ep_scatter(recv_x: torch.Tensor,
+        recv_x_scale: torch.Tensor,
+        recv_topk: torch.Tensor,
+        num_recv_tokens_per_expert: torch.Tensor,
+        expert_start_loc: torch.Tensor,
+        output_tensor: torch.Tensor,
+        output_tensor_scale: torch.Tensor,
+        m_indices: torch.Tensor,
+        output_index: torch.Tensor,
+        scale_ue8m0: bool)
+         @torch.no_grad()
+
+  L1100: def ep_gather(input_tensor: torch.Tensor,
+        recv_topk_ids: torch.Tensor,
+        recv_topk_weight: torch.Tensor,
+        input_index: torch.Tensor,
+        output_tensor: torch.Tensor)
+         @torch.no_grad()
+
+  L1139: def get_tma_aligned_size(x: int, element_size: int)
+         → int
+         📝 Global memory address of TMA must be 16-byte aligned.
+
+  L1189: def tma_align_input_scale(input_scale: torch.Tensor)
+
+  L1215: def compute_masked_m_triton_kernel(seg_indptr, masked_m)
+         @triton.jit
+
+  L1223: def deepgemm_compute_src2dst_triton_kernel(topk_ids,
+        reorder_ids,
+        seg_indptr,
+        src2dst,
+        m_max,
+        num_toks,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L1244: def fill_gateup_input_triton_kernel(input_ptr,
+        scale_ptr,
+        gateup_input_ptr,
+        gateup_input_scale_ptr,
+        src2dst_ptr,
+        topk_ids_ptr,
+        start_expert_id,
+        end_expert_id,
+        topk,
+        m_max,
+        hidden_size,
+        scale_size,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L1288: def moe_ep_deepgemm_preprocess(topk_ids: torch.Tensor,
+        num_experts: int,
+        hidden_states: torch.Tensor,
+        top_k: int,
+        start_expert_id,
+        end_expert_id,
+        block_shape,
+        output_dtype: torch.dtype)
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/ep_moe/layer.py
+Functions: 13
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 779: def get_moe_impl_class(quant_config: Optional[QuantizationConfig])
+
+
+CLASS: DeepEPMoE
+----------------------------------------
+  L 339: __init__(self, num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, layer_id: int, num_fused_shared_experts: int, params_dtype: Optional[torch.dtype], quant_config: Optional[QuantizationConfig], prefix: str, activation: str, routed_scaling_factor: Optional[float])
+
+  L 421: forward(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+
+  L 440: dispatch(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+
+  L 454: moe_impl(self, dispatch_output: DispatchOutput)
+
+  L 475: combine(self, hidden_states: torch.Tensor, topk_idx: torch.Tensor, topk_weights: torch.Tensor, forward_batch: ForwardBatch)
+
+  L 489: forward_aiter(self, dispatch_output: Union[DeepEPNormalOutput, DeepEPLLOutput])
+
+  L 523: forward_deepgemm_contiguous(self, dispatch_output: DeepEPNormalOutput)
+
+  L 647: forward_deepgemm_masked(self, dispatch_output: DeepEPLLOutput)
+
+  L 724: forward_npu(self, dispatch_output: DeepEPLLOutput)
+
+
+CLASS: EPMoE
+----------------------------------------
+  L  82: __init__(self, num_experts: int, top_k: int, hidden_size: int, intermediate_size: int, layer_id: int, num_fused_shared_experts: int, params_dtype: Optional[torch.dtype], quant_config: Optional[QuantizationConfig], prefix: str, activation: str, routed_scaling_factor: Optional[float], gemm1_alpha: Optional[float], gemm1_clamp_limit: Optional[float], with_bias: bool)
+
+  L 138: forward(self, hidden_states: torch.Tensor, topk_output: TopKOutput)
+
+  L 144: forward_deepgemm(self, hidden_states: torch.Tensor, topk_output: TopKOutput)

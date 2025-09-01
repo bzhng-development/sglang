@@ -1,0 +1,15 @@
+
+# python/sglang/srt/connector/serde/__init__.py
+create_serde(serde_type)
+
+# python/sglang/srt/connector/serde/safe_serde.py
+  SafeSerializer.__init__()
+  SafeSerializer.to_bytes(t)
+  SafeDeserializer.__init__(dtype)
+  SafeDeserializer.from_bytes_normal(b, bytes])
+  SafeDeserializer.from_bytes(b, bytes])
+
+# python/sglang/srt/connector/serde/serde.py
+  Serializer.to_bytes(t)
+  Deserializer.__init__(dtype)
+  Deserializer.from_bytes(bs)

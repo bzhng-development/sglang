@@ -1,0 +1,43 @@
+================================================================================
+FUNCTION INDEX: multimodal module
+================================================================================
+Total Functions: 11
+Documented: 7
+
+
+============================================================
+FILE: python/sglang/srt/multimodal/mm_utils.py
+Functions: 11
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  42: def has_valid_data(data)
+         → bool
+
+  L  50: def select_best_resolution(original_size, possible_resolutions)
+         📝 Selects the best resolution from a list of possible resolutions based 
+
+  L  90: def resize_and_pad_image(image, target_resolution)
+         📝 Resize and pad an image to a target resolution while maintaining aspec
+
+  L 125: def divide_to_patches(image, patch_size)
+         📝 Divides an image into patches of a specified size.
+
+  L 147: def get_anyres_image_grid_shape(image_size, grid_pinpoints, patch_size)
+         📝 Calculate the shape of the image patch grid after the preprocessing fo
+
+  L 187: def process_anyres_image(image, processor, grid_pinpoints)
+         📝 Process an image with variable resolutions.
+
+  L 254: def load_image_from_base64(image)
+
+  L 258: def expand2square(pil_img, background_color)
+
+  L 274: def unpad_image(tensor, original_size)
+         📝 Unpads a PyTorch tensor of a padded and resized image.
+
+  L 305: def unpad_image_shape(current_height, current_width, original_size)
+         📝 Unpads a PyTorch tensor of a padded and resized image
+
+  L 329: def process_images(images, image_processor, model_cfg)

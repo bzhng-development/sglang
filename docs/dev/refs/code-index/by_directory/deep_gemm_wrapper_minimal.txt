@@ -1,0 +1,19 @@
+
+# python/sglang/srt/layers/quantization/deep_gemm_wrapper/compile_utils.py
+update_deep_gemm_config(gpu_id, server_args)
+  _BaseWarmupExecutor.create(kernel_type)
+  _BaseWarmupExecutor.execute(m)
+  _NormalWarmupExecutor.__init__(max_m, n, k, num_groups)
+  _NormalWarmupExecutor.execute(m)
+  _GroupedContWarmupExecutor.__init__(max_m, n, k, num_groups)
+  _GroupedContWarmupExecutor.execute(m)
+  _GroupedMaskedWarmupExecutor.__init__(max_m, n, k, num_groups)
+  _GroupedMaskedWarmupExecutor.execute(m)
+deep_gemm_execution_hook(m, n, k, num_groups, kernel_type)
+
+# python/sglang/srt/layers/quantization/deep_gemm_wrapper/entrypoint.py
+grouped_gemm_nt_f8f8bf16_masked(lhs, torch.Tensor], rhs, torch.Tensor], out, masked_m, expected_m)
+grouped_gemm_nt_f8f8bf16_contig(lhs, torch.Tensor], rhs, torch.Tensor], out, m_indices)
+gemm_nt_f8f8bf16(lhs, torch.Tensor], rhs, torch.Tensor], out)
+update_deep_gemm_config(gpu_id, server_args)
+configure_deep_gemm_num_sms(num_sms)

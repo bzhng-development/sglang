@@ -1,0 +1,118 @@
+
+# python/sglang/srt/function_call/base_format_detector.py
+  BaseFormatDetector.__init__()
+  BaseFormatDetector.parse_base_json(action, tools)
+  BaseFormatDetector.detect_and_parse(text, tools)
+  BaseFormatDetector.parse_streaming_increment(new_text, tools)
+  BaseFormatDetector.has_tool_call(text)
+  BaseFormatDetector.supports_structural_tag()
+  BaseFormatDetector.structure_info()
+  BaseFormatDetector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/deepseekv31_detector.py
+  DeepSeekV31Detector.__init__()
+  DeepSeekV31Detector.has_tool_call(text)
+  DeepSeekV31Detector.detect_and_parse(text, tools)
+  DeepSeekV31Detector.parse_streaming_increment(new_text, tools)
+  DeepSeekV31Detector.structure_info()
+  DeepSeekV31Detector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/deepseekv3_detector.py
+  DeepSeekV3Detector.__init__()
+  DeepSeekV3Detector.has_tool_call(text)
+  DeepSeekV3Detector.detect_and_parse(text, tools)
+  DeepSeekV3Detector.parse_streaming_increment(new_text, tools)
+  DeepSeekV3Detector.structure_info()
+  DeepSeekV3Detector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/ebnf_composer.py
+  EBNFComposer.get_value_rule(prop, function_format, 'json', 'xml'])
+  EBNFComposer.get_type_mapping(function_format)
+  EBNFComposer.build_ebnf(tools, function_format, 'json', 'xml'], sequence_start_token, sequence_end_token, individual_call_start_token, individual_call_end_token, tool_call_separator, call_rule_fmt, key_value_rule_fmt, key_value_separator)
+
+# python/sglang/srt/function_call/function_call_parser.py
+  FunctionCallParser.__init__(tools, tool_call_parser)
+  FunctionCallParser.has_tool_call(text)
+  FunctionCallParser.parse_non_stream(full_text)
+  FunctionCallParser.parse_stream_chunk(chunk_text)
+  FunctionCallParser.get_structure_tag()
+  FunctionCallParser.get_structure_constraint(tool_choice, Literal['auto', 'required']])
+  FunctionCallParser.get_ebnf(tool_choice, Literal['required']])
+
+# python/sglang/srt/function_call/glm4_moe_detector.py
+get_argument_type(func_name, arg_key, defined_tools)
+parse_arguments(json_value)
+  Glm4MoeDetector.__init__()
+  Glm4MoeDetector.has_tool_call(text)
+  Glm4MoeDetector.detect_and_parse(text, tools)
+  Glm4MoeDetector.parse_streaming_increment(new_text, tools)
+  Glm4MoeDetector.supports_structural_tag()
+  Glm4MoeDetector.structure_info()
+  Glm4MoeDetector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/gpt_oss_detector.py
+  GptOssDetector.__init__()
+  GptOssDetector.has_tool_call(text)
+  GptOssDetector.detect_and_parse(text, tools)
+  GptOssDetector.parse_streaming_increment(new_text, tools)
+  GptOssDetector.structure_info()
+  GptOssDetector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/kimik2_detector.py
+  KimiK2Detector.__init__()
+  KimiK2Detector.has_tool_call(text)
+  KimiK2Detector.detect_and_parse(text, tools)
+  KimiK2Detector.parse_streaming_increment(new_text, tools)
+  KimiK2Detector.structure_info()
+  KimiK2Detector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/llama32_detector.py
+  Llama32Detector.__init__()
+  Llama32Detector.has_tool_call(text)
+  Llama32Detector.detect_and_parse(text, tools)
+  Llama32Detector.structure_info()
+  Llama32Detector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/mistral_detector.py
+  MistralDetector.__init__()
+  MistralDetector.has_tool_call(text)
+  MistralDetector.detect_and_parse(text, tools)
+  MistralDetector.structure_info()
+  MistralDetector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/pythonic_detector.py
+  PythonicDetector.__init__()
+  PythonicDetector.has_tool_call(text)
+  PythonicDetector.detect_and_parse(text, tools)
+  PythonicDetector.parse_streaming_increment(new_text, tools)
+  PythonicDetector.supports_structural_tag()
+  PythonicDetector.structure_info()
+  PythonicDetector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/qwen25_detector.py
+  Qwen25Detector.__init__()
+  Qwen25Detector.has_tool_call(text)
+  Qwen25Detector.detect_and_parse(text, tools)
+  Qwen25Detector.parse_streaming_increment(new_text, tools)
+  Qwen25Detector.structure_info()
+  Qwen25Detector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/qwen3_coder_detector.py
+  Qwen3CoderDetector.__init__()
+  Qwen3CoderDetector.has_tool_call(text)
+  Qwen3CoderDetector.detect_and_parse(text, tools)
+  Qwen3CoderDetector.parse_streaming_increment(new_text, tools)
+  Qwen3CoderDetector.supports_structural_tag()
+  Qwen3CoderDetector.structure_info()
+  Qwen3CoderDetector.build_ebnf(tools)
+
+# python/sglang/srt/function_call/step3_detector.py
+get_argument_type(func_name, arg_key, defined_tools)
+parse_arguments(value)
+  Step3Detector.__init__()
+  Step3Detector.has_tool_call(text)
+  Step3Detector.detect_and_parse(text, tools)
+  Step3Detector.parse_streaming_increment(new_text, tools)
+  Step3Detector.supports_structural_tag()
+  Step3Detector.structure_info()
+  Step3Detector.build_ebnf(tools)
