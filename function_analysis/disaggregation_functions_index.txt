@@ -1,0 +1,912 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: disaggregation/ascend/__init__.py
+  (no function definitions found)
+File: disaggregation/ascend/conn.py
+  - name: init_engine
+    signature: (self)
+    class: AscendKVManager
+  - name: register_buffer_to_engine
+    signature: (self)
+    class: AscendKVManager
+  - name: send_kvcache
+    signature: (self, mooncake_session_id: str, prefill_kv_indices: npt.NDArray[np.int32], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int32], executor: concurrent.futures.ThreadPoolExecutor)
+    class: AscendKVManager
+  - name: set_transfer_blocks
+    signature: (src_ptr: int, dst_ptr: int, item_len: int)
+    return: List[Tuple[int, int, int]]
+    class: AscendKVManager
+  - name: process_layer
+    signature: (src_ptr: int, dst_ptr: int, item_len: int)
+    return: int
+    class: AscendKVManager
+  - name: process_layers
+    signature: (layers_params: List[Tuple[int, int, int]])
+    return: int
+    class: AscendKVManager
+
+File: disaggregation/ascend/transfer_engine.py
+  - name: __init__
+    signature: (self, hostname: str, npu_id: int, disaggregation_mode: DisaggregationMode)
+    class: AscendTransferEngine
+  - name: initialize
+    signature: (self)
+    return: None
+    class: AscendTransferEngine
+    doc: Initialize the ascend transfer instance.
+  - name: batch_register
+    signature: (self, ptrs: List[int], lengths: List[int])
+    class: AscendTransferEngine
+
+File: disaggregation/base/__init__.py
+  (no function definitions found)
+File: disaggregation/base/conn.py
+  - name: __init__
+    signature: (self, args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool] = False)
+    class: BaseKVManager
+  - name: __init__
+    signature: (self, mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+    class: BaseKVSender
+  - name: init
+    signature: (self, num_kv_indices: int, aux_index: Optional[int] = None)
+    class: BaseKVSender
+    doc: Notify the decoder server about the kv indices length and aux index
+  - name: send
+    signature: (self, kv_indices: npt.NDArray[np.int32])
+    class: BaseKVSender
+    doc: Send the kv cache at the given kv indices to the decoder server
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: BaseKVSender
+    doc: Check the status of the kv cache transfer
+  - name: failure_exception
+    signature: (self)
+    class: BaseKVSender
+    doc: Raise an exception if the kv cache transfer fails
+  - name: __init__
+    signature: (self, mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: Optional[int] = None)
+    class: BaseKVReceiver
+  - name: init
+    signature: (self, kv_indices: npt.NDArray[np.int32], aux_index: Optional[int] = None)
+    class: BaseKVReceiver
+    doc: Notify the prefill server about the kv indices and aux index
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: BaseKVReceiver
+    doc: Check the status of the kv cache transfer
+  - name: failure_exception
+    signature: (self)
+    class: BaseKVReceiver
+    doc: Raise an exception if the kv cache transfer fails
+  - name: __init__
+    signature: (self, port: int)
+    class: BaseKVBootstrapServer
+
+File: disaggregation/common/__init__.py
+  (no function definitions found)
+File: disaggregation/common/conn.py
+  - name: __init__
+    signature: (self, args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool] = False)
+    class: CommonKVManager
+  - name: _register_to_bootstrap
+    signature: (self)
+    class: CommonKVManager
+    doc: Register KVSender to bootstrap server via HTTP POST.
+  - name: _connect
+    signature: (self, endpoint: str, is_ipv6: bool = False)
+    class: CommonKVManager
+  - name: __init__
+    signature: (self, mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: Optional[int] = None, data_parallel_rank: Optional[int] = None)
+    class: CommonKVReceiver
+  - name: _get_bootstrap_info_from_server
+    signature: (self, engine_rank, target_dp_group)
+    class: CommonKVReceiver
+    doc: Fetch the bootstrap info from the bootstrap server.
+  - name: _get_prefill_dp_size_from_server
+    signature: (self)
+    return: int
+    class: CommonKVReceiver
+    doc: Fetch the prefill parallel info from the bootstrap server.
+  - name: _connect
+    signature: (cls, endpoint: str, is_ipv6: bool = False)
+    class: CommonKVReceiver
+  - name: _connect_to_bootstrap_server
+    signature: (cls, bootstrap_info: dict)
+    class: CommonKVReceiver
+  - name: _register_kv_args
+    signature: (self)
+    class: CommonKVReceiver
+  - name: failure_exception
+    signature: (self)
+    class: CommonKVReceiver
+  - name: __init__
+    signature: (self, port: int)
+    class: CommonKVBootstrapServer
+  - name: run
+    signature: (self)
+    class: CommonKVBootstrapServer
+  - name: _setup_routes
+    signature: (self)
+    class: CommonKVBootstrapServer
+  - name: _handle_route
+    signature: (self, request: web.Request)
+    class: CommonKVBootstrapServer
+  - name: _handle_route_put
+    signature: (self, request: web.Request)
+    class: CommonKVBootstrapServer
+  - name: _handle_route_get
+    signature: (self, request: web.Request)
+    class: CommonKVBootstrapServer
+  - name: _run_server
+    signature: (self)
+    class: CommonKVBootstrapServer
+  - name: close
+    signature: (self)
+    class: CommonKVBootstrapServer
+    doc: Shutdown
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: CommonKVBootstrapServer
+
+File: disaggregation/common/utils.py
+  - name: __init__
+    signature: (self)
+    class: FastQueue
+  - name: put
+    signature: (self, item)
+    class: FastQueue
+  - name: get
+    signature: (self)
+    class: FastQueue
+  - name: group_concurrent_contiguous
+    signature: (src_indices: npt.NDArray[np.int32], dst_indices: npt.NDArray[np.int32])
+    return: Tuple[List[npt.NDArray[np.int32]], List[npt.NDArray[np.int32]]]
+    doc: Vectorised NumPy implementation.
+
+File: disaggregation/decode.py
+  - name: __init__
+    signature: (self, size: int, max_context_len: int, device: str, enable_memory_saver: bool, pre_alloc_size: int)
+    class: DecodeReqToTokenPool
+  - name: write
+    signature: (self, indices, values)
+    class: DecodeReqToTokenPool
+  - name: available_size
+    signature: (self)
+    class: DecodeReqToTokenPool
+  - name: alloc
+    signature: (self, need_size: int)
+    return: List[int]
+    class: DecodeReqToTokenPool
+  - name: free
+    signature: (self, free_index: Union[int, List[int]])
+    class: DecodeReqToTokenPool
+  - name: clear
+    signature: (self)
+    class: DecodeReqToTokenPool
+  - name: __init__
+    signature: (self, req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, draft_token_to_kv_pool: Optional[KVCache], req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, metadata_buffers: MetadataBuffers, scheduler: Scheduler, transfer_queue: DecodeTransferQueue, tree_cache: BasePrefixCache, gloo_group: ProcessGroup, tp_rank: int, tp_size: int, dp_size: int, gpu_id: int, bootstrap_port: int, max_total_num_tokens: int, prefill_pp_size: int, num_reserved_decode_tokens: int, transfer_backend: TransferBackend)
+    class: DecodePreallocQueue
+  - name: _init_kv_manager
+    signature: (self)
+    return: BaseKVManager
+    class: DecodePreallocQueue
+  - name: add
+    signature: (self, req: Req, is_retracted: bool = False)
+    return: None
+    class: DecodePreallocQueue
+    doc: Add a request to the pending queue.
+  - name: _check_if_req_exceed_kv_capacity
+    signature: (self, req: Req)
+    return: bool
+    class: DecodePreallocQueue
+  - name: extend
+    signature: (self, reqs: List[Req], is_retracted: bool = False)
+    return: None
+    class: DecodePreallocQueue
+    doc: Add a request to the pending queue.
+  - name: resume_retracted_reqs
+    signature: (self)
+    return: List[Req]
+    class: DecodePreallocQueue
+  - name: _update_handshake_waiters
+    signature: (self)
+    return: None
+    class: DecodePreallocQueue
+  - name: pop_preallocated
+    signature: (self)
+    return: List[DecodeRequest]
+    class: DecodePreallocQueue
+    doc: Pop the preallocated requests from the pending queue (FIFO).
+  - name: num_tokens_pre_allocated
+    signature: (self)
+    class: DecodePreallocQueue
+  - name: _allocatable_tokens
+    signature: (self, retractable_tokens: Optional[int] = None, count_retracted: bool = True)
+    return: int
+    class: DecodePreallocQueue
+  - name: _pre_alloc
+    signature: (self, req: Req)
+    return: torch.Tensor
+    class: DecodePreallocQueue
+    doc: Pre-allocate the memory for req_to_token and token_kv_pool
+  - name: __init__
+    signature: (self, gloo_group: ProcessGroup, req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, tp_rank: int, metadata_buffers: MetadataBuffers, scheduler: Scheduler, tree_cache: BasePrefixCache)
+    class: DecodeTransferQueue
+  - name: add
+    signature: (self, decode_req: DecodeRequest)
+    return: None
+    class: DecodeTransferQueue
+  - name: extend
+    signature: (self, decode_reqs: List[DecodeRequest])
+    return: None
+    class: DecodeTransferQueue
+  - name: pop_transferred
+    signature: (self)
+    return: List[Req]
+    class: DecodeTransferQueue
+  - name: event_loop_normal_disagg_decode
+    signature: (self: Scheduler)
+    class: SchedulerDisaggregationDecodeMixin
+    doc: A normal scheduler loop for decode worker in disaggregation mode.
+  - name: event_loop_overlap_disagg_decode
+    signature: (self: Scheduler)
+    class: SchedulerDisaggregationDecodeMixin
+  - name: _prepare_idle_batch_and_run
+    signature: (self: Scheduler, batch, delay_process = False)
+    class: SchedulerDisaggregationDecodeMixin
+  - name: get_next_disagg_decode_batch_to_run
+    signature: (self: Scheduler)
+    return: Optional[Tuple[ScheduleBatch, bool]]
+    class: SchedulerDisaggregationDecodeMixin
+    doc: Create fake completed prefill if possible and merge with running batch
+  - name: get_new_prebuilt_batch
+    signature: (self: Scheduler)
+    return: Optional[ScheduleBatch]
+    class: SchedulerDisaggregationDecodeMixin
+    doc: Create a schedulebatch for fake completed prefill
+  - name: process_decode_queue
+    signature: (self: Scheduler)
+    class: SchedulerDisaggregationDecodeMixin
+
+File: disaggregation/decode_schedule_batch_mixin.py
+  - name: prepare_for_prebuilt_extend
+    signature: (self: ScheduleBatch)
+    class: ScheduleBatchDisaggregationDecodeMixin
+    doc: Prepare a prebuilt extend by populate metadata
+  - name: process_prebuilt_extend
+    signature: (self: ScheduleBatch, server_args: ServerArgs, model_config: ModelConfig)
+    class: ScheduleBatchDisaggregationDecodeMixin
+    doc: Assign the buffered last input id to schedule batch
+
+File: disaggregation/fake/__init__.py
+  (no function definitions found)
+File: disaggregation/fake/conn.py
+  - name: __init__
+    signature: (self, mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+    class: FakeKVSender
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: FakeKVSender
+  - name: init
+    signature: (self, kv_indices: list[int], aux_index: Optional[int] = None)
+    class: FakeKVSender
+  - name: send
+    signature: (self, kv_indices: npt.NDArray[np.int32])
+    class: FakeKVSender
+  - name: failure_exception
+    signature: (self)
+    class: FakeKVSender
+  - name: __init__
+    signature: (self, mgr: BaseKVManager, bootstrap_addr: str, bootstrap_room: Optional[int] = None, data_parallel_rank: Optional[int] = None)
+    class: FakeKVReceiver
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: FakeKVReceiver
+  - name: init
+    signature: (self, kv_indices: list[int], aux_index: Optional[int] = None)
+    class: FakeKVReceiver
+  - name: failure_exception
+    signature: (self)
+    class: FakeKVReceiver
+
+File: disaggregation/kv_events.py
+  - name: __init__
+    signature: (self, attn_dp_rank: int = 0)
+    class: EventPublisher
+  - name: publish
+    signature: (self, events: EventBatch)
+    return: None
+    class: EventPublisher
+    doc: Emit events in order.
+  - name: shutdown
+    signature: (self)
+    return: None
+    class: EventPublisher
+    doc: Shutdown the publisher.
+  - name: publish
+    signature: (self, events)
+    return: None
+    class: NullEventPublisher
+  - name: shutdown
+    signature: (self)
+    return: None
+    class: NullEventPublisher
+  - name: __init__
+    signature: (self, attn_dp_rank: int, endpoint: str = 'tcp://*:5557', replay_endpoint: Optional[str] = None, buffer_steps: int = 10000, hwm: int = 100000, max_queue_size: int = 100000, topic: str = '')
+    return: None
+    class: ZmqEventPublisher
+  - name: publish
+    signature: (self, events: EventBatch)
+    return: None
+    class: ZmqEventPublisher
+  - name: shutdown
+    signature: (self)
+    return: None
+    class: ZmqEventPublisher
+    doc: Stop the publisher thread and clean up resources.
+  - name: _socket_setup
+    signature: (self)
+    return: None
+    class: ZmqEventPublisher
+    doc: Initialize sockets
+  - name: _publisher_thread
+    signature: (self)
+    return: None
+    class: ZmqEventPublisher
+    doc: Background thread that processes the event queue.
+  - name: _service_replay
+    signature: (self)
+    return: None
+    class: ZmqEventPublisher
+    doc: If a replay request is waiting, send buffered batches.
+  - name: offset_endpoint_port
+    signature: (endpoint: Optional[str], data_parallel_rank: int)
+    return: Optional[str]
+    class: ZmqEventPublisher
+    doc: Helper function to offset the port in an endpoint by
+  - name: from_cli
+    signature: (cls, cli_value: str)
+    return: 'KVEventsConfig'
+    class: KVEventsConfig
+    doc: Parse the CLI value for the event publisher config.
+  - name: register_publisher
+    signature: (cls, name: str, ctor: Callable[..., EventPublisher])
+    return: None
+    class: EventPublisherFactory
+  - name: create
+    signature: (cls, config: Optional[str], attn_dp_rank: int = 0)
+    return: EventPublisher
+    class: EventPublisherFactory
+    doc: Create publisher from a config mapping.
+
+File: disaggregation/launch_lb.py
+  - name: add_cli_args
+    signature: (parser: argparse.ArgumentParser)
+    class: LBArgs
+  - name: from_cli_args
+    signature: (cls, args: argparse.Namespace)
+    return: 'LBArgs'
+    class: LBArgs
+  - name: main
+    signature: ()
+
+File: disaggregation/mini_lb.py
+  - name: setup_logger
+    signature: ()
+  - name: __init__
+    signature: (self, prefill_configs: List[PrefillConfig], decode_servers: List[str], timeout: int)
+    class: MiniLoadBalancer
+  - name: add_prefill_server
+    signature: (self, new_prefill_config: PrefillConfig)
+    class: MiniLoadBalancer
+  - name: add_decode_server
+    signature: (self, new_decode_server: str)
+    class: MiniLoadBalancer
+  - name: select_pair
+    signature: (self)
+    class: MiniLoadBalancer
+  - name: generate
+    signature: (self, modified_request, prefill_server, decode_server, endpoint)
+    return: ORJSONResponse
+    class: MiniLoadBalancer
+  - name: generate_stream
+    signature: (self, modified_request, prefill_server, decode_server, endpoint = 'generate')
+    class: MiniLoadBalancer
+  - name: stream_results
+    signature: ()
+    class: MiniLoadBalancer
+  - name: health_check
+    signature: ()
+  - name: health_check
+    signature: ()
+  - name: flush_cache
+    signature: ()
+  - name: get_server_info
+    signature: ()
+  - name: get_model_info
+    signature: ()
+  - name: handle_generate_request
+    signature: (request_data: dict)
+  - name: _forward_to_backend
+    signature: (request_data: dict, endpoint_name: str)
+  - name: handle_chat_completion_request
+    signature: (request_data: dict)
+  - name: handle_completion_request
+    signature: (request_data: dict)
+  - name: _generate_bootstrap_room
+    signature: ()
+  - name: _get_request_batch_size
+    signature: (request)
+  - name: get_models
+    signature: ()
+  - name: register
+    signature: (obj: PDRegistryRequest)
+  - name: run
+    signature: (prefill_configs, decode_addrs, host, port, timeout)
+
+File: disaggregation/mooncake/__init__.py
+  (no function definitions found)
+File: disaggregation/mooncake/conn.py
+  - name: __init__
+    signature: (self, bootstrap_room: int, failure_reason: str)
+    class: KVTransferError
+  - name: __str__
+    signature: (self)
+    class: KVTransferError
+  - name: from_zmq
+    signature: (cls, msg: List[bytes])
+    class: TransferInfo
+  - name: from_zmq
+    signature: (cls, msg: List[bytes])
+    class: KVArgsRegisterInfo
+  - name: serialize_data_from_buffer
+    signature: (src_addr, data_length)
+    class: AuxDataCodec
+    doc: Serialize data from memory buffer to bytes
+  - name: deserialize_data_to_buffer
+    signature: (kv_args, buffer_index, aux_index, data)
+    class: AuxDataCodec
+    doc: Deserialize bytes into target memory buffer
+  - name: __init__
+    signature: (self, args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool] = False)
+    class: MooncakeKVManager
+  - name: init_engine
+    signature: (self)
+    class: MooncakeKVManager
+  - name: register_buffer_to_engine
+    signature: (self)
+    class: MooncakeKVManager
+  - name: _connect
+    signature: (self, endpoint: str, is_ipv6: bool = False)
+    class: MooncakeKVManager
+  - name: _transfer_data
+    signature: (self, mooncake_session_id, transfer_blocks)
+    class: MooncakeKVManager
+  - name: send_kvcache
+    signature: (self, mooncake_session_id: str, prefill_kv_indices: npt.NDArray[np.int32], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int32], executor: concurrent.futures.ThreadPoolExecutor)
+    class: MooncakeKVManager
+  - name: set_transfer_blocks
+    signature: (src_ptr: int, dst_ptr: int, item_len: int)
+    return: List[Tuple[int, int, int]]
+    class: MooncakeKVManager
+  - name: process_layer
+    signature: (src_ptr: int, dst_ptr: int, item_len: int)
+    return: int
+    class: MooncakeKVManager
+  - name: process_layers
+    signature: (layers_params: List[Tuple[int, int, int]])
+    return: int
+    class: MooncakeKVManager
+  - name: send_kvcache_slice
+    signature: (self, mooncake_session_id: str, prefill_kv_indices: npt.NDArray[np.int64], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int64], dst_tp_rank: int, dst_attn_tp_size: int, dst_kv_item_len: int, executor: concurrent.futures.ThreadPoolExecutor)
+    class: MooncakeKVManager
+    doc: Sends KV cache slices from this Prefill rank to a target Decode rank,
+  - name: process_layer_tp_aware
+    signature: (layer_params)
+    class: MooncakeKVManager
+  - name: send_aux
+    signature: (self, req: TransferInfo, prefill_aux_index: int, dst_aux_ptrs: list[int])
+    class: MooncakeKVManager
+  - name: send_aux_tcp
+    signature: (self, req: TransferInfo, prefill_aux_index: int, dst_aux_ptrs: list[int])
+    class: MooncakeKVManager
+  - name: send_aux_data_to_endpoint
+    signature: (self, remote: str, dst_port: int, room: int, buffer_index: int, aux_index: int, data: bytes)
+    class: MooncakeKVManager
+  - name: sync_status_to_decode_endpoint
+    signature: (self, remote: str, dst_port: int, room: int, status: int, prefill_rank: int)
+    class: MooncakeKVManager
+  - name: transfer_worker
+    signature: (self, queue: FastQueue, executor: concurrent.futures.ThreadPoolExecutor)
+    class: MooncakeKVManager
+  - name: _bind_server_socket
+    signature: (self)
+    class: MooncakeKVManager
+  - name: start_prefill_thread
+    signature: (self)
+    class: MooncakeKVManager
+  - name: bootstrap_thread
+    signature: ()
+    class: MooncakeKVManager
+    doc: This thread recvs pre-alloc notification from the decode engine
+  - name: _handle_aux_data
+    signature: (self, msg: List[bytes])
+    class: MooncakeKVManager
+    doc: Handle AUX_DATA messages received by the decode thread.
+  - name: start_decode_thread
+    signature: (self)
+    class: MooncakeKVManager
+  - name: decode_thread
+    signature: ()
+    class: MooncakeKVManager
+  - name: heartbeat_checker
+    signature: ()
+    class: MooncakeKVManager
+  - name: add_transfer_request
+    signature: (self, bootstrap_room: int, kv_indices: npt.NDArray[np.int32], index_slice: slice, is_last: bool, aux_index: Optional[int] = None)
+    class: MooncakeKVManager
+  - name: check_status
+    signature: (self, bootstrap_room: int)
+    class: MooncakeKVManager
+  - name: update_status
+    signature: (self, bootstrap_room: int, status: KVPoll)
+    class: MooncakeKVManager
+  - name: record_failure
+    signature: (self, bootstrap_room: int, failure_reason: str)
+    class: MooncakeKVManager
+  - name: get_session_id
+    signature: (self)
+    class: MooncakeKVManager
+  - name: _register_to_bootstrap
+    signature: (self)
+    class: MooncakeKVManager
+    doc: Register KVSender to bootstrap server via HTTP POST.
+  - name: _handle_node_failure
+    signature: (self, failed_bootstrap_addr)
+    class: MooncakeKVManager
+  - name: __init__
+    signature: (self, mgr: MooncakeKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+    class: MooncakeKVSender
+  - name: init
+    signature: (self, num_kv_indices: int, aux_index: Optional[int] = None)
+    class: MooncakeKVSender
+  - name: send
+    signature: (self, kv_indices: npt.NDArray[np.int32])
+    class: MooncakeKVSender
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: MooncakeKVSender
+  - name: clear
+    signature: (self)
+    return: None
+    class: MooncakeKVSender
+  - name: failure_exception
+    signature: (self)
+    class: MooncakeKVSender
+  - name: abort
+    signature: (self)
+    class: MooncakeKVSender
+  - name: __init__
+    signature: (self, mgr: MooncakeKVManager, bootstrap_addr: str, bootstrap_room: Optional[int] = None, data_parallel_rank: Optional[int] = None)
+    class: MooncakeKVReceiver
+  - name: _get_bootstrap_info_from_server
+    signature: (self, engine_rank, target_dp_group, target_pp_rank)
+    class: MooncakeKVReceiver
+    doc: Fetch the bootstrap info from the bootstrap server.
+  - name: _get_prefill_parallel_info_from_server
+    signature: (self)
+    return: Tuple[Optional[int], Optional[int], Optional[int]]
+    class: MooncakeKVReceiver
+    doc: Fetch the prefill parallel info from the bootstrap server.
+  - name: _register_kv_args
+    signature: (self)
+    class: MooncakeKVReceiver
+  - name: _connect
+    signature: (cls, endpoint: str, is_ipv6: bool = False)
+    class: MooncakeKVReceiver
+  - name: _connect_to_bootstrap_server
+    signature: (cls, bootstrap_info: dict)
+    class: MooncakeKVReceiver
+  - name: init
+    signature: (self, kv_indices: npt.NDArray[np.int32], aux_index: Optional[int] = None)
+    class: MooncakeKVReceiver
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: MooncakeKVReceiver
+  - name: clear
+    signature: (self)
+    return: None
+    class: MooncakeKVReceiver
+  - name: failure_exception
+    signature: (self)
+    class: MooncakeKVReceiver
+  - name: abort
+    signature: (self)
+    class: MooncakeKVReceiver
+  - name: __init__
+    signature: (self, port: int)
+    class: MooncakeKVBootstrapServer
+  - name: run
+    signature: (self)
+    class: MooncakeKVBootstrapServer
+  - name: _setup_routes
+    signature: (self)
+    class: MooncakeKVBootstrapServer
+  - name: _handle_health_check
+    signature: (self, request)
+    class: MooncakeKVBootstrapServer
+  - name: _handle_route
+    signature: (self, request: web.Request)
+    class: MooncakeKVBootstrapServer
+  - name: _handle_route_put
+    signature: (self, request: web.Request)
+    class: MooncakeKVBootstrapServer
+  - name: _handle_route_get
+    signature: (self, request: web.Request)
+    class: MooncakeKVBootstrapServer
+  - name: _run_server
+    signature: (self)
+    class: MooncakeKVBootstrapServer
+  - name: close
+    signature: (self)
+    class: MooncakeKVBootstrapServer
+    doc: Shutdown
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: MooncakeKVBootstrapServer
+
+File: disaggregation/mooncake/transfer_engine.py
+  - name: __init__
+    signature: (self, hostname: str, gpu_id: int, ib_device: Optional[str] = None)
+    class: MooncakeTransferEngine
+  - name: register
+    signature: (self, ptr, length)
+    class: MooncakeTransferEngine
+  - name: deregister
+    signature: (self, ptr)
+    class: MooncakeTransferEngine
+  - name: batch_register
+    signature: (self, ptrs: List[int], lengths: List[int])
+    return: int
+    class: MooncakeTransferEngine
+    doc: Batch register multiple memory regions.
+  - name: batch_deregister
+    signature: (self, ptrs: List[int])
+    return: int
+    class: MooncakeTransferEngine
+    doc: Batch deregister multiple memory regions.
+  - name: initialize
+    signature: (self, hostname: str, device_name: Optional[str])
+    return: None
+    class: MooncakeTransferEngine
+    doc: Initialize the mooncake instance.
+  - name: transfer_sync
+    signature: (self, session_id: str, buffer: int, peer_buffer_address: int, length: int)
+    return: int
+    class: MooncakeTransferEngine
+    doc: Synchronously transfer data to the specified address.
+  - name: batch_transfer_sync
+    signature: (self, session_id: str, buffers: List[int], peer_buffer_addresses: List[int], lengths: List[int])
+    return: int
+    class: MooncakeTransferEngine
+    doc: Synchronously transfer data to the specified addresses in batches.
+  - name: get_session_id
+    signature: (self)
+    class: MooncakeTransferEngine
+
+File: disaggregation/nixl/__init__.py
+  (no function definitions found)
+File: disaggregation/nixl/conn.py
+  - name: is_dummy
+    signature: (self)
+    class: TransferInfo
+  - name: from_zmq
+    signature: (cls, msg: List[bytes])
+    class: TransferInfo
+  - name: from_zmq
+    signature: (cls, msg: List[bytes])
+    class: KVArgsRegisterInfo
+  - name: is_done
+    signature: (self)
+    class: TransferStatus
+  - name: __init__
+    signature: (self, args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool] = False)
+    class: NixlKVManager
+  - name: check_status
+    signature: (self, bootstrap_room: int)
+    class: NixlKVManager
+  - name: update_status
+    signature: (self, bootstrap_room: int, status: KVPoll)
+    class: NixlKVManager
+  - name: register_buffer_to_engine
+    signature: (self)
+    class: NixlKVManager
+  - name: _add_remote_peer
+    signature: (self, decode_kv_args: KVArgsRegisterInfo)
+    class: NixlKVManager
+  - name: send_kvcache
+    signature: (self, peer_name: str, prefill_kv_indices: npt.NDArray[np.int32], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int32], dst_gpu_id: int, notif: str)
+    class: NixlKVManager
+  - name: send_aux
+    signature: (self, peer_name: str, prefill_aux_index: int, dst_aux_ptrs: list[int], dst_aux_index: int, notif: str)
+    class: NixlKVManager
+  - name: add_transfer_request
+    signature: (self, bootstrap_room: int, kv_indices: npt.NDArray[np.int32], index_slice: slice, is_last: bool, chunk_id: int, aux_index: Optional[int] = None)
+    class: NixlKVManager
+  - name: update_transfer_status
+    signature: (self)
+    class: NixlKVManager
+  - name: check_transfer_done
+    signature: (self, room: int)
+    class: NixlKVManager
+  - name: _bind_server_socket
+    signature: (self)
+    class: NixlKVManager
+  - name: _start_bootstrap_thread
+    signature: (self)
+    class: NixlKVManager
+  - name: bootstrap_thread
+    signature: ()
+    class: NixlKVManager
+    doc: This thread recvs transfer info from the decode engine
+  - name: __init__
+    signature: (self, mgr: NixlKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+    class: NixlKVSender
+  - name: init
+    signature: (self, num_kv_indices: int, aux_index: Optional[int] = None)
+    class: NixlKVSender
+  - name: send
+    signature: (self, kv_indices: npt.NDArray[np.int32])
+    class: NixlKVSender
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: NixlKVSender
+  - name: failure_exception
+    signature: (self)
+    class: NixlKVSender
+  - name: __init__
+    signature: (self, mgr: NixlKVManager, bootstrap_addr: str, bootstrap_room: Optional[int] = None, data_parallel_rank: Optional[int] = None)
+    class: NixlKVReceiver
+  - name: init
+    signature: (self, kv_indices: npt.NDArray[np.int32], aux_index: Optional[int] = None)
+    class: NixlKVReceiver
+  - name: poll
+    signature: (self)
+    return: KVPoll
+    class: NixlKVReceiver
+  - name: _register_kv_args
+    signature: (self)
+    class: NixlKVReceiver
+  - name: failure_exception
+    signature: (self)
+    class: NixlKVReceiver
+
+File: disaggregation/prefill.py
+  - name: __init__
+    signature: (self, token_to_kv_pool: KVCache, draft_token_to_kv_pool: Optional[KVCache], req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, metadata_buffers: MetadataBuffers, tp_rank: int, tp_size: int, gpu_id: int, bootstrap_port: int, gloo_group: ProcessGroup, max_total_num_tokens: int, decode_tp_size: int, decode_dp_size: int, scheduler: Scheduler, pp_rank: int, pp_size: int, transfer_backend: TransferBackend)
+    class: PrefillBootstrapQueue
+  - name: _init_kv_manager
+    signature: (self)
+    return: BaseKVManager
+    class: PrefillBootstrapQueue
+  - name: add
+    signature: (self, req: Req, num_kv_heads: int)
+    return: None
+    class: PrefillBootstrapQueue
+  - name: extend
+    signature: (self, reqs: List[Req], num_kv_heads: int)
+    return: None
+    class: PrefillBootstrapQueue
+  - name: _check_if_req_exceed_kv_capacity
+    signature: (self, req: Req)
+    return: bool
+    class: PrefillBootstrapQueue
+  - name: _process_req
+    signature: (self, req: Req)
+    return: None
+    class: PrefillBootstrapQueue
+    doc: Set max_new_tokens = 1, so PrefillAdder memory estimation is accurate
+  - name: pop_bootstrapped
+    signature: (self, return_failed_reqs: bool = False, rids_to_check: Optional[List[str]] = None)
+    return: List[Req]
+    class: PrefillBootstrapQueue
+    doc: pop the reqs which has finished bootstrapping
+  - name: event_loop_normal_disagg_prefill
+    signature: (self: Scheduler)
+    return: None
+    class: SchedulerDisaggregationPrefillMixin
+    doc: A normal scheduler loop for prefill worker in disaggregation mode.
+  - name: event_loop_overlap_disagg_prefill
+    signature: (self: Scheduler)
+    return: None
+    class: SchedulerDisaggregationPrefillMixin
+  - name: process_batch_result_disagg_prefill
+    signature: (self: Scheduler, batch: ScheduleBatch, result: GenerationBatchResult, launch_done: Optional[threading.Event] = None)
+    return: None
+    class: SchedulerDisaggregationPrefillMixin
+    doc: Transfer kv for prefill completed requests and add it into disagg_prefill_inflight_queue
+  - name: process_disagg_prefill_inflight_queue
+    signature: (self: Scheduler, rids_to_check: Optional[List[str]] = None)
+    return: List[Req]
+    class: SchedulerDisaggregationPrefillMixin
+    doc: Poll the requests in the middle of transfer. If done, return the request.
+  - name: get_transferred_rids
+    signature: (self: Scheduler)
+    return: List[str]
+    class: SchedulerDisaggregationPrefillMixin
+    doc: Used by PP, get the transferred rids but **do not pop**
+  - name: process_prefill_chunk
+    signature: (self: Scheduler)
+    return: None
+    class: SchedulerDisaggregationPrefillMixin
+  - name: send_kv_chunk
+    signature: (self: Scheduler, req: Req, last_chunk: bool = False, end_idx: Optional[int] = None)
+    return: None
+    class: SchedulerDisaggregationPrefillMixin
+    doc: Send a prefilled chunk to the decode server
+  - name: event_loop_pp_disagg_prefill
+    signature: (self: Scheduler)
+    class: SchedulerDisaggregationPrefillMixin
+    doc: An event loop for the prefill server in pipeline parallelism.
+  - name: send_pyobj_to_next_stage
+    signature: (self, data)
+    class: SchedulerDisaggregationPrefillMixin
+  - name: recv_pyobj_from_prev_stage
+    signature: (self)
+    class: SchedulerDisaggregationPrefillMixin
+
+File: disaggregation/utils.py
+  - name: poll_and_all_reduce
+    signature: (pollers, gloo_group)
+  - name: __init__
+    signature: (self, size: int)
+    class: ReqToMetadataIdxAllocator
+  - name: available_size
+    signature: (self)
+    class: ReqToMetadataIdxAllocator
+  - name: alloc
+    signature: (self)
+    return: Optional[int]
+    class: ReqToMetadataIdxAllocator
+  - name: free
+    signature: (self, free_index: int)
+    class: ReqToMetadataIdxAllocator
+  - name: __init__
+    signature: (self, size: int, hidden_size: int, dtype: torch.dtype, max_top_logprobs_num: int = 128, custom_mem_pool: torch.cuda.MemPool = None)
+    class: MetadataBuffers
+  - name: get_buf_infos
+    signature: (self)
+    class: MetadataBuffers
+  - name: get_buf
+    signature: (self, idx: int)
+    class: MetadataBuffers
+  - name: set_buf
+    signature: (self, req: Req)
+    class: MetadataBuffers
+  - name: get_kv_class
+    signature: (transfer_backend: TransferBackend, class_type: KVClassType)
+  - name: kv_to_page_indices
+    signature: (kv_indices: np.ndarray, page_size: int)
+  - name: kv_to_page_num
+    signature: (num_kv_indices: int, page_size: int)
+  - name: __post_init__
+    signature: (self)
+    class: PDRegistryRequest
+  - name: register_disaggregation_server
+    signature: (mode: str, server_port: int, bootstrap_port: int, pdlb_url: str)
+  - name: is_mla_backend
+    signature: (target_kv_pool)
+    return: bool
+  - name: prepare_abort
+    signature: (req: Req, error_message: str, status_code = None)

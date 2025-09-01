@@ -1,0 +1,451 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: multimodal/mm_utils.py
+  - name: has_valid_data
+    signature: (data)
+    return: bool
+  - name: select_best_resolution
+    signature: (original_size, possible_resolutions)
+    doc: Selects the best resolution from a list of possible resolutions based on the original size.
+  - name: resize_and_pad_image
+    signature: (image, target_resolution)
+    doc: Resize and pad an image to a target resolution while maintaining aspect ratio.
+  - name: divide_to_patches
+    signature: (image, patch_size)
+    doc: Divides an image into patches of a specified size.
+  - name: get_anyres_image_grid_shape
+    signature: (image_size, grid_pinpoints, patch_size)
+    doc: Calculate the shape of the image patch grid after the preprocessing for images of any resolution.
+  - name: process_anyres_image
+    signature: (image, processor, grid_pinpoints)
+    doc: Process an image with variable resolutions.
+  - name: load_image_from_base64
+    signature: (image)
+  - name: expand2square
+    signature: (pil_img, background_color)
+  - name: unpad_image
+    signature: (tensor, original_size)
+    doc: Unpads a PyTorch tensor of a padded and resized image.
+  - name: unpad_image_shape
+    signature: (current_height, current_width, original_size)
+    doc: Unpads a PyTorch tensor of a padded and resized image
+  - name: process_images
+    signature: (images, image_processor, model_cfg)
+
+File: multimodal/processors/base_processor.py
+  - name: organize_results
+    signature: (self)
+    return: List[Tuple[Modality, Any]]
+    class: BaseMultiModalProcessorOutput
+    doc: :return: a list of results, with their corresponding modalities
+  - name: build
+    signature: (self, processor)
+    class: MultimodalSpecialTokens
+  - name: convert_to_str
+    signature: (self, token: Union[str, int], processor)
+    return: str
+    class: MultimodalSpecialTokens
+  - name: convert_to_strs
+    signature: (self, processor)
+    class: MultimodalSpecialTokens
+  - name: get_modality_of_token
+    signature: (self, token: str)
+    return: Optional[Modality]
+    class: MultimodalSpecialTokens
+    doc: :return: the modality associated with the given token, if the token is a special_token or matches with the multimodal token regex
+  - name: get_token_id_by_modality
+    signature: (self, modality: Modality)
+    return: Optional[int]
+    class: MultimodalSpecialTokens
+  - name: parse_regex
+    signature: (self)
+    class: MultimodalSpecialTokens
+  - name: get_combined_regex
+    signature: (self)
+    return: re.Pattern
+    class: MultimodalSpecialTokens
+    doc: Builds and returns a regex, used to split input str into tokens (with mm special tokens)
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, transport_mode, *args, **kwargs)
+    class: BaseMultimodalProcessor
+  - name: process_mm_data
+    signature: (self, input_text, images = None, videos = None, audios = None, **kwargs)
+    return: dict
+    class: BaseMultimodalProcessor
+    doc: process multimodal data with transformers AutoProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data, audio_data, input_text, request_obj, **kwargs)
+    return: Optional[Dict[str, Any]]
+    class: BaseMultimodalProcessor
+  - name: get_estimated_frames_list
+    signature: (self, image_data)
+    class: BaseMultimodalProcessor
+    doc: estimate the total frame count from all visual input
+  - name: _load_single_item
+    signature: (data, modality: Modality, frame_count_limit = None, audio_sample_rate: Optional[int] = None, discard_alpha_channel = True)
+    class: BaseMultimodalProcessor
+    doc: Load a single multimodal data.
+  - name: submit_data_loading_tasks
+    signature: (self, text_parts: List[str], multimodal_tokens: MultimodalSpecialTokens, data_iterators: dict[Modality, Iterator[Any]], discard_alpha_channel: bool = True, image_estimated_frames_iter: Optional[iter] = None, image_scaling_factor: float = 1.0, max_image_frames: int = 30, audio_sample_rate: Optional[int] = None)
+    return: Tuple[List, List]
+    class: BaseMultimodalProcessor
+    doc: load multimodal data parallelly using iterators.
+  - name: load_mm_data
+    signature: (self, prompt: str, multimodal_tokens: MultimodalSpecialTokens, image_data: Optional[list] = None, video_data: Optional[list] = None, audio_data: Optional[list] = None, return_text: Optional[bool] = True, discard_alpha_channel: bool = True, audio_sample_rate: Optional[int] = None)
+    return: BaseMultiModalProcessorOutput
+    class: BaseMultimodalProcessor
+    doc: Each frame of video/image will be replaced by a single image token
+  - name: get_mm_items_offset
+    signature: (input_ids: torch.Tensor, mm_token_id: int)
+    return: List[Tuple[int, int]]
+    class: BaseMultimodalProcessor
+    doc: Get a set of range for mm_items from input_ids
+  - name: get_mm_items_offset_by_pair
+    signature: (input_ids: torch.Tensor, mm_start_id: int, mm_end_id: int)
+    return: List[Tuple[int, int]]
+    class: BaseMultimodalProcessor
+  - name: collect_mm_items_from_processor_output
+    signature: (self, data_dict: dict)
+    return: List[MultimodalDataItem]
+    class: BaseMultimodalProcessor
+    doc: Create mm_items directly from processor output.
+  - name: _process_and_collect_mm_items
+    signature: (self, input_text: str, images = None, audios = None, videos = None, **kwargs)
+    return: Tuple[List[MultimodalDataItem], torch.Tensor, dict]
+    class: BaseMultimodalProcessor
+    doc: Helper method to process multimodal data and create mm_items in one step.
+  - name: process_and_combine_mm_data
+    signature: (self, base_output: BaseMultiModalProcessorOutput, mm_tokens: MultimodalSpecialTokens, **kwargs)
+    return: Tuple[List[MultimodalDataItem], torch.Tensor, dict]
+    class: BaseMultimodalProcessor
+    doc: Process multimodal data and return the combined multimodal items and input_ids.
+
+File: multimodal/processors/clip.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: ClipImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, *args, **kwargs)
+    class: ClipImageProcessor
+
+File: multimodal/processors/deepseek_vl_v2.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: DeepseekVL2ImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, request_obj, max_req_input_len, *args, **kwargs)
+    class: DeepseekVL2ImageProcessor
+
+File: multimodal/processors/gemma3.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Gemma3SGLangImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes, Dict]], input_text, request_obj, *args, **kwargs)
+    class: Gemma3SGLangImageProcessor
+
+File: multimodal/processors/gemma3n.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Gemma3nSGLangProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: Optional[List[Union[str, bytes, Dict]]] = None, audio_data: Optional[List[Union[str, bytes, Dict]]] = None, input_text: str = '', request_obj = None, *args, **kwargs)
+    class: Gemma3nSGLangProcessor
+    doc: Process multimodal data including images and audio.
+
+File: multimodal/processors/glm4v.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Glm4vImageProcessor
+  - name: preprocess_video
+    signature: (self, vr: VideoReader)
+    class: Glm4vImageProcessor
+    doc: Preprocess video using VideoReader from Decord backend.
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, request_obj, *args, **kwargs)
+    class: Glm4vImageProcessor
+
+File: multimodal/processors/internvl.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _image_processor, *args, **kwargs)
+    class: InternVLImageProcessor
+  - name: build_transform
+    signature: (input_size)
+    class: InternVLImageProcessor
+  - name: resize_image
+    signature: (img, size)
+    class: InternVLImageProcessor
+  - name: to_tensor
+    signature: (img)
+    class: InternVLImageProcessor
+  - name: normalize
+    signature: (tensor, mean, std)
+    class: InternVLImageProcessor
+  - name: transform
+    signature: (img)
+    class: InternVLImageProcessor
+  - name: dynamic_preprocess
+    signature: (image, min_num = 1, max_num = 12, image_size = 448, use_thumbnail = False)
+    class: InternVLImageProcessor
+  - name: find_closest_aspect_ratio
+    signature: (aspect_ratio, target_ratios, width, height, image_size)
+    class: InternVLImageProcessor
+  - name: get_index
+    signature: (bound, fps, max_frame, first_idx = 0, num_segments = 32)
+    class: InternVLImageProcessor
+  - name: load_video
+    signature: (video_path, bound = None, input_size = 448, max_num = 1, num_segments = 32)
+    class: InternVLImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data, input_text, request_obj, **kwargs)
+    class: InternVLImageProcessor
+  - name: process_image_internvl
+    signature: (image, input_size = 448, max_num = 12)
+    class: InternVLImageProcessor
+
+File: multimodal/processors/janus_pro.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: JanusProImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, request_obj, **kwargs)
+    class: JanusProImageProcessor
+
+File: multimodal/processors/kimi_vl.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: KimiVLImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes, Dict]], input_text, request_obj, *args, **kwargs)
+    class: KimiVLImageProcessor
+
+File: multimodal/processors/llava.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: LlavaImageProcessor
+  - name: _process_single_image_task
+    signature: (image_data: Union[str, bytes, ImageData], image_aspect_ratio: Optional[str] = None, image_grid_pinpoints: Optional[str] = None, processor = None)
+    class: LlavaImageProcessor
+  - name: _process_single_image
+    signature: (self, image_data: Union[bytes, str, ImageData], aspect_ratio: str, grid_pinpoints: str)
+    class: LlavaImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes, ImageData]], input_text, request_obj, *args, **kwargs)
+    class: LlavaImageProcessor
+  - name: _get_sgl_processor_cls
+    signature: (self, model_type: str)
+    class: LlavaMultimodalProcessor
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: LlavaMultimodalProcessor
+  - name: process_mm_data_async
+    signature: (self, *args, **kwargs)
+    class: LlavaMultimodalProcessor
+
+File: multimodal/processors/minicpm.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: MiniCPMMultimodalProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], audio_data: List[Union[str, bytes]], input_text, request_obj, **kwargs)
+    class: MiniCPMMultimodalProcessor
+
+File: multimodal/processors/mlama.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: MllamaImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, *args, **kwargs)
+    class: MllamaImageProcessor
+
+File: multimodal/processors/mllama4.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Mllama4ImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, *args, **kwargs)
+    class: Mllama4ImageProcessor
+
+File: multimodal/processors/phi4mm.py
+  - name: __init__
+    signature: (self, _processor)
+    return: None
+    class: Phi4MMProcessorAdapter
+  - name: __call__
+    signature: (self, **kwargs)
+    class: Phi4MMProcessorAdapter
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Phi4MMMultimodalProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], audio_data, input_text, request_obj, **kwargs)
+    class: Phi4MMMultimodalProcessor
+
+File: multimodal/processors/pixtral.py
+  - name: get_patch_grid_size
+    signature: (self, *, image_width: int, image_height: int)
+    return: tuple[int, int]
+    class: PixtralProcessor
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: PixtralProcessor
+  - name: _resize
+    signature: (self, image)
+    class: PixtralProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, request_obj, *args, **kwargs)
+    class: PixtralProcessor
+
+File: multimodal/processors/qwen_audio.py
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Qwen2AudioMultimodalProcessor
+  - name: process_mm_data_async
+    signature: (self, audio_data, input_text, **kwargs)
+    class: Qwen2AudioMultimodalProcessor
+
+File: multimodal/processors/qwen_vl.py
+  - name: smart_resize
+    signature: (height: int, width: int, factor: int = IMAGE_FACTOR, min_pixels: int = MIN_PIXELS, max_pixels: int = MAX_PIXELS)
+    return: tuple[int, int]
+    doc: Rescales the image so that the following conditions are met:
+  - name: resize_image
+    signature: (image, size_factor: int = IMAGE_FACTOR)
+    return: Image.Image
+  - name: round_by_factor
+    signature: (number: int, factor: int)
+    return: int
+    doc: Returns the closest integer to 'number' that is divisible by 'factor'.
+  - name: ceil_by_factor
+    signature: (number: int, factor: int)
+    return: int
+    doc: Returns the smallest integer greater than or equal to 'number' that is divisible by 'factor'.
+  - name: floor_by_factor
+    signature: (number: int, factor: int)
+    return: int
+    doc: Returns the largest integer less than or equal to 'number' that is divisible by 'factor'.
+  - name: resize_image_async
+    signature: (image)
+  - name: smart_nframes
+    signature: (ele: dict, total_frames: int, video_fps: int | float)
+    return: int
+    doc: calculate the number of frames for video used for model inputs.
+  - name: preprocess_video
+    signature: (vr, image_factor: int = IMAGE_FACTOR)
+    return: torch.Tensor
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Qwen2_5VLImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text, request_obj, *args, **kwargs)
+    class: Qwen2_5VLImageProcessor
+
+File: multimodal/processors/step3_vl.py
+  - name: forward
+    signature: (self, raw_image: Union[np.ndarray, Image.Image])
+    return: torch.Tensor
+    class: GPUToTensor
+  - name: __init__
+    signature: (self, size, interpolation_mode = 'bicubic', patch_size = None)
+    class: Step3VisionProcessor
+  - name: __call__
+    signature: (self, image, is_patch = False)
+    class: Step3VisionProcessor
+  - name: determine_window_size
+    signature: (self, long: int, short: int)
+    return: int
+    class: ImagePatcher
+  - name: slide_window
+    signature: (self, width: int, height: int, sizes: list[tuple[int, int]], steps: list[tuple[int, int]], img_rate_thr: float = 0.6)
+    return: tuple[list[tuple[int, int, int, int]], tuple[int, int]]
+    class: ImagePatcher
+  - name: square_pad
+    signature: (self, img: Image.Image)
+    return: Image.Image
+    class: ImagePatcher
+  - name: get_image_size_for_padding
+    signature: (self, img_width: int, img_height: int)
+    return: tuple[int, int]
+    class: ImagePatcher
+  - name: get_image_size_for_preprocess
+    signature: (self, img_width: int, img_height: int)
+    return: tuple[int, int]
+    class: ImagePatcher
+  - name: get_image_size_for_crop
+    signature: (self, img_width: int, img_height: int, window_size: int)
+    class: ImagePatcher
+  - name: patch_crop
+    signature: (self, img: Image.Image, i: int, j: int, th: int, tw: int)
+    class: ImagePatcher
+  - name: get_num_patches
+    signature: (self, img_width: int, img_height: int)
+    return: tuple[int, int]
+    class: ImagePatcher
+  - name: __call__
+    signature: (self, img: Image.Image)
+    return: tuple[Image.Image, list[Image.Image], list[bool] | None]
+    class: ImagePatcher
+  - name: __init__
+    signature: (self, config, tokenizer)
+    return: None
+    class: Step3VLProcessor
+  - name: image_token_id
+    signature: (self)
+    return: int
+    class: Step3VLProcessor
+  - name: get_num_image_tokens
+    signature: (self, img_width: int, img_height: int)
+    return: int
+    class: Step3VLProcessor
+  - name: _split_images
+    signature: (self, images: list[Image.Image])
+    return: list[ImageWithPatches]
+    class: Step3VLProcessor
+  - name: _convert_images_to_pixel_values
+    signature: (self, images: list[Image.Image], is_patch: bool = False)
+    return: list[torch.Tensor]
+    class: Step3VLProcessor
+  - name: _get_patch_repl
+    signature: (self, num_patches: int, patch_newline_mask: list[bool] | None)
+    return: tuple[str, list[int]]
+    class: Step3VLProcessor
+  - name: _get_image_repl
+    signature: (self, num_images: int)
+    return: tuple[str, list[int]]
+    class: Step3VLProcessor
+  - name: _get_image_repl_features
+    signature: (self, num_images: int, num_patches: int, patch_new_line_idx: Optional[list[bool]])
+    return: tuple[str, list[int]]
+    class: Step3VLProcessor
+  - name: replace_placeholder
+    signature: (self, text: str, placeholder: str, repls: list[str])
+    return: str
+    class: Step3VLProcessor
+  - name: __call__
+    signature: (self, text: Optional[Union[str, list[str]]] = None, images: Optional[Union[Image.Image, list[Image.Image]]] = None, return_tensors: Optional[Union[str, TensorType]] = None, *args, **kwargs)
+    return: BatchFeature
+    class: Step3VLProcessor
+  - name: __init__
+    signature: (self, hf_config, server_args, _processor, *args, **kwargs)
+    class: Step3VLImageProcessor
+  - name: preprocess
+    signature: (self, image)
+    class: Step3VLImageProcessor
+  - name: __call__
+    signature: (self, image)
+    class: Step3VLImageProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: List[Union[str, bytes]], input_text: str | List[int], request_obj, *args, **kwargs)
+    class: Step3VLImageProcessor
+
+File: multimodal/processors/vila.py
+  - name: __init__
+    signature: (self, hf_config: PretrainedConfig, server_args: ServerArgs, _processor: VILAProcessor, *args, **kwargs)
+    return: None
+    class: VILAMultimodalProcessor
+  - name: process_mm_data_async
+    signature: (self, image_data: Optional[ImageDataInputItem | List[ImageDataInputItem]], input_text: str | List[int], request_obj: GenerateReqInput | EmbeddingReqInput, **kwargs)
+    return: Optional[Dict[str, Any]]
+    class: VILAMultimodalProcessor

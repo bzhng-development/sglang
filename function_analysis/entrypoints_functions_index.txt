@@ -1,0 +1,998 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: entrypoints/EngineBase.py
+  - name: generate
+    signature: (self, prompt: Optional[Union[List[str], str]] = None, sampling_params: Optional[Union[List[Dict], Dict]] = None, input_ids: Optional[Union[List[List[int]], List[int]]] = None, image_data: Optional[Union[List[str], str]] = None, return_logprob: Optional[Union[List[bool], bool]] = False, logprob_start_len: Optional[Union[List[int], int]] = None, top_logprobs_num: Optional[Union[List[int], int]] = None, token_ids_logprob: Optional[Union[List[List[int]], List[int]]] = None, lora_path: Optional[Union[List[Optional[str]], Optional[str]]] = None, custom_logit_processor: Optional[Union[List[str], str]] = None, return_hidden_states: Optional[bool] = None, stream: Optional[bool] = None, bootstrap_host: Optional[Union[List[str], str]] = None, bootstrap_port: Optional[Union[List[int], int]] = None, bootstrap_room: Optional[Union[List[int], int]] = None, data_parallel_rank: Optional[int] = None)
+    return: Union[Dict, Iterator[Dict]]
+    class: EngineBase
+    doc: Generate outputs based on given inputs.
+  - name: flush_cache
+    signature: (self)
+    class: EngineBase
+    doc: Flush the cache of the engine.
+  - name: update_weights_from_tensor
+    signature: (self, named_tensors: List[Tuple[str, torch.Tensor]], load_format: Optional[str] = None, flush_cache: bool = True)
+    class: EngineBase
+    doc: Update model weights with in-memory tensor data.
+  - name: load_lora_adapter
+    signature: (self, lora_name: str, lora_path: str)
+    class: EngineBase
+    doc: Load a new LoRA adapter without re-launching the engine.
+  - name: unload_lora_adapter
+    signature: (self, lora_name: str)
+    class: EngineBase
+    doc: Unload a LoRA adapter without re-launching the engine.
+  - name: release_memory_occupation
+    signature: (self)
+    class: EngineBase
+    doc: Release GPU memory occupation temporarily.
+  - name: resume_memory_occupation
+    signature: (self)
+    class: EngineBase
+    doc: Resume GPU memory occupation which is previously released.
+  - name: shutdown
+    signature: (self)
+    class: EngineBase
+    doc: Shutdown the engine and clean up resources.
+
+File: entrypoints/context.py
+  - name: append_output
+    signature: (self, output)
+    return: None
+    class: ConversationContext
+  - name: call_tool
+    signature: (self)
+    return: list[Message]
+    class: ConversationContext
+  - name: need_builtin_tool_call
+    signature: (self)
+    return: bool
+    class: ConversationContext
+  - name: render_for_completion
+    signature: (self)
+    return: list[int]
+    class: ConversationContext
+  - name: __init__
+    signature: (self)
+    class: SimpleContext
+  - name: append_output
+    signature: (self, output)
+    return: None
+    class: SimpleContext
+  - name: need_builtin_tool_call
+    signature: (self)
+    return: bool
+    class: SimpleContext
+  - name: call_tool
+    signature: (self)
+    return: list[Message]
+    class: SimpleContext
+  - name: render_for_completion
+    signature: (self)
+    return: list[int]
+    class: SimpleContext
+  - name: __init__
+    signature: (self, messages: list, tool_sessions: dict[str, Union['ClientSession', Tool]])
+    class: HarmonyContext
+  - name: append_output
+    signature: (self, output)
+    return: None
+    class: HarmonyContext
+  - name: messages
+    signature: (self)
+    return: list
+    class: HarmonyContext
+  - name: need_builtin_tool_call
+    signature: (self)
+    return: bool
+    class: HarmonyContext
+  - name: call_tool
+    signature: (self)
+    return: list[Message]
+    class: HarmonyContext
+  - name: render_for_completion
+    signature: (self)
+    return: list[int]
+    class: HarmonyContext
+  - name: call_search_tool
+    signature: (self, tool_session: Union['ClientSession', Tool], last_msg: Message)
+    return: list[Message]
+    class: HarmonyContext
+  - name: call_python_tool
+    signature: (self, tool_session: Union['ClientSession', Tool], last_msg: Message)
+    return: list[Message]
+    class: HarmonyContext
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: StreamingHarmonyContext
+  - name: messages
+    signature: (self)
+    return: list
+    class: StreamingHarmonyContext
+  - name: append_output
+    signature: (self, output)
+    return: None
+    class: StreamingHarmonyContext
+  - name: is_expecting_start
+    signature: (self)
+    return: bool
+    class: StreamingHarmonyContext
+  - name: is_assistant_action_turn
+    signature: (self)
+    return: bool
+    class: StreamingHarmonyContext
+  - name: render_for_completion
+    signature: (self)
+    return: list[int]
+    class: StreamingHarmonyContext
+
+File: entrypoints/engine.py
+  - name: __init__
+    signature: (self, **kwargs)
+    class: Engine
+    doc: The arguments of this function is the same as `sglang/srt/server_args.py::ServerArgs`.
+  - name: generate
+    signature: (self, prompt: Optional[Union[List[str], str]] = None, sampling_params: Optional[Union[List[Dict], Dict]] = None, input_ids: Optional[Union[List[List[int]], List[int]]] = None, image_data: Optional[MultimodalDataInputFormat] = None, audio_data: Optional[MultimodalDataInputFormat] = None, video_data: Optional[MultimodalDataInputFormat] = None, return_logprob: Optional[Union[List[bool], bool]] = False, logprob_start_len: Optional[Union[List[int], int]] = None, top_logprobs_num: Optional[Union[List[int], int]] = None, token_ids_logprob: Optional[Union[List[List[int]], List[int]]] = None, lora_path: Optional[List[Optional[str]]] = None, custom_logit_processor: Optional[Union[List[str], str]] = None, return_hidden_states: bool = False, stream: bool = False, bootstrap_host: Optional[Union[List[str], str]] = None, bootstrap_port: Optional[Union[List[int], int]] = None, bootstrap_room: Optional[Union[List[int], int]] = None, data_parallel_rank: Optional[int] = None)
+    return: Union[Dict, Iterator[Dict]]
+    class: Engine
+    doc: The arguments of this function is the same as `sglang/srt/managers/io_struct.py::GenerateReqInput`.
+  - name: generator_wrapper
+    signature: ()
+    class: Engine
+  - name: async_generate
+    signature: (self, prompt: Optional[Union[List[str], str]] = None, sampling_params: Optional[Union[List[Dict], Dict]] = None, input_ids: Optional[Union[List[List[int]], List[int]]] = None, image_data: Optional[MultimodalDataInputFormat] = None, audio_data: Optional[MultimodalDataInputFormat] = None, video_data: Optional[MultimodalDataInputFormat] = None, return_logprob: Optional[Union[List[bool], bool]] = False, logprob_start_len: Optional[Union[List[int], int]] = None, top_logprobs_num: Optional[Union[List[int], int]] = None, token_ids_logprob: Optional[Union[List[List[int]], List[int]]] = None, lora_path: Optional[List[Optional[str]]] = None, custom_logit_processor: Optional[Union[List[str], str]] = None, return_hidden_states: bool = False, stream: bool = False, bootstrap_host: Optional[Union[List[str], str]] = None, bootstrap_port: Optional[Union[List[int], int]] = None, bootstrap_room: Optional[Union[List[int], int]] = None, data_parallel_rank: Optional[int] = None)
+    return: Union[Dict, AsyncIterator[Dict]]
+    class: Engine
+    doc: The arguments of this function is the same as `sglang/srt/managers/io_struct.py::GenerateReqInput`.
+  - name: encode
+    signature: (self, prompt: Union[str, List[str], List[Dict], List[List[Dict]]], image_data: Optional[MultimodalDataInputFormat] = None, audio_data: Optional[MultimodalDataInputFormat] = None, video_data: Optional[MultimodalDataInputFormat] = None)
+    return: Dict
+    class: Engine
+    doc: The arguments of this function is the same as `sglang/srt/managers/io_struct.py::EmbeddingReqInput`.
+  - name: async_encode
+    signature: (self, prompt: Union[str, List[str], List[Dict], List[List[Dict]]], image_data: Optional[MultimodalDataInputFormat] = None, audio_data: Optional[MultimodalDataInputFormat] = None, video_data: Optional[MultimodalDataInputFormat] = None)
+    return: Dict
+    class: Engine
+    doc: Asynchronous version of encode method.
+  - name: rerank
+    signature: (self, prompt: Union[List[List[str]]])
+    return: Dict
+    class: Engine
+    doc: The arguments of this function is the same as `sglang/srt/managers/io_struct.py::EmbeddingReqInput`.
+  - name: shutdown
+    signature: (self)
+    class: Engine
+    doc: Shutdown the engine
+  - name: __enter__
+    signature: (self)
+    class: Engine
+  - name: __exit__
+    signature: (self, exc_type, exc_value, traceback)
+    class: Engine
+  - name: flush_cache
+    signature: (self)
+    class: Engine
+  - name: start_profile
+    signature: (self)
+    class: Engine
+  - name: stop_profile
+    signature: (self)
+    class: Engine
+  - name: start_expert_distribution_record
+    signature: (self)
+    class: Engine
+  - name: stop_expert_distribution_record
+    signature: (self)
+    class: Engine
+  - name: dump_expert_distribution_record
+    signature: (self)
+    class: Engine
+  - name: get_server_info
+    signature: (self)
+    class: Engine
+  - name: init_weights_update_group
+    signature: (self, master_address: str, master_port: int, rank_offset: int, world_size: int, group_name: str, backend: str = 'nccl')
+    class: Engine
+    doc: Initialize parameter update group.
+  - name: update_weights_from_distributed
+    signature: (self, names: list[str], dtypes: list[str], shapes: list[list[int]], group_name: str = 'weight_update_group', flush_cache: bool = True)
+    class: Engine
+    doc: Update weights from distributed source.
+  - name: update_weights_from_tensor
+    signature: (self, named_tensors: List[Tuple[str, torch.Tensor]], load_format: Optional[str] = None, flush_cache: bool = True)
+    class: Engine
+    doc: Update weights from distributed source. If there are going to be more updates, set `flush_cache` to be false
+  - name: update_weights_from_disk
+    signature: (self, model_path: str, load_format: Optional[str] = None)
+    class: Engine
+    doc: Update the weights from disk inplace without re-launching the engine.
+  - name: get_weights_by_name
+    signature: (self, name: str, truncate_size: int = 100)
+    class: Engine
+    doc: Get weights by parameter name.
+  - name: load_lora_adapter
+    signature: (self, lora_name: str, lora_path: str, pinned: bool = False)
+    class: Engine
+    doc: Load a new LoRA adapter without re-launching the engine.
+  - name: unload_lora_adapter
+    signature: (self, lora_name: str)
+    class: Engine
+    doc: Unload a LoRA adapter without re-launching the engine.
+  - name: release_memory_occupation
+    signature: (self, tags: Optional[List[str]] = None)
+    class: Engine
+  - name: resume_memory_occupation
+    signature: (self, tags: Optional[List[str]] = None)
+    class: Engine
+  - name: freeze_gc
+    signature: (self)
+    class: Engine
+    doc: To maintain a high performance server with low latency, we want to reduce the
+  - name: collective_rpc
+    signature: (self, method: str, **kwargs)
+    class: Engine
+  - name: save_remote_model
+    signature: (self, **kwargs)
+    class: Engine
+  - name: save_sharded_model
+    signature: (self, **kwargs)
+    class: Engine
+  - name: score
+    signature: (self, query: Optional[Union[str, List[int]]] = None, items: Optional[Union[str, List[str], List[List[int]]]] = None, label_token_ids: Optional[List[int]] = None, apply_softmax: bool = False, item_first: bool = False)
+    return: List[List[float]]
+    class: Engine
+    doc: Score the probability of specified token IDs appearing after the given (query + item) pair. For example:
+  - name: async_score
+    signature: (self, query: Optional[Union[str, List[int]]] = None, items: Optional[Union[str, List[str], List[List[int]]]] = None, label_token_ids: Optional[List[int]] = None, apply_softmax: bool = False, item_first: bool = False)
+    return: List[List[float]]
+    class: Engine
+    doc: Asynchronous version of score method.
+  - name: _set_envs_and_config
+    signature: (server_args: ServerArgs)
+  - name: launch_phase_sigquit_handler
+    signature: (signum, frame)
+  - name: _launch_subprocesses
+    signature: (server_args: ServerArgs, port_args: Optional[PortArgs] = None)
+    return: Tuple[TokenizerManager, TemplateManager, Dict]
+    doc: Launch the TokenizerManager in the main process, the Scheduler in a subprocess, and the DetokenizerManager in another subprocess.
+
+File: entrypoints/harmony_utils.py
+  - name: get_encoding
+    signature: ()
+  - name: get_system_message
+    signature: (model_identity: Optional[str] = None, reasoning_effort: Optional[Literal['high', 'medium', 'low']] = None, start_date: Optional[str] = None, browser_description: Optional[str] = None, python_description: Optional[str] = None)
+    return: Message
+  - name: get_developer_message
+    signature: (instructions: Optional[str] = None, tools: Optional[list[Tool]] = None)
+    return: Message
+  - name: get_user_message
+    signature: (content: str)
+    return: Message
+  - name: parse_response_input
+    signature: (response_msg: ResponseInputOutputItem, prev_responses: list[Union[ResponseOutputItem, ResponseReasoningItem]])
+    return: Message
+  - name: parse_response_output
+    signature: (output: ResponseOutputItem)
+    return: Message
+  - name: parse_chat_input
+    signature: (chat_msg)
+    return: Message
+  - name: render_for_completion
+    signature: (messages: list[Message])
+    return: list[int]
+  - name: get_stop_tokens_for_assistant_actions
+    signature: ()
+    return: list[int]
+  - name: get_streamable_parser_for_assistant
+    signature: ()
+    return: StreamableParser
+  - name: parse_output_message
+    signature: (message: Message)
+  - name: parse_remaining_state
+    signature: (parser: StreamableParser)
+  - name: parse_output_into_messages
+    signature: (token_ids: Iterable[int])
+
+File: entrypoints/http_server.py
+  - name: set_global_state
+    signature: (global_state: _GlobalState)
+  - name: lifespan
+    signature: (fast_api_app: FastAPI)
+  - name: validation_exception_handler
+    signature: (request: Request, exc: HTTPException)
+    doc: Enrich HTTP exception with status code and other details
+  - name: validation_exception_handler
+    signature: (request: Request, exc: RequestValidationError)
+    doc: Override FastAPI's default 422 validation error with 400
+  - name: validate_json_request
+    signature: (raw_request: Request)
+    doc: Validate that the request content-type is application/json.
+  - name: health_generate
+    signature: (request: Request)
+    return: Response
+    doc: Check the health of the inference server by sending a special request to generate one token.
+  - name: gen
+    signature: ()
+  - name: get_model_info
+    signature: ()
+    doc: Get the model information.
+  - name: get_weight_version
+    signature: ()
+    doc: Get the current weight version.
+  - name: get_server_info
+    signature: ()
+  - name: get_load
+    signature: ()
+  - name: set_internal_state
+    signature: (obj: SetInternalStateReq, request: Request)
+  - name: generate_request
+    signature: (obj: GenerateReqInput, request: Request)
+    doc: Handle a generate request.
+  - name: stream_results
+    signature: ()
+    return: AsyncIterator[bytes]
+  - name: generate_from_file_request
+    signature: (file: UploadFile, request: Request)
+    doc: Handle a generate request, this is purely to work with input_embeds.
+  - name: encode_request
+    signature: (obj: EmbeddingReqInput, request: Request)
+    doc: Handle an embedding request.
+  - name: classify_request
+    signature: (obj: EmbeddingReqInput, request: Request)
+    doc: Handle a reward model request. Now the arguments and return values are the same as embedding models.
+  - name: flush_cache
+    signature: ()
+    doc: Flush the radix cache.
+  - name: clear_hicache_storage_backend
+    signature: ()
+    doc: Clear the hierarchical cache storage backend.
+  - name: start_profile_async
+    signature: (obj: Optional[ProfileReqInput] = None)
+    doc: Start profiling.
+  - name: stop_profile_async
+    signature: ()
+    doc: Stop profiling.
+  - name: freeze_gc_async
+    signature: ()
+    doc: See engine.freeze_gc for more details.
+  - name: start_expert_distribution_record_async
+    signature: ()
+    doc: Start recording the expert distribution. Clear the previous record if any.
+  - name: stop_expert_distribution_record_async
+    signature: ()
+    doc: Stop recording the expert distribution.
+  - name: dump_expert_distribution_record_async
+    signature: ()
+    doc: Dump expert distribution record.
+  - name: update_weights_from_disk
+    signature: (obj: UpdateWeightFromDiskReqInput, request: Request)
+    doc: Update the weights from disk inplace without re-launching the server.
+  - name: init_weights_update_group
+    signature: (obj: InitWeightsUpdateGroupReqInput, request: Request)
+    doc: Initialize the parameter update group.
+  - name: update_weights_from_tensor
+    signature: (obj: UpdateWeightsFromTensorReqInput, request: Request)
+    doc: Update the weights from tensor inplace without re-launching the server.
+  - name: update_weights_from_distributed
+    signature: (obj: UpdateWeightsFromDistributedReqInput, request: Request)
+    doc: Update model parameter from distributed online.
+  - name: update_weight_version
+    signature: (obj: UpdateWeightVersionReqInput, request: Request)
+    doc: Update the weight version. This operation requires no active requests.
+  - name: get_weights_by_name
+    signature: (obj: GetWeightsByNameReqInput, request: Request)
+    doc: Get model parameter by name.
+  - name: release_memory_occupation
+    signature: (obj: ReleaseMemoryOccupationReqInput, request: Request)
+    doc: Release GPU memory occupation temporarily.
+  - name: resume_memory_occupation
+    signature: (obj: ResumeMemoryOccupationReqInput, request: Request)
+    doc: Resume GPU memory occupation.
+  - name: slow_down
+    signature: (obj: SlowDownReqInput, request: Request)
+    doc: Slow down the system deliberately. Only for testing. Example scenario:
+  - name: load_lora_adapter
+    signature: (obj: LoadLoRAAdapterReqInput, request: Request)
+    doc: Load a new LoRA adapter without re-launching the server.
+  - name: unload_lora_adapter
+    signature: (obj: UnloadLoRAAdapterReqInput, request: Request)
+    doc: Load a new LoRA adapter without re-launching the server.
+  - name: open_session
+    signature: (obj: OpenSessionReqInput, request: Request)
+    doc: Open a session, and return its unique session id.
+  - name: close_session
+    signature: (obj: CloseSessionReqInput, request: Request)
+    doc: Close the session.
+  - name: configure_logging
+    signature: (obj: ConfigureLoggingReq, request: Request)
+    doc: Configure the request logging options.
+  - name: abort_request
+    signature: (obj: AbortReq, request: Request)
+    doc: Abort a request.
+  - name: parse_function_call_request
+    signature: (obj: ParseFunctionCallReq, request: Request)
+    doc: A native API endpoint to parse function calls from a text.
+  - name: separate_reasoning_request
+    signature: (obj: SeparateReasoningReqInput, request: Request)
+    doc: A native API endpoint to separate reasoning from a text.
+  - name: pause_generation
+    signature: (request: Request)
+    doc: Pause generation.
+  - name: continue_generation
+    signature: (request: Request)
+    doc: Continue generation.
+  - name: openai_v1_completions
+    signature: (request: CompletionRequest, raw_request: Request)
+    doc: OpenAI-compatible text completion endpoint.
+  - name: openai_v1_chat_completions
+    signature: (request: ChatCompletionRequest, raw_request: Request)
+    doc: OpenAI-compatible chat completion endpoint.
+  - name: openai_v1_embeddings
+    signature: (request: EmbeddingRequest, raw_request: Request)
+    doc: OpenAI-compatible embeddings endpoint.
+  - name: available_models
+    signature: ()
+    doc: Show available models. OpenAI-compatible endpoint.
+  - name: retrieve_model
+    signature: (model: str)
+    doc: Retrieves a model instance, providing basic information about the model.
+  - name: v1_score_request
+    signature: (request: ScoringRequest, raw_request: Request)
+    doc: Endpoint for the decoder-only scoring API. See Engine.score() for detailed documentation.
+  - name: v1_responses_request
+    signature: (request: dict, raw_request: Request)
+    doc: Endpoint for the responses API with reasoning support.
+  - name: v1_retrieve_responses
+    signature: (response_id: str, raw_request: Request)
+    doc: Retrieve a response by ID.
+  - name: v1_cancel_responses
+    signature: (response_id: str, raw_request: Request)
+    doc: Cancel a background response.
+  - name: v1_rerank_request
+    signature: (request: V1RerankReqInput, raw_request: Request)
+    doc: Endpoint for reranking documents based on query relevance.
+  - name: sagemaker_health
+    signature: ()
+    return: Response
+    doc: Check the health of the http server.
+  - name: sagemaker_chat_completions
+    signature: (request: ChatCompletionRequest, raw_request: Request)
+    doc: OpenAI-compatible chat completion endpoint.
+  - name: vertex_generate
+    signature: (vertex_req: VertexGenerateReqInput, raw_request: Request)
+  - name: _update_weight_version_if_provided
+    signature: (weight_version: Optional[str])
+    return: None
+    doc: Update weight version if provided.
+  - name: _create_error_response
+    signature: (e)
+  - name: launch_server
+    signature: (server_args: ServerArgs, pipe_finish_writer: Optional[multiprocessing.connection.Connection] = None, launch_callback: Optional[Callable[[], None]] = None)
+    doc: Launch SRT (SGLang Runtime) Server.
+  - name: _execute_server_warmup
+    signature: (server_args: ServerArgs, pipe_finish_writer: Optional[multiprocessing.connection.Connection])
+  - name: _wait_and_warmup
+    signature: (server_args: ServerArgs, pipe_finish_writer: Optional[multiprocessing.connection.Connection], launch_callback: Optional[Callable[[], None]] = None)
+
+File: entrypoints/http_server_engine.py
+  - name: launch_server_process
+    signature: (server_args: ServerArgs)
+    return: multiprocessing.Process
+  - name: __init__
+    signature: (self, **kwargs)
+    class: HttpServerEngineAdapter
+  - name: _make_request
+    signature: (self, endpoint: str, payload: Optional[dict] = None)
+    class: HttpServerEngineAdapter
+    doc: Make a POST request to the specified endpoint with the given payload.
+  - name: update_weights_from_tensor
+    signature: (self, named_tensors: List[Tuple[str, torch.Tensor]], load_format: Optional[str] = None, flush_cache: bool = False)
+    class: HttpServerEngineAdapter
+    doc: Update model weights from tensor data. The HTTP server will only post meta data, and the real weights will be copied directly from GPUs.
+  - name: shutdown
+    signature: (self)
+    class: HttpServerEngineAdapter
+  - name: generate
+    signature: (self, prompt = None, sampling_params = None, input_ids = None, image_data = None, return_logprob = False, logprob_start_len = None, top_logprobs_num = None, token_ids_logprob = None, lora_path = None, custom_logit_processor = None)
+    class: HttpServerEngineAdapter
+  - name: release_memory_occupation
+    signature: (self)
+    class: HttpServerEngineAdapter
+  - name: resume_memory_occupation
+    signature: (self)
+    class: HttpServerEngineAdapter
+  - name: flush_cache
+    signature: (self)
+    class: HttpServerEngineAdapter
+
+File: entrypoints/openai/__init__.py
+  (no function definitions found)
+File: entrypoints/openai/protocol.py
+  - name: validate_max_tokens_positive
+    signature: (cls, v)
+    class: CompletionRequest
+  - name: _serialize
+    signature: (self, handler)
+    class: CompletionResponseChoice
+  - name: _serialize
+    signature: (self, handler)
+    class: CompletionResponseStreamChoice
+  - name: _normalize_role
+    signature: (cls, v)
+    class: ChatCompletionMessageGenericParam
+  - name: set_tool_choice_default
+    signature: (cls, values)
+    class: ChatCompletionRequest
+  - name: normalize_reasoning_inputs
+    signature: (cls, values: Dict)
+    class: ChatCompletionRequest
+  - name: set_json_schema
+    signature: (cls, values)
+    class: ChatCompletionRequest
+  - name: _serialize
+    signature: (self, handler)
+    class: ChatCompletionResponseChoice
+  - name: _serialize
+    signature: (self, handler)
+    class: DeltaMessage
+  - name: to_sampling_params
+    signature: (self, default_max_tokens: int, default_params: Optional[Dict] = None)
+    return: Dict[str, Any]
+    class: ResponsesRequest
+    doc: Convert to sampling parameters for generation.
+  - name: from_request
+    signature: (cls, request: ResponsesRequest, sampling_params: Any, model_name: str, created_time: int, output: List[Union[ResponseOutputItem, ResponseReasoningItem, ResponseFunctionToolCall]], status: str, usage: Optional[UsageInfo])
+    return: 'ResponsesResponse'
+    class: ResponsesResponse
+    doc: Create a response from a request.
+
+File: entrypoints/openai/serving_base.py
+  - name: __init__
+    signature: (self, tokenizer_manager: TokenizerManager)
+    class: OpenAIServingBase
+  - name: handle_request
+    signature: (self, request: OpenAIServingRequest, raw_request: Request)
+    return: Union[Any, StreamingResponse, ErrorResponse]
+    class: OpenAIServingBase
+    doc: Handle the specific request type with common pattern
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingBase
+    doc: Generate request ID based on request type
+  - name: _generate_request_id_base
+    signature: (self, request: OpenAIServingRequest)
+    return: Optional[str]
+    class: OpenAIServingBase
+    doc: Generate request ID based on request type
+  - name: _convert_to_internal_request
+    signature: (self, request: OpenAIServingRequest)
+    return: tuple[GenerateReqInput, OpenAIServingRequest]
+    class: OpenAIServingBase
+    doc: Convert OpenAI request to internal format
+  - name: _handle_streaming_request
+    signature: (self, adapted_request: GenerateReqInput, request: OpenAIServingRequest, raw_request: Request)
+    return: Union[StreamingResponse, ErrorResponse, ORJSONResponse]
+    class: OpenAIServingBase
+    doc: Handle streaming request
+  - name: _handle_non_streaming_request
+    signature: (self, adapted_request: GenerateReqInput, request: OpenAIServingRequest, raw_request: Request)
+    return: Union[Any, ErrorResponse, ORJSONResponse]
+    class: OpenAIServingBase
+    doc: Handle non-streaming request
+  - name: _validate_request
+    signature: (self, _: OpenAIServingRequest)
+    return: Optional[str]
+    class: OpenAIServingBase
+    doc: Validate request
+  - name: create_error_response
+    signature: (self, message: str, err_type: str = 'BadRequestError', status_code: int = 400, param: Optional[str] = None)
+    return: ORJSONResponse
+    class: OpenAIServingBase
+    doc: Create an error response
+  - name: create_streaming_error_response
+    signature: (self, message: str, err_type: str = 'BadRequestError', status_code: int = 400)
+    return: str
+    class: OpenAIServingBase
+    doc: Create a streaming error response
+
+File: entrypoints/openai/serving_chat.py
+  - name: __init__
+    signature: (self, tokenizer_manager: TokenizerManager, template_manager: TemplateManager)
+    class: OpenAIServingChat
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingChat
+  - name: _validate_request
+    signature: (self, request: ChatCompletionRequest)
+    return: Optional[str]
+    class: OpenAIServingChat
+    doc: Validate that the input is valid.
+  - name: _convert_to_internal_request
+    signature: (self, request: ChatCompletionRequest)
+    return: tuple[GenerateReqInput, ChatCompletionRequest]
+    class: OpenAIServingChat
+  - name: _process_messages
+    signature: (self, request: ChatCompletionRequest, is_multimodal: bool)
+    return: MessageProcessingResult
+    class: OpenAIServingChat
+    doc: Process chat messages and apply chat template
+  - name: _apply_jinja_template
+    signature: (self, request: ChatCompletionRequest, tools: Optional[List[Dict]], is_multimodal: bool)
+    return: MessageProcessingResult
+    class: OpenAIServingChat
+    doc: Apply Jinja chat template
+  - name: _apply_conversation_template
+    signature: (self, request: ChatCompletionRequest, is_multimodal: bool)
+    return: MessageProcessingResult
+    class: OpenAIServingChat
+    doc: Apply conversation template
+  - name: _build_sampling_params
+    signature: (self, request: ChatCompletionRequest, stop: List[str], tool_call_constraint: Optional[Any])
+    return: Dict[str, Any]
+    class: OpenAIServingChat
+    doc: Build sampling parameters for the request
+  - name: _handle_streaming_request
+    signature: (self, adapted_request: GenerateReqInput, request: ChatCompletionRequest, raw_request: Request)
+    return: StreamingResponse
+    class: OpenAIServingChat
+    doc: Handle streaming chat completion request
+  - name: _generate_chat_stream
+    signature: (self, adapted_request: GenerateReqInput, request: ChatCompletionRequest, raw_request: Request)
+    return: AsyncGenerator[str, None]
+    class: OpenAIServingChat
+    doc: Generate streaming chat completion response
+  - name: _handle_non_streaming_request
+    signature: (self, adapted_request: GenerateReqInput, request: ChatCompletionRequest, raw_request: Request)
+    return: Union[ChatCompletionResponse, ErrorResponse, ORJSONResponse]
+    class: OpenAIServingChat
+    doc: Handle non-streaming chat completion request
+  - name: _build_chat_response
+    signature: (self, request: ChatCompletionRequest, ret: List[Dict[str, Any]], created: int)
+    return: Union[ChatCompletionResponse, ORJSONResponse]
+    class: OpenAIServingChat
+    doc: Build chat completion response from generation results
+  - name: _process_logprobs_tokens
+    signature: (self, logprobs: LogProbs, use_token_index: bool = False)
+    return: List[ChatCompletionTokenLogprob]
+    class: OpenAIServingChat
+    doc: Common helper to process logprobs tokens for both streaming and non-streaming
+  - name: _process_response_logprobs
+    signature: (self, ret_item: Dict[str, Any])
+    return: ChoiceLogprobs
+    class: OpenAIServingChat
+    doc: Process logprobs for non-streaming response
+  - name: _process_tool_calls
+    signature: (self, text: str, tools: List[Any], tool_call_parser: Optional[str], finish_reason: Dict[str, Any])
+    return: tuple[Optional[List[ToolCall]], str, Dict[str, Any]]
+    class: OpenAIServingChat
+    doc: Process tool calls in the response
+  - name: _process_streaming_logprobs
+    signature: (self, content: Dict[str, Any], n_prev_token: int)
+    return: ChoiceLogprobs
+    class: OpenAIServingChat
+    doc: Process logprobs for streaming response
+  - name: _process_reasoning_stream
+    signature: (self, index: int, delta: str, reasoning_parser_dict: Dict[int, ReasoningParser], content: Dict[str, Any], request: ChatCompletionRequest)
+    return: tuple[Optional[str], str]
+    class: OpenAIServingChat
+    doc: Process reasoning content in streaming response
+  - name: _get_enable_thinking_from_request
+    signature: (self, request: ChatCompletionRequest)
+    return: bool
+    class: OpenAIServingChat
+    doc: Extracts the 'enable_thinking' flag from request chat_template_kwargs.
+  - name: _process_tool_call_stream
+    signature: (self, index: int, delta: str, parser_dict: Dict[int, FunctionCallParser], content: Dict[str, Any], request: ChatCompletionRequest, has_tool_calls: Dict[int, bool])
+    class: OpenAIServingChat
+    doc: Process tool calls in streaming response
+  - name: _check_for_unstreamed_tool_args
+    signature: (self, parser: FunctionCallParser, content: Dict[str, Any], request: ChatCompletionRequest, index: int)
+    return: Optional[str]
+    class: OpenAIServingChat
+    doc: Check for any remaining tool call arguments that need to be streamed
+
+File: entrypoints/openai/serving_completions.py
+  - name: __init__
+    signature: (self, tokenizer_manager: TokenizerManager, template_manager: TemplateManager)
+    class: OpenAIServingCompletion
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingCompletion
+  - name: _validate_request
+    signature: (self, request: CompletionRequest)
+    return: Optional[str]
+    class: OpenAIServingCompletion
+    doc: Validate that the input is valid.
+  - name: _convert_to_internal_request
+    signature: (self, request: CompletionRequest)
+    return: tuple[GenerateReqInput, CompletionRequest]
+    class: OpenAIServingCompletion
+    doc: Convert OpenAI completion request to internal format
+  - name: _build_sampling_params
+    signature: (self, request: CompletionRequest)
+    return: Dict[str, Any]
+    class: OpenAIServingCompletion
+    doc: Build sampling parameters for the request
+  - name: _handle_streaming_request
+    signature: (self, adapted_request: GenerateReqInput, request: CompletionRequest, raw_request: Request)
+    return: StreamingResponse
+    class: OpenAIServingCompletion
+    doc: Handle streaming completion request
+  - name: _generate_completion_stream
+    signature: (self, adapted_request: GenerateReqInput, request: CompletionRequest, raw_request: Request)
+    return: AsyncGenerator[str, None]
+    class: OpenAIServingCompletion
+    doc: Generate streaming completion response
+  - name: _handle_non_streaming_request
+    signature: (self, adapted_request: GenerateReqInput, request: CompletionRequest, raw_request: Request)
+    return: Union[CompletionResponse, ErrorResponse, ORJSONResponse]
+    class: OpenAIServingCompletion
+    doc: Handle non-streaming completion request
+  - name: _build_completion_response
+    signature: (self, request: CompletionRequest, ret: List[Dict[str, Any]], created: int)
+    return: CompletionResponse
+    class: OpenAIServingCompletion
+    doc: Build completion response from generation results
+  - name: _get_echo_text
+    signature: (self, request: CompletionRequest, index: int)
+    return: str
+    class: OpenAIServingCompletion
+    doc: Get echo text for streaming response
+  - name: _prepare_echo_prompts
+    signature: (self, request: CompletionRequest)
+    return: List[str]
+    class: OpenAIServingCompletion
+    doc: Prepare echo prompts for non-streaming response
+
+File: entrypoints/openai/serving_embedding.py
+  - name: __init__
+    signature: (self, tokenizer_manager: TokenizerManager, template_manager: TemplateManager)
+    class: OpenAIServingEmbedding
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingEmbedding
+  - name: _validate_request
+    signature: (self, request: EmbeddingRequest)
+    return: Optional[str]
+    class: OpenAIServingEmbedding
+    doc: Validate that the input is not empty or whitespace only.
+  - name: _convert_to_internal_request
+    signature: (self, request: EmbeddingRequest)
+    return: tuple[EmbeddingReqInput, EmbeddingRequest]
+    class: OpenAIServingEmbedding
+    doc: Convert OpenAI embedding request to internal format
+  - name: _handle_non_streaming_request
+    signature: (self, adapted_request: EmbeddingReqInput, request: EmbeddingRequest, raw_request: Request)
+    return: Union[EmbeddingResponse, ErrorResponse, ORJSONResponse]
+    class: OpenAIServingEmbedding
+    doc: Handle the embedding request
+  - name: _build_embedding_response
+    signature: (self, ret: List[Dict[str, Any]])
+    return: EmbeddingResponse
+    class: OpenAIServingEmbedding
+    doc: Build the embedding response
+
+File: entrypoints/openai/serving_rerank.py
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingRerank
+  - name: _validate_request
+    signature: (self, request: V1RerankReqInput)
+    return: Optional[str]
+    class: OpenAIServingRerank
+    doc: Validate rerank request format and content
+  - name: _convert_to_internal_request
+    signature: (self, request: V1RerankReqInput)
+    return: tuple[EmbeddingReqInput, V1RerankReqInput]
+    class: OpenAIServingRerank
+    doc: Convert OpenAI rerank request to internal embedding format
+  - name: _handle_non_streaming_request
+    signature: (self, adapted_request: EmbeddingReqInput, request: V1RerankReqInput, raw_request: Request)
+    return: Union[List[RerankResponse], ErrorResponse, ORJSONResponse]
+    class: OpenAIServingRerank
+    doc: Handle the rerank request
+  - name: _build_rerank_response
+    signature: (self, ret: List[Dict[str, Any]], request: V1RerankReqInput)
+    return: List[RerankResponse]
+    class: OpenAIServingRerank
+    doc: Build the rerank response from generation results
+
+File: entrypoints/openai/serving_responses.py
+  - name: __init__
+    signature: (self, tokenizer_manager: TokenizerManager, template_manager: TemplateManager, *, enable_prompt_tokens_details: bool = False, enable_force_include_usage: bool = False, tool_server: Optional[ToolServer] = None)
+    return: None
+    class: OpenAIServingResponses
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingResponses
+  - name: create_responses
+    signature: (self, request: ResponsesRequest, raw_request: Optional[Request] = None)
+    return: Union[AsyncGenerator[str, None], ResponsesResponse, ORJSONResponse]
+    class: OpenAIServingResponses
+  - name: _make_request
+    signature: (self, request: ResponsesRequest, prev_response: Optional[ResponsesResponse], tokenizer: Any)
+    class: OpenAIServingResponses
+  - name: _make_request_with_harmony
+    signature: (self, request: ResponsesRequest, prev_response: Optional[ResponsesResponse])
+    class: OpenAIServingResponses
+  - name: responses_full_generator
+    signature: (self, request: ResponsesRequest, sampling_params: Any, result_generator: AsyncIterator[Any], context: ConversationContext, model_name: str, tokenizer: Any, request_metadata: RequestResponseMetadata, created_time: Optional[int] = None)
+    return: Union[ResponsesResponse, ORJSONResponse]
+    class: OpenAIServingResponses
+  - name: _make_response_output_items
+    signature: (self, request: ResponsesRequest, final_output: Any, tokenizer: Any)
+    class: OpenAIServingResponses
+  - name: _make_response_output_items_with_harmony
+    signature: (self, context: HarmonyContext)
+    class: OpenAIServingResponses
+  - name: _construct_input_messages
+    signature: (self, request: ResponsesRequest, prev_response: Optional[ResponsesResponse] = None)
+    return: list[ChatCompletionMessageParam]
+    class: OpenAIServingResponses
+  - name: _construct_input_messages_with_harmony
+    signature: (self, request: ResponsesRequest, prev_response: Optional[ResponsesResponse])
+    return: list['OpenAIMessage']
+    class: OpenAIServingResponses
+  - name: _run_background_request
+    signature: (self, request: ResponsesRequest, sampling_params: Any, result_generator: AsyncIterator[Any], context: ConversationContext, model_name: str, tokenizer: Any, request_metadata: RequestResponseMetadata, created_time: Optional[int] = None, *args, **kwargs)
+    class: OpenAIServingResponses
+  - name: retrieve_responses
+    signature: (self, response_id: str)
+    return: Union[ResponsesResponse, ORJSONResponse]
+    class: OpenAIServingResponses
+  - name: cancel_responses
+    signature: (self, response_id: str)
+    return: Union[ResponsesResponse, ORJSONResponse]
+    class: OpenAIServingResponses
+  - name: _make_invalid_id_error
+    signature: (self, response_id: str)
+    class: OpenAIServingResponses
+  - name: _make_not_found_error
+    signature: (self, response_id: str)
+    class: OpenAIServingResponses
+  - name: responses_stream_generator
+    signature: (self, request: ResponsesRequest, sampling_params: Any, result_generator: AsyncIterator[StreamingHarmonyContext], context: StreamingHarmonyContext, model_name: str, tokenizer: Any, request_metadata: RequestResponseMetadata, created_time: Optional[int] = None)
+    return: AsyncGenerator[str, None]
+    class: OpenAIServingResponses
+  - name: _send_event
+    signature: (event)
+    class: OpenAIServingResponses
+  - name: empty_async_generator
+    signature: ()
+    class: OpenAIServingResponses
+  - name: _generate_with_builtin_tools
+    signature: (self, request_id: str, request_prompt: Any, adapted_request: GenerateReqInput, sampling_params: Any, context: ConversationContext, raw_request: Optional[Request] = None, priority: Optional[int] = None, **kwargs)
+    return: AsyncGenerator[Any, None]
+    class: OpenAIServingResponses
+    doc: Generate with builtin tool support for harmony-based models.
+
+File: entrypoints/openai/serving_score.py
+  - name: _request_id_prefix
+    signature: (self)
+    return: str
+    class: OpenAIServingScore
+  - name: _convert_to_internal_request
+    signature: (self, request: ScoringRequest)
+    return: tuple[ScoringRequest, ScoringRequest]
+    class: OpenAIServingScore
+    doc: Convert OpenAI scoring request to internal format
+  - name: _handle_non_streaming_request
+    signature: (self, adapted_request: ScoringRequest, request: ScoringRequest, raw_request: Request)
+    return: Union[ScoringResponse, ErrorResponse]
+    class: OpenAIServingScore
+    doc: Handle the scoring request
+
+File: entrypoints/openai/tool_server.py
+  - name: list_server_and_tools
+    signature: (server_url: str)
+  - name: trim_schema
+    signature: (schema: dict)
+    return: dict
+  - name: post_process_tools_description
+    signature: (list_tools_result: 'ListToolsResult')
+    return: 'ListToolsResult'
+  - name: has_tool
+    signature: (self, tool_name: str)
+    class: ToolServer
+  - name: get_tool_description
+    signature: (self, tool_name: str)
+    class: ToolServer
+  - name: get_tool_session
+    signature: (self, tool_name: str)
+    return: AbstractAsyncContextManager[Any]
+    class: ToolServer
+  - name: __init__
+    signature: (self)
+    class: MCPToolServer
+  - name: add_tool_server
+    signature: (self, server_url: str)
+    class: MCPToolServer
+  - name: has_tool
+    signature: (self, tool_name: str)
+    class: MCPToolServer
+  - name: get_tool_description
+    signature: (self, tool_name: str)
+    class: MCPToolServer
+  - name: get_tool_session
+    signature: (self, tool_name: str)
+    class: MCPToolServer
+  - name: __init__
+    signature: (self)
+    class: DemoToolServer
+  - name: has_tool
+    signature: (self, tool_name: str)
+    class: DemoToolServer
+  - name: get_tool_description
+    signature: (self, tool_name: str)
+    class: DemoToolServer
+  - name: get_tool_session
+    signature: (self, tool_name: str)
+    class: DemoToolServer
+
+File: entrypoints/openai/usage_processor.py
+  - name: _details_if_cached
+    signature: (count: int)
+    return: Optional[Dict[str, int]]
+    class: UsageProcessor
+    doc: Return {"cached_tokens": N} only when N > 0 (keeps JSON slim).
+  - name: calculate_response_usage
+    signature: (responses: List[Dict[str, Any]], n_choices: int = 1, enable_cache_report: bool = False)
+    return: UsageInfo
+    class: UsageProcessor
+  - name: calculate_streaming_usage
+    signature: (prompt_tokens: Mapping[int, int], completion_tokens: Mapping[int, int], cached_tokens: Mapping[int, int], n_choices: int, enable_cache_report: bool = False)
+    return: UsageInfo
+    class: UsageProcessor
+  - name: calculate_token_usage
+    signature: (prompt_tokens: int, completion_tokens: int, cached_tokens: Optional[Dict[str, int]] = None)
+    return: UsageInfo
+    class: UsageProcessor
+    doc: Calculate token usage information
+
+File: entrypoints/openai/utils.py
+  - name: to_openai_style_logprobs
+    signature: (input_token_logprobs = None, output_token_logprobs = None, input_top_logprobs = None, output_top_logprobs = None)
+  - name: append_token_logprobs
+    signature: (token_logprobs)
+  - name: append_top_logprobs
+    signature: (top_logprobs)
+  - name: process_hidden_states_from_ret
+    signature: (ret_item: Dict[str, Any], request: Union[ChatCompletionRequest, CompletionRequest])
+    return: Optional[List]
+    doc: Process hidden states from a ret item in non-streaming response.
+
+File: entrypoints/tool.py
+  - name: get_result
+    signature: (self, context: 'ConversationContext')
+    return: Any
+    class: Tool
+  - name: __init__
+    signature: (self)
+    class: HarmonyBrowserTool
+  - name: get_result
+    signature: (self, context: 'ConversationContext')
+    return: Any
+    class: HarmonyBrowserTool
+  - name: tool_config
+    signature: (self)
+    return: Any
+    class: HarmonyBrowserTool
+  - name: __init__
+    signature: (self)
+    class: HarmonyPythonTool
+  - name: get_result
+    signature: (self, context: 'ConversationContext')
+    return: Any
+    class: HarmonyPythonTool
+  - name: tool_config
+    signature: (self)
+    return: Any
+    class: HarmonyPythonTool

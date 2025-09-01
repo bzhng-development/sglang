@@ -1,0 +1,515 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: function_call/base_format_detector.py
+  - name: __init__
+    signature: (self)
+    class: BaseFormatDetector
+  - name: _get_tool_indices
+    signature: (self, tools: List[Tool])
+    return: Dict[str, int]
+    class: BaseFormatDetector
+    doc: Get a mapping of tool names to their indices in the tools list.
+  - name: parse_base_json
+    signature: (self, action: Any, tools: List[Tool])
+    return: List[ToolCallItem]
+    class: BaseFormatDetector
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: BaseFormatDetector
+    doc: Parses the text in one go. Returns success=True if the format matches, otherwise False.
+  - name: _ends_with_partial_token
+    signature: (self, buffer: str, bot_token: str)
+    return: int
+    class: BaseFormatDetector
+    doc: Check if buffer ends with a partial bot_token.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: BaseFormatDetector
+    doc: Streaming incremental parsing with tool validation.
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: BaseFormatDetector
+    doc: Check if the given text contains function call markers specific to this format.
+  - name: supports_structural_tag
+    signature: (self)
+    return: bool
+    class: BaseFormatDetector
+    doc: Return True if this detector supports structural tag format.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: BaseFormatDetector
+    doc: Return a function that creates StructureInfo for constrained generation.
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    return: str
+    class: BaseFormatDetector
+    doc: Build an EBNF grammar for constrained generation of function calls.
+
+File: function_call/core_types.py
+  (no function definitions found)
+File: function_call/deepseekv31_detector.py
+  - name: __init__
+    signature: (self)
+    class: DeepSeekV31Detector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: DeepSeekV31Detector
+    doc: Check if the text contains a deepseek format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: DeepSeekV31Detector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: DeepSeekV31Detector
+    doc: Streaming incremental parsing tool calls for DeepSeekV3 format.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: DeepSeekV31Detector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: DeepSeekV31Detector
+
+File: function_call/deepseekv3_detector.py
+  - name: __init__
+    signature: (self)
+    class: DeepSeekV3Detector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: DeepSeekV3Detector
+    doc: Check if the text contains a deepseek format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: DeepSeekV3Detector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: DeepSeekV3Detector
+    doc: Streaming incremental parsing tool calls for DeepSeekV3 format.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: DeepSeekV3Detector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: DeepSeekV3Detector
+
+File: function_call/ebnf_composer.py
+  - name: get_value_rule
+    signature: (prop: dict, function_format: Literal['pythonic', 'json', 'xml'] = 'json')
+    return: str
+    class: EBNFComposer
+  - name: _handle_enum
+    signature: (prop: dict, function_format: str)
+    return: str
+    class: EBNFComposer
+    doc: Handle enum properties by formatting each value according to type and format.
+  - name: format_enum_val
+    signature: (v: Any)
+    return: str
+    class: EBNFComposer
+  - name: get_type_mapping
+    signature: (function_format: str)
+    return: Dict[str, str]
+    class: EBNFComposer
+    doc: Get the complete type mapping for a given format.
+  - name: _handle_type
+    signature: (prop: dict, function_format: str)
+    return: str
+    class: EBNFComposer
+    doc: Handle type properties using the appropriate type mapping.
+  - name: build_ebnf
+    signature: (tools, function_format: Literal['pythonic', 'json', 'xml'] = 'json', sequence_start_token: Optional[str] = None, sequence_end_token: Optional[str] = None, individual_call_start_token: Optional[str] = None, individual_call_end_token: Optional[str] = None, tool_call_separator: Optional[str] = None, call_rule_fmt: Optional[str] = None, key_value_rule_fmt: Optional[str] = None, key_value_separator: str = ',')
+    class: EBNFComposer
+    doc: Generalized EBNF builder for all detectors.
+
+File: function_call/function_call_parser.py
+  - name: __init__
+    signature: (self, tools: List[Tool], tool_call_parser: str)
+    class: FunctionCallParser
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: FunctionCallParser
+    doc: Check if the given text contains a tool call in the format supported by this parser.
+  - name: parse_non_stream
+    signature: (self, full_text: str)
+    return: Tuple[str, list[ToolCallItem]]
+    class: FunctionCallParser
+    doc: One-time parsing of the full text to extract tool calls.
+  - name: parse_stream_chunk
+    signature: (self, chunk_text: str)
+    return: Tuple[str, list[ToolCallItem]]
+    class: FunctionCallParser
+    doc: Streaming incremental parsing of chunks of text as they arrive.
+  - name: get_structure_tag
+    signature: (self)
+    return: StructuralTagResponseFormat
+    class: FunctionCallParser
+    doc: Generate a structural tag response format for all available tools.
+  - name: get_structure_constraint
+    signature: (self, tool_choice: Union[ToolChoice, Literal['auto', 'required']])
+    return: Optional[Tuple[str, Any]]
+    class: FunctionCallParser
+    doc: Returns the appropriate structure constraint for tool calls based on the tool_choice.
+  - name: get_ebnf
+    signature: (self, tool_choice: Union[ToolChoice, Literal['required']])
+    return: Optional[str]
+    class: FunctionCallParser
+    doc: Get the EBNF grammar for the specified tool choice.
+
+File: function_call/glm4_moe_detector.py
+  - name: get_argument_type
+    signature: (func_name: str, arg_key: str, defined_tools: list)
+  - name: parse_arguments
+    signature: (json_value)
+  - name: __init__
+    signature: (self)
+    class: Glm4MoeDetector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: Glm4MoeDetector
+    doc: Check if the text contains a glm-4.5 format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Glm4MoeDetector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Glm4MoeDetector
+    doc: Streaming incremental parsing tool calls for GLM-4.5 format.
+  - name: supports_structural_tag
+    signature: (self)
+    return: bool
+    class: Glm4MoeDetector
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: Glm4MoeDetector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: Glm4MoeDetector
+
+File: function_call/gpt_oss_detector.py
+  - name: __init__
+    signature: (self)
+    class: GptOssDetector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: GptOssDetector
+    doc: Check if text contains TypeScript-style function call markers.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: GptOssDetector
+    doc: Parse TypeScript-style function calls from complete text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: GptOssDetector
+    doc: Parse incremental streaming text for TypeScript-style function calls.
+  - name: _extract_tool_call_from_event
+    signature: (self, content: str, tool_indices: dict, tool_index: int)
+    return: Optional[ToolCallItem]
+    class: GptOssDetector
+    doc: Extract tool call information from HarmonyParser event content.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: GptOssDetector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    return: str
+    class: GptOssDetector
+
+File: function_call/kimik2_detector.py
+  - name: __init__
+    signature: (self)
+    class: KimiK2Detector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: KimiK2Detector
+    doc: Check if the text contains a KimiK2 format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: KimiK2Detector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: KimiK2Detector
+    doc: Streaming incremental parsing tool calls for KimiK2 format.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: KimiK2Detector
+    doc: Return function that creates StructureInfo for guided generation.
+  - name: get_info
+    signature: (name: str)
+    return: StructureInfo
+    class: KimiK2Detector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    return: str
+    class: KimiK2Detector
+    doc: Build EBNF grammar for KimiK2 tool call format.
+
+File: function_call/llama32_detector.py
+  - name: __init__
+    signature: (self)
+    class: Llama32Detector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: Llama32Detector
+    doc: Check if the text contains a Llama 3.2 format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Llama32Detector
+    doc: Parse function calls from text, handling multiple JSON objects.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: Llama32Detector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: Llama32Detector
+
+File: function_call/mistral_detector.py
+  - name: __init__
+    signature: (self)
+    class: MistralDetector
+    doc: Initializes the detector with necessary state variables.
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: MistralDetector
+    doc: Check if the text contains a Mistral format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: MistralDetector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: _extract_json_array
+    signature: (self, text: str)
+    return: str
+    class: MistralDetector
+    doc: Extract the JSON array part using bracket counting to handle nested brackets.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: MistralDetector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: MistralDetector
+
+File: function_call/pythonic_detector.py
+  - name: __init__
+    signature: (self)
+    class: PythonicDetector
+  - name: _text_strip
+    signature: (text: str)
+    return: str
+    class: PythonicDetector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: PythonicDetector
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: PythonicDetector
+  - name: _find_matching_bracket
+    signature: (self, buffer: str, start: int)
+    return: int
+    class: PythonicDetector
+    doc: Find the matching closing bracket for the opening bracket at start position.
+  - name: _strip_and_split_buffer
+    signature: (self, buffer: str)
+    return: tuple[str, str]
+    class: PythonicDetector
+    doc: Strip special tokens from buffer and split into safe_text and held_back_text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: PythonicDetector
+    doc: Streaming incremental parsing for pythonic tool calls.
+  - name: _get_parameter_value
+    signature: (self, val)
+    class: PythonicDetector
+  - name: supports_structural_tag
+    signature: (self)
+    return: bool
+    class: PythonicDetector
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: PythonicDetector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    return: Optional[str]
+    class: PythonicDetector
+
+File: function_call/qwen25_detector.py
+  - name: __init__
+    signature: (self)
+    class: Qwen25Detector
+    doc: Initializes the detector with necessary state variables.
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: Qwen25Detector
+    doc: Check if the text contains a Qwen 2.5 format tool call.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Qwen25Detector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Qwen25Detector
+    doc: Streaming incremental parsing for Qwen 2.5 tool calls.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: Qwen25Detector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: Qwen25Detector
+
+File: function_call/qwen3_coder_detector.py
+  - name: _safe_val
+    signature: (raw: str)
+    return: Any
+  - name: __init__
+    signature: (self)
+    class: Qwen3CoderDetector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: Qwen3CoderDetector
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Qwen3CoderDetector
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Qwen3CoderDetector
+  - name: _parse_and_stream_parameters
+    signature: (self, text_to_parse: str)
+    return: List[ToolCallItem]
+    class: Qwen3CoderDetector
+    doc: Parse complete parameter blocks from text and return any tool call items to emit.
+  - name: _reset_streaming_state
+    signature: (self)
+    class: Qwen3CoderDetector
+    doc: Reset streaming state for the next tool call
+  - name: _extract
+    signature: (self, text: str, tools: List[Tool])
+    return: Tuple[str, List[ToolCallItem]]
+    class: Qwen3CoderDetector
+  - name: _parse_block
+    signature: (self, block: str, tools: List[Tool])
+    return: List[ToolCallItem]
+    class: Qwen3CoderDetector
+  - name: supports_structural_tag
+    signature: (self)
+    return: bool
+    class: Qwen3CoderDetector
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: Qwen3CoderDetector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    class: Qwen3CoderDetector
+
+File: function_call/step3_detector.py
+  - name: get_argument_type
+    signature: (func_name: str, arg_key: str, defined_tools: List[Tool])
+    return: str
+    doc: Get the expected type for a function argument from tool schema.
+  - name: parse_arguments
+    signature: (value: str)
+    return: tuple[Any, bool]
+    doc: Parse a string value to appropriate type. Returns (parsed_value, success).
+  - name: __init__
+    signature: (self)
+    class: Step3Detector
+  - name: has_tool_call
+    signature: (self, text: str)
+    return: bool
+    class: Step3Detector
+    doc: Check if the text contains a Step3 format tool call.
+  - name: _parse_steptml_invoke
+    signature: (self, text: str, tools: List[Tool] = None)
+    return: tuple[str, dict]
+    class: Step3Detector
+    doc: Parse steptml invoke format to extract function name and parameters.
+  - name: detect_and_parse
+    signature: (self, text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Step3Detector
+    doc: One-time parsing: Detects and parses tool calls in the provided text.
+  - name: parse_streaming_increment
+    signature: (self, new_text: str, tools: List[Tool])
+    return: StreamingParseResult
+    class: Step3Detector
+    doc: Streaming incremental parsing for Step3 format.
+  - name: _parse_partial_tool_call
+    signature: (self, tools: List[Tool])
+    return: StreamingParseResult
+    class: Step3Detector
+    doc: Parse partial tool call for streaming scenarios.
+  - name: _reset_streaming_state
+    signature: (self)
+    class: Step3Detector
+    doc: Reset streaming state for the next tool call
+  - name: supports_structural_tag
+    signature: (self)
+    return: bool
+    class: Step3Detector
+    doc: Return True if this detector supports structural tag format.
+  - name: structure_info
+    signature: (self)
+    return: _GetInfoFunc
+    class: Step3Detector
+  - name: build_ebnf
+    signature: (self, tools: List[Tool])
+    return: str
+    class: Step3Detector
+    doc: Build EBNF grammar for Step3 tool call format.
+
+File: function_call/utils.py
+  - name: _find_common_prefix
+    signature: (s1: str, s2: str)
+    return: str
+  - name: _partial_json_loads
+    signature: (input_str: str, flags: Allow)
+    return: Tuple[Any, int]
+    doc: Parse incomplete or partial JSON strings commonly encountered during streaming.
+  - name: _is_complete_json
+    signature: (input_str: str)
+    return: bool

@@ -1,0 +1,1698 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: managers/cache_controller.py
+  - name: __init__
+    signature: (self, num_layers)
+    class: LayerDoneCounter
+  - name: next_producer
+    signature: (self)
+    class: LayerDoneCounter
+  - name: update_producer
+    signature: (self)
+    class: LayerDoneCounter
+  - name: set_consumer
+    signature: (self, index)
+    class: LayerDoneCounter
+  - name: increment
+    signature: (self)
+    class: LayerDoneCounter
+  - name: wait_until
+    signature: (self, threshold)
+    class: LayerDoneCounter
+  - name: reset
+    signature: (self)
+    class: LayerDoneCounter
+  - name: __init__
+    signature: (self, host_indices: torch.Tensor, device_indices: torch.Tensor, node_id: int, priority: Optional[int] = None)
+    class: CacheOperation
+  - name: merge
+    signature: (self, other: 'CacheOperation')
+    return: None
+    class: CacheOperation
+  - name: split
+    signature: (self, factor)
+    return: List['CacheOperation']
+    class: CacheOperation
+  - name: __lt__
+    signature: (self, other: 'CacheOperation')
+    class: CacheOperation
+  - name: __init__
+    signature: (self, stop_event, buffer_count: int = 3, max_buffer_size: int = 1024)
+    return: None
+    class: TransferBuffer
+  - name: full
+    signature: (self)
+    return: bool
+    class: TransferBuffer
+  - name: empty
+    signature: (self)
+    return: bool
+    class: TransferBuffer
+  - name: put
+    signature: (self, item, block = True, timeout = 1)
+    return: None
+    class: TransferBuffer
+  - name: get
+    signature: (self, block = True, timeout = 1)
+    return: Optional[CacheOperation]
+    class: TransferBuffer
+  - name: clear
+    signature: (self)
+    class: TransferBuffer
+  - name: __init__
+    signature: (self, host_indices: torch.Tensor, token_ids: List[int], last_hash: Optional[str] = None, hash_value: Optional[List[str]] = None)
+    class: StorageOperation
+  - name: __lt__
+    signature: (self, other: 'StorageOperation')
+    class: StorageOperation
+  - name: __init__
+    signature: (self, request_id: str, host_indices: torch.Tensor, token_ids: List[int], last_hash: Optional[str] = None)
+    class: PrefetchOperation
+  - name: increment
+    signature: (self, num_tokens: int)
+    class: PrefetchOperation
+  - name: mark_done
+    signature: (self)
+    class: PrefetchOperation
+  - name: is_done
+    signature: (self)
+    return: bool
+    class: PrefetchOperation
+  - name: __init__
+    signature: (self, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, mem_pool_host: HostKVCache, page_size: int, tp_group: torch.distributed.ProcessGroup, load_cache_event: threading.Event = None, write_policy: str = 'write_through_selective', io_backend: str = '', storage_backend: Optional[str] = None, prefetch_threshold: int = 256, model_name: Optional[str] = None, storage_backend_extra_config: Optional[str] = None)
+    class: HiCacheController
+  - name: _generate_storage_config
+    signature: (self, model_name: Optional[str] = None, storage_backend_extra_config: Optional[str] = None)
+    class: HiCacheController
+  - name: reset
+    signature: (self)
+    class: HiCacheController
+  - name: write
+    signature: (self, device_indices: torch.Tensor, priority: Optional[int] = None, node_id: int = 0)
+    return: Optional[torch.Tensor]
+    class: HiCacheController
+    doc: Back up KV caches from device memory to host memory.
+  - name: load
+    signature: (self, host_indices: torch.Tensor, priority: Optional[int] = None, node_id: int = 0)
+    return: Optional[torch.Tensor]
+    class: HiCacheController
+    doc: Load KV caches from host memory to device memory.
+  - name: move_indices
+    signature: (self, host_indices, device_indices)
+    class: HiCacheController
+  - name: write_thread_func_direct
+    signature: (self)
+    class: HiCacheController
+    doc: Directly write through KV caches to host memory without buffering.
+  - name: load_thread_func_layer_by_layer
+    signature: (self)
+    class: HiCacheController
+    doc: Load KV caches from host memory to device memory layer by layer.
+  - name: evict_device
+    signature: (self, device_indices: torch.Tensor, host_indices: torch.Tensor)
+    return: int
+    class: HiCacheController
+  - name: evict_host
+    signature: (self, host_indices: torch.Tensor, backup_only: bool = True)
+    return: int
+    class: HiCacheController
+  - name: prefetch
+    signature: (self, request_id: str, host_indices: torch.Tensor, new_input_tokens: List[int], last_hash: Optional[str] = None)
+    return: PrefetchOperation
+    class: HiCacheController
+    doc: Prefetch KV caches from storage backend to host memory.
+  - name: terminate_prefetch
+    signature: (self, operation)
+    class: HiCacheController
+  - name: _3fs_zero_copy_page_get
+    signature: (self, operation, hash_values, host_indices)
+    class: HiCacheController
+  - name: _mooncake_page_get
+    signature: (self, operation, hash_values, host_indices)
+    class: HiCacheController
+  - name: _generic_page_get
+    signature: (self, operation, hash_values, host_indices)
+    class: HiCacheController
+  - name: _page_transfer
+    signature: (self, operation)
+    class: HiCacheController
+  - name: is_mooncake_backend
+    signature: (self)
+    class: HiCacheController
+  - name: prefetch_io_aux_func
+    signature: (self)
+    class: HiCacheController
+    doc: Auxiliary function conducting IO operations for prefetching.
+  - name: prefetch_rate_limit_check
+    signature: (self)
+    return: bool
+    class: HiCacheController
+    doc: Rate limit the prefetching operations to avoid overwhelming the storage backend.
+  - name: _generic_storage_hit_query
+    signature: (self, operation)
+    return: tuple[list[str], int]
+    class: HiCacheController
+  - name: prefetch_thread_func
+    signature: (self)
+    class: HiCacheController
+    doc: Manage prefetching operations from storage backend to host memory.
+  - name: write_storage
+    signature: (self, host_indices: torch.Tensor, token_ids: List[int], hash_value: Optional[List[str]] = None)
+    return: int
+    class: HiCacheController
+    doc: Write KV caches from host memory to storage backend.
+  - name: _generic_page_set
+    signature: (self, hash_values, host_indices)
+    return: bool
+    class: HiCacheController
+  - name: _mooncake_page_set
+    signature: (self, hash_values, host_indices)
+    return: bool
+    class: HiCacheController
+  - name: _3fs_zero_copy_page_set
+    signature: (self, hash_values, host_indices)
+    return: bool
+    class: HiCacheController
+  - name: _page_backup
+    signature: (self, operation)
+    class: HiCacheController
+  - name: backup_thread_func
+    signature: (self)
+    class: HiCacheController
+    doc: Manage backup operations from host memory to storage backend.
+
+File: managers/configure_logging.py
+  (no function definitions found)
+File: managers/data_parallel_controller.py
+  - name: from_str
+    signature: (cls, method: str)
+    class: LoadBalanceMethod
+  - name: __init__
+    signature: (self, server_args: ServerArgs, port_args: PortArgs, dp_balance_meta: DPBalanceMeta)
+    return: None
+    class: DataParallelController
+  - name: launch_dp_schedulers
+    signature: (self, server_args, port_args)
+    class: DataParallelController
+  - name: launch_tensor_parallel_group_thread
+    signature: (self, server_args: ServerArgs, port_args: PortArgs, base_gpu_id: int, dp_rank: int, ready_event: threading.Event)
+    class: DataParallelController
+  - name: launch_dp_attention_schedulers
+    signature: (self, server_args, port_args)
+    class: DataParallelController
+  - name: launch_tensor_parallel_group
+    signature: (self, server_args: ServerArgs, port_args: PortArgs, base_gpu_id: int, dp_rank: int)
+    class: DataParallelController
+  - name: round_robin_scheduler
+    signature: (self, req: Req)
+    class: DataParallelController
+  - name: shortest_queue_scheduler
+    signature: (self, input_requests)
+    class: DataParallelController
+  - name: minimum_tokens_scheduler
+    signature: (self, req)
+    class: DataParallelController
+  - name: get_next_global_balance_id
+    signature: ()
+    return: int
+    class: DataParallelController
+  - name: event_loop
+    signature: (self)
+    class: DataParallelController
+  - name: run_data_parallel_controller_process
+    signature: (server_args: ServerArgs, port_args: PortArgs, pipe_writer)
+
+File: managers/detokenizer_manager.py
+  - name: __init__
+    signature: (self, server_args: ServerArgs, port_args: PortArgs)
+    class: DetokenizerManager
+  - name: event_loop
+    signature: (self)
+    class: DetokenizerManager
+    doc: The event loop that handles requests
+  - name: trim_matched_stop
+    signature: (self, output: Union[str, List[int]], finished_reason: Dict, no_stop_trim: bool)
+    class: DetokenizerManager
+  - name: handle_batch_embedding_out
+    signature: (self, recv_obj: BatchEmbeddingOut)
+    class: DetokenizerManager
+  - name: handle_batch_token_id_out
+    signature: (self, recv_obj: BatchTokenIDOut)
+    class: DetokenizerManager
+  - name: handle_multimodal_decode_req
+    signature: (self, recv_obj: BatchMultimodalDecodeReq)
+    class: DetokenizerManager
+  - name: handle_freeze_gc_req
+    signature: (self, recv_req: FreezeGCReq)
+    class: DetokenizerManager
+  - name: __init__
+    signature: (self, capacity: int, *args, **kwargs)
+    class: LimitedCapacityDict
+  - name: __setitem__
+    signature: (self, key, value)
+    class: LimitedCapacityDict
+  - name: run_detokenizer_process
+    signature: (server_args: ServerArgs, port_args: PortArgs)
+
+File: managers/io_struct.py
+  - name: contains_mm_input
+    signature: (self)
+    return: bool
+    class: GenerateReqInput
+  - name: normalize_batch_and_arguments
+    signature: (self)
+    class: GenerateReqInput
+    doc: Normalize the batch size and arguments for the request.
+  - name: _validate_inputs
+    signature: (self)
+    class: GenerateReqInput
+    doc: Validate that the input configuration is valid.
+  - name: _determine_batch_size
+    signature: (self)
+    class: GenerateReqInput
+    doc: Determine if this is a single example or a batch and the batch size.
+  - name: _handle_parallel_sampling
+    signature: (self)
+    class: GenerateReqInput
+    doc: Handle parallel sampling parameters and adjust batch size if needed.
+  - name: _normalize_single_inputs
+    signature: (self)
+    class: GenerateReqInput
+    doc: Normalize inputs for a single example.
+  - name: _normalize_batch_inputs
+    signature: (self)
+    class: GenerateReqInput
+    doc: Normalize inputs for a batch of examples, including parallel sampling expansion.
+  - name: _expand_inputs
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Expand the main inputs (text, input_ids, input_embeds) for parallel sampling.
+  - name: _normalize_lora_paths
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize LoRA paths for batch processing.
+  - name: _normalize_image_data
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize image data for batch processing.
+  - name: _normalize_video_data
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize video data for batch processing.
+  - name: _normalize_audio_data
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize audio data for batch processing.
+  - name: _normalize_sampling_params
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize sampling parameters for batch processing.
+  - name: _normalize_rid
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize request IDs for batch processing.
+  - name: _normalize_logprob_params
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize logprob-related parameters for batch processing.
+  - name: normalize_param
+    signature: (param, default_value, param_name)
+    class: GenerateReqInput
+  - name: _normalize_custom_logit_processor
+    signature: (self, num)
+    class: GenerateReqInput
+    doc: Normalize custom logit processor for batch processing.
+  - name: _validate_session_params
+    signature: (self)
+    class: GenerateReqInput
+    doc: Validate that session parameters are properly formatted.
+  - name: regenerate_rid
+    signature: (self)
+    class: GenerateReqInput
+    doc: Generate a new request ID and return it.
+  - name: __getitem__
+    signature: (self, i)
+    class: GenerateReqInput
+  - name: __len__
+    signature: (self)
+    class: BatchTokenizedGenerateReqInput
+  - name: __getitem__
+    signature: (self, i)
+    class: BatchTokenizedGenerateReqInput
+  - name: __iter__
+    signature: (self)
+    class: BatchTokenizedGenerateReqInput
+  - name: normalize_batch_and_arguments
+    signature: (self)
+    class: EmbeddingReqInput
+  - name: regenerate_rid
+    signature: (self)
+    class: EmbeddingReqInput
+  - name: contains_mm_input
+    signature: (self)
+    return: bool
+    class: EmbeddingReqInput
+  - name: __getitem__
+    signature: (self, i)
+    class: EmbeddingReqInput
+  - name: __len__
+    signature: (self)
+    class: BatchTokenizedEmbeddingReqInput
+  - name: __getitem__
+    signature: (self, i)
+    class: BatchTokenizedEmbeddingReqInput
+  - name: __iter__
+    signature: (self)
+    class: BatchTokenizedEmbeddingReqInput
+  - name: to_ref
+    signature: (self)
+    return: LoRARef
+    class: LoadLoRAAdapterReqInput
+  - name: to_ref
+    signature: (self)
+    return: LoRARef
+    class: UnloadLoRAAdapterReqInput
+
+File: managers/mm_utils.py
+  - name: __new__
+    signature: (cls, data: torch.Tensor, name: Optional[str] = None, fields: Optional[Dict[str, Any]] = None, transport_mode: TensorTransportMode = 'default', *args, **kwargs)
+    class: TransportProxyTensor
+  - name: __getstate__
+    signature: (self)
+    class: TransportProxyTensor
+    doc: Called during pickling. Implements the serialization logic.
+  - name: __setstate__
+    signature: (self, state: Dict[str, Any])
+    class: TransportProxyTensor
+    doc: Called during unpickling. Implements the deserialization logic.
+  - name: name
+    signature: (self)
+    return: Optional[str]
+    class: TransportProxyTensor
+  - name: fields
+    signature: (self)
+    return: Dict[str, Any]
+    class: TransportProxyTensor
+  - name: transport_mode
+    signature: (self)
+    return: TensorTransportMode
+    class: TransportProxyTensor
+  - name: pad_input_tokens
+    signature: (self, input_ids: List[int], mm_inputs: MultimodalInputs)
+    return: List[int]
+    class: MultiModalityDataPaddingPattern
+    doc: Pad the input ids sequence containing data tokens, and replace them with pad_values
+  - name: __init__
+    signature: (self, data_token_pairs: Optional[List[Tuple[int, int]]], data_start_token_ids: Optional[List[int]] = None)
+    return: None
+    class: MultiModalityDataPaddingPatternTokenPairs
+    doc: Args:
+  - name: pad_input_tokens
+    signature: (self, input_ids: List[int], mm_inputs: MultimodalInputs)
+    return: List[int]
+    class: MultiModalityDataPaddingPatternTokenPairs
+    doc: This function will replace the data-tokens in between with pad_values accordingly
+  - name: pad_input_tokens
+    signature: (self, input_ids: List[int], mm_inputs: MultimodalInputs)
+    return: List[int]
+    class: MultiModalityDataPaddingPatternMultimodalTokens
+    doc: Replaces multimodal tokens in input_ids with corresponding pad_values from mm_items.
+  - name: init_embedding_cache
+    signature: (max_size: int = 0)
+  - name: get_embedding_hash
+    signature: (embedding_items: List[MultimodalDataItem])
+    return: int
+  - name: get_embedding_chunk
+    signature: (embedding: torch.Tensor, extend_prefix_len: int, extend_seq_len: int, items_offset: List[Tuple[int, int]])
+    return: Tuple[torch.Tensor, int, int]
+    doc: Extract a chunk of embeddings based on the specified prefix length, sequence length, and offset ranges.
+  - name: _get_precomputed_embedding
+    signature: (items: List[MultimodalDataItem])
+    return: Optional[torch.Tensor]
+    doc: If all items have precomputed_embeddings, return their concatenation.
+  - name: _get_chunked_prefill_embedding
+    signature: (data_embedding_func: Callable[[List[MultimodalDataItem]], torch.Tensor], embedding_items: List[MultimodalDataItem], items_size: List[int], prefix_length: List[int], extend_length: List[int], items_offset_list: List[List[Tuple[int, int]]])
+    return: Optional[torch.Tensor]
+  - name: _get_multimodal_mask
+    signature: (input_ids: torch.Tensor, placeholder_tensor: torch.Tensor)
+    return: torch.Tensor
+  - name: _adjust_embedding_length
+    signature: (embedding: torch.Tensor, mask: torch.Tensor, logger)
+    return: torch.Tensor
+  - name: get_embedding_and_mask
+    signature: (data_embedding_func: Callable[[List[MultimodalDataItem]], torch.Tensor], embedding_items: List[MultimodalDataItem], placeholder_tensor: torch.Tensor, input_ids: torch.Tensor, items_size: List[int], prefix_length: List[int], extend_length: List[int], items_offset_list: List[List[Tuple[int, int]]])
+    return: Tuple[torch.Tensor, torch.Tensor]
+    doc: Generate multimodal embeddings and create a mask for identifying their positions in the input sequence.
+  - name: embed_mm_inputs
+    signature: (mm_inputs_list: List[MultimodalInputs], extend_prefix_lens: List[int], extend_seq_lens: List[int], input_ids: torch.Tensor, input_embedding: nn.Embedding, multimodal_model: nn.Module = None, data_embedding_func_mapping: Dict[Modality, Callable[[List[MultimodalDataItem]], torch.Tensor]] = None, placeholder_tokens: dict[Modality, List[int]] = None)
+    return: Optional[torch.Tensor]
+    doc: Embed multimodal inputs and integrate them with text token embeddings.
+  - name: general_mm_embed_routine
+    signature: (input_ids: torch.Tensor, forward_batch: ForwardBatch, language_model: nn.Module, multimodal_model: Optional[nn.Module] = None, data_embedding_funcs: Dict[Modality, Callable[[List[MultimodalDataItem]], torch.Tensor]] = None, placeholder_tokens: Optional[dict[Modality, List[int]]] = None, **kwargs)
+    return: torch.Tensor
+    doc: Process multimodal inputs and forward through language model.
+  - name: get_multimodal_data_bounds
+    signature: (input_ids: torch.Tensor, pad_values: List[int], token_pairs: List[Tuple[int, int]])
+    return: torch.Tensor
+    doc: Returns a tensor indicating the bounds of multimodal data (images, video, audio, etc.)
+  - name: data_hash
+    signature: (data)
+    return: int
+  - name: tensor_hash
+    signature: (tensor_list)
+    return: int
+    doc: hash a tensor or a tensor list
+  - name: hash_feature
+    signature: (f)
+
+File: managers/multimodal_processor.py
+  - name: import_processors
+    signature: ()
+  - name: get_mm_processor
+    signature: (hf_config, server_args: ServerArgs, processor, transport_mode)
+    return: BaseMultimodalProcessor
+
+File: managers/schedule_batch.py
+  - name: __init__
+    signature: (self, is_error: bool = False)
+    class: BaseFinishReason
+  - name: to_json
+    signature: (self)
+    class: BaseFinishReason
+  - name: __init__
+    signature: (self, matched: Union[int, List[int]])
+    class: FINISH_MATCHED_TOKEN
+  - name: to_json
+    signature: (self)
+    class: FINISH_MATCHED_TOKEN
+  - name: __init__
+    signature: (self, matched: str)
+    class: FINISH_MATCHED_STR
+  - name: to_json
+    signature: (self)
+    class: FINISH_MATCHED_STR
+  - name: __init__
+    signature: (self, length: int)
+    class: FINISH_LENGTH
+  - name: to_json
+    signature: (self)
+    class: FINISH_LENGTH
+  - name: __init__
+    signature: (self, message = None, status_code = None, err_type = None)
+    class: FINISH_ABORT
+  - name: to_json
+    signature: (self)
+    class: FINISH_ABORT
+  - name: from_str
+    signature: (modality_str: str)
+    class: Modality
+  - name: all
+    signature: ()
+    class: Modality
+  - name: __getattr__
+    signature: (self, name: str)
+    class: MultimodalDataItem
+  - name: __setitem__
+    signature: (self, key: str, value: Any)
+    class: MultimodalDataItem
+  - name: set
+    signature: (self, key: str, value: Any)
+    class: MultimodalDataItem
+  - name: is_empty_list
+    signature: (l)
+    class: MultimodalDataItem
+  - name: set_pad_value
+    signature: (self)
+    class: MultimodalDataItem
+    doc: Set the pad value after first hashing the data
+  - name: is_modality
+    signature: (self, modality: Modality)
+    return: bool
+    class: MultimodalDataItem
+  - name: is_audio
+    signature: (self)
+    class: MultimodalDataItem
+  - name: is_image
+    signature: (self)
+    class: MultimodalDataItem
+  - name: is_video
+    signature: (self)
+    class: MultimodalDataItem
+  - name: is_valid
+    signature: (self)
+    return: bool
+    class: MultimodalDataItem
+  - name: validate
+    signature: (self)
+    class: MultimodalDataItem
+  - name: from_dict
+    signature: (obj: dict)
+    class: MultimodalDataItem
+  - name: merge
+    signature: (self, other)
+    class: MultimodalDataItem
+  - name: from_dict
+    signature: (obj: dict)
+    class: MultimodalInputs
+  - name: contains_image_inputs
+    signature: (self)
+    return: bool
+    class: MultimodalInputs
+  - name: contains_video_inputs
+    signature: (self)
+    return: bool
+    class: MultimodalInputs
+  - name: contains_audio_inputs
+    signature: (self)
+    return: bool
+    class: MultimodalInputs
+  - name: contains_mm_input
+    signature: (self)
+    return: bool
+    class: MultimodalInputs
+  - name: merge
+    signature: (self, other: MultimodalInputs)
+    class: MultimodalInputs
+    doc: merge image inputs when requests are being merged
+  - name: __init__
+    signature: (self, rid: str, origin_input_text: str, origin_input_ids: List[int], sampling_params: SamplingParams, return_logprob: bool = False, top_logprobs_num: int = 0, token_ids_logprob: List[int] = None, stream: bool = False, origin_input_ids_unpadded: Optional[Tuple[int]] = None, lora_id: Optional[str] = None, input_embeds: Optional[List[List[float]]] = None, token_type_ids: List[int] = None, session_id: Optional[str] = None, custom_logit_processor: Optional[str] = None, return_hidden_states: bool = False, eos_token_ids: Optional[Set[int]] = None, bootstrap_host: Optional[str] = None, bootstrap_port: Optional[int] = None, bootstrap_room: Optional[int] = None, data_parallel_rank: Optional[int] = None, vocab_size: Optional[int] = None)
+    class: Req
+  - name: seqlen
+    signature: (self)
+    class: Req
+  - name: extend_image_inputs
+    signature: (self, image_inputs)
+    class: Req
+  - name: finished
+    signature: (self)
+    return: bool
+    class: Req
+  - name: init_next_round_input
+    signature: (self, tree_cache: Optional[BasePrefixCache] = None)
+    class: Req
+  - name: adjust_max_prefix_ids
+    signature: (self)
+    class: Req
+  - name: init_incremental_detokenize
+    signature: (self)
+    class: Req
+  - name: check_finished
+    signature: (self)
+    class: Req
+  - name: reset_for_retract
+    signature: (self)
+    class: Req
+  - name: offload_kv_cache
+    signature: (self, req_to_token_pool, token_to_kv_pool_allocator)
+    class: Req
+  - name: load_kv_cache
+    signature: (self, req_to_token_pool, token_to_kv_pool_allocator)
+    class: Req
+  - name: log_time_stats
+    signature: (self)
+    class: Req
+  - name: set_finish_with_abort
+    signature: (self, error_msg: str)
+    class: Req
+  - name: __repr__
+    signature: (self)
+    class: Req
+  - name: init_new
+    signature: (cls, reqs: List[Req], req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, tree_cache: BasePrefixCache, model_config: ModelConfig, enable_overlap: bool, spec_algorithm: SpeculativeAlgorithm, chunked_req: Optional[Req] = None)
+    class: ScheduleBatch
+  - name: batch_size
+    signature: (self)
+    class: ScheduleBatch
+  - name: is_empty
+    signature: (self)
+    class: ScheduleBatch
+  - name: alloc_req_slots
+    signature: (self, num_reqs: int)
+    class: ScheduleBatch
+  - name: alloc_token_slots
+    signature: (self, num_tokens: int, backup_state: bool = False)
+    class: ScheduleBatch
+  - name: alloc_paged_token_slots_extend
+    signature: (self, prefix_lens: torch.Tensor, seq_lens: torch.Tensor, last_loc: torch.Tensor, extend_num_tokens: int, backup_state: bool = False)
+    class: ScheduleBatch
+  - name: alloc_paged_token_slots_decode
+    signature: (self, seq_lens: torch.Tensor, last_loc: torch.Tensor, backup_state: bool = False)
+    class: ScheduleBatch
+  - name: prepare_encoder_info_extend
+    signature: (self, input_ids: List[int], seq_lens: List[int])
+    class: ScheduleBatch
+  - name: prepare_for_extend
+    signature: (self)
+    class: ScheduleBatch
+  - name: prepare_for_split_prefill
+    signature: (self)
+    class: ScheduleBatch
+  - name: mix_with_running
+    signature: (self, running_batch: 'ScheduleBatch')
+    class: ScheduleBatch
+  - name: new_page_count_next_decode
+    signature: (self)
+    class: ScheduleBatch
+  - name: check_decode_mem
+    signature: (self, buf_multiplier = 1)
+    class: ScheduleBatch
+  - name: retract_decode
+    signature: (self, server_args: ServerArgs)
+    class: ScheduleBatch
+    doc: Retract the decoding requests when there is not enough memory.
+  - name: get_required_tokens
+    signature: (num_reqs: int)
+    class: ScheduleBatch
+  - name: _get_available_size
+    signature: ()
+    class: ScheduleBatch
+  - name: prepare_encoder_info_decode
+    signature: (self)
+    class: ScheduleBatch
+  - name: prepare_for_idle
+    signature: (self)
+    class: ScheduleBatch
+  - name: prepare_for_decode
+    signature: (self)
+    class: ScheduleBatch
+  - name: filter_batch
+    signature: (self, chunked_req_to_exclude: Optional[Union[Req, List[Req]]] = None, keep_indices: Optional[List[int]] = None)
+    class: ScheduleBatch
+  - name: merge_batch
+    signature: (self, other: 'ScheduleBatch')
+    class: ScheduleBatch
+  - name: get_model_worker_batch
+    signature: (self, seq_lens_cpu_cache: Optional[torch.Tensor] = None)
+    return: ModelWorkerBatch
+    class: ScheduleBatch
+  - name: copy
+    signature: (self)
+    class: ScheduleBatch
+  - name: _evict_tree_cache_if_needed
+    signature: (self, num_tokens: int)
+    class: ScheduleBatch
+  - name: _is_available_size_sufficient
+    signature: (self, num_tokens: int)
+    return: bool
+    class: ScheduleBatch
+  - name: _available_and_evictable_str
+    signature: (self)
+    return: str
+    class: ScheduleBatch
+  - name: __str__
+    signature: (self)
+    class: ScheduleBatch
+  - name: write_req_to_token_pool_triton
+    signature: (req_to_token_ptr, req_pool_indices, pre_lens, seq_lens, extend_lens, out_cache_loc, req_to_token_ptr_stride: tl.constexpr)
+  - name: get_last_loc
+    signature: (req_to_token: torch.Tensor, req_pool_indices_tensor: torch.Tensor, prefix_lens_tensor: torch.Tensor)
+    return: torch.Tensor
+  - name: get_last_loc_torch
+    signature: (req_to_token: torch.Tensor, req_pool_indices_tensor: torch.Tensor, prefix_lens_tensor: torch.Tensor)
+    return: torch.Tensor
+  - name: get_last_loc_kernel
+    signature: (req_to_token, req_pool_indices_tensor, prefix_lens_tensor, result, num_tokens, req_to_token_stride, BLOCK_SIZE: tl.constexpr)
+  - name: get_last_loc_triton
+    signature: (req_to_token: torch.Tensor, req_pool_indices_tensor: torch.Tensor, prefix_lens_tensor: torch.Tensor)
+    return: torch.Tensor
+
+File: managers/schedule_policy.py
+  - name: __init__
+    signature: (self, policy: str, tree_cache: BasePrefixCache, enable_hierarchical_cache: bool)
+    class: SchedulePolicy
+  - name: calc_priority
+    signature: (self, waiting_queue: List[Req])
+    return: bool
+    class: SchedulePolicy
+  - name: _determine_active_policy
+    signature: (self, waiting_queue: List[Req])
+    return: Policy
+    class: SchedulePolicy
+  - name: _validate_and_adjust_policy
+    signature: (self, policy: str, tree_cache: BasePrefixCache)
+    return: Policy
+    class: SchedulePolicy
+    doc: Validates the policy and adjusts it if necessary based on tree cache settings.
+  - name: _compute_prefix_matches
+    signature: (self, waiting_queue: List[Req], policy: CacheAwarePolicy)
+    return: Set[int]
+    class: SchedulePolicy
+    doc: Computes and caches the matching prefixes for requests in the waiting queue,
+  - name: _sort_by_longest_prefix
+    signature: (waiting_queue: List[Req], temporary_deprioritized: Set[int])
+    return: None
+    class: SchedulePolicy
+    doc: Sorts the waiting queue based on the longest prefix match.
+  - name: _sort_by_dfs_weight
+    signature: (waiting_queue: List[Req], tree_cache: BasePrefixCache)
+    return: None
+    class: SchedulePolicy
+    doc: Sorts the waiting queue based on a depth-first search weighting.
+  - name: _sort_by_longest_output
+    signature: (waiting_queue: List[Req])
+    return: None
+    class: SchedulePolicy
+    doc: Sorts the waiting queue based on the longest output (max_new_tokens).
+  - name: _sort_randomly
+    signature: (waiting_queue: List[Req])
+    return: None
+    class: SchedulePolicy
+    doc: Shuffles the waiting queue randomly.
+  - name: _calc_weight
+    signature: (cur_node: TreeNode, node_to_weight: Dict[TreeNode, int])
+    return: None
+    class: SchedulePolicy
+  - name: _get_dfs_priority
+    signature: (cur_node: TreeNode, node_to_priority: Dict[TreeNode, int], last_node_to_reqs: Dict[TreeNode, List[Req]], q: List)
+    return: None
+    class: SchedulePolicy
+  - name: __init__
+    signature: (self, page_size: int, tree_cache: BasePrefixCache, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, running_batch: ScheduleBatch, new_token_ratio: float, rem_input_tokens: int, rem_chunk_tokens: Optional[int], mixed_with_decode_tokens: int = 0)
+    class: PrefillAdder
+  - name: rem_total_tokens
+    signature: (self)
+    class: PrefillAdder
+  - name: cur_rem_tokens
+    signature: (self)
+    class: PrefillAdder
+  - name: ceil_paged_tokens
+    signature: (self, tokens: int)
+    return: int
+    class: PrefillAdder
+  - name: budget_state
+    signature: (self)
+    class: PrefillAdder
+  - name: _update_prefill_budget
+    signature: (self, prefix_len: int, extend_input_len: int, max_new_tokens: int)
+    class: PrefillAdder
+  - name: add_chunked_req
+    signature: (self, req: Req)
+    class: PrefillAdder
+  - name: _lock_node
+    signature: (self, last_node: TreeNode)
+    class: PrefillAdder
+  - name: add_one_req_ignore_eos
+    signature: (self, req: Req, has_chunked_req: bool)
+    class: PrefillAdder
+  - name: add_req_state
+    signature: (r, insert_sort = False)
+    class: PrefillAdder
+  - name: add_one_req
+    signature: (self, req: Req, has_chunked_req: bool)
+    class: PrefillAdder
+
+File: managers/scheduler.py
+  - name: __init__
+    signature: (self, server_args: ServerArgs, port_args: PortArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], dp_balance_meta: Optional[DPBalanceMeta] = None)
+    class: Scheduler
+  - name: init_tokenizer
+    signature: (self)
+    class: Scheduler
+  - name: init_memory_pool_and_cache
+    signature: (self)
+    class: Scheduler
+  - name: init_disaggregation
+    signature: (self)
+    class: Scheduler
+  - name: init_moe_config
+    signature: (self)
+    class: Scheduler
+  - name: event_loop_normal
+    signature: (self)
+    class: Scheduler
+    doc: A normal scheduler loop.
+  - name: event_loop_overlap
+    signature: (self)
+    class: Scheduler
+    doc: A scheduler loop that overlaps the CPU processing and GPU computation.
+  - name: event_loop_pp
+    signature: (self)
+    class: Scheduler
+    doc: A non-overlap scheduler loop for pipeline parallelism.
+  - name: recv_requests
+    signature: (self)
+    return: List[Req]
+    class: Scheduler
+    doc: Receive results at tp_rank = 0 and broadcast it to all other TP ranks.
+  - name: process_input_requests
+    signature: (self, recv_reqs: List)
+    class: Scheduler
+  - name: handle_generate_request
+    signature: (self, recv_req: TokenizedGenerateReqInput)
+    class: Scheduler
+  - name: handle_batch_generate_request
+    signature: (self, recv_req: BatchTokenizedGenerateReqInput)
+    class: Scheduler
+    doc: Handle optimized batch generate request.
+  - name: _add_request_to_queue
+    signature: (self, req: Req)
+    class: Scheduler
+  - name: _prefetch_kvcache
+    signature: (self, req: Req)
+    class: Scheduler
+  - name: _extend_requests_to_queue
+    signature: (self, reqs: List[Req], is_retracted: bool = False)
+    class: Scheduler
+  - name: handle_embedding_request
+    signature: (self, recv_req: TokenizedEmbeddingReqInput)
+    class: Scheduler
+  - name: handle_batch_embedding_request
+    signature: (self, recv_req: BatchTokenizedEmbeddingReqInput)
+    class: Scheduler
+    doc: Handle optimized batch embedding request.
+  - name: self_check_during_idle
+    signature: (self)
+    class: Scheduler
+  - name: check_memory
+    signature: (self)
+    class: Scheduler
+  - name: check_tree_cache
+    signature: (self)
+    class: Scheduler
+  - name: _get_token_info
+    signature: (self)
+    class: Scheduler
+  - name: _get_swa_token_info
+    signature: (self)
+    class: Scheduler
+  - name: get_next_batch_to_run
+    signature: (self)
+    return: Optional[ScheduleBatch]
+    class: Scheduler
+  - name: get_num_allocatable_reqs
+    signature: (self, running_bs)
+    class: Scheduler
+  - name: get_new_batch_prefill
+    signature: (self)
+    return: Optional[ScheduleBatch]
+    class: Scheduler
+  - name: update_running_batch
+    signature: (self, batch: ScheduleBatch)
+    return: Optional[ScheduleBatch]
+    class: Scheduler
+    doc: Update the current running decoding batch.
+  - name: run_batch
+    signature: (self, batch: ScheduleBatch)
+    return: Union[GenerationBatchResult, EmbeddingBatchResult]
+    class: Scheduler
+    doc: Run a batch.
+  - name: process_batch_result
+    signature: (self, batch: ScheduleBatch, result: Union[GenerationBatchResult, EmbeddingBatchResult], launch_done: Optional[threading.Event] = None)
+    class: Scheduler
+  - name: maybe_send_health_check_signal
+    signature: (self)
+    class: Scheduler
+  - name: prepare_mlp_sync_batch
+    signature: (self, local_batch: ScheduleBatch)
+    class: Scheduler
+  - name: handle_dp_balance_data
+    signature: (self, local_batch: ScheduleBatch)
+    class: Scheduler
+  - name: gather_dp_balance_info
+    signature: (holding_tokens_list)
+    return: Union[None, List[List[int]]]
+    class: Scheduler
+    doc: gather recv_dp_balance_id_this_term and holding tokens per worker for dp balance
+  - name: write_shared_dp_balance_info
+    signature: (new_recv_rid_lists, local_tokens)
+    class: Scheduler
+  - name: prepare_mlp_sync_batch_raw
+    signature: (local_batch: ScheduleBatch, dp_size, attn_tp_size: int, tp_group, get_idle_batch, disable_cuda_graph: bool, spec_algorithm, speculative_num_draft_tokens, require_mlp_tp_gather: bool, disable_overlap_schedule: bool)
+    class: Scheduler
+  - name: get_idle_batch
+    signature: (self)
+    class: Scheduler
+  - name: move_ready_grammar_requests
+    signature: (self)
+    class: Scheduler
+    doc: Move requests whose grammar objects are ready from grammar_queue to waiting_queue.
+  - name: set_next_batch_sampling_info_done
+    signature: (self, batch: ScheduleBatch)
+    class: Scheduler
+  - name: watchdog_thread
+    signature: (self)
+    class: Scheduler
+    doc: A watch dog thread that will try to kill the server itself if one forward batch takes too long.
+  - name: flush_cache_wrapped
+    signature: (self, recv_req: FlushCacheReqInput)
+    class: Scheduler
+  - name: clear_hicache_storage_wrapped
+    signature: (self, recv_req: ClearHiCacheReqInput)
+    class: Scheduler
+  - name: flush_cache
+    signature: (self)
+    class: Scheduler
+    doc: Flush the memory pool and cache.
+  - name: get_load
+    signature: (self)
+    class: Scheduler
+  - name: get_internal_state
+    signature: (self, recv_req: GetInternalStateReq)
+    class: Scheduler
+  - name: set_internal_state
+    signature: (self, recv_req: SetInternalStateReq)
+    class: Scheduler
+  - name: handle_rpc_request
+    signature: (self, recv_req: RpcReqInput)
+    class: Scheduler
+  - name: abort_request
+    signature: (self, recv_req: AbortReq)
+    class: Scheduler
+  - name: _pause_engine
+    signature: (self)
+    return: Tuple[List[Req], int]
+    class: Scheduler
+  - name: load_lora_adapter
+    signature: (self, recv_req: LoadLoRAAdapterReqInput)
+    return: LoadLoRAAdapterReqOutput
+    class: Scheduler
+    doc: In-place loading a new lora adapter from disk or huggingface.
+  - name: unload_lora_adapter
+    signature: (self, recv_req: UnloadLoRAAdapterReqInput)
+    return: UnloadLoRAAdapterReqOutput
+    class: Scheduler
+    doc: Unload the lora adapter.
+  - name: slow_down
+    signature: (self, recv_req: SlowDownReqInput)
+    class: Scheduler
+  - name: expert_distribution_handle
+    signature: (self, recv_req: ExpertDistributionReq)
+    class: Scheduler
+  - name: open_session
+    signature: (self, recv_req: OpenSessionReqInput)
+    class: Scheduler
+  - name: close_session
+    signature: (self, recv_req: CloseSessionReqInput)
+    class: Scheduler
+  - name: get_print_prefix
+    signature: (self)
+    class: Scheduler
+  - name: current_scheduler_metrics_enabled
+    signature: (self)
+    class: Scheduler
+  - name: maybe_sleep_on_idle
+    signature: (self)
+    class: Scheduler
+  - name: handle_freeze_gc
+    signature: (self, recv_req: FreezeGCReq)
+    class: Scheduler
+    doc: Handle freeze_gc request: freeze scheduler's GC and forward to detokenizer.
+  - name: __init__
+    signature: (self, sockets)
+    class: IdleSleeper
+  - name: maybe_sleep
+    signature: (self)
+    class: IdleSleeper
+  - name: is_health_check_generate_req
+    signature: (recv_req)
+  - name: is_work_request
+    signature: (recv_req)
+  - name: run_scheduler_process
+    signature: (server_args: ServerArgs, port_args: PortArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], pipe_writer, balance_meta: Optional[DPBalanceMeta] = None)
+
+File: managers/scheduler_input_blocker.py
+  - name: __init__
+    signature: (self, noop: bool)
+    class: SchedulerInputBlocker
+  - name: handle
+    signature: (self, recv_reqs: Optional[List[Any]])
+    class: SchedulerInputBlocker
+  - name: _handle_recv_req
+    signature: (self, recv_req)
+    class: SchedulerInputBlocker
+  - name: _execute_block_req
+    signature: (self)
+    class: SchedulerInputBlocker
+  - name: _execute_unblock_req
+    signature: (self)
+    class: SchedulerInputBlocker
+  - name: _handle_arrive_unblock_barrier
+    signature: (self)
+    class: SchedulerInputBlocker
+  - name: _change_state
+    signature: (self, original: '_State', target: '_State')
+    class: SchedulerInputBlocker
+  - name: input_blocker_guard_region
+    signature: (send_to_scheduler)
+
+File: managers/scheduler_metrics_mixin.py
+  - name: __init__
+    signature: (self)
+    class: KvMetrics
+  - name: init_metrics
+    signature: (self, tp_rank: int, pp_rank: int, dp_rank: Optional[int])
+    class: SchedulerMetricsMixin
+  - name: init_kv_events
+    signature: (self, kv_events_config: Optional[str])
+    class: SchedulerMetricsMixin
+  - name: log_prefill_stats
+    signature: (self, adder: PrefillAdder, can_run_list: List[Req], running_bs: int)
+    class: SchedulerMetricsMixin
+  - name: log_decode_stats
+    signature: (self, can_run_cuda_graph: bool, running_batch: ScheduleBatch = None)
+    class: SchedulerMetricsMixin
+  - name: _emit_kv_metrics
+    signature: (self)
+    class: SchedulerMetricsMixin
+  - name: _publish_kv_events
+    signature: (self)
+    class: SchedulerMetricsMixin
+
+File: managers/scheduler_output_processor_mixin.py
+  - name: process_batch_result_prefill
+    signature: (self: Scheduler, batch: ScheduleBatch, result: Union[GenerationBatchResult, EmbeddingBatchResult], launch_done: Optional[threading.Event] = None)
+    class: SchedulerOutputProcessorMixin
+  - name: process_batch_result_decode
+    signature: (self: Scheduler, batch: ScheduleBatch, result: GenerationBatchResult, launch_done: Optional[threading.Event] = None)
+    class: SchedulerOutputProcessorMixin
+  - name: add_input_logprob_return_values
+    signature: (self: Scheduler, i: int, req: Req, output: LogitsProcessorOutput, logprob_pt: int, num_input_logprobs: int, last_prefill_chunk: bool)
+    class: SchedulerOutputProcessorMixin
+    doc: Incrementally add input logprobs to `req`.
+  - name: add_logprob_return_values
+    signature: (self: Scheduler, i: int, req: Req, pt: int, next_token_ids: List[int], num_input_logprobs: int, output: LogitsProcessorOutput)
+    class: SchedulerOutputProcessorMixin
+    doc: Attach logprobs to the return values.
+  - name: stream_output
+    signature: (self: Scheduler, reqs: List[Req], return_logprob: bool, skip_req: Optional[Req] = None)
+    class: SchedulerOutputProcessorMixin
+    doc: Stream the output to detokenizer.
+  - name: stream_output_generation
+    signature: (self: Scheduler, reqs: List[Req], return_logprob: bool, skip_req: Optional[Req] = None)
+    class: SchedulerOutputProcessorMixin
+  - name: stream_output_embedding
+    signature: (self: Scheduler, reqs: List[Req])
+    class: SchedulerOutputProcessorMixin
+
+File: managers/scheduler_profiler_mixin.py
+  - name: init_profier
+    signature: (self)
+    class: SchedulerProfilerMixin
+  - name: init_profile
+    signature: (self, output_dir: Optional[str], start_step: Optional[int], num_steps: Optional[int], activities: Optional[List[str]], with_stack: Optional[bool], record_shapes: Optional[bool], profile_by_stage: bool, profile_id: str)
+    return: ProfileReqOutput
+    class: SchedulerProfilerMixin
+  - name: start_profile
+    signature: (self, stage: Optional[ForwardMode] = None)
+    return: ProfileReqOutput | None
+    class: SchedulerProfilerMixin
+  - name: stop_profile
+    signature: (self, stage: Optional[ForwardMode] = None)
+    return: ProfileReqOutput | None
+    class: SchedulerProfilerMixin
+  - name: _profile_batch_predicate
+    signature: (self, batch)
+    class: SchedulerProfilerMixin
+  - name: profile
+    signature: (self, recv_req: ProfileReq)
+    class: SchedulerProfilerMixin
+
+File: managers/scheduler_recv_skipper.py
+  - name: maybe_create
+    signature: (server_args: ServerArgs)
+    class: SchedulerRecvSkipper
+  - name: __init__
+    signature: (self, server_args: ServerArgs)
+    class: SchedulerRecvSkipper
+  - name: handle
+    signature: (self, last_forward_mode: ForwardMode)
+    class: SchedulerRecvSkipper
+
+File: managers/scheduler_update_weights_mixin.py
+  - name: update_weights_from_disk
+    signature: (self, recv_req: UpdateWeightFromDiskReqInput)
+    class: SchedulerUpdateWeightsMixin
+    doc: In-place update of the weights from disk.
+  - name: init_weights_update_group
+    signature: (self, recv_req: InitWeightsUpdateGroupReqInput)
+    class: SchedulerUpdateWeightsMixin
+    doc: Initialize the online model parameter update group.
+  - name: update_weights_from_distributed
+    signature: (self, recv_req: UpdateWeightsFromDistributedReqInput)
+    return: Tuple[bool, str]
+    class: SchedulerUpdateWeightsMixin
+    doc: Update the online model parameter.
+  - name: update_weights_from_tensor
+    signature: (self, recv_req: UpdateWeightsFromTensorReqInput)
+    class: SchedulerUpdateWeightsMixin
+    doc: Update the online model parameter from tensors.
+  - name: get_weights_by_name
+    signature: (self, recv_req: GetWeightsByNameReqInput)
+    class: SchedulerUpdateWeightsMixin
+  - name: release_memory_occupation
+    signature: (self, recv_req: ReleaseMemoryOccupationReqInput)
+    class: SchedulerUpdateWeightsMixin
+  - name: resume_memory_occupation
+    signature: (self, recv_req: ResumeMemoryOccupationReqInput)
+    class: SchedulerUpdateWeightsMixin
+  - name: save_remote_model
+    signature: (self, params)
+    class: SchedulerUpdateWeightsMixin
+  - name: save_sharded_model
+    signature: (self, params)
+    class: SchedulerUpdateWeightsMixin
+  - name: _export_static_state
+    signature: (model)
+  - name: _import_static_state
+    signature: (model, static_params)
+
+File: managers/session_controller.py
+  - name: __init__
+    signature: (self, req, parent = None, childs = None)
+    class: SessionReqNode
+  - name: clear_childs
+    signature: (self, req_dict)
+    class: SessionReqNode
+  - name: clear
+    signature: (self, req_dict)
+    class: SessionReqNode
+  - name: abort
+    signature: (self)
+    class: SessionReqNode
+  - name: __str__
+    signature: (self)
+    class: SessionReqNode
+  - name: _str_helper
+    signature: (self, prefix = '')
+    class: SessionReqNode
+  - name: __init__
+    signature: (self, capacity_of_str_len: int, session_id: Optional[str] = None)
+    class: Session
+  - name: create_req
+    signature: (self, req: TokenizedGenerateReqInput, tokenizer)
+    class: Session
+
+File: managers/template_manager.py
+  - name: __init__
+    signature: (self)
+    class: TemplateManager
+  - name: chat_template_name
+    signature: (self)
+    return: Optional[str]
+    class: TemplateManager
+    doc: Get the current chat template name.
+  - name: completion_template_name
+    signature: (self)
+    return: Optional[str]
+    class: TemplateManager
+    doc: Get the current completion template name.
+  - name: jinja_template_content_format
+    signature: (self)
+    return: Optional[str]
+    class: TemplateManager
+    doc: Get the detected template content format ('string' or 'openai' or None).
+  - name: force_reasoning
+    signature: (self)
+    return: bool
+    class: TemplateManager
+    doc: Check if the current chat template enforces reasoning/thinking.
+  - name: _detect_reasoning_pattern
+    signature: (self, template: str)
+    return: bool
+    class: TemplateManager
+    doc: Detect if the chat template contains reasoning/thinking patterns.
+  - name: load_chat_template
+    signature: (self, tokenizer_manager, chat_template_arg: Optional[str], model_path: str)
+    return: None
+    class: TemplateManager
+    doc: Load a chat template from various sources.
+  - name: _load_explicit_chat_template
+    signature: (self, tokenizer_manager, chat_template_arg: str)
+    return: None
+    class: TemplateManager
+    doc: Load explicitly specified chat template.
+  - name: guess_chat_template_from_model_path
+    signature: (self, model_path: str)
+    return: None
+    class: TemplateManager
+    doc: Infer chat template name from model path.
+  - name: load_completion_template
+    signature: (self, completion_template_arg: str)
+    return: None
+    class: TemplateManager
+    doc: Load completion template for code completion.
+  - name: initialize_templates
+    signature: (self, tokenizer_manager, model_path: str, chat_template: Optional[str] = None, completion_template: Optional[str] = None)
+    return: None
+    class: TemplateManager
+    doc: Initialize all templates based on provided configuration.
+  - name: _load_jinja_template
+    signature: (self, tokenizer_manager, template_path: str)
+    return: None
+    class: TemplateManager
+    doc: Load a Jinja template file.
+  - name: _load_json_chat_template
+    signature: (self, template_path: str)
+    return: None
+    class: TemplateManager
+    doc: Load a JSON chat template file.
+  - name: _load_json_completion_template
+    signature: (self, template_path: str)
+    return: None
+    class: TemplateManager
+    doc: Load a JSON completion template file.
+  - name: _resolve_hf_chat_template
+    signature: (self, tokenizer_manager)
+    return: Optional[str]
+    class: TemplateManager
+    doc: Resolve HuggingFace chat template.
+
+File: managers/tokenizer_manager.py
+  - name: __init__
+    signature: (self, server_args: ServerArgs, port_args: PortArgs)
+    class: TokenizerManager
+  - name: generate_request
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: _tokenize_one_request
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput])
+    class: TokenizerManager
+    doc: Tokenize one request.
+  - name: _validate_one_request
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], input_ids: List[int])
+    return: None
+    class: TokenizerManager
+    doc: Validates that the input token count and the requested token count doesn't exceed the model's context length.
+  - name: _validate_input_ids_in_vocab
+    signature: (self, input_ids: List[int], vocab_size: int)
+    return: None
+    class: TokenizerManager
+  - name: _create_tokenized_object
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], input_text: str, input_ids: List[int], input_embeds: Optional[Union[List[float], None]] = None, mm_inputs: Optional[Dict] = None, token_type_ids: Optional[List[int]] = None)
+    return: Union[TokenizedGenerateReqInput, TokenizedEmbeddingReqInput]
+    class: TokenizerManager
+    doc: Create a tokenized request object from common parameters.
+  - name: _batch_tokenize_and_process
+    signature: (self, batch_size: int, obj: Union[GenerateReqInput, EmbeddingReqInput])
+    return: List[Union[TokenizedGenerateReqInput, TokenizedEmbeddingReqInput]]
+    class: TokenizerManager
+    doc: Handle batch tokenization for text inputs only.
+  - name: _validate_batch_tokenization_constraints
+    signature: (self, batch_size: int, obj: Union[GenerateReqInput, EmbeddingReqInput])
+    return: None
+    class: TokenizerManager
+    doc: Validate constraints for batch tokenization processing.
+  - name: _send_one_request
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], tokenized_obj: Union[TokenizedGenerateReqInput, TokenizedEmbeddingReqInput], created_time: Optional[float] = None)
+    class: TokenizerManager
+  - name: _send_batch_request
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], tokenized_objs: List[Union[TokenizedGenerateReqInput, TokenizedEmbeddingReqInput]], created_time: Optional[float] = None)
+    class: TokenizerManager
+    doc: Send a batch of tokenized requests as a single batched request to the scheduler.
+  - name: _wait_one_response
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], state: ReqState, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+    doc: Wait for the response of one request.
+  - name: _handle_batch_request
+    signature: (self, obj: Union[GenerateReqInput, EmbeddingReqInput], request: Optional[fastapi.Request] = None, created_time: Optional[float] = None)
+    class: TokenizerManager
+  - name: flush_cache
+    signature: (self)
+    return: FlushCacheReqOutput
+    class: TokenizerManager
+  - name: clear_hicache_storage
+    signature: (self)
+    return: ClearHiCacheReqOutput
+    class: TokenizerManager
+    doc: Clear the hierarchical cache storage.
+  - name: abort_request
+    signature: (self, rid: str = '', abort_all: bool = False)
+    class: TokenizerManager
+  - name: start_profile
+    signature: (self, output_dir: Optional[str] = None, start_step: Optional[int] = None, num_steps: Optional[int] = None, activities: Optional[List[str]] = None, with_stack: Optional[bool] = None, record_shapes: Optional[bool] = None, profile_by_stage: bool = False)
+    class: TokenizerManager
+  - name: stop_profile
+    signature: (self)
+    class: TokenizerManager
+  - name: _execute_profile
+    signature: (self, req: ProfileReq)
+    class: TokenizerManager
+  - name: start_expert_distribution_record
+    signature: (self)
+    class: TokenizerManager
+  - name: stop_expert_distribution_record
+    signature: (self)
+    class: TokenizerManager
+  - name: dump_expert_distribution_record
+    signature: (self)
+    class: TokenizerManager
+  - name: pause_generation
+    signature: (self)
+    class: TokenizerManager
+  - name: continue_generation
+    signature: (self)
+    class: TokenizerManager
+  - name: update_weights_from_disk
+    signature: (self, obj: UpdateWeightFromDiskReqInput, request: Optional[fastapi.Request] = None)
+    return: Tuple[bool, str]
+    class: TokenizerManager
+  - name: _wait_for_model_update_from_disk
+    signature: (self, obj: UpdateWeightFromDiskReqInput)
+    return: Tuple[bool, str]
+    class: TokenizerManager
+  - name: init_weights_update_group
+    signature: (self, obj: InitWeightsUpdateGroupReqInput, request: Optional[fastapi.Request] = None)
+    return: Tuple[bool, str]
+    class: TokenizerManager
+  - name: update_weights_from_distributed
+    signature: (self, obj: UpdateWeightsFromDistributedReqInput, request: Optional[fastapi.Request] = None)
+    return: Tuple[bool, str]
+    class: TokenizerManager
+  - name: update_weights_from_tensor
+    signature: (self, obj: UpdateWeightsFromTensorReqInput, request: Optional[fastapi.Request] = None)
+    return: Tuple[bool, str]
+    class: TokenizerManager
+  - name: load_lora_adapter
+    signature: (self, obj: LoadLoRAAdapterReqInput, _: Optional[fastapi.Request] = None)
+    return: LoadLoRAAdapterReqOutput
+    class: TokenizerManager
+  - name: unload_lora_adapter
+    signature: (self, obj: UnloadLoRAAdapterReqInput, _: Optional[fastapi.Request] = None)
+    return: UnloadLoRAAdapterReqOutput
+    class: TokenizerManager
+  - name: get_weights_by_name
+    signature: (self, obj: GetWeightsByNameReqInput, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: release_memory_occupation
+    signature: (self, obj: ReleaseMemoryOccupationReqInput, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: resume_memory_occupation
+    signature: (self, obj: ResumeMemoryOccupationReqInput, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: slow_down
+    signature: (self, obj: SlowDownReqInput, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: open_session
+    signature: (self, obj: OpenSessionReqInput, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: close_session
+    signature: (self, obj: CloseSessionReqInput, request: Optional[fastapi.Request] = None)
+    class: TokenizerManager
+  - name: get_internal_state
+    signature: (self)
+    return: List[Dict[Any, Any]]
+    class: TokenizerManager
+  - name: set_internal_state
+    signature: (self, obj: SetInternalStateReq)
+    return: SetInternalStateReqOutput
+    class: TokenizerManager
+  - name: get_load
+    signature: (self)
+    return: dict
+    class: TokenizerManager
+  - name: get_log_request_metadata
+    signature: (self)
+    class: TokenizerManager
+  - name: configure_logging
+    signature: (self, obj: ConfigureLoggingReq)
+    class: TokenizerManager
+  - name: freeze_gc
+    signature: (self)
+    class: TokenizerManager
+    doc: Send a freeze_gc message to the scheduler first, then freeze locally.
+  - name: create_abort_task
+    signature: (self, obj: GenerateReqInput)
+    class: TokenizerManager
+  - name: abort_request
+    signature: ()
+    class: TokenizerManager
+  - name: auto_create_handle_loop
+    signature: (self)
+    class: TokenizerManager
+  - name: dump_requests_before_crash
+    signature: (self)
+    class: TokenizerManager
+  - name: _upload_file_to_gcs
+    signature: (bucket_name, source_file_path, object_name)
+    class: TokenizerManager
+  - name: sigterm_watchdog
+    signature: (self)
+    class: TokenizerManager
+  - name: handle_loop
+    signature: (self)
+    class: TokenizerManager
+    doc: The event loop that handles requests
+  - name: _handle_batch_output
+    signature: (self, recv_obj: Union[BatchStrOut, BatchEmbeddingOut, BatchMultimodalOut, BatchTokenIDOut])
+    class: TokenizerManager
+  - name: convert_logprob_style
+    signature: (self, meta_info: dict, state: ReqState, top_logprobs_num: int, token_ids_logprob: List[int], return_text_in_logprobs: bool, recv_obj: BatchStrOut, recv_obj_index: int)
+    class: TokenizerManager
+  - name: detokenize_logprob_tokens
+    signature: (self, token_logprobs_val: List[float], token_logprobs_idx: List[int], decode_to_text: bool)
+    class: TokenizerManager
+  - name: detokenize_top_logprobs_tokens
+    signature: (self, token_logprobs_val: List[float], token_logprobs_idx: List[int], decode_to_text: bool)
+    class: TokenizerManager
+  - name: collect_metrics
+    signature: (self, state: ReqState, recv_obj: BatchStrOut, i: int)
+    class: TokenizerManager
+  - name: dump_requests
+    signature: (self, state: ReqState, out_dict: dict)
+    class: TokenizerManager
+  - name: record_request_for_crash_dump
+    signature: (self, state: ReqState, out_dict: dict)
+    class: TokenizerManager
+  - name: _dump_data_to_file
+    signature: (self, data_list: List[Tuple], filename: str, log_message: str)
+    class: TokenizerManager
+  - name: background_task
+    signature: ()
+    class: TokenizerManager
+  - name: _handle_abort_req
+    signature: (self, recv_obj)
+    class: TokenizerManager
+  - name: _handle_open_session_req_output
+    signature: (self, recv_obj)
+    class: TokenizerManager
+  - name: _handle_update_weights_from_disk_req_output
+    signature: (self, recv_obj)
+    class: TokenizerManager
+  - name: score_request
+    signature: (self, query: Optional[Union[str, List[int]]] = None, items: Optional[Union[str, List[str], List[List[int]]]] = None, label_token_ids: Optional[List[int]] = None, apply_softmax: bool = False, item_first: bool = False, request: Optional[Any] = None)
+    return: List[List[float]]
+    class: TokenizerManager
+    doc: See Engine.score() for more details.
+  - name: _determine_tensor_transport_mode
+    signature: (server_args: ServerArgs)
+    return: TensorTransportMode
+  - name: print_exception_wrapper
+    signature: (func)
+    doc: Sometimes an asyncio function does not print exception.
+  - name: __init__
+    signature: (self, tokenizer_manager: TokenizerManager)
+    class: SignalHandler
+  - name: sigterm_handler
+    signature: (self, signum = None, frame = None)
+    class: SignalHandler
+  - name: running_phase_sigquit_handler
+    signature: (self, signum = None, frame = None)
+    class: SignalHandler
+  - name: __init__
+    signature: (self, sender, fan_out: int)
+    class: _Communicator
+  - name: __call__
+    signature: (self, obj)
+    class: _Communicator
+  - name: handle_recv
+    signature: (self, recv_obj: T)
+    class: _Communicator
+
+File: managers/tp_worker.py
+  - name: __init__
+    signature: (self, server_args: ServerArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], nccl_port: int, is_draft_worker: bool = False, req_to_token_pool: Optional[ReqToTokenPool] = None, token_to_kv_pool_allocator: Optional[BaseTokenToKVPoolAllocator] = None)
+    class: TpModelWorker
+  - name: register_hicache_layer_transfer_counter
+    signature: (self, counter)
+    class: TpModelWorker
+  - name: set_hicache_consumer
+    signature: (self, consumer_index)
+    class: TpModelWorker
+  - name: get_worker_info
+    signature: (self)
+    class: TpModelWorker
+  - name: sliding_window_size
+    signature: (self)
+    return: Optional[int]
+    class: TpModelWorker
+  - name: is_hybrid
+    signature: (self)
+    return: bool
+    class: TpModelWorker
+  - name: get_tokens_per_layer_info
+    signature: (self)
+    class: TpModelWorker
+  - name: get_pad_input_ids_func
+    signature: (self)
+    class: TpModelWorker
+  - name: get_tp_group
+    signature: (self)
+    class: TpModelWorker
+  - name: get_attention_tp_group
+    signature: (self)
+    class: TpModelWorker
+  - name: get_attention_tp_cpu_group
+    signature: (self)
+    class: TpModelWorker
+  - name: get_memory_pool
+    signature: (self)
+    class: TpModelWorker
+  - name: forward_batch_generation
+    signature: (self, model_worker_batch: ModelWorkerBatch, launch_done: Optional[threading.Event] = None, skip_sample: bool = False)
+    return: Tuple[Union[LogitsProcessorOutput, torch.Tensor], Optional[torch.Tensor], bool]
+    class: TpModelWorker
+  - name: forward_batch_embedding
+    signature: (self, model_worker_batch: ModelWorkerBatch)
+    class: TpModelWorker
+  - name: update_weights_from_disk
+    signature: (self, recv_req: UpdateWeightFromDiskReqInput)
+    class: TpModelWorker
+  - name: init_weights_update_group
+    signature: (self, recv_req: InitWeightsUpdateGroupReqInput)
+    class: TpModelWorker
+  - name: update_weights_from_distributed
+    signature: (self, recv_req: UpdateWeightsFromDistributedReqInput)
+    class: TpModelWorker
+  - name: update_weights_from_tensor
+    signature: (self, recv_req: UpdateWeightsFromTensorReqInput)
+    class: TpModelWorker
+  - name: get_weights_by_name
+    signature: (self, recv_req: GetWeightsByNameReqInput)
+    class: TpModelWorker
+  - name: load_lora_adapter
+    signature: (self, recv_req: LoadLoRAAdapterReqInput)
+    class: TpModelWorker
+  - name: unload_lora_adapter
+    signature: (self, recv_req: UnloadLoRAAdapterReqInput)
+    class: TpModelWorker
+  - name: can_run_lora_batch
+    signature: (self, lora_ids: list[str])
+    return: bool
+    class: TpModelWorker
+
+File: managers/tp_worker_overlap_thread.py
+  - name: resolve_future_token_ids
+    signature: (input_ids, future_token_ids_map)
+  - name: __init__
+    signature: (self, server_args: ServerArgs, gpu_id: int, tp_rank: int, moe_ep_rank: int, pp_rank: int, dp_rank: Optional[int], nccl_port: int)
+    class: TpModelWorkerClient
+  - name: register_hicache_layer_transfer_counter
+    signature: (self, counter)
+    class: TpModelWorkerClient
+  - name: set_hicache_consumer
+    signature: (self, consumer_index)
+    class: TpModelWorkerClient
+  - name: get_worker_info
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: get_tokens_per_layer_info
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: sliding_window_size
+    signature: (self)
+    return: Optional[int]
+    class: TpModelWorkerClient
+  - name: is_hybrid
+    signature: (self)
+    return: bool
+    class: TpModelWorkerClient
+  - name: get_pad_input_ids_func
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: get_tp_group
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: get_attention_tp_group
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: get_attention_tp_cpu_group
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: get_memory_pool
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: get_kv_cache
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: forward_thread_func
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: forward_thread_func_
+    signature: (self)
+    class: TpModelWorkerClient
+  - name: resolve_last_batch_result
+    signature: (self, launch_done: Optional[threading.Event] = None)
+    class: TpModelWorkerClient
+    doc: This function is called to resolve the last batch result and
+  - name: forward_batch_generation
+    signature: (self, model_worker_batch: ModelWorkerBatch)
+    return: Tuple[None, torch.Tensor, bool]
+    class: TpModelWorkerClient
+  - name: update_weights_from_disk
+    signature: (self, recv_req: UpdateWeightFromDiskReqInput)
+    class: TpModelWorkerClient
+  - name: init_weights_update_group
+    signature: (self, recv_req: InitWeightsUpdateGroupReqInput)
+    class: TpModelWorkerClient
+  - name: update_weights_from_distributed
+    signature: (self, recv_req: UpdateWeightsFromDistributedReqInput)
+    class: TpModelWorkerClient
+  - name: update_weights_from_tensor
+    signature: (self, recv_req: UpdateWeightsFromTensorReqInput)
+    class: TpModelWorkerClient
+  - name: get_weights_by_name
+    signature: (self, recv_req: GetWeightsByNameReqInput)
+    class: TpModelWorkerClient
+  - name: load_lora_adapter
+    signature: (self, recv_req: LoadLoRAAdapterReqInput)
+    class: TpModelWorkerClient
+  - name: unload_lora_adapter
+    signature: (self, recv_req: UnloadLoRAAdapterReqInput)
+    class: TpModelWorkerClient
+  - name: can_run_lora_batch
+    signature: (self, lora_ids: list[str])
+    return: bool
+    class: TpModelWorkerClient
+  - name: __delete__
+    signature: (self)
+    class: TpModelWorkerClient
+
+File: managers/utils.py
+  - name: validate_input_length
+    signature: (req: Req, max_req_input_len: int, allow_auto_truncate: bool)
+    return: Optional[str]
+    doc: Validate and potentially truncate input length.
+  - name: get_logprob_dict_from_result
+    signature: (result: GenerationBatchResult)
+    return: dict
+  - name: get_logprob_from_pp_outputs
+    signature: (next_pp_outputs: PPProxyTensors)
+    return: tuple[LogitsProcessorOutput, list[int], list[int]]
+  - name: __init__
+    signature: (self, num_workers: int)
+    class: DPBalanceMeta
+  - name: destructor
+    signature: (self)
+    class: DPBalanceMeta
+  - name: get_shared_onfly
+    signature: (self)
+    return: List[Dict[int, int]]
+    class: DPBalanceMeta
+  - name: set_shared_onfly_info
+    signature: (self, data: List[Dict[int, int]])
+    class: DPBalanceMeta
+  - name: get_shared_local_tokens
+    signature: (self)
+    return: List[int]
+    class: DPBalanceMeta
+  - name: set_shared_local_tokens
+    signature: (self, data: List[int])
+    class: DPBalanceMeta
+  - name: __getstate__
+    signature: (self)
+    class: DPBalanceMeta
+  - name: __setstate__
+    signature: (self, state)
+    class: DPBalanceMeta
