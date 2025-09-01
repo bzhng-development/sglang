@@ -1,0 +1,23 @@
+<h1 id="using-hf3fs-as-l3-global-kv-cache">Using HF3FS as L3 Global KV Cache</h1>
+<p>This document provides step-by-step instructions for setting up a k8s + 3FS + SGLang runtime environment from scratch, describing how to utilize deepseek-hf3fs as the L3 KV cache for SGLang. The process consists of five main steps:</p>
+<h2 id="step-1-install-deepseek-3fs-via-3fs-operator">Step 1: Install deepseek-3fs via 3fs-Operator</h2>
+<p>Refer to the <a href="https://github.com/aliyun/kvc-3fs-operator/blob/main/README_en.md">3fs-operator documentation</a> to deploy 3FS components in your Kubernetes environment using the Operator with one-click deployment.</p>
+<h2 id="step-2-launch-sglang-pod">Step 2: Launch SGLang Pod</h2>
+<p>Start your SGLang Pod while specifying 3FS-related labels in the YAML configuration. Follow the <a href="https://github.com/aliyun/kvc-3fs-operator/blob/main/README_en.md#fuse-client-creation">fuse-client-creation guide</a>.</p>
+<h2 id="step-3-configure-usrbio-client-in-sglang-pod">Step 3: Configure Usrbio Client in SGLang Pod</h2>
+<p>The Usrbio client is required for accessing 3FS. Install it in your SGLang Pod using either method below:</p>
+<p><strong>Alternative 1 (Recommend):</strong> Build from source (refer to <a href="setup_usrbio_client.md">setup_usrbio_client.md</a>)</p>
+<p><strong>Alternative 2:</strong> Run <code>pip3 install hf3fs-py-usrbio</code> (Follow https://pypi.org/project/hf3fs-py-usrbio/#files)</p>
+<h2 id="step-4-deploy-model-serving">Step 4: Deploy Model Serving</h2>
+<h3 id="single-node-deployment">Single Node Deployment</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">LD_LIBRARY_PATH=$LD_LIBRARY_PATH</span>:/usr/local/lib/python3.12/dist-packages</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="ex">python3</span> -m sglang.launch_server <span class="kw">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>    <span class="ex">--model-path</span> /code/models/Qwen3-32B/ <span class="kw">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    <span class="ex">--host</span> 0.0.0.0 --port 10000 <span class="kw">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a>    <span class="ex">--page-size</span> 64 <span class="kw">\</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>    <span class="ex">--enable-hierarchical-cache</span> <span class="kw">\</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>    <span class="ex">--hicache-ratio</span> 2 --hicache-size 0 <span class="kw">\</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>    <span class="ex">--hicache-write-policy</span> write_through <span class="kw">\</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>    <span class="ex">--hicache-storage-backend</span> hf3fs</span></code></pre></div>
+<h3 id="multi-node-deployment-shared-kv-cache">Multi-Node Deployment (Shared KV Cache)</h3>
+<p>Follow the <a href="deploy_sglang_3fs_multinode.md">deploy_sglang_3fs_multinode.md</a> guide to deploy SGLang with 3FS across multiple nodes for shared KV caching.</p>
