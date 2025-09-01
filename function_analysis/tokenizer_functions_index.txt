@@ -1,0 +1,36 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: tokenizer/tiktoken_tokenizer.py
+  - name: __init__
+    signature: (self, name: str)
+    class: TiktokenProcessor
+  - name: image_processor
+    signature: (self, image)
+    class: TiktokenProcessor
+  - name: __init__
+    signature: (self, tokenizer_path)
+    class: TiktokenTokenizer
+  - name: encode_patched
+    signature: (self, text: str, *, allowed_special: Union[Literal['all'], AbstractSet[str]] = set(), disallowed_special: Union[Literal['all'], Collection[str]] = 'all')
+    return: List[int]
+    class: TiktokenTokenizer
+  - name: encode
+    signature: (self, x, add_special_tokens = False)
+    class: TiktokenTokenizer
+  - name: decode
+    signature: (self, x, *args, **kwargs)
+    class: TiktokenTokenizer
+  - name: batch_decode
+    signature: (self, batch, skip_special_tokens = True, spaces_between_special_tokens = False)
+    class: TiktokenTokenizer
+  - name: apply_chat_template
+    signature: (self, messages, tokenize, add_generation_prompt, tools = None, reasoning_effort = None)
+    class: TiktokenTokenizer
+  - name: __call__
+    signature: (self, text, **kwargs)
+    class: TiktokenTokenizer
+  - name: init_xgrammar
+    signature: (self)
+    class: TiktokenTokenizer

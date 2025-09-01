@@ -1,0 +1,32 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: weight_sync/tensor_bucket.py
+  - name: __init__
+    signature: (self, named_tensors: List[Tuple[str, torch.Tensor]] = None, flattened_tensor: torch.Tensor = None, metadata: List[FlattenedTensorMetadata] = None)
+    class: FlattenedTensorBucket
+    doc: Initialize a tensor bucket from a list of named tensors OR from pre-flattened data.
+  - name: get_flattened_tensor
+    signature: (self)
+    return: torch.Tensor
+    class: FlattenedTensorBucket
+    doc: Get the flattened tensor containing all bucket tensors
+  - name: get_metadata
+    signature: (self)
+    return: List[FlattenedTensorMetadata]
+    class: FlattenedTensorBucket
+    doc: Get metadata for all tensors in the bucket
+  - name: reconstruct_tensors
+    signature: (self)
+    return: List[Tuple[str, torch.Tensor]]
+    class: FlattenedTensorBucket
+    doc: Reconstruct original tensors from flattened tensor with optimized performance.
+
+File: weight_sync/utils.py
+  - name: update_weights
+    signature: (engine: Engine, params_batch: list[tuple[str, torch.Tensor]], device_mesh_key: str, device_mesh: DeviceMesh, load_format: Optional[str] = None)
+    doc: Update weights for the inference engine.
+  - name: _preprocess_tensor_for_update_weights
+    signature: (tensor: torch.Tensor)
+    doc: Preprocess the tensor for update weights.

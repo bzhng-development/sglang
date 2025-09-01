@@ -1,0 +1,8 @@
+weight_sync/tensor_bucket.py:
+  FlattenedTensorBucket.__init__(self,named_tensors,flattened_tensor,metadata)
+  FlattenedTensorBucket.get_flattened_tensor(self)
+  FlattenedTensorBucket.get_metadata(self)
+  FlattenedTensorBucket.reconstruct_tensors(self)
+weight_sync/utils.py:
+  _preprocess_tensor_for_update_weights(tensor)
+  async update_weights(engine,params_batch,device_mesh_key,device_mesh,load_format)

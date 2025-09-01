@@ -1,0 +1,186 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: connector/__init__.py
+  - name: create_remote_connector
+    signature: (url, **kwargs)
+    return: BaseConnector
+  - name: get_connector_type
+    signature: (client: BaseConnector)
+    return: ConnectorType
+
+File: connector/base_connector.py
+  - name: __init__
+    signature: (self, url: str)
+    class: BaseConnector
+  - name: get_local_dir
+    signature: (self)
+    class: BaseConnector
+  - name: weight_iterator
+    signature: (self, rank: int = 0)
+    return: Generator[Tuple[str, torch.Tensor], None, None]
+    class: BaseConnector
+  - name: pull_files
+    signature: (self, allow_pattern: Optional[List[str]] = None, ignore_pattern: Optional[List[str]] = None)
+    return: None
+    class: BaseConnector
+  - name: close
+    signature: (self)
+    class: BaseConnector
+  - name: __enter__
+    signature: (self)
+    class: BaseConnector
+  - name: __exit__
+    signature: (self, exc_type, exc_value, traceback)
+    class: BaseConnector
+  - name: __del__
+    signature: (self)
+    class: BaseConnector
+  - name: _close_by_signal
+    signature: (self, existing_handler = None)
+    class: BaseConnector
+  - name: new_handler
+    signature: (signum, frame)
+    class: BaseConnector
+  - name: get
+    signature: (self, key: str)
+    return: Optional[torch.Tensor]
+    class: BaseKVConnector
+  - name: getstr
+    signature: (self, key: str)
+    return: Optional[str]
+    class: BaseKVConnector
+  - name: set
+    signature: (self, key: str, obj: torch.Tensor)
+    return: None
+    class: BaseKVConnector
+  - name: setstr
+    signature: (self, key: str, obj: str)
+    return: None
+    class: BaseKVConnector
+  - name: list
+    signature: (self, prefix: str)
+    return: List[str]
+    class: BaseKVConnector
+  - name: glob
+    signature: (self, allow_pattern: str)
+    return: List[str]
+    class: BaseFileConnector
+
+File: connector/redis.py
+  - name: __init__
+    signature: (self, url: str)
+    class: RedisConnector
+  - name: get
+    signature: (self, key: str)
+    return: Optional[torch.Tensor]
+    class: RedisConnector
+  - name: getstr
+    signature: (self, key: str)
+    return: Optional[str]
+    class: RedisConnector
+  - name: set
+    signature: (self, key: str, tensor: torch.Tensor)
+    return: None
+    class: RedisConnector
+  - name: setstr
+    signature: (self, key: str, obj: str)
+    return: None
+    class: RedisConnector
+  - name: list
+    signature: (self, prefix: str)
+    return: List[str]
+    class: RedisConnector
+  - name: weight_iterator
+    signature: (self, rank: int = 0)
+    return: Generator[Tuple[str, bytes], None, None]
+    class: RedisConnector
+  - name: pull_files
+    signature: (self, allow_pattern: Optional[List[str]] = None, ignore_pattern: Optional[List[str]] = None)
+    return: None
+    class: RedisConnector
+  - name: close
+    signature: (self)
+    class: RedisConnector
+
+File: connector/s3.py
+  - name: _filter_allow
+    signature: (paths: list[str], patterns: list[str])
+    return: list[str]
+  - name: _filter_ignore
+    signature: (paths: list[str], patterns: list[str])
+    return: list[str]
+  - name: list_files
+    signature: (s3, path: str, allow_pattern: Optional[list[str]] = None, ignore_pattern: Optional[list[str]] = None)
+    return: tuple[str, str, list[str]]
+    doc: List files from S3 path and filter by pattern.
+  - name: __init__
+    signature: (self, url: str)
+    return: None
+    class: S3Connector
+  - name: glob
+    signature: (self, allow_pattern: Optional[list[str]] = None)
+    return: list[str]
+    class: S3Connector
+  - name: pull_files
+    signature: (self, allow_pattern: Optional[list[str]] = None, ignore_pattern: Optional[list[str]] = None)
+    return: None
+    class: S3Connector
+    doc: Pull files from S3 storage into the temporary directory.
+  - name: weight_iterator
+    signature: (self, rank: int = 0)
+    return: Generator[Tuple[str, torch.Tensor], None, None]
+    class: S3Connector
+  - name: close
+    signature: (self)
+    class: S3Connector
+
+File: connector/serde/__init__.py
+  - name: create_serde
+    signature: (serde_type: str)
+    return: Tuple[Serializer, Deserializer]
+
+File: connector/serde/safe_serde.py
+  - name: __init__
+    signature: (self)
+    class: SafeSerializer
+  - name: to_bytes
+    signature: (self, t: torch.Tensor)
+    return: bytes
+    class: SafeSerializer
+  - name: __init__
+    signature: (self)
+    class: SafeDeserializer
+  - name: from_bytes_normal
+    signature: (self, b: Union[bytearray, bytes])
+    return: torch.Tensor
+    class: SafeDeserializer
+  - name: from_bytes
+    signature: (self, b: Union[bytearray, bytes])
+    return: torch.Tensor
+    class: SafeDeserializer
+
+File: connector/serde/serde.py
+  - name: to_bytes
+    signature: (self, t: torch.Tensor)
+    return: bytes
+    class: Serializer
+    doc: Serialize a pytorch tensor to bytes. The serialized bytes should contain
+  - name: __init__
+    signature: (self, dtype)
+    class: Deserializer
+  - name: from_bytes
+    signature: (self, bs: bytes)
+    return: torch.Tensor
+    class: Deserializer
+    doc: Deserialize a pytorch tensor from bytes.
+
+File: connector/utils.py
+  - name: parse_model_name
+    signature: (url: str)
+    return: str
+    doc: Parse the model name from the url.
+  - name: pull_files_from_db
+    signature: (connector: BaseConnector, model_name: str, allow_pattern: Optional[list[str]] = None, ignore_pattern: Optional[list[str]] = None)
+    return: None

@@ -1,0 +1,567 @@
+AST Function Index
+Root: /Users/vincentzed/Documents/Github/open_source/sglang/python/sglang/srt
+Excluded directories:
+
+File: eplb/__init__.py
+  (no function definitions found)
+File: eplb/eplb_algorithms/__init__.py
+  - name: rebalance_experts
+    signature: (tokens_per_expert: torch.Tensor, num_physical_experts: int, num_local_physical_experts: int, num_groups: Optional[int], num_nodes: int, algorithm: EplbAlgorithm)
+  - name: compute_algorithm
+    signature: (raw_algorithm: str, num_groups: Optional[int], num_nodes: int)
+    return: EplbAlgorithm
+
+File: eplb/eplb_algorithms/deepseek.py
+  - name: balanced_packing
+    signature: (weight: torch.Tensor, num_packs: int)
+    return: Tuple[torch.Tensor, torch.Tensor]
+    doc: Pack n weighted objects to m packs, such that each bin contains exactly n/m objects and the weights of all packs
+  - name: replicate_experts
+    signature: (weight: torch.Tensor, num_phy: int)
+    return: Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    doc: Replicate `num_log` experts to `num_phy` replicas, such that the maximum load of all replicas is minimized.
+  - name: rebalance_experts_hierarchical
+    signature: (weight: torch.Tensor, num_physical_experts: int, num_groups: int, num_nodes: int, num_gpus: int)
+    doc: Parameters:
+  - name: inverse
+    signature: (perm: torch.Tensor)
+    return: torch.Tensor
+  - name: rebalance_experts
+    signature: (weight: torch.Tensor, num_replicas: int, num_groups: int, num_nodes: int, num_gpus: int, enable_hierarchical: bool)
+    return: Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    doc: Entry point for expert-parallelism load balancer.
+
+File: eplb/eplb_algorithms/deepseek_vec.py
+  - name: pack_groups
+    signature: (tokens_per_group: torch.Tensor, num_nodes: int)
+    return: torch.Tensor
+  - name: key_func
+    signature: (rank: int)
+    return: int
+  - name: make_redundant_experts_chunkwise
+    signature: (tokens_per_expert: torch.Tensor, num_physical_experts: int, num_local_physical_experts: int, num_physical_experts_per_chunk: int)
+    return: Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+  - name: decode_rebalance_experts
+    signature: (tokens_per_expert: torch.Tensor, num_physical_experts: int, num_local_physical_experts: int)
+  - name: prefill_rebalance_experts
+    signature: (tokens_per_expert: torch.Tensor, num_physical_experts: int, num_local_physical_experts: int, num_groups: int, num_nodes: int)
+  - name: rebalance_experts
+    signature: (tokens_per_expert: torch.Tensor, num_physical_experts: int, num_local_physical_experts: int, num_groups: Optional[int], num_nodes: int, enable_hierarchical: bool)
+
+File: eplb/eplb_manager.py
+  - name: __init__
+    signature: (self, model_runner: 'ModelRunner')
+    class: EPLBManager
+  - name: on_forward_pass_end
+    signature: (self)
+    class: EPLBManager
+  - name: _entrypoint
+    signature: (self)
+    class: EPLBManager
+  - name: rebalance
+    signature: (self)
+    class: EPLBManager
+  - name: _check_rebalance_needed
+    signature: (self, average_utilization_rate_over_window)
+    class: EPLBManager
+  - name: _compute_update_layer_ids_chunks
+    signature: (self)
+    return: List[List[int]]
+    class: EPLBManager
+  - name: _chunk_list
+    signature: (items: List, chunk_size)
+
+File: eplb/eplb_simulator/__init__.py
+  (no function definitions found)
+File: eplb/eplb_simulator/reader.py
+  - name: read_mode_per_pass
+    signature: (dir_data: Path)
+    doc: Read data from ExpertDistributionRecorder when recorded with mode `per_pass`
+
+File: eplb/expert_distribution.py
+  - name: init_new
+    signature: (server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    class: ExpertDistributionRecorder
+  - name: with_current_layer
+    signature: (self, layer_idx)
+    class: ExpertDistributionRecorder
+  - name: with_debug_name
+    signature: (self, debug_name)
+    class: ExpertDistributionRecorder
+  - name: disable_this_region
+    signature: (self)
+    class: ExpertDistributionRecorder
+  - name: with_forward_pass
+    signature: (self, forward_pass_id: int, forward_batch: ForwardBatch)
+    class: ExpertDistributionRecorder
+  - name: on_select_experts
+    signature: (self, topk_ids: torch.Tensor)
+    class: ExpertDistributionRecorder
+  - name: on_deepep_dispatch_normal
+    signature: (self, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+    class: ExpertDistributionRecorder
+  - name: on_deepep_dispatch_low_latency
+    signature: (self, local_physical_count_of_layer: torch.Tensor)
+    class: ExpertDistributionRecorder
+  - name: start_record
+    signature: (self)
+    class: ExpertDistributionRecorder
+  - name: stop_record
+    signature: (self)
+    class: ExpertDistributionRecorder
+  - name: dump_record
+    signature: (self, output_mode: _OutputMode = 'file')
+    class: ExpertDistributionRecorder
+  - name: recording
+    signature: (self)
+    class: ExpertDistributionRecorder
+  - name: _on_not_implemented
+    signature: (self)
+    class: ExpertDistributionRecorder
+  - name: __init__
+    signature: (self, server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    class: _ExpertDistributionRecorderReal
+  - name: with_current_layer
+    signature: (self, layer_idx)
+    class: _ExpertDistributionRecorderReal
+  - name: with_debug_name
+    signature: (self, debug_name)
+    class: _ExpertDistributionRecorderReal
+  - name: with_forward_pass
+    signature: (self, forward_pass_id: int, forward_batch: ForwardBatch)
+    class: _ExpertDistributionRecorderReal
+  - name: disable_this_region
+    signature: (self)
+    class: _ExpertDistributionRecorderReal
+    doc: Context manager to temporarily disable recording.
+  - name: _on_forward_pass_start
+    signature: (self, forward_batch: ForwardBatch)
+    class: _ExpertDistributionRecorderReal
+  - name: _on_forward_pass_end
+    signature: (self, forward_pass_id: int)
+    class: _ExpertDistributionRecorderReal
+  - name: on_select_experts
+    signature: (self, topk_ids: torch.Tensor)
+    class: _ExpertDistributionRecorderReal
+  - name: on_deepep_dispatch_normal
+    signature: (self, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+    class: _ExpertDistributionRecorderReal
+  - name: on_deepep_dispatch_low_latency
+    signature: (self, local_physical_count_of_layer: torch.Tensor)
+    class: _ExpertDistributionRecorderReal
+  - name: _on_hook
+    signature: (self, hook_name: str, **kwargs)
+    class: _ExpertDistributionRecorderReal
+  - name: _reset
+    signature: (self)
+    class: _ExpertDistributionRecorderReal
+    doc: Reset the expert distribution recorder.
+  - name: start_record
+    signature: (self)
+    class: _ExpertDistributionRecorderReal
+    doc: Start recording the expert distribution.
+  - name: stop_record
+    signature: (self)
+    class: _ExpertDistributionRecorderReal
+    doc: Stop recording the expert distribution.
+  - name: dump_record
+    signature: (self, output_mode: _OutputMode = 'file')
+    class: _ExpertDistributionRecorderReal
+    doc: Dump the expert distribution record and reset the recorder after dumping.
+  - name: recording
+    signature: (self)
+    class: _ExpertDistributionRecorderReal
+  - name: get_global_expert_distribution_recorder
+    signature: ()
+  - name: set_global_expert_distribution_recorder
+    signature: (value)
+  - name: init_new
+    signature: (server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    return: '_SinglePassGatherer'
+    class: _SinglePassGatherer
+  - name: __init__
+    signature: (self, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    class: _SinglePassGatherer
+  - name: on_forward_pass_start
+    signature: (self, forward_batch: ForwardBatch)
+    class: _SinglePassGatherer
+  - name: on_select_experts
+    signature: (self, layer_idx: int, topk_ids: torch.Tensor)
+    class: _SinglePassGatherer
+  - name: on_deepep_dispatch_normal
+    signature: (self, layer_idx: int, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+    class: _SinglePassGatherer
+  - name: on_deepep_dispatch_low_latency
+    signature: (self, layer_idx: int, local_physical_count_of_layer: torch.Tensor)
+    class: _SinglePassGatherer
+  - name: reset
+    signature: (self)
+    class: _SinglePassGatherer
+  - name: collect
+    signature: (self)
+    return: Dict
+    class: _SinglePassGatherer
+  - name: __init__
+    signature: (self, server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    class: _DetailSinglePassGatherer
+  - name: on_forward_pass_start
+    signature: (self, forward_batch: ForwardBatch)
+    class: _DetailSinglePassGatherer
+  - name: on_select_experts
+    signature: (self, layer_idx: int, topk_ids: torch.Tensor)
+    class: _DetailSinglePassGatherer
+  - name: on_deepep_dispatch_normal
+    signature: (self, layer_idx: int, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+    class: _DetailSinglePassGatherer
+  - name: reset
+    signature: (self)
+    class: _DetailSinglePassGatherer
+  - name: collect
+    signature: (self)
+    return: Dict
+    class: _DetailSinglePassGatherer
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _LayerBasedCpuSinglePassGatherer
+  - name: _on_layer_data
+    signature: (self, layer_idx: int, objects: List[int])
+    class: _LayerBasedCpuSinglePassGatherer
+  - name: reset
+    signature: (self)
+    class: _LayerBasedCpuSinglePassGatherer
+  - name: _collect_objects
+    signature: (self, pad_len: int)
+    return: torch.Tensor
+    class: _LayerBasedCpuSinglePassGatherer
+  - name: _list_sum
+    signature: (a: List, b: List)
+    return: List
+  - name: __init__
+    signature: (self, *args, enable_global_physical_experts: bool, **kwargs)
+    class: _LayerBasedGpuSinglePassGatherer
+  - name: reset
+    signature: (self)
+    class: _LayerBasedGpuSinglePassGatherer
+  - name: collect
+    signature: (self)
+    return: Dict
+    class: _LayerBasedGpuSinglePassGatherer
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _SelectExpertsSinglePassGatherer
+  - name: on_select_experts
+    signature: (self, layer_idx: int, topk_ids: torch.Tensor)
+    class: _SelectExpertsSinglePassGatherer
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _DeepepNormalSinglePassGatherer
+  - name: on_deepep_dispatch_normal
+    signature: (self, layer_idx: int, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+    class: _DeepepNormalSinglePassGatherer
+  - name: collect
+    signature: (self)
+    return: Dict
+    class: _DeepepNormalSinglePassGatherer
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _DeepepLowLatencySinglePassGatherer
+  - name: on_deepep_dispatch_low_latency
+    signature: (self, layer_idx: int, local_physical_count_of_layer: torch.Tensor)
+    class: _DeepepLowLatencySinglePassGatherer
+  - name: _convert_local_to_global_physical_count
+    signature: (local_physical_count: torch.Tensor, rank: int, num_local_physical_experts: int, num_physical_experts: int)
+    return: torch.Tensor
+  - name: init_new
+    signature: (server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    return: '_Accumulator'
+    class: _Accumulator
+  - name: get_class
+    signature: (server_args: ServerArgs)
+    return: Type['_Accumulator']
+    class: _Accumulator
+  - name: __init__
+    signature: (self, server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+    class: _Accumulator
+  - name: get_single_pass_gatherer_keys
+    signature: (self)
+    class: _Accumulator
+  - name: get_single_pass_gatherer_key
+    signature: (self, debug_name: Optional[str])
+    class: _Accumulator
+  - name: append
+    signature: (self, forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+    class: _Accumulator
+  - name: reset
+    signature: (self)
+    class: _Accumulator
+  - name: dump
+    signature: (self, output_mode: _OutputMode)
+    class: _Accumulator
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _UtilizationRateAccumulatorMixin
+  - name: append
+    signature: (self, forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+    class: _UtilizationRateAccumulatorMixin
+  - name: reset
+    signature: (self)
+    class: _UtilizationRateAccumulatorMixin
+  - name: _append_utilization_rate
+    signature: (self, forward_pass_id: int, single_pass_global_physical_count: torch.Tensor)
+    class: _UtilizationRateAccumulatorMixin
+  - name: __init__
+    signature: (self, maxlens: List[int])
+    class: _DequeCollection
+  - name: append
+    signature: (self, value)
+    class: _DequeCollection
+  - name: clear
+    signature: (self)
+    class: _DequeCollection
+  - name: mean
+    signature: (self)
+    return: Dict[int, float]
+    class: _DequeCollection
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _DetailAccumulator
+  - name: get_single_pass_gatherer_keys
+    signature: (self)
+    class: _DetailAccumulator
+  - name: get_single_pass_gatherer_key
+    signature: (self, debug_name: Optional[str])
+    class: _DetailAccumulator
+  - name: append
+    signature: (self, forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+    class: _DetailAccumulator
+  - name: _process_object
+    signature: (obj)
+    class: _DetailAccumulator
+  - name: reset
+    signature: (self)
+    class: _DetailAccumulator
+  - name: dump
+    signature: (self, output_mode: _OutputMode)
+    class: _DetailAccumulator
+  - name: __init__
+    signature: (self, *args, **kwargs)
+    class: _StatAccumulator
+  - name: append
+    signature: (self, forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+    class: _StatAccumulator
+  - name: reset
+    signature: (self)
+    class: _StatAccumulator
+  - name: dump
+    signature: (self, output_mode: _OutputMode)
+    class: _StatAccumulator
+  - name: _get_global_average_utilization_rate
+    signature: (self)
+    class: _StatAccumulator
+  - name: _dump_to_file
+    signature: (name, data)
+  - name: init_new
+    signature: (item_shape: Tuple, buffer_size: int, dtype, device)
+    class: _Buffer
+  - name: append
+    signature: (self, value: torch.Tensor)
+    class: _Buffer
+  - name: get_all
+    signature: (self)
+    return: torch.Tensor
+    class: _Buffer
+  - name: reset
+    signature: (self)
+    class: _Buffer
+  - name: __init__
+    signature: (self, item_shape: Tuple, buffer_size: int, dtype, device)
+    class: _CircularBuffer
+  - name: append
+    signature: (self, value: torch.Tensor)
+    class: _CircularBuffer
+  - name: get_all
+    signature: (self)
+    return: torch.Tensor
+    class: _CircularBuffer
+  - name: reset
+    signature: (self)
+    class: _CircularBuffer
+  - name: __init__
+    signature: (self, item_shape: Tuple, dtype, device)
+    class: _InfiniteBuffer
+  - name: append
+    signature: (self, value: torch.Tensor)
+    class: _InfiniteBuffer
+  - name: get_all
+    signature: (self)
+    return: torch.Tensor
+    class: _InfiniteBuffer
+  - name: reset
+    signature: (self)
+    class: _InfiniteBuffer
+  - name: _convert_global_physical_count_to_logical_count
+    signature: (global_physical_count: torch.Tensor, num_layers: int, num_logical_experts: int, physical_to_logical_map: torch.Tensor)
+  - name: compute_gpu_physical_count
+    signature: (physical_count_of_whatever: torch.Tensor, num_gpu: int)
+    doc: output: gpu_physical_count_of_batch (..., num_layer, num_gpu)
+  - name: compute_utilization_rate
+    signature: (gpu_physical_count_of_batch: torch.Tensor)
+    doc: output: utilization_rate (..., num_layer)
+
+File: eplb/expert_location.py
+  - name: num_layers
+    signature: (self)
+    return: int
+    class: ExpertLocationMetadata
+  - name: num_physical_experts
+    signature: (self)
+    return: int
+    class: ExpertLocationMetadata
+  - name: num_local_physical_experts
+    signature: (self)
+    return: int
+    class: ExpertLocationMetadata
+  - name: num_logical_experts
+    signature: (self)
+    return: int
+    class: ExpertLocationMetadata
+  - name: ep_size
+    signature: (self)
+    class: ExpertLocationMetadata
+  - name: __post_init__
+    signature: (self)
+    class: ExpertLocationMetadata
+  - name: init_trivial
+    signature: (server_args: ServerArgs, model_config: ModelConfig)
+    class: ExpertLocationMetadata
+    doc: Trivial location - logical expert i corresponds to physical expert i
+  - name: init_by_mapping
+    signature: (server_args: ServerArgs, model_config: ModelConfig, physical_to_logical_map)
+    class: ExpertLocationMetadata
+  - name: init_by_eplb
+    signature: (server_args: ServerArgs, model_config: ModelConfig, logical_count: torch.Tensor)
+    class: ExpertLocationMetadata
+  - name: _init_common
+    signature: (server_args: ServerArgs, model_config: ModelConfig)
+    class: ExpertLocationMetadata
+  - name: _init_raw
+    signature: (server_args: ServerArgs, ep_size: int, physical_to_logical_map: torch.Tensor, logical_to_all_physical_map: torch.Tensor)
+    class: ExpertLocationMetadata
+  - name: update
+    signature: (self, other: 'ExpertLocationMetadata', update_layer_ids: List[int])
+    class: ExpertLocationMetadata
+  - name: logical_to_all_physical
+    signature: (self, layer_id: int, logical_expert_id: int)
+    return: List[int]
+    class: ExpertLocationMetadata
+  - name: get_global_expert_location_metadata
+    signature: ()
+  - name: set_global_expert_location_metadata
+    signature: (value)
+  - name: _compute_logical_to_all_physical_map
+    signature: (physical_to_logical_map: torch.Tensor, num_logical_experts: int)
+  - name: _pad_nested_array
+    signature: (arr, pad_value)
+  - name: compute_logical_to_rank_dispatch_physical_map
+    signature: (logical_to_all_physical_map: torch.Tensor, num_gpus: int, num_physical_experts: int, ep_rank: int, seed: int = 42)
+  - name: _logical_to_all_physical_raw
+    signature: (logical_to_all_physical_map, layer_id: int, logical_expert_id: int)
+    return: List[int]
+  - name: _compute_gpu_id_of_physical_expert
+    signature: (physical_expert_id: int, num_local_physical_experts: int)
+    return: int
+  - name: _fair_choices
+    signature: (arr: List, k: int, r: random.Random)
+    return: List
+  - name: from_model_config
+    signature: (model_config: ModelConfig)
+    class: ModelConfigForExpertLocation
+  - name: compute_initial_expert_location_metadata
+    signature: (server_args: ServerArgs, model_config: ModelConfig)
+    return: Optional[ExpertLocationMetadata]
+
+File: eplb/expert_location_dispatch.py
+  - name: init_new
+    signature: (cls, layer_id: int)
+    class: ExpertLocationDispatchInfo
+  - name: transform_select_experts_inputs
+    signature: (router_logits: torch.Tensor, correction_bias: Optional[torch.Tensor], info: Optional[ExpertLocationDispatchInfo])
+  - name: topk_ids_logical_to_physical
+    signature: (topk_ids: torch.Tensor, info: Optional[ExpertLocationDispatchInfo])
+    return: torch.Tensor
+  - name: _topk_ids_logical_to_physical_static
+    signature: (topk_ids: torch.Tensor, info: Optional[ExpertLocationDispatchInfo])
+    return: torch.Tensor
+  - name: _topk_ids_logical_to_physical_dynamic
+    signature: (topk_ids: torch.Tensor, info: Optional[ExpertLocationDispatchInfo])
+    return: torch.Tensor
+
+File: eplb/expert_location_updater.py
+  - name: __init__
+    signature: (self)
+    class: ExpertLocationUpdater
+  - name: update
+    signature: (self, routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]], new_expert_location_metadata: ExpertLocationMetadata, update_layer_ids: List[int], nnodes: int, rank: int)
+    class: ExpertLocationUpdater
+  - name: _update_expert_weights
+    signature: (**kwargs)
+  - name: _update_expert_weights_with_canary
+    signature: (routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]], old_expert_location_metadata: ExpertLocationMetadata, new_expert_location_metadata: ExpertLocationMetadata, update_layer_ids: List[int], nnodes: int, rank: int)
+  - name: _get_canary_value
+    signature: (meta: ExpertLocationMetadata, layer_id: int)
+  - name: _update_expert_weights_raw
+    signature: (routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]], old_expert_location_metadata: ExpertLocationMetadata, new_expert_location_metadata: ExpertLocationMetadata, update_layer_ids: List[int], nnodes: int, rank: int)
+  - name: create_temp_buffers
+    signature: (sample_tensors)
+  - name: update_expert_weights_single_layer
+    signature: (routed_experts_weights: List[torch.Tensor], temp_buffers: List[torch.Tensor], old_physical_to_logical_map: List[int], new_physical_to_logical_map: List[int], num_local_physical_experts: int, num_gpu_per_node: int, rank: int, world_size: Optional[int] = None, debug: bool = False, log_metrics: bool = False)
+  - name: _entrypoint
+    signature: ()
+  - name: _handle_recv
+    signature: (buffer2weight_copy_infos, p2p_op_infos)
+  - name: _handle_recv_of_dst_expert_location
+    signature: (dst_expert_location: int, buffer2weight_copy_infos, p2p_op_infos)
+  - name: _create_p2p_recv_and_buffer2weight_copy
+    signature: (buffer2weight_copy_infos, p2p_op_infos, *, logical_expert_id: int, src_rank: int, dst_expert_location: int)
+  - name: _create_isend_ops
+    signature: (p2p_op_infos)
+  - name: _create_isend_ops_of_logical_expert_id
+    signature: (logical_expert_id, src_expert_location, p2p_op_infos)
+  - name: _compute_comm_info
+    signature: (logical_expert_id: int)
+  - name: _execute_p2p_ops
+    signature: (p2p_op_infos)
+  - name: _execute_buffer2weight_copies
+    signature: (buffer2weight_copy_infos)
+  - name: _get_tensor
+    signature: (tensors, tensor_index: int, expert_location: int)
+    return: torch.Tensor
+  - name: _get_local_expert_location
+    signature: (expert_location: int)
+    return: int
+  - name: __init__
+    signature: (self, *, chunk_values: List, element_values: List)
+    class: _ChunkUtils
+  - name: chunk_value_from_element_value
+    signature: (self, element_value)
+    class: _ChunkUtils
+  - name: element_values_from_chunk_value
+    signature: (self, chunk_value)
+    return: List
+    class: _ChunkUtils
+  - name: _chunk_index_from_element_index
+    signature: (num_elements: int, num_chunks: int, element_index: int)
+    return: int
+    class: _ChunkUtils
+  - name: _element_slice_from_chunk_index
+    signature: (num_elements: int, num_chunks: int, chunk_index: int)
+    return: slice
+    class: _ChunkUtils
+  - name: _deduplicate_ordered
+    signature: (arr: List[int])
+  - name: _log_p2p_op_metrics
+    signature: (p2p_op_infos: List[Tuple[int, List[P2POp]]], num_gpu_per_node: int, world_size: int, self_node_id: int)
+  - name: _get_direction_from_op
+    signature: (op: P2POp)
+  - name: _group_by
+    signature: (items, keyfunc)
