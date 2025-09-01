@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.mem_cache.memory_pool_host API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.mem_cache.memory_pool_host</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.synchronized"><code class="name flex">
+<span>def <span class="ident">synchronized</span></span>(<span>debug_only=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def synchronized(debug_only=False):
+    def _decorator(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if (not debug_only) or self.debug:
+                with self.lock:
+                    return func(self, *args, **kwargs)
+            else:
+                return True
+
+        return wrapper
+
+    return _decorator</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache"><code class="flex name class">
+<span>class <span class="ident">HostKVCache</span></span>
+<span>(</span><span>device_pool: <a title="sglang.srt.mem_cache.memory_pool.KVCache" href="memory_pool.html#sglang.srt.mem_cache.memory_pool.KVCache">KVCache</a>,<br>host_to_device_ratio: float,<br>host_size: int,<br>page_size: int,<br>layout: str,<br>pin_memory: bool,<br>device: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HostKVCache(abc.ABC):
+
+    def __init__(
+        self,
+        device_pool: KVCache,
+        host_to_device_ratio: float,
+        host_size: int,
+        page_size: int,
+        layout: str,
+        pin_memory: bool,
+        device: str,
+    ):
+        self.device_pool = device_pool
+        self.page_size = page_size
+        self.layout = layout
+        self.pin_memory = pin_memory
+        self.device = device
+
+        self.dtype = device_pool.store_dtype
+        self.size_per_token = self.get_size_per_token()
+        if host_size &gt; 0:
+            self.size = int(host_size * 1e9 // self.size_per_token)
+        else:
+            self.size = int(device_pool.size * host_to_device_ratio)
+        # Align the host memory pool size to the page size
+        self.size = self.size - (self.size % self.page_size)
+        self.start_layer = device_pool.start_layer
+        self.end_layer = device_pool.end_layer
+
+        assert (
+            self.size &gt; device_pool.size
+        ), &#34;The host memory should be larger than the device memory with the current protocol&#34;
+
+        # Verify there is enough available host memory.
+        host_mem = psutil.virtual_memory()
+        requested_bytes = self.size * self.size_per_token
+        # preserve at least 10GB for other usage
+        ten_gb = 10 * (1024**3)
+        available_bytes = host_mem.available - ten_gb
+        if requested_bytes &gt; available_bytes:
+            raise ValueError(
+                f&#34;Not enough host memory available. Requesting &#34;
+                f&#34;{requested_bytes / 1e9:.2f} GB but only have &#34;
+                f&#34;{available_bytes / 1e9:.2f} GB free. Please reduce the &#34;
+                f&#34;size of the hierarchical cache.&#34;
+            )
+        else:
+            logger.info(
+                f&#34;Allocating {requested_bytes / 1e9:.2f} GB host memory for hierarchical KV cache.&#34;
+            )
+
+        self.kv_buffer = self.init_kv_buffer()
+
+        # A lock for synchronized operations on memory allocation and state transitions.
+        self.lock = threading.RLock()
+        self.debug = logger.isEnabledFor(logging.DEBUG)
+        self.clear()
+
+    @abc.abstractmethod
+    def get_size_per_token(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def init_kv_buffer(self):
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def load_to_device_per_layer(
+        self, device_pool, host_indices, device_indices, layer_id, io_backend
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Load KV data from the host memory pool to the device memory pool for a specific layer.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def backup_from_device_all_layer(
+        self, device_pool, host_indices, device_indices, io_backend
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Backup KV data from the device memory pool to the host memory pool for all layers.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_flat_data_page(self, index) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Get a flat data page from the host memory pool.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def get_dummy_flat_data_page(self) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Get a dummy flat data page from the host memory pool.
+        This is used for prefetching or initializing empty pages.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def set_from_flat_data_page(self, index: int, data_page: torch.Tensor) -&gt; None:
+        &#34;&#34;&#34;
+        Set a flat data page to the host memory pool.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @synchronized()
+    def clear(self):
+        # Initialize memory states and tracking structures.
+        self.mem_state = torch.zeros(
+            (self.size,), dtype=torch.uint8, device=self.device
+        )
+        self.free_slots = torch.arange(self.size, dtype=torch.int64)
+
+    def available_size(self):
+        return len(self.free_slots)
+
+    @synchronized()
+    def alloc(self, need_size: int) -&gt; torch.Tensor:
+        assert (
+            need_size % self.page_size == 0
+        ), &#34;The requested size should be a multiple of the page size.&#34;
+        if need_size &gt; self.available_size():
+            return None
+
+        select_index = self.free_slots[:need_size]
+        self.free_slots = self.free_slots[need_size:]
+
+        if self.debug:
+            self.mem_state[select_index] = MemoryStateInt.RESERVED
+
+        return select_index
+
+    @synchronized()
+    def free(self, indices: torch.Tensor) -&gt; int:
+        self.free_slots = torch.cat([self.free_slots, indices])
+        if self.debug:
+            self.mem_state[indices] = MemoryStateInt.IDLE
+        return len(indices)
+
+    @synchronized(debug_only=True)
+    def get_state(self, indices: torch.Tensor) -&gt; MemoryStateInt:
+        assert len(indices) &gt; 0, &#34;The indices should not be empty&#34;
+        states = self.mem_state[indices]
+        assert (
+            states == states[0]
+        ).all(), &#34;The memory slots should have the same state {}&#34;.format(states)
+        return MemoryStateInt(states[0].item())
+
+    @synchronized(debug_only=True)
+    def is_reserved(self, indices: torch.Tensor) -&gt; bool:
+        return self.get_state(indices) == MemoryStateInt.RESERVED
+
+    @synchronized(debug_only=True)
+    def is_protected(self, indices: torch.Tensor) -&gt; bool:
+        return self.get_state(indices) == MemoryStateInt.PROTECTED
+
+    @synchronized(debug_only=True)
+    def is_synced(self, indices: torch.Tensor) -&gt; bool:
+        return self.get_state(indices) == MemoryStateInt.SYNCED
+
+    @synchronized(debug_only=True)
+    def is_backup(self, indices: torch.Tensor) -&gt; bool:
+        return self.get_state(indices) == MemoryStateInt.BACKUP
+
+    @synchronized(debug_only=True)
+    def update_backup(self, indices: torch.Tensor):
+        if not self.is_synced(indices):
+            raise ValueError(
+                f&#34;The host memory slots should be in SYNCED state before turning into BACKUP. &#34;
+                f&#34;Current state: {self.get_state(indices)}&#34;
+            )
+        self.mem_state[indices] = MemoryStateInt.BACKUP
+
+    @synchronized(debug_only=True)
+    def update_prefetch(self, indices: torch.Tensor):
+        if not self.is_reserved(indices):
+            raise ValueError(
+                f&#34;The host memory slots should be in RESERVED state before turning into BACKUP. &#34;
+                f&#34;Current state: {self.get_state(indices)}&#34;
+            )
+        self.mem_state[indices] = MemoryStateInt.BACKUP
+
+    @synchronized(debug_only=True)
+    def update_synced(self, indices: torch.Tensor):
+        self.mem_state[indices] = MemoryStateInt.SYNCED
+
+    @synchronized(debug_only=True)
+    def protect_write(self, indices: torch.Tensor):
+        if not self.is_reserved(indices):
+            raise ValueError(
+                f&#34;The host memory slots should be RESERVED before write operations. &#34;
+                f&#34;Current state: {self.get_state(indices)}&#34;
+            )
+        self.mem_state[indices] = MemoryStateInt.PROTECTED
+
+    @synchronized(debug_only=True)
+    def protect_load(self, indices: torch.Tensor):
+        if not self.is_backup(indices):
+            raise ValueError(
+                f&#34;The host memory slots should be in BACKUP state before load operations. &#34;
+                f&#34;Current state: {self.get_state(indices)}&#34;
+            )
+        self.mem_state[indices] = MemoryStateInt.PROTECTED
+
+    @synchronized(debug_only=True)
+    def complete_io(self, indices: torch.Tensor):
+        if not self.is_protected(indices):
+            raise ValueError(
+                f&#34;The host memory slots should be PROTECTED during I/O operations. &#34;
+                f&#34;Current state: {self.get_state(indices)}&#34;
+            )
+        self.mem_state[indices] = MemoryStateInt.SYNCED</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost">MHATokenToKVPoolHost</a></li>
+<li><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost">MLATokenToKVPoolHost</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.alloc"><code class="name flex">
+<span>def <span class="ident">alloc</span></span>(<span>self, need_size: int) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized()
+def alloc(self, need_size: int) -&gt; torch.Tensor:
+    assert (
+        need_size % self.page_size == 0
+    ), &#34;The requested size should be a multiple of the page size.&#34;
+    if need_size &gt; self.available_size():
+        return None
+
+    select_index = self.free_slots[:need_size]
+    self.free_slots = self.free_slots[need_size:]
+
+    if self.debug:
+        self.mem_state[select_index] = MemoryStateInt.RESERVED
+
+    return select_index</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.available_size"><code class="name flex">
+<span>def <span class="ident">available_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def available_size(self):
+    return len(self.free_slots)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer"><code class="name flex">
+<span>def <span class="ident">backup_from_device_all_layer</span></span>(<span>self, device_pool, host_indices, device_indices, io_backend) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def backup_from_device_all_layer(
+    self, device_pool, host_indices, device_indices, io_backend
+) -&gt; None:
+    &#34;&#34;&#34;
+    Backup KV data from the device memory pool to the host memory pool for all layers.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Backup KV data from the device memory pool to the host memory pool for all layers.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.clear"><code class="name flex">
+<span>def <span class="ident">clear</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized()
+def clear(self):
+    # Initialize memory states and tracking structures.
+    self.mem_state = torch.zeros(
+        (self.size,), dtype=torch.uint8, device=self.device
+    )
+    self.free_slots = torch.arange(self.size, dtype=torch.int64)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.complete_io"><code class="name flex">
+<span>def <span class="ident">complete_io</span></span>(<span>self, indices: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def complete_io(self, indices: torch.Tensor):
+    if not self.is_protected(indices):
+        raise ValueError(
+            f&#34;The host memory slots should be PROTECTED during I/O operations. &#34;
+            f&#34;Current state: {self.get_state(indices)}&#34;
+        )
+    self.mem_state[indices] = MemoryStateInt.SYNCED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.free"><code class="name flex">
+<span>def <span class="ident">free</span></span>(<span>self, indices: torch.Tensor) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized()
+def free(self, indices: torch.Tensor) -&gt; int:
+    self.free_slots = torch.cat([self.free_slots, indices])
+    if self.debug:
+        self.mem_state[indices] = MemoryStateInt.IDLE
+    return len(indices)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page"><code class="name flex">
+<span>def <span class="ident">get_dummy_flat_data_page</span></span>(<span>self) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def get_dummy_flat_data_page(self) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Get a dummy flat data page from the host memory pool.
+    This is used for prefetching or initializing empty pages.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Get a dummy flat data page from the host memory pool.
+This is used for prefetching or initializing empty pages.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page"><code class="name flex">
+<span>def <span class="ident">get_flat_data_page</span></span>(<span>self, index) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def get_flat_data_page(self, index) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Get a flat data page from the host memory pool.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Get a flat data page from the host memory pool.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_size_per_token"><code class="name flex">
+<span>def <span class="ident">get_size_per_token</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def get_size_per_token(self):
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_state"><code class="name flex">
+<span>def <span class="ident">get_state</span></span>(<span>self, indices: torch.Tensor) ‑> <a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt">MemoryStateInt</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def get_state(self, indices: torch.Tensor) -&gt; MemoryStateInt:
+    assert len(indices) &gt; 0, &#34;The indices should not be empty&#34;
+    states = self.mem_state[indices]
+    assert (
+        states == states[0]
+    ).all(), &#34;The memory slots should have the same state {}&#34;.format(states)
+    return MemoryStateInt(states[0].item())</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.init_kv_buffer"><code class="name flex">
+<span>def <span class="ident">init_kv_buffer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def init_kv_buffer(self):
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_backup"><code class="name flex">
+<span>def <span class="ident">is_backup</span></span>(<span>self, indices: torch.Tensor) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def is_backup(self, indices: torch.Tensor) -&gt; bool:
+    return self.get_state(indices) == MemoryStateInt.BACKUP</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_protected"><code class="name flex">
+<span>def <span class="ident">is_protected</span></span>(<span>self, indices: torch.Tensor) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def is_protected(self, indices: torch.Tensor) -&gt; bool:
+    return self.get_state(indices) == MemoryStateInt.PROTECTED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_reserved"><code class="name flex">
+<span>def <span class="ident">is_reserved</span></span>(<span>self, indices: torch.Tensor) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def is_reserved(self, indices: torch.Tensor) -&gt; bool:
+    return self.get_state(indices) == MemoryStateInt.RESERVED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_synced"><code class="name flex">
+<span>def <span class="ident">is_synced</span></span>(<span>self, indices: torch.Tensor) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def is_synced(self, indices: torch.Tensor) -&gt; bool:
+    return self.get_state(indices) == MemoryStateInt.SYNCED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer"><code class="name flex">
+<span>def <span class="ident">load_to_device_per_layer</span></span>(<span>self, device_pool, host_indices, device_indices, layer_id, io_backend) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def load_to_device_per_layer(
+    self, device_pool, host_indices, device_indices, layer_id, io_backend
+) -&gt; None:
+    &#34;&#34;&#34;
+    Load KV data from the host memory pool to the device memory pool for a specific layer.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Load KV data from the host memory pool to the device memory pool for a specific layer.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.protect_load"><code class="name flex">
+<span>def <span class="ident">protect_load</span></span>(<span>self, indices: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def protect_load(self, indices: torch.Tensor):
+    if not self.is_backup(indices):
+        raise ValueError(
+            f&#34;The host memory slots should be in BACKUP state before load operations. &#34;
+            f&#34;Current state: {self.get_state(indices)}&#34;
+        )
+    self.mem_state[indices] = MemoryStateInt.PROTECTED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.protect_write"><code class="name flex">
+<span>def <span class="ident">protect_write</span></span>(<span>self, indices: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def protect_write(self, indices: torch.Tensor):
+    if not self.is_reserved(indices):
+        raise ValueError(
+            f&#34;The host memory slots should be RESERVED before write operations. &#34;
+            f&#34;Current state: {self.get_state(indices)}&#34;
+        )
+    self.mem_state[indices] = MemoryStateInt.PROTECTED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page"><code class="name flex">
+<span>def <span class="ident">set_from_flat_data_page</span></span>(<span>self, index: int, data_page: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abc.abstractmethod
+def set_from_flat_data_page(self, index: int, data_page: torch.Tensor) -&gt; None:
+    &#34;&#34;&#34;
+    Set a flat data page to the host memory pool.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Set a flat data page to the host memory pool.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_backup"><code class="name flex">
+<span>def <span class="ident">update_backup</span></span>(<span>self, indices: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def update_backup(self, indices: torch.Tensor):
+    if not self.is_synced(indices):
+        raise ValueError(
+            f&#34;The host memory slots should be in SYNCED state before turning into BACKUP. &#34;
+            f&#34;Current state: {self.get_state(indices)}&#34;
+        )
+    self.mem_state[indices] = MemoryStateInt.BACKUP</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_prefetch"><code class="name flex">
+<span>def <span class="ident">update_prefetch</span></span>(<span>self, indices: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def update_prefetch(self, indices: torch.Tensor):
+    if not self.is_reserved(indices):
+        raise ValueError(
+            f&#34;The host memory slots should be in RESERVED state before turning into BACKUP. &#34;
+            f&#34;Current state: {self.get_state(indices)}&#34;
+        )
+    self.mem_state[indices] = MemoryStateInt.BACKUP</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_synced"><code class="name flex">
+<span>def <span class="ident">update_synced</span></span>(<span>self, indices: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@synchronized(debug_only=True)
+def update_synced(self, indices: torch.Tensor):
+    self.mem_state[indices] = MemoryStateInt.SYNCED</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost"><code class="flex name class">
+<span>class <span class="ident">MHATokenToKVPoolHost</span></span>
+<span>(</span><span>device_pool: <a title="sglang.srt.mem_cache.memory_pool.MHATokenToKVPool" href="memory_pool.html#sglang.srt.mem_cache.memory_pool.MHATokenToKVPool">MHATokenToKVPool</a>,<br>host_to_device_ratio: float,<br>host_size: int,<br>page_size: int,<br>layout: str,<br>pin_memory: bool = True,<br>device: str = 'cpu')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MHATokenToKVPoolHost(HostKVCache):
+    device_pool: MHATokenToKVPool
+
+    def __init__(
+        self,
+        device_pool: MHATokenToKVPool,
+        host_to_device_ratio: float,
+        host_size: int,
+        page_size: int,
+        layout: str,
+        pin_memory: bool = True,
+        device: str = &#34;cpu&#34;,
+    ):
+        super().__init__(
+            device_pool,
+            host_to_device_ratio,
+            host_size,
+            page_size,
+            layout,
+            pin_memory,
+            device,
+        )
+        self.k_data_refs = [self.k_buffer[i] for i in range(self.layer_num)]
+        self.v_data_refs = [self.v_buffer[i] for i in range(self.layer_num)]
+        self.k_data_ptrs = torch.tensor(
+            [x.data_ptr() for x in self.k_data_refs],
+            dtype=torch.uint64,
+            device=self.device_pool.device,
+        )
+        self.v_data_ptrs = torch.tensor(
+            [x.data_ptr() for x in self.v_data_refs],
+            dtype=torch.uint64,
+            device=self.device_pool.device,
+        )
+
+    def get_size_per_token(self):
+        self.head_num = self.device_pool.head_num
+        self.head_dim = self.device_pool.head_dim
+        self.layer_num = self.device_pool.layer_num
+
+        return self.head_dim * self.head_num * self.layer_num * self.dtype.itemsize * 2
+
+    def get_ksize_per_token(self):
+        return self.get_size_per_token() // 2
+
+    def init_kv_buffer(self):
+        if self.layout == &#34;layer_first&#34;:
+            dims = (2, self.layer_num, self.size, self.head_num, self.head_dim)
+        elif self.layout == &#34;page_first&#34;:
+            dims = (2, self.size, self.layer_num, self.head_num, self.head_dim)
+        else:
+            raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+        self.token_stride_size = self.head_num * self.head_dim * self.dtype.itemsize
+        self.layout_dim = self.token_stride_size * self.layer_num
+        return torch.empty(
+            dims,
+            dtype=self.dtype,
+            device=self.device,
+            pin_memory=self.pin_memory,
+        )
+
+    @property
+    def k_buffer(self):
+        return self.kv_buffer[0]
+
+    @property
+    def v_buffer(self):
+        return self.kv_buffer[1]
+
+    def load_to_device_per_layer(
+        self,
+        device_pool,
+        host_indices,
+        device_indices,
+        layer_id,
+        io_backend,
+    ):
+        if io_backend == &#34;kernel&#34;:
+            if self.layout == &#34;layer_first&#34;:
+                transfer_kv_per_layer(
+                    src_k=self.k_buffer[layer_id],
+                    dst_k=device_pool.k_buffer[layer_id],
+                    src_v=self.v_buffer[layer_id],
+                    dst_v=device_pool.v_buffer[layer_id],
+                    src_indices=host_indices,
+                    dst_indices=device_indices,
+                    item_size=self.token_stride_size,
+                )
+            elif self.layout == &#34;page_first&#34;:
+                transfer_kv_per_layer_pf_lf(
+                    src_k=self.k_buffer,
+                    dst_k=device_pool.k_buffer[layer_id],
+                    src_v=self.v_buffer,
+                    dst_v=device_pool.v_buffer[layer_id],
+                    src_indices=host_indices,
+                    dst_indices=device_indices,
+                    layer_id=layer_id,
+                    item_size=self.token_stride_size,
+                    src_layout_dim=self.layout_dim,
+                )
+            else:
+                raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+        elif io_backend == &#34;direct&#34;:
+            assert (
+                self.layout == &#34;layer_first&#34;
+            ), f&#34;Direct IO backend only supports layer_first layout.&#34;
+            transfer_kv_direct(
+                src_layers=[self.k_buffer[layer_id], self.v_buffer[layer_id]],
+                dst_layers=[
+                    device_pool.k_buffer[layer_id],
+                    device_pool.v_buffer[layer_id],
+                ],
+                src_indices=host_indices,
+                dst_indices=device_indices,
+                page_size=self.page_size,
+            )
+        else:
+            raise ValueError(f&#34;Unsupported IO backend: {io_backend}&#34;)
+
+    def backup_from_device_all_layer(
+        self, device_pool, host_indices, device_indices, io_backend
+    ):
+        if io_backend == &#34;kernel&#34;:
+            if self.layout == &#34;layer_first&#34;:
+                transfer_kv_all_layer(
+                    src_k_layers=device_pool.k_data_ptrs,
+                    dst_k_layers=self.k_data_ptrs,
+                    src_v_layers=device_pool.v_data_ptrs,
+                    dst_v_layers=self.v_data_ptrs,
+                    src_indices=device_indices,
+                    dst_indices=host_indices,
+                    item_size=self.token_stride_size,
+                    num_layers=self.layer_num,
+                )
+            elif self.layout == &#34;page_first&#34;:
+                transfer_kv_all_layer_lf_pf(
+                    src_k_layers=device_pool.k_data_ptrs,
+                    dst_k=self.k_buffer,
+                    src_v_layers=device_pool.v_data_ptrs,
+                    dst_v=self.v_buffer,
+                    src_indices=device_indices,
+                    dst_indices=host_indices,
+                    item_size=self.token_stride_size,
+                    dst_layout_dim=self.layout_dim,
+                    num_layers=self.layer_num,
+                )
+            else:
+                raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+        elif io_backend == &#34;direct&#34;:
+            assert (
+                self.layout == &#34;layer_first&#34;
+            ), f&#34;Direct IO backend only supports layer_first layout.&#34;
+            transfer_kv_direct(
+                src_layers=device_pool.k_buffer + device_pool.v_buffer,
+                dst_layers=self.k_data_refs + self.v_data_refs,
+                src_indices=device_indices,
+                dst_indices=host_indices,
+                page_size=self.page_size,
+            )
+        else:
+            raise ValueError(f&#34;Unsupported IO backend: {io_backend}&#34;)
+
+    def get_flat_data_page(self, index) -&gt; torch.Tensor:
+        if self.layout == &#34;layer_first&#34;:
+            return self.kv_buffer[:, :, index : index + self.page_size, :, :].flatten()
+        elif self.layout == &#34;page_first&#34;:
+            return self.kv_buffer[:, index : index + self.page_size, :, :, :].flatten()
+        else:
+            raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+
+    def get_dummy_flat_data_page(self) -&gt; torch.Tensor:
+        return torch.zeros(
+            (2, self.layer_num, self.page_size, self.head_num, self.head_dim),
+            dtype=self.dtype,
+            device=self.device,
+            pin_memory=self.pin_memory,
+        ).flatten()
+
+    def set_from_flat_data_page(self, index: int, data_page: torch.Tensor) -&gt; None:
+        if self.layout == &#34;layer_first&#34;:
+            self.kv_buffer[:, :, index : index + self.page_size, :, :] = (
+                data_page.reshape(
+                    2,
+                    self.layer_num,
+                    self.page_size,
+                    self.head_num,
+                    self.head_dim,
+                )
+            )
+        elif self.layout == &#34;page_first&#34;:
+            self.kv_buffer[:, index : index + self.page_size, :, :, :] = (
+                data_page.reshape(
+                    2, self.page_size, self.layer_num, self.head_num, self.head_dim
+                )
+            )
+        else:
+            raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+
+    def get_buffer_meta(self, keys, indices, local_rank):
+        ptr_list = []
+        key_list = []
+        kv_buffer_data_ptr = self.kv_buffer.data_ptr()
+        v_offset = (
+            self.layer_num
+            * self.size
+            * self.head_num
+            * self.head_dim
+            * self.dtype.itemsize
+        )
+        for index in range(0, len(indices), self.page_size):
+            k_ptr = (
+                kv_buffer_data_ptr
+                + indices[index]
+                * self.layer_num
+                * self.head_num
+                * self.head_dim
+                * self.dtype.itemsize
+            )
+            v_ptr = k_ptr + v_offset
+            ptr_list.append(k_ptr)
+            ptr_list.append(v_ptr)
+            key_ = keys[index // self.page_size]
+            key_list.append(f&#34;{key_}_{local_rank}_k&#34;)
+            key_list.append(f&#34;{key_}_{local_rank}_v&#34;)
+        element_size = (
+            self.layer_num
+            * self.dtype.itemsize
+            * self.page_size
+            * self.head_num
+            * self.head_dim
+        )
+        element_size_list = [element_size] * len(key_list)
+        return key_list, ptr_list, element_size_list
+
+    def get_buffer_with_hash(self, keys, indices):
+        assert self.layout == &#34;page_first&#34;
+        assert len(keys) == (len(indices) // self.page_size)
+
+        key_list = []
+        buf_list = []
+
+        for key, i in zip(keys, range(0, len(indices), self.page_size)):
+            key_list.append(f&#34;{key}-k&#34;)
+            buf_list.append(self.k_buffer[i : i + self.page_size])
+            key_list.append(f&#34;{key}-v&#34;)
+            buf_list.append(self.v_buffer[i : i + self.page_size])
+
+        return key_list, buf_list</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache">HostKVCache</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.device_pool"><code class="name">var <span class="ident">device_pool</span> : <a title="sglang.srt.mem_cache.memory_pool.MHATokenToKVPool" href="memory_pool.html#sglang.srt.mem_cache.memory_pool.MHATokenToKVPool">MHATokenToKVPool</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.k_buffer"><code class="name">prop <span class="ident">k_buffer</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def k_buffer(self):
+    return self.kv_buffer[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.v_buffer"><code class="name">prop <span class="ident">v_buffer</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def v_buffer(self):
+    return self.kv_buffer[1]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_buffer_meta"><code class="name flex">
+<span>def <span class="ident">get_buffer_meta</span></span>(<span>self, keys, indices, local_rank)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_buffer_meta(self, keys, indices, local_rank):
+    ptr_list = []
+    key_list = []
+    kv_buffer_data_ptr = self.kv_buffer.data_ptr()
+    v_offset = (
+        self.layer_num
+        * self.size
+        * self.head_num
+        * self.head_dim
+        * self.dtype.itemsize
+    )
+    for index in range(0, len(indices), self.page_size):
+        k_ptr = (
+            kv_buffer_data_ptr
+            + indices[index]
+            * self.layer_num
+            * self.head_num
+            * self.head_dim
+            * self.dtype.itemsize
+        )
+        v_ptr = k_ptr + v_offset
+        ptr_list.append(k_ptr)
+        ptr_list.append(v_ptr)
+        key_ = keys[index // self.page_size]
+        key_list.append(f&#34;{key_}_{local_rank}_k&#34;)
+        key_list.append(f&#34;{key_}_{local_rank}_v&#34;)
+    element_size = (
+        self.layer_num
+        * self.dtype.itemsize
+        * self.page_size
+        * self.head_num
+        * self.head_dim
+    )
+    element_size_list = [element_size] * len(key_list)
+    return key_list, ptr_list, element_size_list</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_buffer_with_hash"><code class="name flex">
+<span>def <span class="ident">get_buffer_with_hash</span></span>(<span>self, keys, indices)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_buffer_with_hash(self, keys, indices):
+    assert self.layout == &#34;page_first&#34;
+    assert len(keys) == (len(indices) // self.page_size)
+
+    key_list = []
+    buf_list = []
+
+    for key, i in zip(keys, range(0, len(indices), self.page_size)):
+        key_list.append(f&#34;{key}-k&#34;)
+        buf_list.append(self.k_buffer[i : i + self.page_size])
+        key_list.append(f&#34;{key}-v&#34;)
+        buf_list.append(self.v_buffer[i : i + self.page_size])
+
+    return key_list, buf_list</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_ksize_per_token"><code class="name flex">
+<span>def <span class="ident">get_ksize_per_token</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ksize_per_token(self):
+    return self.get_size_per_token() // 2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_size_per_token"><code class="name flex">
+<span>def <span class="ident">get_size_per_token</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_size_per_token(self):
+    self.head_num = self.device_pool.head_num
+    self.head_dim = self.device_pool.head_dim
+    self.layer_num = self.device_pool.layer_num
+
+    return self.head_dim * self.head_num * self.layer_num * self.dtype.itemsize * 2</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.init_kv_buffer"><code class="name flex">
+<span>def <span class="ident">init_kv_buffer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_kv_buffer(self):
+    if self.layout == &#34;layer_first&#34;:
+        dims = (2, self.layer_num, self.size, self.head_num, self.head_dim)
+    elif self.layout == &#34;page_first&#34;:
+        dims = (2, self.size, self.layer_num, self.head_num, self.head_dim)
+    else:
+        raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+    self.token_stride_size = self.head_num * self.head_dim * self.dtype.itemsize
+    self.layout_dim = self.token_stride_size * self.layer_num
+    return torch.empty(
+        dims,
+        dtype=self.dtype,
+        device=self.device,
+        pin_memory=self.pin_memory,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache">HostKVCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer">backup_from_device_all_layer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page">get_dummy_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page">get_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer">load_to_device_per_layer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page">set_from_flat_data_page</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost"><code class="flex name class">
+<span>class <span class="ident">MLATokenToKVPoolHost</span></span>
+<span>(</span><span>device_pool: <a title="sglang.srt.mem_cache.memory_pool.MLATokenToKVPool" href="memory_pool.html#sglang.srt.mem_cache.memory_pool.MLATokenToKVPool">MLATokenToKVPool</a>,<br>host_to_device_ratio: float,<br>host_size: int,<br>page_size: int,<br>layout: str,<br>pin_memory: bool = True,<br>device: str = 'cpu')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MLATokenToKVPoolHost(HostKVCache):
+    device_pool: MLATokenToKVPool
+
+    def __init__(
+        self,
+        device_pool: MLATokenToKVPool,
+        host_to_device_ratio: float,
+        host_size: int,
+        page_size: int,
+        layout: str,
+        pin_memory: bool = True,
+        device: str = &#34;cpu&#34;,
+    ):
+        super().__init__(
+            device_pool,
+            host_to_device_ratio,
+            host_size,
+            page_size,
+            layout,
+            pin_memory,
+            device,
+        )
+        self.data_refs = [self.kv_buffer[i] for i in range(self.layer_num)]
+        self.data_ptrs = torch.tensor(
+            [x.data_ptr() for x in self.data_refs],
+            dtype=torch.uint64,
+            device=self.device_pool.device,
+        )
+
+    def get_size_per_token(self):
+        self.kv_lora_rank = self.device_pool.kv_lora_rank
+        self.qk_rope_head_dim = self.device_pool.qk_rope_head_dim
+        self.layer_num = self.device_pool.layer_num
+
+        return (
+            (self.kv_lora_rank + self.qk_rope_head_dim)
+            * 1
+            * self.dtype.itemsize
+            * self.layer_num
+        )
+
+    def get_ksize_per_token(self):
+        return self.get_size_per_token()
+
+    def init_kv_buffer(self):
+        if self.layout == &#34;layer_first&#34;:
+            dims = (
+                self.layer_num,
+                self.size,
+                1,
+                self.kv_lora_rank + self.qk_rope_head_dim,
+            )
+        elif self.layout == &#34;page_first&#34;:
+            dims = (
+                self.size,
+                self.layer_num,
+                1,
+                self.kv_lora_rank + self.qk_rope_head_dim,
+            )
+        else:
+            raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+        self.token_stride_size = (
+            self.kv_lora_rank + self.qk_rope_head_dim
+        ) * self.dtype.itemsize
+        self.layout_dim = self.token_stride_size * self.layer_num
+
+        return torch.empty(
+            dims,
+            dtype=self.dtype,
+            device=self.device,
+            pin_memory=self.pin_memory,
+        )
+
+    def load_to_device_per_layer(
+        self, device_pool, host_indices, device_indices, layer_id, io_backend
+    ):
+        if io_backend == &#34;kernel&#34;:
+            if self.layout == &#34;layer_first&#34;:
+                transfer_kv_per_layer_mla(
+                    src=self.kv_buffer[layer_id],
+                    dst=device_pool.kv_buffer[layer_id],
+                    src_indices=host_indices,
+                    dst_indices=device_indices,
+                    item_size=self.token_stride_size,
+                )
+            elif self.layout == &#34;page_first&#34;:
+                transfer_kv_per_layer_mla_pf_lf(
+                    src=self.kv_buffer,
+                    dst=device_pool.kv_buffer[layer_id],
+                    src_indices=host_indices,
+                    dst_indices=device_indices,
+                    layer_id=layer_id,
+                    item_size=self.token_stride_size,
+                    src_layout_dim=self.layout_dim,
+                )
+            else:
+                raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+        elif io_backend == &#34;direct&#34;:
+            assert (
+                self.layout == &#34;layer_first&#34;
+            ), f&#34;Direct IO backend only supports layer_first layout.&#34;
+            transfer_kv_direct(
+                src_layers=[self.kv_buffer[layer_id]],
+                dst_layers=[device_pool.kv_buffer[layer_id]],
+                src_indices=host_indices,
+                dst_indices=device_indices,
+                page_size=self.page_size,
+            )
+
+    def backup_from_device_all_layer(
+        self, device_pool, host_indices, device_indices, io_backend
+    ):
+        if io_backend == &#34;kernel&#34;:
+            if self.layout == &#34;layer_first&#34;:
+                transfer_kv_all_layer_mla(
+                    src_layers=device_pool.data_ptrs,
+                    dst_layers=self.data_ptrs,
+                    src_indices=device_indices,
+                    dst_indices=host_indices,
+                    item_size=self.token_stride_size,
+                    num_layers=self.layer_num,
+                )
+            elif self.layout == &#34;page_first&#34;:
+                transfer_kv_all_layer_mla_lf_pf(
+                    src_layers=device_pool.data_ptrs,
+                    dst=self.kv_buffer,
+                    src_indices=device_indices,
+                    dst_indices=host_indices,
+                    item_size=self.token_stride_size,
+                    dst_layout_dim=self.layout_dim,
+                    num_layers=self.layer_num,
+                )
+            else:
+                raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+        elif io_backend == &#34;direct&#34;:
+            assert (
+                self.layout == &#34;layer_first&#34;
+            ), f&#34;Direct IO backend only supports layer_first layout.&#34;
+            transfer_kv_direct(
+                src_layers=device_pool.kv_buffer,
+                dst_layers=self.data_refs,
+                src_indices=device_indices,
+                dst_indices=host_indices,
+                page_size=self.page_size,
+            )
+        else:
+            raise ValueError(f&#34;Unsupported IO backend: {io_backend}&#34;)
+
+    def get_flat_data_page(self, index) -&gt; torch.Tensor:
+        if self.layout == &#34;layer_first&#34;:
+            return self.kv_buffer[:, index : index + self.page_size, :, :].flatten()
+        elif self.layout == &#34;page_first&#34;:
+            return self.kv_buffer[index : index + self.page_size, :, :, :].flatten()
+        else:
+            raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+
+    def get_dummy_flat_data_page(self) -&gt; torch.Tensor:
+        return torch.zeros(
+            (
+                self.layer_num,
+                self.page_size,
+                1,
+                self.kv_lora_rank + self.qk_rope_head_dim,
+            ),
+            dtype=self.dtype,
+            device=self.device,
+            pin_memory=self.pin_memory,
+        ).flatten()
+
+    def set_from_flat_data_page(self, index: int, data_page: torch.Tensor) -&gt; None:
+        if self.layout == &#34;layer_first&#34;:
+            self.kv_buffer[:, index : index + self.page_size, :, :] = data_page.reshape(
+                self.layer_num,
+                self.page_size,
+                1,
+                self.kv_lora_rank + self.qk_rope_head_dim,
+            )
+        elif self.layout == &#34;page_first&#34;:
+            self.kv_buffer[index : index + self.page_size, :, :, :] = data_page.reshape(
+                self.page_size,
+                self.layer_num,
+                1,
+                self.kv_lora_rank + self.qk_rope_head_dim,
+            )
+        else:
+            raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+
+    def get_buffer_meta(self, keys, indices, local_rank):
+        ptr_list = []
+        key_list = []
+        kv_buffer_data_ptr = self.kv_buffer.data_ptr()
+        for index in range(0, len(indices), self.page_size):
+            k_ptr = (
+                kv_buffer_data_ptr
+                + indices[index]
+                * self.layer_num
+                * (self.kv_lora_rank + self.qk_rope_head_dim)
+                * self.dtype.itemsize
+            )
+            ptr_list.append(k_ptr)
+            key_ = keys[index // self.page_size]
+            key_list.append(f&#34;{key_}_k&#34;)
+        element_size = (
+            self.layer_num
+            * self.dtype.itemsize
+            * self.page_size
+            * (self.kv_lora_rank + self.qk_rope_head_dim)
+        )
+        element_size_list = [element_size] * len(key_list)
+        return key_list, ptr_list, element_size_list
+
+    def get_buffer_with_hash(self, keys, indices):
+        assert self.layout == &#34;page_first&#34;
+        assert len(keys) == (len(indices) // self.page_size)
+
+        buf_list = []
+
+        for i in range(0, len(indices), self.page_size):
+            buf_list.append(self.kv_buffer[i : i + self.page_size])
+
+        return keys, buf_list</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache">HostKVCache</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.device_pool"><code class="name">var <span class="ident">device_pool</span> : <a title="sglang.srt.mem_cache.memory_pool.MLATokenToKVPool" href="memory_pool.html#sglang.srt.mem_cache.memory_pool.MLATokenToKVPool">MLATokenToKVPool</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_buffer_meta"><code class="name flex">
+<span>def <span class="ident">get_buffer_meta</span></span>(<span>self, keys, indices, local_rank)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_buffer_meta(self, keys, indices, local_rank):
+    ptr_list = []
+    key_list = []
+    kv_buffer_data_ptr = self.kv_buffer.data_ptr()
+    for index in range(0, len(indices), self.page_size):
+        k_ptr = (
+            kv_buffer_data_ptr
+            + indices[index]
+            * self.layer_num
+            * (self.kv_lora_rank + self.qk_rope_head_dim)
+            * self.dtype.itemsize
+        )
+        ptr_list.append(k_ptr)
+        key_ = keys[index // self.page_size]
+        key_list.append(f&#34;{key_}_k&#34;)
+    element_size = (
+        self.layer_num
+        * self.dtype.itemsize
+        * self.page_size
+        * (self.kv_lora_rank + self.qk_rope_head_dim)
+    )
+    element_size_list = [element_size] * len(key_list)
+    return key_list, ptr_list, element_size_list</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_buffer_with_hash"><code class="name flex">
+<span>def <span class="ident">get_buffer_with_hash</span></span>(<span>self, keys, indices)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_buffer_with_hash(self, keys, indices):
+    assert self.layout == &#34;page_first&#34;
+    assert len(keys) == (len(indices) // self.page_size)
+
+    buf_list = []
+
+    for i in range(0, len(indices), self.page_size):
+        buf_list.append(self.kv_buffer[i : i + self.page_size])
+
+    return keys, buf_list</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_ksize_per_token"><code class="name flex">
+<span>def <span class="ident">get_ksize_per_token</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ksize_per_token(self):
+    return self.get_size_per_token()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_size_per_token"><code class="name flex">
+<span>def <span class="ident">get_size_per_token</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_size_per_token(self):
+    self.kv_lora_rank = self.device_pool.kv_lora_rank
+    self.qk_rope_head_dim = self.device_pool.qk_rope_head_dim
+    self.layer_num = self.device_pool.layer_num
+
+    return (
+        (self.kv_lora_rank + self.qk_rope_head_dim)
+        * 1
+        * self.dtype.itemsize
+        * self.layer_num
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.init_kv_buffer"><code class="name flex">
+<span>def <span class="ident">init_kv_buffer</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_kv_buffer(self):
+    if self.layout == &#34;layer_first&#34;:
+        dims = (
+            self.layer_num,
+            self.size,
+            1,
+            self.kv_lora_rank + self.qk_rope_head_dim,
+        )
+    elif self.layout == &#34;page_first&#34;:
+        dims = (
+            self.size,
+            self.layer_num,
+            1,
+            self.kv_lora_rank + self.qk_rope_head_dim,
+        )
+    else:
+        raise ValueError(f&#34;Unsupported layout: {self.layout}&#34;)
+    self.token_stride_size = (
+        self.kv_lora_rank + self.qk_rope_head_dim
+    ) * self.dtype.itemsize
+    self.layout_dim = self.token_stride_size * self.layer_num
+
+    return torch.empty(
+        dims,
+        dtype=self.dtype,
+        device=self.device,
+        pin_memory=self.pin_memory,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache">HostKVCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer">backup_from_device_all_layer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page">get_dummy_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page">get_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer">load_to_device_per_layer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page">set_from_flat_data_page</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt"><code class="flex name class">
+<span>class <span class="ident">MemoryStateInt</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MemoryStateInt(IntEnum):
+    IDLE = 0
+    RESERVED = 1
+    PROTECTED = 2
+    SYNCED = 3
+    BACKUP = 4</code></pre>
+</details>
+<div class="desc"><p>Enum where members are also (and must be) ints</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.IntEnum</li>
+<li>builtins.int</li>
+<li>enum.ReprEnum</li>
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.BACKUP"><code class="name">var <span class="ident">BACKUP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.IDLE"><code class="name">var <span class="ident">IDLE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.PROTECTED"><code class="name">var <span class="ident">PROTECTED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.RESERVED"><code class="name">var <span class="ident">RESERVED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.SYNCED"><code class="name">var <span class="ident">SYNCED</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.mem_cache" href="index.html">sglang.srt.mem_cache</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.synchronized" href="#sglang.srt.mem_cache.memory_pool_host.synchronized">synchronized</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache">HostKVCache</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.alloc" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.alloc">alloc</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.available_size" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.available_size">available_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.backup_from_device_all_layer">backup_from_device_all_layer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.clear" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.clear">clear</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.complete_io" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.complete_io">complete_io</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.free" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.free">free</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_dummy_flat_data_page">get_dummy_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_flat_data_page">get_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_size_per_token" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_size_per_token">get_size_per_token</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_state" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.get_state">get_state</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.init_kv_buffer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.init_kv_buffer">init_kv_buffer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_backup" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_backup">is_backup</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_protected" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_protected">is_protected</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_reserved" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_reserved">is_reserved</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_synced" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.is_synced">is_synced</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.load_to_device_per_layer">load_to_device_per_layer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.protect_load" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.protect_load">protect_load</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.protect_write" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.protect_write">protect_write</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.set_from_flat_data_page">set_from_flat_data_page</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_backup" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_backup">update_backup</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_prefetch" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_prefetch">update_prefetch</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_synced" href="#sglang.srt.mem_cache.memory_pool_host.HostKVCache.update_synced">update_synced</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost">MHATokenToKVPoolHost</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.device_pool" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.device_pool">device_pool</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_buffer_meta" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_buffer_meta">get_buffer_meta</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_buffer_with_hash" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_buffer_with_hash">get_buffer_with_hash</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_ksize_per_token" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_ksize_per_token">get_ksize_per_token</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_size_per_token" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.get_size_per_token">get_size_per_token</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.init_kv_buffer" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.init_kv_buffer">init_kv_buffer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.k_buffer" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.k_buffer">k_buffer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.v_buffer" href="#sglang.srt.mem_cache.memory_pool_host.MHATokenToKVPoolHost.v_buffer">v_buffer</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost">MLATokenToKVPoolHost</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.device_pool" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.device_pool">device_pool</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_buffer_meta" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_buffer_meta">get_buffer_meta</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_buffer_with_hash" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_buffer_with_hash">get_buffer_with_hash</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_ksize_per_token" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_ksize_per_token">get_ksize_per_token</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_size_per_token" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.get_size_per_token">get_size_per_token</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.init_kv_buffer" href="#sglang.srt.mem_cache.memory_pool_host.MLATokenToKVPoolHost.init_kv_buffer">init_kv_buffer</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt">MemoryStateInt</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.BACKUP" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.BACKUP">BACKUP</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.IDLE" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.IDLE">IDLE</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.PROTECTED" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.PROTECTED">PROTECTED</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.RESERVED" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.RESERVED">RESERVED</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.SYNCED" href="#sglang.srt.mem_cache.memory_pool_host.MemoryStateInt.SYNCED">SYNCED</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

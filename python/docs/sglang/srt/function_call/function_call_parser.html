@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.function_call.function_call_parser API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.function_call.function_call_parser</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser"><code class="flex name class">
+<span>class <span class="ident">FunctionCallParser</span></span>
+<span>(</span><span>tools: List[<a title="sglang.srt.entrypoints.openai.protocol.Tool" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.Tool">Tool</a>],<br>tool_call_parser: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FunctionCallParser:
+    &#34;&#34;&#34;
+    Parser for function/tool calls in model outputs.
+
+    This class handles both streaming and non-streaming parsing of function calls using a detector.
+    In streaming scenarios, each time new_text is received, it calls detector.parse_streaming_increment
+    and returns the resulting normal_text and calls to the upper layer (or SSE).
+    &#34;&#34;&#34;
+
+    ToolCallParserEnum: Dict[str, Type[BaseFormatDetector]] = {
+        &#34;llama3&#34;: Llama32Detector,
+        &#34;qwen25&#34;: Qwen25Detector,
+        &#34;mistral&#34;: MistralDetector,
+        &#34;deepseekv3&#34;: DeepSeekV3Detector,
+        &#34;deepseekv31&#34;: DeepSeekV31Detector,
+        &#34;pythonic&#34;: PythonicDetector,
+        &#34;kimi_k2&#34;: KimiK2Detector,
+        &#34;qwen3_coder&#34;: Qwen3CoderDetector,
+        &#34;glm45&#34;: Glm4MoeDetector,
+        &#34;step3&#34;: Step3Detector,
+        &#34;gpt-oss&#34;: GptOssDetector,
+    }
+
+    def __init__(self, tools: List[Tool], tool_call_parser: str):
+        detector: Type[BaseFormatDetector] = None
+        detector_class = self.ToolCallParserEnum.get(tool_call_parser)
+        if detector_class:
+            detector = detector_class()
+        else:
+            raise ValueError(f&#34;Unsupported tool_call_parser: {tool_call_parser}&#34;)
+
+        self.detector = detector
+        self.tools = tools
+
+    def has_tool_call(self, text: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Check if the given text contains a tool call in the format supported by this parser.
+        This delegates to the detector&#39;s implementation.
+
+        Args:
+            text: The text to check for tool calls
+
+        Returns:
+            True if the text contains a tool call, False otherwise
+        &#34;&#34;&#34;
+        return self.detector.has_tool_call(text)
+
+    def parse_non_stream(self, full_text: str) -&gt; Tuple[str, list[ToolCallItem]]:
+        &#34;&#34;&#34;
+        One-time parsing of the full text to extract tool calls.
+
+        Args:
+            full_text: The complete text to parse
+
+        Returns:
+            A tuple containing:
+            - The remaining text after parsing that was not consumed by the detector (can be treated as normal text)
+            - A list of tool calls parsed from the text
+        &#34;&#34;&#34;
+        parsed_result = self.detector.detect_and_parse(full_text, self.tools)
+        tool_call_list = parsed_result.calls
+        if tool_call_list:
+            return parsed_result.normal_text, tool_call_list
+        else:
+            return full_text, []
+
+    def parse_stream_chunk(self, chunk_text: str) -&gt; Tuple[str, list[ToolCallItem]]:
+        &#34;&#34;&#34;
+        Streaming incremental parsing of chunks of text as they arrive.
+
+        Args:
+            chunk_text: The new chunk of text to parse
+
+        Returns:
+            A tuple containing:
+            - The normal text that should be displayed to the user
+            - A list of tool calls parsed from the chunk
+        &#34;&#34;&#34;
+        final_normal_text = &#34;&#34;
+        final_calls = []
+
+        sp_result = self.detector.parse_streaming_increment(chunk_text, self.tools)
+        if sp_result.normal_text:
+            final_normal_text = sp_result.normal_text
+        if sp_result.calls:
+            final_calls.extend(sp_result.calls)
+            final_normal_text = sp_result.normal_text
+
+        return final_normal_text, final_calls
+
+    def get_structure_tag(self) -&gt; StructuralTagResponseFormat:
+        &#34;&#34;&#34;
+        Generate a structural tag response format for all available tools.
+
+        This creates the necessary structural tags that guide the model&#39;s output format.
+        &#34;&#34;&#34;
+        tool_structures: List[StructuresResponseFormat] = list()
+        tool_trigger_set: Set[str] = set()
+
+        get_structure_info = self.detector.structure_info()
+        for tool in self.tools:
+            function = tool.function
+            name = function.name
+            assert name is not None
+            info = get_structure_info(name)
+
+            # accept all if not strict, otherwise only accept the schema
+            schema = function.parameters if function.strict else {}
+
+            tool_structures.append(
+                StructuresResponseFormat(
+                    begin=info.begin,
+                    schema=schema,  # type: ignore
+                    end=info.end,
+                )
+            )
+            tool_trigger_set.add(info.trigger)
+
+        return StructuralTagResponseFormat(
+            type=&#34;structural_tag&#34;,
+            structures=tool_structures,
+            triggers=list(tool_trigger_set),
+        )
+
+    def get_structure_constraint(
+        self, tool_choice: Union[ToolChoice, Literal[&#34;auto&#34;, &#34;required&#34;]]
+    ) -&gt; Optional[Tuple[str, Any]]:
+        &#34;&#34;&#34;
+        Returns the appropriate structure constraint for tool calls based on the tool_choice.
+        The constraint is used to guide the model&#39;s output format.
+
+        Args:
+            tool_choice: The tool choice setting from the request
+
+        Returns:
+            A tuple of (constraint_type, constraint_value) to be added to sampling parameters,
+            or None if no constraint applies.
+        &#34;&#34;&#34;
+        # NOTE: structural_tag only supports JSON-compatible content between the begin and end.
+        # It cannot parse or validate function call Pythonic or XML-ish syntax.
+        if (
+            self.detector.supports_structural_tag()
+            and tool_choice == &#34;auto&#34;
+            and any(tool.function.strict for tool in self.tools)
+        ):
+            strict_tag = self.get_structure_tag()
+            return (&#34;structural_tag&#34;, strict_tag)
+        elif tool_choice == &#34;required&#34; or isinstance(tool_choice, ToolChoice):
+            ebnf = self.get_ebnf(tool_choice)
+            return (&#34;ebnf&#34;, ebnf) if ebnf is not None else None
+
+    def get_ebnf(
+        self, tool_choice: Union[ToolChoice, Literal[&#34;required&#34;]]
+    ) -&gt; Optional[str]:
+        &#34;&#34;&#34;
+        Get the EBNF grammar for the specified tool choice.
+
+        Args:
+            tool_choice: The tool choice specification
+
+        Returns:
+            EBNF grammar string, or None if no valid tools found
+
+        Note:
+            If a specific function is requested but not found in available tools,
+            logs a warning and falls back to using all available tools for backward compatibility.
+        &#34;&#34;&#34;
+        filtered_tools = []
+        if isinstance(tool_choice, ToolChoice):
+            fn_name = tool_choice.function.name
+            filtered_tools = [t for t in self.tools if t.function.name == fn_name]
+
+            # Check if the requested function exists in available tools
+            if not filtered_tools:
+                available_functions = [t.function.name for t in self.tools]
+                logger.warning(
+                    f&#34;Function &#39;{fn_name}&#39; not found in available tools. &#34;
+                    f&#34;Available functions: {available_functions}. &#34;
+                    f&#34;Skipping tool choice.&#34;
+                )
+
+                # TODO: Return a 400 error instead of warning when adapter supports proper error handling
+                # For now, fall back to return None
+                return None
+        else:
+            filtered_tools = self.tools
+
+        return self.detector.build_ebnf(filtered_tools)</code></pre>
+</details>
+<div class="desc"><p>Parser for function/tool calls in model outputs.</p>
+<p>This class handles both streaming and non-streaming parsing of function calls using a detector.
+In streaming scenarios, each time new_text is received, it calls detector.parse_streaming_increment
+and returns the resulting normal_text and calls to the upper layer (or SSE).</p></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.ToolCallParserEnum"><code class="name">var <span class="ident">ToolCallParserEnum</span> : Dict[str, Type[<a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector">BaseFormatDetector</a>]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.get_ebnf"><code class="name flex">
+<span>def <span class="ident">get_ebnf</span></span>(<span>self,<br>tool_choice: <a title="sglang.srt.entrypoints.openai.protocol.ToolChoice" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.ToolChoice">ToolChoice</a> | Literal['required']) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ebnf(
+    self, tool_choice: Union[ToolChoice, Literal[&#34;required&#34;]]
+) -&gt; Optional[str]:
+    &#34;&#34;&#34;
+    Get the EBNF grammar for the specified tool choice.
+
+    Args:
+        tool_choice: The tool choice specification
+
+    Returns:
+        EBNF grammar string, or None if no valid tools found
+
+    Note:
+        If a specific function is requested but not found in available tools,
+        logs a warning and falls back to using all available tools for backward compatibility.
+    &#34;&#34;&#34;
+    filtered_tools = []
+    if isinstance(tool_choice, ToolChoice):
+        fn_name = tool_choice.function.name
+        filtered_tools = [t for t in self.tools if t.function.name == fn_name]
+
+        # Check if the requested function exists in available tools
+        if not filtered_tools:
+            available_functions = [t.function.name for t in self.tools]
+            logger.warning(
+                f&#34;Function &#39;{fn_name}&#39; not found in available tools. &#34;
+                f&#34;Available functions: {available_functions}. &#34;
+                f&#34;Skipping tool choice.&#34;
+            )
+
+            # TODO: Return a 400 error instead of warning when adapter supports proper error handling
+            # For now, fall back to return None
+            return None
+    else:
+        filtered_tools = self.tools
+
+    return self.detector.build_ebnf(filtered_tools)</code></pre>
+</details>
+<div class="desc"><p>Get the EBNF grammar for the specified tool choice.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tool_choice</code></strong></dt>
+<dd>The tool choice specification</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>EBNF grammar string, or None if no valid tools found</p>
+<h2 id="note">Note</h2>
+<p>If a specific function is requested but not found in available tools,
+logs a warning and falls back to using all available tools for backward compatibility.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.get_structure_constraint"><code class="name flex">
+<span>def <span class="ident">get_structure_constraint</span></span>(<span>self,<br>tool_choice: <a title="sglang.srt.entrypoints.openai.protocol.ToolChoice" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.ToolChoice">ToolChoice</a> | Literal['auto', 'required']) ‑> Tuple[str, Any] | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_structure_constraint(
+    self, tool_choice: Union[ToolChoice, Literal[&#34;auto&#34;, &#34;required&#34;]]
+) -&gt; Optional[Tuple[str, Any]]:
+    &#34;&#34;&#34;
+    Returns the appropriate structure constraint for tool calls based on the tool_choice.
+    The constraint is used to guide the model&#39;s output format.
+
+    Args:
+        tool_choice: The tool choice setting from the request
+
+    Returns:
+        A tuple of (constraint_type, constraint_value) to be added to sampling parameters,
+        or None if no constraint applies.
+    &#34;&#34;&#34;
+    # NOTE: structural_tag only supports JSON-compatible content between the begin and end.
+    # It cannot parse or validate function call Pythonic or XML-ish syntax.
+    if (
+        self.detector.supports_structural_tag()
+        and tool_choice == &#34;auto&#34;
+        and any(tool.function.strict for tool in self.tools)
+    ):
+        strict_tag = self.get_structure_tag()
+        return (&#34;structural_tag&#34;, strict_tag)
+    elif tool_choice == &#34;required&#34; or isinstance(tool_choice, ToolChoice):
+        ebnf = self.get_ebnf(tool_choice)
+        return (&#34;ebnf&#34;, ebnf) if ebnf is not None else None</code></pre>
+</details>
+<div class="desc"><p>Returns the appropriate structure constraint for tool calls based on the tool_choice.
+The constraint is used to guide the model's output format.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tool_choice</code></strong></dt>
+<dd>The tool choice setting from the request</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A tuple of (constraint_type, constraint_value) to be added to sampling parameters,
+or None if no constraint applies.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.get_structure_tag"><code class="name flex">
+<span>def <span class="ident">get_structure_tag</span></span>(<span>self) ‑> <a title="sglang.srt.entrypoints.openai.protocol.StructuralTagResponseFormat" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.StructuralTagResponseFormat">StructuralTagResponseFormat</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_structure_tag(self) -&gt; StructuralTagResponseFormat:
+    &#34;&#34;&#34;
+    Generate a structural tag response format for all available tools.
+
+    This creates the necessary structural tags that guide the model&#39;s output format.
+    &#34;&#34;&#34;
+    tool_structures: List[StructuresResponseFormat] = list()
+    tool_trigger_set: Set[str] = set()
+
+    get_structure_info = self.detector.structure_info()
+    for tool in self.tools:
+        function = tool.function
+        name = function.name
+        assert name is not None
+        info = get_structure_info(name)
+
+        # accept all if not strict, otherwise only accept the schema
+        schema = function.parameters if function.strict else {}
+
+        tool_structures.append(
+            StructuresResponseFormat(
+                begin=info.begin,
+                schema=schema,  # type: ignore
+                end=info.end,
+            )
+        )
+        tool_trigger_set.add(info.trigger)
+
+    return StructuralTagResponseFormat(
+        type=&#34;structural_tag&#34;,
+        structures=tool_structures,
+        triggers=list(tool_trigger_set),
+    )</code></pre>
+</details>
+<div class="desc"><p>Generate a structural tag response format for all available tools.</p>
+<p>This creates the necessary structural tags that guide the model's output format.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.has_tool_call"><code class="name flex">
+<span>def <span class="ident">has_tool_call</span></span>(<span>self, text: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_tool_call(self, text: str) -&gt; bool:
+    &#34;&#34;&#34;
+    Check if the given text contains a tool call in the format supported by this parser.
+    This delegates to the detector&#39;s implementation.
+
+    Args:
+        text: The text to check for tool calls
+
+    Returns:
+        True if the text contains a tool call, False otherwise
+    &#34;&#34;&#34;
+    return self.detector.has_tool_call(text)</code></pre>
+</details>
+<div class="desc"><p>Check if the given text contains a tool call in the format supported by this parser.
+This delegates to the detector's implementation.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>text</code></strong></dt>
+<dd>The text to check for tool calls</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>True if the text contains a tool call, False otherwise</p></div>
+</dd>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.parse_non_stream"><code class="name flex">
+<span>def <span class="ident">parse_non_stream</span></span>(<span>self, full_text: str) ‑> Tuple[str, list[<a title="sglang.srt.function_call.core_types.ToolCallItem" href="core_types.html#sglang.srt.function_call.core_types.ToolCallItem">ToolCallItem</a>]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_non_stream(self, full_text: str) -&gt; Tuple[str, list[ToolCallItem]]:
+    &#34;&#34;&#34;
+    One-time parsing of the full text to extract tool calls.
+
+    Args:
+        full_text: The complete text to parse
+
+    Returns:
+        A tuple containing:
+        - The remaining text after parsing that was not consumed by the detector (can be treated as normal text)
+        - A list of tool calls parsed from the text
+    &#34;&#34;&#34;
+    parsed_result = self.detector.detect_and_parse(full_text, self.tools)
+    tool_call_list = parsed_result.calls
+    if tool_call_list:
+        return parsed_result.normal_text, tool_call_list
+    else:
+        return full_text, []</code></pre>
+</details>
+<div class="desc"><p>One-time parsing of the full text to extract tool calls.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>full_text</code></strong></dt>
+<dd>The complete text to parse</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A tuple containing:
+- The remaining text after parsing that was not consumed by the detector (can be treated as normal text)
+- A list of tool calls parsed from the text</p></div>
+</dd>
+<dt id="sglang.srt.function_call.function_call_parser.FunctionCallParser.parse_stream_chunk"><code class="name flex">
+<span>def <span class="ident">parse_stream_chunk</span></span>(<span>self, chunk_text: str) ‑> Tuple[str, list[<a title="sglang.srt.function_call.core_types.ToolCallItem" href="core_types.html#sglang.srt.function_call.core_types.ToolCallItem">ToolCallItem</a>]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_stream_chunk(self, chunk_text: str) -&gt; Tuple[str, list[ToolCallItem]]:
+    &#34;&#34;&#34;
+    Streaming incremental parsing of chunks of text as they arrive.
+
+    Args:
+        chunk_text: The new chunk of text to parse
+
+    Returns:
+        A tuple containing:
+        - The normal text that should be displayed to the user
+        - A list of tool calls parsed from the chunk
+    &#34;&#34;&#34;
+    final_normal_text = &#34;&#34;
+    final_calls = []
+
+    sp_result = self.detector.parse_streaming_increment(chunk_text, self.tools)
+    if sp_result.normal_text:
+        final_normal_text = sp_result.normal_text
+    if sp_result.calls:
+        final_calls.extend(sp_result.calls)
+        final_normal_text = sp_result.normal_text
+
+    return final_normal_text, final_calls</code></pre>
+</details>
+<div class="desc"><p>Streaming incremental parsing of chunks of text as they arrive.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>chunk_text</code></strong></dt>
+<dd>The new chunk of text to parse</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A tuple containing:
+- The normal text that should be displayed to the user
+- A list of tool calls parsed from the chunk</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.function_call" href="index.html">sglang.srt.function_call</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser">FunctionCallParser</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.ToolCallParserEnum" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.ToolCallParserEnum">ToolCallParserEnum</a></code></li>
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.get_ebnf" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.get_ebnf">get_ebnf</a></code></li>
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.get_structure_constraint" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.get_structure_constraint">get_structure_constraint</a></code></li>
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.get_structure_tag" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.get_structure_tag">get_structure_tag</a></code></li>
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.has_tool_call" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.has_tool_call">has_tool_call</a></code></li>
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.parse_non_stream" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.parse_non_stream">parse_non_stream</a></code></li>
+<li><code><a title="sglang.srt.function_call.function_call_parser.FunctionCallParser.parse_stream_chunk" href="#sglang.srt.function_call.function_call_parser.FunctionCallParser.parse_stream_chunk">parse_stream_chunk</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

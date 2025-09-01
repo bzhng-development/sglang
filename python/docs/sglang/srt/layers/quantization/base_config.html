@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.base_config API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.base_config</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.base_config.method_has_implemented_embedding"><code class="name flex">
+<span>def <span class="ident">method_has_implemented_embedding</span></span>(<span>method_class: Type[<a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a>]) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def method_has_implemented_embedding(method_class: Type[QuantizeMethodBase]) -&gt; bool:
+    &#34;&#34;&#34;
+    Not all quant methods have embedding implemented, so we need to check that
+    it exists for our given method. We check this by making sure the function
+    has been changed from the base implementation.
+    &#34;&#34;&#34;
+    base_embedding = inspect.getattr_static(QuantizeMethodBase, &#34;embedding&#34;, None)
+    class_embedding = inspect.getattr_static(method_class, &#34;embedding&#34;, None)
+
+    return class_embedding is not None and class_embedding is not base_embedding</code></pre>
+</details>
+<div class="desc"><p>Not all quant methods have embedding implemented, so we need to check that
+it exists for our given method. We check this by making sure the function
+has been changed from the base implementation.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase"><code class="flex name class">
+<span>class <span class="ident">FusedMoEMethodBase</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FusedMoEMethodBase(QuantizeMethodBase):
+
+    @abstractmethod
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        raise NotImplementedError
+
+    @abstractmethod
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+        raise NotImplementedError</code></pre>
+</details>
+<div class="desc"><p>Base class for different quantized methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.awq.AWQMoEMethod" href="awq.html#sglang.srt.layers.quantization.awq.AWQMoEMethod">AWQMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.blockwise_int8.BlockInt8MoEMethod" href="blockwise_int8.html#sglang.srt.layers.quantization.blockwise_int8.BlockInt8MoEMethod">BlockInt8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="compressed_tensors/compressed_tensors_moe.html#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.fp8.Fp8MoEMethod" href="fp8.html#sglang.srt.layers.quantization.fp8.Fp8MoEMethod">Fp8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinMoEMethod" href="gptq.html#sglang.srt.layers.quantization.gptq.GPTQMarlinMoEMethod">GPTQMarlinMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.modelopt_quant.ModelOptFp8MoEMethod" href="modelopt_quant.html#sglang.srt.layers.quantization.modelopt_quant.ModelOptFp8MoEMethod">ModelOptFp8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.modelopt_quant.ModelOptNvFp4FusedMoEMethod" href="modelopt_quant.html#sglang.srt.layers.quantization.modelopt_quant.ModelOptNvFp4FusedMoEMethod">ModelOptNvFp4FusedMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method" href="moe_wna16.html#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method">MoeWNA16Method</a></li>
+<li><a title="sglang.srt.layers.quantization.mxfp4.Mxfp4DynamicQuantMoEMethod" href="mxfp4.html#sglang.srt.layers.quantization.mxfp4.Mxfp4DynamicQuantMoEMethod">Mxfp4DynamicQuantMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.mxfp4.Mxfp4MoEMethod" href="mxfp4.html#sglang.srt.layers.quantization.mxfp4.Mxfp4MoEMethod">Mxfp4MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.unquant.UnquantizedFusedMoEMethod" href="unquant.html#sglang.srt.layers.quantization.unquant.UnquantizedFusedMoEMethod">UnquantizedFusedMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w4afp8.W4AFp8MoEMethod" href="w4afp8.html#sglang.srt.layers.quantization.w4afp8.W4AFp8MoEMethod">W4AFp8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_fp8.W8A8FP8MoEMethod" href="w8a8_fp8.html#sglang.srt.layers.quantization.w8a8_fp8.W8A8FP8MoEMethod">W8A8FP8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8MoEMethod" href="w8a8_int8.html#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8MoEMethod">NPU_W8A8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8MoEMethod" href="w8a8_int8.html#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8MoEMethod">W8A8Int8MoEMethod</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.LinearMethodBase"><code class="flex name class">
+<span>class <span class="ident">LinearMethodBase</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LinearMethodBase(QuantizeMethodBase):
+    &#34;&#34;&#34;Base class for different (maybe quantized) linear methods.&#34;&#34;&#34;
+
+    @abstractmethod
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: List[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        &#34;&#34;&#34;Create weights for a linear layer.
+           The weights will be set as attributes of the layer.
+
+        Args:
+            layer: The layer that is using the LinearMethodBase factory.
+            input_size_per_partition: Size of the weight input dim on rank X.
+            output_partition_sizes: Sizes of the output dim of each logical
+                weight on rank X. E.g., output_partition_sizes for QKVLinear
+                is a list contains the width of Wq, Wk, Wv on rank X.
+            input_size: Size of the input dim of the weight across all ranks.
+            output_size: Size of the output dim of the weight across all ranks.
+            params_dtype: Datatype of the parameters.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abstractmethod
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Apply the weights in layer to the input tensor.
+        Expects create_weights to have been called before on the layer.&#34;&#34;&#34;
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Base class for different (maybe quantized) linear methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.awq.AWQLinearMethod" href="awq.html#sglang.srt.layers.quantization.awq.AWQLinearMethod">AWQLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.awq.AWQMarlinLinearMethod" href="awq.html#sglang.srt.layers.quantization.awq.AWQMarlinLinearMethod">AWQMarlinLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.blockwise_int8.BlockInt8LinearMethod" href="blockwise_int8.html#sglang.srt.layers.quantization.blockwise_int8.BlockInt8LinearMethod">BlockInt8LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors.CompressedTensorsLinearMethod" href="compressed_tensors/compressed_tensors.html#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors.CompressedTensorsLinearMethod">CompressedTensorsLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.fp8.Fp8LinearMethod" href="fp8.html#sglang.srt.layers.quantization.fp8.Fp8LinearMethod">Fp8LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.fpgemm_fp8.FBGEMMFp8LinearMethod" href="fpgemm_fp8.html#sglang.srt.layers.quantization.fpgemm_fp8.FBGEMMFp8LinearMethod">FBGEMMFp8LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.gptq.GPTQLinearMethod" href="gptq.html#sglang.srt.layers.quantization.gptq.GPTQLinearMethod">GPTQLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinLinearMethod" href="gptq.html#sglang.srt.layers.quantization.gptq.GPTQMarlinLinearMethod">GPTQMarlinLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.marlin_utils.MarlinLinearMethod" href="marlin_utils.html#sglang.srt.layers.quantization.marlin_utils.MarlinLinearMethod">MarlinLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.modelopt_quant.ModelOptFp4LinearMethod" href="modelopt_quant.html#sglang.srt.layers.quantization.modelopt_quant.ModelOptFp4LinearMethod">ModelOptFp4LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.modelopt_quant.ModelOptFp8LinearMethod" href="modelopt_quant.html#sglang.srt.layers.quantization.modelopt_quant.ModelOptFp8LinearMethod">ModelOptFp8LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.petit.PetitNvFp4LinearMethod" href="petit.html#sglang.srt.layers.quantization.petit.PetitNvFp4LinearMethod">PetitNvFp4LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.qoq.QoQLinearMethod" href="qoq.html#sglang.srt.layers.quantization.qoq.QoQLinearMethod">QoQLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.unquant.UnquantizedLinearMethod" href="unquant.html#sglang.srt.layers.quantization.unquant.UnquantizedLinearMethod">UnquantizedLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_fp8.W8A8Fp8LinearMethod" href="w8a8_fp8.html#sglang.srt.layers.quantization.w8a8_fp8.W8A8Fp8LinearMethod">W8A8Fp8LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethod" href="w8a8_int8.html#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethod">NPU_W8A8DynamicLinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethod" href="w8a8_int8.html#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethod">NPU_W8A8LinearMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8LinearMethod" href="w8a8_int8.html#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8LinearMethod">W8A8Int8LinearMethod</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>self,<br>layer: torch.nn.Module,<br>x: torch.Tensor,<br>bias: Optional[torch.Tensor] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def apply(
+    self,
+    layer: torch.nn.Module,
+    x: torch.Tensor,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Apply the weights in layer to the input tensor.
+    Expects create_weights to have been called before on the layer.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Apply the weights in layer to the input tensor.
+Expects create_weights to have been called before on the layer.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights"><code class="name flex">
+<span>def <span class="ident">create_weights</span></span>(<span>self,<br>layer: torch.nn.Module,<br>input_size_per_partition: int,<br>output_partition_sizes: List[int],<br>input_size: int,<br>output_size: int,<br>params_dtype: torch.dtype,<br>**extra_weight_attrs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def create_weights(
+    self,
+    layer: torch.nn.Module,
+    input_size_per_partition: int,
+    output_partition_sizes: List[int],
+    input_size: int,
+    output_size: int,
+    params_dtype: torch.dtype,
+    **extra_weight_attrs,
+):
+    &#34;&#34;&#34;Create weights for a linear layer.
+       The weights will be set as attributes of the layer.
+
+    Args:
+        layer: The layer that is using the LinearMethodBase factory.
+        input_size_per_partition: Size of the weight input dim on rank X.
+        output_partition_sizes: Sizes of the output dim of each logical
+            weight on rank X. E.g., output_partition_sizes for QKVLinear
+            is a list contains the width of Wq, Wk, Wv on rank X.
+        input_size: Size of the input dim of the weight across all ranks.
+        output_size: Size of the output dim of the weight across all ranks.
+        params_dtype: Datatype of the parameters.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Create weights for a linear layer.
+The weights will be set as attributes of the layer.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>layer</code></strong></dt>
+<dd>The layer that is using the LinearMethodBase factory.</dd>
+<dt><strong><code>input_size_per_partition</code></strong></dt>
+<dd>Size of the weight input dim on rank X.</dd>
+<dt><strong><code>output_partition_sizes</code></strong></dt>
+<dd>Sizes of the output dim of each logical
+weight on rank X. E.g., output_partition_sizes for QKVLinear
+is a list contains the width of Wq, Wk, Wv on rank X.</dd>
+<dt><strong><code>input_size</code></strong></dt>
+<dd>Size of the input dim of the weight across all ranks.</dd>
+<dt><strong><code>output_size</code></strong></dt>
+<dd>Size of the output dim of the weight across all ranks.</dd>
+<dt><strong><code>params_dtype</code></strong></dt>
+<dd>Datatype of the parameters.</dd>
+</dl></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig"><code class="flex name class">
+<span>class <span class="ident">QuantizationConfig</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QuantizationConfig(ABC):
+    &#34;&#34;&#34;Base class for quantization configs.&#34;&#34;&#34;
+
+    def __init__(self):
+        super().__init__()
+        # mapping is updated by models as they initialize
+        self.packed_modules_mapping: Dict[str, List[str]] = dict()
+
+    @abstractmethod
+    def get_name(self) -&gt; str:
+        &#34;&#34;&#34;Name of the quantization method.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_supported_act_dtypes(self) -&gt; List[torch.dtype]:
+        &#34;&#34;&#34;List of supported activation dtypes.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @classmethod
+    @abstractmethod
+    def get_min_capability(cls) -&gt; int:
+        &#34;&#34;&#34;Minimum GPU capability to support the quantization method.
+
+        E.g., 70 for Volta, 75 for Turing, 80 for Ampere.
+        This requirement is due to the custom CUDA kernels used by the
+        quantization method.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @staticmethod
+    @abstractmethod
+    def get_config_filenames() -&gt; List[str]:
+        &#34;&#34;&#34;List of filenames to search for in the model directory.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @classmethod
+    @abstractmethod
+    def from_config(cls, config: Dict[str, Any]) -&gt; &#34;QuantizationConfig&#34;:
+        &#34;&#34;&#34;Create a config class from the model&#39;s quantization config.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @classmethod
+    def override_quantization_method(cls, hf_quant_cfg, user_quant) -&gt; Optional[str]:
+        &#34;&#34;&#34;
+        Detects if this quantization method can support a given checkpoint
+        format by overriding the user specified quantization method --
+        this method should only be overwritten by subclasses in exceptional
+        circumstances
+        &#34;&#34;&#34;
+        return None
+
+    @staticmethod
+    def get_from_keys(config: Dict[str, Any], keys: List[str]) -&gt; Any:
+        &#34;&#34;&#34;Get a value from the model&#39;s quantization config.&#34;&#34;&#34;
+        for key in keys:
+            if key in config:
+                return config[key]
+        raise ValueError(
+            f&#34;Cannot find any of {keys} in the model&#39;s &#34; &#34;quantization config.&#34;
+        )
+
+    @staticmethod
+    def get_from_keys_or(config: Dict[str, Any], keys: List[str], default: Any) -&gt; Any:
+        &#34;&#34;&#34;Get a optional value from the model&#39;s quantization config.&#34;&#34;&#34;
+        try:
+            return QuantizationConfig.get_from_keys(config, keys)
+        except ValueError:
+            return default
+
+    @abstractmethod
+    def get_quant_method(
+        self, layer: torch.nn.Module, prefix: str
+    ) -&gt; Optional[QuantizeMethodBase]:
+        &#34;&#34;&#34;Get the quantize method to use for the quantized layer.
+
+        Args:
+            layer: The layer for the quant method.
+            prefix: The full name of the layer in the state dict
+        Returns:
+            The quantize method. None if the given layer doesn&#39;t support quant
+            method.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_scaled_act_names(self) -&gt; List[str]:
+        &#34;&#34;&#34;Returns the activation function names that should be post-scaled.
+
+        For now, this is only used by AWQ.
+        &#34;&#34;&#34;
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Base class for quantization configs.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.awq.AWQConfig" href="awq.html#sglang.srt.layers.quantization.awq.AWQConfig">AWQConfig</a></li>
+<li><a title="sglang.srt.layers.quantization.awq.AWQMarlinConfig" href="awq.html#sglang.srt.layers.quantization.awq.AWQMarlinConfig">AWQMarlinConfig</a></li>
+<li><a title="sglang.srt.layers.quantization.blockwise_int8.BlockInt8Config" href="blockwise_int8.html#sglang.srt.layers.quantization.blockwise_int8.BlockInt8Config">BlockInt8Config</a></li>
+<li>sglang.srt.layers.quantization.compressed_tensors.compressed_tensors.CompressedTensorsConfig</li>
+<li><a title="sglang.srt.layers.quantization.fp8.Fp8Config" href="fp8.html#sglang.srt.layers.quantization.fp8.Fp8Config">Fp8Config</a></li>
+<li><a title="sglang.srt.layers.quantization.fpgemm_fp8.FBGEMMFp8Config" href="fpgemm_fp8.html#sglang.srt.layers.quantization.fpgemm_fp8.FBGEMMFp8Config">FBGEMMFp8Config</a></li>
+<li><a title="sglang.srt.layers.quantization.gptq.GPTQConfig" href="gptq.html#sglang.srt.layers.quantization.gptq.GPTQConfig">GPTQConfig</a></li>
+<li><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig" href="gptq.html#sglang.srt.layers.quantization.gptq.GPTQMarlinConfig">GPTQMarlinConfig</a></li>
+<li><a title="sglang.srt.layers.quantization.marlin_utils.MarlinConfig" href="marlin_utils.html#sglang.srt.layers.quantization.marlin_utils.MarlinConfig">MarlinConfig</a></li>
+<li><a title="sglang.srt.layers.quantization.modelopt_quant.ModelOptFp4Config" href="modelopt_quant.html#sglang.srt.layers.quantization.modelopt_quant.ModelOptFp4Config">ModelOptFp4Config</a></li>
+<li><a title="sglang.srt.layers.quantization.modelopt_quant.ModelOptFp8Config" href="modelopt_quant.html#sglang.srt.layers.quantization.modelopt_quant.ModelOptFp8Config">ModelOptFp8Config</a></li>
+<li><a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config" href="moe_wna16.html#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config">MoeWNA16Config</a></li>
+<li><a title="sglang.srt.layers.quantization.mxfp4.Mxfp4Config" href="mxfp4.html#sglang.srt.layers.quantization.mxfp4.Mxfp4Config">Mxfp4Config</a></li>
+<li><a title="sglang.srt.layers.quantization.petit.PetitNvFp4Config" href="petit.html#sglang.srt.layers.quantization.petit.PetitNvFp4Config">PetitNvFp4Config</a></li>
+<li><a title="sglang.srt.layers.quantization.qoq.QoQConfig" href="qoq.html#sglang.srt.layers.quantization.qoq.QoQConfig">QoQConfig</a></li>
+<li><a title="sglang.srt.layers.quantization.w4afp8.W4AFp8Config" href="w4afp8.html#sglang.srt.layers.quantization.w4afp8.W4AFp8Config">W4AFp8Config</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_fp8.W8A8Fp8Config" href="w8a8_fp8.html#sglang.srt.layers.quantization.w8a8_fp8.W8A8Fp8Config">W8A8Fp8Config</a></li>
+<li><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="w8a8_int8.html#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config"><code class="name flex">
+<span>def <span class="ident">from_config</span></span>(<span>config: Dict[str, Any]) ‑> <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a config class from the model's quantization config.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames"><code class="name flex">
+<span>def <span class="ident">get_config_filenames</span></span>(<span>) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+@abstractmethod
+def get_config_filenames() -&gt; List[str]:
+    &#34;&#34;&#34;List of filenames to search for in the model directory.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>List of filenames to search for in the model directory.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys"><code class="name flex">
+<span>def <span class="ident">get_from_keys</span></span>(<span>config: Dict[str, Any], keys: List[str]) ‑> Any</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_from_keys(config: Dict[str, Any], keys: List[str]) -&gt; Any:
+    &#34;&#34;&#34;Get a value from the model&#39;s quantization config.&#34;&#34;&#34;
+    for key in keys:
+        if key in config:
+            return config[key]
+    raise ValueError(
+        f&#34;Cannot find any of {keys} in the model&#39;s &#34; &#34;quantization config.&#34;
+    )</code></pre>
+</details>
+<div class="desc"><p>Get a value from the model's quantization config.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or"><code class="name flex">
+<span>def <span class="ident">get_from_keys_or</span></span>(<span>config: Dict[str, Any], keys: List[str], default: Any) ‑> Any</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_from_keys_or(config: Dict[str, Any], keys: List[str], default: Any) -&gt; Any:
+    &#34;&#34;&#34;Get a optional value from the model&#39;s quantization config.&#34;&#34;&#34;
+    try:
+        return QuantizationConfig.get_from_keys(config, keys)
+    except ValueError:
+        return default</code></pre>
+</details>
+<div class="desc"><p>Get a optional value from the model's quantization config.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability"><code class="name flex">
+<span>def <span class="ident">get_min_capability</span></span>(<span>) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Minimum GPU capability to support the quantization method.</p>
+<p>E.g., 70 for Volta, 75 for Turing, 80 for Ampere.
+This requirement is due to the custom CUDA kernels used by the
+quantization method.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method"><code class="name flex">
+<span>def <span class="ident">override_quantization_method</span></span>(<span>hf_quant_cfg, user_quant) ‑> str | None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Detects if this quantization method can support a given checkpoint
+format by overriding the user specified quantization method &ndash;
+this method should only be overwritten by subclasses in exceptional
+circumstances</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name"><code class="name flex">
+<span>def <span class="ident">get_name</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def get_name(self) -&gt; str:
+    &#34;&#34;&#34;Name of the quantization method.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Name of the quantization method.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method"><code class="name flex">
+<span>def <span class="ident">get_quant_method</span></span>(<span>self, layer: torch.nn.Module, prefix: str) ‑> <a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def get_quant_method(
+    self, layer: torch.nn.Module, prefix: str
+) -&gt; Optional[QuantizeMethodBase]:
+    &#34;&#34;&#34;Get the quantize method to use for the quantized layer.
+
+    Args:
+        layer: The layer for the quant method.
+        prefix: The full name of the layer in the state dict
+    Returns:
+        The quantize method. None if the given layer doesn&#39;t support quant
+        method.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Get the quantize method to use for the quantized layer.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>layer</code></strong></dt>
+<dd>The layer for the quant method.</dd>
+<dt><strong><code>prefix</code></strong></dt>
+<dd>The full name of the layer in the state dict</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The quantize method. None if the given layer doesn't support quant
+method.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names"><code class="name flex">
+<span>def <span class="ident">get_scaled_act_names</span></span>(<span>self) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def get_scaled_act_names(self) -&gt; List[str]:
+    &#34;&#34;&#34;Returns the activation function names that should be post-scaled.
+
+    For now, this is only used by AWQ.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Returns the activation function names that should be post-scaled.</p>
+<p>For now, this is only used by AWQ.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes"><code class="name flex">
+<span>def <span class="ident">get_supported_act_dtypes</span></span>(<span>self) ‑> List[torch.dtype]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def get_supported_act_dtypes(self) -&gt; List[torch.dtype]:
+    &#34;&#34;&#34;List of supported activation dtypes.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>List of supported activation dtypes.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizeMethodBase"><code class="flex name class">
+<span>class <span class="ident">QuantizeMethodBase</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QuantizeMethodBase(ABC):
+    &#34;&#34;&#34;Base class for different quantized methods.&#34;&#34;&#34;
+
+    @abstractmethod
+    def create_weights(
+        self, layer: torch.nn.Module, *weight_args, **extra_weight_attrs
+    ):
+        &#34;&#34;&#34;Create weights for a layer.
+
+        The weights will be set as attributes of the layer.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    @abstractmethod
+    def apply(self, layer: torch.nn.Module, *args, **kwargs) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Apply the weights in layer to the input tensor.
+
+        Expects create_weights to have been called before on the layer.&#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def process_weights_after_loading(self, layer: nn.Module) -&gt; None:
+        &#34;&#34;&#34;Process the weight after loading.
+
+        This can be used for example, to transpose weights for computation.
+        &#34;&#34;&#34;
+        return</code></pre>
+</details>
+<div class="desc"><p>Base class for different quantized methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.kv_cache.BaseKVCacheMethod" href="kv_cache.html#sglang.srt.layers.quantization.kv_cache.BaseKVCacheMethod">BaseKVCacheMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.unquant.UnquantizedEmbeddingMethod" href="unquant.html#sglang.srt.layers.quantization.unquant.UnquantizedEmbeddingMethod">UnquantizedEmbeddingMethod</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>self, layer: torch.nn.Module, *args, **kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def apply(self, layer: torch.nn.Module, *args, **kwargs) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Apply the weights in layer to the input tensor.
+
+    Expects create_weights to have been called before on the layer.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Apply the weights in layer to the input tensor.</p>
+<p>Expects create_weights to have been called before on the layer.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights"><code class="name flex">
+<span>def <span class="ident">create_weights</span></span>(<span>self, layer: torch.nn.Module, *weight_args, **extra_weight_attrs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def create_weights(
+    self, layer: torch.nn.Module, *weight_args, **extra_weight_attrs
+):
+    &#34;&#34;&#34;Create weights for a layer.
+
+    The weights will be set as attributes of the layer.&#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Create weights for a layer.</p>
+<p>The weights will be set as attributes of the layer.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading"><code class="name flex">
+<span>def <span class="ident">process_weights_after_loading</span></span>(<span>self, layer: nn.Module) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_weights_after_loading(self, layer: nn.Module) -&gt; None:
+    &#34;&#34;&#34;Process the weight after loading.
+
+    This can be used for example, to transpose weights for computation.
+    &#34;&#34;&#34;
+    return</code></pre>
+</details>
+<div class="desc"><p>Process the weight after loading.</p>
+<p>This can be used for example, to transpose weights for computation.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.base_config.method_has_implemented_embedding" href="#sglang.srt.layers.quantization.base_config.method_has_implemented_embedding">method_has_implemented_embedding</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading" href="#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

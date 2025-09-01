@@ -1,0 +1,1847 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.gemma3_mm API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.gemma3_mm</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration"><code class="flex name class">
+<span>class <span class="ident">Gemma3ForConditionalGeneration</span></span>
+<span>(</span><span>config: transformers.models.gemma3.configuration_gemma3.Gemma3Config,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Gemma3ForConditionalGeneration(PreTrainedModel):
+    config_class = Gemma3Config
+    &#34;&#34;&#34;Gemma3 multimodal model for conditional generation.&#34;&#34;&#34;
+
+    # BitandBytes specific attributes
+    default_bitsandbytes_target_modules = [
+        &#34;.gate_proj.&#34;,
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+        &#34;.out_proj.&#34;,
+    ]
+    bitsandbytes_stacked_params_mapping = {
+        # shard_name, weight_name, index
+        &#34;q_proj&#34;: (&#34;qkv_proj&#34;, 0),
+        &#34;k_proj&#34;: (&#34;qkv_proj&#34;, 1),
+        &#34;v_proj&#34;: (&#34;qkv_proj&#34;, 2),
+        &#34;gate_proj&#34;: (&#34;gate_up_proj&#34;, 0),
+        &#34;up_proj&#34;: (&#34;gate_up_proj&#34;, 1),
+        &#34;out_proj&#34;: (&#34;proj&#34;, 0),
+    }
+
+    packed_modules_mapping = {
+        &#34;qkv_proj&#34;: [
+            &#34;q_proj&#34;,
+            &#34;k_proj&#34;,
+            &#34;v_proj&#34;,
+        ],
+        &#34;gate_up_proj&#34;: [
+            &#34;gate_proj&#34;,
+            &#34;up_proj&#34;,
+        ],
+    }
+
+    # LoRA specific attributes
+    supported_lora_modules = [
+        &#34;qkv_proj&#34;,
+        &#34;o_proj&#34;,
+        &#34;gate_up_proj&#34;,
+        &#34;down_proj&#34;,
+    ]
+    # Gemma does not apply LoRA to the embedding layer.
+    embedding_modules = {}
+    embedding_padding_modules = []
+    supports_lora = True
+
+    def __init__(
+        self,
+        config: Gemma3Config,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__(config=config)
+        self.config = config
+        self.quant_config = quant_config
+
+        self.vision_tower = SiglipVisionModel(
+            config=config.vision_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;vision_tower&#34;, prefix),
+        )
+
+        self.multi_modal_projector = Gemma3MultiModalProjector(config)
+        self.vocab_size = config.text_config.vocab_size
+
+        # Text model
+        self.language_model = Gemma3ForCausalLM(
+            config.text_config,
+            quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        if self.language_model.logits_processor.logit_scale:
+            logit_scale = getattr(config, &#34;logit_scale&#34;, 1.0)
+            self.language_model.logits_processor.logit_scale *= logit_scale
+        self.post_init()
+
+    def pad_input_ids(
+        self, input_ids: List[int], image_inputs: MultimodalInputs
+    ) -&gt; List[int]:
+        &#34;&#34;&#34;Pad input IDs with image tokens.&#34;&#34;&#34;
+        # Get special token IDs
+        im_start_id: int = image_inputs.im_start_id
+        im_end_id: int = image_inputs.im_end_id
+
+        media_token_pairs = [(im_start_id, im_end_id)]
+        pattern = MultiModalityDataPaddingPatternTokenPairs(media_token_pairs)
+        ids = pattern.pad_input_tokens(input_ids, image_inputs)
+        return ids
+
+    def prepare_attn_masks(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        mask_dtype: torch.dtype,
+        **kwargs,
+    ) -&gt; Dict:
+        &#34;&#34;&#34;Prepare attention masks for multimodal inputs.&#34;&#34;&#34;
+        kwargs[&#34;has_images&#34;] = True
+
+        # Distinguish sequences by position id 0
+        start_indices = (positions == 0).cpu().nonzero()
+        num_seqs = len(start_indices)
+        seq_lens = []
+
+        for i in range(num_seqs):
+            start_idx = start_indices[i].item()
+            if i &lt; num_seqs - 1:
+                end_idx = start_indices[i + 1].item()
+            else:
+                end_idx = len(input_ids)
+            seq_lens.append(end_idx - start_idx)
+
+        kwargs[&#34;seq_lens&#34;] = seq_lens
+
+        # Create attention masks
+        global_attn_masks = []
+        local_attn_masks = []
+        sliding_window = self.config.text_config.interleaved_sliding_window
+
+        start_idx = 0
+        for seq_len in seq_lens:
+            end_idx = start_idx + seq_len
+            input_token_ids = input_ids[start_idx:end_idx]
+            start_idx = end_idx
+
+            # Create global causal mask
+            global_attn_mask = torch.empty(
+                1,
+                1,
+                seq_len,
+                seq_len,
+                dtype=mask_dtype,
+                device=input_ids.device,
+            )
+            global_attn_mask.fill_(float(&#34;-inf&#34;))
+            global_attn_mask = global_attn_mask.triu(diagonal=1)
+
+            # Consider bidirectional attention between image tokens
+            img_mask = torch.zeros_like(global_attn_mask)
+            img_pos = input_token_ids == self.config.image_token_index
+            img_mask[:, :, :, img_pos] += 1
+            img_mask[:, :, img_pos, :] += 1
+            global_attn_mask = torch.where(img_mask == 2, 0, global_attn_mask)
+            global_attn_masks.append(global_attn_mask)
+
+            # Create local causal mask with sliding window
+            local_attn_mask = torch.ones_like(global_attn_mask)
+            local_attn_mask = torch.tril(local_attn_mask, diagonal=-sliding_window)
+            local_attn_mask = torch.where(
+                local_attn_mask == 0, global_attn_mask, float(&#34;-inf&#34;)
+            )
+            local_attn_masks.append(local_attn_mask)
+
+        kwargs[&#34;global_attn_masks&#34;] = global_attn_masks
+        kwargs[&#34;local_attn_masks&#34;] = local_attn_masks
+        return kwargs
+
+    def get_input_embeddings(self) -&gt; nn.Embedding:
+        return self.language_model.get_input_embeddings()
+
+    def get_attention_sliding_window_size(self):
+        &#34;&#34;&#34;
+        This value is used to initialize attention backends in `ForwardBatch`.
+        &#34;&#34;&#34;
+        return self.language_model.get_attention_sliding_window_size()
+
+    def get_image_feature(self, items: List[MultimodalDataItem]):
+        &#34;&#34;&#34;
+        Projects the last hidden state from the vision model into language model space.
+
+        Returns:
+            image_features (`torch.Tensor`): Image feature tensor of shape `(num_images, image_length, embed_dim)`).
+        &#34;&#34;&#34;
+        # Process images one by one to handle flatten_batch=True constraint in vision_tower
+        all_pixel_values = flatten_nested_list([item.feature for item in items])
+        vision_outputs_list = []
+
+        for pixel_values_batch in all_pixel_values:
+            # Normalize input shape to [batch_size, channels, height, width]
+            if pixel_values_batch.dim() == 5:
+                pixel_values_batch = pixel_values_batch.squeeze(0)
+            elif pixel_values_batch.dim() == 3:
+                pixel_values_batch = pixel_values_batch.unsqueeze(0)
+            elif pixel_values_batch.dim() != 4:
+                raise ValueError(
+                    f&#34;Unexpected pixel_values shape: {pixel_values_batch.shape}&#34;
+                )
+
+            # Process each image in the batch
+            batch_size = pixel_values_batch.shape[0]
+            for i in range(batch_size):
+                pixel_value = pixel_values_batch[i : i + 1]  # Keep batch dimension as 1
+                pixel_value = pixel_value.to(
+                    device=self.vision_tower.device, dtype=self.language_model.dtype()
+                )
+                vision_output = self.vision_tower(pixel_values=pixel_value)
+                vision_outputs_list.append(vision_output)
+
+        # Concatenate all vision outputs
+        vision_outputs = torch.cat(vision_outputs_list, dim=0)
+        image_features = self.multi_modal_projector(vision_outputs)
+        return image_features
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.LongTensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+        **kwargs: object,
+    ) -&gt; LogitsProcessor:
+        r&#34;&#34;&#34;
+            labels (`torch.LongTensor` of shape `(batch_size, sequence_length)`, *optional*):
+                Labels for computing the masked language modeling loss. Indices should either be in `[0, ...,
+                config.text_config.vocab_size]` or -100 (see `input_ids` docstring). Tokens with indices set to `-100` are ignored
+                (masked), the loss is only computed for the tokens with labels in `[0, ..., config.text_config.vocab_size]`.
+
+            logits_to_keep (`int` or `torch.Tensor`, *optional*):
+                If an `int`, compute logits for the last `logits_to_keep` tokens. If `0`, calculate logits for all
+                `input_ids` (special case). Only last token logits are needed for generation, and calculating them only for that
+                token can save memory, which becomes pretty significant for long sequences or large vocabulary size.
+                If a `torch.Tensor`, must be 1D corresponding to the indices to keep in the sequence length dimension.
+                This is useful when using packed tensor format (single dimension for batch and sequence length).
+
+        Returns:
+
+        Example:
+
+        ```python
+        &gt;&gt;&gt; from PIL import Image
+        &gt;&gt;&gt; import requests
+        &gt;&gt;&gt; from transformers import AutoProcessor, Gemma3ForConditionalGeneration
+
+        &gt;&gt;&gt; model = Gemma3ForConditionalGeneration.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+        &gt;&gt;&gt; processor = AutoProcessor.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+
+        &gt;&gt;&gt; prompt = &#34;answer en Where is the cow standing?&#34;
+        &gt;&gt;&gt; url = &#34;https://huggingface.co/gv-hf/Gemma3-test-224px-hf/resolve/main/cow_beach_1.png&#34;
+        &gt;&gt;&gt; image = Image.open(requests.get(url, stream=True).raw)
+
+        &gt;&gt;&gt; inputs = processor(images=image, text=prompt,  return_tensors=&#34;pt&#34;)
+
+        &gt;&gt;&gt; # Generate
+        &gt;&gt;&gt; generate_ids = model.generate(**inputs, max_length=30)
+        &gt;&gt;&gt; processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        &#34;answer en Where is the cow standing?\nbeach&#34;
+        ```&#34;&#34;&#34;
+
+        # Important: position_ids in Gemma3 are 1-indexed
+        # This really does cost me sometime
+        positions += 1
+
+        # Replace image id with PAD if the image token if OOV, to avoid index-errors
+        if input_ids is not None and self.config.image_token_index &gt;= self.vocab_size:
+            special_image_mask = input_ids == self.config.image_token_index
+            llm_input_ids = input_ids.clone()
+            llm_input_ids[special_image_mask] = 0
+        else:
+            llm_input_ids = input_ids
+
+        hs = general_mm_embed_routine(
+            input_ids=llm_input_ids,
+            forward_batch=forward_batch,
+            language_model=self.language_model,
+            multimodal_model=self,
+            positions=positions,
+        )
+
+        return hs
+
+    def tie_weights(self):
+        return self.language_model.tie_weights()
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+            (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+            (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+        ]
+        &#34;&#34;&#34;Load weights for the model.&#34;&#34;&#34;
+        params_dict = dict(self.named_parameters())
+        loaded_params: Set[str] = set()
+
+        for name, loaded_weight in weights:
+            if &#34;language_model&#34; in name:
+                # Gemma3ForCausalLM.load_weights(self, [(name.replace(&#34;language_model.&#34;, &#34;&#34;), loaded_weight)])
+                causal_loaded_params = Gemma3ForCausalLM.load_weights(
+                    self, [(name, loaded_weight)]
+                )
+                loaded_params.update(causal_loaded_params)
+                continue
+            else:
+                for param_name, weight_name, shard_id in stacked_params_mapping:
+                    if weight_name not in name:
+                        continue
+                    name = name.replace(weight_name, param_name)
+                    # Skip loading extra bias for GPTQ models.
+                    if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                        continue
+                    param = params_dict[name]
+                    weight_loader = param.weight_loader
+                    weight_loader(param, loaded_weight, shard_id)
+                    break
+                else:
+                    if &#34;vision_model&#34; in name:
+                        # adapt to VisionAttention
+                        name = name.replace(&#34;.self_attn.out_proj&#34;, &#34;.self_attn.proj&#34;)
+                    # Skip loading extra bias for GPTQ models
+                    if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                        continue
+                    # Remapping the name of FP8 kv-scale
+                    name = maybe_remap_kv_scale_name(name, params_dict)
+                    if name is None:
+                        continue
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+                loaded_params.add(name)
+        unloaded_params = params_dict.keys() - loaded_params
+        if unloaded_params:
+            pass
+            # raise RuntimeError(
+            #     f&#34;Some weights are not initialized from checkpoints: {unloaded_params}&#34;)
+        return loaded_params</code></pre>
+</details>
+<div class="desc"><p>Base class for all models.</p>
+<p>[<code>PreTrainedModel</code>] takes care of storing the configuration of the models and handles methods for loading,
+downloading and saving models as well as a few methods common to all models to:</p>
+<pre><code>- resize the input embeddings,
+- prune heads in the self-attention heads.
+</code></pre>
+<p>Class attributes (overridden by derived classes):</p>
+<pre><code>- **config_class** ([`PretrainedConfig`]) -- A subclass of [`PretrainedConfig`] to use as configuration class
+  for this model architecture.
+- **load_tf_weights** (&lt;code&gt;Callable&lt;/code&gt;) -- A python *method* for loading a TensorFlow checkpoint in a PyTorch model,
+  taking as arguments:
+
+    - **model** ([`PreTrainedModel`]) -- An instance of the model on which to load the TensorFlow checkpoint.
+    - **config** ([`PreTrainedConfig`]) -- An instance of the configuration associated to the model.
+    - **path** (&lt;code&gt;str&lt;/code&gt;) -- A path to the TensorFlow checkpoint.
+
+- **base_model_prefix** (&lt;code&gt;str&lt;/code&gt;) -- A string indicating the attribute associated to the base model in derived
+  classes of the same architecture adding modules on top of the base model.
+- **is_parallelizable** (&lt;code&gt;bool&lt;/code&gt;) -- A flag indicating whether this model supports model parallelization.
+- **main_input_name** (&lt;code&gt;str&lt;/code&gt;) -- The name of the principal input to the model (often &lt;code&gt;input\_ids&lt;/code&gt; for NLP
+  models, &lt;code&gt;pixel\_values&lt;/code&gt; for vision models and &lt;code&gt;input\_values&lt;/code&gt; for speech models).
+- **can_record_outputs** (dict):
+</code></pre>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.modeling_utils.PreTrainedModel</li>
+<li>torch.nn.modules.module.Module</li>
+<li>transformers.modeling_utils.EmbeddingAccessMixin</li>
+<li>transformers.modeling_utils.ModuleUtilsMixin</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+<li>transformers.integrations.peft.PeftAdapterMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.bitsandbytes_stacked_params_mapping"><code class="name">var <span class="ident">bitsandbytes_stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.config_class"><code class="name">var <span class="ident">config_class</span></code></dt>
+<dd>
+<div class="desc"><p>Gemma3 multimodal model for conditional generation.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.default_bitsandbytes_target_modules"><code class="name">var <span class="ident">default_bitsandbytes_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_modules"><code class="name">var <span class="ident">embedding_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_padding_modules"><code class="name">var <span class="ident">embedding_padding_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.packed_modules_mapping"><code class="name">var <span class="ident">packed_modules_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supported_lora_modules"><code class="name">var <span class="ident">supported_lora_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supports_lora"><code class="name">var <span class="ident">supports_lora</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.LongTensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None,<br>**kwargs: object) ‑> <a title="sglang.srt.layers.logits_processor.LogitsProcessor" href="../layers/logits_processor.html#sglang.srt.layers.logits_processor.LogitsProcessor">LogitsProcessor</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.LongTensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+    **kwargs: object,
+) -&gt; LogitsProcessor:
+    r&#34;&#34;&#34;
+        labels (`torch.LongTensor` of shape `(batch_size, sequence_length)`, *optional*):
+            Labels for computing the masked language modeling loss. Indices should either be in `[0, ...,
+            config.text_config.vocab_size]` or -100 (see `input_ids` docstring). Tokens with indices set to `-100` are ignored
+            (masked), the loss is only computed for the tokens with labels in `[0, ..., config.text_config.vocab_size]`.
+
+        logits_to_keep (`int` or `torch.Tensor`, *optional*):
+            If an `int`, compute logits for the last `logits_to_keep` tokens. If `0`, calculate logits for all
+            `input_ids` (special case). Only last token logits are needed for generation, and calculating them only for that
+            token can save memory, which becomes pretty significant for long sequences or large vocabulary size.
+            If a `torch.Tensor`, must be 1D corresponding to the indices to keep in the sequence length dimension.
+            This is useful when using packed tensor format (single dimension for batch and sequence length).
+
+    Returns:
+
+    Example:
+
+    ```python
+    &gt;&gt;&gt; from PIL import Image
+    &gt;&gt;&gt; import requests
+    &gt;&gt;&gt; from transformers import AutoProcessor, Gemma3ForConditionalGeneration
+
+    &gt;&gt;&gt; model = Gemma3ForConditionalGeneration.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+    &gt;&gt;&gt; processor = AutoProcessor.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+
+    &gt;&gt;&gt; prompt = &#34;answer en Where is the cow standing?&#34;
+    &gt;&gt;&gt; url = &#34;https://huggingface.co/gv-hf/Gemma3-test-224px-hf/resolve/main/cow_beach_1.png&#34;
+    &gt;&gt;&gt; image = Image.open(requests.get(url, stream=True).raw)
+
+    &gt;&gt;&gt; inputs = processor(images=image, text=prompt,  return_tensors=&#34;pt&#34;)
+
+    &gt;&gt;&gt; # Generate
+    &gt;&gt;&gt; generate_ids = model.generate(**inputs, max_length=30)
+    &gt;&gt;&gt; processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+    &#34;answer en Where is the cow standing?\nbeach&#34;
+    ```&#34;&#34;&#34;
+
+    # Important: position_ids in Gemma3 are 1-indexed
+    # This really does cost me sometime
+    positions += 1
+
+    # Replace image id with PAD if the image token if OOV, to avoid index-errors
+    if input_ids is not None and self.config.image_token_index &gt;= self.vocab_size:
+        special_image_mask = input_ids == self.config.image_token_index
+        llm_input_ids = input_ids.clone()
+        llm_input_ids[special_image_mask] = 0
+    else:
+        llm_input_ids = input_ids
+
+    hs = general_mm_embed_routine(
+        input_ids=llm_input_ids,
+        forward_batch=forward_batch,
+        language_model=self.language_model,
+        multimodal_model=self,
+        positions=positions,
+    )
+
+    return hs</code></pre>
+</details>
+<div class="desc"><p>labels (<code>torch.LongTensor</code> of shape <code>(batch_size, sequence_length)</code>, <em>optional</em>):
+Labels for computing the masked language modeling loss. Indices should either be in <code>[0, ...,
+config.text_config.vocab_size]</code> or -100 (see <code>input_ids&lt;code&gt; docstring). Tokens with indices set to &lt;/code&gt;-100</code> are ignored
+(masked), the loss is only computed for the tokens with labels in <code>[0, &hellip;, config.text_config.vocab_size]</code>.</p>
+<pre><code>logits_to_keep (&lt;code&gt;int&lt;/code&gt; or &lt;code&gt;torch.Tensor&lt;/code&gt;, *optional*):
+    If an &lt;code&gt;int&lt;/code&gt;, compute logits for the last &lt;code&gt;logits\_to\_keep&lt;/code&gt; tokens. If &lt;code&gt;0&lt;/code&gt;, calculate logits for all
+    &lt;code&gt;input\_ids&lt;/code&gt; (special case). Only last token logits are needed for generation, and calculating them only for that
+    token can save memory, which becomes pretty significant for long sequences or large vocabulary size.
+    If a &lt;code&gt;torch.Tensor&lt;/code&gt;, must be 1D corresponding to the indices to keep in the sequence length dimension.
+    This is useful when using packed tensor format (single dimension for batch and sequence length).
+</code></pre>
+<p>Returns:</p>
+<p>Example:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from PIL import Image
+&gt;&gt;&gt; import requests
+&gt;&gt;&gt; from transformers import AutoProcessor, Gemma3ForConditionalGeneration
+
+&gt;&gt;&gt; model = Gemma3ForConditionalGeneration.from_pretrained(&quot;google/Gemma3-test-224px-hf&quot;)
+&gt;&gt;&gt; processor = AutoProcessor.from_pretrained(&quot;google/Gemma3-test-224px-hf&quot;)
+
+&gt;&gt;&gt; prompt = &quot;answer en Where is the cow standing?&quot;
+&gt;&gt;&gt; url = &quot;https://huggingface.co/gv-hf/Gemma3-test-224px-hf/resolve/main/cow_beach_1.png&quot;
+&gt;&gt;&gt; image = Image.open(requests.get(url, stream=True).raw)
+
+&gt;&gt;&gt; inputs = processor(images=image, text=prompt,  return_tensors=&quot;pt&quot;)
+
+&gt;&gt;&gt; # Generate
+&gt;&gt;&gt; generate_ids = model.generate(**inputs, max_length=30)
+&gt;&gt;&gt; processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+&quot;answer en Where is the cow standing?\nbeach&quot;
+</code></pre></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_attention_sliding_window_size"><code class="name flex">
+<span>def <span class="ident">get_attention_sliding_window_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_attention_sliding_window_size(self):
+    &#34;&#34;&#34;
+    This value is used to initialize attention backends in `ForwardBatch`.
+    &#34;&#34;&#34;
+    return self.language_model.get_attention_sliding_window_size()</code></pre>
+</details>
+<div class="desc"><p>This value is used to initialize attention backends in <code>ForwardBatch</code>.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_image_feature"><code class="name flex">
+<span>def <span class="ident">get_image_feature</span></span>(<span>self,<br>items: List[<a title="sglang.srt.managers.schedule_batch.MultimodalDataItem" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalDataItem">MultimodalDataItem</a>])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_image_feature(self, items: List[MultimodalDataItem]):
+    &#34;&#34;&#34;
+    Projects the last hidden state from the vision model into language model space.
+
+    Returns:
+        image_features (`torch.Tensor`): Image feature tensor of shape `(num_images, image_length, embed_dim)`).
+    &#34;&#34;&#34;
+    # Process images one by one to handle flatten_batch=True constraint in vision_tower
+    all_pixel_values = flatten_nested_list([item.feature for item in items])
+    vision_outputs_list = []
+
+    for pixel_values_batch in all_pixel_values:
+        # Normalize input shape to [batch_size, channels, height, width]
+        if pixel_values_batch.dim() == 5:
+            pixel_values_batch = pixel_values_batch.squeeze(0)
+        elif pixel_values_batch.dim() == 3:
+            pixel_values_batch = pixel_values_batch.unsqueeze(0)
+        elif pixel_values_batch.dim() != 4:
+            raise ValueError(
+                f&#34;Unexpected pixel_values shape: {pixel_values_batch.shape}&#34;
+            )
+
+        # Process each image in the batch
+        batch_size = pixel_values_batch.shape[0]
+        for i in range(batch_size):
+            pixel_value = pixel_values_batch[i : i + 1]  # Keep batch dimension as 1
+            pixel_value = pixel_value.to(
+                device=self.vision_tower.device, dtype=self.language_model.dtype()
+            )
+            vision_output = self.vision_tower(pixel_values=pixel_value)
+            vision_outputs_list.append(vision_output)
+
+    # Concatenate all vision outputs
+    vision_outputs = torch.cat(vision_outputs_list, dim=0)
+    image_features = self.multi_modal_projector(vision_outputs)
+    return image_features</code></pre>
+</details>
+<div class="desc"><p>Projects the last hidden state from the vision model into language model space.</p>
+<h2 id="returns">Returns</h2>
+<p>image_features (<code>torch.Tensor</code>): Image feature tensor of shape <code>(num_images, image_length, embed_dim)</code>).</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_input_embeddings"><code class="name flex">
+<span>def <span class="ident">get_input_embeddings</span></span>(<span>self) ‑> torch.nn.modules.sparse.Embedding</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_embeddings(self) -&gt; nn.Embedding:
+    return self.language_model.get_input_embeddings()</code></pre>
+</details>
+<div class="desc"><p>Returns the model's input embeddings.</p>
+<h2 id="returns">Returns</h2>
+<p><code>nn.Module</code>: A torch module mapping vocabulary to hidden states.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+        (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+    ]
+    &#34;&#34;&#34;Load weights for the model.&#34;&#34;&#34;
+    params_dict = dict(self.named_parameters())
+    loaded_params: Set[str] = set()
+
+    for name, loaded_weight in weights:
+        if &#34;language_model&#34; in name:
+            # Gemma3ForCausalLM.load_weights(self, [(name.replace(&#34;language_model.&#34;, &#34;&#34;), loaded_weight)])
+            causal_loaded_params = Gemma3ForCausalLM.load_weights(
+                self, [(name, loaded_weight)]
+            )
+            loaded_params.update(causal_loaded_params)
+            continue
+        else:
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                if &#34;vision_model&#34; in name:
+                    # adapt to VisionAttention
+                    name = name.replace(&#34;.self_attn.out_proj&#34;, &#34;.self_attn.proj&#34;)
+                # Skip loading extra bias for GPTQ models
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                # Remapping the name of FP8 kv-scale
+                name = maybe_remap_kv_scale_name(name, params_dict)
+                if name is None:
+                    continue
+                param = params_dict[name]
+                weight_loader = getattr(
+                    param, &#34;weight_loader&#34;, default_weight_loader
+                )
+                weight_loader(param, loaded_weight)
+            loaded_params.add(name)
+    unloaded_params = params_dict.keys() - loaded_params
+    if unloaded_params:
+        pass
+        # raise RuntimeError(
+        #     f&#34;Some weights are not initialized from checkpoints: {unloaded_params}&#34;)
+    return loaded_params</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>image_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>) ‑> List[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(
+    self, input_ids: List[int], image_inputs: MultimodalInputs
+) -&gt; List[int]:
+    &#34;&#34;&#34;Pad input IDs with image tokens.&#34;&#34;&#34;
+    # Get special token IDs
+    im_start_id: int = image_inputs.im_start_id
+    im_end_id: int = image_inputs.im_end_id
+
+    media_token_pairs = [(im_start_id, im_end_id)]
+    pattern = MultiModalityDataPaddingPatternTokenPairs(media_token_pairs)
+    ids = pattern.pad_input_tokens(input_ids, image_inputs)
+    return ids</code></pre>
+</details>
+<div class="desc"><p>Pad input IDs with image tokens.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.prepare_attn_masks"><code class="name flex">
+<span>def <span class="ident">prepare_attn_masks</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>mask_dtype: torch.dtype,<br>**kwargs) ‑> Dict</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_attn_masks(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    mask_dtype: torch.dtype,
+    **kwargs,
+) -&gt; Dict:
+    &#34;&#34;&#34;Prepare attention masks for multimodal inputs.&#34;&#34;&#34;
+    kwargs[&#34;has_images&#34;] = True
+
+    # Distinguish sequences by position id 0
+    start_indices = (positions == 0).cpu().nonzero()
+    num_seqs = len(start_indices)
+    seq_lens = []
+
+    for i in range(num_seqs):
+        start_idx = start_indices[i].item()
+        if i &lt; num_seqs - 1:
+            end_idx = start_indices[i + 1].item()
+        else:
+            end_idx = len(input_ids)
+        seq_lens.append(end_idx - start_idx)
+
+    kwargs[&#34;seq_lens&#34;] = seq_lens
+
+    # Create attention masks
+    global_attn_masks = []
+    local_attn_masks = []
+    sliding_window = self.config.text_config.interleaved_sliding_window
+
+    start_idx = 0
+    for seq_len in seq_lens:
+        end_idx = start_idx + seq_len
+        input_token_ids = input_ids[start_idx:end_idx]
+        start_idx = end_idx
+
+        # Create global causal mask
+        global_attn_mask = torch.empty(
+            1,
+            1,
+            seq_len,
+            seq_len,
+            dtype=mask_dtype,
+            device=input_ids.device,
+        )
+        global_attn_mask.fill_(float(&#34;-inf&#34;))
+        global_attn_mask = global_attn_mask.triu(diagonal=1)
+
+        # Consider bidirectional attention between image tokens
+        img_mask = torch.zeros_like(global_attn_mask)
+        img_pos = input_token_ids == self.config.image_token_index
+        img_mask[:, :, :, img_pos] += 1
+        img_mask[:, :, img_pos, :] += 1
+        global_attn_mask = torch.where(img_mask == 2, 0, global_attn_mask)
+        global_attn_masks.append(global_attn_mask)
+
+        # Create local causal mask with sliding window
+        local_attn_mask = torch.ones_like(global_attn_mask)
+        local_attn_mask = torch.tril(local_attn_mask, diagonal=-sliding_window)
+        local_attn_mask = torch.where(
+            local_attn_mask == 0, global_attn_mask, float(&#34;-inf&#34;)
+        )
+        local_attn_masks.append(local_attn_mask)
+
+    kwargs[&#34;global_attn_masks&#34;] = global_attn_masks
+    kwargs[&#34;local_attn_masks&#34;] = local_attn_masks
+    return kwargs</code></pre>
+</details>
+<div class="desc"><p>Prepare attention masks for multimodal inputs.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.tie_weights"><code class="name flex">
+<span>def <span class="ident">tie_weights</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tie_weights(self):
+    return self.language_model.tie_weights()</code></pre>
+</details>
+<div class="desc"><p>Tie the weights between the input embeddings and the output embeddings.</p>
+<p>If the <code>torchscript</code> flag is set in the configuration, can't handle parameter sharing so we are cloning the
+weights instead.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration"><code class="flex name class">
+<span>class <span class="ident">EntryClass</span></span>
+<span>(</span><span>config: transformers.models.gemma3.configuration_gemma3.Gemma3Config,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Gemma3ForConditionalGeneration(PreTrainedModel):
+    config_class = Gemma3Config
+    &#34;&#34;&#34;Gemma3 multimodal model for conditional generation.&#34;&#34;&#34;
+
+    # BitandBytes specific attributes
+    default_bitsandbytes_target_modules = [
+        &#34;.gate_proj.&#34;,
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+        &#34;.out_proj.&#34;,
+    ]
+    bitsandbytes_stacked_params_mapping = {
+        # shard_name, weight_name, index
+        &#34;q_proj&#34;: (&#34;qkv_proj&#34;, 0),
+        &#34;k_proj&#34;: (&#34;qkv_proj&#34;, 1),
+        &#34;v_proj&#34;: (&#34;qkv_proj&#34;, 2),
+        &#34;gate_proj&#34;: (&#34;gate_up_proj&#34;, 0),
+        &#34;up_proj&#34;: (&#34;gate_up_proj&#34;, 1),
+        &#34;out_proj&#34;: (&#34;proj&#34;, 0),
+    }
+
+    packed_modules_mapping = {
+        &#34;qkv_proj&#34;: [
+            &#34;q_proj&#34;,
+            &#34;k_proj&#34;,
+            &#34;v_proj&#34;,
+        ],
+        &#34;gate_up_proj&#34;: [
+            &#34;gate_proj&#34;,
+            &#34;up_proj&#34;,
+        ],
+    }
+
+    # LoRA specific attributes
+    supported_lora_modules = [
+        &#34;qkv_proj&#34;,
+        &#34;o_proj&#34;,
+        &#34;gate_up_proj&#34;,
+        &#34;down_proj&#34;,
+    ]
+    # Gemma does not apply LoRA to the embedding layer.
+    embedding_modules = {}
+    embedding_padding_modules = []
+    supports_lora = True
+
+    def __init__(
+        self,
+        config: Gemma3Config,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__(config=config)
+        self.config = config
+        self.quant_config = quant_config
+
+        self.vision_tower = SiglipVisionModel(
+            config=config.vision_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;vision_tower&#34;, prefix),
+        )
+
+        self.multi_modal_projector = Gemma3MultiModalProjector(config)
+        self.vocab_size = config.text_config.vocab_size
+
+        # Text model
+        self.language_model = Gemma3ForCausalLM(
+            config.text_config,
+            quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        if self.language_model.logits_processor.logit_scale:
+            logit_scale = getattr(config, &#34;logit_scale&#34;, 1.0)
+            self.language_model.logits_processor.logit_scale *= logit_scale
+        self.post_init()
+
+    def pad_input_ids(
+        self, input_ids: List[int], image_inputs: MultimodalInputs
+    ) -&gt; List[int]:
+        &#34;&#34;&#34;Pad input IDs with image tokens.&#34;&#34;&#34;
+        # Get special token IDs
+        im_start_id: int = image_inputs.im_start_id
+        im_end_id: int = image_inputs.im_end_id
+
+        media_token_pairs = [(im_start_id, im_end_id)]
+        pattern = MultiModalityDataPaddingPatternTokenPairs(media_token_pairs)
+        ids = pattern.pad_input_tokens(input_ids, image_inputs)
+        return ids
+
+    def prepare_attn_masks(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        mask_dtype: torch.dtype,
+        **kwargs,
+    ) -&gt; Dict:
+        &#34;&#34;&#34;Prepare attention masks for multimodal inputs.&#34;&#34;&#34;
+        kwargs[&#34;has_images&#34;] = True
+
+        # Distinguish sequences by position id 0
+        start_indices = (positions == 0).cpu().nonzero()
+        num_seqs = len(start_indices)
+        seq_lens = []
+
+        for i in range(num_seqs):
+            start_idx = start_indices[i].item()
+            if i &lt; num_seqs - 1:
+                end_idx = start_indices[i + 1].item()
+            else:
+                end_idx = len(input_ids)
+            seq_lens.append(end_idx - start_idx)
+
+        kwargs[&#34;seq_lens&#34;] = seq_lens
+
+        # Create attention masks
+        global_attn_masks = []
+        local_attn_masks = []
+        sliding_window = self.config.text_config.interleaved_sliding_window
+
+        start_idx = 0
+        for seq_len in seq_lens:
+            end_idx = start_idx + seq_len
+            input_token_ids = input_ids[start_idx:end_idx]
+            start_idx = end_idx
+
+            # Create global causal mask
+            global_attn_mask = torch.empty(
+                1,
+                1,
+                seq_len,
+                seq_len,
+                dtype=mask_dtype,
+                device=input_ids.device,
+            )
+            global_attn_mask.fill_(float(&#34;-inf&#34;))
+            global_attn_mask = global_attn_mask.triu(diagonal=1)
+
+            # Consider bidirectional attention between image tokens
+            img_mask = torch.zeros_like(global_attn_mask)
+            img_pos = input_token_ids == self.config.image_token_index
+            img_mask[:, :, :, img_pos] += 1
+            img_mask[:, :, img_pos, :] += 1
+            global_attn_mask = torch.where(img_mask == 2, 0, global_attn_mask)
+            global_attn_masks.append(global_attn_mask)
+
+            # Create local causal mask with sliding window
+            local_attn_mask = torch.ones_like(global_attn_mask)
+            local_attn_mask = torch.tril(local_attn_mask, diagonal=-sliding_window)
+            local_attn_mask = torch.where(
+                local_attn_mask == 0, global_attn_mask, float(&#34;-inf&#34;)
+            )
+            local_attn_masks.append(local_attn_mask)
+
+        kwargs[&#34;global_attn_masks&#34;] = global_attn_masks
+        kwargs[&#34;local_attn_masks&#34;] = local_attn_masks
+        return kwargs
+
+    def get_input_embeddings(self) -&gt; nn.Embedding:
+        return self.language_model.get_input_embeddings()
+
+    def get_attention_sliding_window_size(self):
+        &#34;&#34;&#34;
+        This value is used to initialize attention backends in `ForwardBatch`.
+        &#34;&#34;&#34;
+        return self.language_model.get_attention_sliding_window_size()
+
+    def get_image_feature(self, items: List[MultimodalDataItem]):
+        &#34;&#34;&#34;
+        Projects the last hidden state from the vision model into language model space.
+
+        Returns:
+            image_features (`torch.Tensor`): Image feature tensor of shape `(num_images, image_length, embed_dim)`).
+        &#34;&#34;&#34;
+        # Process images one by one to handle flatten_batch=True constraint in vision_tower
+        all_pixel_values = flatten_nested_list([item.feature for item in items])
+        vision_outputs_list = []
+
+        for pixel_values_batch in all_pixel_values:
+            # Normalize input shape to [batch_size, channels, height, width]
+            if pixel_values_batch.dim() == 5:
+                pixel_values_batch = pixel_values_batch.squeeze(0)
+            elif pixel_values_batch.dim() == 3:
+                pixel_values_batch = pixel_values_batch.unsqueeze(0)
+            elif pixel_values_batch.dim() != 4:
+                raise ValueError(
+                    f&#34;Unexpected pixel_values shape: {pixel_values_batch.shape}&#34;
+                )
+
+            # Process each image in the batch
+            batch_size = pixel_values_batch.shape[0]
+            for i in range(batch_size):
+                pixel_value = pixel_values_batch[i : i + 1]  # Keep batch dimension as 1
+                pixel_value = pixel_value.to(
+                    device=self.vision_tower.device, dtype=self.language_model.dtype()
+                )
+                vision_output = self.vision_tower(pixel_values=pixel_value)
+                vision_outputs_list.append(vision_output)
+
+        # Concatenate all vision outputs
+        vision_outputs = torch.cat(vision_outputs_list, dim=0)
+        image_features = self.multi_modal_projector(vision_outputs)
+        return image_features
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.LongTensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+        **kwargs: object,
+    ) -&gt; LogitsProcessor:
+        r&#34;&#34;&#34;
+            labels (`torch.LongTensor` of shape `(batch_size, sequence_length)`, *optional*):
+                Labels for computing the masked language modeling loss. Indices should either be in `[0, ...,
+                config.text_config.vocab_size]` or -100 (see `input_ids` docstring). Tokens with indices set to `-100` are ignored
+                (masked), the loss is only computed for the tokens with labels in `[0, ..., config.text_config.vocab_size]`.
+
+            logits_to_keep (`int` or `torch.Tensor`, *optional*):
+                If an `int`, compute logits for the last `logits_to_keep` tokens. If `0`, calculate logits for all
+                `input_ids` (special case). Only last token logits are needed for generation, and calculating them only for that
+                token can save memory, which becomes pretty significant for long sequences or large vocabulary size.
+                If a `torch.Tensor`, must be 1D corresponding to the indices to keep in the sequence length dimension.
+                This is useful when using packed tensor format (single dimension for batch and sequence length).
+
+        Returns:
+
+        Example:
+
+        ```python
+        &gt;&gt;&gt; from PIL import Image
+        &gt;&gt;&gt; import requests
+        &gt;&gt;&gt; from transformers import AutoProcessor, Gemma3ForConditionalGeneration
+
+        &gt;&gt;&gt; model = Gemma3ForConditionalGeneration.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+        &gt;&gt;&gt; processor = AutoProcessor.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+
+        &gt;&gt;&gt; prompt = &#34;answer en Where is the cow standing?&#34;
+        &gt;&gt;&gt; url = &#34;https://huggingface.co/gv-hf/Gemma3-test-224px-hf/resolve/main/cow_beach_1.png&#34;
+        &gt;&gt;&gt; image = Image.open(requests.get(url, stream=True).raw)
+
+        &gt;&gt;&gt; inputs = processor(images=image, text=prompt,  return_tensors=&#34;pt&#34;)
+
+        &gt;&gt;&gt; # Generate
+        &gt;&gt;&gt; generate_ids = model.generate(**inputs, max_length=30)
+        &gt;&gt;&gt; processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        &#34;answer en Where is the cow standing?\nbeach&#34;
+        ```&#34;&#34;&#34;
+
+        # Important: position_ids in Gemma3 are 1-indexed
+        # This really does cost me sometime
+        positions += 1
+
+        # Replace image id with PAD if the image token if OOV, to avoid index-errors
+        if input_ids is not None and self.config.image_token_index &gt;= self.vocab_size:
+            special_image_mask = input_ids == self.config.image_token_index
+            llm_input_ids = input_ids.clone()
+            llm_input_ids[special_image_mask] = 0
+        else:
+            llm_input_ids = input_ids
+
+        hs = general_mm_embed_routine(
+            input_ids=llm_input_ids,
+            forward_batch=forward_batch,
+            language_model=self.language_model,
+            multimodal_model=self,
+            positions=positions,
+        )
+
+        return hs
+
+    def tie_weights(self):
+        return self.language_model.tie_weights()
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+            (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+            (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+        ]
+        &#34;&#34;&#34;Load weights for the model.&#34;&#34;&#34;
+        params_dict = dict(self.named_parameters())
+        loaded_params: Set[str] = set()
+
+        for name, loaded_weight in weights:
+            if &#34;language_model&#34; in name:
+                # Gemma3ForCausalLM.load_weights(self, [(name.replace(&#34;language_model.&#34;, &#34;&#34;), loaded_weight)])
+                causal_loaded_params = Gemma3ForCausalLM.load_weights(
+                    self, [(name, loaded_weight)]
+                )
+                loaded_params.update(causal_loaded_params)
+                continue
+            else:
+                for param_name, weight_name, shard_id in stacked_params_mapping:
+                    if weight_name not in name:
+                        continue
+                    name = name.replace(weight_name, param_name)
+                    # Skip loading extra bias for GPTQ models.
+                    if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                        continue
+                    param = params_dict[name]
+                    weight_loader = param.weight_loader
+                    weight_loader(param, loaded_weight, shard_id)
+                    break
+                else:
+                    if &#34;vision_model&#34; in name:
+                        # adapt to VisionAttention
+                        name = name.replace(&#34;.self_attn.out_proj&#34;, &#34;.self_attn.proj&#34;)
+                    # Skip loading extra bias for GPTQ models
+                    if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                        continue
+                    # Remapping the name of FP8 kv-scale
+                    name = maybe_remap_kv_scale_name(name, params_dict)
+                    if name is None:
+                        continue
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+                loaded_params.add(name)
+        unloaded_params = params_dict.keys() - loaded_params
+        if unloaded_params:
+            pass
+            # raise RuntimeError(
+            #     f&#34;Some weights are not initialized from checkpoints: {unloaded_params}&#34;)
+        return loaded_params</code></pre>
+</details>
+<div class="desc"><p>Base class for all models.</p>
+<p>[<code>PreTrainedModel</code>] takes care of storing the configuration of the models and handles methods for loading,
+downloading and saving models as well as a few methods common to all models to:</p>
+<pre><code>- resize the input embeddings,
+- prune heads in the self-attention heads.
+</code></pre>
+<p>Class attributes (overridden by derived classes):</p>
+<pre><code>- **config_class** ([`PretrainedConfig`]) -- A subclass of [`PretrainedConfig`] to use as configuration class
+  for this model architecture.
+- **load_tf_weights** (&lt;code&gt;Callable&lt;/code&gt;) -- A python *method* for loading a TensorFlow checkpoint in a PyTorch model,
+  taking as arguments:
+
+    - **model** ([`PreTrainedModel`]) -- An instance of the model on which to load the TensorFlow checkpoint.
+    - **config** ([`PreTrainedConfig`]) -- An instance of the configuration associated to the model.
+    - **path** (&lt;code&gt;str&lt;/code&gt;) -- A path to the TensorFlow checkpoint.
+
+- **base_model_prefix** (&lt;code&gt;str&lt;/code&gt;) -- A string indicating the attribute associated to the base model in derived
+  classes of the same architecture adding modules on top of the base model.
+- **is_parallelizable** (&lt;code&gt;bool&lt;/code&gt;) -- A flag indicating whether this model supports model parallelization.
+- **main_input_name** (&lt;code&gt;str&lt;/code&gt;) -- The name of the principal input to the model (often &lt;code&gt;input\_ids&lt;/code&gt; for NLP
+  models, &lt;code&gt;pixel\_values&lt;/code&gt; for vision models and &lt;code&gt;input\_values&lt;/code&gt; for speech models).
+- **can_record_outputs** (dict):
+</code></pre>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.modeling_utils.PreTrainedModel</li>
+<li>torch.nn.modules.module.Module</li>
+<li>transformers.modeling_utils.EmbeddingAccessMixin</li>
+<li>transformers.modeling_utils.ModuleUtilsMixin</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+<li>transformers.integrations.peft.PeftAdapterMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.bitsandbytes_stacked_params_mapping"><code class="name">var <span class="ident">bitsandbytes_stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.config_class"><code class="name">var <span class="ident">config_class</span></code></dt>
+<dd>
+<div class="desc"><p>Gemma3 multimodal model for conditional generation.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.default_bitsandbytes_target_modules"><code class="name">var <span class="ident">default_bitsandbytes_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_modules"><code class="name">var <span class="ident">embedding_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_padding_modules"><code class="name">var <span class="ident">embedding_padding_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.packed_modules_mapping"><code class="name">var <span class="ident">packed_modules_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supported_lora_modules"><code class="name">var <span class="ident">supported_lora_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supports_lora"><code class="name">var <span class="ident">supports_lora</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.LongTensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None,<br>**kwargs: object) ‑> <a title="sglang.srt.layers.logits_processor.LogitsProcessor" href="../layers/logits_processor.html#sglang.srt.layers.logits_processor.LogitsProcessor">LogitsProcessor</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.LongTensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+    **kwargs: object,
+) -&gt; LogitsProcessor:
+    r&#34;&#34;&#34;
+        labels (`torch.LongTensor` of shape `(batch_size, sequence_length)`, *optional*):
+            Labels for computing the masked language modeling loss. Indices should either be in `[0, ...,
+            config.text_config.vocab_size]` or -100 (see `input_ids` docstring). Tokens with indices set to `-100` are ignored
+            (masked), the loss is only computed for the tokens with labels in `[0, ..., config.text_config.vocab_size]`.
+
+        logits_to_keep (`int` or `torch.Tensor`, *optional*):
+            If an `int`, compute logits for the last `logits_to_keep` tokens. If `0`, calculate logits for all
+            `input_ids` (special case). Only last token logits are needed for generation, and calculating them only for that
+            token can save memory, which becomes pretty significant for long sequences or large vocabulary size.
+            If a `torch.Tensor`, must be 1D corresponding to the indices to keep in the sequence length dimension.
+            This is useful when using packed tensor format (single dimension for batch and sequence length).
+
+    Returns:
+
+    Example:
+
+    ```python
+    &gt;&gt;&gt; from PIL import Image
+    &gt;&gt;&gt; import requests
+    &gt;&gt;&gt; from transformers import AutoProcessor, Gemma3ForConditionalGeneration
+
+    &gt;&gt;&gt; model = Gemma3ForConditionalGeneration.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+    &gt;&gt;&gt; processor = AutoProcessor.from_pretrained(&#34;google/Gemma3-test-224px-hf&#34;)
+
+    &gt;&gt;&gt; prompt = &#34;answer en Where is the cow standing?&#34;
+    &gt;&gt;&gt; url = &#34;https://huggingface.co/gv-hf/Gemma3-test-224px-hf/resolve/main/cow_beach_1.png&#34;
+    &gt;&gt;&gt; image = Image.open(requests.get(url, stream=True).raw)
+
+    &gt;&gt;&gt; inputs = processor(images=image, text=prompt,  return_tensors=&#34;pt&#34;)
+
+    &gt;&gt;&gt; # Generate
+    &gt;&gt;&gt; generate_ids = model.generate(**inputs, max_length=30)
+    &gt;&gt;&gt; processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+    &#34;answer en Where is the cow standing?\nbeach&#34;
+    ```&#34;&#34;&#34;
+
+    # Important: position_ids in Gemma3 are 1-indexed
+    # This really does cost me sometime
+    positions += 1
+
+    # Replace image id with PAD if the image token if OOV, to avoid index-errors
+    if input_ids is not None and self.config.image_token_index &gt;= self.vocab_size:
+        special_image_mask = input_ids == self.config.image_token_index
+        llm_input_ids = input_ids.clone()
+        llm_input_ids[special_image_mask] = 0
+    else:
+        llm_input_ids = input_ids
+
+    hs = general_mm_embed_routine(
+        input_ids=llm_input_ids,
+        forward_batch=forward_batch,
+        language_model=self.language_model,
+        multimodal_model=self,
+        positions=positions,
+    )
+
+    return hs</code></pre>
+</details>
+<div class="desc"><p>labels (<code>torch.LongTensor</code> of shape <code>(batch_size, sequence_length)</code>, <em>optional</em>):
+Labels for computing the masked language modeling loss. Indices should either be in <code>[0, ...,
+config.text_config.vocab_size]</code> or -100 (see <code>input_ids&lt;code&gt; docstring). Tokens with indices set to &lt;/code&gt;-100</code> are ignored
+(masked), the loss is only computed for the tokens with labels in <code>[0, &hellip;, config.text_config.vocab_size]</code>.</p>
+<pre><code>logits_to_keep (&lt;code&gt;int&lt;/code&gt; or &lt;code&gt;torch.Tensor&lt;/code&gt;, *optional*):
+    If an &lt;code&gt;int&lt;/code&gt;, compute logits for the last &lt;code&gt;logits\_to\_keep&lt;/code&gt; tokens. If &lt;code&gt;0&lt;/code&gt;, calculate logits for all
+    &lt;code&gt;input\_ids&lt;/code&gt; (special case). Only last token logits are needed for generation, and calculating them only for that
+    token can save memory, which becomes pretty significant for long sequences or large vocabulary size.
+    If a &lt;code&gt;torch.Tensor&lt;/code&gt;, must be 1D corresponding to the indices to keep in the sequence length dimension.
+    This is useful when using packed tensor format (single dimension for batch and sequence length).
+</code></pre>
+<p>Returns:</p>
+<p>Example:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from PIL import Image
+&gt;&gt;&gt; import requests
+&gt;&gt;&gt; from transformers import AutoProcessor, Gemma3ForConditionalGeneration
+
+&gt;&gt;&gt; model = Gemma3ForConditionalGeneration.from_pretrained(&quot;google/Gemma3-test-224px-hf&quot;)
+&gt;&gt;&gt; processor = AutoProcessor.from_pretrained(&quot;google/Gemma3-test-224px-hf&quot;)
+
+&gt;&gt;&gt; prompt = &quot;answer en Where is the cow standing?&quot;
+&gt;&gt;&gt; url = &quot;https://huggingface.co/gv-hf/Gemma3-test-224px-hf/resolve/main/cow_beach_1.png&quot;
+&gt;&gt;&gt; image = Image.open(requests.get(url, stream=True).raw)
+
+&gt;&gt;&gt; inputs = processor(images=image, text=prompt,  return_tensors=&quot;pt&quot;)
+
+&gt;&gt;&gt; # Generate
+&gt;&gt;&gt; generate_ids = model.generate(**inputs, max_length=30)
+&gt;&gt;&gt; processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+&quot;answer en Where is the cow standing?\nbeach&quot;
+</code></pre></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_attention_sliding_window_size"><code class="name flex">
+<span>def <span class="ident">get_attention_sliding_window_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_attention_sliding_window_size(self):
+    &#34;&#34;&#34;
+    This value is used to initialize attention backends in `ForwardBatch`.
+    &#34;&#34;&#34;
+    return self.language_model.get_attention_sliding_window_size()</code></pre>
+</details>
+<div class="desc"><p>This value is used to initialize attention backends in <code>ForwardBatch</code>.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_image_feature"><code class="name flex">
+<span>def <span class="ident">get_image_feature</span></span>(<span>self,<br>items: List[<a title="sglang.srt.managers.schedule_batch.MultimodalDataItem" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalDataItem">MultimodalDataItem</a>])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_image_feature(self, items: List[MultimodalDataItem]):
+    &#34;&#34;&#34;
+    Projects the last hidden state from the vision model into language model space.
+
+    Returns:
+        image_features (`torch.Tensor`): Image feature tensor of shape `(num_images, image_length, embed_dim)`).
+    &#34;&#34;&#34;
+    # Process images one by one to handle flatten_batch=True constraint in vision_tower
+    all_pixel_values = flatten_nested_list([item.feature for item in items])
+    vision_outputs_list = []
+
+    for pixel_values_batch in all_pixel_values:
+        # Normalize input shape to [batch_size, channels, height, width]
+        if pixel_values_batch.dim() == 5:
+            pixel_values_batch = pixel_values_batch.squeeze(0)
+        elif pixel_values_batch.dim() == 3:
+            pixel_values_batch = pixel_values_batch.unsqueeze(0)
+        elif pixel_values_batch.dim() != 4:
+            raise ValueError(
+                f&#34;Unexpected pixel_values shape: {pixel_values_batch.shape}&#34;
+            )
+
+        # Process each image in the batch
+        batch_size = pixel_values_batch.shape[0]
+        for i in range(batch_size):
+            pixel_value = pixel_values_batch[i : i + 1]  # Keep batch dimension as 1
+            pixel_value = pixel_value.to(
+                device=self.vision_tower.device, dtype=self.language_model.dtype()
+            )
+            vision_output = self.vision_tower(pixel_values=pixel_value)
+            vision_outputs_list.append(vision_output)
+
+    # Concatenate all vision outputs
+    vision_outputs = torch.cat(vision_outputs_list, dim=0)
+    image_features = self.multi_modal_projector(vision_outputs)
+    return image_features</code></pre>
+</details>
+<div class="desc"><p>Projects the last hidden state from the vision model into language model space.</p>
+<h2 id="returns">Returns</h2>
+<p>image_features (<code>torch.Tensor</code>): Image feature tensor of shape <code>(num_images, image_length, embed_dim)</code>).</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_input_embeddings"><code class="name flex">
+<span>def <span class="ident">get_input_embeddings</span></span>(<span>self) ‑> torch.nn.modules.sparse.Embedding</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_embeddings(self) -&gt; nn.Embedding:
+    return self.language_model.get_input_embeddings()</code></pre>
+</details>
+<div class="desc"><p>Returns the model's input embeddings.</p>
+<h2 id="returns">Returns</h2>
+<p><code>nn.Module</code>: A torch module mapping vocabulary to hidden states.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        (&#34;gate_up_proj&#34;, &#34;up_proj&#34;, 1),
+        (&#34;gate_up_proj&#34;, &#34;gate_proj&#34;, 0),
+    ]
+    &#34;&#34;&#34;Load weights for the model.&#34;&#34;&#34;
+    params_dict = dict(self.named_parameters())
+    loaded_params: Set[str] = set()
+
+    for name, loaded_weight in weights:
+        if &#34;language_model&#34; in name:
+            # Gemma3ForCausalLM.load_weights(self, [(name.replace(&#34;language_model.&#34;, &#34;&#34;), loaded_weight)])
+            causal_loaded_params = Gemma3ForCausalLM.load_weights(
+                self, [(name, loaded_weight)]
+            )
+            loaded_params.update(causal_loaded_params)
+            continue
+        else:
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                if &#34;vision_model&#34; in name:
+                    # adapt to VisionAttention
+                    name = name.replace(&#34;.self_attn.out_proj&#34;, &#34;.self_attn.proj&#34;)
+                # Skip loading extra bias for GPTQ models
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                # Remapping the name of FP8 kv-scale
+                name = maybe_remap_kv_scale_name(name, params_dict)
+                if name is None:
+                    continue
+                param = params_dict[name]
+                weight_loader = getattr(
+                    param, &#34;weight_loader&#34;, default_weight_loader
+                )
+                weight_loader(param, loaded_weight)
+            loaded_params.add(name)
+    unloaded_params = params_dict.keys() - loaded_params
+    if unloaded_params:
+        pass
+        # raise RuntimeError(
+        #     f&#34;Some weights are not initialized from checkpoints: {unloaded_params}&#34;)
+    return loaded_params</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>image_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>) ‑> List[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(
+    self, input_ids: List[int], image_inputs: MultimodalInputs
+) -&gt; List[int]:
+    &#34;&#34;&#34;Pad input IDs with image tokens.&#34;&#34;&#34;
+    # Get special token IDs
+    im_start_id: int = image_inputs.im_start_id
+    im_end_id: int = image_inputs.im_end_id
+
+    media_token_pairs = [(im_start_id, im_end_id)]
+    pattern = MultiModalityDataPaddingPatternTokenPairs(media_token_pairs)
+    ids = pattern.pad_input_tokens(input_ids, image_inputs)
+    return ids</code></pre>
+</details>
+<div class="desc"><p>Pad input IDs with image tokens.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.prepare_attn_masks"><code class="name flex">
+<span>def <span class="ident">prepare_attn_masks</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>mask_dtype: torch.dtype,<br>**kwargs) ‑> Dict</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_attn_masks(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    mask_dtype: torch.dtype,
+    **kwargs,
+) -&gt; Dict:
+    &#34;&#34;&#34;Prepare attention masks for multimodal inputs.&#34;&#34;&#34;
+    kwargs[&#34;has_images&#34;] = True
+
+    # Distinguish sequences by position id 0
+    start_indices = (positions == 0).cpu().nonzero()
+    num_seqs = len(start_indices)
+    seq_lens = []
+
+    for i in range(num_seqs):
+        start_idx = start_indices[i].item()
+        if i &lt; num_seqs - 1:
+            end_idx = start_indices[i + 1].item()
+        else:
+            end_idx = len(input_ids)
+        seq_lens.append(end_idx - start_idx)
+
+    kwargs[&#34;seq_lens&#34;] = seq_lens
+
+    # Create attention masks
+    global_attn_masks = []
+    local_attn_masks = []
+    sliding_window = self.config.text_config.interleaved_sliding_window
+
+    start_idx = 0
+    for seq_len in seq_lens:
+        end_idx = start_idx + seq_len
+        input_token_ids = input_ids[start_idx:end_idx]
+        start_idx = end_idx
+
+        # Create global causal mask
+        global_attn_mask = torch.empty(
+            1,
+            1,
+            seq_len,
+            seq_len,
+            dtype=mask_dtype,
+            device=input_ids.device,
+        )
+        global_attn_mask.fill_(float(&#34;-inf&#34;))
+        global_attn_mask = global_attn_mask.triu(diagonal=1)
+
+        # Consider bidirectional attention between image tokens
+        img_mask = torch.zeros_like(global_attn_mask)
+        img_pos = input_token_ids == self.config.image_token_index
+        img_mask[:, :, :, img_pos] += 1
+        img_mask[:, :, img_pos, :] += 1
+        global_attn_mask = torch.where(img_mask == 2, 0, global_attn_mask)
+        global_attn_masks.append(global_attn_mask)
+
+        # Create local causal mask with sliding window
+        local_attn_mask = torch.ones_like(global_attn_mask)
+        local_attn_mask = torch.tril(local_attn_mask, diagonal=-sliding_window)
+        local_attn_mask = torch.where(
+            local_attn_mask == 0, global_attn_mask, float(&#34;-inf&#34;)
+        )
+        local_attn_masks.append(local_attn_mask)
+
+    kwargs[&#34;global_attn_masks&#34;] = global_attn_masks
+    kwargs[&#34;local_attn_masks&#34;] = local_attn_masks
+    return kwargs</code></pre>
+</details>
+<div class="desc"><p>Prepare attention masks for multimodal inputs.</p></div>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.tie_weights"><code class="name flex">
+<span>def <span class="ident">tie_weights</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tie_weights(self):
+    return self.language_model.tie_weights()</code></pre>
+</details>
+<div class="desc"><p>Tie the weights between the input embeddings and the output embeddings.</p>
+<p>If the <code>torchscript</code> flag is set in the configuration, can't handle parameter sharing so we are cloning the
+weights instead.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ImagePixelInputs"><code class="flex name class">
+<span>class <span class="ident">Gemma3ImagePixelInputs</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Gemma3ImagePixelInputs(TypedDict):
+    pixel_values: torch.Tensor
+    &#34;&#34;&#34;Shape: `(batch_size * num_images, num_channels, height, width)`&#34;&#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3ImagePixelInputs.pixel_values"><code class="name">var <span class="ident">pixel_values</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"><p>Shape: <code>(batch_size * num_images, num_channels, height, width)</code></p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3MultiModalProjector"><code class="flex name class">
+<span>class <span class="ident">Gemma3MultiModalProjector</span></span>
+<span>(</span><span>config: transformers.models.gemma3.configuration_gemma3.Gemma3Config)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Gemma3MultiModalProjector(nn.Module):
+    &#34;&#34;&#34;Projector for Gemma3 multimodal.&#34;&#34;&#34;
+
+    def __init__(self, config: Gemma3Config):
+        super().__init__()
+
+        self.mm_input_projection_weight = nn.Parameter(
+            torch.zeros(
+                config.vision_config.hidden_size, config.text_config.hidden_size
+            )
+        )
+
+        self.mm_soft_emb_norm = Gemma3RMSNorm(
+            config.vision_config.hidden_size, eps=config.vision_config.layer_norm_eps
+        )
+
+        self.patches_per_image = int(
+            config.vision_config.image_size // config.vision_config.patch_size
+        )
+        self.tokens_per_side = int(config.mm_tokens_per_image**0.5)
+        self.kernel_size = self.patches_per_image // self.tokens_per_side
+        self.avg_pool = nn.AvgPool2d(
+            kernel_size=self.kernel_size, stride=self.kernel_size
+        )
+
+    def forward(self, vision_outputs: torch.Tensor) -&gt; torch.Tensor:
+        batch_size, seq_length, hidden_size = vision_outputs.shape
+
+        # Reshape for pooling
+        reshaped_vision_outputs = vision_outputs.transpose(1, 2)
+        reshaped_vision_outputs = reshaped_vision_outputs.reshape(
+            batch_size, hidden_size, self.patches_per_image, self.patches_per_image
+        )
+        reshaped_vision_outputs = reshaped_vision_outputs.contiguous()
+
+        # Apply pooling
+        pooled_vision_outputs = self.avg_pool(reshaped_vision_outputs)
+        pooled_vision_outputs = pooled_vision_outputs.flatten(2)
+        pooled_vision_outputs = pooled_vision_outputs.transpose(1, 2)
+
+        # Apply normalization
+        normed_vision_outputs = self.mm_soft_emb_norm(pooled_vision_outputs)
+
+        # Project to text embedding space
+        projected_vision_outputs = torch.matmul(
+            normed_vision_outputs, self.mm_input_projection_weight
+        )
+
+        return projected_vision_outputs.type_as(vision_outputs)</code></pre>
+</details>
+<div class="desc"><p>Projector for Gemma3 multimodal.</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.gemma3_mm.Gemma3MultiModalProjector.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, vision_outputs: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, vision_outputs: torch.Tensor) -&gt; torch.Tensor:
+    batch_size, seq_length, hidden_size = vision_outputs.shape
+
+    # Reshape for pooling
+    reshaped_vision_outputs = vision_outputs.transpose(1, 2)
+    reshaped_vision_outputs = reshaped_vision_outputs.reshape(
+        batch_size, hidden_size, self.patches_per_image, self.patches_per_image
+    )
+    reshaped_vision_outputs = reshaped_vision_outputs.contiguous()
+
+    # Apply pooling
+    pooled_vision_outputs = self.avg_pool(reshaped_vision_outputs)
+    pooled_vision_outputs = pooled_vision_outputs.flatten(2)
+    pooled_vision_outputs = pooled_vision_outputs.transpose(1, 2)
+
+    # Apply normalization
+    normed_vision_outputs = self.mm_soft_emb_norm(pooled_vision_outputs)
+
+    # Project to text embedding space
+    projected_vision_outputs = torch.matmul(
+        normed_vision_outputs, self.mm_input_projection_weight
+    )
+
+    return projected_vision_outputs.type_as(vision_outputs)</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration">Gemma3ForConditionalGeneration</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.bitsandbytes_stacked_params_mapping" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.bitsandbytes_stacked_params_mapping">bitsandbytes_stacked_params_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.config_class" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.config_class">config_class</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.default_bitsandbytes_target_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.default_bitsandbytes_target_modules">default_bitsandbytes_target_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_modules">embedding_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_padding_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_padding_modules">embedding_padding_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.forward" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_attention_sliding_window_size" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_attention_sliding_window_size">get_attention_sliding_window_size</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_image_feature" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_image_feature">get_image_feature</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_input_embeddings" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_input_embeddings">get_input_embeddings</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.load_weights" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.packed_modules_mapping" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.packed_modules_mapping">packed_modules_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.pad_input_ids" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.pad_input_ids">pad_input_ids</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.prepare_attn_masks" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.prepare_attn_masks">prepare_attn_masks</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supported_lora_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supported_lora_modules">supported_lora_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supports_lora" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supports_lora">supports_lora</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.tie_weights" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.tie_weights">tie_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration">Gemma3ForConditionalGeneration</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.bitsandbytes_stacked_params_mapping" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.bitsandbytes_stacked_params_mapping">bitsandbytes_stacked_params_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.config_class" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.config_class">config_class</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.default_bitsandbytes_target_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.default_bitsandbytes_target_modules">default_bitsandbytes_target_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_modules">embedding_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_padding_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.embedding_padding_modules">embedding_padding_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.forward" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_attention_sliding_window_size" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_attention_sliding_window_size">get_attention_sliding_window_size</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_image_feature" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_image_feature">get_image_feature</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_input_embeddings" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.get_input_embeddings">get_input_embeddings</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.load_weights" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.packed_modules_mapping" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.packed_modules_mapping">packed_modules_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.pad_input_ids" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.pad_input_ids">pad_input_ids</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.prepare_attn_masks" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.prepare_attn_masks">prepare_attn_masks</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supported_lora_modules" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supported_lora_modules">supported_lora_modules</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supports_lora" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.supports_lora">supports_lora</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.tie_weights" href="#sglang.srt.models.gemma3_mm.Gemma3ForConditionalGeneration.tie_weights">tie_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.gemma3_mm.Gemma3ImagePixelInputs" href="#sglang.srt.models.gemma3_mm.Gemma3ImagePixelInputs">Gemma3ImagePixelInputs</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3ImagePixelInputs.pixel_values" href="#sglang.srt.models.gemma3_mm.Gemma3ImagePixelInputs.pixel_values">pixel_values</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.gemma3_mm.Gemma3MultiModalProjector" href="#sglang.srt.models.gemma3_mm.Gemma3MultiModalProjector">Gemma3MultiModalProjector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.gemma3_mm.Gemma3MultiModalProjector.forward" href="#sglang.srt.models.gemma3_mm.Gemma3MultiModalProjector.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

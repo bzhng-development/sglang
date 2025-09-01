@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.test.test_block_fp8_ep API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.test.test_block_fp8_ep</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.test.test_block_fp8_ep.block_dequant"><code class="name flex">
+<span>def <span class="ident">block_dequant</span></span>(<span>x_q_block: torch.Tensor, x_s: torch.Tensor, block_size: List[int]) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def block_dequant(
+    x_q_block: torch.Tensor,
+    x_s: torch.Tensor,
+    block_size: List[int],
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    &#34;&#34;&#34;This function converts block-wise quantization to tensor-wise quantization.
+    The inputs are block-wise quantization tensor `x_q_block`, block-wise quantization scale
+    and the block size.
+    The outputs are tensor-wise quantization tensor and tensor-wise quantization scale.
+    Note only float8 is supported for now.
+    &#34;&#34;&#34;
+
+    # process 3D tensor
+    if x_q_block.dim() == 3:
+        batch_size = x_q_block.size(0)
+        return torch.stack(
+            [block_dequant(x_q_block[b], x_s[b], block_size) for b in range(batch_size)]
+        )
+
+    block_n, block_k = block_size[0], block_size[1]
+    n, k = x_q_block.shape
+    n_tiles = (n + block_n - 1) // block_n
+    k_tiles = (k + block_k - 1) // block_k
+    assert n_tiles == x_s.shape[0]
+    assert k_tiles == x_s.shape[1]
+
+    x_dq_block = x_q_block.to(torch.float32)
+
+    x_dq_block_tiles = [
+        [
+            x_dq_block[
+                j * block_n : min((j + 1) * block_n, n),
+                i * block_k : min((i + 1) * block_k, k),
+            ]
+            for i in range(k_tiles)
+        ]
+        for j in range(n_tiles)
+    ]
+
+    for i in range(k_tiles):
+        for j in range(n_tiles):
+            x_dq_block_tiles[j][i][:, :] = x_dq_block_tiles[j][i] * x_s[j][i]
+
+    return x_dq_block</code></pre>
+</details>
+<div class="desc"><p>This function converts block-wise quantization to tensor-wise quantization.
+The inputs are block-wise quantization tensor <code>x_q_block</code>, block-wise quantization scale
+and the block size.
+The outputs are tensor-wise quantization tensor and tensor-wise quantization scale.
+Note only float8 is supported for now.</p></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.ep_moe"><code class="name flex">
+<span>def <span class="ident">ep_moe</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>router_logits: torch.Tensor,<br>topk_config: <a title="sglang.srt.layers.moe.topk.TopKConfig" href="../srt/layers/moe/topk.html#sglang.srt.layers.moe.topk.TopKConfig">TopKConfig</a>,<br>num_experts: int = 256,<br>fp8_dtype: <module 'torch.types' from '/usr/local/lib/python3.12/site-packages/torch/types.py'> = torch.float8_e4m3fn,<br>num_experts_per_partition: int = 128,<br>start_expert_id: int = 0,<br>end_expert_id: int = 127,<br>use_fp8_w8a8: bool = False,<br>w1_scale_inv: torch.Tensor | None = None,<br>w2_scale_inv: torch.Tensor | None = None,<br>block_shape: List[int] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ep_moe(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    router_logits: torch.Tensor,
+    topk_config: TopKConfig,
+    # ep config
+    num_experts: int = 256,
+    fp8_dtype: torch.types = torch.float8_e4m3fn,
+    num_experts_per_partition: int = 128,
+    start_expert_id: int = 0,
+    end_expert_id: int = 127,
+    use_fp8_w8a8: bool = False,
+    w1_scale_inv: Optional[torch.Tensor] = None,
+    w2_scale_inv: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+):
+    use_blockwise_fp8 = block_shape is not None
+    top_k = topk_config.top_k
+    topk_output = select_experts(
+        hidden_states=hidden_states,
+        router_logits=router_logits,
+        topk_config=topk_config,
+    )
+    topk_weights, topk_ids, _ = topk_output
+
+    reorder_topk_ids, src2dst, seg_indptr = run_moe_ep_preproess(topk_ids, num_experts)
+
+    gateup_input = torch.empty(
+        (int(hidden_states.shape[0] * top_k), hidden_states.shape[1]),
+        device=hidden_states.device,
+        dtype=(
+            fp8_dtype
+            if (use_fp8_w8a8 and not use_blockwise_fp8)
+            else hidden_states.dtype
+        ),
+    )
+
+    if use_fp8_w8a8 and not use_blockwise_fp8:
+        max_value = (
+            torch.max(hidden_states).repeat(num_experts_per_partition).to(torch.float32)
+        )
+        w1_input_scale = max_value / torch.finfo(fp8_dtype).max
+    else:
+        w1_input_scale = None
+
+    # PreReorder
+    pre_reorder_triton_kernel[(hidden_states.shape[0],)](
+        hidden_states,
+        gateup_input,
+        src2dst,
+        topk_ids,
+        w1_input_scale,
+        start_expert_id,
+        end_expert_id,
+        top_k,
+        hidden_states.shape[1],
+        BLOCK_SIZE=512,
+        use_per_token_if_dynamic=True,
+    )
+
+    seg_indptr_cur_rank = seg_indptr[start_expert_id : end_expert_id + 2]
+    weight_indices_cur_rank = torch.arange(
+        0,
+        num_experts_per_partition,
+        device=hidden_states.device,
+        dtype=torch.int64,
+    )
+
+    # GroupGemm-0
+    gateup_output = torch.empty(
+        gateup_input.shape[0],
+        w1.shape[1],
+        device=hidden_states.device,
+        dtype=hidden_states.dtype,
+    )
+
+    gateup_output = grouped_gemm_triton(
+        a=gateup_input,
+        b=w1,
+        c=gateup_output,
+        batch_size=num_experts_per_partition,
+        weight_column_major=True,
+        seg_indptr=seg_indptr_cur_rank,
+        weight_indices=weight_indices_cur_rank,
+        use_fp8_w8a8=use_fp8_w8a8,
+        scale_a=w1_input_scale,
+        scale_b=w1_scale_inv,
+        block_shape=block_shape,
+    )
+
+    # Act
+    down_input = torch.empty(
+        gateup_output.shape[0],
+        gateup_output.shape[1] // 2,
+        device=gateup_output.device,
+        dtype=(
+            fp8_dtype
+            if (use_fp8_w8a8 and not use_blockwise_fp8)
+            else hidden_states.dtype
+        ),
+    )
+    if use_fp8_w8a8 and not use_blockwise_fp8:
+        w2_input_scale = torch.ones(
+            num_experts_per_partition,
+            dtype=torch.float32,
+            device=hidden_states.device,
+        )
+    else:
+        w2_input_scale = None
+
+    silu_and_mul_triton_kernel[(gateup_output.shape[0],)](
+        gateup_output,
+        down_input,
+        gateup_output.shape[1],
+        reorder_topk_ids,
+        w2_input_scale,
+        start_expert_id,
+        end_expert_id,
+        BLOCK_SIZE=512,
+    )
+
+    # GroupGemm-1
+    down_output = torch.empty(
+        down_input.shape[0],
+        w2.shape[1],
+        device=hidden_states.device,
+        dtype=hidden_states.dtype,
+    )
+
+    down_output = grouped_gemm_triton(
+        a=down_input,
+        b=w2,
+        c=down_output,
+        batch_size=num_experts_per_partition,
+        weight_column_major=True,
+        seg_indptr=seg_indptr_cur_rank,
+        weight_indices=weight_indices_cur_rank,
+        use_fp8_w8a8=use_fp8_w8a8,
+        scale_a=w2_input_scale,
+        scale_b=w2_scale_inv,
+        block_shape=block_shape,
+    )
+
+    # PostReorder
+    output = torch.empty_like(hidden_states)
+    post_reorder_triton_kernel[(hidden_states.size(0),)](
+        down_output,
+        output,
+        src2dst,
+        topk_ids,
+        topk_weights,
+        start_expert_id,
+        end_expert_id,
+        top_k,
+        hidden_states.size(1),
+        0,
+        BLOCK_SIZE=512,
+    )
+    return output</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE"><code class="flex name class">
+<span>class <span class="ident">TestW8A8BlockFP8EPMoE</span></span>
+<span>(</span><span>methodName='runTest')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TestW8A8BlockFP8EPMoE(CustomTestCase):
+    DTYPES = [torch.half, torch.bfloat16]
+    M = [1, 222, 1024, 2048]
+    N = [128, 1024, 2048]
+    K = [256, 4096, 5120]
+    E = [8, 16]
+    ep_size = [2, 4]
+    TOP_KS = [2, 4]
+    BLOCK_SIZE = [[128, 128]]
+    SEEDS = [0]
+
+    @classmethod
+    def setUpClass(cls):
+        if not torch.cuda.is_available():
+            raise unittest.SkipTest(&#34;CUDA is not available&#34;)
+        torch.set_default_device(&#34;cuda&#34;)
+
+    def _w8a8_block_fp8_ep_moe(
+        self, M, N, K, E, ep_size, topk, block_size, dtype, seed
+    ):
+        torch.manual_seed(seed)
+        random.seed(seed)
+        # NOTE(HandH1998): to avoid overflow when out_dtype = torch.half
+        factor_for_scale = 1e-2
+        fp8_info = torch.finfo(torch.float8_e4m3fn)
+        fp8_max, fp8_min = fp8_info.max, fp8_info.min
+
+        a = torch.randn((M, K), dtype=dtype) / 10
+
+        w1_fp32 = (torch.rand((E, 2 * N, K), dtype=dtype) - 0.5) * 2 * fp8_max
+        w1 = w1_fp32.clamp(min=fp8_min, max=fp8_max).to(torch.float8_e4m3fn)
+
+        w2_fp32 = (torch.rand((E, K, N), dtype=dtype) - 0.5) * 2 * fp8_max
+        w2 = w2_fp32.clamp(min=fp8_min, max=fp8_max).to(torch.float8_e4m3fn)
+
+        block_n, block_k = block_size[0], block_size[1]
+        n_tiles_w1 = (2 * N + block_n - 1) // block_n
+        n_tiles_w2 = (K + block_n - 1) // block_n
+        k_tiles_w1 = (K + block_k - 1) // block_k
+        k_tiles_w2 = (N + block_k - 1) // block_k
+
+        w1_s = (
+            torch.rand((E, n_tiles_w1, k_tiles_w1), dtype=torch.float32)
+            * factor_for_scale
+        )
+        w2_s = (
+            torch.rand((E, n_tiles_w2, k_tiles_w2), dtype=torch.float32)
+            * factor_for_scale
+        )
+
+        w1_ref = block_dequant(w1, w1_s, block_size).to(dtype)
+        w2_ref = block_dequant(w2, w2_s, block_size).to(dtype)
+
+        score = torch.randn((M, E), dtype=dtype)
+        num_experts_per_partition = E // ep_size
+        cur_rank = random.randint(0, ep_size - 1)
+        start_id = cur_rank * num_experts_per_partition
+        end_id = start_id + num_experts_per_partition - 1
+
+        topk_config = TopKConfig(
+            top_k=topk,
+            renormalize=False,
+        )
+
+        with torch.inference_mode():
+            out = ep_moe(
+                hidden_states=a,
+                w1=w1,
+                w2=w2,
+                router_logits=score,
+                topk_config=topk_config,
+                use_fp8_w8a8=True,
+                w1_scale_inv=w1_s,
+                w2_scale_inv=w2_s,
+                block_shape=block_size,
+                num_experts=E,
+                num_experts_per_partition=num_experts_per_partition,
+                start_expert_id=start_id,
+                end_expert_id=end_id,
+            )
+            ref_out = ep_moe(
+                hidden_states=a,
+                w1=w1_ref,
+                w2=w2_ref,
+                router_logits=score,
+                topk_config=topk_config,
+                use_fp8_w8a8=False,
+                w1_scale_inv=None,
+                w2_scale_inv=None,
+                block_shape=None,
+                num_experts=E,
+                num_experts_per_partition=num_experts_per_partition,
+                start_expert_id=start_id,
+                end_expert_id=end_id,
+            )
+        self.assertTrue(
+            torch.mean(torch.abs(out.to(torch.float32) - ref_out.to(torch.float32)))
+            / (torch.mean(torch.abs(ref_out.to(torch.float32))) + 1e-6)
+            &lt; 0.06
+        )
+
+    def test_w8a8_block_fp8_ep_moe(self):
+        for params in itertools.product(
+            self.M,
+            self.N,
+            self.K,
+            self.E,
+            self.ep_size,
+            self.TOP_KS,
+            self.BLOCK_SIZE,
+            self.DTYPES,
+            self.SEEDS,
+        ):
+            with self.subTest(
+                M=params[0],
+                N=params[1],
+                K=params[2],
+                E=params[3],
+                ep_size=params[4],
+                topk=params[5],
+                block_size=params[6],
+                dtype=params[7],
+                seed=params[8],
+            ):
+                self._w8a8_block_fp8_ep_moe(*params)
+            torch.cuda.empty_cache()</code></pre>
+</details>
+<div class="desc"><p>A class whose instances are single test cases.</p>
+<p>By default, the test code itself should be placed in a method named
+'runTest'.</p>
+<p>If the fixture may be used for many test cases, create as
+many test methods as are needed. When instantiating such a TestCase
+subclass, specify in the constructor arguments the name of the test method
+that the instance is to execute.</p>
+<p>Test authors should subclass TestCase for their own tests. Construction
+and deconstruction of the test's environment ('fixture') can be
+implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
+<p>If it is necessary to override the <strong>init</strong> method, the base class
+<strong>init</strong> method must always be called. It is important that subclasses
+should not change the signature of their <strong>init</strong> method, since instances
+of the classes are instantiated automatically by parts of the framework
+in order to be run.</p>
+<p>When subclassing TestCase, you can set these attributes:
+* failureException: determines which exception will be raised when
+the instance's assertion methods fail; test methods raising this
+exception will be deemed to have 'failed' rather than 'errored'.
+* longMessage: determines whether long messages (including repr of
+objects used in assert methods) will be printed on failure in <em>addition</em>
+to any explicit message passed.
+* maxDiff: sets the maximum length of a diff in failure messages
+by assert methods using difflib. It is looked up as an instance
+attribute so can be configured by individual tests if required.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.test.test_utils.CustomTestCase" href="test_utils.html#sglang.test.test_utils.CustomTestCase">CustomTestCase</a></li>
+<li>unittest.case.TestCase</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.BLOCK_SIZE"><code class="name">var <span class="ident">BLOCK_SIZE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.DTYPES"><code class="name">var <span class="ident">DTYPES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.E"><code class="name">var <span class="ident">E</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.K"><code class="name">var <span class="ident">K</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.M"><code class="name">var <span class="ident">M</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.N"><code class="name">var <span class="ident">N</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.SEEDS"><code class="name">var <span class="ident">SEEDS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.TOP_KS"><code class="name">var <span class="ident">TOP_KS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.ep_size"><code class="name">var <span class="ident">ep_size</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.setUpClass"><code class="name flex">
+<span>def <span class="ident">setUpClass</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Hook method for setting up class fixture before running tests in the class.</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.test_w8a8_block_fp8_ep_moe"><code class="name flex">
+<span>def <span class="ident">test_w8a8_block_fp8_ep_moe</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_w8a8_block_fp8_ep_moe(self):
+    for params in itertools.product(
+        self.M,
+        self.N,
+        self.K,
+        self.E,
+        self.ep_size,
+        self.TOP_KS,
+        self.BLOCK_SIZE,
+        self.DTYPES,
+        self.SEEDS,
+    ):
+        with self.subTest(
+            M=params[0],
+            N=params[1],
+            K=params[2],
+            E=params[3],
+            ep_size=params[4],
+            topk=params[5],
+            block_size=params[6],
+            dtype=params[7],
+            seed=params[8],
+        ):
+            self._w8a8_block_fp8_ep_moe(*params)
+        torch.cuda.empty_cache()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.test" href="index.html">sglang.test</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.test.test_block_fp8_ep.block_dequant" href="#sglang.test.test_block_fp8_ep.block_dequant">block_dequant</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.ep_moe" href="#sglang.test.test_block_fp8_ep.ep_moe">ep_moe</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE">TestW8A8BlockFP8EPMoE</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.BLOCK_SIZE" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.BLOCK_SIZE">BLOCK_SIZE</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.DTYPES" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.DTYPES">DTYPES</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.E" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.E">E</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.K" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.K">K</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.M" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.M">M</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.N" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.N">N</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.SEEDS" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.SEEDS">SEEDS</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.TOP_KS" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.TOP_KS">TOP_KS</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.ep_size" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.ep_size">ep_size</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.setUpClass" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.setUpClass">setUpClass</a></code></li>
+<li><code><a title="sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.test_w8a8_block_fp8_ep_moe" href="#sglang.test.test_block_fp8_ep.TestW8A8BlockFP8EPMoE.test_w8a8_block_fp8_ep_moe">test_w8a8_block_fp8_ep_moe</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

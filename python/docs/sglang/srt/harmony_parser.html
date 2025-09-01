@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.harmony_parser API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.harmony_parser</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.harmony_parser.iter_tokens"><code class="name flex">
+<span>def <span class="ident">iter_tokens</span></span>(<span>text: str, start_pos: int = 0) ‑> Iterator[<a title="sglang.srt.harmony_parser.Token" href="#sglang.srt.harmony_parser.Token">Token</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def iter_tokens(text: str, start_pos: int = 0) -&gt; Iterator[Token]:
+    &#34;&#34;&#34;Iterate over structural tokens in left-to-right order.&#34;&#34;&#34;
+    TOKENS = {
+        &#34;&lt;|start|&gt;&#34;: &#34;START&#34;,
+        &#34;&lt;|channel|&gt;&#34;: &#34;CHANNEL&#34;,
+        &#34;&lt;|message|&gt;&#34;: &#34;MESSAGE&#34;,
+        &#34;&lt;|constrain|&gt;&#34;: &#34;CONSTRAIN&#34;,
+        &#34;&lt;|end|&gt;&#34;: &#34;END&#34;,
+        &#34;&lt;|call|&gt;&#34;: &#34;CALL&#34;,
+        &#34;&lt;|return|&gt;&#34;: &#34;RETURN&#34;,
+    }
+
+    pos = start_pos
+    has_unknown_tokens = False
+    while pos &lt; len(text):
+        # Find next &#34;&lt;|&#34;
+        marker_pos = text.find(&#34;&lt;|&#34;, pos)
+        if marker_pos == -1:
+            break
+
+        # Emit any text before the marker
+        if marker_pos &gt; pos:
+            yield Token(&#34;TEXT&#34;, pos, marker_pos)
+
+        # Check which token it is
+        found_token = False
+
+        for literal, token_type in TOKENS.items():
+            if text.startswith(literal, marker_pos):
+                yield Token(token_type, marker_pos, marker_pos + len(literal))
+                pos = marker_pos + len(literal)
+                found_token = True
+                break
+        if not found_token:
+            tail = text[marker_pos:]
+            is_partial = any(lit.startswith(tail) for lit in TOKENS)
+            if is_partial:
+                # Hold whole tail (partial token)
+                yield Token(&#34;TEXT&#34;, marker_pos, len(text))
+                pos = len(text)
+                break
+            else:
+                # Unknown token like &lt;|weird|&gt; ...
+                has_unknown_tokens = True
+                # Emit the &#34;&lt;|&#34; as a TEXT token first
+                yield Token(&#34;TEXT&#34;, marker_pos, marker_pos + 2)
+
+                # Try to find a closing &#34;|&gt;&#34; for this unknown token
+                close_pos = text.find(&#34;|&gt;&#34;, marker_pos + 2)
+                if close_pos != -1:
+                    # Look ahead to the next structural token after the unknown close
+                    next_marker = text.find(&#34;&lt;|&#34;, close_pos + 2)
+                    if next_marker != -1:
+                        # Emit the unknown body + any following plain text up to next marker
+                        yield Token(&#34;TEXT&#34;, marker_pos + 2, next_marker)
+                        pos = next_marker
+                    else:
+                        # Emit until the end
+                        yield Token(&#34;TEXT&#34;, marker_pos + 2, len(text))
+                        pos = len(text)
+                        break
+                else:
+                    # No closing; advance past &#34;&lt;|&#34; and continue scanning
+                    pos = marker_pos + 2
+
+    # Emit any remaining text
+    if pos &lt; len(text):
+        yield Token(&#34;TEXT&#34;, pos, len(text))
+    elif pos == len(text) and has_unknown_tokens:
+        # Add an empty trailing TEXT token only when we encountered unknown tokens
+        # and the text ends with a known structural token. This matches expected tests.
+        for literal in TOKENS.keys():
+            if text.endswith(literal):
+                yield Token(&#34;TEXT&#34;, pos, pos)
+                break</code></pre>
+</details>
+<div class="desc"><p>Iterate over structural tokens in left-to-right order.</p></div>
+</dd>
+<dt id="sglang.srt.harmony_parser.prefix_hold"><code class="name flex">
+<span>def <span class="ident">prefix_hold</span></span>(<span>text: str, tokens: List[str]) ‑> Tuple[str, str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prefix_hold(text: str, tokens: List[str]) -&gt; Tuple[str, str]:
+    &#34;&#34;&#34;
+    Holds back the longest suffix of `text` that could be a prefix of any token.
+    Returns (emit_now, keep_for_later).
+    &#34;&#34;&#34;
+    if not text:
+        return &#34;&#34;, &#34;&#34;
+    max_hold = 0
+    for tok in tokens:
+        if not tok:
+            continue
+        # Check for prefixes of tok in the suffix of text
+        L = min(len(tok) - 1, len(text))
+        for k in range(L, 0, -1):
+            if tok.startswith(text[-k:]):
+                max_hold = max(max_hold, k)
+                break
+    if max_hold == 0:
+        return text, &#34;&#34;
+    return text[:-max_hold], text[-max_hold:]</code></pre>
+</details>
+<div class="desc"><p>Holds back the longest suffix of <code>text</code> that could be a prefix of any token.
+Returns (emit_now, keep_for_later).</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.harmony_parser.CanonicalStrategy"><code class="flex name class">
+<span>class <span class="ident">CanonicalStrategy</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CanonicalStrategy:
+    &#34;&#34;&#34;Parses the canonical Harmony format with channel markers.&#34;&#34;&#34;
+
+    def __init__(self):
+        self.guard_tokens = [
+            &#34;&lt;|start|&gt;&#34;,
+            &#34;&lt;|channel|&gt;&#34;,
+            &#34;&lt;|message|&gt;&#34;,
+            &#34;&lt;|constrain|&gt;&#34;,
+            &#34;&lt;|end|&gt;&#34;,
+            &#34;&lt;|call|&gt;&#34;,
+            &#34;&lt;|return|&gt;&#34;,
+        ]
+
+    def parse(self, text: str) -&gt; Tuple[List[Event], str]:
+        events = []
+        tokens = list(iter_tokens(text))
+
+        if not tokens:
+            return events, &#34;&#34;
+
+        pos = 0
+        while pos &lt; len(tokens):
+            token = tokens[pos]
+
+            if token.type == &#34;TEXT&#34;:
+                # Check if this might be incomplete
+                if pos == len(tokens) - 1:  # Last token
+                    emit, hold = prefix_hold(
+                        text[token.start : token.end], self.guard_tokens
+                    )
+                    if emit:
+                        events.append(Event(&#34;normal&#34;, emit))
+                    return events, hold
+                else:
+                    # Check if this might be commentary filler between blocks
+                    if self._is_commentary_filler_between_blocks(text, tokens, pos):
+                        # Skip this filler text - don&#39;t emit as normal content
+                        pos += 1
+                    else:
+                        content = text[token.start : token.end]
+                        # Skip standalone structural tokens that shouldn&#39;t be emitted as normal text
+                        if not self._is_standalone_structural_token(content):
+                            events.append(Event(&#34;normal&#34;, content))
+                        pos += 1
+
+            elif token.type in (&#34;START&#34;, &#34;CHANNEL&#34;):
+                # Parse a channel block starting here
+                block_result = self._parse_block(text, tokens, pos)
+                if block_result is None:
+                    # Incomplete block - check if we can emit partial reasoning content
+                    partial_result = self._parse_partial_analysis(text, tokens, pos)
+                    if partial_result:
+                        event, remaining_text = partial_result
+                        events.append(event)
+                        return events, remaining_text
+                    # No partial content, hold entire remaining text
+                    remaining_start = tokens[pos].start
+                    return events, text[remaining_start:]
+                event, new_pos = block_result
+                if event:
+                    events.append(event)
+                pos = new_pos
+
+            else:
+                # Check if this might be commentary filler between blocks
+                if self._is_commentary_filler_between_blocks(text, tokens, pos):
+                    # Skip this filler text - don&#39;t emit as normal content
+                    pos += 1
+                else:
+                    # Unexpected token - only emit as text if it&#39;s not a standalone structural token
+                    content = text[token.start : token.end]
+                    if not self._is_standalone_structural_token(content):
+                        events.append(Event(&#34;normal&#34;, content))
+                    pos += 1
+
+        return events, &#34;&#34;
+
+    def _parse_partial_analysis(
+        self, text: str, tokens: List[Token], start_pos: int
+    ) -&gt; Optional[Tuple[Event, str]]:
+        &#34;&#34;&#34;Try to parse partial analysis content for incremental streaming.&#34;&#34;&#34;
+        pos = start_pos
+
+        # Skip &lt;|start|&gt; if present
+        if pos &lt; len(tokens) and tokens[pos].type == &#34;START&#34;:
+            pos += 1
+
+        # Look for &lt;|channel|&gt; followed by analysis
+        channel_pos = None
+        message_pos = None
+
+        for i in range(pos, len(tokens)):
+            if tokens[i].type == &#34;CHANNEL&#34; and channel_pos is None:
+                channel_pos = i
+            elif tokens[i].type == &#34;MESSAGE&#34;:
+                message_pos = i
+                break
+
+        if channel_pos is None or message_pos is None:
+            return None
+
+        # Extract channel type
+        channel_start = (
+            tokens[channel_pos + 1].start
+            if channel_pos + 1 &lt; len(tokens)
+            else tokens[channel_pos].end
+        )
+        channel_end = tokens[message_pos].start
+        channel_header = text[channel_start:channel_end]
+
+        channel_type = self._extract_channel_type(channel_header)
+        if channel_type != &#34;analysis&#34;:
+            return None  # Only stream analysis content - tool calls wait for completion
+
+        # Extract partial content after &lt;|message|&gt;
+        content_start = tokens[message_pos].end
+        content = text[content_start:]
+
+        # Return partial reasoning content and preserve the channel structure for next parse
+        remaining_text = text[tokens[start_pos].start : content_start]
+        return Event(&#34;reasoning&#34;, content), remaining_text
+
+    def _extract_channel_type(self, header_text: str) -&gt; Optional[str]:
+        &#34;&#34;&#34;Extract channel type from header, ignoring other attributes like to=... or &lt;|constrain|&gt;...&#34;&#34;&#34;
+        # Look for channel type at the start of the header (case insensitive)
+        header_clean = header_text.strip()
+
+        if header_clean.lower().startswith(&#34;analysis&#34;):
+            return &#34;analysis&#34;
+        elif header_clean.lower().startswith(&#34;commentary&#34;):
+            return &#34;commentary&#34;
+        elif header_clean.lower().startswith(&#34;final&#34;):
+            return &#34;final&#34;
+        else:
+            return None  # Unknown channel type
+
+    def _parse_block(
+        self, text: str, tokens: List[Token], start_pos: int
+    ) -&gt; Optional[Tuple[Optional[Event], int]]:
+        &#34;&#34;&#34;Parse a channel block. Returns (event, next_pos) or None if incomplete.&#34;&#34;&#34;
+        pos = start_pos
+
+        # Skip &lt;|start|&gt; if present
+        if pos &lt; len(tokens) and tokens[pos].type == &#34;START&#34;:
+            pos += 1
+
+        # Look for &lt;|channel|&gt; or &lt;|message|&gt; (tool responses go direct to message)
+        channel_pos = None
+        message_pos = None
+
+        for i in range(pos, len(tokens)):
+            if tokens[i].type == &#34;CHANNEL&#34; and channel_pos is None:
+                channel_pos = i
+            elif tokens[i].type == &#34;MESSAGE&#34;:
+                message_pos = i
+                break
+
+        if message_pos is None:
+            return None  # No message token found
+
+        # If no channel found, this is a tool response - treat as normal text
+        if channel_pos is None:
+            content_start = tokens[message_pos].end
+            # Find end token after message
+            end_token_pos = None
+            for i in range(message_pos + 1, len(tokens)):
+                if tokens[i].type in (&#34;END&#34;, &#34;CALL&#34;, &#34;RETURN&#34;):
+                    end_token_pos = i
+                    break
+            if end_token_pos is None:
+                return None  # Incomplete
+            content = text[content_start : tokens[end_token_pos].start]
+            return Event(&#34;normal&#34;, content), end_token_pos + 1
+
+        # Standard channel block processing - message_pos is already found above
+        pos = channel_pos + 1  # Skip CHANNEL token
+
+        # Extract channel type from header (ignoring other attributes like to=... or &lt;|constrain|&gt;...)
+        channel_start = tokens[pos].start if pos &lt; len(tokens) else tokens[pos - 1].end
+        channel_end = tokens[message_pos].start
+        channel_header = text[channel_start:channel_end]
+
+        channel_type = self._extract_channel_type(channel_header)
+        if not channel_type:
+            return None  # Unknown or malformed channel
+
+        pos = message_pos + 1  # Skip MESSAGE token
+
+        # Find content and end token
+        content_start = tokens[message_pos].end
+        end_pos = pos
+
+        # Each channel type has specific valid end tokens
+        if channel_type == &#34;final&#34;:
+            while end_pos &lt; len(tokens) and tokens[end_pos].type != &#34;RETURN&#34;:
+                end_pos += 1
+        elif channel_type == &#34;analysis&#34;:
+            while end_pos &lt; len(tokens) and tokens[end_pos].type not in (&#34;END&#34;, &#34;CALL&#34;):
+                end_pos += 1
+        else:  # commentary
+            while end_pos &lt; len(tokens) and tokens[end_pos].type not in (&#34;END&#34;, &#34;CALL&#34;):
+                end_pos += 1
+
+        if end_pos &gt;= len(tokens):
+            # No end token found
+            if channel_type == &#34;final&#34;:
+                # Final blocks can end at end of input without requiring &lt;|return|&gt;
+                content = text[content_start:]
+                return Event(&#34;normal&#34;, content), end_pos
+            return None  # Analysis and commentary need proper end tokens
+
+        end_token = tokens[end_pos]
+        content = text[content_start : end_token.start]
+
+        # Create event based on channel and end token
+        if channel_type == &#34;analysis&#34;:
+            if end_token.type == &#34;CALL&#34;:
+                # Built-in tools (browser, python) use analysis channel with &lt;|call|&gt;
+                raw_text = text[tokens[start_pos].start : end_token.end]
+                return Event(&#34;tool_call&#34;, content.strip(), raw_text), end_pos + 1
+            else:
+                return Event(&#34;reasoning&#34;, content), end_pos + 1
+        elif channel_type == &#34;commentary&#34;:
+            if end_token.type == &#34;CALL&#34;:
+                raw_text = text[tokens[start_pos].start : end_token.end]
+                return Event(&#34;tool_call&#34;, content.strip(), raw_text), end_pos + 1
+            else:
+                return Event(&#34;normal&#34;, content), end_pos + 1
+        elif channel_type == &#34;final&#34;:
+            # For final blocks, include any trailing TEXT immediately after &lt;|return|&gt;
+            final_content = content
+            if end_token.type == &#34;RETURN&#34; and end_pos + 1 &lt; len(tokens):
+                next_token = tokens[end_pos + 1]
+                if next_token.type == &#34;TEXT&#34;:
+                    final_content += text[next_token.start : next_token.end]
+                    return Event(&#34;normal&#34;, final_content), end_pos + 2
+            return Event(&#34;normal&#34;, final_content), end_pos + 1
+
+        return None, end_pos + 1
+
+    def _is_commentary_filler_between_blocks(
+        self, text: str, tokens: List[Token], pos: int
+    ) -&gt; bool:
+        &#34;&#34;&#34;Check if this is commentary filler text or problematic structural tokens in malformed sequences.&#34;&#34;&#34;
+        current_token = tokens[pos]
+        current_text = text[current_token.start : current_token.end].strip()
+
+        # Check for commentary filler between CALL and CHANNEL
+        if pos &gt; 0 and pos + 1 &lt; len(tokens):
+            prev_token = tokens[pos - 1]
+            next_token = tokens[pos + 1]
+
+            # Check if we have CALL -&gt; TEXT(&#34;commentary&#34;) -&gt; CHANNEL pattern
+            if (
+                prev_token.type == &#34;CALL&#34;
+                and next_token.type == &#34;CHANNEL&#34;
+                and current_text.lower() == &#34;commentary&#34;
+            ):
+                return True
+
+        # Check for problematic patterns after CALL tokens (malformed sequences)
+        if pos &gt; 0:
+            prev_token = tokens[pos - 1]
+
+            # Only filter structural tokens that appear immediately after CALL in malformed sequences
+            # These patterns indicate the content is malformed and the structural tokens are noise
+            if prev_token.type == &#34;CALL&#34;:
+                # Filter MESSAGE tokens after CALL (should not happen in well-formed content)
+                if current_token.type == &#34;MESSAGE&#34;:
+                    return True
+
+                # Filter standalone &#34;commentary&#34; text after CALL
+                if (
+                    current_token.type == &#34;TEXT&#34;
+                    and current_text.lower() == &#34;commentary&#34;
+                ):
+                    return True
+
+        return False
+
+    def _is_standalone_structural_token(self, content: str) -&gt; bool:
+        &#34;&#34;&#34;Check if content is just a standalone structural token that should be filtered.&#34;&#34;&#34;
+        content_stripped = content.strip()
+        structural_tokens = [
+            &#34;&lt;|start|&gt;&#34;,
+            &#34;&lt;|channel|&gt;&#34;,
+            &#34;&lt;|message|&gt;&#34;,
+            &#34;&lt;|constrain|&gt;&#34;,
+            &#34;&lt;|end|&gt;&#34;,
+            &#34;&lt;|call|&gt;&#34;,
+            &#34;&lt;|return|&gt;&#34;,
+        ]
+        return content_stripped in structural_tokens</code></pre>
+</details>
+<div class="desc"><p>Parses the canonical Harmony format with channel markers.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.harmony_parser.CanonicalStrategy.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, text: str) ‑> Tuple[List[<a title="sglang.srt.harmony_parser.Event" href="#sglang.srt.harmony_parser.Event">Event</a>], str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, text: str) -&gt; Tuple[List[Event], str]:
+    events = []
+    tokens = list(iter_tokens(text))
+
+    if not tokens:
+        return events, &#34;&#34;
+
+    pos = 0
+    while pos &lt; len(tokens):
+        token = tokens[pos]
+
+        if token.type == &#34;TEXT&#34;:
+            # Check if this might be incomplete
+            if pos == len(tokens) - 1:  # Last token
+                emit, hold = prefix_hold(
+                    text[token.start : token.end], self.guard_tokens
+                )
+                if emit:
+                    events.append(Event(&#34;normal&#34;, emit))
+                return events, hold
+            else:
+                # Check if this might be commentary filler between blocks
+                if self._is_commentary_filler_between_blocks(text, tokens, pos):
+                    # Skip this filler text - don&#39;t emit as normal content
+                    pos += 1
+                else:
+                    content = text[token.start : token.end]
+                    # Skip standalone structural tokens that shouldn&#39;t be emitted as normal text
+                    if not self._is_standalone_structural_token(content):
+                        events.append(Event(&#34;normal&#34;, content))
+                    pos += 1
+
+        elif token.type in (&#34;START&#34;, &#34;CHANNEL&#34;):
+            # Parse a channel block starting here
+            block_result = self._parse_block(text, tokens, pos)
+            if block_result is None:
+                # Incomplete block - check if we can emit partial reasoning content
+                partial_result = self._parse_partial_analysis(text, tokens, pos)
+                if partial_result:
+                    event, remaining_text = partial_result
+                    events.append(event)
+                    return events, remaining_text
+                # No partial content, hold entire remaining text
+                remaining_start = tokens[pos].start
+                return events, text[remaining_start:]
+            event, new_pos = block_result
+            if event:
+                events.append(event)
+            pos = new_pos
+
+        else:
+            # Check if this might be commentary filler between blocks
+            if self._is_commentary_filler_between_blocks(text, tokens, pos):
+                # Skip this filler text - don&#39;t emit as normal content
+                pos += 1
+            else:
+                # Unexpected token - only emit as text if it&#39;s not a standalone structural token
+                content = text[token.start : token.end]
+                if not self._is_standalone_structural_token(content):
+                    events.append(Event(&#34;normal&#34;, content))
+                pos += 1
+
+    return events, &#34;&#34;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.harmony_parser.Event"><code class="flex name class">
+<span>class <span class="ident">Event</span></span>
+<span>(</span><span>event_type: str, content: str, raw_text: str = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Event:
+    &#34;&#34;&#34;Represents a parsed event from the Harmony stream.&#34;&#34;&#34;
+
+    event_type: str
+    content: str
+    raw_text: str = None  # Original text including structural markers</code></pre>
+</details>
+<div class="desc"><p>Represents a parsed event from the Harmony stream.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.harmony_parser.Event.content"><code class="name">var <span class="ident">content</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.harmony_parser.Event.event_type"><code class="name">var <span class="ident">event_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.harmony_parser.Event.raw_text"><code class="name">var <span class="ident">raw_text</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.harmony_parser.HarmonyParser"><code class="flex name class">
+<span>class <span class="ident">HarmonyParser</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class HarmonyParser:
+    &#34;&#34;&#34;Facade for parsing Harmony format, switching between strategies.&#34;&#34;&#34;
+
+    def __init__(self):
+        self.strategy = None
+        self._buffer = &#34;&#34;
+        self._should_filter_commentary = (
+            False  # Track if we should filter commentary in next chunks
+        )
+        self._partial_commentary = (
+            &#34;&#34;  # Track partial commentary being built across chunks
+        )
+
+    def parse(self, chunk: str) -&gt; List[Event]:
+        self._buffer += chunk
+
+        if self.strategy is None:
+            if &#34;&lt;|channel|&gt;&#34; in self._buffer or &#34;&lt;|start|&gt;&#34; in self._buffer:
+                self.strategy = CanonicalStrategy()
+            elif re.search(
+                r&#34;(?:^|\s)(?:assistant)?\s*(analysis|commentary|assistantfinal)&#34;,
+                self._buffer,
+                re.IGNORECASE,
+            ):
+                self.strategy = TextStrategy()
+            else:
+                # Not yet determined, hold
+                return []
+
+        if hasattr(self.strategy, &#34;set_buffer_context&#34;):
+            # Provide full buffer context to strategy for smarter whitespace handling
+            self.strategy.set_buffer_context(self._buffer)
+
+        events, remaining = self.strategy.parse(self._buffer)
+
+        # Check if we should start filtering commentary (after &lt;|call|&gt; token or tool_call event)
+        buffer_has_call_token = self._buffer.rstrip().endswith(&#34;&lt;|call|&gt;&#34;)
+
+        self._buffer = remaining
+
+        # Filter events for streaming case
+        filtered_events = []
+        for event in events:
+            should_filter = False
+
+            if event.event_type == &#34;normal&#34;:
+                # Check if we&#39;re in a commentary filtering state
+                if self._should_filter_commentary or self._partial_commentary:
+                    # Try to build partial commentary
+                    potential_commentary = (
+                        self._partial_commentary + event.content.strip().lower()
+                    )
+
+                    if potential_commentary == &#34;commentary&#34;:
+                        # Complete commentary found - filter it
+                        should_filter = True
+                        self._partial_commentary = &#34;&#34;  # Reset
+                        self._should_filter_commentary = False  # Done filtering
+                    elif &#34;commentary&#34;.startswith(potential_commentary):
+                        # Partial match - accumulate and filter this chunk
+                        should_filter = True
+                        self._partial_commentary = potential_commentary
+                    else:
+                        # Not commentary - reset and keep the event
+                        self._partial_commentary = &#34;&#34;
+                        self._should_filter_commentary = False
+                else:
+                    # Not in commentary filtering state - reset partial state
+                    self._partial_commentary = &#34;&#34;
+
+            if should_filter:
+                # Skip this commentary filler
+                continue
+
+            # Update filtering state based on events and buffer state
+            if event.event_type == &#34;tool_call&#34;:
+                self._should_filter_commentary = (
+                    True  # Filter commentary after tool calls
+                )
+                self._partial_commentary = &#34;&#34;  # Reset on tool call
+            elif buffer_has_call_token:
+                self._should_filter_commentary = (
+                    True  # Filter commentary after &lt;|call|&gt; token
+                )
+
+            filtered_events.append(event)
+
+        return filtered_events</code></pre>
+</details>
+<div class="desc"><p>Facade for parsing Harmony format, switching between strategies.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.harmony_parser.HarmonyParser.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, chunk: str) ‑> List[<a title="sglang.srt.harmony_parser.Event" href="#sglang.srt.harmony_parser.Event">Event</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, chunk: str) -&gt; List[Event]:
+    self._buffer += chunk
+
+    if self.strategy is None:
+        if &#34;&lt;|channel|&gt;&#34; in self._buffer or &#34;&lt;|start|&gt;&#34; in self._buffer:
+            self.strategy = CanonicalStrategy()
+        elif re.search(
+            r&#34;(?:^|\s)(?:assistant)?\s*(analysis|commentary|assistantfinal)&#34;,
+            self._buffer,
+            re.IGNORECASE,
+        ):
+            self.strategy = TextStrategy()
+        else:
+            # Not yet determined, hold
+            return []
+
+    if hasattr(self.strategy, &#34;set_buffer_context&#34;):
+        # Provide full buffer context to strategy for smarter whitespace handling
+        self.strategy.set_buffer_context(self._buffer)
+
+    events, remaining = self.strategy.parse(self._buffer)
+
+    # Check if we should start filtering commentary (after &lt;|call|&gt; token or tool_call event)
+    buffer_has_call_token = self._buffer.rstrip().endswith(&#34;&lt;|call|&gt;&#34;)
+
+    self._buffer = remaining
+
+    # Filter events for streaming case
+    filtered_events = []
+    for event in events:
+        should_filter = False
+
+        if event.event_type == &#34;normal&#34;:
+            # Check if we&#39;re in a commentary filtering state
+            if self._should_filter_commentary or self._partial_commentary:
+                # Try to build partial commentary
+                potential_commentary = (
+                    self._partial_commentary + event.content.strip().lower()
+                )
+
+                if potential_commentary == &#34;commentary&#34;:
+                    # Complete commentary found - filter it
+                    should_filter = True
+                    self._partial_commentary = &#34;&#34;  # Reset
+                    self._should_filter_commentary = False  # Done filtering
+                elif &#34;commentary&#34;.startswith(potential_commentary):
+                    # Partial match - accumulate and filter this chunk
+                    should_filter = True
+                    self._partial_commentary = potential_commentary
+                else:
+                    # Not commentary - reset and keep the event
+                    self._partial_commentary = &#34;&#34;
+                    self._should_filter_commentary = False
+            else:
+                # Not in commentary filtering state - reset partial state
+                self._partial_commentary = &#34;&#34;
+
+        if should_filter:
+            # Skip this commentary filler
+            continue
+
+        # Update filtering state based on events and buffer state
+        if event.event_type == &#34;tool_call&#34;:
+            self._should_filter_commentary = (
+                True  # Filter commentary after tool calls
+            )
+            self._partial_commentary = &#34;&#34;  # Reset on tool call
+        elif buffer_has_call_token:
+            self._should_filter_commentary = (
+                True  # Filter commentary after &lt;|call|&gt; token
+            )
+
+        filtered_events.append(event)
+
+    return filtered_events</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.harmony_parser.TextStrategy"><code class="flex name class">
+<span>class <span class="ident">TextStrategy</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TextStrategy:
+    &#34;&#34;&#34;Parses the text-based Harmony fallback format.&#34;&#34;&#34;
+
+    def __init__(self):
+        self.buffer_context = &#34;&#34;
+        self.patterns = {
+            &#34;analysis_then_final&#34;: re.compile(
+                r&#34;^\s*(?:assistant)?\s*(analysis|commentary)(.*?)\s*assistantfinal\s*(.*)\s*$&#34;,
+                re.IGNORECASE | re.DOTALL,
+            ),
+            &#34;final_only&#34;: re.compile(
+                r&#34;^\s*assistantfinal\s*(.*)\s*$&#34;, re.IGNORECASE | re.DOTALL
+            ),
+            &#34;analysis_only&#34;: re.compile(
+                r&#34;^\s*(?:assistant)?\s*(analysis|commentary)(.*)\s*$&#34;,
+                re.IGNORECASE | re.DOTALL,
+            ),
+        }
+
+    def set_buffer_context(self, buffer: str):
+        self.buffer_context = buffer
+
+    def parse(self, text: str) -&gt; Tuple[List[Event], str]:
+        events = []
+
+        m = self.patterns[&#34;analysis_then_final&#34;].match(text)
+        if m:
+            channel, reasoning, final = m.groups()
+            if channel.lower() == &#34;analysis&#34; and reasoning.strip():
+                events.append(Event(&#34;reasoning&#34;, reasoning.strip()))
+            elif channel.lower() == &#34;commentary&#34; and reasoning.strip():
+                events.append(Event(&#34;normal&#34;, reasoning.strip()))
+            if final.strip():
+                events.append(Event(&#34;normal&#34;, final.strip()))
+            return events, &#34;&#34;
+
+        # If assistantfinal appears to be incomplete (e.g., &#39;assistantfin&#39;), hold entire buffer
+        if re.search(
+            r&#34;(?:^|\s)(?:assistant)?\s*(analysis|commentary)&#34;, text, re.IGNORECASE
+        ):
+            low = text.lower()
+            if &#34;assistantfin&#34; in low and &#34;assistantfinal&#34; not in low:
+                return events, text
+
+        m = self.patterns[&#34;final_only&#34;].match(text)
+        if m:
+            final = m.group(1)
+            if final.strip():
+                events.append(Event(&#34;normal&#34;, final.strip()))
+            return events, &#34;&#34;
+
+        m = self.patterns[&#34;analysis_only&#34;].match(text)
+        if m:
+            channel, content = m.groups()
+            emit, hold = prefix_hold(content, [&#34;assistantfinal&#34;])
+            if channel.lower() == &#34;analysis&#34; and emit:
+                # Stream reasoning content as-is based on structural markers only.
+                events.append(Event(&#34;reasoning&#34;, emit))
+                # Keep the channel header in the remaining buffer to continue parsing
+                # subsequent chunks in the text fallback format. Preserve any held
+                # prefix that may complete into &#34;assistantfinal&#34;.
+                if hold:
+                    return events, text[: m.start(2)] + hold
+                else:
+                    return events, channel
+            elif channel.lower() == &#34;commentary&#34; and emit:
+                # For commentary, stream as normal text. Preserve spaces unless holding.
+                content_out = emit if hold else emit.strip()
+                events.append(Event(&#34;normal&#34;, content_out))
+                if hold:
+                    return events, text[: m.start(2)] + hold
+                else:
+                    return events, &#34;&#34;
+            # If no emit, just return the held content
+            return events, text[: m.start(2)] + hold
+
+        emit, hold = prefix_hold(text, [&#34;analysis&#34;, &#34;commentary&#34;, &#34;assistantfinal&#34;])
+        if emit:
+            events.append(Event(&#34;normal&#34;, emit))
+        return events, hold</code></pre>
+</details>
+<div class="desc"><p>Parses the text-based Harmony fallback format.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.harmony_parser.TextStrategy.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self, text: str) ‑> Tuple[List[<a title="sglang.srt.harmony_parser.Event" href="#sglang.srt.harmony_parser.Event">Event</a>], str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self, text: str) -&gt; Tuple[List[Event], str]:
+    events = []
+
+    m = self.patterns[&#34;analysis_then_final&#34;].match(text)
+    if m:
+        channel, reasoning, final = m.groups()
+        if channel.lower() == &#34;analysis&#34; and reasoning.strip():
+            events.append(Event(&#34;reasoning&#34;, reasoning.strip()))
+        elif channel.lower() == &#34;commentary&#34; and reasoning.strip():
+            events.append(Event(&#34;normal&#34;, reasoning.strip()))
+        if final.strip():
+            events.append(Event(&#34;normal&#34;, final.strip()))
+        return events, &#34;&#34;
+
+    # If assistantfinal appears to be incomplete (e.g., &#39;assistantfin&#39;), hold entire buffer
+    if re.search(
+        r&#34;(?:^|\s)(?:assistant)?\s*(analysis|commentary)&#34;, text, re.IGNORECASE
+    ):
+        low = text.lower()
+        if &#34;assistantfin&#34; in low and &#34;assistantfinal&#34; not in low:
+            return events, text
+
+    m = self.patterns[&#34;final_only&#34;].match(text)
+    if m:
+        final = m.group(1)
+        if final.strip():
+            events.append(Event(&#34;normal&#34;, final.strip()))
+        return events, &#34;&#34;
+
+    m = self.patterns[&#34;analysis_only&#34;].match(text)
+    if m:
+        channel, content = m.groups()
+        emit, hold = prefix_hold(content, [&#34;assistantfinal&#34;])
+        if channel.lower() == &#34;analysis&#34; and emit:
+            # Stream reasoning content as-is based on structural markers only.
+            events.append(Event(&#34;reasoning&#34;, emit))
+            # Keep the channel header in the remaining buffer to continue parsing
+            # subsequent chunks in the text fallback format. Preserve any held
+            # prefix that may complete into &#34;assistantfinal&#34;.
+            if hold:
+                return events, text[: m.start(2)] + hold
+            else:
+                return events, channel
+        elif channel.lower() == &#34;commentary&#34; and emit:
+            # For commentary, stream as normal text. Preserve spaces unless holding.
+            content_out = emit if hold else emit.strip()
+            events.append(Event(&#34;normal&#34;, content_out))
+            if hold:
+                return events, text[: m.start(2)] + hold
+            else:
+                return events, &#34;&#34;
+        # If no emit, just return the held content
+        return events, text[: m.start(2)] + hold
+
+    emit, hold = prefix_hold(text, [&#34;analysis&#34;, &#34;commentary&#34;, &#34;assistantfinal&#34;])
+    if emit:
+        events.append(Event(&#34;normal&#34;, emit))
+    return events, hold</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.harmony_parser.TextStrategy.set_buffer_context"><code class="name flex">
+<span>def <span class="ident">set_buffer_context</span></span>(<span>self, buffer: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_buffer_context(self, buffer: str):
+    self.buffer_context = buffer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.harmony_parser.Token"><code class="flex name class">
+<span>class <span class="ident">Token</span></span>
+<span>(</span><span>type: str, start: int, end: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Token:
+    &#34;&#34;&#34;A structural token in the Harmony format.&#34;&#34;&#34;
+
+    type: str
+    start: int
+    end: int</code></pre>
+</details>
+<div class="desc"><p>A structural token in the Harmony format.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.harmony_parser.Token.end"><code class="name">var <span class="ident">end</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.harmony_parser.Token.start"><code class="name">var <span class="ident">start</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.harmony_parser.Token.type"><code class="name">var <span class="ident">type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.harmony_parser.iter_tokens" href="#sglang.srt.harmony_parser.iter_tokens">iter_tokens</a></code></li>
+<li><code><a title="sglang.srt.harmony_parser.prefix_hold" href="#sglang.srt.harmony_parser.prefix_hold">prefix_hold</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.harmony_parser.CanonicalStrategy" href="#sglang.srt.harmony_parser.CanonicalStrategy">CanonicalStrategy</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.harmony_parser.CanonicalStrategy.parse" href="#sglang.srt.harmony_parser.CanonicalStrategy.parse">parse</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.harmony_parser.Event" href="#sglang.srt.harmony_parser.Event">Event</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.harmony_parser.Event.content" href="#sglang.srt.harmony_parser.Event.content">content</a></code></li>
+<li><code><a title="sglang.srt.harmony_parser.Event.event_type" href="#sglang.srt.harmony_parser.Event.event_type">event_type</a></code></li>
+<li><code><a title="sglang.srt.harmony_parser.Event.raw_text" href="#sglang.srt.harmony_parser.Event.raw_text">raw_text</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.harmony_parser.HarmonyParser" href="#sglang.srt.harmony_parser.HarmonyParser">HarmonyParser</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.harmony_parser.HarmonyParser.parse" href="#sglang.srt.harmony_parser.HarmonyParser.parse">parse</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.harmony_parser.TextStrategy" href="#sglang.srt.harmony_parser.TextStrategy">TextStrategy</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.harmony_parser.TextStrategy.parse" href="#sglang.srt.harmony_parser.TextStrategy.parse">parse</a></code></li>
+<li><code><a title="sglang.srt.harmony_parser.TextStrategy.set_buffer_context" href="#sglang.srt.harmony_parser.TextStrategy.set_buffer_context">set_buffer_context</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.harmony_parser.Token" href="#sglang.srt.harmony_parser.Token">Token</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.harmony_parser.Token.end" href="#sglang.srt.harmony_parser.Token.end">end</a></code></li>
+<li><code><a title="sglang.srt.harmony_parser.Token.start" href="#sglang.srt.harmony_parser.Token.start">start</a></code></li>
+<li><code><a title="sglang.srt.harmony_parser.Token.type" href="#sglang.srt.harmony_parser.Token.type">type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

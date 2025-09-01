@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.test.test_deepep_utils API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.test.test_deepep_utils</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.test.test_deepep_utils.bench"><code class="name flex">
+<span>def <span class="ident">bench</span></span>(<span>fn, num_warmups: int = 20, num_tests: int = 30, post_fn=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bench(fn, num_warmups: int = 20, num_tests: int = 30, post_fn=None):
+    # Flush L2 cache with 256 MB data
+    torch.cuda.synchronize()
+    cache = torch.empty(int(256e6 // 4), dtype=torch.int, device=&#34;cuda&#34;)
+
+    # Warmup
+    for _ in range(num_warmups):
+        fn()
+
+    # Flush L2
+    cache.zero_()
+
+    # Testing
+    start_events = [torch.cuda.Event(enable_timing=True) for _ in range(num_tests)]
+    end_events = [torch.cuda.Event(enable_timing=True) for _ in range(num_tests)]
+    for i in range(num_tests):
+        # Record
+        start_events[i].record()
+        fn()
+        end_events[i].record()
+        if post_fn is not None:
+            post_fn()
+    torch.cuda.synchronize()
+
+    times = np.array(
+        [s.elapsed_time(e) / 1e3 for s, e in zip(start_events, end_events)]
+    )[1:]
+    return np.average(times), np.min(times), np.max(times)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.bench_kineto"><code class="name flex">
+<span>def <span class="ident">bench_kineto</span></span>(<span>fn,<br>kernel_names,<br>num_tests: int = 30,<br>suppress_kineto_output: bool = False,<br>trace_path: str | None = None,<br>barrier_comm_profiling: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bench_kineto(
+    fn,
+    kernel_names,
+    num_tests: int = 30,
+    suppress_kineto_output: bool = False,
+    trace_path: Optional[str] = None,
+    barrier_comm_profiling: bool = False,
+):
+    # Profile
+    suppress = suppress_stdout_stderr if suppress_kineto_output else empty_suppress
+    with suppress():
+        schedule = torch.profiler.schedule(wait=0, warmup=1, active=1, repeat=1)
+        with torch.profiler.profile(
+            activities=[torch.profiler.ProfilerActivity.CUDA], schedule=schedule
+        ) as prof:
+            for i in range(2):
+                # NOTES: use a large kernel and a barrier to eliminate the unbalanced CPU launch overhead
+                if barrier_comm_profiling:
+                    lhs = torch.randn((8192, 8192), dtype=torch.float, device=&#34;cuda&#34;)
+                    rhs = torch.randn((8192, 8192), dtype=torch.float, device=&#34;cuda&#34;)
+                    lhs @ rhs
+                    dist.all_reduce(torch.ones(1, dtype=torch.float, device=&#34;cuda&#34;))
+                for _ in range(num_tests):
+                    fn()
+                prof.step()
+
+    # Parse the profiling table
+    assert isinstance(kernel_names, str) or isinstance(kernel_names, tuple)
+    is_tupled = isinstance(kernel_names, tuple)
+    prof_lines = (
+        prof.key_averages()
+        .table(sort_by=&#34;cuda_time_total&#34;, max_name_column_width=100)
+        .split(&#34;\n&#34;)
+    )
+    kernel_names = (kernel_names,) if isinstance(kernel_names, str) else kernel_names
+    assert all([isinstance(name, str) for name in kernel_names])
+    for name in kernel_names:
+        assert (
+            sum([name in line for line in prof_lines]) == 1
+        ), f&#34;Errors of the kernel {name} in the profiling table&#34;
+
+    # Save chrome traces
+    if trace_path is not None:
+        prof.export_chrome_trace(trace_path)
+
+    # Return average kernel times
+    units = {&#34;ms&#34;: 1e3, &#34;us&#34;: 1e6}
+    kernel_times = []
+    for name in kernel_names:
+        for line in prof_lines:
+            if name in line:
+                time_str = line.split()[-2]
+                for unit, scale in units.items():
+                    if unit in time_str:
+                        kernel_times.append(float(time_str.replace(unit, &#34;&#34;)) / scale)
+                        break
+                break
+    return tuple(kernel_times) if is_tupled else kernel_times[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.calc_diff"><code class="name flex">
+<span>def <span class="ident">calc_diff</span></span>(<span>x: torch.Tensor, y: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calc_diff(x: torch.Tensor, y: torch.Tensor):
+    x, y = x.double() + 1, y.double() + 1
+    denominator = (x * x + y * y).sum()
+    sim = 2 * (x * y).sum() / denominator
+    return (1 - sim).item()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.create_grouped_scores"><code class="name flex">
+<span>def <span class="ident">create_grouped_scores</span></span>(<span>scores: torch.Tensor, group_idx: torch.Tensor, num_groups: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_grouped_scores(
+    scores: torch.Tensor, group_idx: torch.Tensor, num_groups: int
+):
+    num_tokens, num_experts = scores.shape
+    scores = scores.view(num_tokens, num_groups, -1)
+    mask = torch.zeros((num_tokens, num_groups), dtype=torch.bool, device=scores.device)
+    mask = mask.scatter_(1, group_idx, True).unsqueeze(-1).expand_as(scores)
+    return (scores * mask).view(num_tokens, num_experts)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.hash_tensor"><code class="name flex">
+<span>def <span class="ident">hash_tensor</span></span>(<span>t: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hash_tensor(t: torch.Tensor):
+    return t.view(torch.int64).sum().item()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.init_dist"><code class="name flex">
+<span>def <span class="ident">init_dist</span></span>(<span>local_rank: int, num_local_ranks: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_dist(local_rank: int, num_local_ranks: int):
+    # NOTES: you may rewrite this function with your own cluster settings
+    ip = os.getenv(&#34;MASTER_ADDR&#34;, &#34;127.0.0.1&#34;)
+    port = int(os.getenv(&#34;MASTER_PORT&#34;, &#34;8361&#34;))
+    num_nodes = int(os.getenv(&#34;WORLD_SIZE&#34;, 1))
+    node_rank = int(os.getenv(&#34;RANK&#34;, 0))
+    assert (num_local_ranks &lt; 8 and num_nodes == 1) or num_local_ranks == 8
+
+    dist.init_process_group(
+        backend=&#34;nccl&#34;,
+        init_method=f&#34;tcp://{ip}:{port}&#34;,
+        world_size=num_nodes * num_local_ranks,
+        rank=node_rank * num_local_ranks + local_rank,
+    )
+    torch.set_default_dtype(torch.bfloat16)
+    torch.set_default_device(&#34;cuda&#34;)
+    torch.cuda.set_device(local_rank)
+
+    return (
+        dist.get_rank(),
+        dist.get_world_size(),
+        dist.new_group(list(range(num_local_ranks * num_nodes))),
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.inplace_unique"><code class="name flex">
+<span>def <span class="ident">inplace_unique</span></span>(<span>x: torch.Tensor, num_slots: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inplace_unique(x: torch.Tensor, num_slots: int):
+    assert x.dim() == 2
+    mask = x &lt; 0
+    x_padded = x.masked_fill(mask, num_slots)
+    bin_count = torch.zeros((x.size(0), num_slots + 1), dtype=x.dtype, device=x.device)
+    bin_count.scatter_add_(1, x_padded, torch.ones_like(x_padded))
+    bin_count = bin_count[:, :num_slots]
+    sorted_bin_count, sorted_bin_idx = torch.sort(bin_count, dim=-1, descending=True)
+    sorted_bin_idx.masked_fill_(sorted_bin_count == 0, -1)
+    sorted_bin_idx = torch.sort(sorted_bin_idx, descending=True, dim=-1).values
+    x[:, :].fill_(-1)
+    valid_len = min(num_slots, x.size(1))
+    x[:, :valid_len] = sorted_bin_idx[:, :valid_len]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.per_token_cast_back"><code class="name flex">
+<span>def <span class="ident">per_token_cast_back</span></span>(<span>x_fp8: torch.Tensor, x_scales: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def per_token_cast_back(x_fp8: torch.Tensor, x_scales: torch.Tensor):
+    x_fp32 = x_fp8.to(torch.float32).view(x_fp8.size(0), -1, 128)
+    x_scales = x_scales.view(x_fp8.size(0), -1, 1)
+    return (x_fp32 * x_scales).view(x_fp8.shape).to(torch.bfloat16)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.per_token_cast_to_fp8"><code class="name flex">
+<span>def <span class="ident">per_token_cast_to_fp8</span></span>(<span>x: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def per_token_cast_to_fp8(x: torch.Tensor):
+    assert x.dim() == 2 and x.size(1) % 128 == 0
+    m, n = x.shape
+    x_view = x.view(m, -1, 128)
+    x_amax = x_view.abs().float().amax(dim=2).view(m, -1).clamp(1e-4)
+    return (x_view * (448.0 / x_amax.unsqueeze(2))).to(torch.float8_e4m3fn).view(
+        m, n
+    ), (x_amax / 448.0).view(m, -1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.test.test_deepep_utils.empty_suppress"><code class="flex name class">
+<span>class <span class="ident">empty_suppress</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class empty_suppress:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.test_deepep_utils.suppress_stdout_stderr"><code class="flex name class">
+<span>class <span class="ident">suppress_stdout_stderr</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class suppress_stdout_stderr:
+    def __enter__(self):
+        self.outnull_file = open(os.devnull, &#34;w&#34;)
+        self.errnull_file = open(os.devnull, &#34;w&#34;)
+
+        self.old_stdout_fileno_undup = sys.stdout.fileno()
+        self.old_stderr_fileno_undup = sys.stderr.fileno()
+
+        self.old_stdout_fileno = os.dup(sys.stdout.fileno())
+        self.old_stderr_fileno = os.dup(sys.stderr.fileno())
+
+        self.old_stdout = sys.stdout
+        self.old_stderr = sys.stderr
+
+        os.dup2(self.outnull_file.fileno(), self.old_stdout_fileno_undup)
+        os.dup2(self.errnull_file.fileno(), self.old_stderr_fileno_undup)
+
+        sys.stdout = self.outnull_file
+        sys.stderr = self.errnull_file
+        return self
+
+    def __exit__(self, *_):
+        sys.stdout = self.old_stdout
+        sys.stderr = self.old_stderr
+
+        os.dup2(self.old_stdout_fileno, self.old_stdout_fileno_undup)
+        os.dup2(self.old_stderr_fileno, self.old_stderr_fileno_undup)
+
+        os.close(self.old_stdout_fileno)
+        os.close(self.old_stderr_fileno)
+
+        self.outnull_file.close()
+        self.errnull_file.close()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.test" href="index.html">sglang.test</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.test.test_deepep_utils.bench" href="#sglang.test.test_deepep_utils.bench">bench</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.bench_kineto" href="#sglang.test.test_deepep_utils.bench_kineto">bench_kineto</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.calc_diff" href="#sglang.test.test_deepep_utils.calc_diff">calc_diff</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.create_grouped_scores" href="#sglang.test.test_deepep_utils.create_grouped_scores">create_grouped_scores</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.hash_tensor" href="#sglang.test.test_deepep_utils.hash_tensor">hash_tensor</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.init_dist" href="#sglang.test.test_deepep_utils.init_dist">init_dist</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.inplace_unique" href="#sglang.test.test_deepep_utils.inplace_unique">inplace_unique</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.per_token_cast_back" href="#sglang.test.test_deepep_utils.per_token_cast_back">per_token_cast_back</a></code></li>
+<li><code><a title="sglang.test.test_deepep_utils.per_token_cast_to_fp8" href="#sglang.test.test_deepep_utils.per_token_cast_to_fp8">per_token_cast_to_fp8</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.test.test_deepep_utils.empty_suppress" href="#sglang.test.test_deepep_utils.empty_suppress">empty_suppress</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.test.test_deepep_utils.suppress_stdout_stderr" href="#sglang.test.test_deepep_utils.suppress_stdout_stderr">suppress_stdout_stderr</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

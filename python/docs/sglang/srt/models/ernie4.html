@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.ernie4 API documentation</title>
+<meta name="description" content="Inference-only Ernie4.5 model compatible with baidu/ERNIE-4.5-*-PT weights.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.ernie4</code></h1>
+</header>
+<section id="section-intro">
+<p>Inference-only Ernie4.5 model compatible with baidu/ERNIE-4.5-*-PT weights.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4DecoderLayer"><code class="flex name class">
+<span>class <span class="ident">Ernie4DecoderLayer</span></span>
+<span>(</span><span>config,<br>layer_id: int,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '',<br>is_mtp: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Ernie4DecoderLayer(nn.Module):
+    &#34;&#34;&#34;A single transformer layer.
+
+    Transformer layer takes input with size [s, b, h] and returns an
+    output of the same size.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        config,
+        layer_id: int,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+        is_mtp: bool = False,
+    ):
+        super().__init__()
+        rope_theta = getattr(config, &#34;rope_theta&#34;, 10000)
+        rope_scaling = getattr(config, &#34;rope_scaling&#34;, None)
+        rope_is_neox_style = getattr(config, &#34;rope_is_neox_style&#34;, False)
+        # Self attention.
+        self.self_attn = Ernie4Attention(
+            config=config,
+            hidden_size=config.hidden_size,
+            num_heads=config.num_attention_heads,
+            num_kv_heads=config.num_key_value_heads,
+            layer_id=layer_id,
+            rope_theta=rope_theta,
+            rope_scaling=rope_scaling,
+            rope_is_neox_style=rope_is_neox_style,
+            max_position_embeddings=config.max_position_embeddings,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;self_attn&#34;, prefix),
+            bias=config.use_bias,
+        )
+        moe_layer_start_index = getattr(
+            config, &#34;moe_layer_start_index&#34;, config.num_hidden_layers
+        )
+        moe_layer_end_index = getattr(
+            config, &#34;moe_layer_end_index&#34;, config.num_hidden_layers - 1
+        )
+        # MLP
+        if (not is_mtp) and (
+            moe_layer_start_index &lt;= layer_id &lt;= moe_layer_end_index
+            and (layer_id - moe_layer_start_index) % config.moe_layer_interval == 0
+        ):
+            self.mlp = Ernie4Moe(
+                config=config,
+                layer_id=layer_id,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;mlp&#34;, prefix),
+            )
+        else:
+            if enable_moe_dense_fully_dp():
+                mlp_tp_rank, mlp_tp_size = 0, 1
+            else:
+                mlp_tp_rank, mlp_tp_size = None, None
+            self.mlp = Ernie4MLP(
+                hidden_size=config.hidden_size,
+                intermediate_size=config.intermediate_size,
+                hidden_act=config.hidden_act,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;mlp&#34;, prefix),
+                tp_rank=mlp_tp_rank,
+                tp_size=mlp_tp_size,
+            )
+
+        self.input_layernorm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.post_attention_layernorm = RMSNorm(
+            config.hidden_size, eps=config.rms_norm_eps
+        )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+        residual: Optional[torch.Tensor],
+    ) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+        # Self Attention
+        if residual is None:
+            residual = hidden_states
+            hidden_states = self.input_layernorm(hidden_states)
+        else:
+            hidden_states, residual = self.input_layernorm(hidden_states, residual)
+        hidden_states = self.self_attn(
+            positions=positions,
+            hidden_states=hidden_states,
+            forward_batch=forward_batch,
+        )
+
+        # Fully Connected
+        hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+        hidden_states = self.mlp(hidden_states)
+
+        return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>A single transformer layer.</p>
+<p>Transformer layer takes input with size [s, b, h] and returns an
+output of the same size.</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4DecoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>residual: torch.Tensor | None) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+    residual: Optional[torch.Tensor],
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    # Self Attention
+    if residual is None:
+        residual = hidden_states
+        hidden_states = self.input_layernorm(hidden_states)
+    else:
+        hidden_states, residual = self.input_layernorm(hidden_states, residual)
+    hidden_states = self.self_attn(
+        positions=positions,
+        hidden_states=hidden_states,
+        forward_batch=forward_batch,
+    )
+
+    # Fully Connected
+    hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+    hidden_states = self.mlp(hidden_states)
+
+    return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4Model"><code class="flex name class">
+<span>class <span class="ident">Ernie4Model</span></span>
+<span>(</span><span>config: transformers.models.ernie4_5_moe.configuration_ernie4_5_moe.Ernie4_5_MoeConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Ernie4Model(nn.Module):
+    def __init__(
+        self,
+        config: Ernie4_5_MoeConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.config = config
+        self.embed_tokens = VocabParallelEmbedding(
+            config.vocab_size,
+            config.hidden_size,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;embed_tokens&#34;, prefix),
+        )
+        self.layers = make_layers(
+            config.num_hidden_layers,
+            lambda idx, prefix: Ernie4DecoderLayer(
+                config=config, layer_id=idx, quant_config=quant_config, prefix=prefix
+            ),
+            prefix=&#34;model.layers&#34;,
+        )
+
+        self.norm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]:
+        if input_embeds is None:
+            hidden_states = self.embed_tokens(input_ids)
+        else:
+            hidden_states = input_embeds
+        residual = None
+        for layer in self.layers:
+            hidden_states, residual = layer(
+                positions,
+                hidden_states,
+                forward_batch,
+                residual,
+            )
+        hidden_states, _ = self.norm(hidden_states, residual)
+
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4Model.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None) ‑> torch.Tensor | Tuple[torch.Tensor, List[torch.Tensor]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]]]:
+    if input_embeds is None:
+        hidden_states = self.embed_tokens(input_ids)
+    else:
+        hidden_states = input_embeds
+    residual = None
+    for layer in self.layers:
+        hidden_states, residual = layer(
+            positions,
+            hidden_states,
+            forward_batch,
+            residual,
+        )
+    hidden_states, _ = self.norm(hidden_states, residual)
+
+    return hidden_states</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4Moe"><code class="flex name class">
+<span>class <span class="ident">Ernie4Moe</span></span>
+<span>(</span><span>config: transformers.models.ernie4_5_moe.configuration_ernie4_5_moe.Ernie4_5_MoeConfig,<br>layer_id: int,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Ernie4Moe(nn.Module):
+    def __init__(
+        self,
+        config: Ernie4_5_MoeConfig,
+        layer_id: int,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.layer_id = layer_id
+        self.tp_size = get_tensor_model_parallel_world_size()
+        self.moe_num_shared_experts = getattr(config, &#34;moe_num_shared_experts&#34;, 0)
+
+        if config.hidden_act != &#34;silu&#34;:
+            raise ValueError(
+                f&#34;Unsupported activation: {config.hidden_act}. &#34;
+                &#34;Only silu is supported for now.&#34;
+            )
+
+        self.gate = MoEGate(config=config, prefix=add_prefix(&#34;gate&#34;, prefix))
+
+        self.topk = TopK(
+            top_k=config.moe_k,
+            renormalize=True,
+            use_grouped_topk=False,
+            correction_bias=self.gate.e_score_correction_bias,
+        )
+
+        self.experts = get_moe_impl_class()(
+            num_experts=config.moe_num_experts,
+            top_k=config.moe_k,
+            hidden_size=config.hidden_size,
+            intermediate_size=config.moe_intermediate_size,
+            layer_id=self.layer_id,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;experts&#34;, prefix),
+        )
+
+        if self.moe_num_shared_experts &gt; 0:
+            intermediate_size = (
+                config.moe_intermediate_size * config.moe_num_shared_experts
+            )
+            # disable tp for shared experts when enable deepep moe
+            self.shared_experts = Ernie4MLP(
+                hidden_size=config.hidden_size,
+                intermediate_size=intermediate_size,
+                hidden_act=config.hidden_act,
+                quant_config=quant_config,
+                reduce_results=False,
+                prefix=add_prefix(&#34;shared_experts&#34;, prefix),
+            )
+
+    def forward(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+        return self.forward_normal(hidden_states)
+
+    def forward_normal(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+        shared_output = (
+            self.shared_experts(hidden_states)
+            if self.moe_num_shared_experts &gt; 0
+            else None
+        )
+        # router_logits: (num_tokens, n_experts)
+        router_logits = self.gate(hidden_states)
+        topk_output = self.topk(hidden_states, router_logits)
+        final_hidden_states = self.experts(
+            hidden_states=hidden_states, topk_output=topk_output
+        )
+        if shared_output is not None:
+            final_hidden_states = final_hidden_states + shared_output
+        if self.tp_size &gt; 1:
+            final_hidden_states = tensor_model_parallel_all_reduce(final_hidden_states)
+        return final_hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4Moe.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+    return self.forward_normal(hidden_states)</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4Moe.forward_normal"><code class="name flex">
+<span>def <span class="ident">forward_normal</span></span>(<span>self, hidden_states: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward_normal(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+    shared_output = (
+        self.shared_experts(hidden_states)
+        if self.moe_num_shared_experts &gt; 0
+        else None
+    )
+    # router_logits: (num_tokens, n_experts)
+    router_logits = self.gate(hidden_states)
+    topk_output = self.topk(hidden_states, router_logits)
+    final_hidden_states = self.experts(
+        hidden_states=hidden_states, topk_output=topk_output
+    )
+    if shared_output is not None:
+        final_hidden_states = final_hidden_states + shared_output
+    if self.tp_size &gt; 1:
+        final_hidden_states = tensor_model_parallel_all_reduce(final_hidden_states)
+    return final_hidden_states</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM"><code class="flex name class">
+<span>class <span class="ident">Ernie4_5_ForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.ernie4_5_moe.configuration_ernie4_5_moe.Ernie4_5_MoeConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Ernie4_5_ForCausalLM(nn.Module):
+    packed_modules_mapping = {
+        &#34;qkv_proj&#34;: [&#34;q_proj&#34;, &#34;k_proj&#34;, &#34;v_proj&#34;],
+        &#34;gate_up_proj&#34;: [&#34;gate_proj&#34;, &#34;up_proj&#34;],
+    }
+    stacked_params_mapping = [
+        # (param_name, weight_name, shard_id)
+        (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+        (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+    ]
+
+    def __init__(
+        self,
+        config: Ernie4_5_MoeConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.config: Ernie4_5_MoeConfig = config
+        self.quant_config = quant_config
+        self.model = Ernie4Model(config, quant_config, add_prefix(&#34;model&#34;, prefix))
+        if config.tie_word_embeddings:
+            self.lm_head = self.model.embed_tokens
+        else:
+            self.lm_head = ParallelLMHead(
+                config.vocab_size,
+                config.hidden_size,
+                quant_config=quant_config,
+                prefix=&#34;lm_head&#34;,
+            )
+        self.logits_processor = LogitsProcessor(config)
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        hidden_states = self.model(input_ids, positions, forward_batch)
+        return self.logits_processor(
+            input_ids, hidden_states, self.lm_head, forward_batch
+        )
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        params_dict = dict(self.named_parameters())
+        for name, loaded_weight in weights:
+            if self.config.tie_word_embeddings and &#34;lm_head.weight&#34; in name:
+                continue
+            for param_name, weight_name, shard_id in self.stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                if name in params_dict.keys():
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+                else:
+                    raise KeyError(f&#34;Parameter &#39;{name}&#39; not found in model.&#34;)
+
+    def get_embed_and_head(self):
+        return self.model.embed_tokens.weight, self.lm_head.weight</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM" href="#sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM">Ernie4_5_MoeForCausalLM</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.packed_modules_mapping"><code class="name">var <span class="ident">packed_modules_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.stacked_params_mapping"><code class="name">var <span class="ident">stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    hidden_states = self.model(input_ids, positions, forward_batch)
+    return self.logits_processor(
+        input_ids, hidden_states, self.lm_head, forward_batch
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.get_embed_and_head"><code class="name flex">
+<span>def <span class="ident">get_embed_and_head</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_embed_and_head(self):
+    return self.model.embed_tokens.weight, self.lm_head.weight</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    params_dict = dict(self.named_parameters())
+    for name, loaded_weight in weights:
+        if self.config.tie_word_embeddings and &#34;lm_head.weight&#34; in name:
+            continue
+        for param_name, weight_name, shard_id in self.stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            name = name.replace(weight_name, param_name)
+            param = params_dict[name]
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            if name in params_dict.keys():
+                param = params_dict[name]
+                weight_loader = getattr(
+                    param, &#34;weight_loader&#34;, default_weight_loader
+                )
+                weight_loader(param, loaded_weight)
+            else:
+                raise KeyError(f&#34;Parameter &#39;{name}&#39; not found in model.&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM"><code class="flex name class">
+<span>class <span class="ident">Ernie4_5_MoeForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.ernie4_5_moe.configuration_ernie4_5_moe.Ernie4_5_MoeConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Ernie4_5_MoeForCausalLM(Ernie4_5_ForCausalLM):
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        expert_params_mapping = FusedMoE.make_expert_params_mapping(
+            ckpt_gate_proj_name=&#34;gate_proj&#34;,
+            ckpt_down_proj_name=&#34;down_proj&#34;,
+            ckpt_up_proj_name=&#34;up_proj&#34;,
+            num_experts=self.config.moe_num_experts,
+        )
+        params_dict = dict(self.named_parameters())
+        for name, loaded_weight in weights:
+            if self.config.tie_word_embeddings and &#34;lm_head.weight&#34; in name:
+                continue
+            if name.startswith(&#34;model.mtp_&#34;):
+                continue
+            if &#34;moe_statics.e_score_correction_bias&#34; in name:
+                name = name.replace(&#34;moe_statics&#34;, &#34;gate&#34;)
+            for param_name, weight_name, shard_id in self.stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                # We have mlp.experts[0].gate_proj in the checkpoint.
+                # Since we handle the experts below in expert_params_mapping,
+                # we need to skip here BEFORE we update the name, otherwise
+                # name will be updated to mlp.experts[0].gate_up_proj, which
+                # will then be updated below in expert_params_mapping
+                # for mlp.experts[0].gate_gate_up_proj, which breaks load.
+                if (&#34;mlp.experts.&#34; in name) and name not in params_dict:
+                    continue
+                name = name.replace(weight_name, param_name)
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                for mapping in expert_params_mapping:
+                    param_name, weight_name, expert_id, shard_id = mapping
+                    if weight_name not in name:
+                        continue
+                    name = name.replace(weight_name, param_name)
+                    if name in params_dict.keys():
+                        param = params_dict[name]
+                        weight_loader = param.weight_loader
+                        weight_loader(
+                            param,
+                            loaded_weight,
+                            name,
+                            shard_id=shard_id,
+                            expert_id=expert_id,
+                        )
+                    else:
+                        raise KeyError(
+                            f&#34;Parameter &#39;{name}&#39;(replaced) not found in model.&#34;
+                        )
+                    break
+                else:
+                    if name in params_dict.keys():
+                        param = params_dict[name]
+                        weight_loader = getattr(
+                            param, &#34;weight_loader&#34;, default_weight_loader
+                        )
+                        weight_loader(param, loaded_weight)
+                    else:
+                        raise KeyError(f&#34;Parameter &#39;{name}&#39; not found in model.&#34;)</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM">Ernie4_5_ForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    expert_params_mapping = FusedMoE.make_expert_params_mapping(
+        ckpt_gate_proj_name=&#34;gate_proj&#34;,
+        ckpt_down_proj_name=&#34;down_proj&#34;,
+        ckpt_up_proj_name=&#34;up_proj&#34;,
+        num_experts=self.config.moe_num_experts,
+    )
+    params_dict = dict(self.named_parameters())
+    for name, loaded_weight in weights:
+        if self.config.tie_word_embeddings and &#34;lm_head.weight&#34; in name:
+            continue
+        if name.startswith(&#34;model.mtp_&#34;):
+            continue
+        if &#34;moe_statics.e_score_correction_bias&#34; in name:
+            name = name.replace(&#34;moe_statics&#34;, &#34;gate&#34;)
+        for param_name, weight_name, shard_id in self.stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            # We have mlp.experts[0].gate_proj in the checkpoint.
+            # Since we handle the experts below in expert_params_mapping,
+            # we need to skip here BEFORE we update the name, otherwise
+            # name will be updated to mlp.experts[0].gate_up_proj, which
+            # will then be updated below in expert_params_mapping
+            # for mlp.experts[0].gate_gate_up_proj, which breaks load.
+            if (&#34;mlp.experts.&#34; in name) and name not in params_dict:
+                continue
+            name = name.replace(weight_name, param_name)
+            param = params_dict[name]
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            for mapping in expert_params_mapping:
+                param_name, weight_name, expert_id, shard_id = mapping
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                if name in params_dict.keys():
+                    param = params_dict[name]
+                    weight_loader = param.weight_loader
+                    weight_loader(
+                        param,
+                        loaded_weight,
+                        name,
+                        shard_id=shard_id,
+                        expert_id=expert_id,
+                    )
+                else:
+                    raise KeyError(
+                        f&#34;Parameter &#39;{name}&#39;(replaced) not found in model.&#34;
+                    )
+                break
+            else:
+                if name in params_dict.keys():
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+                else:
+                    raise KeyError(f&#34;Parameter &#39;{name}&#39; not found in model.&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.ernie4.MoEGate"><code class="flex name class">
+<span>class <span class="ident">MoEGate</span></span>
+<span>(</span><span>config, prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoEGate(nn.Module):
+    def __init__(
+        self,
+        config,
+        prefix: str = &#34;&#34;,
+    ):
+        super().__init__()
+        self.weight = nn.Parameter(
+            torch.empty((config.moe_num_experts, config.hidden_size))
+        )
+        self.e_score_correction_bias = nn.Parameter(
+            torch.empty((1, config.moe_num_experts))
+        )
+
+    def forward(self, hidden_states):
+        logits = F.linear(hidden_states, self.weight, None)
+        return logits</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.ernie4.MoEGate.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, hidden_states):
+    logits = F.linear(hidden_states, self.weight, None)
+    return logits</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.ernie4.Ernie4DecoderLayer" href="#sglang.srt.models.ernie4.Ernie4DecoderLayer">Ernie4DecoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.ernie4.Ernie4DecoderLayer.forward" href="#sglang.srt.models.ernie4.Ernie4DecoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.ernie4.Ernie4Model" href="#sglang.srt.models.ernie4.Ernie4Model">Ernie4Model</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.ernie4.Ernie4Model.forward" href="#sglang.srt.models.ernie4.Ernie4Model.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.ernie4.Ernie4Moe" href="#sglang.srt.models.ernie4.Ernie4Moe">Ernie4Moe</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.ernie4.Ernie4Moe.forward" href="#sglang.srt.models.ernie4.Ernie4Moe.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4.Ernie4Moe.forward_normal" href="#sglang.srt.models.ernie4.Ernie4Moe.forward_normal">forward_normal</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM">Ernie4_5_ForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.forward" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.get_embed_and_head" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.get_embed_and_head">get_embed_and_head</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.load_weights" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.packed_modules_mapping" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.packed_modules_mapping">packed_modules_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.stacked_params_mapping" href="#sglang.srt.models.ernie4.Ernie4_5_ForCausalLM.stacked_params_mapping">stacked_params_mapping</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM" href="#sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM">Ernie4_5_MoeForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM.load_weights" href="#sglang.srt.models.ernie4.Ernie4_5_MoeForCausalLM.load_weights">load_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.ernie4.MoEGate" href="#sglang.srt.models.ernie4.MoEGate">MoEGate</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.ernie4.MoEGate.forward" href="#sglang.srt.models.ernie4.MoEGate.forward">forward</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

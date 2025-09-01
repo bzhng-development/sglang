@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Namespace <code>sglang.srt.models</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="sglang.srt.models.arcee" href="arcee.html">sglang.srt.models.arcee</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Arcee Foundational Model (AFM) compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.baichuan" href="baichuan.html">sglang.srt.models.baichuan</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only BaiChuan model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.bailing_moe" href="bailing_moe.html">sglang.srt.models.bailing_moe</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.bert" href="bert.html">sglang.srt.models.bert</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.chatglm" href="chatglm.html">sglang.srt.models.chatglm</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only ChatGLM model compatible with THUDM weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.clip" href="clip.html">sglang.srt.models.clip</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.commandr" href="commandr.html">sglang.srt.models.commandr</a></code></dt>
+<dd>
+<div class="desc"><p>PyTorch Cohere model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.dbrx" href="dbrx.html">sglang.srt.models.dbrx</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.deepseek" href="deepseek.html">sglang.srt.models.deepseek</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Deepseek model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.deepseek_janus_pro" href="deepseek_janus_pro.html">sglang.srt.models.deepseek_janus_pro</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.deepseek_nextn" href="deepseek_nextn.html">sglang.srt.models.deepseek_nextn</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only DeepSeek NextN Speculative Decoding.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.deepseek_v2" href="deepseek_v2.html">sglang.srt.models.deepseek_v2</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only DeepseekV2 model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.deepseek_vl2" href="deepseek_vl2.html">sglang.srt.models.deepseek_vl2</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.ernie4" href="ernie4.html">sglang.srt.models.ernie4</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Ernie4.5 model compatible with baidu/ERNIE-4.5-*-PT weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.ernie4_eagle" href="ernie4_eagle.html">sglang.srt.models.ernie4_eagle</a></code></dt>
+<dd>
+<div class="desc"><p>Ernie4.5 MTP model compatible with baidu/ERNIE-4.5-*-PT weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.exaone" href="exaone.html">sglang.srt.models.exaone</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Exaone model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma" href="gemma.html">sglang.srt.models.gemma</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Gemma model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma2" href="gemma2.html">sglang.srt.models.gemma2</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma2_reward" href="gemma2_reward.html">sglang.srt.models.gemma2_reward</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma3_causal" href="gemma3_causal.html">sglang.srt.models.gemma3_causal</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma3_mm" href="gemma3_mm.html">sglang.srt.models.gemma3_mm</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma3n_audio" href="gemma3n_audio.html">sglang.srt.models.gemma3n_audio</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma3n_causal" href="gemma3n_causal.html">sglang.srt.models.gemma3n_causal</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gemma3n_mm" href="gemma3n_mm.html">sglang.srt.models.gemma3n_mm</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.glm4" href="glm4.html">sglang.srt.models.glm4</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GLM4 model compatible with THUDM weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.glm4_moe" href="glm4_moe.html">sglang.srt.models.glm4_moe</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GLM-4.5 model compatible with HuggingFace weights</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.glm4_moe_nextn" href="glm4_moe_nextn.html">sglang.srt.models.glm4_moe_nextn</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GLM-4.5 NextN Speculative Decoding.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.glm4v" href="glm4v.html">sglang.srt.models.glm4v</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.glm4v_moe" href="glm4v_moe.html">sglang.srt.models.glm4v_moe</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gpt2" href="gpt2.html">sglang.srt.models.gpt2</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GPT-2 model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gpt_bigcode" href="gpt_bigcode.html">sglang.srt.models.gpt_bigcode</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GPTBigCode model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.gpt_oss" href="gpt_oss.html">sglang.srt.models.gpt_oss</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GptOss model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.granite" href="granite.html">sglang.srt.models.granite</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Granite model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.granitemoe" href="granitemoe.html">sglang.srt.models.granitemoe</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only GraniteMoe model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.grok" href="grok.html">sglang.srt.models.grok</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Grok1 model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.hunyuan" href="hunyuan.html">sglang.srt.models.hunyuan</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only HunYuan model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.idefics2" href="idefics2.html">sglang.srt.models.idefics2</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.internlm2" href="internlm2.html">sglang.srt.models.internlm2</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.internlm2_reward" href="internlm2_reward.html">sglang.srt.models.internlm2_reward</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.interns1" href="interns1.html">sglang.srt.models.interns1</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.internvl" href="internvl.html">sglang.srt.models.internvl</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.kimi_vl" href="kimi_vl.html">sglang.srt.models.kimi_vl</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.kimi_vl_moonvit" href="kimi_vl_moonvit.html">sglang.srt.models.kimi_vl_moonvit</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama" href="llama.html">sglang.srt.models.llama</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only LLaMA model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama4" href="llama4.html">sglang.srt.models.llama4</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only LLaMA model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama_classification" href="llama_classification.html">sglang.srt.models.llama_classification</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama_eagle" href="llama_eagle.html">sglang.srt.models.llama_eagle</a></code></dt>
+<dd>
+<div class="desc"><p>Copyright 2023-2024 SGLang Team
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama_eagle3" href="llama_eagle3.html">sglang.srt.models.llama_eagle3</a></code></dt>
+<dd>
+<div class="desc"><p>Copyright 2023-2024 SGLang Team
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama_embedding" href="llama_embedding.html">sglang.srt.models.llama_embedding</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llama_reward" href="llama_reward.html">sglang.srt.models.llama_reward</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llava" href="llava.html">sglang.srt.models.llava</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only LLaVa model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.llavavid" href="llavavid.html">sglang.srt.models.llavavid</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only LLaVa video model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.longcat_flash" href="longcat_flash.html">sglang.srt.models.longcat_flash</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.longcat_flash_nextn" href="longcat_flash_nextn.html">sglang.srt.models.longcat_flash_nextn</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mimo" href="mimo.html">sglang.srt.models.mimo</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mimo_mtp" href="mimo_mtp.html">sglang.srt.models.mimo_mtp</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.minicpm" href="minicpm.html">sglang.srt.models.minicpm</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only MiniCPM model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.minicpm3" href="minicpm3.html">sglang.srt.models.minicpm3</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only MiniCPM3 model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.minicpmo" href="minicpmo.html">sglang.srt.models.minicpmo</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only MiniCPM-o model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.minicpmv" href="minicpmv.html">sglang.srt.models.minicpmv</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only MiniCPM-V model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mistral" href="mistral.html">sglang.srt.models.mistral</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Mistral model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mixtral" href="mixtral.html">sglang.srt.models.mixtral</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Mixtral model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mixtral_quant" href="mixtral_quant.html">sglang.srt.models.mixtral_quant</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Mixtral model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mllama" href="mllama.html">sglang.srt.models.mllama</a></code></dt>
+<dd>
+<div class="desc"><p>PyTorch Mllama model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.mllama4" href="mllama4.html">sglang.srt.models.mllama4</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.nemotron_nas" href="nemotron_nas.html">sglang.srt.models.nemotron_nas</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only deci model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.olmo" href="olmo.html">sglang.srt.models.olmo</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only OLMo model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.olmo2" href="olmo2.html">sglang.srt.models.olmo2</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only OLMo2 model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.olmoe" href="olmoe.html">sglang.srt.models.olmoe</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only OLMoE model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.persimmon" href="persimmon.html">sglang.srt.models.persimmon</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.phi" href="phi.html">sglang.srt.models.phi</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.phi3_small" href="phi3_small.html">sglang.srt.models.phi3_small</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.phi4mm" href="phi4mm.html">sglang.srt.models.phi4mm</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.phi4mm_audio" href="phi4mm_audio.html">sglang.srt.models.phi4mm_audio</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.phi4mm_utils" href="phi4mm_utils.html">sglang.srt.models.phi4mm_utils</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.phimoe" href="phimoe.html">sglang.srt.models.phimoe</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.pixtral" href="pixtral.html">sglang.srt.models.pixtral</a></code></dt>
+<dd>
+<div class="desc"><p>Using mistral-community/pixtral-12b as reference.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen" href="qwen.html">sglang.srt.models.qwen</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2" href="qwen2.html">sglang.srt.models.qwen2</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Qwen2 model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_5_vl" href="qwen2_5_vl.html">sglang.srt.models.qwen2_5_vl</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Qwen2-VL model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_audio" href="qwen2_audio.html">sglang.srt.models.qwen2_audio</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Qwen2-Audio model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_classification" href="qwen2_classification.html">sglang.srt.models.qwen2_classification</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_eagle" href="qwen2_eagle.html">sglang.srt.models.qwen2_eagle</a></code></dt>
+<dd>
+<div class="desc"><p>Copyright 2023-2024 SGLang Team
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_moe" href="qwen2_moe.html">sglang.srt.models.qwen2_moe</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Qwen2MoE model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_rm" href="qwen2_rm.html">sglang.srt.models.qwen2_rm</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen2_vl" href="qwen2_vl.html">sglang.srt.models.qwen2_vl</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Qwen2-VL model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen3" href="qwen3.html">sglang.srt.models.qwen3</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen3_classification" href="qwen3_classification.html">sglang.srt.models.qwen3_classification</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.qwen3_moe" href="qwen3_moe.html">sglang.srt.models.qwen3_moe</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Qwen3MoE model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.registry" href="registry.html">sglang.srt.models.registry</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.roberta" href="roberta.html">sglang.srt.models.roberta</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.siglip" href="siglip.html">sglang.srt.models.siglip</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.stablelm" href="stablelm.html">sglang.srt.models.stablelm</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only StableLM-2 (<a href="https://huggingface.co/stabilityai/stablelm-2-1_6b">https://huggingface.co/stabilityai/stablelm-2-1_6b</a>)
+model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.step3_vl" href="step3_vl.html">sglang.srt.models.step3_vl</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.torch_native_llama" href="torch_native_llama.html">sglang.srt.models.torch_native_llama</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.transformers" href="transformers.html">sglang.srt.models.transformers</a></code></dt>
+<dd>
+<div class="desc"><p>Wrapper around <code><a title="sglang.srt.models.transformers" href="transformers.html">sglang.srt.models.transformers</a></code> models</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.vila" href="vila.html">sglang.srt.models.vila</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.xverse" href="xverse.html">sglang.srt.models.xverse</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only XVERSE model compatible with HuggingFace weights.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.xverse_moe" href="xverse_moe.html">sglang.srt.models.xverse_moe</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only XVERSE MoE model.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.models.yivl" href="yivl.html">sglang.srt.models.yivl</a></code></dt>
+<dd>
+<div class="desc"><p>Inference-only Yi-VL model.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="../index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="sglang.srt.models.arcee" href="arcee.html">sglang.srt.models.arcee</a></code></li>
+<li><code><a title="sglang.srt.models.baichuan" href="baichuan.html">sglang.srt.models.baichuan</a></code></li>
+<li><code><a title="sglang.srt.models.bailing_moe" href="bailing_moe.html">sglang.srt.models.bailing_moe</a></code></li>
+<li><code><a title="sglang.srt.models.bert" href="bert.html">sglang.srt.models.bert</a></code></li>
+<li><code><a title="sglang.srt.models.chatglm" href="chatglm.html">sglang.srt.models.chatglm</a></code></li>
+<li><code><a title="sglang.srt.models.clip" href="clip.html">sglang.srt.models.clip</a></code></li>
+<li><code><a title="sglang.srt.models.commandr" href="commandr.html">sglang.srt.models.commandr</a></code></li>
+<li><code><a title="sglang.srt.models.dbrx" href="dbrx.html">sglang.srt.models.dbrx</a></code></li>
+<li><code><a title="sglang.srt.models.deepseek" href="deepseek.html">sglang.srt.models.deepseek</a></code></li>
+<li><code><a title="sglang.srt.models.deepseek_janus_pro" href="deepseek_janus_pro.html">sglang.srt.models.deepseek_janus_pro</a></code></li>
+<li><code><a title="sglang.srt.models.deepseek_nextn" href="deepseek_nextn.html">sglang.srt.models.deepseek_nextn</a></code></li>
+<li><code><a title="sglang.srt.models.deepseek_v2" href="deepseek_v2.html">sglang.srt.models.deepseek_v2</a></code></li>
+<li><code><a title="sglang.srt.models.deepseek_vl2" href="deepseek_vl2.html">sglang.srt.models.deepseek_vl2</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4" href="ernie4.html">sglang.srt.models.ernie4</a></code></li>
+<li><code><a title="sglang.srt.models.ernie4_eagle" href="ernie4_eagle.html">sglang.srt.models.ernie4_eagle</a></code></li>
+<li><code><a title="sglang.srt.models.exaone" href="exaone.html">sglang.srt.models.exaone</a></code></li>
+<li><code><a title="sglang.srt.models.gemma" href="gemma.html">sglang.srt.models.gemma</a></code></li>
+<li><code><a title="sglang.srt.models.gemma2" href="gemma2.html">sglang.srt.models.gemma2</a></code></li>
+<li><code><a title="sglang.srt.models.gemma2_reward" href="gemma2_reward.html">sglang.srt.models.gemma2_reward</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_causal" href="gemma3_causal.html">sglang.srt.models.gemma3_causal</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3_mm" href="gemma3_mm.html">sglang.srt.models.gemma3_mm</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3n_audio" href="gemma3n_audio.html">sglang.srt.models.gemma3n_audio</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3n_causal" href="gemma3n_causal.html">sglang.srt.models.gemma3n_causal</a></code></li>
+<li><code><a title="sglang.srt.models.gemma3n_mm" href="gemma3n_mm.html">sglang.srt.models.gemma3n_mm</a></code></li>
+<li><code><a title="sglang.srt.models.glm4" href="glm4.html">sglang.srt.models.glm4</a></code></li>
+<li><code><a title="sglang.srt.models.glm4_moe" href="glm4_moe.html">sglang.srt.models.glm4_moe</a></code></li>
+<li><code><a title="sglang.srt.models.glm4_moe_nextn" href="glm4_moe_nextn.html">sglang.srt.models.glm4_moe_nextn</a></code></li>
+<li><code><a title="sglang.srt.models.glm4v" href="glm4v.html">sglang.srt.models.glm4v</a></code></li>
+<li><code><a title="sglang.srt.models.glm4v_moe" href="glm4v_moe.html">sglang.srt.models.glm4v_moe</a></code></li>
+<li><code><a title="sglang.srt.models.gpt2" href="gpt2.html">sglang.srt.models.gpt2</a></code></li>
+<li><code><a title="sglang.srt.models.gpt_bigcode" href="gpt_bigcode.html">sglang.srt.models.gpt_bigcode</a></code></li>
+<li><code><a title="sglang.srt.models.gpt_oss" href="gpt_oss.html">sglang.srt.models.gpt_oss</a></code></li>
+<li><code><a title="sglang.srt.models.granite" href="granite.html">sglang.srt.models.granite</a></code></li>
+<li><code><a title="sglang.srt.models.granitemoe" href="granitemoe.html">sglang.srt.models.granitemoe</a></code></li>
+<li><code><a title="sglang.srt.models.grok" href="grok.html">sglang.srt.models.grok</a></code></li>
+<li><code><a title="sglang.srt.models.hunyuan" href="hunyuan.html">sglang.srt.models.hunyuan</a></code></li>
+<li><code><a title="sglang.srt.models.idefics2" href="idefics2.html">sglang.srt.models.idefics2</a></code></li>
+<li><code><a title="sglang.srt.models.internlm2" href="internlm2.html">sglang.srt.models.internlm2</a></code></li>
+<li><code><a title="sglang.srt.models.internlm2_reward" href="internlm2_reward.html">sglang.srt.models.internlm2_reward</a></code></li>
+<li><code><a title="sglang.srt.models.interns1" href="interns1.html">sglang.srt.models.interns1</a></code></li>
+<li><code><a title="sglang.srt.models.internvl" href="internvl.html">sglang.srt.models.internvl</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl" href="kimi_vl.html">sglang.srt.models.kimi_vl</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit" href="kimi_vl_moonvit.html">sglang.srt.models.kimi_vl_moonvit</a></code></li>
+<li><code><a title="sglang.srt.models.llama" href="llama.html">sglang.srt.models.llama</a></code></li>
+<li><code><a title="sglang.srt.models.llama4" href="llama4.html">sglang.srt.models.llama4</a></code></li>
+<li><code><a title="sglang.srt.models.llama_classification" href="llama_classification.html">sglang.srt.models.llama_classification</a></code></li>
+<li><code><a title="sglang.srt.models.llama_eagle" href="llama_eagle.html">sglang.srt.models.llama_eagle</a></code></li>
+<li><code><a title="sglang.srt.models.llama_eagle3" href="llama_eagle3.html">sglang.srt.models.llama_eagle3</a></code></li>
+<li><code><a title="sglang.srt.models.llama_embedding" href="llama_embedding.html">sglang.srt.models.llama_embedding</a></code></li>
+<li><code><a title="sglang.srt.models.llama_reward" href="llama_reward.html">sglang.srt.models.llama_reward</a></code></li>
+<li><code><a title="sglang.srt.models.llava" href="llava.html">sglang.srt.models.llava</a></code></li>
+<li><code><a title="sglang.srt.models.llavavid" href="llavavid.html">sglang.srt.models.llavavid</a></code></li>
+<li><code><a title="sglang.srt.models.longcat_flash" href="longcat_flash.html">sglang.srt.models.longcat_flash</a></code></li>
+<li><code><a title="sglang.srt.models.longcat_flash_nextn" href="longcat_flash_nextn.html">sglang.srt.models.longcat_flash_nextn</a></code></li>
+<li><code><a title="sglang.srt.models.mimo" href="mimo.html">sglang.srt.models.mimo</a></code></li>
+<li><code><a title="sglang.srt.models.mimo_mtp" href="mimo_mtp.html">sglang.srt.models.mimo_mtp</a></code></li>
+<li><code><a title="sglang.srt.models.minicpm" href="minicpm.html">sglang.srt.models.minicpm</a></code></li>
+<li><code><a title="sglang.srt.models.minicpm3" href="minicpm3.html">sglang.srt.models.minicpm3</a></code></li>
+<li><code><a title="sglang.srt.models.minicpmo" href="minicpmo.html">sglang.srt.models.minicpmo</a></code></li>
+<li><code><a title="sglang.srt.models.minicpmv" href="minicpmv.html">sglang.srt.models.minicpmv</a></code></li>
+<li><code><a title="sglang.srt.models.mistral" href="mistral.html">sglang.srt.models.mistral</a></code></li>
+<li><code><a title="sglang.srt.models.mixtral" href="mixtral.html">sglang.srt.models.mixtral</a></code></li>
+<li><code><a title="sglang.srt.models.mixtral_quant" href="mixtral_quant.html">sglang.srt.models.mixtral_quant</a></code></li>
+<li><code><a title="sglang.srt.models.mllama" href="mllama.html">sglang.srt.models.mllama</a></code></li>
+<li><code><a title="sglang.srt.models.mllama4" href="mllama4.html">sglang.srt.models.mllama4</a></code></li>
+<li><code><a title="sglang.srt.models.nemotron_nas" href="nemotron_nas.html">sglang.srt.models.nemotron_nas</a></code></li>
+<li><code><a title="sglang.srt.models.olmo" href="olmo.html">sglang.srt.models.olmo</a></code></li>
+<li><code><a title="sglang.srt.models.olmo2" href="olmo2.html">sglang.srt.models.olmo2</a></code></li>
+<li><code><a title="sglang.srt.models.olmoe" href="olmoe.html">sglang.srt.models.olmoe</a></code></li>
+<li><code><a title="sglang.srt.models.persimmon" href="persimmon.html">sglang.srt.models.persimmon</a></code></li>
+<li><code><a title="sglang.srt.models.phi" href="phi.html">sglang.srt.models.phi</a></code></li>
+<li><code><a title="sglang.srt.models.phi3_small" href="phi3_small.html">sglang.srt.models.phi3_small</a></code></li>
+<li><code><a title="sglang.srt.models.phi4mm" href="phi4mm.html">sglang.srt.models.phi4mm</a></code></li>
+<li><code><a title="sglang.srt.models.phi4mm_audio" href="phi4mm_audio.html">sglang.srt.models.phi4mm_audio</a></code></li>
+<li><code><a title="sglang.srt.models.phi4mm_utils" href="phi4mm_utils.html">sglang.srt.models.phi4mm_utils</a></code></li>
+<li><code><a title="sglang.srt.models.phimoe" href="phimoe.html">sglang.srt.models.phimoe</a></code></li>
+<li><code><a title="sglang.srt.models.pixtral" href="pixtral.html">sglang.srt.models.pixtral</a></code></li>
+<li><code><a title="sglang.srt.models.qwen" href="qwen.html">sglang.srt.models.qwen</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2" href="qwen2.html">sglang.srt.models.qwen2</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_5_vl" href="qwen2_5_vl.html">sglang.srt.models.qwen2_5_vl</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_audio" href="qwen2_audio.html">sglang.srt.models.qwen2_audio</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_classification" href="qwen2_classification.html">sglang.srt.models.qwen2_classification</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_eagle" href="qwen2_eagle.html">sglang.srt.models.qwen2_eagle</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_moe" href="qwen2_moe.html">sglang.srt.models.qwen2_moe</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_rm" href="qwen2_rm.html">sglang.srt.models.qwen2_rm</a></code></li>
+<li><code><a title="sglang.srt.models.qwen2_vl" href="qwen2_vl.html">sglang.srt.models.qwen2_vl</a></code></li>
+<li><code><a title="sglang.srt.models.qwen3" href="qwen3.html">sglang.srt.models.qwen3</a></code></li>
+<li><code><a title="sglang.srt.models.qwen3_classification" href="qwen3_classification.html">sglang.srt.models.qwen3_classification</a></code></li>
+<li><code><a title="sglang.srt.models.qwen3_moe" href="qwen3_moe.html">sglang.srt.models.qwen3_moe</a></code></li>
+<li><code><a title="sglang.srt.models.registry" href="registry.html">sglang.srt.models.registry</a></code></li>
+<li><code><a title="sglang.srt.models.roberta" href="roberta.html">sglang.srt.models.roberta</a></code></li>
+<li><code><a title="sglang.srt.models.siglip" href="siglip.html">sglang.srt.models.siglip</a></code></li>
+<li><code><a title="sglang.srt.models.stablelm" href="stablelm.html">sglang.srt.models.stablelm</a></code></li>
+<li><code><a title="sglang.srt.models.step3_vl" href="step3_vl.html">sglang.srt.models.step3_vl</a></code></li>
+<li><code><a title="sglang.srt.models.torch_native_llama" href="torch_native_llama.html">sglang.srt.models.torch_native_llama</a></code></li>
+<li><code><a title="sglang.srt.models.transformers" href="transformers.html">sglang.srt.models.transformers</a></code></li>
+<li><code><a title="sglang.srt.models.vila" href="vila.html">sglang.srt.models.vila</a></code></li>
+<li><code><a title="sglang.srt.models.xverse" href="xverse.html">sglang.srt.models.xverse</a></code></li>
+<li><code><a title="sglang.srt.models.xverse_moe" href="xverse_moe.html">sglang.srt.models.xverse_moe</a></code></li>
+<li><code><a title="sglang.srt.models.yivl" href="yivl.html">sglang.srt.models.yivl</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

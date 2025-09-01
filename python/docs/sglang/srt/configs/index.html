@@ -1,0 +1,2595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.configs API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.configs</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="sglang.srt.configs.chatglm" href="chatglm.html">sglang.srt.configs.chatglm</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.dbrx" href="dbrx.html">sglang.srt.configs.dbrx</a></code></dt>
+<dd>
+<div class="desc"><p>Dbrx configuration.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.deepseekvl2" href="deepseekvl2.html">sglang.srt.configs.deepseekvl2</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.device_config" href="device_config.html">sglang.srt.configs.device_config</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.exaone" href="exaone.html">sglang.srt.configs.exaone</a></code></dt>
+<dd>
+<div class="desc"><p>EXAONE model configuration</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.internvl" href="internvl.html">sglang.srt.configs.internvl</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.janus_pro" href="janus_pro.html">sglang.srt.configs.janus_pro</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.kimi_vl" href="kimi_vl.html">sglang.srt.configs.kimi_vl</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.kimi_vl_moonvit" href="kimi_vl_moonvit.html">sglang.srt.configs.kimi_vl_moonvit</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.load_config" href="load_config.html">sglang.srt.configs.load_config</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.longcat_flash" href="longcat_flash.html">sglang.srt.configs.longcat_flash</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.model_config" href="model_config.html">sglang.srt.configs.model_config</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.step3_vl" href="step3_vl.html">sglang.srt.configs.step3_vl</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.update_config" href="update_config.html">sglang.srt.configs.update_config</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.configs.utils" href="utils.html">sglang.srt.configs.utils</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.configs.ChatGLMConfig"><code class="flex name class">
+<span>class <span class="ident">ChatGLMConfig</span></span>
+<span>(</span><span>num_layers=28,<br>padded_vocab_size=65024,<br>hidden_size=4096,<br>ffn_hidden_size=13696,<br>kv_channels=128,<br>num_attention_heads=32,<br>seq_length=2048,<br>hidden_dropout=0.0,<br>attention_dropout=0.0,<br>layernorm_epsilon=1e-05,<br>rmsnorm=True,<br>apply_residual_connection_post_layernorm=False,<br>post_layer_norm=True,<br>add_bias_linear=False,<br>add_qkv_bias=False,<br>interleaved_qkv=False,<br>bias_dropout_fusion=True,<br>multi_query_attention=False,<br>multi_query_group_num=1,<br>apply_query_key_layer_scaling=True,<br>attention_softmax_in_fp32=True,<br>fp32_residual_connection=False,<br>quantization_bit=0,<br>pre_seq_len=None,<br>prefix_projection=False,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ChatGLMConfig(PretrainedConfig):
+    model_type = &#34;chatglm&#34;
+    attribute_map = {
+        &#34;num_hidden_layers&#34;: &#34;num_layers&#34;,
+        &#34;n_head_kv&#34;: &#34;multi_query_group_num&#34;,
+    }
+
+    def __init__(
+        self,
+        num_layers=28,
+        padded_vocab_size=65024,
+        hidden_size=4096,
+        ffn_hidden_size=13696,
+        kv_channels=128,
+        num_attention_heads=32,
+        seq_length=2048,
+        hidden_dropout=0.0,
+        attention_dropout=0.0,
+        layernorm_epsilon=1e-5,
+        rmsnorm=True,
+        apply_residual_connection_post_layernorm=False,
+        post_layer_norm=True,
+        add_bias_linear=False,
+        add_qkv_bias=False,
+        interleaved_qkv=False,
+        bias_dropout_fusion=True,
+        multi_query_attention=False,
+        multi_query_group_num=1,
+        apply_query_key_layer_scaling=True,
+        attention_softmax_in_fp32=True,
+        fp32_residual_connection=False,
+        quantization_bit=0,
+        pre_seq_len=None,
+        prefix_projection=False,
+        **kwargs
+    ):
+        self.num_layers = num_layers
+        self.vocab_size = padded_vocab_size
+        self.padded_vocab_size = padded_vocab_size
+        self.hidden_size = hidden_size
+        self.ffn_hidden_size = ffn_hidden_size
+        self.kv_channels = kv_channels
+        self.num_attention_heads = num_attention_heads
+        self.seq_length = seq_length
+        # It is to be compatible with long lora.
+        self.max_position_embeddings = seq_length
+        self.hidden_dropout = hidden_dropout
+        self.attention_dropout = attention_dropout
+        self.layernorm_epsilon = layernorm_epsilon
+        self.rmsnorm = rmsnorm
+        self.apply_residual_connection_post_layernorm = (
+            apply_residual_connection_post_layernorm
+        )
+        self.post_layer_norm = post_layer_norm
+        self.add_bias_linear = add_bias_linear
+        self.add_qkv_bias = add_qkv_bias
+        self.bias_dropout_fusion = bias_dropout_fusion
+        self.multi_query_attention = multi_query_attention
+        self.multi_query_group_num = multi_query_group_num
+        self.apply_query_key_layer_scaling = apply_query_key_layer_scaling
+        self.attention_softmax_in_fp32 = attention_softmax_in_fp32
+        self.fp32_residual_connection = fp32_residual_connection
+        self.quantization_bit = quantization_bit
+        self.pre_seq_len = pre_seq_len
+        self.prefix_projection = prefix_projection
+        self.interleaved_qkv = interleaved_qkv
+        super().__init__(**kwargs)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.ChatGLMConfig.attribute_map"><code class="name">var <span class="ident">attribute_map</span> : dict[str, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.ChatGLMConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.DbrxConfig"><code class="flex name class">
+<span>class <span class="ident">DbrxConfig</span></span>
+<span>(</span><span>d_model: int = 2048,<br>n_heads: int = 16,<br>n_layers: int = 24,<br>max_seq_len: int = 2048,<br>vocab_size: int = 32000,<br>resid_pdrop: float = 0.0,<br>emb_pdrop: float = 0.0,<br>attn_config: <a title="sglang.srt.configs.dbrx.DbrxAttentionConfig" href="dbrx.html#sglang.srt.configs.dbrx.DbrxAttentionConfig">DbrxAttentionConfig</a> | None = None,<br>ffn_config: <a title="sglang.srt.configs.dbrx.DbrxFFNConfig" href="dbrx.html#sglang.srt.configs.dbrx.DbrxFFNConfig">DbrxFFNConfig</a> | None = None,<br>use_cache: bool = True,<br>initializer_range: float = 0.02,<br>output_router_logits: bool = False,<br>router_aux_loss_coef: float = 0.05,<br>**kwargs: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DbrxConfig(PretrainedConfig):
+    &#34;&#34;&#34;Configuration class for Dbrx.
+
+    [`DbrxModel`]. It is used to instantiate a Dbrx model according to the
+    specified arguments, defining the model architecture.
+
+    Configuration objects inherit from [`PretrainedConfig`] and can be used to control the model outputs. Read the
+    documentation from [`PretrainedConfig`] for more information.
+
+
+    Args:
+        d_model (`int`, *optional*, defaults to 6144):
+            Dimensionality of the embeddings and hidden states.
+        n_heads (`int`, *optional*, defaults to 48):
+            Number of attention heads for each attention layer in the Transformer encoder.
+        n_layers (`int`, *optional*, defaults to 40):
+            Number of hidden layers in the Transformer encoder.
+        max_seq_len (`int`, *optional*, defaults to 32768):
+            The maximum sequence length of the model.
+        vocab_size (`int`, *optional*, defaults to 100352):
+            Vocabulary size of the Dbrx model. Defines the maximum number of different tokens that can be represented by
+            the `inputs_ids` passed when calling [`DbrxModel`].
+        resid_pdrop (`float`, *optional*, defaults to 0.0):
+            The dropout probability applied to the attention output before combining with residual.
+        emb_pdrop (`float`, *optional*, defaults to 0.0):
+            The dropout probability for the embedding layer.
+        attn_config (`dict`, *optional*):
+            A dictionary used to configure the model&#39;s attention module.
+        ffn_config (`dict`, *optional*):
+            A dictionary used to configure the model&#39;s FFN module.
+        use_cache (`bool`, *optional*, defaults to `False`):
+            Whether or not the model should return the last key/values attentions (not used by all models).
+        initializer_range (`float`, *optional*, defaults to 0.02):
+            The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+        output_router_logits (`bool`, *optional*, defaults to `False`):
+            Whether or not the router logits should be returned by the model. Enabling this will also
+            allow the model to output the auxiliary loss. See [here]() for more details
+        router_aux_loss_coef (`float`, *optional*, defaults to 0.001):
+            The aux loss factor for the total loss.
+
+
+    Example:
+    ```python
+    &gt;&gt;&gt; from transformers import DbrxConfig, DbrxModel
+
+    &gt;&gt;&gt; # Initializing a Dbrx configuration
+    &gt;&gt;&gt; configuration = DbrxConfig()
+
+    &gt;&gt;&gt; # Initializing a model (with random weights) from the configuration
+    &gt;&gt;&gt; model = DbrxModel(configuration)
+
+    &gt;&gt;&gt; # Accessing the model configuration
+    &gt;&gt;&gt; configuration = model.config
+    ```
+    &#34;&#34;&#34;
+
+    model_type = &#34;dbrx&#34;
+    attribute_map = {
+        &#34;num_attention_heads&#34;: &#34;n_heads&#34;,
+        &#34;hidden_size&#34;: &#34;d_model&#34;,
+        &#34;num_hidden_layers&#34;: &#34;n_layers&#34;,
+        &#34;max_position_embeddings&#34;: &#34;max_seq_len&#34;,
+    }
+
+    def __init__(
+        self,
+        d_model: int = 2048,
+        n_heads: int = 16,
+        n_layers: int = 24,
+        max_seq_len: int = 2048,
+        vocab_size: int = 32000,
+        resid_pdrop: float = 0.0,
+        emb_pdrop: float = 0.0,
+        attn_config: Optional[DbrxAttentionConfig] = None,
+        ffn_config: Optional[DbrxFFNConfig] = None,
+        use_cache: bool = True,
+        initializer_range: float = 0.02,
+        output_router_logits: bool = False,
+        router_aux_loss_coef: float = 0.05,
+        **kwargs: Any,
+    ):
+        if attn_config is None:
+            self.attn_config = DbrxAttentionConfig()
+        elif isinstance(attn_config, dict):
+            self.attn_config = DbrxAttentionConfig(**attn_config)
+        else:
+            self.attn_config = attn_config
+
+        if ffn_config is None:
+            self.ffn_config = DbrxFFNConfig()
+        elif isinstance(ffn_config, dict):
+            self.ffn_config = DbrxFFNConfig(**ffn_config)
+        else:
+            self.ffn_config = ffn_config
+
+        self.d_model = d_model
+        self.n_heads = n_heads
+        self.n_layers = n_layers
+        self.max_seq_len = max_seq_len
+        self.vocab_size = vocab_size
+        self.resid_pdrop = resid_pdrop
+        self.emb_pdrop = emb_pdrop
+        self.use_cache = use_cache
+        self.initializer_range = initializer_range
+        self.output_router_logits = output_router_logits
+        self.router_aux_loss_coef = router_aux_loss_coef
+
+        tie_word_embeddings = kwargs.pop(&#34;tie_word_embeddings&#34;, False)
+        if tie_word_embeddings:
+            raise ValueError(&#34;tie_word_embeddings is not supported for Dbrx models.&#34;)
+
+        super().__init__(
+            tie_word_embeddings=tie_word_embeddings,
+            **kwargs,
+        )</code></pre>
+</details>
+<div class="desc"><p>Configuration class for Dbrx.</p>
+<p>[<code>DbrxModel</code>]. It is used to instantiate a Dbrx model according to the
+specified arguments, defining the model architecture.</p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<p>d_model (<code>int</code>, <em>optional</em>, defaults to 6144):
+Dimensionality of the embeddings and hidden states.
+n_heads (<code>int</code>, <em>optional</em>, defaults to 48):
+Number of attention heads for each attention layer in the Transformer encoder.
+n_layers (<code>int</code>, <em>optional</em>, defaults to 40):
+Number of hidden layers in the Transformer encoder.
+max_seq_len (<code>int</code>, <em>optional</em>, defaults to 32768):
+The maximum sequence length of the model.
+vocab_size (<code>int</code>, <em>optional</em>, defaults to 100352):
+Vocabulary size of the Dbrx model. Defines the maximum number of different tokens that can be represented by
+the <code>inputs_ids</code> passed when calling [<code>DbrxModel</code>].
+resid_pdrop (<code>float</code>, <em>optional</em>, defaults to 0.0):
+The dropout probability applied to the attention output before combining with residual.
+emb_pdrop (<code>float</code>, <em>optional</em>, defaults to 0.0):
+The dropout probability for the embedding layer.
+attn_config (<code>dict</code>, <em>optional</em>):
+A dictionary used to configure the model's attention module.
+ffn_config (<code>dict</code>, <em>optional</em>):
+A dictionary used to configure the model's FFN module.
+use_cache (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return the last key/values attentions (not used by all models).
+initializer_range (<code>float</code>, <em>optional</em>, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+output_router_logits (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the router logits should be returned by the model. Enabling this will also
+allow the model to output the auxiliary loss. See <a href="">here</a> for more details
+router_aux_loss_coef (<code>float</code>, <em>optional</em>, defaults to 0.001):
+The aux loss factor for the total loss.
+Example:</p>
+<pre><code class="language-python">&gt;&gt;&gt; from transformers import DbrxConfig, DbrxModel
+
+&gt;&gt;&gt; # Initializing a Dbrx configuration
+&gt;&gt;&gt; configuration = DbrxConfig()
+
+&gt;&gt;&gt; # Initializing a model (with random weights) from the configuration
+&gt;&gt;&gt; model = DbrxModel(configuration)
+
+&gt;&gt;&gt; # Accessing the model configuration
+&gt;&gt;&gt; configuration = model.config
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.DbrxConfig.attribute_map"><code class="name">var <span class="ident">attribute_map</span> : dict[str, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DbrxConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config"><code class="flex name class">
+<span>class <span class="ident">DeepseekVL2Config</span></span>
+<span>(</span><span>tile_tag: str = 'tile_tag',<br>global_view_pos: str = 'head',<br>candidate_resolutions: Tuple[Tuple[int, int]] = ((384, 384),),<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepseekVL2Config(PretrainedConfig):
+    model_type = &#34;deepseek_vl_v2&#34;
+    vision_config: DeepseekVL2VisionEncoderConfig
+    projector_config: DeepseekVL2MlpProjectorConfig
+    language_config: DeepseekV2Config
+
+    tile_tag: str = &#34;2D&#34;
+    global_view_pos: str = &#34;head&#34;
+    candidate_resolutions: Tuple[Tuple[int, int]] = ((384, 384),)
+
+    def __init__(
+        self,
+        tile_tag: str = &#34;tile_tag&#34;,
+        global_view_pos: str = &#34;head&#34;,
+        candidate_resolutions: Tuple[Tuple[int, int]] = ((384, 384),),
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        vision_config = kwargs.get(&#34;vision_config&#34;, {})
+        self.vision_config = DeepseekVL2VisionEncoderConfig(**vision_config)
+
+        projector_config = kwargs.get(&#34;projector_config&#34;, {})
+        self.projector_config = DeepseekVL2MlpProjectorConfig(**projector_config)
+
+        language_config = kwargs.get(&#34;language_config&#34;, {})
+        if isinstance(language_config, DeepseekV2Config):
+            self.language_config = language_config
+        else:
+            self.language_config = DeepseekV2Config(**language_config)
+
+        self.tile_tag = tile_tag
+        self.global_view_pos = global_view_pos
+        self.candidate_resolutions = candidate_resolutions
+        self.architectures = [&#34;DeepseekVL2ForCausalLM&#34;]</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.DeepseekVL2Config.candidate_resolutions"><code class="name">var <span class="ident">candidate_resolutions</span> : Tuple[Tuple[int, int]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config.global_view_pos"><code class="name">var <span class="ident">global_view_pos</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config.language_config"><code class="name">var <span class="ident">language_config</span> : <a title="sglang.srt.configs.deepseekvl2.DeepseekV2Config" href="deepseekvl2.html#sglang.srt.configs.deepseekvl2.DeepseekV2Config">DeepseekV2Config</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config.projector_config"><code class="name">var <span class="ident">projector_config</span> : <a title="sglang.srt.configs.deepseekvl2.DeepseekVL2MlpProjectorConfig" href="deepseekvl2.html#sglang.srt.configs.deepseekvl2.DeepseekVL2MlpProjectorConfig">DeepseekVL2MlpProjectorConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config.tile_tag"><code class="name">var <span class="ident">tile_tag</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.DeepseekVL2Config.vision_config"><code class="name">var <span class="ident">vision_config</span> : <a title="sglang.srt.configs.deepseekvl2.DeepseekVL2VisionEncoderConfig" href="deepseekvl2.html#sglang.srt.configs.deepseekvl2.DeepseekVL2VisionEncoderConfig">DeepseekVL2VisionEncoderConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.ExaoneConfig"><code class="flex name class">
+<span>class <span class="ident">ExaoneConfig</span></span>
+<span>(</span><span>vocab_size=102400,<br>max_position_embeddings=2048,<br>hidden_size=2048,<br>num_layers=32,<br>num_attention_heads=32,<br>num_key_value_heads=None,<br>intermediate_size=None,<br>activation_function='silu',<br>rope_theta=10000.0,<br>rope_scaling=None,<br>embed_dropout=0.0,<br>attention_dropout=0.0,<br>layer_norm_epsilon=1e-05,<br>initializer_range=0.02,<br>use_cache=True,<br>bos_token_id=0,<br>eos_token_id=2,<br>tie_word_embeddings=True,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ExaoneConfig(PretrainedConfig):
+    r&#34;&#34;&#34;
+    This is the configuration class to store the configuration of a :class:`~transformers.ExaoneModel`. It is used to
+    instantiate a EXAONE model according to the specified arguments, defining the model architecture. Instantiating a
+    configuration with the defaults will yield a similar configuration to that of the Exaone
+
+    Configuration objects inherit from :class:`~transformers.PretrainedConfig` and can be used to control the model
+    outputs. Read the documentation from :class:`~transformers.PretrainedConfig` for more information.
+
+
+    Args:
+        vocab_size (:obj:`int`, `optional`, defaults to 102400):
+            Vocabulary size of the EXAONE model. Defines the number of different tokens that can be represented by the
+            :obj:`inputs_ids` passed when calling :class:`~transformers.ExaoneModel`. Vocabulary size of the model.
+            Defines the different tokens that can be represented by the `inputs_ids` passed to the forward method of
+            :class:`~transformers.EXAONEModel`.
+        max_position_embeddings (:obj:`int`, `optional`, defaults to 2048):
+            The maximum sequence length that this model might ever be used with. Typically set this to something large
+            just in case (e.g., 512 or 1024 or 2048).
+        hidden_size (:obj:`int`, `optional`, defaults to 2048):
+            Dimensionality of the encoder layers and the pooler layer.
+        num_layers (:obj:`int`, `optional`, defaults to 32):
+            Number of hidden layers in the Transformer encoder.
+        num_attention_heads (:obj:`int`, `optional`, defaults to 32):
+            Number of attention heads for each attention layer in the Transformer decoder.
+        num_key_value_heads (:obj:`int`, `optional`):
+            This is the number of key_value heads that should be used to implement Grouped Query Attention. If
+            `num_key_value_heads=num_attention_heads`, the model will use Multi Head Attention (MHA), if
+            `num_key_value_heads=1 the model will use Multi Query Attention (MQA) otherwise GQA is used. When
+            converting a multi-head checkpoint to a GQA checkpoint, each group key and value head should be constructed
+            by meanpooling all the original heads within that group. For more details checkout [this
+            paper](https://arxiv.org/pdf/2305.13245.pdf). If it is not specified, will default to
+            `num_attention_heads`.
+        intermediate_size (:obj:`int`, `optional`, defaults to `hidden_size * 4`):
+            Dimensionality of the &#34;intermediate&#34; (i.e., feed-forward) layer in the Transformer encoder.
+        activation_function (:obj:`str` or :obj:`function`, `optional`, defaults to :obj:`&#34;silu&#34;`):
+            The non-linear activation function (function or string) in the decoder.
+        rope_theta (:obj:`float`, `optional`, defaults to 10000.0):
+            The base period of the RoPE embeddings.
+        rope_scaling (:obj:`Dict`, `optional`):
+            Dictionary containing the scaling configuration for the RoPE embeddings. NOTE: if you apply new rope type
+            and you expect the model to work on longer `max_position_embeddings`, we recommend you to update this value
+            accordingly.
+            Expected contents:
+                `rope_type` (:obj:`str`):
+                    The sub-variant of RoPE to use. Can be one of [&#39;default&#39;, &#39;linear&#39;, &#39;dynamic&#39;, &#39;yarn&#39;, &#39;longrope&#39;,
+                    &#39;llama3&#39;], with &#39;default&#39; being the original RoPE implementation.
+                `factor` (:obj:`float`, `optional`):
+                    Used with all rope types except &#39;default&#39;. The scaling factor to apply to the RoPE embeddings. In
+                    most scaling types, a `factor` of x will enable the model to handle sequences of length x *
+                    original maximum pre-trained length.
+                `original_max_position_embeddings` (:obj:`int`, `optional`):
+                    Used with &#39;dynamic&#39;, &#39;longrope&#39; and &#39;llama3&#39;. The original max position embeddings used during
+                    pretraining.
+                `attention_factor` (:obj:`float`, `optional`):
+                    Used with &#39;yarn&#39; and &#39;longrope&#39;. The scaling factor to be applied on the attention
+                    computation. If unspecified, it defaults to value recommended by the implementation, using the
+                    `factor` field to infer the suggested value.
+                `beta_fast` (:obj:`float`, `optional`):
+                    Only used with &#39;yarn&#39;. Parameter to set the boundary for extrapolation (only) in the linear
+                    ramp function. If unspecified, it defaults to 32.
+                `beta_slow` (:obj:`float`, `optional`):
+                    Only used with &#39;yarn&#39;. Parameter to set the boundary for interpolation (only) in the linear
+                    ramp function. If unspecified, it defaults to 1.
+                `short_factor` (:obj:`List[float]`, `optional`):
+                    Only used with &#39;longrope&#39;. The scaling factor to be applied to short contexts (&lt;
+                    `original_max_position_embeddings`). Must be a list of numbers with the same length as the hidden
+                    size divided by the number of attention heads divided by 2
+                `long_factor` (:obj:`List[float]`, `optional`):
+                    Only used with &#39;longrope&#39;. The scaling factor to be applied to long contexts (&lt;
+                    `original_max_position_embeddings`). Must be a list of numbers with the same length as the hidden
+                    size divided by the number of attention heads divided by 2
+                `low_freq_factor` (:obj:`float`, `optional`):
+                    Only used with &#39;llama3&#39;. Scaling factor applied to low frequency components of the RoPE
+                `high_freq_factor` (:obj:`float`, `optional`):
+                    Only used with &#39;llama3&#39;. Scaling factor applied to high frequency components of the RoPE
+        embed_dropout (:obj:`float`, `optional`, defaults to 0.0):
+            The dropout probabilitiy for all fully connected layers in the embeddings, encoder, and pooler.
+        attention_dropout (:obj:`float`, `optional`, defaults to 0.0):
+            The dropout ratio for the attention probabilities.
+        layer_norm_epsilon (:obj:`float`, `optional`, defaults to 1e-5):
+            The epsilon used by the layer normalization layers.
+        initializer_range (:obj:`float`, `optional`, defaults to 0.02):
+            The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+        use_cache (:obj:`bool`, `optional`, defaults to :obj:`True`):
+            Whether or not the model should return the last key/values attentions (not used by all models). Only
+            relevant if ``configs.is_decoder=True``.
+        bos_token_id (:obj:`int`, `optional`, defaults to 0):
+            Beginning of stream token id.
+        eos_token_id (:obj:`int`, `optional`, defaults to 2):
+            End of stream token id.
+        tie_word_embeddings (:obj:`bool`, `optional`, defaults to :obj:`True`):
+            Whether to tie weight embeddings
+        gradient_checkpointing (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            If True, use gradient checkpointing to save memory at the expense of slower backward pass.
+
+        Example::
+
+            &gt;&gt;&gt; from transformers import EXAONEModel, ExaoneConfig
+
+            &gt;&gt;&gt; # Initializing a EXAONE configuration
+            &gt;&gt;&gt; configuration = ExaoneConfig()
+
+            &gt;&gt;&gt; # Initializing a model from configuration
+            &gt;&gt;&gt; model = EXAONEModel(configuration)
+
+            &gt;&gt;&gt; # Accessing the model configuration
+            &gt;&gt;&gt; configuration = model.configs
+    &#34;&#34;&#34;
+
+    model_type = &#34;exaone&#34;
+    keys_to_ignore_at_inference = [&#34;past_key_values&#34;]
+    attribute_map = {&#34;num_hidden_layers&#34;: &#34;num_layers&#34;}
+
+    def __init__(
+        self,
+        vocab_size=102400,
+        max_position_embeddings=2048,
+        hidden_size=2048,
+        num_layers=32,
+        num_attention_heads=32,
+        num_key_value_heads=None,
+        intermediate_size=None,
+        activation_function=&#34;silu&#34;,
+        rope_theta=10000.0,
+        rope_scaling=None,
+        embed_dropout=0.0,
+        attention_dropout=0.0,
+        layer_norm_epsilon=1e-5,
+        initializer_range=0.02,
+        use_cache=True,
+        bos_token_id=0,
+        eos_token_id=2,
+        tie_word_embeddings=True,
+        **kwargs
+    ):
+        self.vocab_size = vocab_size
+        self.max_position_embeddings = max_position_embeddings
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.num_attention_heads = num_attention_heads
+        self.num_hidden_layers = num_layers
+        if num_key_value_heads is None:
+            num_key_value_heads = num_attention_heads
+        self.num_key_value_heads = num_key_value_heads
+        if intermediate_size:
+            self.intermediate_size = intermediate_size
+        else:
+            self.intermediate_size = hidden_size * 4
+        self.activation_function = activation_function
+        self.embed_dropout = embed_dropout
+        self.attention_dropout = attention_dropout
+        self.layer_norm_epsilon = layer_norm_epsilon
+        self.initializer_range = initializer_range
+        self.use_cache = use_cache
+        self.rope_theta = rope_theta
+        self.rope_scaling = rope_scaling
+
+        self.bos_token_id = bos_token_id
+        self.eos_token_id = eos_token_id
+
+        super().__init__(
+            bos_token_id=bos_token_id,
+            eos_token_id=eos_token_id,
+            tie_word_embeddings=tie_word_embeddings,
+            **kwargs
+        )</code></pre>
+</details>
+<div class="desc"><p>This is the configuration class to store the configuration of a :class:<code>~transformers.ExaoneModel</code>. It is used to
+instantiate a EXAONE model according to the specified arguments, defining the model architecture. Instantiating a
+configuration with the defaults will yield a similar configuration to that of the Exaone</p>
+<p>Configuration objects inherit from :class:<code>~transformers.PretrainedConfig</code> and can be used to control the model
+outputs. Read the documentation from :class:<code>~transformers.PretrainedConfig</code> for more information.</p>
+<h2 id="args">Args</h2>
+<p>vocab_size (:obj:<code>int</code>, <code>optional</code>, defaults to 102400):
+Vocabulary size of the EXAONE model. Defines the number of different tokens that can be represented by the
+:obj:<code>inputs_ids</code> passed when calling :class:<code>~transformers.ExaoneModel</code>. Vocabulary size of the model.
+Defines the different tokens that can be represented by the <code>inputs_ids</code> passed to the forward method of
+:class:<code>~transformers.EXAONEModel</code>.
+max_position_embeddings (:obj:<code>int</code>, <code>optional</code>, defaults to 2048):
+The maximum sequence length that this model might ever be used with. Typically set this to something large
+just in case (e.g., 512 or 1024 or 2048).
+hidden_size (:obj:<code>int</code>, <code>optional</code>, defaults to 2048):
+Dimensionality of the encoder layers and the pooler layer.
+num_layers (:obj:<code>int</code>, <code>optional</code>, defaults to 32):
+Number of hidden layers in the Transformer encoder.
+num_attention_heads (:obj:<code>int</code>, <code>optional</code>, defaults to 32):
+Number of attention heads for each attention layer in the Transformer decoder.
+num_key_value_heads (:obj:<code>int</code>, <code>optional</code>):
+This is the number of key_value heads that should be used to implement Grouped Query Attention. If
+<code>num_key_value_heads=num_attention_heads</code>, the model will use Multi Head Attention (MHA), if
+<code>num_key_value_heads=1 the model will use Multi Query Attention (MQA) otherwise GQA is used. When
+converting a multi-head checkpoint to a GQA checkpoint, each group key and value head should be constructed
+by meanpooling all the original heads within that group. For more details checkout [this
+paper](&lt;https://arxiv.org/pdf/2305.13245.pdf&gt;). If it is not specified, will default to
+&lt;code&gt;num\_attention\_heads&lt;/code&gt;.
+intermediate_size (:obj:&lt;code&gt;int&lt;/code&gt;, &lt;code&gt;optional&lt;/code&gt;, defaults to</code>hidden_size * 4<code>):
+Dimensionality of the "intermediate" (i.e., feed-forward) layer in the Transformer encoder.
+activation_function (:obj:&lt;code&gt;str&lt;/code&gt; or :obj:&lt;code&gt;function&lt;/code&gt;, &lt;code&gt;optional&lt;/code&gt;, defaults to :obj:</code>"silu"`):
+The non-linear activation function (function or string) in the decoder.
+rope_theta (:obj:<code>float</code>, <code>optional</code>, defaults to 10000.0):
+The base period of the RoPE embeddings.
+rope_scaling (:obj:<code>Dict</code>, <code>optional</code>):
+Dictionary containing the scaling configuration for the RoPE embeddings. NOTE: if you apply new rope type
+and you expect the model to work on longer <code>max_position_embeddings</code>, we recommend you to update this value
+accordingly.
+Expected contents:
+<code>rope_type</code> (:obj:<code>str</code>):
+The sub-variant of RoPE to use. Can be one of ['default', 'linear', 'dynamic', 'yarn', 'longrope',
+'llama3'], with 'default' being the original RoPE implementation.
+<code>factor</code> (:obj:<code>float</code>, <code>optional</code>):
+Used with all rope types except 'default'. The scaling factor to apply to the RoPE embeddings. In
+most scaling types, a <code>factor</code> of x will enable the model to handle sequences of length x *
+original maximum pre-trained length.
+<code>original_max_position_embeddings</code> (:obj:<code>int</code>, <code>optional</code>):
+Used with 'dynamic', 'longrope' and 'llama3'. The original max position embeddings used during
+pretraining.
+<code>attention_factor</code> (:obj:<code>float</code>, <code>optional</code>):
+Used with 'yarn' and 'longrope'. The scaling factor to be applied on the attention
+computation. If unspecified, it defaults to value recommended by the implementation, using the
+<code>factor</code> field to infer the suggested value.
+<code>beta_fast</code> (:obj:<code>float</code>, <code>optional</code>):
+Only used with 'yarn'. Parameter to set the boundary for extrapolation (only) in the linear
+ramp function. If unspecified, it defaults to 32.
+<code>beta_slow</code> (:obj:<code>float</code>, <code>optional</code>):
+Only used with 'yarn'. Parameter to set the boundary for interpolation (only) in the linear
+ramp function. If unspecified, it defaults to 1.
+<code>short_factor</code> (:obj:<code>List[float]</code>, <code>optional</code>):
+Only used with 'longrope'. The scaling factor to be applied to short contexts (&lt;
+<code>original_max_position_embeddings</code>). Must be a list of numbers with the same length as the hidden
+size divided by the number of attention heads divided by 2
+<code>long_factor</code> (:obj:<code>List[float]</code>, <code>optional</code>):
+Only used with 'longrope'. The scaling factor to be applied to long contexts (&lt;
+<code>original_max_position_embeddings</code>). Must be a list of numbers with the same length as the hidden
+size divided by the number of attention heads divided by 2
+<code>low_freq_factor</code> (:obj:<code>float</code>, <code>optional</code>):
+Only used with 'llama3'. Scaling factor applied to low frequency components of the RoPE
+<code>high_freq_factor</code> (:obj:<code>float</code>, <code>optional</code>):
+Only used with 'llama3'. Scaling factor applied to high frequency components of the RoPE
+embed_dropout (:obj:<code>float</code>, <code>optional</code>, defaults to 0.0):
+The dropout probabilitiy for all fully connected layers in the embeddings, encoder, and pooler.
+attention_dropout (:obj:<code>float</code>, <code>optional</code>, defaults to 0.0):
+The dropout ratio for the attention probabilities.
+layer_norm_epsilon (:obj:<code>float</code>, <code>optional</code>, defaults to 1e-5):
+The epsilon used by the layer normalization layers.
+initializer_range (:obj:<code>float</code>, <code>optional</code>, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+use_cache (:obj:<code>bool</code>, <code>optional</code>, defaults to :obj:<code>True</code>):
+Whether or not the model should return the last key/values attentions (not used by all models). Only
+relevant if <code>configs.is_decoder=True</code>.
+bos_token_id (:obj:<code>int</code>, <code>optional</code>, defaults to 0):
+Beginning of stream token id.
+eos_token_id (:obj:<code>int</code>, <code>optional</code>, defaults to 2):
+End of stream token id.
+tie_word_embeddings (:obj:<code>bool</code>, <code>optional</code>, defaults to :obj:<code>True</code>):
+Whether to tie weight embeddings
+gradient_checkpointing (:obj:<code>bool</code>, <code>optional</code>, defaults to :obj:<code>False</code>):
+If True, use gradient checkpointing to save memory at the expense of slower backward pass.</p>
+<p>Example::</p>
+<pre><code>&gt;&gt;&gt; from transformers import EXAONEModel, ExaoneConfig
+
+&gt;&gt;&gt; # Initializing a EXAONE configuration
+&gt;&gt;&gt; configuration = ExaoneConfig()
+
+&gt;&gt;&gt; # Initializing a model from configuration
+&gt;&gt;&gt; model = EXAONEModel(configuration)
+
+&gt;&gt;&gt; # Accessing the model configuration
+&gt;&gt;&gt; configuration = model.configs
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.ExaoneConfig.attribute_map"><code class="name">var <span class="ident">attribute_map</span> : dict[str, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.ExaoneConfig.keys_to_ignore_at_inference"><code class="name">var <span class="ident">keys_to_ignore_at_inference</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.ExaoneConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.KimiVLConfig"><code class="flex name class">
+<span>class <span class="ident">KimiVLConfig</span></span>
+<span>(</span><span>vision_config: dict | <a title="sglang.srt.configs.kimi_vl_moonvit.MoonViTConfig" href="kimi_vl_moonvit.html#sglang.srt.configs.kimi_vl_moonvit.MoonViTConfig">MoonViTConfig</a> | None = None,<br>text_config: dict | <a title="sglang.srt.configs.deepseekvl2.DeepseekV2Config" href="deepseekvl2.html#sglang.srt.configs.deepseekvl2.DeepseekV2Config">DeepseekV2Config</a> | None = None,<br>ignore_index: int = -100,<br>media_placeholder_token_id: int = 163605,<br>pad_token_id: int = 0,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KimiVLConfig(PretrainedConfig):
+    model_type = &#34;kimi_vl&#34;
+
+    def __init__(
+        self,
+        vision_config: Optional[Union[dict, MoonViTConfig]] = None,
+        text_config: Optional[Union[dict, DeepseekV2Config]] = None,
+        ignore_index: int = -100,
+        media_placeholder_token_id: int = 163605,
+        pad_token_id: int = 0,
+        **kwargs
+    ):
+        if vision_config is None:
+            vision_config = MoonViTConfig()
+        elif isinstance(vision_config, dict):
+            vision_config = MoonViTConfig(**vision_config)
+        self.vision_config = vision_config
+
+        if text_config is None:
+            text_config = DeepseekV2Config()
+        elif isinstance(text_config, dict):
+            text_config = DeepseekV2Config(**text_config)
+        self.text_config = text_config
+
+        self.ignore_index = ignore_index
+        self.media_placeholder_token_id = media_placeholder_token_id
+
+        super().__init__(pad_token_id=pad_token_id, **kwargs)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.KimiVLConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.LongcatFlashConfig"><code class="flex name class">
+<span>class <span class="ident">LongcatFlashConfig</span></span>
+<span>(</span><span>vocab_size=131072,<br>hidden_size=6144,<br>intermediate_size=None,<br>ffn_hidden_size=12288,<br>expert_ffn_hidden_size=2048,<br>num_layers=28,<br>num_hidden_layers=None,<br>num_attention_heads=64,<br>ep_size=1,<br>kv_lora_rank=512,<br>q_lora_rank=1536,<br>qk_rope_head_dim=128,<br>qk_nope_head_dim=128,<br>v_head_dim=128,<br>n_routed_experts=512,<br>moe_topk=12,<br>norm_topk_prob=False,<br>max_position_embeddings=131072,<br>rms_norm_eps=1e-05,<br>use_cache=True,<br>pad_token_id=None,<br>bos_token_id=1,<br>eos_token_id=2,<br>pretraining_tp=1,<br>tie_word_embeddings=False,<br>rope_theta=10000000.0,<br>rope_scaling=None,<br>attention_bias=False,<br>attention_dropout=0.0,<br>mla_scale_q_lora=True,<br>mla_scale_kv_lora=True,<br>torch_dtype='bfloat16',<br>params_dtype='bfloat16',<br>rounter_params_dtype='float32',<br>router_bias=False,<br>topk_method=None,<br>routed_scaling_factor=6.0,<br>zero_expert_num=256,<br>zero_expert_type='identity',<br>nextn_use_scmoe=False,<br>num_nextn_predict_layers=1,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LongcatFlashConfig(PretrainedConfig):
+    model_type = &#34;longcat_flash&#34;
+    keys_to_ignore_at_inference = [&#34;past_key_values&#34;]
+
+    def __init__(
+        self,
+        vocab_size=131072,
+        hidden_size=6144,
+        intermediate_size=None,
+        ffn_hidden_size=12288,
+        expert_ffn_hidden_size=2048,
+        num_layers=28,
+        num_hidden_layers=None,
+        num_attention_heads=64,
+        ep_size=1,
+        kv_lora_rank=512,
+        q_lora_rank=1536,
+        qk_rope_head_dim=128,
+        qk_nope_head_dim=128,
+        v_head_dim=128,
+        n_routed_experts=512,
+        moe_topk=12,
+        norm_topk_prob=False,
+        max_position_embeddings=131072,
+        rms_norm_eps=1e-05,
+        use_cache=True,
+        pad_token_id=None,
+        bos_token_id=1,
+        eos_token_id=2,
+        pretraining_tp=1,
+        tie_word_embeddings=False,
+        rope_theta=10000000.0,
+        rope_scaling=None,
+        attention_bias=False,
+        attention_dropout=0.0,
+        mla_scale_q_lora=True,
+        mla_scale_kv_lora=True,
+        torch_dtype=&#34;bfloat16&#34;,
+        params_dtype=&#34;bfloat16&#34;,
+        rounter_params_dtype=&#34;float32&#34;,
+        router_bias=False,
+        topk_method=None,
+        routed_scaling_factor=6.0,
+        zero_expert_num=256,
+        zero_expert_type=&#34;identity&#34;,
+        nextn_use_scmoe=False,
+        num_nextn_predict_layers=1,
+        **kwargs,
+    ):
+        super().__init__(
+            pad_token_id=pad_token_id,
+            bos_token_id=bos_token_id,
+            eos_token_id=eos_token_id,
+            tie_word_embeddings=tie_word_embeddings,
+            torch_dtype=torch_dtype,
+            params_dtype=params_dtype,
+            rounter_params_dtype=rounter_params_dtype,
+            topk_method=topk_method,
+            router_bias=router_bias,
+            nextn_use_scmoe=nextn_use_scmoe,
+            num_nextn_predict_layers=num_nextn_predict_layers,
+            **kwargs,
+        )
+        self.vocab_size = vocab_size
+        self.max_position_embeddings = max_position_embeddings
+        self.hidden_size = hidden_size
+        self.num_hidden_layers = (
+            num_hidden_layers if num_hidden_layers is not None else num_layers
+        )
+        self.intermediate_size = (
+            intermediate_size if intermediate_size is not None else ffn_hidden_size
+        )
+        self.moe_intermediate_size = expert_ffn_hidden_size
+        self.num_attention_heads = num_attention_heads
+        self.ep_size = ep_size
+        self.kv_lora_rank = kv_lora_rank
+        self.q_lora_rank = q_lora_rank
+        self.qk_rope_head_dim = qk_rope_head_dim
+        self.v_head_dim = v_head_dim
+        self.qk_nope_head_dim = qk_nope_head_dim
+        self.n_routed_experts = n_routed_experts
+        self.moe_topk = moe_topk
+        self.norm_topk_prob = norm_topk_prob
+        self.rms_norm_eps = rms_norm_eps
+        self.pretraining_tp = pretraining_tp
+        self.use_cache = use_cache
+        self.rope_theta = rope_theta
+        self.rope_scaling = rope_scaling
+        self.attention_bias = attention_bias
+        self.attention_dropout = attention_dropout
+        self.mla_scale_q_lora = mla_scale_q_lora
+        self.mla_scale_kv_lora = mla_scale_kv_lora
+        self.zero_expert_num = zero_expert_num
+        self.zero_expert_type = zero_expert_type
+        self.routed_scaling_factor = routed_scaling_factor
+        self.hidden_act = &#34;silu&#34;</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.LongcatFlashConfig.keys_to_ignore_at_inference"><code class="name">var <span class="ident">keys_to_ignore_at_inference</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.LongcatFlashConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.MoonViTConfig"><code class="flex name class">
+<span>class <span class="ident">MoonViTConfig</span></span>
+<span>(</span><span>patch_size: int = 14,<br>init_pos_emb_height: int = 64,<br>init_pos_emb_width: int = 64,<br>num_attention_heads: int = 16,<br>num_hidden_layers: int = 27,<br>hidden_size: int = 1152,<br>intermediate_size: int = 4304,<br>merge_kernel_size: tuple[int, int] = (2, 2),<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoonViTConfig(PretrainedConfig):
+    model_type = &#34;moonvit&#34;
+
+    def __init__(
+        self,
+        patch_size: int = 14,
+        init_pos_emb_height: int = 64,
+        init_pos_emb_width: int = 64,
+        num_attention_heads: int = 16,
+        num_hidden_layers: int = 27,
+        hidden_size: int = 1152,
+        intermediate_size: int = 4304,
+        merge_kernel_size: tuple[int, int] = (2, 2),
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self.patch_size = patch_size
+        # Positional embedding config
+        self.init_pos_emb_height = init_pos_emb_height
+        self.init_pos_emb_width = init_pos_emb_width
+        # Transformer config
+        self.num_hidden_layers = num_hidden_layers
+        self.num_attention_heads = num_attention_heads
+        self.hidden_size = hidden_size
+        self.intermediate_size = intermediate_size
+        # Patch merger config
+        self.merge_kernel_size = merge_kernel_size</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.MoonViTConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig"><code class="flex name class">
+<span>class <span class="ident">MultiModalityConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MultiModalityConfig(PretrainedConfig):
+    model_type = &#34;multi_modality&#34;
+    vision_config: VisionConfig
+    aligner_config: AlignerConfig
+
+    gen_vision_config: GenVisionConfig
+    gen_aligner_config: GenAlignerConfig
+    gen_head_config: GenHeadConfig
+
+    language_config: LlamaConfig
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        vision_config = kwargs.get(&#34;vision_config&#34;, {})
+        self.vision_config = VisionConfig(**vision_config)
+
+        aligner_config = kwargs.get(&#34;aligner_config&#34;, {})
+        self.aligner_config = AlignerConfig(**aligner_config)
+
+        gen_vision_config = kwargs.get(&#34;gen_vision_config&#34;, {})
+        self.gen_vision_config = GenVisionConfig(**gen_vision_config)
+
+        gen_aligner_config = kwargs.get(&#34;gen_aligner_config&#34;, {})
+        self.gen_aligner_config = GenAlignerConfig(**gen_aligner_config)
+
+        gen_head_config = kwargs.get(&#34;gen_head_config&#34;, {})
+        self.gen_head_config = GenHeadConfig(**gen_head_config)
+
+        language_config = kwargs.get(&#34;language_config&#34;, {})
+        if isinstance(language_config, LlamaConfig):
+            self.language_config = language_config
+        else:
+            self.language_config = LlamaConfig(**language_config)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.MultiModalityConfig.aligner_config"><code class="name">var <span class="ident">aligner_config</span> : <a title="sglang.srt.configs.janus_pro.AlignerConfig" href="janus_pro.html#sglang.srt.configs.janus_pro.AlignerConfig">AlignerConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig.gen_aligner_config"><code class="name">var <span class="ident">gen_aligner_config</span> : <a title="sglang.srt.configs.janus_pro.GenAlignerConfig" href="janus_pro.html#sglang.srt.configs.janus_pro.GenAlignerConfig">GenAlignerConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig.gen_head_config"><code class="name">var <span class="ident">gen_head_config</span> : <a title="sglang.srt.configs.janus_pro.GenHeadConfig" href="janus_pro.html#sglang.srt.configs.janus_pro.GenHeadConfig">GenHeadConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig.gen_vision_config"><code class="name">var <span class="ident">gen_vision_config</span> : <a title="sglang.srt.configs.janus_pro.GenVisionConfig" href="janus_pro.html#sglang.srt.configs.janus_pro.GenVisionConfig">GenVisionConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig.language_config"><code class="name">var <span class="ident">language_config</span> : transformers.models.llama.configuration_llama.LlamaConfig</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.MultiModalityConfig.vision_config"><code class="name">var <span class="ident">vision_config</span> : <a title="sglang.srt.configs.janus_pro.VisionConfig" href="janus_pro.html#sglang.srt.configs.janus_pro.VisionConfig">VisionConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.Step3TextConfig"><code class="flex name class">
+<span>class <span class="ident">Step3TextConfig</span></span>
+<span>(</span><span>hidden_size: int = 7168,<br>intermediate_size: int = 18432,<br>num_attention_heads: int = 64,<br>num_attention_groups: int = 1,<br>num_hidden_layers: int = 61,<br>max_seq_len: int = 65536,<br>vocab_size: int = 128815,<br>rms_norm_eps: float = 1e-05,<br>moe_intermediate_size: int = 5120,<br>moe_num_experts: int = 48,<br>moe_top_k: int = 3,<br>rope_theta: float = 500000,<br>rope_scaling: dict[str, typing.Any] | None = None,<br>max_position_embedding: int = 65536,<br>share_expert_dim: int = 5120,<br>share_q_dim: int = 2048,<br>head_dim: int = 256,<br>norm_expert_weight: bool = False,<br>moe_layers_enum: tuple[int] = (4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59),<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Step3TextConfig(PretrainedConfig):
+    model_type = &#34;step3_text&#34;
+    architectures = [&#34;Step3TextForCausalLM&#34;]
+
+    def __init__(
+        self,
+        hidden_size: int = 7168,
+        intermediate_size: int = 18432,
+        num_attention_heads: int = 64,
+        num_attention_groups: int = 1,
+        num_hidden_layers: int = 61,
+        max_seq_len: int = 65536,
+        vocab_size: int = 128815,
+        rms_norm_eps: float = 1e-5,
+        moe_intermediate_size: int = 5120,
+        moe_num_experts: int = 48,
+        moe_top_k: int = 3,
+        rope_theta: float = 500000,
+        rope_scaling: Optional[dict[str, Any]] = None,
+        max_position_embedding: int = 65536,
+        share_expert_dim: int = 5120,
+        share_q_dim: int = 2048,
+        head_dim: int = 256,
+        norm_expert_weight: bool = False,
+        moe_layers_enum: tuple[int] = (
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+        ),
+        **kwargs,
+    ) -&gt; None:
+        self.hidden_size = hidden_size
+        self.intermediate_size = intermediate_size
+        self.num_attention_heads = num_attention_heads
+        self.num_attention_groups = num_attention_groups
+        self.num_hidden_layers = num_hidden_layers
+        self.max_seq_len = max_seq_len
+        self.vocab_size = vocab_size
+        self.rms_norm_eps = rms_norm_eps
+        self.moe_intermediate_size = moe_intermediate_size
+        self.moe_num_experts = moe_num_experts
+        self.moe_top_k = moe_top_k
+        self.rope_theta = rope_theta
+        self.rope_scaling = rope_scaling
+        self.max_position_embedding = max_position_embedding
+        self.share_expert_dim = share_expert_dim
+        self.share_q_dim = share_q_dim
+        self.head_dim = head_dim
+        self.norm_expert_weight = norm_expert_weight
+        self.moe_layers_enum = moe_layers_enum
+
+        super().__init__(**kwargs)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.Step3TextConfig.architectures"><code class="name">var <span class="ident">architectures</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.Step3TextConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.Step3VLConfig"><code class="flex name class">
+<span>class <span class="ident">Step3VLConfig</span></span>
+<span>(</span><span>vision_config: dict | <a title="sglang.srt.configs.step3_vl.Step3VisionEncoderConfig" href="step3_vl.html#sglang.srt.configs.step3_vl.Step3VisionEncoderConfig">Step3VisionEncoderConfig</a> | None = None,<br>text_config: dict | <a title="sglang.srt.configs.step3_vl.Step3TextConfig" href="step3_vl.html#sglang.srt.configs.step3_vl.Step3TextConfig">Step3TextConfig</a> | None = None,<br>understand_projector_stride: int = 1,<br>projector_bias: bool = True,<br>image_token_id: int = 128001,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Step3VLConfig(PretrainedConfig):
+    model_type = &#34;step3_vl&#34;
+
+    def __init__(
+        self,
+        vision_config: Optional[Union[dict, Step3VisionEncoderConfig]] = None,
+        text_config: Optional[Union[dict, Step3TextConfig]] = None,
+        understand_projector_stride: int = 1,
+        projector_bias: bool = True,
+        image_token_id: int = 128001,
+        **kwargs,
+    ) -&gt; None:
+        if vision_config is None:
+            vision_config = Step3VisionEncoderConfig()
+        elif isinstance(vision_config, dict):
+            vision_config = Step3VisionEncoderConfig(**vision_config)
+        self.vision_config = vision_config
+
+        if text_config is None:
+            text_config = Step3TextConfig()
+        elif isinstance(text_config, dict):
+            text_config = Step3TextConfig(**text_config)
+        self.text_config = text_config
+
+        self.understand_projector_stride = understand_projector_stride
+        self.projector_bias = projector_bias
+        self.hidden_size = text_config.hidden_size
+        self.image_token_id = image_token_id
+
+        super().__init__(**kwargs)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.Step3VLConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.Step3VisionEncoderConfig"><code class="flex name class">
+<span>class <span class="ident">Step3VisionEncoderConfig</span></span>
+<span>(</span><span>hidden_size=1792,<br>intermediate_size=3072,<br>output_hidden_size=4096,<br>num_hidden_layers=63,<br>num_attention_heads=16,<br>num_channels=3,<br>image_size=728,<br>patch_size=14,<br>hidden_act='quick_gelu',<br>layer_norm_eps=1e-05,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Step3VisionEncoderConfig(PretrainedConfig):
+    model_type = &#34;step3_vision_encoder&#34;
+
+    def __init__(
+        self,
+        hidden_size=1792,
+        intermediate_size=3072,
+        output_hidden_size=4096,
+        num_hidden_layers=63,
+        num_attention_heads=16,
+        num_channels=3,
+        image_size=728,
+        patch_size=14,
+        hidden_act=&#34;quick_gelu&#34;,
+        layer_norm_eps=1e-5,
+        **kwargs,
+    ):
+        self.hidden_size = hidden_size
+        self.intermediate_size = intermediate_size
+        self.output_hidden_size = output_hidden_size
+        self.num_hidden_layers = num_hidden_layers
+        self.num_attention_heads = num_attention_heads
+        self.num_channels = num_channels
+        self.patch_size = patch_size
+        self.image_size = image_size
+        self.layer_norm_eps = layer_norm_eps
+        self.hidden_act = hidden_act
+        super().__init__(**kwargs)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.Step3VisionEncoderConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="../index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="sglang.srt.configs.chatglm" href="chatglm.html">sglang.srt.configs.chatglm</a></code></li>
+<li><code><a title="sglang.srt.configs.dbrx" href="dbrx.html">sglang.srt.configs.dbrx</a></code></li>
+<li><code><a title="sglang.srt.configs.deepseekvl2" href="deepseekvl2.html">sglang.srt.configs.deepseekvl2</a></code></li>
+<li><code><a title="sglang.srt.configs.device_config" href="device_config.html">sglang.srt.configs.device_config</a></code></li>
+<li><code><a title="sglang.srt.configs.exaone" href="exaone.html">sglang.srt.configs.exaone</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl" href="internvl.html">sglang.srt.configs.internvl</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro" href="janus_pro.html">sglang.srt.configs.janus_pro</a></code></li>
+<li><code><a title="sglang.srt.configs.kimi_vl" href="kimi_vl.html">sglang.srt.configs.kimi_vl</a></code></li>
+<li><code><a title="sglang.srt.configs.kimi_vl_moonvit" href="kimi_vl_moonvit.html">sglang.srt.configs.kimi_vl_moonvit</a></code></li>
+<li><code><a title="sglang.srt.configs.load_config" href="load_config.html">sglang.srt.configs.load_config</a></code></li>
+<li><code><a title="sglang.srt.configs.longcat_flash" href="longcat_flash.html">sglang.srt.configs.longcat_flash</a></code></li>
+<li><code><a title="sglang.srt.configs.model_config" href="model_config.html">sglang.srt.configs.model_config</a></code></li>
+<li><code><a title="sglang.srt.configs.step3_vl" href="step3_vl.html">sglang.srt.configs.step3_vl</a></code></li>
+<li><code><a title="sglang.srt.configs.update_config" href="update_config.html">sglang.srt.configs.update_config</a></code></li>
+<li><code><a title="sglang.srt.configs.utils" href="utils.html">sglang.srt.configs.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.configs.ChatGLMConfig" href="#sglang.srt.configs.ChatGLMConfig">ChatGLMConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.ChatGLMConfig.attribute_map" href="#sglang.srt.configs.ChatGLMConfig.attribute_map">attribute_map</a></code></li>
+<li><code><a title="sglang.srt.configs.ChatGLMConfig.model_type" href="#sglang.srt.configs.ChatGLMConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.DbrxConfig" href="#sglang.srt.configs.DbrxConfig">DbrxConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.DbrxConfig.attribute_map" href="#sglang.srt.configs.DbrxConfig.attribute_map">attribute_map</a></code></li>
+<li><code><a title="sglang.srt.configs.DbrxConfig.model_type" href="#sglang.srt.configs.DbrxConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.DeepseekVL2Config" href="#sglang.srt.configs.DeepseekVL2Config">DeepseekVL2Config</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.candidate_resolutions" href="#sglang.srt.configs.DeepseekVL2Config.candidate_resolutions">candidate_resolutions</a></code></li>
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.global_view_pos" href="#sglang.srt.configs.DeepseekVL2Config.global_view_pos">global_view_pos</a></code></li>
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.language_config" href="#sglang.srt.configs.DeepseekVL2Config.language_config">language_config</a></code></li>
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.model_type" href="#sglang.srt.configs.DeepseekVL2Config.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.projector_config" href="#sglang.srt.configs.DeepseekVL2Config.projector_config">projector_config</a></code></li>
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.tile_tag" href="#sglang.srt.configs.DeepseekVL2Config.tile_tag">tile_tag</a></code></li>
+<li><code><a title="sglang.srt.configs.DeepseekVL2Config.vision_config" href="#sglang.srt.configs.DeepseekVL2Config.vision_config">vision_config</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.ExaoneConfig" href="#sglang.srt.configs.ExaoneConfig">ExaoneConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.ExaoneConfig.attribute_map" href="#sglang.srt.configs.ExaoneConfig.attribute_map">attribute_map</a></code></li>
+<li><code><a title="sglang.srt.configs.ExaoneConfig.keys_to_ignore_at_inference" href="#sglang.srt.configs.ExaoneConfig.keys_to_ignore_at_inference">keys_to_ignore_at_inference</a></code></li>
+<li><code><a title="sglang.srt.configs.ExaoneConfig.model_type" href="#sglang.srt.configs.ExaoneConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.KimiVLConfig" href="#sglang.srt.configs.KimiVLConfig">KimiVLConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.KimiVLConfig.model_type" href="#sglang.srt.configs.KimiVLConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.LongcatFlashConfig" href="#sglang.srt.configs.LongcatFlashConfig">LongcatFlashConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.LongcatFlashConfig.keys_to_ignore_at_inference" href="#sglang.srt.configs.LongcatFlashConfig.keys_to_ignore_at_inference">keys_to_ignore_at_inference</a></code></li>
+<li><code><a title="sglang.srt.configs.LongcatFlashConfig.model_type" href="#sglang.srt.configs.LongcatFlashConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.MoonViTConfig" href="#sglang.srt.configs.MoonViTConfig">MoonViTConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.MoonViTConfig.model_type" href="#sglang.srt.configs.MoonViTConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.MultiModalityConfig" href="#sglang.srt.configs.MultiModalityConfig">MultiModalityConfig</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.aligner_config" href="#sglang.srt.configs.MultiModalityConfig.aligner_config">aligner_config</a></code></li>
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.gen_aligner_config" href="#sglang.srt.configs.MultiModalityConfig.gen_aligner_config">gen_aligner_config</a></code></li>
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.gen_head_config" href="#sglang.srt.configs.MultiModalityConfig.gen_head_config">gen_head_config</a></code></li>
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.gen_vision_config" href="#sglang.srt.configs.MultiModalityConfig.gen_vision_config">gen_vision_config</a></code></li>
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.language_config" href="#sglang.srt.configs.MultiModalityConfig.language_config">language_config</a></code></li>
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.model_type" href="#sglang.srt.configs.MultiModalityConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.MultiModalityConfig.vision_config" href="#sglang.srt.configs.MultiModalityConfig.vision_config">vision_config</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.Step3TextConfig" href="#sglang.srt.configs.Step3TextConfig">Step3TextConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.Step3TextConfig.architectures" href="#sglang.srt.configs.Step3TextConfig.architectures">architectures</a></code></li>
+<li><code><a title="sglang.srt.configs.Step3TextConfig.model_type" href="#sglang.srt.configs.Step3TextConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.Step3VLConfig" href="#sglang.srt.configs.Step3VLConfig">Step3VLConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.Step3VLConfig.model_type" href="#sglang.srt.configs.Step3VLConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.Step3VisionEncoderConfig" href="#sglang.srt.configs.Step3VisionEncoderConfig">Step3VisionEncoderConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.Step3VisionEncoderConfig.model_type" href="#sglang.srt.configs.Step3VisionEncoderConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

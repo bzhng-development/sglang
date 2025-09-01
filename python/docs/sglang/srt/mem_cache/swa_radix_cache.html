@@ -1,0 +1,2053 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.mem_cache.swa_radix_cache API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.mem_cache.swa_radix_cache</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.gen_swa_uuid"><code class="name flex">
+<span>def <span class="ident">gen_swa_uuid</span></span>(<span>) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gen_swa_uuid() -&gt; int:
+    TreeNode.swa_uuid_counter += 1
+    return TreeNode.swa_uuid_counter</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList"><code class="flex name class">
+<span>class <span class="ident">LRUList</span></span>
+<span>(</span><span>swa: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LRUList:
+    def __init__(self, swa: bool = False):
+        self.swa = swa
+        if self.swa:
+            self.prv = &#34;swa_prev&#34;
+            self.nxt = &#34;swa_next&#34;
+            self.lock_ref = &#34;swa_lock_ref&#34;
+        else:
+            self.prv = &#34;prev&#34;
+            self.nxt = &#34;next&#34;
+            self.lock_ref = &#34;full_lock_ref&#34;
+        # Initialize dummy head and tail nodes
+        self.head = TreeNode()  # Most recently used side
+        self.tail = TreeNode()  # Least recently used side
+        setattr(self.head, self.nxt, self.tail)  # self.head.next = self.tail
+        setattr(self.tail, self.prv, self.head)  # self.tail.prev = self.head
+        self.cache = {}
+
+    def _add_node(self, node):
+        &#34;&#34;&#34;Helper to add node right after head (most recently used)&#34;&#34;&#34;
+        self._add_node_after(self.head, node)
+
+    def _add_node_after(self, old_node, new_node):
+        &#34;&#34;&#34;Helper to add node right after old_node&#34;&#34;&#34;
+        setattr(new_node, self.prv, old_node)  # new_node.prev = old_node
+        setattr(
+            new_node, self.nxt, getattr(old_node, self.nxt)
+        )  # new_node.next = old_node.next
+        setattr(
+            getattr(old_node, self.nxt), self.prv, new_node
+        )  # old_node.next.prev = new_node
+        setattr(old_node, self.nxt, new_node)  # old_node.next = new_node
+
+    def _remove_node(self, node):
+        &#34;&#34;&#34;Helper to remove node from linked list&#34;&#34;&#34;
+        setattr(
+            getattr(node, self.prv), self.nxt, getattr(node, self.nxt)
+        )  # node.prev.next = node.next
+        setattr(
+            getattr(node, self.nxt), self.prv, getattr(node, self.prv)
+        )  # node.next.prev = node.prev
+
+    def _get_lru(self) -&gt; Optional[TreeNode]:
+        &#34;&#34;&#34;
+        Get the least recently used node
+        &#34;&#34;&#34;
+        if len(self.cache) == 0:
+            return None
+        return getattr(self.tail, self.prv)
+
+    def reset_node_mru(self, node):
+        &#34;&#34;&#34;
+        Move a (existing) node to most recently used position
+        &#34;&#34;&#34;
+        assert node.id in self.cache, f&#34;Resetting node {node.id=} not in lru list&#34;
+        assert (
+            not self.swa or not node.swa_tombstone
+        ), f&#34;Resetting swa tombstone node in swa lru list: {node.id=}&#34;
+        self._remove_node(node)
+        self._add_node(node)
+
+    def reset_node_and_parents_mru(self, node, root_node):
+        &#34;&#34;&#34;
+        Move an (existing) node and its parents to most recently used position. Child node is
+        more recently used than parent node.
+        &#34;&#34;&#34;
+        prev_node = self.head
+        while node != root_node:
+            # for swa lru list, only reset non-tombstone nodes
+            if not self.swa or not node.swa_tombstone:
+                assert (
+                    node.id in self.cache
+                ), f&#34;Resetting node {node.id=} not in lru list when resetting node and parents mru&#34;
+                self._remove_node(node)
+                self._add_node_after(prev_node, node)
+                prev_node = node
+            node = node.parent
+
+    def insert_mru(self, node):
+        &#34;&#34;&#34;
+        Insert a (new) node as most recently used
+        &#34;&#34;&#34;
+        assert (
+            not self.swa or not node.swa_tombstone
+        ), f&#34;Inserting swa tombstone node in swa lru list: {node.id=}&#34;
+        assert (
+            node.id not in self.cache
+        ), f&#34;Inserting node {node.id=} already in lru list, existing node: {self.cache[node.id].id=}&#34;
+        self.cache[node.id] = node
+        self._add_node(node)
+
+    def remove_node(self, node: TreeNode):
+        &#34;&#34;&#34;
+        Remove node from lru list
+        &#34;&#34;&#34;
+        assert node.id in self.cache, f&#34;Removing node {node.id=} not in lru list&#34;
+        assert (
+            not self.swa or not node.swa_tombstone
+        ), f&#34;Removing swa tombstone node from swa lru list: {node.id=}&#34;
+        del self.cache[node.id]
+        self._remove_node(node)
+
+    def get_lru_no_lock(self) -&gt; Optional[TreeNode]:
+        &#34;&#34;&#34;
+        Get the least recently used node that is not locked
+        &#34;&#34;&#34;
+        return self.get_prev_no_lock(self.tail, check_id=False)
+
+    def get_leaf_lru_no_lock(self) -&gt; Optional[TreeNode]:
+        &#34;&#34;&#34;
+        Get the least recently used leaf node that is not locked
+        &#34;&#34;&#34;
+        return self.get_prev_leaf_no_lock(self.tail, check_id=False)
+
+    def get_prev_no_lock(
+        self, node: TreeNode, check_id: bool = True
+    ) -&gt; Optional[TreeNode]:
+        &#34;&#34;&#34;
+        Get the previous (i.e. more recently used) node that is not locked
+        &#34;&#34;&#34;
+        if check_id:
+            assert (
+                node.id in self.cache
+            ), f&#34;Getting prev of node {node.id=} not in lru list&#34;
+        x = getattr(node, self.prv)  # x = node.prev
+        while getattr(x, self.lock_ref) &gt; 0:
+            x = getattr(x, self.prv)  # x = x.prev
+        # if x is the head, it means there is no node in the lru list without lock
+        if x == self.head:
+            return None
+        return x
+
+    def get_prev_leaf_no_lock(self, node: TreeNode, check_id: bool = True):
+        &#34;&#34;&#34;
+        Get the previous (i.e. more recently used) leaf node that is not locked
+        &#34;&#34;&#34;
+        if check_id:
+            assert (
+                node.id in self.cache
+            ), f&#34;Getting prev of node {node.id=} not in lru list&#34;
+        x = getattr(node, self.prv)  # x = node.prev
+        while getattr(x, self.lock_ref) &gt; 0 or len(x.children) &gt; 0:
+            x = getattr(x, self.prv)  # x = x.prev
+        # if x is the head, it means there is no leaf node in the lru list without lock
+        if x == self.head:
+            return None
+        return x
+
+    def in_list(self, node: Optional[TreeNode]):
+        &#34;&#34;&#34;
+        Check if the node is in the lru list
+        &#34;&#34;&#34;
+        if not node:
+            return False
+        return node.id in self.cache
+
+    # Note: this is expensive, only use for debug
+    def sanity_check_evictable_size(self):
+        &#34;&#34;&#34;
+        Check the evictable size (i.e. the size of the nodes that are not locked)
+        &#34;&#34;&#34;
+        node = self.get_lru_no_lock()
+        evictable_size = 0
+        while self.in_list(node):
+            evictable_size += len(node.value)
+            node = self.get_prev_no_lock(node)
+        return evictable_size
+
+    # Note: this is expensive, only use for debug or idle check
+    def sanity_check(self, tree_cache: &#34;SWARadixCache&#34;):
+        &#34;&#34;&#34;
+        Check if the lru list is valid by rebuilding the lru list from the tree, heapifying it, and
+        checking if the lru list is valid.
+        &#34;&#34;&#34;
+        try:
+            if self.swa:
+                nodes = tree_cache._collect_nontombstone_nodes()
+            else:
+                nodes = tree_cache._collect_all_nodes()
+            total_nodes = len(nodes)
+            total_lru_plus_1 = len(self.cache) + 1
+            # heapify based on last_access_time
+            heapq.heapify(nodes)
+            # the root node is not in the lru list
+            assert (
+                len(nodes) == len(self.cache) + 1
+            ), f&#34;len(nodes): {len(nodes)} != len(self.cache) + 1: {len(self.cache) + 1}&#34;
+
+            x_lru = self._get_lru()
+            while len(nodes):
+                x = heapq.heappop(nodes)
+                if x == tree_cache.root_node:
+                    # root node is not in the lru list
+                    continue
+                assert (
+                    x == x_lru
+                ), f&#34;Incorrect LRU list, {self.swa=}, x: {x.id=} != x_lru: {x_lru.id=}&#34;
+                assert (
+                    x_lru.full_lock_ref == 0
+                ), f&#34;x_lru should not be locked when idle, {x_lru.full_lock_ref=}, {x_lru.swa_uuid=}, {x_lru.id=}&#34;
+                assert (
+                    x_lru.swa_lock_ref == 0
+                ), f&#34;x_lru should not be locked when idle, {x_lru.swa_lock_ref=}, {x_lru.swa_uuid=}, {x_lru.id=}&#34;
+                x_lru = getattr(x, self.prv)
+
+            if self.swa:
+                evictable_size = tree_cache.swa_evictable_size()
+                lru_list_evictable_size = tree_cache.swa_lru_list_evictable_size()
+            else:
+                evictable_size = tree_cache.full_evictable_size()
+                lru_list_evictable_size = tree_cache.full_lru_list_evictable_size()
+
+            assert (
+                evictable_size == lru_list_evictable_size
+            ), f&#34;{self.swa=}, total nodes: {total_nodes}, total lru plus 1: {total_lru_plus_1}, evictable size: {evictable_size} != lru list evictable size: {lru_list_evictable_size}&#34;
+        except Exception as e:
+            msg = f&#34;SWA Radix tree sanity check failed, ping @hanming-lu: {e}&#34;
+            logger.error(msg)
+            raise Exception(msg)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_leaf_lru_no_lock"><code class="name flex">
+<span>def <span class="ident">get_leaf_lru_no_lock</span></span>(<span>self) ‑> <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_leaf_lru_no_lock(self) -&gt; Optional[TreeNode]:
+    &#34;&#34;&#34;
+    Get the least recently used leaf node that is not locked
+    &#34;&#34;&#34;
+    return self.get_prev_leaf_no_lock(self.tail, check_id=False)</code></pre>
+</details>
+<div class="desc"><p>Get the least recently used leaf node that is not locked</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_lru_no_lock"><code class="name flex">
+<span>def <span class="ident">get_lru_no_lock</span></span>(<span>self) ‑> <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_lru_no_lock(self) -&gt; Optional[TreeNode]:
+    &#34;&#34;&#34;
+    Get the least recently used node that is not locked
+    &#34;&#34;&#34;
+    return self.get_prev_no_lock(self.tail, check_id=False)</code></pre>
+</details>
+<div class="desc"><p>Get the least recently used node that is not locked</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_prev_leaf_no_lock"><code class="name flex">
+<span>def <span class="ident">get_prev_leaf_no_lock</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a>,<br>check_id: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_prev_leaf_no_lock(self, node: TreeNode, check_id: bool = True):
+    &#34;&#34;&#34;
+    Get the previous (i.e. more recently used) leaf node that is not locked
+    &#34;&#34;&#34;
+    if check_id:
+        assert (
+            node.id in self.cache
+        ), f&#34;Getting prev of node {node.id=} not in lru list&#34;
+    x = getattr(node, self.prv)  # x = node.prev
+    while getattr(x, self.lock_ref) &gt; 0 or len(x.children) &gt; 0:
+        x = getattr(x, self.prv)  # x = x.prev
+    # if x is the head, it means there is no leaf node in the lru list without lock
+    if x == self.head:
+        return None
+    return x</code></pre>
+</details>
+<div class="desc"><p>Get the previous (i.e. more recently used) leaf node that is not locked</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_prev_no_lock"><code class="name flex">
+<span>def <span class="ident">get_prev_no_lock</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a>,<br>check_id: bool = True) ‑> <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_prev_no_lock(
+    self, node: TreeNode, check_id: bool = True
+) -&gt; Optional[TreeNode]:
+    &#34;&#34;&#34;
+    Get the previous (i.e. more recently used) node that is not locked
+    &#34;&#34;&#34;
+    if check_id:
+        assert (
+            node.id in self.cache
+        ), f&#34;Getting prev of node {node.id=} not in lru list&#34;
+    x = getattr(node, self.prv)  # x = node.prev
+    while getattr(x, self.lock_ref) &gt; 0:
+        x = getattr(x, self.prv)  # x = x.prev
+    # if x is the head, it means there is no node in the lru list without lock
+    if x == self.head:
+        return None
+    return x</code></pre>
+</details>
+<div class="desc"><p>Get the previous (i.e. more recently used) node that is not locked</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.in_list"><code class="name flex">
+<span>def <span class="ident">in_list</span></span>(<span>self,<br>node: Optional[<a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a>])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def in_list(self, node: Optional[TreeNode]):
+    &#34;&#34;&#34;
+    Check if the node is in the lru list
+    &#34;&#34;&#34;
+    if not node:
+        return False
+    return node.id in self.cache</code></pre>
+</details>
+<div class="desc"><p>Check if the node is in the lru list</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.insert_mru"><code class="name flex">
+<span>def <span class="ident">insert_mru</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert_mru(self, node):
+    &#34;&#34;&#34;
+    Insert a (new) node as most recently used
+    &#34;&#34;&#34;
+    assert (
+        not self.swa or not node.swa_tombstone
+    ), f&#34;Inserting swa tombstone node in swa lru list: {node.id=}&#34;
+    assert (
+        node.id not in self.cache
+    ), f&#34;Inserting node {node.id=} already in lru list, existing node: {self.cache[node.id].id=}&#34;
+    self.cache[node.id] = node
+    self._add_node(node)</code></pre>
+</details>
+<div class="desc"><p>Insert a (new) node as most recently used</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.remove_node"><code class="name flex">
+<span>def <span class="ident">remove_node</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_node(self, node: TreeNode):
+    &#34;&#34;&#34;
+    Remove node from lru list
+    &#34;&#34;&#34;
+    assert node.id in self.cache, f&#34;Removing node {node.id=} not in lru list&#34;
+    assert (
+        not self.swa or not node.swa_tombstone
+    ), f&#34;Removing swa tombstone node from swa lru list: {node.id=}&#34;
+    del self.cache[node.id]
+    self._remove_node(node)</code></pre>
+</details>
+<div class="desc"><p>Remove node from lru list</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.reset_node_and_parents_mru"><code class="name flex">
+<span>def <span class="ident">reset_node_and_parents_mru</span></span>(<span>self, node, root_node)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_node_and_parents_mru(self, node, root_node):
+    &#34;&#34;&#34;
+    Move an (existing) node and its parents to most recently used position. Child node is
+    more recently used than parent node.
+    &#34;&#34;&#34;
+    prev_node = self.head
+    while node != root_node:
+        # for swa lru list, only reset non-tombstone nodes
+        if not self.swa or not node.swa_tombstone:
+            assert (
+                node.id in self.cache
+            ), f&#34;Resetting node {node.id=} not in lru list when resetting node and parents mru&#34;
+            self._remove_node(node)
+            self._add_node_after(prev_node, node)
+            prev_node = node
+        node = node.parent</code></pre>
+</details>
+<div class="desc"><p>Move an (existing) node and its parents to most recently used position. Child node is
+more recently used than parent node.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.reset_node_mru"><code class="name flex">
+<span>def <span class="ident">reset_node_mru</span></span>(<span>self, node)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_node_mru(self, node):
+    &#34;&#34;&#34;
+    Move a (existing) node to most recently used position
+    &#34;&#34;&#34;
+    assert node.id in self.cache, f&#34;Resetting node {node.id=} not in lru list&#34;
+    assert (
+        not self.swa or not node.swa_tombstone
+    ), f&#34;Resetting swa tombstone node in swa lru list: {node.id=}&#34;
+    self._remove_node(node)
+    self._add_node(node)</code></pre>
+</details>
+<div class="desc"><p>Move a (existing) node to most recently used position</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.sanity_check"><code class="name flex">
+<span>def <span class="ident">sanity_check</span></span>(<span>self,<br>tree_cache: "'<a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache">SWARadixCache</a>'")</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sanity_check(self, tree_cache: &#34;SWARadixCache&#34;):
+    &#34;&#34;&#34;
+    Check if the lru list is valid by rebuilding the lru list from the tree, heapifying it, and
+    checking if the lru list is valid.
+    &#34;&#34;&#34;
+    try:
+        if self.swa:
+            nodes = tree_cache._collect_nontombstone_nodes()
+        else:
+            nodes = tree_cache._collect_all_nodes()
+        total_nodes = len(nodes)
+        total_lru_plus_1 = len(self.cache) + 1
+        # heapify based on last_access_time
+        heapq.heapify(nodes)
+        # the root node is not in the lru list
+        assert (
+            len(nodes) == len(self.cache) + 1
+        ), f&#34;len(nodes): {len(nodes)} != len(self.cache) + 1: {len(self.cache) + 1}&#34;
+
+        x_lru = self._get_lru()
+        while len(nodes):
+            x = heapq.heappop(nodes)
+            if x == tree_cache.root_node:
+                # root node is not in the lru list
+                continue
+            assert (
+                x == x_lru
+            ), f&#34;Incorrect LRU list, {self.swa=}, x: {x.id=} != x_lru: {x_lru.id=}&#34;
+            assert (
+                x_lru.full_lock_ref == 0
+            ), f&#34;x_lru should not be locked when idle, {x_lru.full_lock_ref=}, {x_lru.swa_uuid=}, {x_lru.id=}&#34;
+            assert (
+                x_lru.swa_lock_ref == 0
+            ), f&#34;x_lru should not be locked when idle, {x_lru.swa_lock_ref=}, {x_lru.swa_uuid=}, {x_lru.id=}&#34;
+            x_lru = getattr(x, self.prv)
+
+        if self.swa:
+            evictable_size = tree_cache.swa_evictable_size()
+            lru_list_evictable_size = tree_cache.swa_lru_list_evictable_size()
+        else:
+            evictable_size = tree_cache.full_evictable_size()
+            lru_list_evictable_size = tree_cache.full_lru_list_evictable_size()
+
+        assert (
+            evictable_size == lru_list_evictable_size
+        ), f&#34;{self.swa=}, total nodes: {total_nodes}, total lru plus 1: {total_lru_plus_1}, evictable size: {evictable_size} != lru list evictable size: {lru_list_evictable_size}&#34;
+    except Exception as e:
+        msg = f&#34;SWA Radix tree sanity check failed, ping @hanming-lu: {e}&#34;
+        logger.error(msg)
+        raise Exception(msg)</code></pre>
+</details>
+<div class="desc"><p>Check if the lru list is valid by rebuilding the lru list from the tree, heapifying it, and
+checking if the lru list is valid.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.LRUList.sanity_check_evictable_size"><code class="name flex">
+<span>def <span class="ident">sanity_check_evictable_size</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sanity_check_evictable_size(self):
+    &#34;&#34;&#34;
+    Check the evictable size (i.e. the size of the nodes that are not locked)
+    &#34;&#34;&#34;
+    node = self.get_lru_no_lock()
+    evictable_size = 0
+    while self.in_list(node):
+        evictable_size += len(node.value)
+        node = self.get_prev_no_lock(node)
+    return evictable_size</code></pre>
+</details>
+<div class="desc"><p>Check the evictable size (i.e. the size of the nodes that are not locked)</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache"><code class="flex name class">
+<span>class <span class="ident">SWARadixCache</span></span>
+<span>(</span><span>req_to_token_pool: ReqToTokenPool,<br>token_to_kv_pool_allocator: SWATokenToKVPoolAllocator,<br>sliding_window_size: int,<br>page_size: int,<br>disable: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SWARadixCache(BasePrefixCache):
+    def __init__(
+        self,
+        req_to_token_pool: ReqToTokenPool,
+        token_to_kv_pool_allocator: SWATokenToKVPoolAllocator,
+        sliding_window_size: int,
+        page_size: int,
+        disable: bool = False,
+    ):
+        assert isinstance(token_to_kv_pool_allocator, SWATokenToKVPoolAllocator)
+        self.req_to_token_pool = req_to_token_pool
+        self.token_to_kv_pool_allocator = token_to_kv_pool_allocator
+        self.page_size = page_size
+        self.disable = disable
+
+        if self.token_to_kv_pool_allocator:
+            self.device = self.token_to_kv_pool_allocator.device
+        else:
+            self.device = torch.device(&#34;cpu&#34;)
+
+        if self.page_size == 1:
+            self.key_match_fn = _key_match_page_size1
+            self.get_child_key_fn = lambda key: key[0]
+        else:
+            self.key_match_fn = partial(_key_match_paged, page_size=page_size)
+            self.get_child_key_fn = lambda key: tuple(key[:page_size])
+
+        self.sliding_window_size = sliding_window_size
+        self.reset()
+
+    ##### Public API #####
+
+    def reset(self) -&gt; None:
+        self.root_node = TreeNode()
+        self.root_node.key = []
+        self.root_node.value = []
+        self.root_node.full_lock_ref = 1
+        self.root_node.swa_lock_ref = 1
+        self.full_evictable_size_ = 0
+        self.swa_evictable_size_ = 0
+        self.full_protected_size_ = 0
+        self.swa_protected_size_ = 0
+        # LRU lists are used to maintain the order of eviction of the nodes in the tree
+        self.full_lru_list = LRUList(swa=False)
+        self.swa_lru_list = LRUList(swa=True)
+
+    def match_prefix(self, key: List[int], **kwargs) -&gt; MatchResult:
+        &#34;&#34;&#34;Find the matching prefix from the radix tree.
+        Args:
+            key: A list of token IDs to find a matching prefix.
+        Returns:
+            A tuple of a tensor of matching prefix token IDs and
+            the last node that contains the prefix values. Note that
+            this API can modify the internal state of the Radix tree.
+            The last node create a new child if the prefix is shorter
+            than the last node&#39;s value.
+        &#34;&#34;&#34;
+        if self.disable or len(key) == 0:
+            return MatchResult(
+                device_indices=torch.empty(
+                    (0,),
+                    dtype=torch.int64,
+                    device=self.device,
+                ),
+                last_device_node=self.root_node,
+                last_host_node=self.root_node,
+            )
+
+        if self.page_size != 1:
+            page_aligned_len = len(key) // self.page_size * self.page_size
+            key = key[:page_aligned_len]
+
+        value, last_node = self._match_prefix_helper(key)
+        if value:
+            value = torch.cat(value)
+        else:
+            value = torch.empty((0,), dtype=torch.int64, device=self.device)
+        return MatchResult(
+            device_indices=value,
+            last_device_node=last_node,
+            last_host_node=last_node,
+        )
+
+    def insert(self, key: List, value=None, prev_prefix_len: int = 0) -&gt; int:
+        if self.disable:
+            return 0
+
+        if value is None:
+            value = [x for x in key]
+        return self._insert_helper(self.root_node, key, value, prev_prefix_len)
+
+    def cache_finished_req(self, req: Req) -&gt; None:
+        &#34;&#34;&#34;Cache request when it finishes.&#34;&#34;&#34;
+        if self.disable:
+            kv_indices = self.req_to_token_pool.req_to_token[
+                req.req_pool_idx,
+                : len(req.origin_input_ids) + max(len(req.output_ids) - 1, 0),
+            ]
+            self.token_to_kv_pool_allocator.free(kv_indices)
+            self.req_to_token_pool.free(req.req_pool_idx)
+            return
+
+        token_ids = (req.origin_input_ids + req.output_ids)[:-1]
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx, : len(token_ids)
+        ]
+
+        if self.page_size != 1:
+            page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+            page_aligned_kv_indices = kv_indices[:page_aligned_len].clone()
+            self.token_to_kv_pool_allocator.free(kv_indices[page_aligned_len:])
+        else:
+            page_aligned_len = len(kv_indices)
+            page_aligned_kv_indices = kv_indices.clone()
+
+        # Radix Cache takes one ref in memory pool
+        # insert the token_ids and kv_indices into the radix tree
+        # Note: the insert function already frees the overlapped kv_indices
+        new_prefix_len = self.insert(
+            token_ids[:page_aligned_len],
+            page_aligned_kv_indices,
+            len(req.prefix_indices),
+        )
+
+        # Remove req slot release the cache lock
+        self.req_to_token_pool.free(req.req_pool_idx)
+        self.dec_lock_ref(req.last_node, req.swa_uuid_for_lock)
+
+    def cache_unfinished_req(self, req: Req, chunked=False) -&gt; None:
+        &#34;&#34;&#34;Cache request when it is unfinished.&#34;&#34;&#34;
+        if self.disable:
+            kv_indices = self.req_to_token_pool.req_to_token[
+                req.req_pool_idx, : len(req.fill_ids)
+            ]
+
+            # `req.prefix_indices` will be used in `PrefillAdder::add_chunked_req` later
+            req.prefix_indices = kv_indices
+            return
+
+        token_ids = req.fill_ids
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx, : len(token_ids)
+        ]
+
+        if self.page_size != 1:
+            page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+            page_aligned_kv_indices = kv_indices[:page_aligned_len].clone()
+        else:
+            page_aligned_len = len(kv_indices)
+            page_aligned_kv_indices = kv_indices.clone()
+        page_aligned_token_ids = token_ids[:page_aligned_len]
+
+        # Radix Cache takes one ref in memory pool
+        # Note: the insert function already frees the overlapped kv_indices
+        new_prefix_len = self.insert(
+            page_aligned_token_ids, page_aligned_kv_indices, len(req.prefix_indices)
+        )
+
+        # The prefix indices could be updated, reuse it
+        new_indices, new_last_node, _, _ = self.match_prefix(page_aligned_token_ids)
+        assert len(req.prefix_indices) &lt;= len(
+            new_indices
+        ), f&#34;{req.prefix_indices=}, {new_indices=}&#34;
+        assert new_prefix_len &lt;= len(new_indices), f&#34;{new_prefix_len=}, {new_indices=}&#34;
+        self.req_to_token_pool.write(
+            (req.req_pool_idx, slice(len(req.prefix_indices), len(new_indices))),
+            new_indices[len(req.prefix_indices) :],
+        )
+
+        self.dec_lock_ref(req.last_node, req.swa_uuid_for_lock)
+        swa_uuid_for_lock = self.inc_lock_ref(new_last_node)
+
+        # `req.prefix_indices` will be used in `PrefillAdder::add_chunked_req` later
+        if self.page_size != 1:
+            req.prefix_indices = torch.cat(
+                [new_indices, kv_indices[len(new_indices) :]]
+            )
+        else:
+            req.prefix_indices = new_indices
+        req.last_node = new_last_node
+        req.swa_uuid_for_lock = swa_uuid_for_lock
+
+    def pretty_print(self) -&gt; None:
+        self._print_helper(self.root_node, 0)
+        total_size, total_swa_size = self._total_size_helper()
+        print(f&#34;#full_tokens: {total_size}, #swa_tokens: {total_swa_size}&#34;)
+
+    def total_size(self) -&gt; Tuple[int, int]:
+        return self._total_size_helper()
+
+    def evict(self, full_num_tokens: int, swa_num_tokens: int = 0) -&gt; None:
+        if self.disable:
+            return
+
+        full_num_evicted = 0
+        swa_num_evicted = 0
+        if full_num_tokens &gt; 0:
+            # get the least recently used leaf node that is not locked
+            x = self.full_lru_list.get_leaf_lru_no_lock()
+
+            while full_num_evicted &lt; full_num_tokens and self.full_lru_list.in_list(x):
+                assert (
+                    x != self.root_node
+                ), f&#34;root node should not exist in full lru list, {x.id=}&#34;
+                assert x.full_lock_ref == 0, f&#34;node is in use, {x.id=}&#34;
+
+                # 1. free node kv indices, evict full and swa tokens
+                self.token_to_kv_pool_allocator.free(x.value)
+                full_num_evicted += len(x.value)
+                swa_num_evicted += len(x.value)
+
+                # 2. get the next leaf, update the lru lists
+                x_next = self.full_lru_list.get_prev_leaf_no_lock(x)
+                self.full_lru_list.remove_node(x)
+                self.swa_lru_list.remove_node(x)
+
+                # 3. delete the leaf node
+                self._delete_leaf(x)
+
+                # 4. Iteratively delete tombstone leaves to maintain invariant that leaf nodes are not tombstone
+                x, leaf_full_num_evicted = self._iteratively_delete_tombstone_leaf(x)
+                full_num_evicted += leaf_full_num_evicted
+
+                # 5. if parent has no more children, it is a leaf. It is possible that this node is lru, so
+                # we need to get the first leaf node in the lru list
+                if len(x.parent.children) == 0:
+                    x_next = self.full_lru_list.get_leaf_lru_no_lock()
+
+                x = x_next
+
+        if swa_num_evicted &lt; swa_num_tokens:
+            # get the least recently used node that is not locked, doesn&#39;t have to be a leaf
+            x = self.swa_lru_list.get_lru_no_lock()
+
+            # evict lru leaf nodes until swa_num_tokens is reached
+            while swa_num_evicted &lt; swa_num_tokens and (self.swa_lru_list.in_list(x)):
+                assert not x.swa_tombstone, f&#34;duplicate swa tombstone node, {x.id=}&#34;
+                assert x != self.root_node, f&#34;root node is not evictable, {x.id=}&#34;
+                assert x.swa_lock_ref == 0, f&#34;node is in use by swa kv indices, {x.id=}&#34;
+
+                if len(x.children) &gt; 0:
+                    # 1. an internal node, free swa tokens.
+                    self.token_to_kv_pool_allocator.free_swa(x.value)
+                    swa_num_evicted += len(x.value)
+
+                    # 2. get the next node, update the lru lists
+                    x_next = self.swa_lru_list.get_prev_no_lock(x)
+                    self.swa_lru_list.remove_node(x)
+
+                    # 3. tombstone the node
+                    self._tombstone_internal_node(x)
+                else:
+                    assert (
+                        x.full_lock_ref == 0
+                    ), f&#34;leaf node with full lock must also have swa lock, {x.id=}&#34;
+                    # 1. a leaf node, free full and swa tokens
+                    self.token_to_kv_pool_allocator.free(x.value)
+                    full_num_evicted += len(x.value)
+                    swa_num_evicted += len(x.value)
+
+                    # 2. get the next node, update the lru lists
+                    x_next = self.swa_lru_list.get_prev_no_lock(x)
+                    self.full_lru_list.remove_node(x)
+                    self.swa_lru_list.remove_node(x)
+
+                    # 3. delete the leaf node
+                    self._delete_leaf(x)
+
+                    # 4. Iteratively delete tombstone leaves to maintain invariant that leaf nodes are not tombstone
+                    self._iteratively_delete_tombstone_leaf(x)
+
+                x = x_next
+
+    def inc_lock_ref(self, node: TreeNode) -&gt; Optional[int]:
+        &#34;&#34;&#34;
+        Increment the lock reference count for the node. Returns the swa_uuid_for_lock, which needs
+        to be passed to dec_lock_ref.
+        It locks the full_lock_ref for nodes between the [last node, root), exclusive.
+        It locks the swa_lock_ref for nodes between the [last node, swa_uuid_for_lock], inclusive.
+        &#34;&#34;&#34;
+        if self.disable:
+            return None
+
+        swa_lock_size = 0
+        swa_uuid_for_lock = None
+        while node != self.root_node:
+            # lock full from node to root
+            assert (
+                node.full_lock_ref &gt;= 0
+            ), f&#34;inc_lock_ref on node with {node.full_lock_ref=}, {node.id=}&#34;
+            if node.full_lock_ref == 0:
+                self.full_evictable_size_ -= len(node.value)
+                self.full_protected_size_ += len(node.value)
+            node.full_lock_ref += 1
+
+            # lock swa if we have not reached the sliding window size.
+            # When we reach the sliding window size, we will set the swa_uuid_for_lock.
+            # caller needs to pass the swa_uuid_for_lock to dec_lock_ref
+            if swa_lock_size &lt; self.sliding_window_size:
+                assert (
+                    not node.swa_tombstone
+                ), f&#34;inc_lock_swa on swa_tombstone node, {node.id=}&#34;
+                if node.swa_lock_ref == 0:
+                    self.swa_evictable_size_ -= len(node.value)
+                    self.swa_protected_size_ += len(node.value)
+                node.swa_lock_ref += 1
+                swa_lock_size += len(node.value)
+                if swa_lock_size &gt;= self.sliding_window_size:
+                    if node.swa_uuid is None:
+                        node.swa_uuid = gen_swa_uuid()
+                    swa_uuid_for_lock = node.swa_uuid
+            node = node.parent
+        return swa_uuid_for_lock
+
+    def dec_lock_ref(self, node: TreeNode, swa_uuid_for_lock: Optional[int] = None):
+        &#34;&#34;&#34;
+        Decrement the lock reference count for the node.
+        It unlocks the full_lock_ref for nodes between the [last node, root), exclusive.
+        It unlocks the swa_lock_ref for nodes between the [last node, swa_uuid_for_lock], inclusive.
+        If swa_uuid_for_lock is None, it unlocks to the root, exclusive.
+        &#34;&#34;&#34;
+        if self.disable:
+            return
+
+        dec_lock_swa = True
+        while node != self.root_node:
+            assert (
+                node.full_lock_ref &gt; 0
+            ), f&#34;dec_lock_ref on node with {node.full_lock_ref=}, {node.id=}&#34;
+            if node.full_lock_ref == 1:
+                self.full_evictable_size_ += len(node.value)
+                self.full_protected_size_ -= len(node.value)
+            node.full_lock_ref -= 1
+
+            if dec_lock_swa:
+                assert (
+                    not node.swa_tombstone
+                ), f&#34;dec_lock_ref on swa_tombstone node, {node.id=}&#34;
+                assert (
+                    node.swa_lock_ref &gt; 0
+                ), f&#34;dec_lock_ref on node with {node.swa_lock_ref=}, {node.id=}&#34;
+
+                if node.swa_lock_ref == 1:
+                    self.swa_evictable_size_ += len(node.value)
+                    self.swa_protected_size_ -= len(node.value)
+                node.swa_lock_ref -= 1
+                if swa_uuid_for_lock and node.swa_uuid == swa_uuid_for_lock:
+                    dec_lock_swa = False
+
+            node = node.parent
+
+    def sanity_check(self):
+        self.full_lru_list.sanity_check(self)
+        self.swa_lru_list.sanity_check(self)
+
+    def evictable_size(self) -&gt; Tuple[int, int]:
+        # Note: use full_evictable_size() and swa_evictable_size() instead.
+        raise NotImplementedError
+
+    def full_evictable_size(self) -&gt; int:
+        return self.full_evictable_size_
+
+    def swa_evictable_size(self) -&gt; int:
+        return self.swa_evictable_size_
+
+    # Note: this is expensive, only use for debug
+    def full_lru_list_evictable_size(self) -&gt; int:
+        return self.full_lru_list.sanity_check_evictable_size()
+
+    # Note: this is expensive, only use for debug
+    def swa_lru_list_evictable_size(self) -&gt; int:
+        return self.swa_lru_list.sanity_check_evictable_size()
+
+    def protected_size(self) -&gt; Tuple[int, int]:
+        # Note: use full_protected_size() and swa_protected_size() instead.
+        raise NotImplementedError
+
+    def full_protected_size(self) -&gt; int:
+        # protected size refers to the size of the full cache that is locked
+        return self.full_protected_size_
+
+    def swa_protected_size(self) -&gt; int:
+        # protected size refers to the size of the swa cache that is locked
+        return self.swa_protected_size_
+
+    def all_values_flatten(self) -&gt; torch.Tensor:
+        values = []
+
+        def _dfs_helper(node: TreeNode):
+            for _, child in node.children.items():
+                values.append(child.value)
+                _dfs_helper(child)
+
+        _dfs_helper(self.root_node)
+        return torch.cat(values)
+
+    ##### Internal Helper Functions #####
+
+    def _match_prefix_helper(self, key: List) -&gt; Tuple[List[torch.Tensor], TreeNode]:
+        &#34;&#34;&#34;
+        SWA prefix matching helper. It factors in the sliding window size such that
+        the matched node is guaranteed to either 1. connected to root without swa tombstone,
+        or 2. the number of matching tokens from the matched node to the last swa tombstone
+        node is greater than or equal to the sliding window size.
+        &#34;&#34;&#34;
+        node = self.root_node
+        child_key = self.get_child_key_fn(key)
+
+        value = []
+        # for path connected to root without tombstone, always match, so set to inf
+        match_len_since_tombstone = float(&#34;inf&#34;)
+        best_value_len = 0
+        best_last_node = node
+        while len(key) &gt; 0 and child_key in node.children.keys():
+            child = node.children[child_key]
+
+            # update best_value_len and best_last_node if needed
+            if (
+                child.swa_tombstone
+                and match_len_since_tombstone &gt;= self.sliding_window_size
+            ):
+                best_value_len = len(value)
+                best_last_node = node
+                match_len_since_tombstone = 0
+
+            prefix_len = self.key_match_fn(child.key, key)
+            if prefix_len &lt; len(child.key):
+                new_node = self._split_node(child.key, child, prefix_len)
+                value.append(new_node.value)
+                if not new_node.swa_tombstone:
+                    match_len_since_tombstone += len(new_node.value)
+                node = new_node
+                break
+            else:
+                value.append(child.value)
+                if not child.swa_tombstone:
+                    match_len_since_tombstone += len(child.value)
+                node = child
+                key = key[prefix_len:]
+
+                if len(key):
+                    child_key = self.get_child_key_fn(key)
+
+        # handle best_value_len and best_last_node, for the case that last node is fully matched
+        if match_len_since_tombstone &gt;= self.sliding_window_size:
+            best_value_len = len(value)
+            best_last_node = node
+
+        # update time for matched nodes, and make nodes closer to root to be least recently used
+        # this allows swa to evict nodes closer to root first
+        self.full_lru_list.reset_node_and_parents_mru(best_last_node, self.root_node)
+        self.swa_lru_list.reset_node_and_parents_mru(best_last_node, self.root_node)
+
+        # This last_access_time is for sanity check, can be deleted after validation in production
+        cur_time = time.monotonic()
+        while node:
+            node.last_access_time = cur_time
+            cur_time -= 0.0001
+            node = node.parent
+
+        return value[:best_value_len], best_last_node
+
+    def _split_node(self, key: List[int], child: TreeNode, split_len: int) -&gt; TreeNode:
+        # new_node -&gt; child
+        new_node = TreeNode()
+        new_node.children = {self.get_child_key_fn(key[split_len:]): child}
+        new_node.parent = child.parent
+        new_node.swa_tombstone = child.swa_tombstone
+        new_node.full_lock_ref = child.full_lock_ref
+        new_node.swa_lock_ref = child.swa_lock_ref
+        new_node.key = child.key[:split_len]
+        new_node.value = child.value[:split_len]
+        # parent inherits the swa_uuid from child for swa lock ref
+        new_node.swa_uuid = child.swa_uuid
+        child.swa_uuid = None
+        # child time should be later than parent&#39;s time for swa tombstone
+        child.last_access_time = time.monotonic()
+
+        # remove the child from the lru lists because it is being split
+        self.full_lru_list.remove_node(child)
+        if not new_node.swa_tombstone:
+            self.swa_lru_list.remove_node(child)
+        child.parent = new_node
+        child.key = child.key[split_len:]
+        child.value = child.value[split_len:]
+        new_node.parent.children[self.get_child_key_fn(key)] = new_node
+
+        # insert the new node and child into the lru lists, insert
+        # parent first so that parent is after child in the lru list
+        self.full_lru_list.insert_mru(new_node)
+        self.full_lru_list.insert_mru(child)
+        if not new_node.swa_tombstone:
+            self.swa_lru_list.insert_mru(new_node)
+            self.swa_lru_list.insert_mru(child)
+        return new_node
+
+    def _insert_helper(
+        self, node: TreeNode, key: List, value, update_kv_after_len: int
+    ) -&gt; int:
+        # Update the last access time from root to leaf, so that
+        # swa will tombstone the node closer to root first
+        node.last_access_time = time.monotonic()
+        if node != self.root_node:
+            self.full_lru_list.reset_node_mru(node)
+            if not node.swa_tombstone:
+                self.swa_lru_list.reset_node_mru(node)
+        if len(key) == 0:
+            return 0
+
+        child_key = self.get_child_key_fn(key)
+
+        total_prefix_length = 0
+        while len(key) &gt; 0 and child_key in node.children.keys():
+            node = node.children[child_key]
+            node.last_access_time = time.monotonic()
+            self.full_lru_list.reset_node_mru(node)
+            if not node.swa_tombstone:
+                self.swa_lru_list.reset_node_mru(node)
+            prefix_len = self.key_match_fn(node.key, key)
+
+            if prefix_len &lt; len(node.key):
+                new_node = self._split_node(node.key, node, prefix_len)
+                node = new_node
+
+            # if tombstone after update_kv_after_len, update node.value to be the input value.
+            # This is needed because it is possible that the last sliding window size tokens
+            # contains tombstone. If this is the case and we don&#39;t update the kv value, then
+            # the prefill prefix matching will stuck.
+            if update_kv_after_len &lt; total_prefix_length + prefix_len:
+                first_diff_idx = max(0, update_kv_after_len - total_prefix_length)
+                if node.swa_tombstone:
+                    assert (
+                        node.swa_lock_ref == 0
+                    ), f&#34;tombstone swa_lock_ref should always be 0, {node.full_lock_ref=}, {node.swa_lock_ref=}, {node.id=}&#34;
+                    self.token_to_kv_pool_allocator.free(node.value[first_diff_idx:])
+                    node.value = value[:prefix_len]
+                    node.swa_tombstone = False
+
+                    # insert the node into the lru lists
+                    self.swa_lru_list.insert_mru(node)
+
+                    self.swa_evictable_size_ += len(node.value)
+                else:
+                    self.token_to_kv_pool_allocator.free(
+                        value[first_diff_idx:prefix_len]
+                    )
+
+            total_prefix_length += prefix_len
+            key = key[prefix_len:]
+            value = value[prefix_len:]
+
+            if len(key):
+                child_key = self.get_child_key_fn(key)
+
+        if len(key):
+            new_node = TreeNode()
+            new_node.parent = node
+            new_node.key = key
+            new_node.value = value
+            self.full_lru_list.insert_mru(new_node)
+            self.swa_lru_list.insert_mru(new_node)
+            node.children[child_key] = new_node
+            self.full_evictable_size_ += len(value)
+            self.swa_evictable_size_ += len(value)
+        return total_prefix_length
+
+    def _iteratively_delete_tombstone_leaf(
+        self, node: TreeNode
+    ) -&gt; Tuple[TreeNode, int]:
+        full_num_evicted = 0
+        while node.parent.swa_tombstone and len(node.parent.children) == 0:
+            # root node is not evictable
+            if node.parent == self.root_node:
+                break
+            # if locked, means node is in use, skip
+            if node.parent.full_lock_ref &gt; 0:
+                break
+            assert (
+                node.parent.swa_lock_ref == 0
+            ), f&#34;tombstone swa_lock_ref should always be 0, {node.parent.full_lock_ref=}, {node.parent.swa_lock_ref=}, {node.parent.id=}&#34;
+            # delete tombstone node evicts full tokens
+            self.token_to_kv_pool_allocator.free(node.parent.value)
+            full_num_evicted += len(node.parent.value)
+            self.full_lru_list.remove_node(node.parent)
+            self._delete_tombstone_leaf(node.parent)
+            node = node.parent
+
+        return node, full_num_evicted
+
+    def _delete_leaf(self, node: TreeNode) -&gt; None:
+        assert (
+            not node.swa_tombstone
+        ), f&#34;Invariant violated: leaf node is a tombstone, {node.id=}&#34;
+        assert len(node.children) == 0, f&#34;leaf node has children, {node.id=}&#34;
+        for k, v in node.parent.children.items():
+            if v == node:
+                break
+        del node.parent.children[k]
+        self.full_evictable_size_ -= len(node.key)
+        self.swa_evictable_size_ -= len(node.key)
+
+    def _tombstone_internal_node(self, node: TreeNode) -&gt; None:
+        assert len(node.children) != 0, f&#34;Cannot tombstone a leaf node, {node.id=}&#34;
+        node.swa_tombstone = True
+        self.swa_evictable_size_ -= len(node.key)
+
+    def _delete_tombstone_leaf(self, node: TreeNode) -&gt; None:
+        assert (
+            node.swa_tombstone
+        ), f&#34;Deleting a unexpected non-tombstone leaf node, {node.id=}&#34;
+        assert len(node.children) == 0, f&#34;leaf node has children, {node.id=}&#34;
+        for k, v in node.parent.children.items():
+            if v == node:
+                break
+        del node.parent.children[k]
+        self.full_evictable_size_ -= len(node.key)
+
+    def _collect_leaves(self) -&gt; List[TreeNode]:
+        ret_list = []
+        stack = [self.root_node]
+
+        while stack:
+            cur_node = stack.pop()
+            if len(cur_node.children) == 0:
+                ret_list.append(cur_node)
+            else:
+                stack.extend(cur_node.children.values())
+
+        return ret_list
+
+    def _collect_nontombstone_nodes(self) -&gt; List[TreeNode]:
+        ret_list = []
+        stack = [self.root_node]
+
+        while stack:
+            cur_node = stack.pop()
+            if not cur_node.swa_tombstone:
+                ret_list.append(cur_node)
+            stack.extend(cur_node.children.values())
+
+        return ret_list
+
+    def _collect_all_nodes(self) -&gt; List[TreeNode]:
+        ret_list = []
+        stack = [self.root_node]
+        while stack:
+            cur_node = stack.pop()
+            ret_list.append(cur_node)
+            stack.extend(cur_node.children.values())
+        return ret_list
+
+    def _print_helper(self, node: TreeNode, indent: int) -&gt; None:
+        &#34;&#34;&#34;Prints the radix tree in a human-readable format.&#34;&#34;&#34;
+        stack = [(node, indent)]
+        while stack:
+            current_node, current_indent = stack.pop()
+            print(
+                &#34; &#34; * current_indent,
+                current_node.id,
+                len(current_node.key),
+                f&#34;fr={current_node.full_lock_ref}&#34;,
+                f&#34;sr={current_node.swa_lock_ref}&#34;,
+                f&#34;fll={self.full_lru_list.in_list(current_node)}&#34;,
+                f&#34;sll={self.swa_lru_list.in_list(current_node)}&#34;,
+                f&#34;ts={current_node.swa_tombstone}&#34;,
+            )
+            for key, child in current_node.children.items():
+                stack.append((child, current_indent + 2))
+
+                assert key == self.get_child_key_fn(
+                    child.key
+                ), f&#34;{key=}, {self.get_child_key_fn(child.key)=}&#34;
+
+    def _total_size_helper(self) -&gt; Tuple[int, int]:
+        total_size = 0
+        total_swa_size = 0
+        stack = [self.root_node]
+        while stack:
+            current_node = stack.pop()
+            total_size += len(current_node.value)
+            if not current_node.swa_tombstone:
+                total_swa_size += len(current_node.value)
+            for child in current_node.children.values():
+                if child.evicted:
+                    continue
+                stack.append(child)
+        return total_size, total_swa_size</code></pre>
+</details>
+<div class="desc"><p>Cache can be indexed by either rid or key.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache">BasePrefixCache</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.all_values_flatten"><code class="name flex">
+<span>def <span class="ident">all_values_flatten</span></span>(<span>self) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def all_values_flatten(self) -&gt; torch.Tensor:
+    values = []
+
+    def _dfs_helper(node: TreeNode):
+        for _, child in node.children.items():
+            values.append(child.value)
+            _dfs_helper(child)
+
+    _dfs_helper(self.root_node)
+    return torch.cat(values)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.cache_finished_req"><code class="name flex">
+<span>def <span class="ident">cache_finished_req</span></span>(<span>self, req: Req) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache_finished_req(self, req: Req) -&gt; None:
+    &#34;&#34;&#34;Cache request when it finishes.&#34;&#34;&#34;
+    if self.disable:
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx,
+            : len(req.origin_input_ids) + max(len(req.output_ids) - 1, 0),
+        ]
+        self.token_to_kv_pool_allocator.free(kv_indices)
+        self.req_to_token_pool.free(req.req_pool_idx)
+        return
+
+    token_ids = (req.origin_input_ids + req.output_ids)[:-1]
+    kv_indices = self.req_to_token_pool.req_to_token[
+        req.req_pool_idx, : len(token_ids)
+    ]
+
+    if self.page_size != 1:
+        page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+        page_aligned_kv_indices = kv_indices[:page_aligned_len].clone()
+        self.token_to_kv_pool_allocator.free(kv_indices[page_aligned_len:])
+    else:
+        page_aligned_len = len(kv_indices)
+        page_aligned_kv_indices = kv_indices.clone()
+
+    # Radix Cache takes one ref in memory pool
+    # insert the token_ids and kv_indices into the radix tree
+    # Note: the insert function already frees the overlapped kv_indices
+    new_prefix_len = self.insert(
+        token_ids[:page_aligned_len],
+        page_aligned_kv_indices,
+        len(req.prefix_indices),
+    )
+
+    # Remove req slot release the cache lock
+    self.req_to_token_pool.free(req.req_pool_idx)
+    self.dec_lock_ref(req.last_node, req.swa_uuid_for_lock)</code></pre>
+</details>
+<div class="desc"><p>Cache request when it finishes.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.cache_unfinished_req"><code class="name flex">
+<span>def <span class="ident">cache_unfinished_req</span></span>(<span>self, req: Req, chunked=False) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache_unfinished_req(self, req: Req, chunked=False) -&gt; None:
+    &#34;&#34;&#34;Cache request when it is unfinished.&#34;&#34;&#34;
+    if self.disable:
+        kv_indices = self.req_to_token_pool.req_to_token[
+            req.req_pool_idx, : len(req.fill_ids)
+        ]
+
+        # `req.prefix_indices` will be used in `PrefillAdder::add_chunked_req` later
+        req.prefix_indices = kv_indices
+        return
+
+    token_ids = req.fill_ids
+    kv_indices = self.req_to_token_pool.req_to_token[
+        req.req_pool_idx, : len(token_ids)
+    ]
+
+    if self.page_size != 1:
+        page_aligned_len = len(kv_indices) // self.page_size * self.page_size
+        page_aligned_kv_indices = kv_indices[:page_aligned_len].clone()
+    else:
+        page_aligned_len = len(kv_indices)
+        page_aligned_kv_indices = kv_indices.clone()
+    page_aligned_token_ids = token_ids[:page_aligned_len]
+
+    # Radix Cache takes one ref in memory pool
+    # Note: the insert function already frees the overlapped kv_indices
+    new_prefix_len = self.insert(
+        page_aligned_token_ids, page_aligned_kv_indices, len(req.prefix_indices)
+    )
+
+    # The prefix indices could be updated, reuse it
+    new_indices, new_last_node, _, _ = self.match_prefix(page_aligned_token_ids)
+    assert len(req.prefix_indices) &lt;= len(
+        new_indices
+    ), f&#34;{req.prefix_indices=}, {new_indices=}&#34;
+    assert new_prefix_len &lt;= len(new_indices), f&#34;{new_prefix_len=}, {new_indices=}&#34;
+    self.req_to_token_pool.write(
+        (req.req_pool_idx, slice(len(req.prefix_indices), len(new_indices))),
+        new_indices[len(req.prefix_indices) :],
+    )
+
+    self.dec_lock_ref(req.last_node, req.swa_uuid_for_lock)
+    swa_uuid_for_lock = self.inc_lock_ref(new_last_node)
+
+    # `req.prefix_indices` will be used in `PrefillAdder::add_chunked_req` later
+    if self.page_size != 1:
+        req.prefix_indices = torch.cat(
+            [new_indices, kv_indices[len(new_indices) :]]
+        )
+    else:
+        req.prefix_indices = new_indices
+    req.last_node = new_last_node
+    req.swa_uuid_for_lock = swa_uuid_for_lock</code></pre>
+</details>
+<div class="desc"><p>Cache request when it is unfinished.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.dec_lock_ref"><code class="name flex">
+<span>def <span class="ident">dec_lock_ref</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a>,<br>swa_uuid_for_lock: Optional[int] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dec_lock_ref(self, node: TreeNode, swa_uuid_for_lock: Optional[int] = None):
+    &#34;&#34;&#34;
+    Decrement the lock reference count for the node.
+    It unlocks the full_lock_ref for nodes between the [last node, root), exclusive.
+    It unlocks the swa_lock_ref for nodes between the [last node, swa_uuid_for_lock], inclusive.
+    If swa_uuid_for_lock is None, it unlocks to the root, exclusive.
+    &#34;&#34;&#34;
+    if self.disable:
+        return
+
+    dec_lock_swa = True
+    while node != self.root_node:
+        assert (
+            node.full_lock_ref &gt; 0
+        ), f&#34;dec_lock_ref on node with {node.full_lock_ref=}, {node.id=}&#34;
+        if node.full_lock_ref == 1:
+            self.full_evictable_size_ += len(node.value)
+            self.full_protected_size_ -= len(node.value)
+        node.full_lock_ref -= 1
+
+        if dec_lock_swa:
+            assert (
+                not node.swa_tombstone
+            ), f&#34;dec_lock_ref on swa_tombstone node, {node.id=}&#34;
+            assert (
+                node.swa_lock_ref &gt; 0
+            ), f&#34;dec_lock_ref on node with {node.swa_lock_ref=}, {node.id=}&#34;
+
+            if node.swa_lock_ref == 1:
+                self.swa_evictable_size_ += len(node.value)
+                self.swa_protected_size_ -= len(node.value)
+            node.swa_lock_ref -= 1
+            if swa_uuid_for_lock and node.swa_uuid == swa_uuid_for_lock:
+                dec_lock_swa = False
+
+        node = node.parent</code></pre>
+</details>
+<div class="desc"><p>Decrement the lock reference count for the node.
+It unlocks the full_lock_ref for nodes between the [last node, root), exclusive.
+It unlocks the swa_lock_ref for nodes between the [last node, swa_uuid_for_lock], inclusive.
+If swa_uuid_for_lock is None, it unlocks to the root, exclusive.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.evict"><code class="name flex">
+<span>def <span class="ident">evict</span></span>(<span>self, full_num_tokens: int, swa_num_tokens: int = 0) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evict(self, full_num_tokens: int, swa_num_tokens: int = 0) -&gt; None:
+    if self.disable:
+        return
+
+    full_num_evicted = 0
+    swa_num_evicted = 0
+    if full_num_tokens &gt; 0:
+        # get the least recently used leaf node that is not locked
+        x = self.full_lru_list.get_leaf_lru_no_lock()
+
+        while full_num_evicted &lt; full_num_tokens and self.full_lru_list.in_list(x):
+            assert (
+                x != self.root_node
+            ), f&#34;root node should not exist in full lru list, {x.id=}&#34;
+            assert x.full_lock_ref == 0, f&#34;node is in use, {x.id=}&#34;
+
+            # 1. free node kv indices, evict full and swa tokens
+            self.token_to_kv_pool_allocator.free(x.value)
+            full_num_evicted += len(x.value)
+            swa_num_evicted += len(x.value)
+
+            # 2. get the next leaf, update the lru lists
+            x_next = self.full_lru_list.get_prev_leaf_no_lock(x)
+            self.full_lru_list.remove_node(x)
+            self.swa_lru_list.remove_node(x)
+
+            # 3. delete the leaf node
+            self._delete_leaf(x)
+
+            # 4. Iteratively delete tombstone leaves to maintain invariant that leaf nodes are not tombstone
+            x, leaf_full_num_evicted = self._iteratively_delete_tombstone_leaf(x)
+            full_num_evicted += leaf_full_num_evicted
+
+            # 5. if parent has no more children, it is a leaf. It is possible that this node is lru, so
+            # we need to get the first leaf node in the lru list
+            if len(x.parent.children) == 0:
+                x_next = self.full_lru_list.get_leaf_lru_no_lock()
+
+            x = x_next
+
+    if swa_num_evicted &lt; swa_num_tokens:
+        # get the least recently used node that is not locked, doesn&#39;t have to be a leaf
+        x = self.swa_lru_list.get_lru_no_lock()
+
+        # evict lru leaf nodes until swa_num_tokens is reached
+        while swa_num_evicted &lt; swa_num_tokens and (self.swa_lru_list.in_list(x)):
+            assert not x.swa_tombstone, f&#34;duplicate swa tombstone node, {x.id=}&#34;
+            assert x != self.root_node, f&#34;root node is not evictable, {x.id=}&#34;
+            assert x.swa_lock_ref == 0, f&#34;node is in use by swa kv indices, {x.id=}&#34;
+
+            if len(x.children) &gt; 0:
+                # 1. an internal node, free swa tokens.
+                self.token_to_kv_pool_allocator.free_swa(x.value)
+                swa_num_evicted += len(x.value)
+
+                # 2. get the next node, update the lru lists
+                x_next = self.swa_lru_list.get_prev_no_lock(x)
+                self.swa_lru_list.remove_node(x)
+
+                # 3. tombstone the node
+                self._tombstone_internal_node(x)
+            else:
+                assert (
+                    x.full_lock_ref == 0
+                ), f&#34;leaf node with full lock must also have swa lock, {x.id=}&#34;
+                # 1. a leaf node, free full and swa tokens
+                self.token_to_kv_pool_allocator.free(x.value)
+                full_num_evicted += len(x.value)
+                swa_num_evicted += len(x.value)
+
+                # 2. get the next node, update the lru lists
+                x_next = self.swa_lru_list.get_prev_no_lock(x)
+                self.full_lru_list.remove_node(x)
+                self.swa_lru_list.remove_node(x)
+
+                # 3. delete the leaf node
+                self._delete_leaf(x)
+
+                # 4. Iteratively delete tombstone leaves to maintain invariant that leaf nodes are not tombstone
+                self._iteratively_delete_tombstone_leaf(x)
+
+            x = x_next</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.evictable_size"><code class="name flex">
+<span>def <span class="ident">evictable_size</span></span>(<span>self) ‑> Tuple[int, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def evictable_size(self) -&gt; Tuple[int, int]:
+    # Note: use full_evictable_size() and swa_evictable_size() instead.
+    raise NotImplementedError</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_evictable_size"><code class="name flex">
+<span>def <span class="ident">full_evictable_size</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def full_evictable_size(self) -&gt; int:
+    return self.full_evictable_size_</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_lru_list_evictable_size"><code class="name flex">
+<span>def <span class="ident">full_lru_list_evictable_size</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def full_lru_list_evictable_size(self) -&gt; int:
+    return self.full_lru_list.sanity_check_evictable_size()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_protected_size"><code class="name flex">
+<span>def <span class="ident">full_protected_size</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def full_protected_size(self) -&gt; int:
+    # protected size refers to the size of the full cache that is locked
+    return self.full_protected_size_</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.inc_lock_ref"><code class="name flex">
+<span>def <span class="ident">inc_lock_ref</span></span>(<span>self,<br>node: <a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a>) ‑> int | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inc_lock_ref(self, node: TreeNode) -&gt; Optional[int]:
+    &#34;&#34;&#34;
+    Increment the lock reference count for the node. Returns the swa_uuid_for_lock, which needs
+    to be passed to dec_lock_ref.
+    It locks the full_lock_ref for nodes between the [last node, root), exclusive.
+    It locks the swa_lock_ref for nodes between the [last node, swa_uuid_for_lock], inclusive.
+    &#34;&#34;&#34;
+    if self.disable:
+        return None
+
+    swa_lock_size = 0
+    swa_uuid_for_lock = None
+    while node != self.root_node:
+        # lock full from node to root
+        assert (
+            node.full_lock_ref &gt;= 0
+        ), f&#34;inc_lock_ref on node with {node.full_lock_ref=}, {node.id=}&#34;
+        if node.full_lock_ref == 0:
+            self.full_evictable_size_ -= len(node.value)
+            self.full_protected_size_ += len(node.value)
+        node.full_lock_ref += 1
+
+        # lock swa if we have not reached the sliding window size.
+        # When we reach the sliding window size, we will set the swa_uuid_for_lock.
+        # caller needs to pass the swa_uuid_for_lock to dec_lock_ref
+        if swa_lock_size &lt; self.sliding_window_size:
+            assert (
+                not node.swa_tombstone
+            ), f&#34;inc_lock_swa on swa_tombstone node, {node.id=}&#34;
+            if node.swa_lock_ref == 0:
+                self.swa_evictable_size_ -= len(node.value)
+                self.swa_protected_size_ += len(node.value)
+            node.swa_lock_ref += 1
+            swa_lock_size += len(node.value)
+            if swa_lock_size &gt;= self.sliding_window_size:
+                if node.swa_uuid is None:
+                    node.swa_uuid = gen_swa_uuid()
+                swa_uuid_for_lock = node.swa_uuid
+        node = node.parent
+    return swa_uuid_for_lock</code></pre>
+</details>
+<div class="desc"><p>Increment the lock reference count for the node. Returns the swa_uuid_for_lock, which needs
+to be passed to dec_lock_ref.
+It locks the full_lock_ref for nodes between the [last node, root), exclusive.
+It locks the swa_lock_ref for nodes between the [last node, swa_uuid_for_lock], inclusive.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.insert"><code class="name flex">
+<span>def <span class="ident">insert</span></span>(<span>self, key: List, value=None, prev_prefix_len: int = 0) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def insert(self, key: List, value=None, prev_prefix_len: int = 0) -&gt; int:
+    if self.disable:
+        return 0
+
+    if value is None:
+        value = [x for x in key]
+    return self._insert_helper(self.root_node, key, value, prev_prefix_len)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.match_prefix"><code class="name flex">
+<span>def <span class="ident">match_prefix</span></span>(<span>self, key: List[int], **kwargs) ‑> <a title="sglang.srt.mem_cache.base_prefix_cache.MatchResult" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.MatchResult">MatchResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def match_prefix(self, key: List[int], **kwargs) -&gt; MatchResult:
+    &#34;&#34;&#34;Find the matching prefix from the radix tree.
+    Args:
+        key: A list of token IDs to find a matching prefix.
+    Returns:
+        A tuple of a tensor of matching prefix token IDs and
+        the last node that contains the prefix values. Note that
+        this API can modify the internal state of the Radix tree.
+        The last node create a new child if the prefix is shorter
+        than the last node&#39;s value.
+    &#34;&#34;&#34;
+    if self.disable or len(key) == 0:
+        return MatchResult(
+            device_indices=torch.empty(
+                (0,),
+                dtype=torch.int64,
+                device=self.device,
+            ),
+            last_device_node=self.root_node,
+            last_host_node=self.root_node,
+        )
+
+    if self.page_size != 1:
+        page_aligned_len = len(key) // self.page_size * self.page_size
+        key = key[:page_aligned_len]
+
+    value, last_node = self._match_prefix_helper(key)
+    if value:
+        value = torch.cat(value)
+    else:
+        value = torch.empty((0,), dtype=torch.int64, device=self.device)
+    return MatchResult(
+        device_indices=value,
+        last_device_node=last_node,
+        last_host_node=last_node,
+    )</code></pre>
+</details>
+<div class="desc"><p>Find the matching prefix from the radix tree.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>key</code></strong></dt>
+<dd>A list of token IDs to find a matching prefix.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A tuple of a tensor of matching prefix token IDs and
+the last node that contains the prefix values. Note that
+this API can modify the internal state of the Radix tree.
+The last node create a new child if the prefix is shorter
+than the last node's value.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.pretty_print"><code class="name flex">
+<span>def <span class="ident">pretty_print</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pretty_print(self) -&gt; None:
+    self._print_helper(self.root_node, 0)
+    total_size, total_swa_size = self._total_size_helper()
+    print(f&#34;#full_tokens: {total_size}, #swa_tokens: {total_swa_size}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.protected_size"><code class="name flex">
+<span>def <span class="ident">protected_size</span></span>(<span>self) ‑> Tuple[int, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def protected_size(self) -&gt; Tuple[int, int]:
+    # Note: use full_protected_size() and swa_protected_size() instead.
+    raise NotImplementedError</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset(self) -&gt; None:
+    self.root_node = TreeNode()
+    self.root_node.key = []
+    self.root_node.value = []
+    self.root_node.full_lock_ref = 1
+    self.root_node.swa_lock_ref = 1
+    self.full_evictable_size_ = 0
+    self.swa_evictable_size_ = 0
+    self.full_protected_size_ = 0
+    self.swa_protected_size_ = 0
+    # LRU lists are used to maintain the order of eviction of the nodes in the tree
+    self.full_lru_list = LRUList(swa=False)
+    self.swa_lru_list = LRUList(swa=True)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.sanity_check"><code class="name flex">
+<span>def <span class="ident">sanity_check</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sanity_check(self):
+    self.full_lru_list.sanity_check(self)
+    self.swa_lru_list.sanity_check(self)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_evictable_size"><code class="name flex">
+<span>def <span class="ident">swa_evictable_size</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def swa_evictable_size(self) -&gt; int:
+    return self.swa_evictable_size_</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_lru_list_evictable_size"><code class="name flex">
+<span>def <span class="ident">swa_lru_list_evictable_size</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def swa_lru_list_evictable_size(self) -&gt; int:
+    return self.swa_lru_list.sanity_check_evictable_size()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_protected_size"><code class="name flex">
+<span>def <span class="ident">swa_protected_size</span></span>(<span>self) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def swa_protected_size(self) -&gt; int:
+    # protected size refers to the size of the swa cache that is locked
+    return self.swa_protected_size_</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.total_size"><code class="name flex">
+<span>def <span class="ident">total_size</span></span>(<span>self) ‑> Tuple[int, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def total_size(self) -&gt; Tuple[int, int]:
+    return self._total_size_helper()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache">BasePrefixCache</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.check_hicache_events" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.check_hicache_events">check_hicache_events</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.init_load_back" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.init_load_back">init_load_back</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.ready_to_load_host_cache" href="base_prefix_cache.html#sglang.srt.mem_cache.base_prefix_cache.BasePrefixCache.ready_to_load_host_cache">ready_to_load_host_cache</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.TreeNode"><code class="flex name class">
+<span>class <span class="ident">TreeNode</span></span>
+<span>(</span><span>id: Optional[int] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TreeNode:
+
+    counter = 0
+    swa_uuid_counter = 1
+
+    def __init__(self, id: Optional[int] = None):
+        self.children = defaultdict(TreeNode)
+        self.parent: TreeNode = None
+        self.key: List[int] = None
+        self.value: Optional[torch.Tensor] = None
+        # swa_tombstone is used to indicate the kv indices have been freed for swa layers
+        self.swa_tombstone = False
+        # invariant: for any node, if swa_lock_ref is locked, full_lock_ref must be locked;
+        # if full_lock_ref is locked, swa_lock_ref doesn&#39;t need to be locked. So,
+        # full_lock_ref is always &gt;= swa_lock_ref.
+        self.full_lock_ref = 0
+        self.swa_lock_ref = 0
+        # last access time is only used for sanity check. LRU is maintained by the lru list.
+        self.last_access_time = time.monotonic()
+
+        self.hit_count = 0
+        # indicating the node is loading KV cache from host
+        self.loading = False
+        # store the host indices of KV cache
+        self.host_value = None
+
+        # for lru list, invariant:
+        # 1. prev has greater last_access_time
+        # 2. next has smaller last_access_time
+        self.prev = None
+        self.next = None
+        self.swa_prev = None
+        self.swa_next = None
+
+        self.id = TreeNode.counter if id is None else id
+        TreeNode.counter += 1
+        self.swa_uuid = None
+
+    @property
+    def evicted(self):
+        return self.value is None
+
+    @property
+    def backuped(self):
+        return self.host_value is not None
+
+    def __lt__(self, other: &#34;TreeNode&#34;):
+        return self.last_access_time &lt; other.last_access_time</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.TreeNode.counter"><code class="name">var <span class="ident">counter</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.TreeNode.swa_uuid_counter"><code class="name">var <span class="ident">swa_uuid_counter</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.TreeNode.backuped"><code class="name">prop <span class="ident">backuped</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def backuped(self):
+    return self.host_value is not None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.swa_radix_cache.TreeNode.evicted"><code class="name">prop <span class="ident">evicted</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def evicted(self):
+    return self.value is None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.mem_cache" href="index.html">sglang.srt.mem_cache</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.gen_swa_uuid" href="#sglang.srt.mem_cache.swa_radix_cache.gen_swa_uuid">gen_swa_uuid</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList">LRUList</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_leaf_lru_no_lock" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.get_leaf_lru_no_lock">get_leaf_lru_no_lock</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_lru_no_lock" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.get_lru_no_lock">get_lru_no_lock</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_prev_leaf_no_lock" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.get_prev_leaf_no_lock">get_prev_leaf_no_lock</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.get_prev_no_lock" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.get_prev_no_lock">get_prev_no_lock</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.in_list" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.in_list">in_list</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.insert_mru" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.insert_mru">insert_mru</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.remove_node" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.remove_node">remove_node</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.reset_node_and_parents_mru" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.reset_node_and_parents_mru">reset_node_and_parents_mru</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.reset_node_mru" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.reset_node_mru">reset_node_mru</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.sanity_check" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.sanity_check">sanity_check</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.LRUList.sanity_check_evictable_size" href="#sglang.srt.mem_cache.swa_radix_cache.LRUList.sanity_check_evictable_size">sanity_check_evictable_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache">SWARadixCache</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.all_values_flatten" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.all_values_flatten">all_values_flatten</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.cache_finished_req" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.cache_finished_req">cache_finished_req</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.cache_unfinished_req" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.cache_unfinished_req">cache_unfinished_req</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.dec_lock_ref" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.dec_lock_ref">dec_lock_ref</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.evict" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.evict">evict</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.evictable_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.evictable_size">evictable_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_evictable_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_evictable_size">full_evictable_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_lru_list_evictable_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_lru_list_evictable_size">full_lru_list_evictable_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_protected_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.full_protected_size">full_protected_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.inc_lock_ref" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.inc_lock_ref">inc_lock_ref</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.insert" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.insert">insert</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.match_prefix" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.match_prefix">match_prefix</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.pretty_print" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.pretty_print">pretty_print</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.protected_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.protected_size">protected_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.reset" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.reset">reset</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.sanity_check" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.sanity_check">sanity_check</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_evictable_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_evictable_size">swa_evictable_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_lru_list_evictable_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_lru_list_evictable_size">swa_lru_list_evictable_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_protected_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.swa_protected_size">swa_protected_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.total_size" href="#sglang.srt.mem_cache.swa_radix_cache.SWARadixCache.total_size">total_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode">TreeNode</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode.backuped" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode.backuped">backuped</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode.counter" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode.counter">counter</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode.evicted" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode.evicted">evicted</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.swa_radix_cache.TreeNode.swa_uuid_counter" href="#sglang.srt.mem_cache.swa_radix_cache.TreeNode.swa_uuid_counter">swa_uuid_counter</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

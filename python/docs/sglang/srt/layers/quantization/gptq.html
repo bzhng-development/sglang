@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.gptq API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.gptq</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.gptq.check_marlin_format"><code class="name flex">
+<span>def <span class="ident">check_marlin_format</span></span>(<span>hf_quant_cfg: Dict[str, Any]) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_marlin_format(hf_quant_cfg: Dict[str, Any]) -&gt; bool:
+    # compat: gptqmodel and autogptq (eol) main use checkpoint_format: str
+    # compat: autogptq &lt;=0.7.1 is_marlin_format: bool
+    return hf_quant_cfg.get(&#34;checkpoint_format&#34;) == &#34;marlin&#34; or hf_quant_cfg.get(
+        &#34;is_marlin_format&#34;, False
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.gptq_marlin_moe_repack"><code class="name flex">
+<span>def <span class="ident">gptq_marlin_moe_repack</span></span>(<span>b_q_weight: torch.Tensor,<br>perm: torch.Tensor,<br>size_k: int,<br>size_n: int,<br>num_bits: int) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gptq_marlin_moe_repack(
+    b_q_weight: torch.Tensor,
+    perm: torch.Tensor,
+    size_k: int,
+    size_n: int,
+    num_bits: int,
+) -&gt; torch.Tensor:
+    num_experts = b_q_weight.shape[0]
+    assert size_k % 16 == 0
+    output = torch.empty(
+        (num_experts, size_k // 16, size_n * (num_bits // 2)),
+        device=b_q_weight.device,
+        dtype=b_q_weight.dtype,
+    )
+    for e in range(num_experts):
+        output[e] = gptq_marlin_repack(b_q_weight[e], perm[e], size_k, size_n, num_bits)
+    return output</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQConfig"><code class="flex name class">
+<span>class <span class="ident">GPTQConfig</span></span>
+<span>(</span><span>weight_bits: int,<br>group_size: int,<br>desc_act: bool,<br>lm_head_quantized: bool,<br>dynamic: Dict[str, Dict[str, Union[int, bool]]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GPTQConfig(QuantizationConfig):
+    &#34;&#34;&#34;Config class for GPTQ.
+
+    Reference: https://arxiv.org/abs/2210.17323
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        weight_bits: int,
+        group_size: int,
+        desc_act: bool,
+        lm_head_quantized: bool,
+        dynamic: Dict[str, Dict[str, Union[int, bool]]],
+    ) -&gt; None:
+        # GPTQModel use `dynamic` config property to allow per module
+        # quantization config so each module can be individually optimized.
+        # Format is Dict[str, Dict] where key is a regex string that can
+        # perform both positive (&#34;+:&#34; prefixed) or negative (&#34;-:&#34; prefixed)
+        # matching of a module.
+        # Default to positive match, override base quant config mode, if no
+        # prefix is used. Value is in dict format of field key and override
+        # value.
+        # Negative matching will skip quantization init for this module
+        # entirely:
+        # non-quantized inference. More details and quantization examples can be
+        # found at: https://github.com/ModelCloud/GPTQModel
+        # Example:
+        #  # last 1/2 of the layers 10-21 has 8bit vs 4bit for 0-9
+        #  # last 1/4 of the layers 16-21 has 8bit and group_size 64
+        # dynamic = {
+        #  #`.*\.` matches the layers_node prefix
+        #  # positive match layer 10-15
+        #  r&#34;+:.*\.(?:1[0-5])\..*&#34;: {&#34;bits&#34;: 8,},
+        #  # positive match layer 16-21
+        #  r&#34;+:.*\.(?:1[6-9]|20|21)\..*&#34;: {&#34;bits&#34;: 8, &#34;group_size&#34;: 64,},
+        #  r&#34;-:.*\.moe\..*&#34;: {}, # negative match (skip) all `moe` layers
+        # }
+        super().__init__()
+        self.dynamic = dynamic
+
+        self.weight_bits = weight_bits
+        self.group_size = group_size
+        self.desc_act = desc_act
+        self.lm_head_quantized = lm_head_quantized
+        self.pack_factor = Fraction(32, self.weight_bits)
+        if self.weight_bits not in [2, 3, 4, 8]:
+            raise ValueError(
+                &#34;Currently, only 2/3/4/8-bit weight quantization is &#34;
+                f&#34;supported for GPTQ, but got {self.weight_bits} bits.&#34;
+            )
+
+    def __repr__(self) -&gt; str:
+        return (
+            f&#34;GPTQConfig(weight_bits={self.weight_bits}, &#34;
+            f&#34;group_size={self.group_size}, &#34;
+            f&#34;desc_act={self.desc_act}),&#34;
+            f&#34;lm_head_quantized={self.lm_head_quantized}), &#34;
+            f&#34;dynamic={self.dynamic}&#34;
+        )
+
+    def get_scaled_act_names(self) -&gt; List[str]:
+        &#34;&#34;&#34;Returns the activation function names that should be post-scaled.
+
+        For now, this is only used by AWQ.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    @classmethod
+    def get_name(cls) -&gt; str:
+        return &#34;gptq&#34;
+
+    @classmethod
+    def get_supported_act_dtypes(cls) -&gt; List[torch.dtype]:
+        return [torch.half]
+
+    @classmethod
+    # Need to figure it out
+    def get_min_capability(cls) -&gt; int:
+        return 60
+
+    @classmethod
+    def get_config_filenames(cls) -&gt; List[str]:
+        return [&#34;quantize_config.json&#34;]
+
+    @classmethod
+    def from_config(cls, config: Dict[str, Any]) -&gt; GPTQConfig:
+        dynamic = cls.get_from_keys_or(config, [&#34;dynamic&#34;], default={})
+        dynamic = {} if dynamic is None else dynamic
+
+        weight_bits = cls.get_from_keys(config, [&#34;bits&#34;])
+        group_size = cls.get_from_keys(config, [&#34;group_size&#34;])
+        desc_act = cls.get_from_keys(config, [&#34;desc_act&#34;])
+        lm_head_quantized = cls.get_from_keys_or(config, [&#34;lm_head&#34;], default=False)
+        return cls(weight_bits, group_size, desc_act, lm_head_quantized, dynamic)
+
+    def get_quant_method(
+        self, layer: torch.nn.Module, prefix: str
+    ) -&gt; Optional[LinearMethodBase]:
+        # Delay the import to avoid circular dependency
+        from sglang.srt.layers.linear import LinearBase
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoE
+
+        if isinstance(layer, FusedMoE):
+            raise TypeError(&#34;GPTQ Method does not support MoE, please use gptq_marlin&#34;)
+        else:
+            return get_linear_quant_method(
+                self, layer, prefix=prefix, linear_method_cls=GPTQLinearMethod
+            )</code></pre>
+</details>
+<div class="desc"><p>Config class for GPTQ.</p>
+<p>Reference: <a href="https://arxiv.org/abs/2210.17323">https://arxiv.org/abs/2210.17323</a></p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQLinearMethod"><code class="flex name class">
+<span>class <span class="ident">GPTQLinearMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.gptq.GPTQConfig" href="#sglang.srt.layers.quantization.gptq.GPTQConfig">GPTQConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GPTQLinearMethod(LinearMethodBase):
+    &#34;&#34;&#34;Linear method for GPTQ.
+
+    Args:
+        quant_config: The GPTQ quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quant_config: GPTQConfig):
+        self.quant_config = quant_config
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: list[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        del output_size  # Unused.
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+        if input_size_per_partition % self.quant_config.group_size != 0:
+            raise ValueError(
+                &#34;The input size is not aligned with the quantized &#34;
+                &#34;weight shape. This can be caused by too large &#34;
+                &#34;tensor parallel size.&#34;
+            )
+        output_size_per_partition = sum(output_partition_sizes)
+        if output_size_per_partition % self.quant_config.pack_factor.numerator != 0:
+            raise ValueError(
+                &#34;The output size is not aligned with the quantized &#34;
+                &#34;weight shape. This can be caused by too large &#34;
+                &#34;tensor parallel size.&#34;
+            )
+
+        if self.quant_config.group_size != -1:
+            group_size = self.quant_config.group_size
+        else:
+            group_size = input_size
+
+        self.use_shuffle = True
+        scale_and_zero_size = input_size // group_size
+        scale_and_zero_input_dim = None
+        if (
+            input_size != input_size_per_partition
+            and self.quant_config.group_size != -1
+        ):
+            if self.quant_config.desc_act:
+                self.use_shuffle = False
+            else:
+                # we need to partition qzeros and scales for exllama kernel
+                scale_and_zero_size = input_size_per_partition // group_size
+                scale_and_zero_input_dim = 0
+
+        qweight = PackedvLLMParameter(
+            data=torch.empty(
+                input_size_per_partition // self.quant_config.pack_factor,
+                output_size_per_partition,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            output_dim=1,
+            packed_dim=0,
+            packed_factor=self.quant_config.pack_factor,
+            weight_loader=weight_loader,
+        )
+
+        g_idx = RowvLLMParameter(
+            data=torch.tensor(
+                [
+                    i // self.quant_config.group_size
+                    for i in range(input_size_per_partition)
+                ],
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            weight_loader=weight_loader,
+        )
+        qzeros_args = {
+            &#34;data&#34;: torch.empty(
+                scale_and_zero_size,
+                output_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            &#34;weight_loader&#34;: weight_loader,
+        }
+        weight_scale_args = {
+            &#34;data&#34;: torch.empty(
+                scale_and_zero_size,
+                output_size_per_partition,
+                dtype=params_dtype,
+            ),
+            &#34;weight_loader&#34;: weight_loader,
+        }
+        if scale_and_zero_input_dim is None:
+            scales = ChannelQuantScaleParameter(output_dim=1, **weight_scale_args)
+            qzeros = PackedColumnParameter(
+                output_dim=1,
+                packed_dim=1,
+                packed_factor=self.quant_config.pack_factor,
+                **qzeros_args,
+            )
+
+        else:
+            scales = GroupQuantScaleParameter(
+                output_dim=1, input_dim=0, **weight_scale_args
+            )
+            qzeros = PackedvLLMParameter(
+                input_dim=0,
+                output_dim=1,
+                packed_dim=1,
+                packed_factor=self.quant_config.pack_factor,
+                **qzeros_args,
+            )
+
+        layer.register_parameter(&#34;qweight&#34;, qweight)
+        layer.register_parameter(&#34;g_idx&#34;, g_idx)
+        layer.register_parameter(&#34;qzeros&#34;, qzeros)
+        layer.register_parameter(&#34;scales&#34;, scales)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        # for torch.compile
+        layer.qzeros = torch.nn.Parameter(layer.qzeros.data, requires_grad=False)
+        layer.qweight = torch.nn.Parameter(layer.qweight.data, requires_grad=False)
+        layer.g_idx = torch.nn.Parameter(layer.g_idx.data, requires_grad=False)
+        layer.scales = torch.nn.Parameter(layer.scales.data, requires_grad=False)
+
+        # exllama needs to shuffle the weight after the weight is loaded
+        # here we do the shuffle on first forward pass
+        if self.use_shuffle:
+            if self.quant_config.desc_act:
+                layer.g_idx.data = torch.argsort(layer.g_idx).to(torch.int)
+            else:
+                layer.g_idx.data = torch.empty(
+                    (0,), dtype=torch.int, device=layer.g_idx.device
+                )
+            gptq_shuffle(layer.qweight, layer.g_idx, self.quant_config.weight_bits)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        out_shape = x.shape[:-1] + (layer.qweight.shape[-1],)
+        reshaped_x = x.reshape(-1, x.shape[-1])
+
+        output = gptq_gemm(
+            reshaped_x,
+            layer.qweight,
+            layer.qzeros,
+            layer.scales,
+            layer.g_idx,
+            self.use_shuffle,
+            self.quant_config.weight_bits,
+        )
+        if bias is not None:
+            output.add_(bias)
+        return output.reshape(out_shape)</code></pre>
+</details>
+<div class="desc"><p>Linear method for GPTQ.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The GPTQ quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig"><code class="flex name class">
+<span>class <span class="ident">GPTQMarlinConfig</span></span>
+<span>(</span><span>weight_bits: int,<br>group_size: int,<br>desc_act: bool,<br>is_sym: bool,<br>lm_head_quantized: bool,<br>dynamic: Dict[str, Dict[str, Union[int, bool]]],<br>full_config: Dict[str, Any])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GPTQMarlinConfig(QuantizationConfig):
+    &#34;&#34;&#34;Config class for GPTQ Marlin&#34;&#34;&#34;
+
+    # (num_bits, is_sym) -&gt; quant_type
+    TYPE_MAP = {
+        (4, True): scalar_types.uint4b8,
+        (8, True): scalar_types.uint8b128,
+    }
+
+    def __init__(
+        self,
+        weight_bits: int,
+        group_size: int,
+        desc_act: bool,
+        is_sym: bool,
+        lm_head_quantized: bool,
+        dynamic: Dict[str, Dict[str, Union[int, bool]]],
+        full_config: Dict[str, Any],
+    ) -&gt; None:
+        super().__init__()
+        if desc_act and group_size == -1:
+            # In this case, act_order == True is the same as act_order == False
+            # (since we have only one group per output channel)
+            desc_act = False
+
+        # GPTQModel use `dynamic` config property to allow per module
+        # quantization config so each module can be individually optimized.
+        # Format is Dict[str, Dict] where key is a regex string that can
+        # perform both positive (&#34;+:&#34; prefixed) or negative (&#34;-:&#34; prefixed)
+        # matching of a module.
+        # Default to positive match, override base quant config mode, if no
+        # prefix is used. Value is in dict format of field key and override
+        # value.
+        # Negative matching will skip quantization init for this module
+        # entirely:
+        # non-quantized inference. More details and quantization examples can be
+        # found at: https://github.com/ModelCloud/GPTQModel
+        # Example:
+        #  # last 1/2 of the layers 10-21 has 8bit vs 4bit for 0-9
+        #  # last 1/4 of the layers 16-21 has 8bit and group_size 64
+        # dynamic = {
+        #  #`.*\.` matches the layers_node prefix
+        #  # positive match layer 10-15
+        #  r&#34;+:.*\.(?:1[0-5])\..*&#34;: {&#34;bits&#34;: 8,},
+        #  # positive match layer 16-21
+        #  r&#34;+:.*\.(?:1[6-9]|20|21)\..*&#34;: {&#34;bits&#34;: 8, &#34;group_size&#34;: 64,},
+        #  r&#34;-:.*\.moe\..*&#34;: {}, # negative match (skip) all `moe` layers
+        # }
+        self.dynamic = dynamic
+
+        self.weight_bits = weight_bits
+        self.is_sym = is_sym
+
+        self.pack_factor = 32 // weight_bits  # packed into int32
+        self.group_size = group_size
+        self.desc_act = desc_act
+        self.lm_head_quantized = lm_head_quantized
+        self.full_config = full_config
+
+        if (weight_bits, is_sym) not in self.TYPE_MAP:
+            raise ValueError(
+                &#34;Unsupported quantization config: &#34; f&#34;bits={weight_bits}, sym={is_sym}&#34;
+            )
+
+        # (num_bits, is_sym) -&gt; quant_type
+        self.quant_type = self.TYPE_MAP[(weight_bits, is_sym)]
+
+    def __repr__(self) -&gt; str:
+        return (
+            f&#34;GPTQMarlinConfig(quant_type={self.quant_type}, &#34;
+            f&#34;group_size={self.group_size}, &#34;
+            f&#34;desc_act={self.desc_act}, &#34;
+            f&#34;lm_head_quantized={self.lm_head_quantized}), &#34;
+            f&#34;dynamic={self.dynamic}&#34;
+        )
+
+    def get_scaled_act_names(self) -&gt; List[str]:
+        &#34;&#34;&#34;Returns the activation function names that should be post-scaled.
+
+        For now, this is only used by AWQ.
+        &#34;&#34;&#34;
+        raise NotImplementedError
+
+    @classmethod
+    def get_name(cls) -&gt; str:
+        return &#34;gptq_marlin&#34;
+
+    @classmethod
+    def get_supported_act_dtypes(cls) -&gt; List[torch.dtype]:
+        return [torch.half, torch.bfloat16]
+
+    @classmethod
+    def get_min_capability(cls) -&gt; int:
+        return 80
+
+    @classmethod
+    def get_config_filenames(cls) -&gt; List[str]:
+        return [&#34;quantize_config.json&#34;]
+
+    @classmethod
+    def from_config(cls, config: Dict[str, Any]) -&gt; GPTQMarlinConfig:
+        dynamic = cls.get_from_keys_or(config, [&#34;dynamic&#34;], default={})
+        dynamic = {} if dynamic is None else dynamic
+
+        weight_bits = cls.get_from_keys(config, [&#34;bits&#34;])
+        group_size = cls.get_from_keys(config, [&#34;group_size&#34;])
+        desc_act = cls.get_from_keys(config, [&#34;desc_act&#34;])
+        is_sym = cls.get_from_keys(config, [&#34;sym&#34;])
+        lm_head_quantized = cls.get_from_keys_or(config, [&#34;lm_head&#34;], default=False)
+        return cls(
+            weight_bits,
+            group_size,
+            desc_act,
+            is_sym,
+            lm_head_quantized,
+            dynamic,
+            config,
+        )
+
+    @classmethod
+    def override_quantization_method(cls, hf_quant_cfg, user_quant) -&gt; Optional[str]:
+        is_marlin_format = check_marlin_format(hf_quant_cfg)
+
+        can_convert = cls.is_gptq_marlin_compatible(hf_quant_cfg)
+
+        is_valid_user_quant = (
+            user_quant is None or user_quant == &#34;marlin&#34; or user_quant == &#34;gptq_marlin&#34;
+        )
+
+        if not is_marlin_format and can_convert and is_valid_user_quant:
+            msg = (
+                &#34;The model is convertible to {} during runtime.&#34;
+                &#34; Using {} kernel.&#34;.format(cls.get_name(), cls.get_name())
+            )
+            logger.info(msg)
+            return cls.get_name()
+
+        if not is_marlin_format and can_convert and user_quant == &#34;gptq&#34;:
+            logger.info(
+                &#34;Detected that the model can run with gptq_marlin&#34;
+                &#34;, however you specified quantization=gptq explicitly,&#34;
+                &#34; so forcing gptq. Use quantization=gptq_marlin for&#34;
+                &#34; faster inference&#34;
+            )
+        return None
+
+    def get_quant_method(
+        self, layer: torch.nn.Module, prefix: str
+    ) -&gt; Optional[QuantizeMethodBase]:
+        # Delay the import to avoid circular dependency
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoE
+
+        if isinstance(layer, FusedMoE):
+            return GPTQMarlinMoEMethod(self)
+        return get_linear_quant_method(self, layer, prefix, GPTQMarlinLinearMethod)
+
+    @classmethod
+    def is_gptq_marlin_compatible(cls, quant_config: Dict[str, Any]):
+        quant_method = quant_config.get(&#34;quant_method&#34;, &#34;&#34;).lower()
+        num_bits = quant_config.get(&#34;bits&#34;)
+        group_size = quant_config.get(&#34;group_size&#34;)
+        sym = quant_config.get(&#34;sym&#34;)
+        desc_act = quant_config.get(&#34;desc_act&#34;)
+
+        if not _is_cuda:
+            return False
+
+        if quant_method != &#34;gptq&#34;:
+            return False
+
+        # Marlin conversion is only valid if required properties are found
+        if num_bits is None or group_size is None or sym is None or desc_act is None:
+            return False
+
+        if (num_bits, sym) not in cls.TYPE_MAP:
+            return False
+
+        return check_marlin_supported(
+            quant_type=cls.TYPE_MAP[(num_bits, sym)], group_size=group_size
+        )</code></pre>
+</details>
+<div class="desc"><p>Config class for GPTQ Marlin</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig.TYPE_MAP"><code class="name">var <span class="ident">TYPE_MAP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig.is_gptq_marlin_compatible"><code class="name flex">
+<span>def <span class="ident">is_gptq_marlin_compatible</span></span>(<span>quant_config: Dict[str, Any])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQMarlinLinearMethod"><code class="flex name class">
+<span>class <span class="ident">GPTQMarlinLinearMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinConfig">GPTQMarlinConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GPTQMarlinLinearMethod(LinearMethodBase):
+    &#34;&#34;&#34;Linear method for GPTQ Marlin.
+
+    Args:
+        quant_config: The GPTQ Marlin quantization config.
+    &#34;&#34;&#34;
+
+    _kernel_backends_being_used: set[str] = set()
+
+    def __init__(self, quant_config: GPTQMarlinConfig) -&gt; None:
+        self.quant_config = quant_config
+
+        # Verify supported on platform.
+        verify_marlin_supported(
+            quant_type=self.quant_config.quant_type,
+            group_size=self.quant_config.group_size,
+        )
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: list[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ) -&gt; None:
+        output_size_per_partition = sum(output_partition_sizes)
+        is_row_parallel = input_size != input_size_per_partition
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+
+        self.kernel_config = MarlinLinearLayerConfig(
+            full_weight_shape=(input_size, output_size),
+            partition_weight_shape=(
+                input_size_per_partition,
+                output_size_per_partition,
+            ),
+            weight_type=self.quant_config.quant_type,
+            act_type=params_dtype,
+            group_size=self.quant_config.group_size,
+            zero_points=False,
+            has_g_idx=self.quant_config.desc_act,
+        )
+        # Normalize group_size
+        if self.quant_config.group_size != -1:
+            group_size = self.quant_config.group_size
+        else:
+            group_size = input_size
+
+        # Determine sharding
+        if marlin_repeat_scales_on_all_ranks(
+            self.quant_config.desc_act, self.quant_config.group_size, is_row_parallel
+        ):
+            # By setting scale_dim == None, weight_loader will
+            # repeat the scales on each GPU in TP&gt;1 case.
+            scales_and_zp_input_dim = None
+            scales_and_zp_size = input_size // group_size
+        else:
+            # By setting scale_dim == 0, weight_loader will
+            # shard the scales in TP&gt;1 case.
+            scales_and_zp_input_dim = 0
+            scales_and_zp_size = input_size_per_partition // group_size
+
+        # Quantized weights
+        qweight = PackedvLLMParameter(
+            data=torch.empty(
+                input_size_per_partition // self.quant_config.pack_factor,
+                output_size_per_partition,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            output_dim=1,
+            packed_dim=0,
+            packed_factor=self.quant_config.pack_factor,
+            weight_loader=weight_loader,
+        )
+
+        # Activation order
+        g_idx = RowvLLMParameter(
+            data=torch.empty(
+                input_size_per_partition,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            weight_loader=weight_loader,
+        )
+
+        qzeros_args = {
+            &#34;data&#34;: torch.empty(
+                scales_and_zp_size,
+                output_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            &#34;weight_loader&#34;: weight_loader,
+        }
+        weight_scale_args = {
+            &#34;data&#34;: torch.empty(
+                scales_and_zp_size,
+                output_size_per_partition,
+                dtype=params_dtype,
+            ),
+            &#34;weight_loader&#34;: weight_loader,
+        }
+
+        if scales_and_zp_input_dim is None:
+            scales = ChannelQuantScaleParameter(output_dim=1, **weight_scale_args)
+            qzeros = PackedColumnParameter(
+                output_dim=1,
+                packed_dim=1,
+                packed_factor=self.quant_config.pack_factor,
+                **qzeros_args,
+            )
+
+        else:
+            scales = GroupQuantScaleParameter(
+                output_dim=1, input_dim=0, **weight_scale_args
+            )
+            qzeros = PackedvLLMParameter(
+                input_dim=0,
+                output_dim=1,
+                packed_dim=1,
+                packed_factor=self.quant_config.pack_factor,
+                **qzeros_args,
+            )
+
+        layer.register_parameter(&#34;qweight&#34;, qweight)
+        layer.register_parameter(&#34;g_idx&#34;, g_idx)
+        layer.register_parameter(&#34;scales&#34;, scales)
+        layer.register_parameter(&#34;qzeros&#34;, qzeros)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        device = getattr(layer, &#34;qweight&#34;).device
+        c = self.kernel_config
+
+        check_marlin_supports_shape(
+            c.partition_weight_shape[1],  # out_features
+            c.partition_weight_shape[0],  # in_features
+            c.full_weight_shape[0],  # in_features
+            c.group_size,
+        )
+
+        row_parallel = c.partition_weight_shape[0] != c.full_weight_shape[0]
+        self.is_k_full = marlin_is_k_full(c.has_g_idx, row_parallel)
+
+        # Allocate marlin workspace.
+        self.workspace = marlin_make_workspace(device)
+
+        # Default names since marlin requires empty parameters for these,
+        # TODO: remove this requirement from marlin (allow optional tensors)
+        self.w_q_name = &#34;qweight&#34;
+        self.w_s_name = &#34;scales&#34;
+        self.w_zp_name = &#34;qzeros&#34;
+        self.w_gidx_name = &#34;g_idx&#34;
+
+        def _transform_param(
+            layer: torch.nn.Module, name: Optional[str], fn: Callable
+        ) -&gt; None:
+            if name is not None and getattr(layer, name, None) is not None:
+
+                old_param = getattr(layer, name)
+                new_param = fn(old_param)
+                # replace the parameter with torch.nn.Parameter for TorchDynamo
+                # compatibility
+                replace_parameter(
+                    layer, name, torch.nn.Parameter(new_param.data, requires_grad=False)
+                )
+
+        def transform_w_q(x):
+            assert isinstance(x, BasevLLMParameter)
+            permute_param_layout_(x, input_dim=0, output_dim=1, packed_dim=0)
+            x.data = gptq_marlin_repack(
+                x.data.contiguous(),
+                perm=layer.g_idx_sort_indices,
+                size_k=c.partition_weight_shape[0],
+                size_n=c.partition_weight_shape[1],
+                num_bits=c.weight_type.size_bits,
+            )
+            return x
+
+        def transform_w_s(x):
+            assert isinstance(x, BasevLLMParameter)
+            permute_param_layout_(x, input_dim=0, output_dim=1)
+            x.data = marlin_permute_scales(
+                x.data.contiguous(),
+                size_k=c.partition_weight_shape[0],
+                size_n=c.partition_weight_shape[1],
+                group_size=c.group_size,
+            )
+            return x
+
+        if c.has_g_idx:
+            g_idx, g_idx_sort_indices = marlin_sort_g_idx(
+                getattr(layer, self.w_gidx_name)
+            )
+            _transform_param(layer, self.w_gidx_name, lambda _: g_idx)
+            layer.g_idx_sort_indices = g_idx_sort_indices
+        else:
+            setattr(layer, self.w_gidx_name, marlin_make_empty_g_idx(device))
+            layer.g_idx_sort_indices = marlin_make_empty_g_idx(device)
+
+        if c.zero_points:
+            grouped_k = (
+                c.partition_weight_shape[0] // c.group_size if c.group_size != -1 else 1
+            )
+            _transform_param(
+                layer,
+                self.w_zp_name,
+                lambda x: marlin_zero_points(
+                    unpack_cols(
+                        x.t(),
+                        c.weight_type.size_bits,
+                        grouped_k,
+                        c.partition_weight_shape[1],
+                    ),
+                    size_k=grouped_k,
+                    size_n=c.partition_weight_shape[1],
+                    num_bits=c.weight_type.size_bits,
+                ),
+            )
+        else:
+            setattr(layer, self.w_zp_name, marlin_make_empty_g_idx(device))
+        _transform_param(layer, self.w_q_name, transform_w_q)
+        _transform_param(layer, self.w_s_name, transform_w_s)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        c = self.kernel_config
+
+        def _get_weight_params(
+            layer: torch.nn.Module,
+        ) -&gt; tuple[
+            torch.Tensor,  # w_q
+            torch.Tensor,  # w_s
+            Optional[torch.Tensor],  # w_zp,
+            Optional[torch.Tensor],  # w_gidx
+        ]:
+            return (
+                getattr(layer, self.w_q_name),
+                getattr(layer, self.w_s_name),
+                getattr(layer, self.w_zp_name or &#34;&#34;, None),
+                getattr(layer, self.w_gidx_name or &#34;&#34;, None),
+            )
+
+        w_q, w_s, w_zp, w_gidx = _get_weight_params(layer)
+
+        # `process_weights_after_loading` will ensure w_zp and w_gidx are not
+        #  None for marlin
+        return apply_gptq_marlin_linear(
+            input=x,
+            weight=w_q,
+            weight_scale=w_s,
+            weight_zp=w_zp,  # type: ignore
+            g_idx=w_gidx,  # type: ignore
+            g_idx_sort_indices=layer.g_idx_sort_indices,
+            workspace=self.workspace,
+            wtype=c.weight_type,
+            input_size_per_partition=c.partition_weight_shape[0],
+            output_size_per_partition=c.partition_weight_shape[1],
+            is_k_full=self.is_k_full,
+            bias=bias,
+        )</code></pre>
+</details>
+<div class="desc"><p>Linear method for GPTQ Marlin.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The GPTQ Marlin quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.GPTQMarlinMoEMethod"><code class="flex name class">
+<span>class <span class="ident">GPTQMarlinMoEMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinConfig">GPTQMarlinConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GPTQMarlinMoEMethod(FusedMoEMethodBase):
+    &#34;&#34;&#34;MoE Marlin method with quantization.&#34;&#34;&#34;
+
+    def __init__(self, quant_config: GPTQMarlinConfig) -&gt; None:
+        self.quant_config = quant_config
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size_per_partition: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        # Delay the import to avoid circular dependency
+        from sglang.srt.layers.linear import set_weight_attrs
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoeWeightScaleSupported
+
+        intermediate_size = extra_weight_attrs.pop(&#34;intermediate_size&#34;)
+
+        self.is_k_full = (not self.quant_config.desc_act) or (
+            intermediate_size_per_partition == intermediate_size
+        )
+
+        if self.quant_config.group_size != -1:
+            scales_size13 = hidden_size // self.quant_config.group_size
+            w2_scales_size = (
+                intermediate_size
+                if self.quant_config.desc_act
+                else intermediate_size_per_partition
+            )
+            scales_size2 = w2_scales_size // self.quant_config.group_size
+            strategy = FusedMoeWeightScaleSupported.GROUP.value
+        else:
+            scales_size13 = 1
+            scales_size2 = 1
+            strategy = FusedMoeWeightScaleSupported.CHANNEL.value
+
+        extra_weight_attrs.update({&#34;quant_method&#34;: strategy, &#34;is_transposed&#34;: True})
+        # Fused gate_up_proj (column parallel)
+        w13_qweight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size // self.quant_config.pack_factor,
+                2 * intermediate_size_per_partition,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_qweight&#34;, w13_qweight)
+        set_weight_attrs(w13_qweight, extra_weight_attrs)
+        # down_proj (row parallel)
+        w2_qweight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition // self.quant_config.pack_factor,
+                hidden_size,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_qweight&#34;, w2_qweight)
+        set_weight_attrs(w2_qweight, extra_weight_attrs)
+        # up_proj scales
+        w13_scales = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                scales_size13,
+                2 * intermediate_size_per_partition,
+                dtype=torch.half,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_scales&#34;, w13_scales)
+        set_weight_attrs(w13_scales, extra_weight_attrs)
+        # down_proj scales
+        w2_scales = torch.nn.Parameter(
+            torch.empty(num_experts, scales_size2, hidden_size, dtype=torch.half),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_scales&#34;, w2_scales)
+        set_weight_attrs(w2_scales, extra_weight_attrs)
+        # dont shard the w2 scales when running act order
+        set_weight_attrs(w2_scales, {&#34;load_full_w2&#34;: self.quant_config.desc_act})
+        # up_proj scales
+        w13_qzeros = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                scales_size13,
+                2 * intermediate_size_per_partition // self.quant_config.pack_factor,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_qzeros&#34;, w13_qzeros)
+        set_weight_attrs(w13_qzeros, extra_weight_attrs)
+        # down_proj scales
+        w2_qzeros = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                scales_size2,
+                hidden_size // self.quant_config.pack_factor,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_qzeros&#34;, w2_qzeros)
+        set_weight_attrs(w2_qzeros, extra_weight_attrs)
+        # dont shard the w2 scales when running act order
+        set_weight_attrs(w2_qzeros, {&#34;load_full_w2&#34;: self.quant_config.desc_act})
+        w13_g_idx = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_g_idx&#34;, w13_g_idx)
+        set_weight_attrs(w13_g_idx, extra_weight_attrs)
+        w2_g_idx = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_g_idx&#34;, w2_g_idx)
+        set_weight_attrs(w2_g_idx, extra_weight_attrs)
+        w13_g_idx_sort_indices = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_g_idx_sort_indices&#34;, w13_g_idx_sort_indices)
+        set_weight_attrs(w13_g_idx_sort_indices, extra_weight_attrs)
+        w2_g_idx_sort_indices = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_g_idx_sort_indices&#34;, w2_g_idx_sort_indices)
+        set_weight_attrs(w2_g_idx_sort_indices, extra_weight_attrs)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+
+        # Process act_order
+        if self.quant_config.desc_act:
+            # Get sorting based on g_idx
+            num_experts = layer.w13_g_idx.shape[0]
+            w13_g_idx_sort_indices = torch.empty_like(layer.w13_g_idx)
+            w2_g_idx_sort_indices = torch.empty_like(layer.w2_g_idx)
+            w13_sorted_g_idx = torch.empty_like(layer.w13_g_idx)
+            w2_sorted_g_idx = torch.empty_like(layer.w2_g_idx)
+            for e in range(num_experts):
+                w13_g_idx_sort_indices[e] = torch.argsort(layer.w13_g_idx[e]).to(
+                    torch.int32
+                )
+                w2_g_idx_sort_indices[e] = torch.argsort(layer.w2_g_idx[e]).to(
+                    torch.int32
+                )
+                w13_sorted_g_idx[e] = layer.w13_g_idx[e][w13_g_idx_sort_indices[e]]
+                w2_sorted_g_idx[e] = layer.w2_g_idx[e][w2_g_idx_sort_indices[e]]
+            replace_parameter(layer, &#34;w13_g_idx&#34;, w13_sorted_g_idx)
+            replace_parameter(layer, &#34;w2_g_idx&#34;, w2_sorted_g_idx)
+            replace_parameter(layer, &#34;w13_g_idx_sort_indices&#34;, w13_g_idx_sort_indices)
+            replace_parameter(layer, &#34;w2_g_idx_sort_indices&#34;, w2_g_idx_sort_indices)
+        else:
+            # Reset g_idx related tensors
+            num_experts = layer.w13_g_idx.shape[0]
+            device = layer.w13_g_idx.device
+            layer.w13_g_idx = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+            layer.w2_g_idx = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+            layer.w13_g_idx_sort_indices = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+            layer.w2_g_idx_sort_indices = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+        # Repack weights
+        marlin_w13_qweight = gptq_marlin_moe_repack(
+            layer.w13_qweight,
+            layer.w13_g_idx_sort_indices,
+            layer.w13_qweight.shape[1] * self.quant_config.pack_factor,
+            layer.w13_qweight.shape[2],
+            self.quant_config.weight_bits,
+        )
+        replace_parameter(layer, &#34;w13_qweight&#34;, marlin_w13_qweight)
+        marlin_w2_qweight = gptq_marlin_moe_repack(
+            layer.w2_qweight,
+            layer.w2_g_idx_sort_indices,
+            layer.w2_qweight.shape[1] * self.quant_config.pack_factor,
+            layer.w2_qweight.shape[2],
+            self.quant_config.weight_bits,
+        )
+        replace_parameter(layer, &#34;w2_qweight&#34;, marlin_w2_qweight)
+        # Repack scales
+        marlin_w13_scales = marlin_moe_permute_scales(
+            s=layer.w13_scales,
+            size_k=layer.intermediate_size_per_partition,
+            size_n=layer.w13_scales.shape[2],
+            group_size=self.quant_config.group_size,
+        )
+        replace_parameter(layer, &#34;w13_scales&#34;, marlin_w13_scales)
+        marlin_w2_scales = marlin_moe_permute_scales(
+            s=layer.w2_scales,
+            size_k=layer.w2_scales.shape[1]
+            * (
+                self.quant_config.group_size
+                if self.quant_config.group_size != -1
+                else self.quant_config.pack_factor
+            ),
+            size_n=layer.w2_scales.shape[2],
+            group_size=self.quant_config.group_size,
+        )
+        replace_parameter(layer, &#34;w2_scales&#34;, marlin_w2_scales)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+        # Delay the import to avoid circular dependency
+
+        assert (
+            moe_runner_config.activation == &#34;silu&#34;
+        ), &#34;Only SiLU activation is supported.&#34;
+
+        # The input must currently be float16
+        orig_dtype = x.dtype
+        x = x.half()
+
+        topk_weights, topk_ids, router_logits = topk_output
+
+        return fused_marlin_moe(
+            x,
+            layer.w13_qweight,
+            layer.w2_qweight,
+            layer.w13_scales,
+            layer.w2_scales,
+            router_logits,
+            topk_weights,
+            topk_ids,
+            g_idx1=layer.w13_g_idx,
+            g_idx2=layer.w2_g_idx,
+            sort_indices1=layer.w13_g_idx_sort_indices,
+            sort_indices2=layer.w2_g_idx_sort_indices,
+            num_bits=self.quant_config.weight_bits,
+            is_k_full=self.is_k_full,
+        ).to(orig_dtype)</code></pre>
+</details>
+<div class="desc"><p>MoE Marlin method with quantization.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig"><code class="flex name class">
+<span>class <span class="ident">MarlinLinearLayerConfig</span></span>
+<span>(</span><span>full_weight_shape: tuple[int, int],<br>partition_weight_shape: tuple[int, int],<br>weight_type: ScalarType,<br>act_type: torch.dtype,<br>group_size: int,<br>zero_points: bool,<br>has_g_idx: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class MarlinLinearLayerConfig:
+    full_weight_shape: tuple[int, int]  # [in, out]
+    partition_weight_shape: tuple[int, int]
+    weight_type: ScalarType
+    act_type: torch.dtype
+    group_size: int
+    zero_points: bool
+    has_g_idx: bool</code></pre>
+</details>
+<div class="desc"><p>MarlinLinearLayerConfig(full_weight_shape: 'tuple[int, int]', partition_weight_shape: 'tuple[int, int]', weight_type: 'ScalarType', act_type: 'torch.dtype', group_size: 'int', zero_points: 'bool', has_g_idx: 'bool')</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.act_type"><code class="name">var <span class="ident">act_type</span> : torch.dtype</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.full_weight_shape"><code class="name">var <span class="ident">full_weight_shape</span> : tuple[int, int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.group_size"><code class="name">var <span class="ident">group_size</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.has_g_idx"><code class="name">var <span class="ident">has_g_idx</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.partition_weight_shape"><code class="name">var <span class="ident">partition_weight_shape</span> : tuple[int, int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.weight_type"><code class="name">var <span class="ident">weight_type</span> : sgl_kernel.scalar_type.ScalarType</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.zero_points"><code class="name">var <span class="ident">zero_points</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.gptq.check_marlin_format" href="#sglang.srt.layers.quantization.gptq.check_marlin_format">check_marlin_format</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.gptq_marlin_moe_repack" href="#sglang.srt.layers.quantization.gptq.gptq_marlin_moe_repack">gptq_marlin_moe_repack</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.gptq.GPTQConfig" href="#sglang.srt.layers.quantization.gptq.GPTQConfig">GPTQConfig</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.gptq.GPTQLinearMethod" href="#sglang.srt.layers.quantization.gptq.GPTQLinearMethod">GPTQLinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinConfig">GPTQMarlinConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig.TYPE_MAP" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinConfig.TYPE_MAP">TYPE_MAP</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinConfig.is_gptq_marlin_compatible" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinConfig.is_gptq_marlin_compatible">is_gptq_marlin_compatible</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinLinearMethod" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinLinearMethod">GPTQMarlinLinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.gptq.GPTQMarlinMoEMethod" href="#sglang.srt.layers.quantization.gptq.GPTQMarlinMoEMethod">GPTQMarlinMoEMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig">MarlinLinearLayerConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.act_type" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.act_type">act_type</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.full_weight_shape" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.full_weight_shape">full_weight_shape</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.group_size" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.group_size">group_size</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.has_g_idx" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.has_g_idx">has_g_idx</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.partition_weight_shape" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.partition_weight_shape">partition_weight_shape</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.weight_type" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.weight_type">weight_type</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.zero_points" href="#sglang.srt.layers.quantization.gptq.MarlinLinearLayerConfig.zero_points">zero_points</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

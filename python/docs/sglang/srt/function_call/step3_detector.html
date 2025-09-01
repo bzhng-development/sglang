@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.function_call.step3_detector API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.function_call.step3_detector</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.function_call.step3_detector.get_argument_type"><code class="name flex">
+<span>def <span class="ident">get_argument_type</span></span>(<span>func_name: str,<br>arg_key: str,<br>defined_tools: List[<a title="sglang.srt.entrypoints.openai.protocol.Tool" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.Tool">Tool</a>]) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_argument_type(func_name: str, arg_key: str, defined_tools: List[Tool]) -&gt; str:
+    &#34;&#34;&#34;Get the expected type for a function argument from tool schema.&#34;&#34;&#34;
+    name2tool = {tool.function.name: tool for tool in defined_tools}
+    if func_name not in name2tool:
+        return None
+    tool = name2tool[func_name]
+    parameters = tool.function.parameters or {}
+    properties = parameters.get(&#34;properties&#34;, {})
+    if arg_key not in properties:
+        return None
+    return properties[arg_key].get(&#34;type&#34;, None)</code></pre>
+</details>
+<div class="desc"><p>Get the expected type for a function argument from tool schema.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.step3_detector.parse_arguments"><code class="name flex">
+<span>def <span class="ident">parse_arguments</span></span>(<span>value: str) ‑> tuple[typing.Any, bool]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_arguments(value: str) -&gt; tuple[Any, bool]:
+    &#34;&#34;&#34;Parse a string value to appropriate type. Returns (parsed_value, success).&#34;&#34;&#34;
+    try:
+        try:
+            parsed_value = json.loads(value)
+        except:
+            parsed_value = ast.literal_eval(value)
+        return parsed_value, True
+    except:
+        return value, False</code></pre>
+</details>
+<div class="desc"><p>Parse a string value to appropriate type. Returns (parsed_value, success).</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.function_call.step3_detector.Step3Detector"><code class="flex name class">
+<span>class <span class="ident">Step3Detector</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Step3Detector(BaseFormatDetector):
+    &#34;&#34;&#34;
+    Detector for Step3 model function call format.
+
+    The Step3 format uses special Unicode tokens to delimit function calls
+    with steptml XML format for invocations.
+
+    Format Structure:
+    ```
+    &lt;｜tool_calls_begin｜&gt;
+    &lt;｜tool_call_begin｜&gt;function&lt;｜tool_sep｜&gt;&lt;steptml:invoke name=&#34;function_name&#34;&gt;
+    &lt;steptml:parameter name=&#34;param1&#34;&gt;value1&lt;/steptml:parameter&gt;
+    &lt;steptml:parameter name=&#34;param2&#34;&gt;value2&lt;/steptml:parameter&gt;
+    &lt;/steptml:invoke&gt;&lt;｜tool_call_end｜&gt;
+    &lt;｜tool_calls_end｜&gt;
+    ```
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        super().__init__()
+        self.bot_token = &#34;&lt;｜tool_calls_begin｜&gt;&#34;
+        self.eot_token = &#34;&lt;｜tool_calls_end｜&gt;&#34;
+        self.tool_call_begin = &#34;&lt;｜tool_call_begin｜&gt;&#34;
+        self.tool_call_end = &#34;&lt;｜tool_call_end｜&gt;&#34;
+        self.tool_sep = &#34;&lt;｜tool_sep｜&gt;&#34;
+
+        # Regex for parsing steptml invocations
+        self.invoke_regex = re.compile(
+            r&#39;&lt;steptml:invoke name=&#34;([^&#34;]+)&#34;&gt;(.+?)&lt;/steptml:invoke&gt;&#39;, re.DOTALL
+        )
+        self.param_regex = re.compile(
+            r&#39;&lt;steptml:parameter name=&#34;([^&#34;]+)&#34;&gt;([^&lt;]*)&lt;/steptml:parameter&gt;&#39;, re.DOTALL
+        )
+
+        # Streaming state variables
+        self._in_tool_block: bool = False
+        self._tool_block_finished: bool = False
+        self._current_function_name: str = &#34;&#34;
+        self._current_parameters: Dict[str, Any] = {}
+        self._in_tool_call: bool = False
+        self._function_name_sent: bool = False
+
+    def has_tool_call(self, text: str) -&gt; bool:
+        &#34;&#34;&#34;Check if the text contains a Step3 format tool call.&#34;&#34;&#34;
+        return self.bot_token in text
+
+    def _parse_steptml_invoke(
+        self, text: str, tools: List[Tool] = None
+    ) -&gt; tuple[str, dict]:
+        &#34;&#34;&#34;Parse steptml invoke format to extract function name and parameters.&#34;&#34;&#34;
+        invoke_match = self.invoke_regex.search(text)
+        if not invoke_match:
+            return None, {}
+
+        func_name = invoke_match.group(1)
+        params_text = invoke_match.group(2)
+
+        params = {}
+        for param_match in self.param_regex.finditer(params_text):
+            param_name = param_match.group(1)
+            param_value = param_match.group(2).strip()
+
+            # If tools provided, use schema-aware parsing
+            if tools:
+                arg_type = get_argument_type(func_name, param_name, tools)
+                if arg_type and arg_type != &#34;string&#34;:
+                    parsed_value, _ = parse_arguments(param_value)
+                    params[param_name] = parsed_value
+                else:
+                    params[param_name] = param_value
+            else:
+                # Fallback to generic parsing if no tools provided
+                parsed_value, _ = parse_arguments(param_value)
+                params[param_name] = parsed_value
+
+        return func_name, params
+
+    def detect_and_parse(self, text: str, tools: List[Tool]) -&gt; StreamingParseResult:
+        &#34;&#34;&#34;
+        One-time parsing: Detects and parses tool calls in the provided text.
+        &#34;&#34;&#34;
+        if self.bot_token not in text:
+            return StreamingParseResult(normal_text=text, calls=[])
+
+        try:
+            pre_text, rest = text.split(self.bot_token, 1)
+
+            # If no end token, return everything as normal text
+            if self.eot_token not in rest:
+                return StreamingParseResult(normal_text=text, calls=[])
+
+            tool_section, post_text = rest.split(self.eot_token, 1)
+
+            # Find all individual tool calls using regex
+            calls = []
+            tool_call_pattern = (
+                f&#34;{re.escape(self.tool_call_begin)}(.*?){re.escape(self.tool_call_end)}&#34;
+            )
+
+            for match in re.finditer(tool_call_pattern, tool_section, re.DOTALL):
+                call_content = match.group(1)
+
+                # Check if it&#39;s a function call
+                if self.tool_sep not in call_content:
+                    continue
+
+                type_part, invoke_part = call_content.split(self.tool_sep, 1)
+                if type_part.strip() != &#34;function&#34;:
+                    continue
+
+                func_name, params = self._parse_steptml_invoke(invoke_part, tools)
+                if func_name:
+                    # Use parse_base_json to create the ToolCallItem
+                    action = {&#34;name&#34;: func_name, &#34;arguments&#34;: params}
+                    calls.extend(self.parse_base_json(action, tools))
+
+            # Combine pre and post text
+            normal_text = pre_text + post_text
+
+            return StreamingParseResult(normal_text=normal_text, calls=calls)
+
+        except Exception as e:
+            logger.error(f&#34;Error in detect_and_parse: {e}&#34;)
+            # Return the original text if parsing fails
+            return StreamingParseResult(normal_text=text)
+
+    def parse_streaming_increment(
+        self, new_text: str, tools: List[Tool]
+    ) -&gt; StreamingParseResult:
+        &#34;&#34;&#34;
+        Streaming incremental parsing for Step3 format.
+        &#34;&#34;&#34;
+        self._buffer += new_text
+
+        # Build tool indices for validation
+        if not hasattr(self, &#34;_tool_indices&#34;):
+            self._tool_indices = self._get_tool_indices(tools)
+
+        # If we&#39;ve finished the tool block, everything is normal text
+        if self._tool_block_finished:
+            normal_text = self._buffer
+            self._buffer = &#34;&#34;
+            return StreamingParseResult(normal_text=normal_text)
+
+        # Check if tool block hasn&#39;t started yet
+        if not self._in_tool_block:
+            if self.bot_token in self._buffer:
+                idx = self._buffer.find(self.bot_token)
+                normal_text = self._buffer[:idx]
+                self._buffer = self._buffer[idx + len(self.bot_token) :]
+                self._in_tool_block = True
+                return StreamingParseResult(normal_text=normal_text)
+            else:
+                # Check if we might have a partial bot_token
+                partial_len = self._ends_with_partial_token(
+                    self._buffer, self.bot_token
+                )
+                if partial_len:
+                    return StreamingParseResult()  # Wait for more text
+                else:
+                    normal_text = self._buffer
+                    self._buffer = &#34;&#34;
+                    return StreamingParseResult(normal_text=normal_text)
+
+        # We&#39;re inside the tool block
+        calls: List[ToolCallItem] = []
+
+        # Check if tool block is ending
+        if self.eot_token in self._buffer:
+            idx = self._buffer.find(self.eot_token)
+
+            # If we&#39;re in the middle of a tool call, we need to handle it
+            if self._in_tool_call:
+                # The buffer before eot_token might contain the end of the current tool call
+                before_eot = self._buffer[:idx]
+                if self.tool_call_end in before_eot:
+                    # Parse this final tool call
+                    result = self._parse_partial_tool_call(tools)
+                    calls.extend(result.calls)
+                else:
+                    # Incomplete tool call - log warning
+                    logger.warning(&#34;Tool block ended with incomplete tool call&#34;)
+
+            remaining = self._buffer[idx + len(self.eot_token) :]
+            self._buffer = &#34;&#34;
+            self._tool_block_finished = True
+
+            # Reset any partial tool call state
+            self._reset_streaming_state()
+
+            return StreamingParseResult(normal_text=remaining, calls=calls)
+
+        # Check if we&#39;re in a tool call or need to start one
+        if not self._in_tool_call:
+            if self.tool_call_begin in self._buffer:
+                idx = self._buffer.find(self.tool_call_begin)
+                # Remove any content before tool call begin (shouldn&#39;t happen but be safe)
+                self._buffer = self._buffer[idx + len(self.tool_call_begin) :]
+                self._in_tool_call = True
+                self._function_name_sent = False
+                self._current_function_name = &#34;&#34;
+                self._current_parameters = {}
+                # Fall through to parse the partial tool call
+            else:
+                # Wait for tool call to begin
+                return StreamingParseResult()
+
+        # Parse partial tool call
+        if self._in_tool_call:
+            return self._parse_partial_tool_call(tools)
+
+        return StreamingParseResult()
+
+    def _parse_partial_tool_call(self, tools: List[Tool]) -&gt; StreamingParseResult:
+        &#34;&#34;&#34;Parse partial tool call for streaming scenarios.&#34;&#34;&#34;
+        calls = []
+
+        # Check if we have tool_sep (means we&#39;re past the type declaration)
+        if self.tool_sep not in self._buffer:
+            return StreamingParseResult(calls=calls)  # Wait for more text
+
+        type_part, invoke_part = self._buffer.split(self.tool_sep, 1)
+        if type_part.strip() != &#34;function&#34;:
+            # Invalid tool type, skip this tool call
+            self._reset_streaming_state()
+            return StreamingParseResult(calls=calls)
+
+        # Try to extract function name if not sent yet
+        if not self._function_name_sent:
+            name_match = re.search(r&#39;&lt;steptml:invoke name=&#34;([^&#34;]+)&#34;&gt;&#39;, invoke_part)
+            if name_match:
+                func_name = name_match.group(1)
+
+                # Validate function name
+                if func_name in self._tool_indices:
+                    self._current_function_name = func_name
+                    self._function_name_sent = True
+
+                    # Initialize tool tracking
+                    if self.current_tool_id == -1:
+                        self.current_tool_id = 0
+
+                    # Ensure tracking arrays are large enough
+                    while len(self.prev_tool_call_arr) &lt;= self.current_tool_id:
+                        self.prev_tool_call_arr.append({})
+                    while len(self.streamed_args_for_tool) &lt;= self.current_tool_id:
+                        self.streamed_args_for_tool.append(&#34;&#34;)
+
+                    # Store tool call info
+                    self.prev_tool_call_arr[self.current_tool_id] = {
+                        &#34;name&#34;: func_name,
+                        &#34;arguments&#34;: {},
+                    }
+
+                    # Send tool name with empty parameters
+                    calls.append(
+                        ToolCallItem(
+                            tool_index=self.current_tool_id,
+                            name=func_name,
+                            parameters=&#34;&#34;,
+                        )
+                    )
+                else:
+                    # Invalid function name
+                    logger.warning(f&#34;Invalid function name: {func_name}&#34;)
+                    self._reset_streaming_state()
+                    return StreamingParseResult(calls=calls)
+            else:
+                # Function name not complete yet
+                return StreamingParseResult(calls=calls)
+
+        # Parse parameters incrementally
+        if self._function_name_sent:
+            # Extract all complete parameters
+            new_params = {}
+            for param_match in self.param_regex.finditer(invoke_part):
+                param_name = param_match.group(1)
+                param_value = param_match.group(2).strip()
+
+                # Use schema-aware parsing
+                arg_type = get_argument_type(
+                    self._current_function_name, param_name, tools
+                )
+                if arg_type and arg_type != &#34;string&#34;:
+                    parsed_value, _ = parse_arguments(param_value)
+                    new_params[param_name] = parsed_value
+                else:
+                    new_params[param_name] = param_value
+
+            # Check if we have new parameters to stream
+            if new_params != self._current_parameters:
+                # Build the JSON content without the closing brace for streaming
+                if not self._current_parameters:
+                    # First parameters - send opening brace and content
+                    params_content = json.dumps(new_params, ensure_ascii=False)
+                    if len(params_content) &gt; 2:  # More than just &#34;{}&#34;
+                        # Send everything except the closing brace
+                        diff = params_content[:-1]
+                    else:
+                        diff = &#34;{&#34;
+                else:
+                    # Subsequent parameters - calculate the incremental diff
+                    old_json = json.dumps(self._current_parameters, ensure_ascii=False)
+                    new_json = json.dumps(new_params, ensure_ascii=False)
+
+                    # Remove closing braces for comparison
+                    old_without_brace = old_json[:-1]
+                    new_without_brace = new_json[:-1]
+
+                    # The new content should extend the old content
+                    if new_without_brace.startswith(old_without_brace):
+                        diff = new_without_brace[len(old_without_brace) :]
+                    else:
+                        # Parameters changed in unexpected way - shouldn&#39;t happen in normal streaming
+                        diff = &#34;&#34;
+
+                if diff:
+                    calls.append(
+                        ToolCallItem(
+                            tool_index=self.current_tool_id,
+                            parameters=diff,
+                        )
+                    )
+                    self.streamed_args_for_tool[self.current_tool_id] += diff
+
+                # Update current state
+                self._current_parameters = new_params
+                self.prev_tool_call_arr[self.current_tool_id][&#34;arguments&#34;] = new_params
+
+            # Check if tool call is complete
+            if self.tool_call_end in self._buffer:
+                # Send closing brace if we&#39;ve sent any parameters
+                if self.streamed_args_for_tool[self.current_tool_id]:
+                    calls.append(
+                        ToolCallItem(
+                            tool_index=self.current_tool_id,
+                            parameters=&#34;}&#34;,
+                        )
+                    )
+                    self.streamed_args_for_tool[self.current_tool_id] += &#34;}&#34;
+
+                # Find the end position
+                end_idx = self._buffer.find(self.tool_call_end)
+                # Remove the processed tool call from buffer
+                self._buffer = self._buffer[end_idx + len(self.tool_call_end) :]
+
+                # Reset state for next tool call
+                self._reset_streaming_state()
+                self.current_tool_id += 1
+
+        return StreamingParseResult(calls=calls)
+
+    def _reset_streaming_state(self):
+        &#34;&#34;&#34;Reset streaming state for the next tool call&#34;&#34;&#34;
+        self._in_tool_call = False
+        self._function_name_sent = False
+        self._current_function_name = &#34;&#34;
+        self._current_parameters = {}
+
+    def supports_structural_tag(self) -&gt; bool:
+        &#34;&#34;&#34;Return True if this detector supports structural tag format.&#34;&#34;&#34;
+        return False
+
+    def structure_info(self) -&gt; _GetInfoFunc:
+        raise NotImplementedError()
+
+    def build_ebnf(self, tools: List[Tool]) -&gt; str:
+        &#34;&#34;&#34;
+        Build EBNF grammar for Step3 tool call format.
+        &#34;&#34;&#34;
+        # Custom call rule for steptml format
+        call_rule_fmt = (
+            &#39;&#34;function&#34; &#34;&lt;｜tool_sep｜&gt;&#34; &#34;&lt;steptml:invoke name=\\&#34;{name}\\&#34;&gt;&#34; &#39;
+            &#39;{arguments_rule} &#34;&lt;/steptml:invoke&gt;&#34;&#39;
+        )
+
+        # Custom key-value rule for steptml parameters
+        key_value_rule_fmt = (
+            &#39;&#34;&lt;steptml:parameter name=\\&#34;{key}\\&#34;&gt;&#34; {valrule} &#34;&lt;/steptml:parameter&gt;&#34;&#39;
+        )
+
+        return EBNFComposer.build_ebnf(
+            tools,
+            sequence_start_token=self.bot_token,
+            sequence_end_token=self.eot_token,
+            individual_call_start_token=self.tool_call_begin,
+            individual_call_end_token=self.tool_call_end,
+            tool_call_separator=&#34;&#34;,
+            function_format=&#34;xml&#34;,
+            call_rule_fmt=call_rule_fmt,
+            key_value_rule_fmt=key_value_rule_fmt,
+            key_value_separator=&#34;&#34;,
+        )</code></pre>
+</details>
+<div class="desc"><p>Detector for Step3 model function call format.</p>
+<p>The Step3 format uses special Unicode tokens to delimit function calls
+with steptml XML format for invocations.</p>
+<p>Format Structure:</p>
+<pre><code>&lt;｜tool_calls_begin｜&gt;
+&lt;｜tool_call_begin｜&gt;function&lt;｜tool_sep｜&gt;&lt;steptml:invoke name=&quot;function_name&quot;&gt;
+&lt;steptml:parameter name=&quot;param1&quot;&gt;value1&lt;/steptml:parameter&gt;
+&lt;steptml:parameter name=&quot;param2&quot;&gt;value2&lt;/steptml:parameter&gt;
+&lt;/steptml:invoke&gt;&lt;｜tool_call_end｜&gt;
+&lt;｜tool_calls_end｜&gt;
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector">BaseFormatDetector</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.function_call.step3_detector.Step3Detector.build_ebnf"><code class="name flex">
+<span>def <span class="ident">build_ebnf</span></span>(<span>self,<br>tools: List[<a title="sglang.srt.entrypoints.openai.protocol.Tool" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.Tool">Tool</a>]) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_ebnf(self, tools: List[Tool]) -&gt; str:
+    &#34;&#34;&#34;
+    Build EBNF grammar for Step3 tool call format.
+    &#34;&#34;&#34;
+    # Custom call rule for steptml format
+    call_rule_fmt = (
+        &#39;&#34;function&#34; &#34;&lt;｜tool_sep｜&gt;&#34; &#34;&lt;steptml:invoke name=\\&#34;{name}\\&#34;&gt;&#34; &#39;
+        &#39;{arguments_rule} &#34;&lt;/steptml:invoke&gt;&#34;&#39;
+    )
+
+    # Custom key-value rule for steptml parameters
+    key_value_rule_fmt = (
+        &#39;&#34;&lt;steptml:parameter name=\\&#34;{key}\\&#34;&gt;&#34; {valrule} &#34;&lt;/steptml:parameter&gt;&#34;&#39;
+    )
+
+    return EBNFComposer.build_ebnf(
+        tools,
+        sequence_start_token=self.bot_token,
+        sequence_end_token=self.eot_token,
+        individual_call_start_token=self.tool_call_begin,
+        individual_call_end_token=self.tool_call_end,
+        tool_call_separator=&#34;&#34;,
+        function_format=&#34;xml&#34;,
+        call_rule_fmt=call_rule_fmt,
+        key_value_rule_fmt=key_value_rule_fmt,
+        key_value_separator=&#34;&#34;,
+    )</code></pre>
+</details>
+<div class="desc"><p>Build EBNF grammar for Step3 tool call format.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.step3_detector.Step3Detector.detect_and_parse"><code class="name flex">
+<span>def <span class="ident">detect_and_parse</span></span>(<span>self,<br>text: str,<br>tools: List[<a title="sglang.srt.entrypoints.openai.protocol.Tool" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.Tool">Tool</a>]) ‑> <a title="sglang.srt.function_call.core_types.StreamingParseResult" href="core_types.html#sglang.srt.function_call.core_types.StreamingParseResult">StreamingParseResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def detect_and_parse(self, text: str, tools: List[Tool]) -&gt; StreamingParseResult:
+    &#34;&#34;&#34;
+    One-time parsing: Detects and parses tool calls in the provided text.
+    &#34;&#34;&#34;
+    if self.bot_token not in text:
+        return StreamingParseResult(normal_text=text, calls=[])
+
+    try:
+        pre_text, rest = text.split(self.bot_token, 1)
+
+        # If no end token, return everything as normal text
+        if self.eot_token not in rest:
+            return StreamingParseResult(normal_text=text, calls=[])
+
+        tool_section, post_text = rest.split(self.eot_token, 1)
+
+        # Find all individual tool calls using regex
+        calls = []
+        tool_call_pattern = (
+            f&#34;{re.escape(self.tool_call_begin)}(.*?){re.escape(self.tool_call_end)}&#34;
+        )
+
+        for match in re.finditer(tool_call_pattern, tool_section, re.DOTALL):
+            call_content = match.group(1)
+
+            # Check if it&#39;s a function call
+            if self.tool_sep not in call_content:
+                continue
+
+            type_part, invoke_part = call_content.split(self.tool_sep, 1)
+            if type_part.strip() != &#34;function&#34;:
+                continue
+
+            func_name, params = self._parse_steptml_invoke(invoke_part, tools)
+            if func_name:
+                # Use parse_base_json to create the ToolCallItem
+                action = {&#34;name&#34;: func_name, &#34;arguments&#34;: params}
+                calls.extend(self.parse_base_json(action, tools))
+
+        # Combine pre and post text
+        normal_text = pre_text + post_text
+
+        return StreamingParseResult(normal_text=normal_text, calls=calls)
+
+    except Exception as e:
+        logger.error(f&#34;Error in detect_and_parse: {e}&#34;)
+        # Return the original text if parsing fails
+        return StreamingParseResult(normal_text=text)</code></pre>
+</details>
+<div class="desc"><p>One-time parsing: Detects and parses tool calls in the provided text.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.step3_detector.Step3Detector.has_tool_call"><code class="name flex">
+<span>def <span class="ident">has_tool_call</span></span>(<span>self, text: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_tool_call(self, text: str) -&gt; bool:
+    &#34;&#34;&#34;Check if the text contains a Step3 format tool call.&#34;&#34;&#34;
+    return self.bot_token in text</code></pre>
+</details>
+<div class="desc"><p>Check if the text contains a Step3 format tool call.</p></div>
+</dd>
+<dt id="sglang.srt.function_call.step3_detector.Step3Detector.parse_streaming_increment"><code class="name flex">
+<span>def <span class="ident">parse_streaming_increment</span></span>(<span>self,<br>new_text: str,<br>tools: List[<a title="sglang.srt.entrypoints.openai.protocol.Tool" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.Tool">Tool</a>]) ‑> <a title="sglang.srt.function_call.core_types.StreamingParseResult" href="core_types.html#sglang.srt.function_call.core_types.StreamingParseResult">StreamingParseResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_streaming_increment(
+    self, new_text: str, tools: List[Tool]
+) -&gt; StreamingParseResult:
+    &#34;&#34;&#34;
+    Streaming incremental parsing for Step3 format.
+    &#34;&#34;&#34;
+    self._buffer += new_text
+
+    # Build tool indices for validation
+    if not hasattr(self, &#34;_tool_indices&#34;):
+        self._tool_indices = self._get_tool_indices(tools)
+
+    # If we&#39;ve finished the tool block, everything is normal text
+    if self._tool_block_finished:
+        normal_text = self._buffer
+        self._buffer = &#34;&#34;
+        return StreamingParseResult(normal_text=normal_text)
+
+    # Check if tool block hasn&#39;t started yet
+    if not self._in_tool_block:
+        if self.bot_token in self._buffer:
+            idx = self._buffer.find(self.bot_token)
+            normal_text = self._buffer[:idx]
+            self._buffer = self._buffer[idx + len(self.bot_token) :]
+            self._in_tool_block = True
+            return StreamingParseResult(normal_text=normal_text)
+        else:
+            # Check if we might have a partial bot_token
+            partial_len = self._ends_with_partial_token(
+                self._buffer, self.bot_token
+            )
+            if partial_len:
+                return StreamingParseResult()  # Wait for more text
+            else:
+                normal_text = self._buffer
+                self._buffer = &#34;&#34;
+                return StreamingParseResult(normal_text=normal_text)
+
+    # We&#39;re inside the tool block
+    calls: List[ToolCallItem] = []
+
+    # Check if tool block is ending
+    if self.eot_token in self._buffer:
+        idx = self._buffer.find(self.eot_token)
+
+        # If we&#39;re in the middle of a tool call, we need to handle it
+        if self._in_tool_call:
+            # The buffer before eot_token might contain the end of the current tool call
+            before_eot = self._buffer[:idx]
+            if self.tool_call_end in before_eot:
+                # Parse this final tool call
+                result = self._parse_partial_tool_call(tools)
+                calls.extend(result.calls)
+            else:
+                # Incomplete tool call - log warning
+                logger.warning(&#34;Tool block ended with incomplete tool call&#34;)
+
+        remaining = self._buffer[idx + len(self.eot_token) :]
+        self._buffer = &#34;&#34;
+        self._tool_block_finished = True
+
+        # Reset any partial tool call state
+        self._reset_streaming_state()
+
+        return StreamingParseResult(normal_text=remaining, calls=calls)
+
+    # Check if we&#39;re in a tool call or need to start one
+    if not self._in_tool_call:
+        if self.tool_call_begin in self._buffer:
+            idx = self._buffer.find(self.tool_call_begin)
+            # Remove any content before tool call begin (shouldn&#39;t happen but be safe)
+            self._buffer = self._buffer[idx + len(self.tool_call_begin) :]
+            self._in_tool_call = True
+            self._function_name_sent = False
+            self._current_function_name = &#34;&#34;
+            self._current_parameters = {}
+            # Fall through to parse the partial tool call
+        else:
+            # Wait for tool call to begin
+            return StreamingParseResult()
+
+    # Parse partial tool call
+    if self._in_tool_call:
+        return self._parse_partial_tool_call(tools)
+
+    return StreamingParseResult()</code></pre>
+</details>
+<div class="desc"><p>Streaming incremental parsing for Step3 format.</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector">BaseFormatDetector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.structure_info" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.structure_info">structure_info</a></code></li>
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.supports_structural_tag" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.supports_structural_tag">supports_structural_tag</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.function_call" href="index.html">sglang.srt.function_call</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.function_call.step3_detector.get_argument_type" href="#sglang.srt.function_call.step3_detector.get_argument_type">get_argument_type</a></code></li>
+<li><code><a title="sglang.srt.function_call.step3_detector.parse_arguments" href="#sglang.srt.function_call.step3_detector.parse_arguments">parse_arguments</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.function_call.step3_detector.Step3Detector" href="#sglang.srt.function_call.step3_detector.Step3Detector">Step3Detector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.function_call.step3_detector.Step3Detector.build_ebnf" href="#sglang.srt.function_call.step3_detector.Step3Detector.build_ebnf">build_ebnf</a></code></li>
+<li><code><a title="sglang.srt.function_call.step3_detector.Step3Detector.detect_and_parse" href="#sglang.srt.function_call.step3_detector.Step3Detector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.function_call.step3_detector.Step3Detector.has_tool_call" href="#sglang.srt.function_call.step3_detector.Step3Detector.has_tool_call">has_tool_call</a></code></li>
+<li><code><a title="sglang.srt.function_call.step3_detector.Step3Detector.parse_streaming_increment" href="#sglang.srt.function_call.step3_detector.Step3Detector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

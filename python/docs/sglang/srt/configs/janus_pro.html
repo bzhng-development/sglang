@@ -1,0 +1,2638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.configs.janus_pro API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.configs.janus_pro</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.AlignerConfig"><code class="flex name class">
+<span>class <span class="ident">AlignerConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AlignerConfig(PretrainedConfig):
+    model_type = &#34;aligner&#34;
+    cls: str = &#34;&#34;
+    params = {}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.cls = kwargs.get(&#34;cls&#34;, &#34;&#34;)
+        if not isinstance(self.cls, str):
+            self.cls = self.cls.__name__
+
+        self.params = kwargs.get(&#34;params&#34;, {})</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.AlignerConfig.cls"><code class="name">var <span class="ident">cls</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.AlignerConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.AlignerConfig.params"><code class="name">var <span class="ident">params</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput"><code class="flex name class">
+<span>class <span class="ident">BatchedVLChatProcessorOutput</span></span>
+<span>(</span><span>sft_format: List[str],<br>input_ids: torch.Tensor,<br>pixel_values: torch.Tensor,<br>attention_mask: torch.Tensor,<br>images_seq_mask: torch.BoolTensor,<br>images_emb_mask: torch.BoolTensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class BatchedVLChatProcessorOutput(DictOutput):
+    sft_format: List[str]
+    input_ids: torch.Tensor
+    pixel_values: torch.Tensor
+    attention_mask: torch.Tensor
+    images_seq_mask: torch.BoolTensor
+    images_emb_mask: torch.BoolTensor</code></pre>
+</details>
+<div class="desc"><p>BatchedVLChatProcessorOutput(sft_format: List[str], input_ids: torch.Tensor, pixel_values: torch.Tensor, attention_mask: torch.Tensor, images_seq_mask: torch.BoolTensor, images_emb_mask: torch.BoolTensor)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.configs.janus_pro.DictOutput" href="#sglang.srt.configs.janus_pro.DictOutput">DictOutput</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.attention_mask"><code class="name">var <span class="ident">attention_mask</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.images_emb_mask"><code class="name">var <span class="ident">images_emb_mask</span> : torch.BoolTensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.images_seq_mask"><code class="name">var <span class="ident">images_seq_mask</span> : torch.BoolTensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.input_ids"><code class="name">var <span class="ident">input_ids</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.pixel_values"><code class="name">var <span class="ident">pixel_values</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.sft_format"><code class="name">var <span class="ident">sft_format</span> : List[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.DictOutput"><code class="flex name class">
+<span>class <span class="ident">DictOutput</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DictOutput(object):
+    def items(self):
+        return self.__dict__.items()
+
+    def keys(self):
+        return self.__dict__.keys()
+
+    def __getitem__(self, item):
+        return self.__dict__[item]
+
+    def __contains__(self, key):
+        return key in self.__dict__
+
+    def __setitem__(self, key, value):
+        self.__dict__[key] = value</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput">BatchedVLChatProcessorOutput</a></li>
+<li><a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput">VLChatProcessorOutput</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.DictOutput.items"><code class="name flex">
+<span>def <span class="ident">items</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def items(self):
+    return self.__dict__.items()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.DictOutput.keys"><code class="name flex">
+<span>def <span class="ident">keys</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def keys(self):
+    return self.__dict__.keys()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.DictToObject"><code class="flex name class">
+<span>class <span class="ident">DictToObject</span></span>
+<span>(</span><span>dictionary)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DictToObject(dict):
+    def __init__(self, dictionary):
+        super(self).__init__(dictionary)
+
+        for key, value in dictionary.items():
+            if isinstance(value, dict):
+                value = DictToObject(value)
+            setattr(self, key, value)</code></pre>
+</details>
+<div class="desc"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+(key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+d = {}
+for k, v in iterable:
+d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+in the keyword argument list.
+For example:
+dict(one=1, two=2)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.dict</li>
+</ul>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenAlignerConfig"><code class="flex name class">
+<span>class <span class="ident">GenAlignerConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GenAlignerConfig(PretrainedConfig):
+    model_type = &#34;gen_aligner&#34;
+    cls: str = &#34;&#34;
+    params = {}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.cls = kwargs.get(&#34;cls&#34;, &#34;&#34;)
+        if not isinstance(self.cls, str):
+            self.cls = self.cls.__name__
+
+        self.params = kwargs.get(&#34;params&#34;, {})</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.GenAlignerConfig.cls"><code class="name">var <span class="ident">cls</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenAlignerConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenAlignerConfig.params"><code class="name">var <span class="ident">params</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenHeadConfig"><code class="flex name class">
+<span>class <span class="ident">GenHeadConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GenHeadConfig(PretrainedConfig):
+    model_type = &#34;gen_head&#34;
+    cls: str = &#34;&#34;
+    params = {}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.cls = kwargs.get(&#34;cls&#34;, &#34;&#34;)
+        if not isinstance(self.cls, str):
+            self.cls = self.cls.__name__
+
+        self.params = kwargs.get(&#34;params&#34;, {})</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.GenHeadConfig.cls"><code class="name">var <span class="ident">cls</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenHeadConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenHeadConfig.params"><code class="name">var <span class="ident">params</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenVisionConfig"><code class="flex name class">
+<span>class <span class="ident">GenVisionConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GenVisionConfig(PretrainedConfig):
+    model_type = &#34;gen_vision&#34;
+    cls: str = &#34;&#34;
+    params = {}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.cls = kwargs.get(&#34;cls&#34;, &#34;&#34;)
+        if not isinstance(self.cls, str):
+            self.cls = self.cls.__name__
+
+        self.params = kwargs.get(&#34;params&#34;, {})</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.GenVisionConfig.cls"><code class="name">var <span class="ident">cls</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenVisionConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.GenVisionConfig.params"><code class="name">var <span class="ident">params</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig"><code class="flex name class">
+<span>class <span class="ident">MultiModalityConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MultiModalityConfig(PretrainedConfig):
+    model_type = &#34;multi_modality&#34;
+    vision_config: VisionConfig
+    aligner_config: AlignerConfig
+
+    gen_vision_config: GenVisionConfig
+    gen_aligner_config: GenAlignerConfig
+    gen_head_config: GenHeadConfig
+
+    language_config: LlamaConfig
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        vision_config = kwargs.get(&#34;vision_config&#34;, {})
+        self.vision_config = VisionConfig(**vision_config)
+
+        aligner_config = kwargs.get(&#34;aligner_config&#34;, {})
+        self.aligner_config = AlignerConfig(**aligner_config)
+
+        gen_vision_config = kwargs.get(&#34;gen_vision_config&#34;, {})
+        self.gen_vision_config = GenVisionConfig(**gen_vision_config)
+
+        gen_aligner_config = kwargs.get(&#34;gen_aligner_config&#34;, {})
+        self.gen_aligner_config = GenAlignerConfig(**gen_aligner_config)
+
+        gen_head_config = kwargs.get(&#34;gen_head_config&#34;, {})
+        self.gen_head_config = GenHeadConfig(**gen_head_config)
+
+        language_config = kwargs.get(&#34;language_config&#34;, {})
+        if isinstance(language_config, LlamaConfig):
+            self.language_config = language_config
+        else:
+            self.language_config = LlamaConfig(**language_config)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.aligner_config"><code class="name">var <span class="ident">aligner_config</span> : <a title="sglang.srt.configs.janus_pro.AlignerConfig" href="#sglang.srt.configs.janus_pro.AlignerConfig">AlignerConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.gen_aligner_config"><code class="name">var <span class="ident">gen_aligner_config</span> : <a title="sglang.srt.configs.janus_pro.GenAlignerConfig" href="#sglang.srt.configs.janus_pro.GenAlignerConfig">GenAlignerConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.gen_head_config"><code class="name">var <span class="ident">gen_head_config</span> : <a title="sglang.srt.configs.janus_pro.GenHeadConfig" href="#sglang.srt.configs.janus_pro.GenHeadConfig">GenHeadConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.gen_vision_config"><code class="name">var <span class="ident">gen_vision_config</span> : <a title="sglang.srt.configs.janus_pro.GenVisionConfig" href="#sglang.srt.configs.janus_pro.GenVisionConfig">GenVisionConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.language_config"><code class="name">var <span class="ident">language_config</span> : transformers.models.llama.configuration_llama.LlamaConfig</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.MultiModalityConfig.vision_config"><code class="name">var <span class="ident">vision_config</span> : <a title="sglang.srt.configs.janus_pro.VisionConfig" href="#sglang.srt.configs.janus_pro.VisionConfig">VisionConfig</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg"><code class="flex name class">
+<span>class <span class="ident">SigLIPVisionCfg</span></span>
+<span>(</span><span>width: int = 1152,<br>layers: Tuple[int, int, int, int] | int = 27,<br>heads: int = 16,<br>patch_size: int = 14,<br>image_size: Tuple[int, int] | int = 336,<br>global_pool: str = 'map',<br>mlp_ratio: float = 3.7362,<br>class_token: bool = False,<br>num_classes: int = 0,<br>use_checkpoint: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class SigLIPVisionCfg:
+    width: int = 1152
+    layers: Union[Tuple[int, int, int, int], int] = 27
+    heads: int = 16
+    patch_size: int = 14
+    image_size: Union[Tuple[int, int], int] = 336
+    global_pool: str = &#34;map&#34;
+    mlp_ratio: float = 3.7362
+    class_token: bool = False
+    num_classes: int = 0
+    use_checkpoint: bool = False</code></pre>
+</details>
+<div class="desc"><p>SigLIPVisionCfg(width: int = 1152, layers: Union[Tuple[int, int, int, int], int] = 27, heads: int = 16, patch_size: int = 14, image_size: Union[Tuple[int, int], int] = 336, global_pool: str = 'map', mlp_ratio: float = 3.7362, class_token: bool = False, num_classes: int = 0, use_checkpoint: bool = False)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.class_token"><code class="name">var <span class="ident">class_token</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.global_pool"><code class="name">var <span class="ident">global_pool</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.heads"><code class="name">var <span class="ident">heads</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.image_size"><code class="name">var <span class="ident">image_size</span> : Tuple[int, int] | int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.layers"><code class="name">var <span class="ident">layers</span> : Tuple[int, int, int, int] | int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.mlp_ratio"><code class="name">var <span class="ident">mlp_ratio</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.num_classes"><code class="name">var <span class="ident">num_classes</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.patch_size"><code class="name">var <span class="ident">patch_size</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.use_checkpoint"><code class="name">var <span class="ident">use_checkpoint</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.SigLIPVisionCfg.width"><code class="name">var <span class="ident">width</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor"><code class="flex name class">
+<span>class <span class="ident">VLChatProcessor</span></span>
+<span>(</span><span>image_processor: <a title="sglang.srt.configs.janus_pro.VLMImageProcessor" href="#sglang.srt.configs.janus_pro.VLMImageProcessor">VLMImageProcessor</a>,<br>tokenizer: transformers.models.llama.tokenization_llama_fast.LlamaTokenizerFast,<br>image_tag: str = &#x27;&lt;image_placeholder&gt;&#x27;,<br>image_start_tag: str = &#x27;&lt;begin_of_image&gt;&#x27;,<br>image_end_tag: str = &#x27;&lt;end_of_image&gt;&#x27;,<br>pad_tag: str = &#x27;&lt;｜▁pad▁｜&gt;&#x27;,<br>num_image_tokens: int = 576,<br>add_special_token: bool = False,<br>sft_format: str = 'deepseek',<br>mask_prompt: bool = True,<br>ignore_id: int = -100,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VLChatProcessor(ProcessorMixin):
+    image_processor_class = &#34;AutoImageProcessor&#34;
+    tokenizer_class = (&#34;LlamaTokenizer&#34;, &#34;LlamaTokenizerFast&#34;)
+
+    attributes = [&#34;image_processor&#34;, &#34;tokenizer&#34;]
+
+    def __init__(
+        self,
+        image_processor: VLMImageProcessor,
+        tokenizer: LlamaTokenizerFast,
+        image_tag: str = &#34;&lt;image_placeholder&gt;&#34;,
+        image_start_tag: str = &#34;&lt;begin_of_image&gt;&#34;,
+        image_end_tag: str = &#34;&lt;end_of_image&gt;&#34;,
+        pad_tag: str = &#34;&lt;｜▁pad▁｜&gt;&#34;,
+        num_image_tokens: int = 576,
+        add_special_token: bool = False,
+        sft_format: str = &#34;deepseek&#34;,
+        mask_prompt: bool = True,
+        ignore_id: int = -100,
+        **kwargs,
+    ):
+        self.image_processor = image_processor
+        self.tokenizer = tokenizer
+
+        image_id = self.tokenizer.vocab.get(image_tag)
+        if image_id is None:
+            special_tokens = [image_tag]
+            special_tokens_dict = {&#34;additional_special_tokens&#34;: special_tokens}
+            self.tokenizer.add_special_tokens(special_tokens_dict)
+            # print(f&#34;Add image tag = {image_tag} to the tokenizer&#34;)
+
+        self.image_tag = image_tag
+        self.image_start_tag = image_start_tag
+        self.image_end_tag = image_end_tag
+        self.pad_tag = pad_tag
+
+        self.num_image_tokens = num_image_tokens
+        self.add_special_token = add_special_token
+        self.sft_format = sft_format
+        self.ignore_id = ignore_id
+
+        super().__init__(
+            image_processor,
+            tokenizer,
+            **kwargs,
+        )
+
+    @property
+    def image_token(self):
+        return self.image_tag
+
+    @property
+    def image_id(self) -&gt; int:
+        image_id = self.tokenizer.vocab.get(self.image_tag)
+        return image_id
+
+    @property
+    def image_start_id(self):
+        image_start_id = self.tokenizer.vocab.get(self.image_start_tag)
+        return image_start_id
+
+    @property
+    def image_end_id(self):
+        image_end_id = self.tokenizer.vocab.get(self.image_end_tag)
+        return image_end_id
+
+    @property
+    def image_start_token(self):
+        return self.image_start_tag
+
+    @property
+    def image_end_token(self):
+        return self.image_end_tag
+
+    @property
+    def pad_id(self):
+        pad_id = self.tokenizer.vocab.get(self.pad_tag)
+        return pad_id
+
+    def add_image_token(
+        self,
+        image_indices: List[int],
+        input_ids: torch.LongTensor,
+    ):
+        &#34;&#34;&#34;
+
+        Args:
+            image_indices (List[int]): [index_0, index_1, ..., index_j]
+            input_ids (torch.LongTensor): [N]
+
+        Returns:
+            input_ids (torch.LongTensor): [N + image tokens]
+            num_image_tokens (torch.IntTensor): [n_images]
+        &#34;&#34;&#34;
+
+        input_slices = []
+
+        start = 0
+        for index in image_indices:
+            if self.add_special_token:
+                end = index + 1
+            else:
+                end = index
+
+            # original text tokens
+            input_slices.append(input_ids[start:end])
+
+            # add boi, image tokens, eoi and set the mask as False
+            input_slices.append(self.image_start_id * torch.ones((1), dtype=torch.long))
+            input_slices.append(
+                self.image_id * torch.ones((self.num_image_tokens,), dtype=torch.long)
+            )
+            input_slices.append(self.image_end_id * torch.ones((1), dtype=torch.long))
+            start = index + 1
+
+        # the left part
+        input_slices.append(input_ids[start:])
+
+        # concat all slices
+        input_ids = torch.cat(input_slices, dim=0)
+        num_image_tokens = torch.IntTensor([self.num_image_tokens] * len(image_indices))
+
+        return input_ids, num_image_tokens
+
+    def process_one(
+        self,
+        prompt: str = None,
+        images: List[Image] = None,
+        **kwargs,
+    ):
+        &#34;&#34;&#34;
+
+        Args:
+            prompt (str): the formatted prompt;
+            images (List[ImageType]): the list of images;
+            **kwargs:
+
+        Returns:
+            outputs (BaseProcessorOutput): the output of the processor,
+                - input_ids (torch.LongTensor): [N + image tokens]
+                - target_ids (torch.LongTensor): [N + image tokens]
+                - images (torch.FloatTensor): [n_images, 3, H, W]
+                - image_id (int): the id of the image token
+                - num_image_tokens (List[int]): the number of image tokens
+        &#34;&#34;&#34;
+
+        sft_format = prompt
+        # tokenize
+        input_ids = self.tokenizer.encode(sft_format)
+        input_ids = torch.LongTensor(input_ids)
+
+        # add image tokens to the input_ids
+        image_token_mask: torch.Tensor = (input_ids == self.image_id).to(torch.bool)
+        image_indices = image_token_mask.nonzero()
+        input_ids, num_image_tokens = self.add_image_token(
+            image_indices=image_indices,
+            input_ids=input_ids,
+        )
+
+        # load images
+        images_outputs = self.image_processor(images, return_tensors=&#34;pt&#34;)
+
+        prepare = VLChatProcessorOutput(
+            sft_format=sft_format,
+            input_ids=input_ids,
+            pixel_values=images_outputs.pixel_values,
+            num_image_tokens=num_image_tokens,
+        )
+
+        return prepare
+
+    def __call__(
+        self,
+        *,
+        prompt: str = None,
+        conversations: List[Dict[str, str]] = None,
+        images: List[Image] = None,
+        force_batchify: bool = True,
+        **kwargs,
+    ):
+        &#34;&#34;&#34;
+
+        Args:
+            prompt (str): the formatted prompt;
+            conversations (List[Dict]): conversations with a list of messages;
+            images (List[ImageType]): the list of images;
+            force_batchify (bool): force batchify the inputs;
+            **kwargs:
+
+        Returns:
+            outputs (BaseProcessorOutput): the output of the processor,
+                - input_ids (torch.LongTensor): [N + image tokens]
+                - images (torch.FloatTensor): [n_images, 3, H, W]
+                - image_id (int): the id of the image token
+                - num_image_tokens (List[int]): the number of image tokens
+        &#34;&#34;&#34;
+
+        prepare = self.process_one(
+            prompt=prompt, conversations=conversations, images=images
+        )
+
+        if force_batchify:
+            prepare = self.batchify([prepare])
+
+        return prepare
+
+    def batchify(
+        self, prepare_list: List[VLChatProcessorOutput]
+    ) -&gt; BatchedVLChatProcessorOutput:
+        &#34;&#34;&#34;
+        Preprocesses the inputs for multimodal inference.
+
+        Args:
+            prepare_list (List[VLChatProcessorOutput]): A list of VLChatProcessorOutput.
+
+        Returns:
+            BatchedVLChatProcessorOutput: A dictionary of the inputs to use for multimodal inference.
+        &#34;&#34;&#34;
+
+        batch_size = len(prepare_list)
+        sft_format = []
+        n_images = []
+        seq_lens = []
+        for prepare in prepare_list:
+            n_images.append(len(prepare.num_image_tokens))
+            seq_lens.append(len(prepare))
+
+        input_token_max_len = max(seq_lens)
+        max_n_images = max(1, max(n_images))
+
+        batched_input_ids = torch.full(
+            (batch_size, input_token_max_len), self.pad_id
+        ).long()  # FIXME
+        batched_attention_mask = torch.zeros((batch_size, input_token_max_len)).long()
+        batched_pixel_values = torch.zeros(
+            (batch_size, max_n_images, *self.image_processor.default_shape)
+        ).float()
+        batched_images_seq_mask = torch.zeros((batch_size, input_token_max_len)).bool()
+        batched_images_emb_mask = torch.zeros(
+            (batch_size, max_n_images, self.num_image_tokens)
+        ).bool()
+
+        for i, prepare in enumerate(prepare_list):
+            input_ids = prepare.input_ids
+            seq_len = len(prepare)
+            n_image = len(prepare.num_image_tokens)
+            # left-padding
+            batched_attention_mask[i, -seq_len:] = 1
+            batched_input_ids[i, -seq_len:] = torch.LongTensor(input_ids)
+            batched_images_seq_mask[i, -seq_len:] = input_ids == self.image_id
+
+            if n_image &gt; 0:
+                batched_pixel_values[i, :n_image] = prepare.pixel_values
+                for j, n_image_tokens in enumerate(prepare.num_image_tokens):
+                    batched_images_emb_mask[i, j, :n_image_tokens] = True
+
+            sft_format.append(prepare.sft_format)
+
+        batched_prepares = BatchedVLChatProcessorOutput(
+            input_ids=batched_input_ids,
+            attention_mask=batched_attention_mask,
+            pixel_values=batched_pixel_values,
+            images_seq_mask=batched_images_seq_mask,
+            images_emb_mask=batched_images_emb_mask,
+            sft_format=sft_format,
+        )
+
+        return batched_prepares</code></pre>
+</details>
+<div class="desc"><p>This is a mixin used to provide saving/loading functionality for all processor classes.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.processing_utils.ProcessorMixin</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.attributes"><code class="name">var <span class="ident">attributes</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_processor_class"><code class="name">var <span class="ident">image_processor_class</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.tokenizer_class"><code class="name">var <span class="ident">tokenizer_class</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_end_id"><code class="name">prop <span class="ident">image_end_id</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_end_id(self):
+    image_end_id = self.tokenizer.vocab.get(self.image_end_tag)
+    return image_end_id</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_end_token"><code class="name">prop <span class="ident">image_end_token</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_end_token(self):
+    return self.image_end_tag</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_id"><code class="name">prop <span class="ident">image_id</span> : int</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_id(self) -&gt; int:
+    image_id = self.tokenizer.vocab.get(self.image_tag)
+    return image_id</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_start_id"><code class="name">prop <span class="ident">image_start_id</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_start_id(self):
+    image_start_id = self.tokenizer.vocab.get(self.image_start_tag)
+    return image_start_id</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_start_token"><code class="name">prop <span class="ident">image_start_token</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_start_token(self):
+    return self.image_start_tag</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.image_token"><code class="name">prop <span class="ident">image_token</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image_token(self):
+    return self.image_tag</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.pad_id"><code class="name">prop <span class="ident">pad_id</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def pad_id(self):
+    pad_id = self.tokenizer.vocab.get(self.pad_tag)
+    return pad_id</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.add_image_token"><code class="name flex">
+<span>def <span class="ident">add_image_token</span></span>(<span>self, image_indices: List[int], input_ids: torch.LongTensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_image_token(
+    self,
+    image_indices: List[int],
+    input_ids: torch.LongTensor,
+):
+    &#34;&#34;&#34;
+
+    Args:
+        image_indices (List[int]): [index_0, index_1, ..., index_j]
+        input_ids (torch.LongTensor): [N]
+
+    Returns:
+        input_ids (torch.LongTensor): [N + image tokens]
+        num_image_tokens (torch.IntTensor): [n_images]
+    &#34;&#34;&#34;
+
+    input_slices = []
+
+    start = 0
+    for index in image_indices:
+        if self.add_special_token:
+            end = index + 1
+        else:
+            end = index
+
+        # original text tokens
+        input_slices.append(input_ids[start:end])
+
+        # add boi, image tokens, eoi and set the mask as False
+        input_slices.append(self.image_start_id * torch.ones((1), dtype=torch.long))
+        input_slices.append(
+            self.image_id * torch.ones((self.num_image_tokens,), dtype=torch.long)
+        )
+        input_slices.append(self.image_end_id * torch.ones((1), dtype=torch.long))
+        start = index + 1
+
+    # the left part
+    input_slices.append(input_ids[start:])
+
+    # concat all slices
+    input_ids = torch.cat(input_slices, dim=0)
+    num_image_tokens = torch.IntTensor([self.num_image_tokens] * len(image_indices))
+
+    return input_ids, num_image_tokens</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>image_indices</code></strong> :&ensp;<code>List[int]</code></dt>
+<dd>[index_0, index_1, &hellip;, index_j]</dd>
+<dt><strong><code>input_ids</code></strong> :&ensp;<code>torch.LongTensor</code></dt>
+<dd>[N]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>input_ids (torch.LongTensor): [N + image tokens]
+num_image_tokens (torch.IntTensor): [n_images]</p></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.batchify"><code class="name flex">
+<span>def <span class="ident">batchify</span></span>(<span>self,<br>prepare_list: List[<a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput">VLChatProcessorOutput</a>]) ‑> <a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput">BatchedVLChatProcessorOutput</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def batchify(
+    self, prepare_list: List[VLChatProcessorOutput]
+) -&gt; BatchedVLChatProcessorOutput:
+    &#34;&#34;&#34;
+    Preprocesses the inputs for multimodal inference.
+
+    Args:
+        prepare_list (List[VLChatProcessorOutput]): A list of VLChatProcessorOutput.
+
+    Returns:
+        BatchedVLChatProcessorOutput: A dictionary of the inputs to use for multimodal inference.
+    &#34;&#34;&#34;
+
+    batch_size = len(prepare_list)
+    sft_format = []
+    n_images = []
+    seq_lens = []
+    for prepare in prepare_list:
+        n_images.append(len(prepare.num_image_tokens))
+        seq_lens.append(len(prepare))
+
+    input_token_max_len = max(seq_lens)
+    max_n_images = max(1, max(n_images))
+
+    batched_input_ids = torch.full(
+        (batch_size, input_token_max_len), self.pad_id
+    ).long()  # FIXME
+    batched_attention_mask = torch.zeros((batch_size, input_token_max_len)).long()
+    batched_pixel_values = torch.zeros(
+        (batch_size, max_n_images, *self.image_processor.default_shape)
+    ).float()
+    batched_images_seq_mask = torch.zeros((batch_size, input_token_max_len)).bool()
+    batched_images_emb_mask = torch.zeros(
+        (batch_size, max_n_images, self.num_image_tokens)
+    ).bool()
+
+    for i, prepare in enumerate(prepare_list):
+        input_ids = prepare.input_ids
+        seq_len = len(prepare)
+        n_image = len(prepare.num_image_tokens)
+        # left-padding
+        batched_attention_mask[i, -seq_len:] = 1
+        batched_input_ids[i, -seq_len:] = torch.LongTensor(input_ids)
+        batched_images_seq_mask[i, -seq_len:] = input_ids == self.image_id
+
+        if n_image &gt; 0:
+            batched_pixel_values[i, :n_image] = prepare.pixel_values
+            for j, n_image_tokens in enumerate(prepare.num_image_tokens):
+                batched_images_emb_mask[i, j, :n_image_tokens] = True
+
+        sft_format.append(prepare.sft_format)
+
+    batched_prepares = BatchedVLChatProcessorOutput(
+        input_ids=batched_input_ids,
+        attention_mask=batched_attention_mask,
+        pixel_values=batched_pixel_values,
+        images_seq_mask=batched_images_seq_mask,
+        images_emb_mask=batched_images_emb_mask,
+        sft_format=sft_format,
+    )
+
+    return batched_prepares</code></pre>
+</details>
+<div class="desc"><p>Preprocesses the inputs for multimodal inference.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>prepare_list</code></strong> :&ensp;<code>List[<a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput">VLChatProcessorOutput</a>]</code></dt>
+<dd>A list of VLChatProcessorOutput.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput">BatchedVLChatProcessorOutput</a></code></dt>
+<dd>A dictionary of the inputs to use for multimodal inference.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessor.process_one"><code class="name flex">
+<span>def <span class="ident">process_one</span></span>(<span>self, prompt: str = None, images: List[PIL.Image.Image] = None, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_one(
+    self,
+    prompt: str = None,
+    images: List[Image] = None,
+    **kwargs,
+):
+    &#34;&#34;&#34;
+
+    Args:
+        prompt (str): the formatted prompt;
+        images (List[ImageType]): the list of images;
+        **kwargs:
+
+    Returns:
+        outputs (BaseProcessorOutput): the output of the processor,
+            - input_ids (torch.LongTensor): [N + image tokens]
+            - target_ids (torch.LongTensor): [N + image tokens]
+            - images (torch.FloatTensor): [n_images, 3, H, W]
+            - image_id (int): the id of the image token
+            - num_image_tokens (List[int]): the number of image tokens
+    &#34;&#34;&#34;
+
+    sft_format = prompt
+    # tokenize
+    input_ids = self.tokenizer.encode(sft_format)
+    input_ids = torch.LongTensor(input_ids)
+
+    # add image tokens to the input_ids
+    image_token_mask: torch.Tensor = (input_ids == self.image_id).to(torch.bool)
+    image_indices = image_token_mask.nonzero()
+    input_ids, num_image_tokens = self.add_image_token(
+        image_indices=image_indices,
+        input_ids=input_ids,
+    )
+
+    # load images
+    images_outputs = self.image_processor(images, return_tensors=&#34;pt&#34;)
+
+    prepare = VLChatProcessorOutput(
+        sft_format=sft_format,
+        input_ids=input_ids,
+        pixel_values=images_outputs.pixel_values,
+        num_image_tokens=num_image_tokens,
+    )
+
+    return prepare</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>prompt</code></strong> :&ensp;<code>str</code></dt>
+<dd>the formatted prompt;</dd>
+<dt><strong><code>images</code></strong> :&ensp;<code>List[ImageType]</code></dt>
+<dd>the list of images;</dd>
+</dl>
+<p>**kwargs:</p>
+<h2 id="returns">Returns</h2>
+<p>outputs (BaseProcessorOutput): the output of the processor,
+- input_ids (torch.LongTensor): [N + image tokens]
+- target_ids (torch.LongTensor): [N + image tokens]
+- images (torch.FloatTensor): [n_images, 3, H, W]
+- image_id (int): the id of the image token
+- num_image_tokens (List[int]): the number of image tokens</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessorOutput"><code class="flex name class">
+<span>class <span class="ident">VLChatProcessorOutput</span></span>
+<span>(</span><span>sft_format: str,<br>input_ids: torch.Tensor,<br>pixel_values: torch.Tensor,<br>num_image_tokens: torch.IntTensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class VLChatProcessorOutput(DictOutput):
+    sft_format: str
+    input_ids: torch.Tensor
+    pixel_values: torch.Tensor
+    num_image_tokens: torch.IntTensor
+
+    def __len__(self):
+        return len(self.input_ids)</code></pre>
+</details>
+<div class="desc"><p>VLChatProcessorOutput(sft_format: str, input_ids: torch.Tensor, pixel_values: torch.Tensor, num_image_tokens: torch.IntTensor)</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.configs.janus_pro.DictOutput" href="#sglang.srt.configs.janus_pro.DictOutput">DictOutput</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessorOutput.input_ids"><code class="name">var <span class="ident">input_ids</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessorOutput.num_image_tokens"><code class="name">var <span class="ident">num_image_tokens</span> : torch.IntTensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessorOutput.pixel_values"><code class="name">var <span class="ident">pixel_values</span> : torch.Tensor</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLChatProcessorOutput.sft_format"><code class="name">var <span class="ident">sft_format</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessor"><code class="flex name class">
+<span>class <span class="ident">VLMImageProcessor</span></span>
+<span>(</span><span>image_size: int,<br>min_size: int = 14,<br>image_mean: Tuple[float, float, float] | List[float] = (0.48145466, 0.4578275, 0.40821073),<br>image_std: Tuple[float, float, float] | List[float] = (0.26862954, 0.26130258, 0.27577711),<br>rescale_factor: float = 0.00392156862745098,<br>do_normalize: bool = True,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VLMImageProcessor(BaseImageProcessor):
+    model_input_names = [&#34;pixel_values&#34;]
+
+    def __init__(
+        self,
+        image_size: int,
+        min_size: int = 14,
+        image_mean: Union[Tuple[float, float, float], List[float]] = (
+            0.48145466,
+            0.4578275,
+            0.40821073,
+        ),
+        image_std: Union[Tuple[float, float, float], List[float]] = (
+            0.26862954,
+            0.26130258,
+            0.27577711,
+        ),
+        rescale_factor: float = 1.0 / 255.0,
+        do_normalize: bool = True,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        self.image_size = image_size
+        self.rescale_factor = rescale_factor
+        self.image_mean = image_mean
+        self.image_std = image_std
+        self.min_size = min_size
+        self.do_normalize = do_normalize
+
+        if image_mean is None:
+            self.background_color = (127, 127, 127)
+        else:
+            self.background_color = tuple([int(x * 255) for x in image_mean])
+
+    def resize(self, pil_img: Image) -&gt; np.ndarray:
+        &#34;&#34;&#34;
+
+        Args:
+            pil_img (PIL.Image): [H, W, 3] in PIL.Image in RGB
+
+        Returns:
+            x (np.ndarray): [3, self.image_size, self.image_size]
+        &#34;&#34;&#34;
+
+        width, height = pil_img.size
+        max_size = max(width, height)
+
+        size = [
+            max(int(height / max_size * self.image_size), self.min_size),
+            max(int(width / max_size * self.image_size), self.min_size),
+        ]
+
+        if width &lt;= 0 or height &lt;= 0 or size[0] &lt;= 0 or size[1] &lt;= 0:
+            # print(f&#34;orig size = {pil_img.size}, new size = {size}&#34;)
+            raise ValueError(&#34;Invalid size!&#34;)
+
+        def resize(
+            pil_img, size, interpolation=PIL.Image.Resampling.BICUBIC, antialias=True
+        ):
+            if isinstance(size, int):
+                w, h = pil_img.size
+                if (w &lt;= h and w == size) or (h &lt;= w and h == size):
+                    return pil_img
+                if w &lt; h:
+                    ow = size
+                    oh = int(size * h / w)
+                else:
+                    oh = size
+                    ow = int(size * w / h)
+                size = (ow, oh)
+            else:
+                size = (size[1], size[0])
+
+            return pil_img.resize(
+                size, resample=interpolation, reducing_gap=None if antialias else 3.0
+            )
+
+        pil_img = resize(
+            pil_img, size, interpolation=PIL.Image.Resampling.BICUBIC, antialias=True
+        )
+
+        pil_img = expand2square(pil_img, self.background_color)
+        x = to_numpy_array(pil_img)
+
+        # [H, W, 3] -&gt; [3, H, W]
+        x = np.transpose(x, (2, 0, 1))
+
+        return x
+
+    def preprocess(self, images, return_tensors: str = &#34;pt&#34;, **kwargs) -&gt; BatchFeature:
+        # resize and pad to [self.image_size, self.image_size]
+        # then convert from [H, W, 3] to [3, H, W]
+        if not isinstance(images, list):
+            images = [images]
+        images: List[np.ndarray] = [self.resize(image) for image in images]
+        images = [image[:3, ...] for image in images]
+
+        # rescale from [0, 255] -&gt; [0, 1]
+        images = [
+            self.rescale(
+                image=image,
+                scale=self.rescale_factor,
+                input_data_format=&#34;channels_first&#34;,
+            )
+            for image in images
+        ]
+
+        # normalize
+        if self.do_normalize:
+            images = [
+                self.normalize(
+                    image=image,
+                    mean=self.image_mean,
+                    std=self.image_std,
+                    input_data_format=&#34;channels_first&#34;,
+                )
+                for image in images
+            ]
+        data = {&#34;pixel_values&#34;: images}
+        return BatchFeature(data=data, tensor_type=return_tensors)
+
+    @property
+    def default_shape(self):
+        return [3, self.image_size, self.image_size]</code></pre>
+</details>
+<div class="desc"><p>This is an image processor mixin used to provide saving/loading functionality for sequential and image feature
+extractors.</p>
+<p>Set elements of <code>kwargs</code> as attributes.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.image_processing_utils.BaseImageProcessor</li>
+<li>transformers.image_processing_base.ImageProcessingMixin</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessor.model_input_names"><code class="name">var <span class="ident">model_input_names</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessor.default_shape"><code class="name">prop <span class="ident">default_shape</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def default_shape(self):
+    return [3, self.image_size, self.image_size]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessor.preprocess"><code class="name flex">
+<span>def <span class="ident">preprocess</span></span>(<span>self, images, return_tensors: str = 'pt', **kwargs) ‑> transformers.feature_extraction_utils.BatchFeature</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def preprocess(self, images, return_tensors: str = &#34;pt&#34;, **kwargs) -&gt; BatchFeature:
+    # resize and pad to [self.image_size, self.image_size]
+    # then convert from [H, W, 3] to [3, H, W]
+    if not isinstance(images, list):
+        images = [images]
+    images: List[np.ndarray] = [self.resize(image) for image in images]
+    images = [image[:3, ...] for image in images]
+
+    # rescale from [0, 255] -&gt; [0, 1]
+    images = [
+        self.rescale(
+            image=image,
+            scale=self.rescale_factor,
+            input_data_format=&#34;channels_first&#34;,
+        )
+        for image in images
+    ]
+
+    # normalize
+    if self.do_normalize:
+        images = [
+            self.normalize(
+                image=image,
+                mean=self.image_mean,
+                std=self.image_std,
+                input_data_format=&#34;channels_first&#34;,
+            )
+            for image in images
+        ]
+    data = {&#34;pixel_values&#34;: images}
+    return BatchFeature(data=data, tensor_type=return_tensors)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessor.resize"><code class="name flex">
+<span>def <span class="ident">resize</span></span>(<span>self, pil_img: PIL.Image.Image) ‑> numpy.ndarray</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def resize(self, pil_img: Image) -&gt; np.ndarray:
+    &#34;&#34;&#34;
+
+    Args:
+        pil_img (PIL.Image): [H, W, 3] in PIL.Image in RGB
+
+    Returns:
+        x (np.ndarray): [3, self.image_size, self.image_size]
+    &#34;&#34;&#34;
+
+    width, height = pil_img.size
+    max_size = max(width, height)
+
+    size = [
+        max(int(height / max_size * self.image_size), self.min_size),
+        max(int(width / max_size * self.image_size), self.min_size),
+    ]
+
+    if width &lt;= 0 or height &lt;= 0 or size[0] &lt;= 0 or size[1] &lt;= 0:
+        # print(f&#34;orig size = {pil_img.size}, new size = {size}&#34;)
+        raise ValueError(&#34;Invalid size!&#34;)
+
+    def resize(
+        pil_img, size, interpolation=PIL.Image.Resampling.BICUBIC, antialias=True
+    ):
+        if isinstance(size, int):
+            w, h = pil_img.size
+            if (w &lt;= h and w == size) or (h &lt;= w and h == size):
+                return pil_img
+            if w &lt; h:
+                ow = size
+                oh = int(size * h / w)
+            else:
+                oh = size
+                ow = int(size * w / h)
+            size = (ow, oh)
+        else:
+            size = (size[1], size[0])
+
+        return pil_img.resize(
+            size, resample=interpolation, reducing_gap=None if antialias else 3.0
+        )
+
+    pil_img = resize(
+        pil_img, size, interpolation=PIL.Image.Resampling.BICUBIC, antialias=True
+    )
+
+    pil_img = expand2square(pil_img, self.background_color)
+    x = to_numpy_array(pil_img)
+
+    # [H, W, 3] -&gt; [3, H, W]
+    x = np.transpose(x, (2, 0, 1))
+
+    return x</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pil_img</code></strong> :&ensp;<code>PIL.Image</code></dt>
+<dd>[H, W, 3] in PIL.Image in RGB</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>x (np.ndarray): [3, self.image_size, self.image_size]</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig"><code class="flex name class">
+<span>class <span class="ident">VLMImageProcessorConfig</span></span>
+<span>(</span><span>image_size: int,<br>min_size: int = 14,<br>image_mean: Tuple[float, float, float] | List[float] = (0.48145466, 0.4578275, 0.40821073),<br>image_std: Tuple[float, float, float] | List[float] = (0.26862954, 0.26130258, 0.27577711),<br>rescale_factor: float = 0.00392156862745098,<br>do_normalize: bool = True,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VLMImageProcessorConfig(PretrainedConfig):
+    model_type = &#34;deepseek_vlm&#34;
+    image_size: int
+    min_size: int
+    image_mean: Union[Tuple[float, float, float], List[float]]
+    image_std: Union[Tuple[float, float, float], List[float]]
+    rescale_factor: float
+    do_normalize: bool
+
+    def __init__(
+        self,
+        image_size: int,
+        min_size: int = 14,
+        image_mean: Union[Tuple[float, float, float], List[float]] = (
+            0.48145466,
+            0.4578275,
+            0.40821073,
+        ),
+        image_std: Union[Tuple[float, float, float], List[float]] = (
+            0.26862954,
+            0.26130258,
+            0.27577711,
+        ),
+        rescale_factor: float = 1.0 / 255.0,
+        do_normalize: bool = True,
+        **kwargs,
+    ):
+        self.image_size = image_size
+        self.min_size = min_size
+        self.image_mean = image_mean
+        self.image_std = image_std
+        self.rescale_factor = rescale_factor
+        self.do_normalize = do_normalize
+
+        super().__init__(**kwargs)</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.do_normalize"><code class="name">var <span class="ident">do_normalize</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_mean"><code class="name">var <span class="ident">image_mean</span> : Tuple[float, float, float] | List[float]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_size"><code class="name">var <span class="ident">image_size</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_std"><code class="name">var <span class="ident">image_std</span> : Tuple[float, float, float] | List[float]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.min_size"><code class="name">var <span class="ident">min_size</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.rescale_factor"><code class="name">var <span class="ident">rescale_factor</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VisionConfig"><code class="flex name class">
+<span>class <span class="ident">VisionConfig</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class VisionConfig(PretrainedConfig):
+    model_type = &#34;vision&#34;
+    cls: str = &#34;&#34;
+    params = {}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.cls = kwargs.get(&#34;cls&#34;, &#34;&#34;)
+        if not isinstance(self.cls, str):
+            self.cls = self.cls.__name__
+
+        self.params = kwargs.get(&#34;params&#34;, {})</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+torch_dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights. Since the config object is stored in plain text, this attribute contains just the
+floating type string without the <code>torch.</code> prefix. For example, for <code>torch.float16</code> <code><code>torch\_dtype&lt;/code&gt; is the</code>"float16"` string.</p>
+<pre><code>This attribute is currently not being used during model loading time, but this may change in the future
+versions. But we can already start preparing for the future by saving the dtype with save_pretrained.
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.janus_pro.VisionConfig.cls"><code class="name">var <span class="ident">cls</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VisionConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.janus_pro.VisionConfig.params"><code class="name">var <span class="ident">params</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.configs" href="index.html">sglang.srt.configs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.AlignerConfig" href="#sglang.srt.configs.janus_pro.AlignerConfig">AlignerConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.AlignerConfig.cls" href="#sglang.srt.configs.janus_pro.AlignerConfig.cls">cls</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.AlignerConfig.model_type" href="#sglang.srt.configs.janus_pro.AlignerConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.AlignerConfig.params" href="#sglang.srt.configs.janus_pro.AlignerConfig.params">params</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput">BatchedVLChatProcessorOutput</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.attention_mask" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.attention_mask">attention_mask</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.images_emb_mask" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.images_emb_mask">images_emb_mask</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.images_seq_mask" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.images_seq_mask">images_seq_mask</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.input_ids" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.input_ids">input_ids</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.pixel_values" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.pixel_values">pixel_values</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.sft_format" href="#sglang.srt.configs.janus_pro.BatchedVLChatProcessorOutput.sft_format">sft_format</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.DictOutput" href="#sglang.srt.configs.janus_pro.DictOutput">DictOutput</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.DictOutput.items" href="#sglang.srt.configs.janus_pro.DictOutput.items">items</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.DictOutput.keys" href="#sglang.srt.configs.janus_pro.DictOutput.keys">keys</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.DictToObject" href="#sglang.srt.configs.janus_pro.DictToObject">DictToObject</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.GenAlignerConfig" href="#sglang.srt.configs.janus_pro.GenAlignerConfig">GenAlignerConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.GenAlignerConfig.cls" href="#sglang.srt.configs.janus_pro.GenAlignerConfig.cls">cls</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.GenAlignerConfig.model_type" href="#sglang.srt.configs.janus_pro.GenAlignerConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.GenAlignerConfig.params" href="#sglang.srt.configs.janus_pro.GenAlignerConfig.params">params</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.GenHeadConfig" href="#sglang.srt.configs.janus_pro.GenHeadConfig">GenHeadConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.GenHeadConfig.cls" href="#sglang.srt.configs.janus_pro.GenHeadConfig.cls">cls</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.GenHeadConfig.model_type" href="#sglang.srt.configs.janus_pro.GenHeadConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.GenHeadConfig.params" href="#sglang.srt.configs.janus_pro.GenHeadConfig.params">params</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.GenVisionConfig" href="#sglang.srt.configs.janus_pro.GenVisionConfig">GenVisionConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.GenVisionConfig.cls" href="#sglang.srt.configs.janus_pro.GenVisionConfig.cls">cls</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.GenVisionConfig.model_type" href="#sglang.srt.configs.janus_pro.GenVisionConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.GenVisionConfig.params" href="#sglang.srt.configs.janus_pro.GenVisionConfig.params">params</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig" href="#sglang.srt.configs.janus_pro.MultiModalityConfig">MultiModalityConfig</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.aligner_config" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.aligner_config">aligner_config</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.gen_aligner_config" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.gen_aligner_config">gen_aligner_config</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.gen_head_config" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.gen_head_config">gen_head_config</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.gen_vision_config" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.gen_vision_config">gen_vision_config</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.language_config" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.language_config">language_config</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.model_type" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.MultiModalityConfig.vision_config" href="#sglang.srt.configs.janus_pro.MultiModalityConfig.vision_config">vision_config</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg">SigLIPVisionCfg</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.class_token" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.class_token">class_token</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.global_pool" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.global_pool">global_pool</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.heads" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.heads">heads</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.image_size" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.image_size">image_size</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.layers" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.layers">layers</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.mlp_ratio" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.mlp_ratio">mlp_ratio</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.num_classes" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.num_classes">num_classes</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.patch_size" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.patch_size">patch_size</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.use_checkpoint" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.use_checkpoint">use_checkpoint</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.SigLIPVisionCfg.width" href="#sglang.srt.configs.janus_pro.SigLIPVisionCfg.width">width</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor" href="#sglang.srt.configs.janus_pro.VLChatProcessor">VLChatProcessor</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.add_image_token" href="#sglang.srt.configs.janus_pro.VLChatProcessor.add_image_token">add_image_token</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.attributes" href="#sglang.srt.configs.janus_pro.VLChatProcessor.attributes">attributes</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.batchify" href="#sglang.srt.configs.janus_pro.VLChatProcessor.batchify">batchify</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_end_id" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_end_id">image_end_id</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_end_token" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_end_token">image_end_token</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_id" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_id">image_id</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_processor_class" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_processor_class">image_processor_class</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_start_id" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_start_id">image_start_id</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_start_token" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_start_token">image_start_token</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.image_token" href="#sglang.srt.configs.janus_pro.VLChatProcessor.image_token">image_token</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.pad_id" href="#sglang.srt.configs.janus_pro.VLChatProcessor.pad_id">pad_id</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.process_one" href="#sglang.srt.configs.janus_pro.VLChatProcessor.process_one">process_one</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessor.tokenizer_class" href="#sglang.srt.configs.janus_pro.VLChatProcessor.tokenizer_class">tokenizer_class</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput">VLChatProcessorOutput</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput.input_ids" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput.input_ids">input_ids</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput.num_image_tokens" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput.num_image_tokens">num_image_tokens</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput.pixel_values" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput.pixel_values">pixel_values</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLChatProcessorOutput.sft_format" href="#sglang.srt.configs.janus_pro.VLChatProcessorOutput.sft_format">sft_format</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessor" href="#sglang.srt.configs.janus_pro.VLMImageProcessor">VLMImageProcessor</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessor.default_shape" href="#sglang.srt.configs.janus_pro.VLMImageProcessor.default_shape">default_shape</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessor.model_input_names" href="#sglang.srt.configs.janus_pro.VLMImageProcessor.model_input_names">model_input_names</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessor.preprocess" href="#sglang.srt.configs.janus_pro.VLMImageProcessor.preprocess">preprocess</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessor.resize" href="#sglang.srt.configs.janus_pro.VLMImageProcessor.resize">resize</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig">VLMImageProcessorConfig</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.do_normalize" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.do_normalize">do_normalize</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_mean" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_mean">image_mean</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_size" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_size">image_size</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_std" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.image_std">image_std</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.min_size" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.min_size">min_size</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.model_type" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VLMImageProcessorConfig.rescale_factor" href="#sglang.srt.configs.janus_pro.VLMImageProcessorConfig.rescale_factor">rescale_factor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.janus_pro.VisionConfig" href="#sglang.srt.configs.janus_pro.VisionConfig">VisionConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.janus_pro.VisionConfig.cls" href="#sglang.srt.configs.janus_pro.VisionConfig.cls">cls</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VisionConfig.model_type" href="#sglang.srt.configs.janus_pro.VisionConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.janus_pro.VisionConfig.params" href="#sglang.srt.configs.janus_pro.VisionConfig.params">params</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

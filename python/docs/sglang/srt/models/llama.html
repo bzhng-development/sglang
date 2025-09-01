@@ -1,0 +1,1810 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.llama API documentation</title>
+<meta name="description" content="Inference-only LLaMA model compatible with HuggingFace weights.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.llama</code></h1>
+</header>
+<section id="section-intro">
+<p>Inference-only LLaMA model compatible with HuggingFace weights.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.llama.InternLM3ForCausalLM"><code class="flex name class">
+<span>class <span class="ident">InternLM3ForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InternLM3ForCausalLM(LlamaForCausalLM):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llama.LlamaForCausalLM" href="#sglang.srt.models.llama.LlamaForCausalLM">LlamaForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.llama.LlamaForCausalLM" href="#sglang.srt.models.llama.LlamaForCausalLM">LlamaForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name" href="#sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name">get_weights_by_name</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaAttention"><code class="flex name class">
+<span>class <span class="ident">LlamaAttention</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>hidden_size: int,<br>num_heads: int,<br>num_kv_heads: int,<br>layer_id: int = 0,<br>rope_theta: float = 10000,<br>rope_scaling: Dict[str, Any] | None = None,<br>rope_is_neox_style: bool = True,<br>max_position_embeddings: int = 8192,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '',<br>bias: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlamaAttention(nn.Module):
+    def __init__(
+        self,
+        config: LlamaConfig,
+        hidden_size: int,
+        num_heads: int,
+        num_kv_heads: int,
+        layer_id: int = 0,
+        rope_theta: float = 10000,
+        rope_scaling: Optional[Dict[str, Any]] = None,
+        rope_is_neox_style: bool = True,
+        max_position_embeddings: int = 8192,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+        bias: bool = False,
+    ) -&gt; None:
+        super().__init__()
+        self.hidden_size = hidden_size
+        tp_size = get_tensor_model_parallel_world_size()
+        self.total_num_heads = num_heads
+        assert self.total_num_heads % tp_size == 0
+        self.num_heads = self.total_num_heads // tp_size
+        self.total_num_kv_heads = num_kv_heads
+        if self.total_num_kv_heads &gt;= tp_size:
+            # Number of KV heads is greater than TP size, so we partition
+            # the KV heads across multiple tensor parallel GPUs.
+            assert self.total_num_kv_heads % tp_size == 0
+        else:
+            # Number of KV heads is less than TP size, so we replicate
+            # the KV heads across multiple tensor parallel GPUs.
+            assert tp_size % self.total_num_kv_heads == 0
+        self.num_kv_heads = max(1, self.total_num_kv_heads // tp_size)
+        # MistralConfig has an optional head_dim introduced by Mistral-Nemo
+        self.head_dim = getattr(
+            config, &#34;head_dim&#34;, self.hidden_size // self.total_num_heads
+        )
+        partial_rotary_factor = getattr(config, &#34;partial_rotary_factor&#34;, 1)
+        self.rotary_dim = int(partial_rotary_factor * self.head_dim)
+        self.q_size = self.num_heads * self.head_dim
+        self.kv_size = self.num_kv_heads * self.head_dim
+        self.scaling = self.head_dim**-0.5
+        self.rope_theta = rope_theta
+        self.max_position_embeddings = max_position_embeddings
+
+        self.qkv_proj = QKVParallelLinear(
+            hidden_size,
+            self.head_dim,
+            self.total_num_heads,
+            self.total_num_kv_heads,
+            bias=bias,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;qkv_proj&#34;, prefix),
+        )
+        self.o_proj = RowParallelLinear(
+            self.total_num_heads * self.head_dim,
+            hidden_size,
+            bias=bias,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;o_proj&#34;, prefix),
+        )
+
+        self.rotary_emb = get_rope(
+            self.head_dim,
+            rotary_dim=self.rotary_dim,
+            max_position=max_position_embeddings,
+            base=rope_theta,
+            rope_scaling=rope_scaling,
+            is_neox_style=rope_is_neox_style,
+        )
+        self.attn = RadixAttention(
+            self.num_heads,
+            self.head_dim,
+            self.scaling,
+            num_kv_heads=self.num_kv_heads,
+            layer_id=layer_id,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;attn&#34;, prefix),
+        )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        qkv, _ = self.qkv_proj(hidden_states)
+        q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+        q, k = self.rotary_emb(positions, q, k)
+        attn_output = self.attn(q, k, v, forward_batch)
+        output, _ = self.o_proj(attn_output)
+        return output</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaAttention.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    qkv, _ = self.qkv_proj(hidden_states)
+    q, k, v = qkv.split([self.q_size, self.kv_size, self.kv_size], dim=-1)
+    q, k = self.rotary_emb(positions, q, k)
+    attn_output = self.attn(q, k, v, forward_batch)
+    output, _ = self.o_proj(attn_output)
+    return output</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaDecoderLayer"><code class="flex name class">
+<span>class <span class="ident">LlamaDecoderLayer</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>layer_id: int = 0,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlamaDecoderLayer(nn.Module):
+    def __init__(
+        self,
+        config: LlamaConfig,
+        layer_id: int = 0,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.hidden_size = config.hidden_size
+        rope_theta = getattr(config, &#34;rope_theta&#34;, 10000)
+        rope_scaling = getattr(config, &#34;rope_scaling&#34;, None)
+        if rope_scaling is not None and getattr(
+            config, &#34;original_max_position_embeddings&#34;, None
+        ):
+            rope_scaling[&#34;original_max_position_embeddings&#34;] = (
+                config.original_max_position_embeddings
+            )
+        rope_is_neox_style = getattr(config, &#34;rope_is_neox_style&#34;, True)
+        max_position_embeddings = getattr(config, &#34;max_position_embeddings&#34;, 8192)
+        # Support llamafy/Qwen-Qwen2.5-7B-Instruct-llamafied with attention_bias
+        # Support internlm/internlm-7b with bias
+        attention_bias = getattr(config, &#34;attention_bias&#34;, False) or getattr(
+            config, &#34;bias&#34;, False
+        )
+        self.self_attn = LlamaAttention(
+            config=config,
+            hidden_size=self.hidden_size,
+            num_heads=config.num_attention_heads,
+            num_kv_heads=config.num_key_value_heads,
+            layer_id=layer_id,
+            rope_theta=rope_theta,
+            rope_scaling=rope_scaling,
+            rope_is_neox_style=rope_is_neox_style,
+            max_position_embeddings=max_position_embeddings,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;self_attn&#34;, prefix),
+            bias=attention_bias,
+        )
+        self.mlp = LlamaMLP(
+            hidden_size=self.hidden_size,
+            intermediate_size=config.intermediate_size,
+            hidden_act=config.hidden_act,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;mlp&#34;, prefix),
+        )
+        self.input_layernorm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        self.post_attention_layernorm = RMSNorm(
+            config.hidden_size, eps=config.rms_norm_eps
+        )
+
+    def forward(
+        self,
+        positions: torch.Tensor,
+        hidden_states: torch.Tensor,
+        forward_batch: ForwardBatch,
+        residual: Optional[torch.Tensor],
+    ) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+        # Self Attention
+        if residual is None:
+            residual = hidden_states
+            hidden_states = self.input_layernorm(hidden_states)
+        else:
+            hidden_states, residual = self.input_layernorm(hidden_states, residual)
+        hidden_states = self.self_attn(
+            positions=positions,
+            hidden_states=hidden_states,
+            forward_batch=forward_batch,
+        )
+
+        # Fully Connected
+        hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+        hidden_states = self.mlp(hidden_states)
+        return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llama_eagle.LlamaDecoderLayer" href="llama_eagle.html#sglang.srt.models.llama_eagle.LlamaDecoderLayer">LlamaDecoderLayer</a></li>
+<li><a title="sglang.srt.models.llama_eagle3.LlamaDecoderLayer" href="llama_eagle3.html#sglang.srt.models.llama_eagle3.LlamaDecoderLayer">LlamaDecoderLayer</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaDecoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>positions: torch.Tensor,<br>hidden_states: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>residual: torch.Tensor | None) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    positions: torch.Tensor,
+    hidden_states: torch.Tensor,
+    forward_batch: ForwardBatch,
+    residual: Optional[torch.Tensor],
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    # Self Attention
+    if residual is None:
+        residual = hidden_states
+        hidden_states = self.input_layernorm(hidden_states)
+    else:
+        hidden_states, residual = self.input_layernorm(hidden_states, residual)
+    hidden_states = self.self_attn(
+        positions=positions,
+        hidden_states=hidden_states,
+        forward_batch=forward_batch,
+    )
+
+    # Fully Connected
+    hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+    hidden_states = self.mlp(hidden_states)
+    return hidden_states, residual</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM"><code class="flex name class">
+<span>class <span class="ident">LlamaForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlamaForCausalLM(nn.Module):
+    # BitandBytes specific attributes
+    default_bitsandbytes_target_modules = [
+        &#34;.gate_proj.&#34;,
+        &#34;.down_proj.&#34;,
+        &#34;.up_proj.&#34;,
+        &#34;.q_proj.&#34;,
+        &#34;.k_proj.&#34;,
+        &#34;.v_proj.&#34;,
+        &#34;.o_proj.&#34;,
+    ]
+    # in TP, these weights are partitioned along the column dimension (dim=-1)
+    column_parallel_weights_modules = [&#34;.down_proj.&#34;, &#34;.o_proj.&#34;]
+    bitsandbytes_stacked_params_mapping = {
+        # shard_name, weight_name, index
+        &#34;.q_proj&#34;: (&#34;.qkv_proj&#34;, 0),
+        &#34;.k_proj&#34;: (&#34;.qkv_proj&#34;, 1),
+        &#34;.v_proj&#34;: (&#34;.qkv_proj&#34;, 2),
+        &#34;.gate_proj&#34;: (&#34;.gate_up_proj&#34;, 0),
+        &#34;.up_proj&#34;: (&#34;.gate_up_proj&#34;, 1),
+    }
+
+    def __init__(
+        self,
+        config: LlamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.pp_group = get_pp_group()
+        self.config = config
+        self.quant_config = quant_config
+        self.model = self._init_model(config, quant_config, add_prefix(&#34;model&#34;, prefix))
+        # Llama 3.2 1B Instruct set tie_word_embeddings to True
+        # Llama 3.1 8B Instruct set tie_word_embeddings to False
+        if self.config.tie_word_embeddings:
+            self.lm_head = self.model.embed_tokens
+        else:
+            self.lm_head = ParallelLMHead(
+                config.vocab_size,
+                config.hidden_size,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;lm_head&#34;, prefix),
+                use_attn_tp_group=global_server_args_dict[&#34;enable_dp_lm_head&#34;],
+            )
+        self.logits_processor = LogitsProcessor(config)
+        self.pooler = Pooler(pooling_type=PoolingType.LAST, normalize=True)
+        self.stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+            (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+            (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+        ]
+
+        self.capture_aux_hidden_states = False
+
+    def _init_model(
+        self,
+        config: LlamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ):
+        return LlamaModel(config, quant_config=quant_config, prefix=prefix)
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+        get_embedding: bool = False,
+        pp_proxy_tensors: Optional[PPProxyTensors] = None,
+    ) -&gt; LogitsProcessorOutput:
+        hidden_states = self.model(
+            input_ids,
+            positions,
+            forward_batch,
+            input_embeds,
+            pp_proxy_tensors=pp_proxy_tensors,
+        )
+
+        aux_hidden_states = None
+        if self.capture_aux_hidden_states:
+            hidden_states, aux_hidden_states = hidden_states
+
+        if self.pp_group.is_last_rank:
+            if not get_embedding:
+                return self.logits_processor(
+                    input_ids,
+                    hidden_states,
+                    self.lm_head,
+                    forward_batch,
+                    aux_hidden_states,
+                )
+            else:
+                return self.pooler(hidden_states, forward_batch)
+        else:
+            return hidden_states
+
+    @torch.no_grad()
+    def forward_split_prefill(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        split_interval: Tuple[int, int],  # [start, end) 0-based
+        input_embeds: torch.Tensor = None,
+    ) -&gt; Optional[LogitsProcessorOutput]:
+        start, end = split_interval
+        # embed
+        if start == 0:
+            if input_embeds is None:
+                forward_batch.hidden_states = self.model.embed_tokens(input_ids)
+            else:
+                forward_batch.hidden_states = input_embeds
+        # decoder layer
+        for i in range(start, end):
+            layer = self.model.layers[i]
+            forward_batch.hidden_states, forward_batch.residual = layer(
+                positions,
+                forward_batch.hidden_states,
+                forward_batch,
+                forward_batch.residual,
+            )
+
+        if end == self.model.config.num_hidden_layers:
+            # norm
+            hidden_states, _ = self.model.norm(
+                forward_batch.hidden_states, forward_batch.residual
+            )
+            forward_batch.hidden_states = hidden_states
+            # logits process
+            result = self.logits_processor(
+                input_ids, forward_batch.hidden_states, self.lm_head, forward_batch
+            )
+        else:
+            result = None
+
+        return result
+
+    @property
+    def start_layer(self):
+        return self.model.start_layer
+
+    @property
+    def end_layer(self):
+        return self.model.end_layer
+
+    def get_input_embeddings(self) -&gt; nn.Embedding:
+        return self.model.embed_tokens
+
+    def get_module_name_from_weight_name(self, name):
+        for param_name, weight_name, shard_id, num_shard in self.stacked_params_mapping:
+            if weight_name in name:
+                return (
+                    name.replace(weight_name, param_name)[: -len(&#34;.weight&#34;)],
+                    num_shard,
+                )
+        return name[: -len(&#34;.weight&#34;)], 1
+
+    def get_num_params(self):
+        params_dict = dict(self.named_parameters())
+        return len(params_dict)
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        stacked_params_mapping = [
+            # (param_name, shard_name, shard_id)
+            (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+            (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+            (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+            (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+        ]
+
+        params_dict = dict(self.named_parameters())
+
+        for name, loaded_weight in weights:
+            layer_id = get_layer_id(name)
+            if (
+                layer_id is not None
+                and hasattr(self.model, &#34;start_layer&#34;)
+                and (
+                    layer_id &lt; self.model.start_layer
+                    or layer_id &gt;= self.model.end_layer
+                )
+            ):
+                continue
+            if &#34;rotary_emb.inv_freq&#34; in name or &#34;projector&#34; in name:
+                continue
+            if &#34;rotary_emb.cos_cached&#34; in name or &#34;rotary_emb.sin_cached&#34; in name:
+                # Models trained using ColossalAI may include these tensors in
+                # the checkpoint. Skip them.
+                continue
+            if name.startswith(&#34;model.vision_tower&#34;) and name not in params_dict:
+                continue
+            if self.config.tie_word_embeddings and &#34;lm_head.weight&#34; in name:
+                continue
+            # Handle FP8 kv-scale remapping
+            if &#34;scale&#34; in name:
+                name = maybe_remap_kv_scale_name(name, params_dict)
+                if name is None:
+                    continue
+
+            for param_name, weight_name, shard_id in stacked_params_mapping:
+                if weight_name not in name:
+                    continue
+                name = name.replace(weight_name, param_name)
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                if name not in params_dict:
+                    continue
+                param = params_dict[name]
+                weight_loader = param.weight_loader
+                weight_loader(param, loaded_weight, shard_id)
+                break
+            else:
+                # Skip loading extra bias for GPTQ models.
+                if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                    continue
+                # Skip loading kv_scale from ckpts towards new design.
+                if name.endswith(&#34;.kv_scale&#34;) and name not in params_dict:
+                    continue
+                if name in params_dict.keys():
+                    param = params_dict[name]
+                    weight_loader = getattr(
+                        param, &#34;weight_loader&#34;, default_weight_loader
+                    )
+                    weight_loader(param, loaded_weight)
+                else:
+                    logger.warning(f&#34;Parameter {name} not found in params_dict&#34;)
+
+    def get_weights_by_name(
+        self, name: str, truncate_size: int = 100, tp_size: int = 1
+    ) -&gt; Optional[torch.Tensor]:
+        &#34;&#34;&#34;Get the weights of the parameter by its name. Similar to `get_parameter` in Hugging Face.
+
+        Only used for unit test with an unoptimized performance.
+        For optimized performance, please use torch.save and torch.load.
+        &#34;&#34;&#34;
+        try:
+            if name == &#34;lm_head.weight&#34; and self.config.tie_word_embeddings:
+                logger.info(
+                    &#34;word embedding is tied for this model, return embed_tokens.weight as lm_head.weight.&#34;
+                )
+                return (
+                    self.model.embed_tokens.weight.cpu()
+                    .to(torch.float32)
+                    .numpy()
+                    .tolist()[:truncate_size]
+                )
+
+            mapped_name = name
+            mapped_shard_id = None
+            for param_name, weight_name, shard_id in self.stacked_params_mapping:
+                if weight_name in name:
+                    mapped_name = name.replace(weight_name, param_name)
+                    mapped_shard_id = shard_id
+                    break
+            params_dict = dict(self.named_parameters())
+            param = params_dict[mapped_name]
+            if mapped_shard_id is not None:
+                if mapped_shard_id in [&#34;q&#34;, &#34;k&#34;, &#34;v&#34;]:
+                    num_heads = self.config.num_attention_heads // tp_size
+                    num_kv_heads = self.config.num_key_value_heads // tp_size
+                    head_dim = (
+                        self.config.hidden_size // self.config.num_attention_heads
+                    )
+                    if mapped_shard_id == &#34;q&#34;:
+                        offset = 0
+                        size = num_heads * head_dim
+                    elif mapped_shard_id == &#34;k&#34;:
+                        offset = num_heads * head_dim
+                        size = num_kv_heads * head_dim
+                    elif mapped_shard_id == &#34;v&#34;:
+                        offset = (num_heads + num_kv_heads) * head_dim
+                        size = num_kv_heads * head_dim
+                    weight = param.data.narrow(0, offset, size)
+                elif mapped_shard_id in [0, 1]:
+                    intermediate_size = self.config.intermediate_size
+                    slice_size = intermediate_size // tp_size
+                    if mapped_shard_id == 0:  # gate_proj
+                        offset = 0
+                        size = slice_size
+                    elif mapped_shard_id == 1:  # up_proj
+                        offset = slice_size
+                        size = slice_size
+
+                    weight = param.data.narrow(0, offset, size)
+                else:
+                    weight = param.data
+            else:
+                weight = param.data
+            if tp_size &gt; 1 and (&#34;o_proj&#34; in name or &#34;down_proj&#34; in name):
+                gathered_weights = [torch.zeros_like(weight) for _ in range(tp_size)]
+                torch.distributed.all_gather(gathered_weights, weight)
+                weight = torch.cat(gathered_weights, dim=1)
+            return weight.cpu().to(torch.float32).numpy().tolist()[:truncate_size]
+
+        except Exception:
+            logger.error(
+                f&#34;Error getting weights by name {name} in LlamaForCausalLM: {get_exception_traceback()}&#34;
+            )
+            return None
+
+    def get_embed_and_head(self):
+        return self.model.embed_tokens.weight, self.lm_head.weight
+
+    def set_embed_and_head(self, embed, head):
+        del self.model.embed_tokens.weight
+        del self.lm_head.weight
+        self.model.embed_tokens.weight = embed
+        self.lm_head.weight = head
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize()
+
+    def get_embed(self):
+        return self.model.embed_tokens.weight
+
+    def set_embed(self, embed):
+        # NOTE: If draft hidden size != target hidden size, the embed weight cannot be shared for EAGLE3
+        if (
+            hasattr(self.config, &#34;target_hidden_size&#34;)
+            and self.config.target_hidden_size != self.config.hidden_size
+        ):
+            return
+        del self.model.embed_tokens.weight
+        self.model.embed_tokens.weight = embed
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize()
+
+    def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+        self.model.load_kv_cache_scales(quantization_param_path)
+
+    def set_eagle3_layers_to_capture(self, layer_ids: Optional[List[int]] = None):
+        if not self.pp_group.is_last_rank:
+            return
+
+        if layer_ids is None:
+            self.capture_aux_hidden_states = True
+            num_layers = self.config.num_hidden_layers
+            self.model.layers_to_capture = [2, num_layers // 2, num_layers - 3]
+        else:
+            self.capture_aux_hidden_states = True
+            # we plus 1 here because in sglang, for the ith layer, it takes the output
+            # of the (i-1)th layer as aux hidden state
+            self.model.layers_to_capture = [val + 1 for val in layer_ids]</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llama.InternLM3ForCausalLM" href="#sglang.srt.models.llama.InternLM3ForCausalLM">InternLM3ForCausalLM</a></li>
+<li><a title="sglang.srt.models.llama.Phi3ForCausalLM" href="#sglang.srt.models.llama.Phi3ForCausalLM">Phi3ForCausalLM</a></li>
+<li><a title="sglang.srt.models.llama4.Llama4ForCausalLM" href="llama4.html#sglang.srt.models.llama4.Llama4ForCausalLM">Llama4ForCausalLM</a></li>
+<li><a title="sglang.srt.models.llama_eagle.LlamaForCausalLMEagle" href="llama_eagle.html#sglang.srt.models.llama_eagle.LlamaForCausalLMEagle">LlamaForCausalLMEagle</a></li>
+<li><a title="sglang.srt.models.llama_eagle3.LlamaForCausalLMEagle3" href="llama_eagle3.html#sglang.srt.models.llama_eagle3.LlamaForCausalLMEagle3">LlamaForCausalLMEagle3</a></li>
+<li><a title="sglang.srt.models.mistral.MistralForCausalLM" href="mistral.html#sglang.srt.models.mistral.MistralForCausalLM">MistralForCausalLM</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.bitsandbytes_stacked_params_mapping"><code class="name">var <span class="ident">bitsandbytes_stacked_params_mapping</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.column_parallel_weights_modules"><code class="name">var <span class="ident">column_parallel_weights_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.default_bitsandbytes_target_modules"><code class="name">var <span class="ident">default_bitsandbytes_target_modules</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.end_layer"><code class="name">prop <span class="ident">end_layer</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def end_layer(self):
+    return self.model.end_layer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.start_layer"><code class="name">prop <span class="ident">start_layer</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def start_layer(self):
+    return self.model.start_layer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None,<br>get_embedding: bool = False,<br>pp_proxy_tensors: <a title="sglang.srt.model_executor.forward_batch_info.PPProxyTensors" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.PPProxyTensors">PPProxyTensors</a> | None = None) ‑> <a title="sglang.srt.layers.logits_processor.LogitsProcessorOutput" href="../layers/logits_processor.html#sglang.srt.layers.logits_processor.LogitsProcessorOutput">LogitsProcessorOutput</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+    get_embedding: bool = False,
+    pp_proxy_tensors: Optional[PPProxyTensors] = None,
+) -&gt; LogitsProcessorOutput:
+    hidden_states = self.model(
+        input_ids,
+        positions,
+        forward_batch,
+        input_embeds,
+        pp_proxy_tensors=pp_proxy_tensors,
+    )
+
+    aux_hidden_states = None
+    if self.capture_aux_hidden_states:
+        hidden_states, aux_hidden_states = hidden_states
+
+    if self.pp_group.is_last_rank:
+        if not get_embedding:
+            return self.logits_processor(
+                input_ids,
+                hidden_states,
+                self.lm_head,
+                forward_batch,
+                aux_hidden_states,
+            )
+        else:
+            return self.pooler(hidden_states, forward_batch)
+    else:
+        return hidden_states</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.forward_split_prefill"><code class="name flex">
+<span>def <span class="ident">forward_split_prefill</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>split_interval: Tuple[int, int],<br>input_embeds: torch.Tensor = None) ‑> <a title="sglang.srt.layers.logits_processor.LogitsProcessorOutput" href="../layers/logits_processor.html#sglang.srt.layers.logits_processor.LogitsProcessorOutput">LogitsProcessorOutput</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward_split_prefill(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    split_interval: Tuple[int, int],  # [start, end) 0-based
+    input_embeds: torch.Tensor = None,
+) -&gt; Optional[LogitsProcessorOutput]:
+    start, end = split_interval
+    # embed
+    if start == 0:
+        if input_embeds is None:
+            forward_batch.hidden_states = self.model.embed_tokens(input_ids)
+        else:
+            forward_batch.hidden_states = input_embeds
+    # decoder layer
+    for i in range(start, end):
+        layer = self.model.layers[i]
+        forward_batch.hidden_states, forward_batch.residual = layer(
+            positions,
+            forward_batch.hidden_states,
+            forward_batch,
+            forward_batch.residual,
+        )
+
+    if end == self.model.config.num_hidden_layers:
+        # norm
+        hidden_states, _ = self.model.norm(
+            forward_batch.hidden_states, forward_batch.residual
+        )
+        forward_batch.hidden_states = hidden_states
+        # logits process
+        result = self.logits_processor(
+            input_ids, forward_batch.hidden_states, self.lm_head, forward_batch
+        )
+    else:
+        result = None
+
+    return result</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.get_embed"><code class="name flex">
+<span>def <span class="ident">get_embed</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_embed(self):
+    return self.model.embed_tokens.weight</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.get_embed_and_head"><code class="name flex">
+<span>def <span class="ident">get_embed_and_head</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_embed_and_head(self):
+    return self.model.embed_tokens.weight, self.lm_head.weight</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.get_input_embeddings"><code class="name flex">
+<span>def <span class="ident">get_input_embeddings</span></span>(<span>self) ‑> torch.nn.modules.sparse.Embedding</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_input_embeddings(self) -&gt; nn.Embedding:
+    return self.model.embed_tokens</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.get_module_name_from_weight_name"><code class="name flex">
+<span>def <span class="ident">get_module_name_from_weight_name</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_module_name_from_weight_name(self, name):
+    for param_name, weight_name, shard_id, num_shard in self.stacked_params_mapping:
+        if weight_name in name:
+            return (
+                name.replace(weight_name, param_name)[: -len(&#34;.weight&#34;)],
+                num_shard,
+            )
+    return name[: -len(&#34;.weight&#34;)], 1</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.get_num_params"><code class="name flex">
+<span>def <span class="ident">get_num_params</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_num_params(self):
+    params_dict = dict(self.named_parameters())
+    return len(params_dict)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name"><code class="name flex">
+<span>def <span class="ident">get_weights_by_name</span></span>(<span>self, name: str, truncate_size: int = 100, tp_size: int = 1) ‑> torch.Tensor | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weights_by_name(
+    self, name: str, truncate_size: int = 100, tp_size: int = 1
+) -&gt; Optional[torch.Tensor]:
+    &#34;&#34;&#34;Get the weights of the parameter by its name. Similar to `get_parameter` in Hugging Face.
+
+    Only used for unit test with an unoptimized performance.
+    For optimized performance, please use torch.save and torch.load.
+    &#34;&#34;&#34;
+    try:
+        if name == &#34;lm_head.weight&#34; and self.config.tie_word_embeddings:
+            logger.info(
+                &#34;word embedding is tied for this model, return embed_tokens.weight as lm_head.weight.&#34;
+            )
+            return (
+                self.model.embed_tokens.weight.cpu()
+                .to(torch.float32)
+                .numpy()
+                .tolist()[:truncate_size]
+            )
+
+        mapped_name = name
+        mapped_shard_id = None
+        for param_name, weight_name, shard_id in self.stacked_params_mapping:
+            if weight_name in name:
+                mapped_name = name.replace(weight_name, param_name)
+                mapped_shard_id = shard_id
+                break
+        params_dict = dict(self.named_parameters())
+        param = params_dict[mapped_name]
+        if mapped_shard_id is not None:
+            if mapped_shard_id in [&#34;q&#34;, &#34;k&#34;, &#34;v&#34;]:
+                num_heads = self.config.num_attention_heads // tp_size
+                num_kv_heads = self.config.num_key_value_heads // tp_size
+                head_dim = (
+                    self.config.hidden_size // self.config.num_attention_heads
+                )
+                if mapped_shard_id == &#34;q&#34;:
+                    offset = 0
+                    size = num_heads * head_dim
+                elif mapped_shard_id == &#34;k&#34;:
+                    offset = num_heads * head_dim
+                    size = num_kv_heads * head_dim
+                elif mapped_shard_id == &#34;v&#34;:
+                    offset = (num_heads + num_kv_heads) * head_dim
+                    size = num_kv_heads * head_dim
+                weight = param.data.narrow(0, offset, size)
+            elif mapped_shard_id in [0, 1]:
+                intermediate_size = self.config.intermediate_size
+                slice_size = intermediate_size // tp_size
+                if mapped_shard_id == 0:  # gate_proj
+                    offset = 0
+                    size = slice_size
+                elif mapped_shard_id == 1:  # up_proj
+                    offset = slice_size
+                    size = slice_size
+
+                weight = param.data.narrow(0, offset, size)
+            else:
+                weight = param.data
+        else:
+            weight = param.data
+        if tp_size &gt; 1 and (&#34;o_proj&#34; in name or &#34;down_proj&#34; in name):
+            gathered_weights = [torch.zeros_like(weight) for _ in range(tp_size)]
+            torch.distributed.all_gather(gathered_weights, weight)
+            weight = torch.cat(gathered_weights, dim=1)
+        return weight.cpu().to(torch.float32).numpy().tolist()[:truncate_size]
+
+    except Exception:
+        logger.error(
+            f&#34;Error getting weights by name {name} in LlamaForCausalLM: {get_exception_traceback()}&#34;
+        )
+        return None</code></pre>
+</details>
+<div class="desc"><p>Get the weights of the parameter by its name. Similar to <code>get_parameter</code> in Hugging Face.</p>
+<p>Only used for unit test with an unoptimized performance.
+For optimized performance, please use torch.save and torch.load.</p></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.load_kv_cache_scales"><code class="name flex">
+<span>def <span class="ident">load_kv_cache_scales</span></span>(<span>self, quantization_param_path: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+    self.model.load_kv_cache_scales(quantization_param_path)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    stacked_params_mapping = [
+        # (param_name, shard_name, shard_id)
+        (&#34;.qkv_proj&#34;, &#34;.q_proj&#34;, &#34;q&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.k_proj&#34;, &#34;k&#34;),
+        (&#34;.qkv_proj&#34;, &#34;.v_proj&#34;, &#34;v&#34;),
+        (&#34;.gate_up_proj&#34;, &#34;.gate_proj&#34;, 0),
+        (&#34;.gate_up_proj&#34;, &#34;.up_proj&#34;, 1),
+    ]
+
+    params_dict = dict(self.named_parameters())
+
+    for name, loaded_weight in weights:
+        layer_id = get_layer_id(name)
+        if (
+            layer_id is not None
+            and hasattr(self.model, &#34;start_layer&#34;)
+            and (
+                layer_id &lt; self.model.start_layer
+                or layer_id &gt;= self.model.end_layer
+            )
+        ):
+            continue
+        if &#34;rotary_emb.inv_freq&#34; in name or &#34;projector&#34; in name:
+            continue
+        if &#34;rotary_emb.cos_cached&#34; in name or &#34;rotary_emb.sin_cached&#34; in name:
+            # Models trained using ColossalAI may include these tensors in
+            # the checkpoint. Skip them.
+            continue
+        if name.startswith(&#34;model.vision_tower&#34;) and name not in params_dict:
+            continue
+        if self.config.tie_word_embeddings and &#34;lm_head.weight&#34; in name:
+            continue
+        # Handle FP8 kv-scale remapping
+        if &#34;scale&#34; in name:
+            name = maybe_remap_kv_scale_name(name, params_dict)
+            if name is None:
+                continue
+
+        for param_name, weight_name, shard_id in stacked_params_mapping:
+            if weight_name not in name:
+                continue
+            name = name.replace(weight_name, param_name)
+            # Skip loading extra bias for GPTQ models.
+            if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                continue
+            if name not in params_dict:
+                continue
+            param = params_dict[name]
+            weight_loader = param.weight_loader
+            weight_loader(param, loaded_weight, shard_id)
+            break
+        else:
+            # Skip loading extra bias for GPTQ models.
+            if name.endswith(&#34;.bias&#34;) and name not in params_dict:
+                continue
+            # Skip loading kv_scale from ckpts towards new design.
+            if name.endswith(&#34;.kv_scale&#34;) and name not in params_dict:
+                continue
+            if name in params_dict.keys():
+                param = params_dict[name]
+                weight_loader = getattr(
+                    param, &#34;weight_loader&#34;, default_weight_loader
+                )
+                weight_loader(param, loaded_weight)
+            else:
+                logger.warning(f&#34;Parameter {name} not found in params_dict&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.set_eagle3_layers_to_capture"><code class="name flex">
+<span>def <span class="ident">set_eagle3_layers_to_capture</span></span>(<span>self, layer_ids: List[int] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_eagle3_layers_to_capture(self, layer_ids: Optional[List[int]] = None):
+    if not self.pp_group.is_last_rank:
+        return
+
+    if layer_ids is None:
+        self.capture_aux_hidden_states = True
+        num_layers = self.config.num_hidden_layers
+        self.model.layers_to_capture = [2, num_layers // 2, num_layers - 3]
+    else:
+        self.capture_aux_hidden_states = True
+        # we plus 1 here because in sglang, for the ith layer, it takes the output
+        # of the (i-1)th layer as aux hidden state
+        self.model.layers_to_capture = [val + 1 for val in layer_ids]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.set_embed"><code class="name flex">
+<span>def <span class="ident">set_embed</span></span>(<span>self, embed)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_embed(self, embed):
+    # NOTE: If draft hidden size != target hidden size, the embed weight cannot be shared for EAGLE3
+    if (
+        hasattr(self.config, &#34;target_hidden_size&#34;)
+        and self.config.target_hidden_size != self.config.hidden_size
+    ):
+        return
+    del self.model.embed_tokens.weight
+    self.model.embed_tokens.weight = embed
+    torch.cuda.empty_cache()
+    torch.cuda.synchronize()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaForCausalLM.set_embed_and_head"><code class="name flex">
+<span>def <span class="ident">set_embed_and_head</span></span>(<span>self, embed, head)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_embed_and_head(self, embed, head):
+    del self.model.embed_tokens.weight
+    del self.lm_head.weight
+    self.model.embed_tokens.weight = embed
+    self.lm_head.weight = head
+    torch.cuda.empty_cache()
+    torch.cuda.synchronize()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaMLP"><code class="flex name class">
+<span>class <span class="ident">LlamaMLP</span></span>
+<span>(</span><span>hidden_size: int,<br>intermediate_size: int,<br>hidden_act: str,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '',<br>reduce_results: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlamaMLP(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int,
+        intermediate_size: int,
+        hidden_act: str,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+        reduce_results: bool = True,
+    ) -&gt; None:
+        super().__init__()
+        self.gate_up_proj = MergedColumnParallelLinear(
+            hidden_size,
+            [intermediate_size] * 2,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;gate_up_proj&#34;, prefix),
+        )
+        self.down_proj = RowParallelLinear(
+            intermediate_size,
+            hidden_size,
+            bias=False,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;down_proj&#34;, prefix),
+            reduce_results=reduce_results,
+        )
+        if hidden_act != &#34;silu&#34;:
+            raise ValueError(
+                f&#34;Unsupported activation: {hidden_act}. &#34;
+                &#34;Only silu is supported for now.&#34;
+            )
+        self.act_fn = SiluAndMul()
+
+    def forward(
+        self,
+        x,
+        forward_batch=None,
+        use_reduce_scatter: bool = False,
+    ):
+        gate_up, _ = self.gate_up_proj(x)
+        x = self.act_fn(gate_up)
+        x, _ = self.down_proj(
+            x,
+            skip_all_reduce=use_reduce_scatter,
+        )
+        return x</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaMLP.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x, forward_batch=None, use_reduce_scatter: bool = False) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    x,
+    forward_batch=None,
+    use_reduce_scatter: bool = False,
+):
+    gate_up, _ = self.gate_up_proj(x)
+    x = self.act_fn(gate_up)
+    x, _ = self.down_proj(
+        x,
+        skip_all_reduce=use_reduce_scatter,
+    )
+    return x</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaModel"><code class="flex name class">
+<span>class <span class="ident">LlamaModel</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlamaModel(nn.Module):
+    def __init__(
+        self,
+        config: LlamaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+        self.config = config
+        self.padding_idx = config.pad_token_id
+        self.vocab_size = config.vocab_size
+        self.pp_group = get_pp_group()
+        if self.pp_group.is_first_rank:
+            self.embed_tokens = VocabParallelEmbedding(
+                config.vocab_size,
+                config.hidden_size,
+                quant_config=quant_config,
+                prefix=add_prefix(&#34;embed_tokens&#34;, prefix),
+            )
+        else:
+            self.embed_tokens = PPMissingLayer()
+
+        self.layers, self.start_layer, self.end_layer = make_layers(
+            config.num_hidden_layers,
+            lambda idx, prefix: LlamaDecoderLayer(
+                config=config, quant_config=quant_config, layer_id=idx, prefix=prefix
+            ),
+            pp_rank=self.pp_group.rank_in_group,
+            pp_size=self.pp_group.world_size,
+            prefix=&#34;model.layers&#34;,
+        )
+
+        if self.pp_group.is_last_rank:
+            self.norm = RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+        else:
+            self.norm = PPMissingLayer(return_tuple=True)
+        self.layers_to_capture = []
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        input_embeds: torch.Tensor = None,
+        pp_proxy_tensors: Optional[PPProxyTensors] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]], PPProxyTensors]:
+        if self.pp_group.is_first_rank:
+            if input_embeds is None:
+                hidden_states = self.embed_tokens(input_ids)
+            else:
+                hidden_states = input_embeds
+            residual = None
+        else:
+            assert pp_proxy_tensors is not None
+            # FIXME(@ying): reduce the number of proxy tensors by not fusing layer norms
+            hidden_states = pp_proxy_tensors[&#34;hidden_states&#34;]
+            residual = pp_proxy_tensors[&#34;residual&#34;]
+            deferred_norm = None
+
+        aux_hidden_states = []
+        for i in range(self.start_layer, self.end_layer):
+            if i in self.layers_to_capture:
+                aux_hidden_states.append(hidden_states + residual)
+            layer = self.layers[i]
+            hidden_states, residual = layer(
+                positions,
+                hidden_states,
+                forward_batch,
+                residual,
+            )
+
+        if not self.pp_group.is_last_rank:
+            return PPProxyTensors(
+                {
+                    &#34;hidden_states&#34;: hidden_states,
+                    &#34;residual&#34;: residual,
+                }
+            )
+        else:
+            hidden_states, _ = self.norm(hidden_states, residual)
+
+        if len(aux_hidden_states) == 0:
+            return hidden_states
+
+        return hidden_states, aux_hidden_states
+
+    # If this function is called, it should always initialize KV cache scale
+    # factors (or else raise an exception). Thus, handled exceptions should
+    # make sure to leave KV cache scale factors in a known good (dummy) state
+    def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+        tp_size = get_tensor_model_parallel_world_size()
+        tp_rank = get_tensor_model_parallel_rank()
+        for layer_idx, scaling_factor in kv_cache_scales_loader(
+            quantization_param_path,
+            tp_rank,
+            tp_size,
+            self.config.num_hidden_layers,
+            self.config.__class__.model_type,
+        ):
+            if not isinstance(self.layers[layer_idx], nn.Identity):
+                layer_self_attn = self.layers[layer_idx].self_attn
+
+            if hasattr(layer_self_attn.attn, &#34;k_scale&#34;):
+                layer_self_attn.attn.k_scale = scaling_factor
+                layer_self_attn.attn.v_scale = scaling_factor
+            else:
+                raise RuntimeError(
+                    &#34;Self attention has no KV cache scaling &#34; &#34;factor attribute!&#34;
+                )</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llama.LlamaModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>input_embeds: torch.Tensor = None,<br>pp_proxy_tensors: <a title="sglang.srt.model_executor.forward_batch_info.PPProxyTensors" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.PPProxyTensors">PPProxyTensors</a> | None = None) ‑> torch.Tensor | Tuple[torch.Tensor, List[torch.Tensor]] | <a title="sglang.srt.model_executor.forward_batch_info.PPProxyTensors" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.PPProxyTensors">PPProxyTensors</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    input_embeds: torch.Tensor = None,
+    pp_proxy_tensors: Optional[PPProxyTensors] = None,
+) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, List[torch.Tensor]], PPProxyTensors]:
+    if self.pp_group.is_first_rank:
+        if input_embeds is None:
+            hidden_states = self.embed_tokens(input_ids)
+        else:
+            hidden_states = input_embeds
+        residual = None
+    else:
+        assert pp_proxy_tensors is not None
+        # FIXME(@ying): reduce the number of proxy tensors by not fusing layer norms
+        hidden_states = pp_proxy_tensors[&#34;hidden_states&#34;]
+        residual = pp_proxy_tensors[&#34;residual&#34;]
+        deferred_norm = None
+
+    aux_hidden_states = []
+    for i in range(self.start_layer, self.end_layer):
+        if i in self.layers_to_capture:
+            aux_hidden_states.append(hidden_states + residual)
+        layer = self.layers[i]
+        hidden_states, residual = layer(
+            positions,
+            hidden_states,
+            forward_batch,
+            residual,
+        )
+
+    if not self.pp_group.is_last_rank:
+        return PPProxyTensors(
+            {
+                &#34;hidden_states&#34;: hidden_states,
+                &#34;residual&#34;: residual,
+            }
+        )
+    else:
+        hidden_states, _ = self.norm(hidden_states, residual)
+
+    if len(aux_hidden_states) == 0:
+        return hidden_states
+
+    return hidden_states, aux_hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.llama.LlamaModel.load_kv_cache_scales"><code class="name flex">
+<span>def <span class="ident">load_kv_cache_scales</span></span>(<span>self, quantization_param_path: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_kv_cache_scales(self, quantization_param_path: str) -&gt; None:
+    tp_size = get_tensor_model_parallel_world_size()
+    tp_rank = get_tensor_model_parallel_rank()
+    for layer_idx, scaling_factor in kv_cache_scales_loader(
+        quantization_param_path,
+        tp_rank,
+        tp_size,
+        self.config.num_hidden_layers,
+        self.config.__class__.model_type,
+    ):
+        if not isinstance(self.layers[layer_idx], nn.Identity):
+            layer_self_attn = self.layers[layer_idx].self_attn
+
+        if hasattr(layer_self_attn.attn, &#34;k_scale&#34;):
+            layer_self_attn.attn.k_scale = scaling_factor
+            layer_self_attn.attn.v_scale = scaling_factor
+        else:
+            raise RuntimeError(
+                &#34;Self attention has no KV cache scaling &#34; &#34;factor attribute!&#34;
+            )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.llama.Phi3ForCausalLM"><code class="flex name class">
+<span>class <span class="ident">Phi3ForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llama.configuration_llama.LlamaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Phi3ForCausalLM(LlamaForCausalLM):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llama.LlamaForCausalLM" href="#sglang.srt.models.llama.LlamaForCausalLM">LlamaForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.llama.LlamaForCausalLM" href="#sglang.srt.models.llama.LlamaForCausalLM">LlamaForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name" href="#sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name">get_weights_by_name</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.llama.InternLM3ForCausalLM" href="#sglang.srt.models.llama.InternLM3ForCausalLM">InternLM3ForCausalLM</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llama.LlamaAttention" href="#sglang.srt.models.llama.LlamaAttention">LlamaAttention</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llama.LlamaAttention.forward" href="#sglang.srt.models.llama.LlamaAttention.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llama.LlamaDecoderLayer" href="#sglang.srt.models.llama.LlamaDecoderLayer">LlamaDecoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llama.LlamaDecoderLayer.forward" href="#sglang.srt.models.llama.LlamaDecoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llama.LlamaForCausalLM" href="#sglang.srt.models.llama.LlamaForCausalLM">LlamaForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.bitsandbytes_stacked_params_mapping" href="#sglang.srt.models.llama.LlamaForCausalLM.bitsandbytes_stacked_params_mapping">bitsandbytes_stacked_params_mapping</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.column_parallel_weights_modules" href="#sglang.srt.models.llama.LlamaForCausalLM.column_parallel_weights_modules">column_parallel_weights_modules</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.default_bitsandbytes_target_modules" href="#sglang.srt.models.llama.LlamaForCausalLM.default_bitsandbytes_target_modules">default_bitsandbytes_target_modules</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.end_layer" href="#sglang.srt.models.llama.LlamaForCausalLM.end_layer">end_layer</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.forward" href="#sglang.srt.models.llama.LlamaForCausalLM.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.forward_split_prefill" href="#sglang.srt.models.llama.LlamaForCausalLM.forward_split_prefill">forward_split_prefill</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_embed" href="#sglang.srt.models.llama.LlamaForCausalLM.get_embed">get_embed</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_embed_and_head" href="#sglang.srt.models.llama.LlamaForCausalLM.get_embed_and_head">get_embed_and_head</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_input_embeddings" href="#sglang.srt.models.llama.LlamaForCausalLM.get_input_embeddings">get_input_embeddings</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_module_name_from_weight_name" href="#sglang.srt.models.llama.LlamaForCausalLM.get_module_name_from_weight_name">get_module_name_from_weight_name</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_num_params" href="#sglang.srt.models.llama.LlamaForCausalLM.get_num_params">get_num_params</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name" href="#sglang.srt.models.llama.LlamaForCausalLM.get_weights_by_name">get_weights_by_name</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.load_kv_cache_scales" href="#sglang.srt.models.llama.LlamaForCausalLM.load_kv_cache_scales">load_kv_cache_scales</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.load_weights" href="#sglang.srt.models.llama.LlamaForCausalLM.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.set_eagle3_layers_to_capture" href="#sglang.srt.models.llama.LlamaForCausalLM.set_eagle3_layers_to_capture">set_eagle3_layers_to_capture</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.set_embed" href="#sglang.srt.models.llama.LlamaForCausalLM.set_embed">set_embed</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.set_embed_and_head" href="#sglang.srt.models.llama.LlamaForCausalLM.set_embed_and_head">set_embed_and_head</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaForCausalLM.start_layer" href="#sglang.srt.models.llama.LlamaForCausalLM.start_layer">start_layer</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llama.LlamaMLP" href="#sglang.srt.models.llama.LlamaMLP">LlamaMLP</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llama.LlamaMLP.forward" href="#sglang.srt.models.llama.LlamaMLP.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llama.LlamaModel" href="#sglang.srt.models.llama.LlamaModel">LlamaModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llama.LlamaModel.forward" href="#sglang.srt.models.llama.LlamaModel.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.llama.LlamaModel.load_kv_cache_scales" href="#sglang.srt.models.llama.LlamaModel.load_kv_cache_scales">load_kv_cache_scales</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llama.Phi3ForCausalLM" href="#sglang.srt.models.llama.Phi3ForCausalLM">Phi3ForCausalLM</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

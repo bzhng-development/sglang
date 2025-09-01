@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.moe_wna16 API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.moe_wna16</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.moe_wna16.get_weight_perm"><code class="name flex">
+<span>def <span class="ident">get_weight_perm</span></span>(<span>num_bits: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_weight_perm(num_bits: int):
+    perm_list: List[int] = []
+    for i in range(32):
+        perm1: List[int] = []
+        col = i // 4
+        for block in [0, 1]:
+            for row in [
+                2 * (i % 4),
+                2 * (i % 4) + 1,
+                2 * (i % 4 + 4),
+                2 * (i % 4 + 4) + 1,
+            ]:
+                perm1.append(16 * row + col + 8 * block)
+        for j in range(4):
+            perm_list.extend([p + 256 * j for p in perm1])
+
+    perm = np.array(perm_list)
+
+    if num_bits == 4:
+        interleave = np.array([0, 2, 4, 6, 1, 3, 5, 7])
+    elif num_bits == 8:
+        interleave = np.array([0, 2, 1, 3])
+    else:
+        raise Exception(&#34;num_bits must be 4 or 8, got {}&#34;.format(num_bits))
+
+    perm = perm.reshape((-1, len(interleave)))[:, interleave].ravel()
+    perm = torch.from_numpy(perm)
+    return perm</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.moe_wna16.is_layer_skipped_quant"><code class="name flex">
+<span>def <span class="ident">is_layer_skipped_quant</span></span>(<span>prefix: str, modules_to_not_convert: List[str])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_layer_skipped_quant(prefix: str, modules_to_not_convert: List[str]):
+    return any(module_name in prefix for module_name in modules_to_not_convert)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config"><code class="flex name class">
+<span>class <span class="ident">MoeWNA16Config</span></span>
+<span>(</span><span>linear_quant_method: str,<br>weight_bits: int,<br>group_size: int,<br>has_zp: bool,<br>lm_head_quantized: bool,<br>modules_to_not_convert: Optional[List[str]],<br>full_config: Dict[str, Any])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoeWNA16Config(QuantizationConfig):
+    &#34;&#34;&#34;Config class for MOE WNA16 (W8A16/W4A16) quantization.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        linear_quant_method: str,
+        weight_bits: int,
+        group_size: int,
+        has_zp: bool,
+        lm_head_quantized: bool,
+        modules_to_not_convert: Optional[List[str]],
+        full_config: Dict[str, Any],
+    ) -&gt; None:
+        super().__init__()
+        self.weight_bits = weight_bits
+        self.group_size = group_size
+        self.has_zp = has_zp
+        self.bit8_pack_factor = 8 // self.weight_bits
+        self.lm_head_quantized = lm_head_quantized
+        self.linear_quant_method = linear_quant_method
+        self.full_config = full_config
+        self.use_marlin = False
+        # Avoid circular import
+
+        if self.linear_quant_method == &#34;gptq&#34;:
+            self.use_marlin = GPTQMarlinConfig.is_gptq_marlin_compatible(full_config)
+        elif self.linear_quant_method == &#34;awq&#34;:
+            capability_tuple = get_device_capability()
+            device_capability = (
+                -1
+                if capability_tuple is None
+                else capability_tuple[0] * 10 + capability_tuple[1]
+            )
+            awq_min_capability = AWQConfig.get_min_capability()
+            if device_capability &lt; awq_min_capability:
+                raise ValueError(
+                    &#34;The quantization method moe_wna16 + awq is not supported &#34;
+                    &#34;for the current GPU. &#34;
+                    f&#34;Minimum capability: {awq_min_capability}. &#34;
+                    f&#34;Current capability: {device_capability}.&#34;
+                )
+        else:
+            raise ValueError(&#34;moe_wna16 only support gptq and awq.&#34;)
+
+        if modules_to_not_convert is None:
+            self.modules_to_not_convert = []
+        else:
+            self.modules_to_not_convert = modules_to_not_convert
+
+    @classmethod
+    def get_name(cls) -&gt; str:
+        return &#34;moe_wna16&#34;
+
+    @classmethod
+    def get_supported_act_dtypes(cls) -&gt; List[torch.dtype]:
+        return [torch.bfloat16, torch.half]
+
+    @classmethod
+    def get_min_capability(cls) -&gt; int:
+        return 70
+
+    @classmethod
+    def get_config_filenames(cls) -&gt; List[str]:
+        return [&#34;quantize_config.json&#34;]
+
+    def get_scaled_act_names(self) -&gt; List[str]:
+        raise NotImplementedError
+
+    @classmethod
+    def from_config(cls, config: Dict[str, Any]) -&gt; MoeWNA16Config:
+        quant_method = cls.get_from_keys(config, [&#34;quant_method&#34;])
+        weight_bits = cls.get_from_keys(config, [&#34;bits&#34;])
+        group_size = cls.get_from_keys(config, [&#34;group_size&#34;])
+        lm_head_quantized = cls.get_from_keys_or(config, [&#34;lm_head&#34;], default=False)
+        if quant_method == &#34;gptq&#34;:
+            has_zp = not cls.get_from_keys(config, [&#34;sym&#34;])
+            modules_to_not_convert = []
+        elif quant_method == &#34;awq&#34;:
+            has_zp = cls.get_from_keys(config, [&#34;zero_point&#34;])
+            modules_to_not_convert = cls.get_from_keys_or(
+                config, [&#34;modules_to_not_convert&#34;], None
+            )
+        else:
+            raise ValueError(&#34;moe_wna16 only support gptq and awq.&#34;)
+
+        return cls(
+            quant_method,
+            weight_bits,
+            group_size,
+            has_zp,
+            lm_head_quantized,
+            modules_to_not_convert,
+            config,
+        )
+
+    @classmethod
+    def override_quantization_method(cls, hf_quant_cfg, user_quant) -&gt; Optional[str]:
+        if user_quant == &#34;moe_wna16&#34; and cls.is_moe_wna16_compatible(hf_quant_cfg):
+            return cls.get_name()
+        return None
+
+    @classmethod
+    def is_moe_wna16_compatible(cls, quant_config: Dict[str, Any]):
+        # Extract data from quant config.
+        quant_method = quant_config.get(&#34;quant_method&#34;, &#34;&#34;).lower()
+        num_bits = quant_config.get(&#34;bits&#34;)
+        desc_act = quant_config.get(&#34;desc_act&#34;)
+
+        capability_tuple = get_device_capability()
+        device_capability = (
+            -1
+            if all(capability is None for capability in capability_tuple)
+            else capability_tuple[0] * 10 + capability_tuple[1]
+        )
+        # Avoid circular import
+        awq_min_capability = AWQConfig.get_min_capability()
+
+        gptq_compatible = quant_method == &#34;gptq&#34; and not desc_act and num_bits in [4, 8]
+        awq_compatible = (
+            quant_method == &#34;awq&#34;
+            and num_bits == 4
+            and device_capability &gt;= awq_min_capability
+        )
+
+        return gptq_compatible or awq_compatible
+
+    def get_quant_method(
+        self, layer: torch.nn.Module, prefix: str
+    ) -&gt; Optional[QuantizeMethodBase]:
+        # avoid circular import
+        from sglang.srt.layers.linear import LinearBase
+        from sglang.srt.layers.moe.fused_moe_triton.layer import FusedMoE
+
+        if is_layer_skipped_quant(prefix, self.modules_to_not_convert):
+            return UnquantizedLinearMethod()
+        elif isinstance(layer, LinearBase):
+
+            if self.linear_quant_method == &#34;gptq&#34;:
+                if self.use_marlin:
+                    return GPTQMarlinConfig.from_config(
+                        self.full_config
+                    ).get_quant_method(layer, prefix)
+                else:
+                    return GPTQConfig.from_config(self.full_config).get_quant_method(
+                        layer, prefix
+                    )
+            elif self.linear_quant_method == &#34;awq&#34;:
+                return AWQConfig.from_config(self.full_config).get_quant_method(
+                    layer, prefix
+                )
+            else:
+                raise ValueError(&#34;moe_wna16 only support gptq and awq.&#34;)
+        elif isinstance(layer, FusedMoE):
+            return MoeWNA16Method(self)
+        return None</code></pre>
+</details>
+<div class="desc"><p>Config class for MOE WNA16 (W8A16/W4A16) quantization.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config.is_moe_wna16_compatible"><code class="name flex">
+<span>def <span class="ident">is_moe_wna16_compatible</span></span>(<span>quant_config: Dict[str, Any])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method"><code class="flex name class">
+<span>class <span class="ident">MoeWNA16Method</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config" href="#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config">MoeWNA16Config</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoeWNA16Method(FusedMoEMethodBase):
+    &#34;&#34;&#34;Linear method for MOE WNA16 (W8A16/W4A16) quantization.
+
+    Args:
+        quant_config: The MOE WNA16 (W8A16/W4A16) quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quant_config: MoeWNA16Config):
+        self.quant_config = quant_config
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size_per_partition: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoeWeightScaleSupported
+
+        layer.quant_config = self.quant_config
+        bit8_pack_factor = self.quant_config.bit8_pack_factor
+        group_size = self.quant_config.group_size
+        group_size_div_factor = 1
+
+        # make intermediate_size and hidden_size diviable by group_size
+        # we reduce the group size to ensure that
+        # and we would repeat the loaded_weight later
+        while intermediate_size_per_partition % group_size or hidden_size % group_size:
+            group_size = group_size // 2
+            group_size_div_factor *= 2
+            assert group_size &gt;= 32
+        layer.group_size = group_size
+        layer.group_size_div_factor = group_size_div_factor
+
+        strategy = FusedMoeWeightScaleSupported.GROUP.value
+        extra_weight_attrs.update({&#34;quant_method&#34;: strategy, &#34;is_transposed&#34;: False})
+
+        assert &#34;weight_loader&#34; in extra_weight_attrs
+        weight_loader = extra_weight_attrs[&#34;weight_loader&#34;]
+        wrapped_weight_loader = MoeWNA16Method.get_weight_loader(layer, weight_loader)
+        extra_weight_attrs[&#34;weight_loader&#34;] = wrapped_weight_loader
+
+        # Fused gate_up_proj (column parallel)
+        w13_qweight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                2 * intermediate_size_per_partition,
+                hidden_size // bit8_pack_factor,
+                dtype=torch.uint8,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_qweight&#34;, w13_qweight)
+        set_weight_attrs(w13_qweight, extra_weight_attrs)
+
+        # down_proj (row parallel)
+        w2_qweight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                intermediate_size_per_partition // bit8_pack_factor,
+                dtype=torch.uint8,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_qweight&#34;, w2_qweight)
+        set_weight_attrs(w2_qweight, extra_weight_attrs)
+
+        w13_scales = torch.nn.Parameter(
+            torch.zeros(
+                num_experts,
+                2 * intermediate_size_per_partition,
+                hidden_size // group_size,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_scales&#34;, w13_scales)
+        set_weight_attrs(w13_scales, extra_weight_attrs)
+
+        w2_scales = torch.nn.Parameter(
+            torch.zeros(
+                num_experts,
+                hidden_size,
+                intermediate_size_per_partition // group_size,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_scales&#34;, w2_scales)
+        set_weight_attrs(w2_scales, extra_weight_attrs)
+
+        if self.quant_config.has_zp:
+            w13_qzeros = torch.nn.Parameter(
+                torch.zeros(
+                    num_experts,
+                    2 * intermediate_size_per_partition // bit8_pack_factor,
+                    hidden_size // group_size,
+                    dtype=torch.uint8,
+                ),
+                requires_grad=False,
+            )
+            layer.register_parameter(&#34;w13_qzeros&#34;, w13_qzeros)
+            set_weight_attrs(w13_qzeros, extra_weight_attrs)
+
+            w2_qzeros = torch.nn.Parameter(
+                torch.zeros(
+                    num_experts,
+                    hidden_size // bit8_pack_factor,
+                    intermediate_size_per_partition // group_size,
+                    dtype=torch.uint8,
+                ),
+                requires_grad=False,
+            )
+            layer.register_parameter(&#34;w2_qzeros&#34;, w2_qzeros)
+            set_weight_attrs(w2_qzeros, extra_weight_attrs)
+
+        if self.quant_config.linear_quant_method == &#34;gptq&#34;:
+            # some param are unused, but we need to init them in order to
+            # load weights
+            invalid_param_keys = [&#34;w13_g_idx&#34;, &#34;w2_g_idx&#34;]
+            if not self.quant_config.has_zp:
+                invalid_param_keys += [&#34;w13_qzeros&#34;, &#34;w2_qzeros&#34;]
+            for key in invalid_param_keys:
+                param = torch.nn.Parameter(
+                    torch.empty((0,), dtype=torch.int32), requires_grad=False
+                )
+                layer.register_parameter(key, param)
+                set_weight_attrs(param, extra_weight_attrs)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+        # avoid circular import
+        from sglang.srt.layers.moe.fused_moe_triton.fused_moe import fused_experts
+
+        assert (
+            moe_runner_config.activation == &#34;silu&#34;
+        ), &#34;Only SiLU activation is supported.&#34;
+
+        weight_bits = self.quant_config.weight_bits
+        has_zp = self.quant_config.has_zp
+
+        return fused_experts(
+            x,
+            layer.w13_qweight,
+            layer.w2_qweight,
+            topk_output=topk_output,
+            moe_runner_config=moe_runner_config,
+            use_int4_w4a16=weight_bits == 4,
+            use_int8_w8a16=weight_bits == 8,
+            w1_scale=layer.w13_scales,
+            w2_scale=layer.w2_scales,
+            w1_zp=layer.w13_qzeros if has_zp else None,
+            w2_zp=layer.w2_qzeros if has_zp else None,
+            block_shape=[0, layer.group_size],
+        )
+
+    @staticmethod
+    def get_weight_loader(layer, weight_loader):
+
+        def convert_awq_tensor(tensor, tensor_type):
+            # convert awq qweight/qzeros to a standard format (assume int4)
+            # qweight: (k, n // pack_factor_bit32) -&gt; (n, k // pack_factor_bit8)
+            # qzeros: (k // group_size, n // pack_factor_bit32) -&gt;
+            #         (n // pack_factor_bit8, k // group_size)
+            # pack_factor_bit32 = 32 // weight_bits
+            # pack_factor_bit8 = 8 // weight_bits
+
+            # 0. suppose origin shape (a, b), dtype int32
+            # 1. convert to uint8, shape (a, b) -&gt; (a, 4 * b)
+            size0 = tensor.size(0)
+            tensor = tensor.view(torch.uint8)
+
+            # 2. unpack to uint4 (only when weight_bits == 4)
+            #    shape (a, 4 * b) -&gt; (a, 4 * b, 2)
+            shifter = torch.tensor([0, 4], dtype=torch.uint8, device=tensor.device)
+            tensor = (tensor[:, :, None] &gt;&gt; shifter) &amp; 0xF
+
+            # 3. change order, see
+            # https://github.com/casper-hansen/AutoAWQ/blob/v0.2.8/awq/utils/quant_utils.py
+            # shape -&gt; (a, 4 * b * pack_factor_bit8)
+            reverse_awq_pack_order = [0, 4, 1, 5, 2, 6, 3, 7]
+            tensor = tensor.view(-1, 8)[:, reverse_awq_pack_order]
+            tensor = tensor.view(size0, -1)
+
+            # 4. transpose, shape -&gt; (4 * b * pack_factor_bit8, a)
+            tensor = tensor.T.contiguous()
+
+            # 5. repack (only when weight_bits == 4)
+            # qweight shape -&gt; (4 * b * pack_factor_bit8, a // pack_factor_bit8)
+            # qzeros shape -&gt; (4 * b, a)
+
+            if tensor_type == &#34;qweight&#34;:
+                tensor = tensor[:, 1::2] * 16 + tensor[:, ::2]
+            elif tensor_type == &#34;qzeros&#34;:
+                tensor = tensor[1::2, :] * 16 + tensor[::2, :]
+            return tensor
+
+        def convert_gptq_int4_qzeros(tensor):
+            tensor = tensor.view(torch.uint8)
+            shifter = torch.tensor([0, 4], dtype=torch.uint8, device=tensor.device)
+            tensor = (tensor[:, :, None] &gt;&gt; shifter) &amp; 0xF
+            tensor = tensor + 1
+            tensor = tensor[:, :, 0] + tensor[:, :, 1] * 16
+            return tensor
+
+        def moe_wna16_weight_loader(
+            param: torch.nn.Parameter,
+            loaded_weight: torch.Tensor,
+            weight_name: str,
+            shard_id: str,
+            expert_id: int,
+        ):
+            if &#34;g_idx&#34; in weight_name:
+                return
+            if not layer.quant_config.has_zp and &#34;qzeros&#34; in weight_name:
+                return
+
+            device = get_tp_group().device
+            tp_rank = get_tensor_model_parallel_rank()
+            loaded_weight = loaded_weight.to(device)
+            shard_size = layer.intermediate_size_per_partition
+
+            # convert gptq and awq weight to a standard format
+            if layer.quant_config.linear_quant_method == &#34;awq&#34;:
+                assert layer.quant_config.weight_bits == 4
+                if &#34;weight&#34; in weight_name:
+                    loaded_weight = convert_awq_tensor(loaded_weight, &#34;qweight&#34;)
+                elif &#34;zeros&#34; in weight_name:
+                    loaded_weight = convert_awq_tensor(loaded_weight, &#34;qzeros&#34;)
+                else:
+                    loaded_weight = loaded_weight.T
+            elif layer.quant_config.linear_quant_method == &#34;gptq&#34;:
+                assert layer.quant_config.weight_bits in [4, 8]
+                if &#34;weight&#34; in weight_name:
+                    loaded_weight = loaded_weight.T.contiguous().view(torch.uint8)
+                elif &#34;zeros&#34; in weight_name:
+                    # add 1 to gptq qzeros to align with awq
+                    loaded_weight = loaded_weight.view(torch.uint8)
+                    if layer.quant_config.weight_bits == 4:
+                        loaded_weight = convert_gptq_int4_qzeros(loaded_weight).T
+                    else:
+                        loaded_weight = loaded_weight.T + 1
+                else:
+                    loaded_weight = loaded_weight.T
+
+            # repeat the qzeros/scales to fit new group size
+            if (
+                layer.group_size_div_factor &gt; 1
+                and &#34;qzeros&#34; in weight_name
+                or &#34;scales&#34; in weight_name
+            ):
+                loaded_weight = loaded_weight.repeat_interleave(
+                    layer.group_size_div_factor, 1
+                )
+
+            if &#34;w13_qzeros&#34; in weight_name:
+                tensor = loaded_weight.view(
+                    layer.moe_tp_size, -1, loaded_weight.size(1)
+                )[tp_rank]
+                if shard_id == &#34;w1&#34;:
+                    param.data[expert_id, : shard_size // 2] = tensor
+                else:
+                    param.data[expert_id, shard_size // 2 :] = tensor
+            elif &#34;w2_qzeros&#34; in weight_name:
+                param.data[expert_id] = loaded_weight.view(
+                    loaded_weight.size(0), layer.moe_tp_size, -1
+                )[:, tp_rank]
+            else:
+                weight_loader(param, loaded_weight, weight_name, shard_id, expert_id)
+
+        return moe_wna16_weight_loader</code></pre>
+</details>
+<div class="desc"><p>Linear method for MOE WNA16 (W8A16/W4A16) quantization.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The MOE WNA16 (W8A16/W4A16) quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method.get_weight_loader"><code class="name flex">
+<span>def <span class="ident">get_weight_loader</span></span>(<span>layer, weight_loader)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_weight_loader(layer, weight_loader):
+
+    def convert_awq_tensor(tensor, tensor_type):
+        # convert awq qweight/qzeros to a standard format (assume int4)
+        # qweight: (k, n // pack_factor_bit32) -&gt; (n, k // pack_factor_bit8)
+        # qzeros: (k // group_size, n // pack_factor_bit32) -&gt;
+        #         (n // pack_factor_bit8, k // group_size)
+        # pack_factor_bit32 = 32 // weight_bits
+        # pack_factor_bit8 = 8 // weight_bits
+
+        # 0. suppose origin shape (a, b), dtype int32
+        # 1. convert to uint8, shape (a, b) -&gt; (a, 4 * b)
+        size0 = tensor.size(0)
+        tensor = tensor.view(torch.uint8)
+
+        # 2. unpack to uint4 (only when weight_bits == 4)
+        #    shape (a, 4 * b) -&gt; (a, 4 * b, 2)
+        shifter = torch.tensor([0, 4], dtype=torch.uint8, device=tensor.device)
+        tensor = (tensor[:, :, None] &gt;&gt; shifter) &amp; 0xF
+
+        # 3. change order, see
+        # https://github.com/casper-hansen/AutoAWQ/blob/v0.2.8/awq/utils/quant_utils.py
+        # shape -&gt; (a, 4 * b * pack_factor_bit8)
+        reverse_awq_pack_order = [0, 4, 1, 5, 2, 6, 3, 7]
+        tensor = tensor.view(-1, 8)[:, reverse_awq_pack_order]
+        tensor = tensor.view(size0, -1)
+
+        # 4. transpose, shape -&gt; (4 * b * pack_factor_bit8, a)
+        tensor = tensor.T.contiguous()
+
+        # 5. repack (only when weight_bits == 4)
+        # qweight shape -&gt; (4 * b * pack_factor_bit8, a // pack_factor_bit8)
+        # qzeros shape -&gt; (4 * b, a)
+
+        if tensor_type == &#34;qweight&#34;:
+            tensor = tensor[:, 1::2] * 16 + tensor[:, ::2]
+        elif tensor_type == &#34;qzeros&#34;:
+            tensor = tensor[1::2, :] * 16 + tensor[::2, :]
+        return tensor
+
+    def convert_gptq_int4_qzeros(tensor):
+        tensor = tensor.view(torch.uint8)
+        shifter = torch.tensor([0, 4], dtype=torch.uint8, device=tensor.device)
+        tensor = (tensor[:, :, None] &gt;&gt; shifter) &amp; 0xF
+        tensor = tensor + 1
+        tensor = tensor[:, :, 0] + tensor[:, :, 1] * 16
+        return tensor
+
+    def moe_wna16_weight_loader(
+        param: torch.nn.Parameter,
+        loaded_weight: torch.Tensor,
+        weight_name: str,
+        shard_id: str,
+        expert_id: int,
+    ):
+        if &#34;g_idx&#34; in weight_name:
+            return
+        if not layer.quant_config.has_zp and &#34;qzeros&#34; in weight_name:
+            return
+
+        device = get_tp_group().device
+        tp_rank = get_tensor_model_parallel_rank()
+        loaded_weight = loaded_weight.to(device)
+        shard_size = layer.intermediate_size_per_partition
+
+        # convert gptq and awq weight to a standard format
+        if layer.quant_config.linear_quant_method == &#34;awq&#34;:
+            assert layer.quant_config.weight_bits == 4
+            if &#34;weight&#34; in weight_name:
+                loaded_weight = convert_awq_tensor(loaded_weight, &#34;qweight&#34;)
+            elif &#34;zeros&#34; in weight_name:
+                loaded_weight = convert_awq_tensor(loaded_weight, &#34;qzeros&#34;)
+            else:
+                loaded_weight = loaded_weight.T
+        elif layer.quant_config.linear_quant_method == &#34;gptq&#34;:
+            assert layer.quant_config.weight_bits in [4, 8]
+            if &#34;weight&#34; in weight_name:
+                loaded_weight = loaded_weight.T.contiguous().view(torch.uint8)
+            elif &#34;zeros&#34; in weight_name:
+                # add 1 to gptq qzeros to align with awq
+                loaded_weight = loaded_weight.view(torch.uint8)
+                if layer.quant_config.weight_bits == 4:
+                    loaded_weight = convert_gptq_int4_qzeros(loaded_weight).T
+                else:
+                    loaded_weight = loaded_weight.T + 1
+            else:
+                loaded_weight = loaded_weight.T
+
+        # repeat the qzeros/scales to fit new group size
+        if (
+            layer.group_size_div_factor &gt; 1
+            and &#34;qzeros&#34; in weight_name
+            or &#34;scales&#34; in weight_name
+        ):
+            loaded_weight = loaded_weight.repeat_interleave(
+                layer.group_size_div_factor, 1
+            )
+
+        if &#34;w13_qzeros&#34; in weight_name:
+            tensor = loaded_weight.view(
+                layer.moe_tp_size, -1, loaded_weight.size(1)
+            )[tp_rank]
+            if shard_id == &#34;w1&#34;:
+                param.data[expert_id, : shard_size // 2] = tensor
+            else:
+                param.data[expert_id, shard_size // 2 :] = tensor
+        elif &#34;w2_qzeros&#34; in weight_name:
+            param.data[expert_id] = loaded_weight.view(
+                loaded_weight.size(0), layer.moe_tp_size, -1
+            )[:, tp_rank]
+        else:
+            weight_loader(param, loaded_weight, weight_name, shard_id, expert_id)
+
+    return moe_wna16_weight_loader</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.moe_wna16.get_weight_perm" href="#sglang.srt.layers.quantization.moe_wna16.get_weight_perm">get_weight_perm</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.moe_wna16.is_layer_skipped_quant" href="#sglang.srt.layers.quantization.moe_wna16.is_layer_skipped_quant">is_layer_skipped_quant</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config" href="#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config">MoeWNA16Config</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config.is_moe_wna16_compatible" href="#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Config.is_moe_wna16_compatible">is_moe_wna16_compatible</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method" href="#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method">MoeWNA16Method</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method.get_weight_loader" href="#sglang.srt.layers.quantization.moe_wna16.MoeWNA16Method.get_weight_loader">get_weight_loader</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

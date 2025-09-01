@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.test.attention.test_flashattn_backend API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.test.attention.test_flashattn_backend</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.test.attention.test_flashattn_backend.MockModelRunner"><code class="flex name class">
+<span>class <span class="ident">MockModelRunner</span></span>
+<span>(</span><span>page_size=1, num_heads=2, head_dim=8)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MockModelRunner:
+    def __init__(
+        self,
+        page_size=1,
+        num_heads=2,
+        head_dim=8,
+    ):
+        self.device = &#34;cuda&#34;
+        self.dtype = torch.float16
+        attention_arch = AttentionArch.MHA
+        # Max batch size for the test.
+        max_batch_size = 160
+        # Total tokens(prefix + extend + decode) in the test should not exceed this length.
+        max_context_len = 2048
+        self.model_config = type(
+            &#34;ModelConfig&#34;,
+            (),
+            {
+                &#34;context_len&#34;: max_context_len,
+                &#34;is_multimodal&#34;: False,
+                &#34;attention_arch&#34;: attention_arch,
+            },
+        )
+        self.sliding_window_size = None
+        self.device = self.device
+        # Create a large enough req_to_token_pool to fit the test usage.
+        self.req_to_token_pool = type(
+            &#34;TokenPool&#34;,
+            (),
+            {
+                # A typical max_bs * max_context_len for cuda graph decode
+                &#34;size&#34;: max_batch_size,
+                # Add req_to_token attribute
+                &#34;req_to_token&#34;: torch.zeros(
+                    max_batch_size,
+                    max_context_len,
+                    dtype=torch.int32,
+                    device=self.device,
+                ),
+            },
+        )
+        self.page_size = page_size
+        max_total_num_tokens = max_batch_size * max_context_len
+        self.token_to_kv_pool = MHATokenToKVPool(
+            size=max_total_num_tokens,
+            page_size=page_size,
+            dtype=self.dtype,
+            head_num=num_heads,
+            head_dim=head_dim,
+            layer_num=1,  # only consider layer=1 for unit test
+            device=self.device,
+            enable_memory_saver=False,
+        )
+        # Required by torch native backend
+        self.server_args = ServerArgs(model_path=&#34;fake_model_path&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend"><code class="flex name class">
+<span>class <span class="ident">TestFlashAttentionBackend</span></span>
+<span>(</span><span>methodName='runTest')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@unittest.skipIf(not torch.cuda.is_available(), &#34;Test requires CUDA&#34;)
+class TestFlashAttentionBackend(CustomTestCase):
+    def setUp(self):
+        # Test parameters
+        self.batch_size = 2
+        self.seq_len = 256
+        self.num_heads = 2
+        self.head_dim = 8
+        self.device = &#34;cuda&#34;
+        self.dtype = torch.float16
+
+    def _init_model_runner(self, page_size=1):
+        self.model_runner = MockModelRunner(
+            page_size=page_size,
+            num_heads=self.num_heads,
+            head_dim=self.head_dim,
+        )
+        self.backend = FlashAttentionBackend(self.model_runner)
+        self.ref_backend = TorchNativeAttnBackend(self.model_runner)
+        self.model_runner.model_config.num_attention_heads = self.num_heads
+
+    def _mock_write_to_req_to_token_pool(self, batch_size, seq_len, page_size):
+        # if page_size &gt; 1, the token pool stores the index to the page.
+        # so we need to multiply the index by page_size.
+        self.req_to_token = (
+            torch.arange(0, batch_size, dtype=torch.int32, device=self.device)[:, None]
+            * seq_len
+            + torch.arange(0, seq_len, dtype=torch.int32, device=self.device)[None, :]
+            + page_size
+        )
+        self.model_runner.req_to_token_pool.req_to_token[:batch_size, :seq_len] = (
+            self.req_to_token
+        )
+
+    def _create_attention_layer(self):
+        &#34;&#34;&#34;Create attention layer for testing.&#34;&#34;&#34;
+        return RadixAttention(
+            num_heads=self.num_heads,
+            head_dim=self.head_dim,
+            scaling=1.0,
+            num_kv_heads=self.num_heads,
+            layer_id=0,
+        )
+
+    def _create_qkv_tensors(self, tokens_len):
+        &#34;&#34;&#34;Create q, k, v tensors for testing.&#34;&#34;&#34;
+        shape = (tokens_len, self.num_heads, self.head_dim)
+        return (
+            torch.randn(shape, dtype=self.dtype, device=self.device),
+            torch.randn(shape, dtype=self.dtype, device=self.device),
+            torch.randn(shape, dtype=self.dtype, device=self.device),
+        )
+
+    def _run_reference_forward(
+        self, mode, q, k, v, layer, forward_batch, expected_shape
+    ):
+        &#34;&#34;&#34;Run reference forward pass using native backend.&#34;&#34;&#34;
+        if mode == ForwardMode.EXTEND:
+            output = self.ref_backend.forward_extend(q, k, v, layer, forward_batch)
+        else:  # ForwardMode.DECODE
+            output = self.ref_backend.forward_decode(q, k, v, layer, forward_batch)
+        return output.view(expected_shape)
+
+    def _verify_output(self, output, expected_shape, output_ref=None):
+        &#34;&#34;&#34;Verify output tensor shape, dtype, and values.&#34;&#34;&#34;
+        self.assertEqual(
+            output.shape,
+            expected_shape,
+            f&#34;Expected shape {expected_shape}, got {output.shape}&#34;,
+        )
+        self.assertEqual(output.dtype, self.dtype)
+        self.assertEqual(output.device.type, &#34;cuda&#34;)
+        self.assertEqual(
+            torch.isnan(output).sum().item(), 0, &#34;Output contains NaN values&#34;
+        )
+
+        if output_ref is not None:
+            if not torch.allclose(output, output_ref, atol=1e-1, rtol=0.0):
+                # Check where the values differ beyond the given tolerances
+                diff_mask = ~torch.isclose(output, output_ref, atol=1e-1, rtol=0.0)
+
+                # Find the first index where the difference occurs
+                if diff_mask.any():
+                    first_mismatch_idx = diff_mask.nonzero()[0]
+                    print(
+                        &#34;First mismatch at index:&#34;, tuple(first_mismatch_idx.tolist())
+                    )
+                    print(&#34;output:&#34;, output[tuple(first_mismatch_idx.tolist())])
+                    print(&#34;output_ref:&#34;, output_ref[tuple(first_mismatch_idx.tolist())])
+                raise AssertionError(
+                    &#34;Attention output is not close to the torch native backend output&#34;
+                )
+
+    def _create_forward_batch(self, mode, q_len=None, prefix_len=0, page_size=1):
+        &#34;&#34;&#34;Create a forward batch for testing based on mode and lengths.&#34;&#34;&#34;
+        self._init_model_runner(page_size=page_size)
+
+        # Default to self.seq_len if not specified
+        q_len = q_len or self.seq_len
+
+        if mode == ForwardMode.EXTEND:
+            total_len = prefix_len + q_len
+            out_cache_start = prefix_len * self.batch_size
+            out_cache_end = total_len * self.batch_size
+
+            forward_batch = ForwardBatch(
+                batch_size=self.batch_size,
+                input_ids=torch.randint(
+                    0, 100, (self.batch_size, q_len), device=self.device
+                ),
+                out_cache_loc=torch.arange(
+                    out_cache_start, out_cache_end, device=self.device
+                ),
+                seq_lens_sum=self.batch_size * total_len,
+                forward_mode=mode,
+                req_pool_indices=torch.arange(self.batch_size, device=self.device),
+                seq_lens=torch.tensor(
+                    [total_len] * self.batch_size, device=self.device
+                ),
+                seq_lens_cpu=torch.tensor([total_len] * self.batch_size, device=&#34;cpu&#34;),
+                extend_prefix_lens=torch.tensor(
+                    [prefix_len] * self.batch_size, device=self.device
+                ),
+                extend_prefix_lens_cpu=torch.tensor(
+                    [prefix_len] * self.batch_size, device=&#34;cpu&#34;
+                ),
+                extend_seq_lens=torch.tensor(
+                    [q_len] * self.batch_size, device=self.device
+                ),
+                extend_seq_lens_cpu=torch.tensor(
+                    [q_len] * self.batch_size, device=&#34;cpu&#34;
+                ),
+                attn_backend=self.backend,
+            )
+        else:  # ForwardMode.DECODE
+            decode_len = q_len  # Assuming 1 for decode testing
+            total_len = self.seq_len + decode_len
+            if mode == ForwardMode.DECODE and page_size &gt; 1:
+                # Get next page_size multiple of self.seq_len
+                out_cache_start = (
+                    self.batch_size * self.seq_len // page_size + 1
+                ) * page_size
+                # out_cache_end is the start of the next block
+                out_cache_end = out_cache_start + decode_len * page_size
+            else:
+                out_cache_start = self.batch_size * self.seq_len
+                out_cache_end = self.batch_size * total_len
+
+            forward_batch = ForwardBatch(
+                batch_size=self.batch_size,
+                input_ids=torch.randint(
+                    0, 100, (self.batch_size, decode_len), device=self.device
+                ),
+                out_cache_loc=torch.tensor(
+                    [out_cache_start, out_cache_end], device=self.device
+                ),
+                seq_lens_sum=self.batch_size * total_len,
+                forward_mode=mode,
+                req_pool_indices=torch.arange(self.batch_size, device=self.device),
+                seq_lens=torch.tensor(
+                    [total_len] * self.batch_size, device=self.device
+                ),
+                seq_lens_cpu=torch.tensor([total_len] * self.batch_size, device=&#34;cpu&#34;),
+                attn_backend=self.backend,
+            )
+
+        # Add token pool
+        forward_batch.req_to_token_pool = self.model_runner.req_to_token_pool
+
+        # Write current batch&#39;s req_to_token to req_to_token_pool
+        self._mock_write_to_req_to_token_pool(self.batch_size, total_len, page_size)
+        # Add kv pool for this forward batch
+        forward_batch.token_to_kv_pool = self.model_runner.token_to_kv_pool
+
+        return forward_batch
+
+    def _setup_kv_cache(self, forward_batch, layer, cache_len):
+        # Create constant values for the prefix cache for easy debugging
+        cache_k = torch.ones(
+            self.batch_size * cache_len,
+            self.num_heads,
+            self.head_dim,
+            dtype=self.dtype,
+            device=self.device,
+        )
+        cache_v = (
+            torch.ones(
+                self.batch_size * cache_len,
+                self.num_heads,
+                self.head_dim,
+                dtype=self.dtype,
+                device=self.device,
+            )
+            * 2
+        )
+
+        # Set the prefix KV cache
+        forward_batch.token_to_kv_pool.set_kv_buffer(
+            layer,
+            torch.arange(self.batch_size * cache_len, device=self.device),
+            cache_k,
+            cache_v,
+            layer.k_scale,
+            layer.v_scale,
+        )
+
+    def _run_attention_test(self, mode, q_len, prefix_len=0, page_size=1):
+        &#34;&#34;&#34;
+            Run an attention test with the specified parameters.
+        Args:
+            mode: ForwardMode.EXTEND or ForwardMode.DECODE
+            q_len: Length of the query sequence. For decode mode, q_len is 1.
+            prefix_len: Length of the prefix sequence for extend mode
+            page_size: Page size for the KV cache
+        &#34;&#34;&#34;
+        layer = self._create_attention_layer()
+
+        # Create forward batch and set up
+        forward_batch = self._create_forward_batch(mode, q_len, prefix_len, page_size)
+
+        # Create QKV tensors for the input
+        q, k, v = self._create_qkv_tensors(self.batch_size * q_len)
+
+        # KV cache for prefixed extend is prefix_len
+        # KV cache for decode is same as seq_len
+        # No KV cache for extend without prefix
+        if mode == ForwardMode.EXTEND:
+            if prefix_len &gt; 0:
+                self._setup_kv_cache(forward_batch, layer, prefix_len)
+        else:
+            self._setup_kv_cache(forward_batch, layer, self.seq_len)
+
+        self.backend.init_forward_metadata(forward_batch)
+
+        if mode == ForwardMode.EXTEND:
+            expected_shape = (
+                self.batch_size * q_len,
+                self.num_heads * self.head_dim,
+            )
+            output = self.backend.forward_extend(q, k, v, layer, forward_batch)
+        else:
+            expected_shape = (self.batch_size, self.num_heads * self.head_dim)
+            output = self.backend.forward_decode(q, k, v, layer, forward_batch)
+
+        output_ref = self._run_reference_forward(
+            mode, q, k, v, layer, forward_batch, expected_shape
+        )
+
+        self._verify_output(output, expected_shape, output_ref)
+
+        return output
+
+    def test_forward_extend(self):
+        &#34;&#34;&#34;Test the standard extend operation.&#34;&#34;&#34;
+        self._run_attention_test(ForwardMode.EXTEND, q_len=self.seq_len)
+
+    def test_forward_decode(self):
+        &#34;&#34;&#34;Test the decode operation with cached tokens.&#34;&#34;&#34;
+        self._run_attention_test(ForwardMode.DECODE, q_len=1)
+
+    def test_forward_extend_with_prefix(self):
+        &#34;&#34;&#34;Test extending from cached prefix tokens.&#34;&#34;&#34;
+        prefix_len = self.seq_len // 2
+        extend_len = self.seq_len - prefix_len
+        self._run_attention_test(
+            ForwardMode.EXTEND, q_len=extend_len, prefix_len=prefix_len
+        )
+
+    def test_forward_extend_with_page_size_greater_than_1(self):
+        &#34;&#34;&#34;Test extending from cached prefix tokens with page size greater than 1.&#34;&#34;&#34;
+        self._run_attention_test(ForwardMode.EXTEND, q_len=self.seq_len, page_size=64)
+
+    def test_forward_decode_with_page_size_greater_than_1(self):
+        &#34;&#34;&#34;Test decode operation with page size greater than 1.&#34;&#34;&#34;
+        self._run_attention_test(ForwardMode.DECODE, q_len=1, page_size=64)</code></pre>
+</details>
+<div class="desc"><p>A class whose instances are single test cases.</p>
+<p>By default, the test code itself should be placed in a method named
+'runTest'.</p>
+<p>If the fixture may be used for many test cases, create as
+many test methods as are needed. When instantiating such a TestCase
+subclass, specify in the constructor arguments the name of the test method
+that the instance is to execute.</p>
+<p>Test authors should subclass TestCase for their own tests. Construction
+and deconstruction of the test's environment ('fixture') can be
+implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
+<p>If it is necessary to override the <strong>init</strong> method, the base class
+<strong>init</strong> method must always be called. It is important that subclasses
+should not change the signature of their <strong>init</strong> method, since instances
+of the classes are instantiated automatically by parts of the framework
+in order to be run.</p>
+<p>When subclassing TestCase, you can set these attributes:
+* failureException: determines which exception will be raised when
+the instance's assertion methods fail; test methods raising this
+exception will be deemed to have 'failed' rather than 'errored'.
+* longMessage: determines whether long messages (including repr of
+objects used in assert methods) will be printed on failure in <em>addition</em>
+to any explicit message passed.
+* maxDiff: sets the maximum length of a diff in failure messages
+by assert methods using difflib. It is looked up as an instance
+attribute so can be configured by individual tests if required.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.test.test_utils.CustomTestCase" href="../test_utils.html#sglang.test.test_utils.CustomTestCase">CustomTestCase</a></li>
+<li>unittest.case.TestCase</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.setUp"><code class="name flex">
+<span>def <span class="ident">setUp</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setUp(self):
+    # Test parameters
+    self.batch_size = 2
+    self.seq_len = 256
+    self.num_heads = 2
+    self.head_dim = 8
+    self.device = &#34;cuda&#34;
+    self.dtype = torch.float16</code></pre>
+</details>
+<div class="desc"><p>Hook method for setting up the test fixture before exercising it.</p></div>
+</dd>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_decode"><code class="name flex">
+<span>def <span class="ident">test_forward_decode</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_forward_decode(self):
+    &#34;&#34;&#34;Test the decode operation with cached tokens.&#34;&#34;&#34;
+    self._run_attention_test(ForwardMode.DECODE, q_len=1)</code></pre>
+</details>
+<div class="desc"><p>Test the decode operation with cached tokens.</p></div>
+</dd>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_decode_with_page_size_greater_than_1"><code class="name flex">
+<span>def <span class="ident">test_forward_decode_with_page_size_greater_than_1</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_forward_decode_with_page_size_greater_than_1(self):
+    &#34;&#34;&#34;Test decode operation with page size greater than 1.&#34;&#34;&#34;
+    self._run_attention_test(ForwardMode.DECODE, q_len=1, page_size=64)</code></pre>
+</details>
+<div class="desc"><p>Test decode operation with page size greater than 1.</p></div>
+</dd>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend"><code class="name flex">
+<span>def <span class="ident">test_forward_extend</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_forward_extend(self):
+    &#34;&#34;&#34;Test the standard extend operation.&#34;&#34;&#34;
+    self._run_attention_test(ForwardMode.EXTEND, q_len=self.seq_len)</code></pre>
+</details>
+<div class="desc"><p>Test the standard extend operation.</p></div>
+</dd>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend_with_page_size_greater_than_1"><code class="name flex">
+<span>def <span class="ident">test_forward_extend_with_page_size_greater_than_1</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_forward_extend_with_page_size_greater_than_1(self):
+    &#34;&#34;&#34;Test extending from cached prefix tokens with page size greater than 1.&#34;&#34;&#34;
+    self._run_attention_test(ForwardMode.EXTEND, q_len=self.seq_len, page_size=64)</code></pre>
+</details>
+<div class="desc"><p>Test extending from cached prefix tokens with page size greater than 1.</p></div>
+</dd>
+<dt id="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend_with_prefix"><code class="name flex">
+<span>def <span class="ident">test_forward_extend_with_prefix</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_forward_extend_with_prefix(self):
+    &#34;&#34;&#34;Test extending from cached prefix tokens.&#34;&#34;&#34;
+    prefix_len = self.seq_len // 2
+    extend_len = self.seq_len - prefix_len
+    self._run_attention_test(
+        ForwardMode.EXTEND, q_len=extend_len, prefix_len=prefix_len
+    )</code></pre>
+</details>
+<div class="desc"><p>Test extending from cached prefix tokens.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.test.attention" href="index.html">sglang.test.attention</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.test.attention.test_flashattn_backend.MockModelRunner" href="#sglang.test.attention.test_flashattn_backend.MockModelRunner">MockModelRunner</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend">TestFlashAttentionBackend</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.setUp" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.setUp">setUp</a></code></li>
+<li><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_decode" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_decode">test_forward_decode</a></code></li>
+<li><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_decode_with_page_size_greater_than_1" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_decode_with_page_size_greater_than_1">test_forward_decode_with_page_size_greater_than_1</a></code></li>
+<li><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend">test_forward_extend</a></code></li>
+<li><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend_with_page_size_greater_than_1" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend_with_page_size_greater_than_1">test_forward_extend_with_page_size_greater_than_1</a></code></li>
+<li><code><a title="sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend_with_prefix" href="#sglang.test.attention.test_flashattn_backend.TestFlashAttentionBackend.test_forward_extend_with_prefix">test_forward_extend_with_prefix</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.connector API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.connector</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="sglang.srt.connector.base_connector" href="base_connector.html">sglang.srt.connector.base_connector</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.connector.redis" href="redis.html">sglang.srt.connector.redis</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.connector.s3" href="s3.html">sglang.srt.connector.s3</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.connector.serde" href="serde/index.html">sglang.srt.connector.serde</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.connector.utils" href="utils.html">sglang.srt.connector.utils</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.connector.create_remote_connector"><code class="name flex">
+<span>def <span class="ident">create_remote_connector</span></span>(<span>url, **kwargs) ‑> <a title="sglang.srt.connector.base_connector.BaseConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseConnector">BaseConnector</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_remote_connector(url, **kwargs) -&gt; BaseConnector:
+    connector_type = parse_connector_type(url)
+    if connector_type == &#34;redis&#34;:
+        return RedisConnector(url)
+    elif connector_type == &#34;s3&#34;:
+        return S3Connector(url)
+    else:
+        raise ValueError(f&#34;Invalid connector type: {url}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.get_connector_type"><code class="name flex">
+<span>def <span class="ident">get_connector_type</span></span>(<span>client: <a title="sglang.srt.connector.base_connector.BaseConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseConnector">BaseConnector</a>) ‑> <a title="sglang.srt.connector.ConnectorType" href="#sglang.srt.connector.ConnectorType">ConnectorType</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_connector_type(client: BaseConnector) -&gt; ConnectorType:
+    if isinstance(client, BaseKVConnector):
+        return ConnectorType.KV
+    if isinstance(client, BaseFileConnector):
+        return ConnectorType.FS
+
+    raise ValueError(f&#34;Invalid connector type: {client}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.connector.BaseConnector"><code class="flex name class">
+<span>class <span class="ident">BaseConnector</span></span>
+<span>(</span><span>url: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseConnector(ABC):
+    &#34;&#34;&#34;
+    For fs connector such as s3:
+    &lt;connector_type&gt;://&lt;path&gt;/&lt;filename&gt;
+
+    For kv connector such as redis:
+    &lt;connector_type&gt;://&lt;host&gt;:&lt;port&gt;/&lt;model_name&gt;/keys/&lt;key&gt;
+    &lt;connector_type://&lt;host&gt;:&lt;port&gt;/&lt;model_name&gt;/files/&lt;filename&gt;
+    &#34;&#34;&#34;
+
+    def __init__(self, url: str):
+        self.url = url
+        self.closed = False
+        self.local_dir = tempfile.mkdtemp()
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            existing_handler = signal.getsignal(sig)
+            signal.signal(sig, self._close_by_signal(existing_handler))
+
+    def get_local_dir(self):
+        return self.local_dir
+
+    @abstractmethod
+    def weight_iterator(
+        self, rank: int = 0
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def pull_files(
+        self,
+        allow_pattern: Optional[List[str]] = None,
+        ignore_pattern: Optional[List[str]] = None,
+    ) -&gt; None:
+        raise NotImplementedError()
+
+    def close(self):
+        if self.closed:
+            return
+
+        self.closed = True
+        if os.path.exists(self.local_dir):
+            shutil.rmtree(self.local_dir)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+    def __del__(self):
+        self.close()
+
+    def _close_by_signal(self, existing_handler=None):
+
+        def new_handler(signum, frame):
+            self.close()
+            if existing_handler:
+                existing_handler(signum, frame)
+
+        return new_handler</code></pre>
+</details>
+<div class="desc"><p>For fs connector such as s3:
+<connector_type>://<path>/<filename></p>
+<p>For kv connector such as redis:
+<connector_type>://<host>:<port>/<model_name>/keys/<key>
+&lt;connector_type://<host>:<port>/<model_name>/files/<filename></p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.base_connector.BaseFileConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseFileConnector">BaseFileConnector</a></li>
+<li><a title="sglang.srt.connector.base_connector.BaseKVConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseKVConnector">BaseKVConnector</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.connector.BaseConnector.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    if self.closed:
+        return
+
+    self.closed = True
+    if os.path.exists(self.local_dir):
+        shutil.rmtree(self.local_dir)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseConnector.get_local_dir"><code class="name flex">
+<span>def <span class="ident">get_local_dir</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_local_dir(self):
+    return self.local_dir</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseConnector.pull_files"><code class="name flex">
+<span>def <span class="ident">pull_files</span></span>(<span>self,<br>allow_pattern: List[str] | None = None,<br>ignore_pattern: List[str] | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def pull_files(
+    self,
+    allow_pattern: Optional[List[str]] = None,
+    ignore_pattern: Optional[List[str]] = None,
+) -&gt; None:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseConnector.weight_iterator"><code class="name flex">
+<span>def <span class="ident">weight_iterator</span></span>(<span>self, rank: int = 0) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def weight_iterator(
+    self, rank: int = 0
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.connector.BaseFileConnector"><code class="flex name class">
+<span>class <span class="ident">BaseFileConnector</span></span>
+<span>(</span><span>url: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseFileConnector(BaseConnector):
+    &#34;&#34;&#34;
+    List full file names from remote fs path and filter by allow pattern.
+
+    Args:
+        allow_pattern: A list of patterns of which files to pull.
+
+    Returns:
+        list[str]: List of full paths allowed by the pattern
+    &#34;&#34;&#34;
+
+    @abstractmethod
+    def glob(self, allow_pattern: str) -&gt; List[str]:
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>List full file names from remote fs path and filter by allow pattern.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>allow_pattern</code></strong></dt>
+<dd>A list of patterns of which files to pull.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list[str]</code></dt>
+<dd>List of full paths allowed by the pattern</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.base_connector.BaseConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseConnector">BaseConnector</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.s3.S3Connector" href="s3.html#sglang.srt.connector.s3.S3Connector">S3Connector</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.connector.BaseFileConnector.glob"><code class="name flex">
+<span>def <span class="ident">glob</span></span>(<span>self, allow_pattern: str) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def glob(self, allow_pattern: str) -&gt; List[str]:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.connector.BaseKVConnector"><code class="flex name class">
+<span>class <span class="ident">BaseKVConnector</span></span>
+<span>(</span><span>url: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseKVConnector(BaseConnector):
+
+    @abstractmethod
+    def get(self, key: str) -&gt; Optional[torch.Tensor]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def getstr(self, key: str) -&gt; Optional[str]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def set(self, key: str, obj: torch.Tensor) -&gt; None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def setstr(self, key: str, obj: str) -&gt; None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def list(self, prefix: str) -&gt; List[str]:
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>For fs connector such as s3:
+<connector_type>://<path>/<filename></p>
+<p>For kv connector such as redis:
+<connector_type>://<host>:<port>/<model_name>/keys/<key>
+&lt;connector_type://<host>:<port>/<model_name>/files/<filename></p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.base_connector.BaseConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseConnector">BaseConnector</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.redis.RedisConnector" href="redis.html#sglang.srt.connector.redis.RedisConnector">RedisConnector</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.connector.BaseKVConnector.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key: str) ‑> torch.Tensor | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def get(self, key: str) -&gt; Optional[torch.Tensor]:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseKVConnector.getstr"><code class="name flex">
+<span>def <span class="ident">getstr</span></span>(<span>self, key: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def getstr(self, key: str) -&gt; Optional[str]:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseKVConnector.list"><code class="name flex">
+<span>def <span class="ident">list</span></span>(<span>self, prefix: str) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def list(self, prefix: str) -&gt; List[str]:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseKVConnector.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, key: str, obj: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def set(self, key: str, obj: torch.Tensor) -&gt; None:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.BaseKVConnector.setstr"><code class="name flex">
+<span>def <span class="ident">setstr</span></span>(<span>self, key: str, obj: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def setstr(self, key: str, obj: str) -&gt; None:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.connector.ConnectorType"><code class="flex name class">
+<span>class <span class="ident">ConnectorType</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ConnectorType(str, enum.Enum):
+    FS = &#34;filesystem&#34;
+    KV = &#34;KV&#34;</code></pre>
+</details>
+<div class="desc"><p>str(object='') -&gt; str
+str(bytes_or_buffer[, encoding[, errors]]) -&gt; str</p>
+<p>Create a new string object from the given object. If encoding or
+errors is specified, then the object must expose a data buffer
+that will be decoded using the given encoding and error handler.
+Otherwise, returns the result of object.<strong>str</strong>() (if defined)
+or repr(object).
+encoding defaults to sys.getdefaultencoding().
+errors defaults to 'strict'.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.str</li>
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.connector.ConnectorType.FS"><code class="name">var <span class="ident">FS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.ConnectorType.KV"><code class="name">var <span class="ident">KV</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector"><code class="flex name class">
+<span>class <span class="ident">RedisConnector</span></span>
+<span>(</span><span>url: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RedisConnector(BaseKVConnector):
+
+    def __init__(self, url: str):
+        import redis
+
+        super().__init__(url)
+        parsed_url = urlparse(url)
+        self.connection = redis.Redis(host=parsed_url.hostname, port=parsed_url.port)
+        self.model_name = parsed_url.path.lstrip(&#34;/&#34;)
+        # TODO: more serde options
+        self.s, self.d = create_serde(&#34;safe&#34;)
+
+    def get(self, key: str) -&gt; Optional[torch.Tensor]:
+        val = self.connection.get(key)
+
+        if val is None:
+            logger.error(&#34;Key %s not found&#34;, key)
+            return None
+
+        return self.d.from_bytes(val)
+
+    def getstr(self, key: str) -&gt; Optional[str]:
+        val = self.connection.get(key)
+        if val is None:
+            logger.error(&#34;Key %s not found&#34;, key)
+            return None
+
+        return val.decode(&#34;utf-8&#34;)
+
+    def set(self, key: str, tensor: torch.Tensor) -&gt; None:
+        assert tensor is not None
+        self.connection.set(key, self.s.to_bytes(tensor))
+
+    def setstr(self, key: str, obj: str) -&gt; None:
+        self.connection.set(key, obj)
+
+    def list(self, prefix: str) -&gt; List[str]:
+        cursor = 0
+        all_keys: List[bytes] = []
+
+        while True:
+            ret: Tuple[int, List[bytes]] = self.connection.scan(
+                cursor=cursor, match=f&#34;{prefix}*&#34;
+            )  # type: ignore
+            cursor, keys = ret
+            all_keys.extend(keys)
+            if cursor == 0:
+                break
+
+        return [key.decode(&#34;utf-8&#34;) for key in all_keys]
+
+    def weight_iterator(
+        self, rank: int = 0
+    ) -&gt; Generator[Tuple[str, bytes], None, None]:
+        keys = self.list(f&#34;{self.model_name}/keys/rank_{rank}/&#34;)
+        for key in keys:
+            val = self.get(key)
+            key = key.removeprefix(f&#34;{self.model_name}/keys/rank_{rank}/&#34;)
+            yield key, val
+
+    def pull_files(
+        self,
+        allow_pattern: Optional[List[str]] = None,
+        ignore_pattern: Optional[List[str]] = None,
+    ) -&gt; None:
+        pull_files_from_db(self, self.model_name, allow_pattern, ignore_pattern)
+
+    def close(self):
+        self.connection.close()
+        super().close()</code></pre>
+</details>
+<div class="desc"><p>For fs connector such as s3:
+<connector_type>://<path>/<filename></p>
+<p>For kv connector such as redis:
+<connector_type>://<host>:<port>/<model_name>/keys/<key>
+&lt;connector_type://<host>:<port>/<model_name>/files/<filename></p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.base_connector.BaseKVConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseKVConnector">BaseKVConnector</a></li>
+<li><a title="sglang.srt.connector.base_connector.BaseConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseConnector">BaseConnector</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.connector.RedisConnector.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    self.connection.close()
+    super().close()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key: str) ‑> torch.Tensor | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get(self, key: str) -&gt; Optional[torch.Tensor]:
+    val = self.connection.get(key)
+
+    if val is None:
+        logger.error(&#34;Key %s not found&#34;, key)
+        return None
+
+    return self.d.from_bytes(val)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.getstr"><code class="name flex">
+<span>def <span class="ident">getstr</span></span>(<span>self, key: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getstr(self, key: str) -&gt; Optional[str]:
+    val = self.connection.get(key)
+    if val is None:
+        logger.error(&#34;Key %s not found&#34;, key)
+        return None
+
+    return val.decode(&#34;utf-8&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.list"><code class="name flex">
+<span>def <span class="ident">list</span></span>(<span>self, prefix: str) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def list(self, prefix: str) -&gt; List[str]:
+    cursor = 0
+    all_keys: List[bytes] = []
+
+    while True:
+        ret: Tuple[int, List[bytes]] = self.connection.scan(
+            cursor=cursor, match=f&#34;{prefix}*&#34;
+        )  # type: ignore
+        cursor, keys = ret
+        all_keys.extend(keys)
+        if cursor == 0:
+            break
+
+    return [key.decode(&#34;utf-8&#34;) for key in all_keys]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.pull_files"><code class="name flex">
+<span>def <span class="ident">pull_files</span></span>(<span>self,<br>allow_pattern: List[str] | None = None,<br>ignore_pattern: List[str] | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pull_files(
+    self,
+    allow_pattern: Optional[List[str]] = None,
+    ignore_pattern: Optional[List[str]] = None,
+) -&gt; None:
+    pull_files_from_db(self, self.model_name, allow_pattern, ignore_pattern)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, key: str, tensor: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set(self, key: str, tensor: torch.Tensor) -&gt; None:
+    assert tensor is not None
+    self.connection.set(key, self.s.to_bytes(tensor))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.setstr"><code class="name flex">
+<span>def <span class="ident">setstr</span></span>(<span>self, key: str, obj: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setstr(self, key: str, obj: str) -&gt; None:
+    self.connection.set(key, obj)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.RedisConnector.weight_iterator"><code class="name flex">
+<span>def <span class="ident">weight_iterator</span></span>(<span>self, rank: int = 0) ‑> Generator[Tuple[str, bytes], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def weight_iterator(
+    self, rank: int = 0
+) -&gt; Generator[Tuple[str, bytes], None, None]:
+    keys = self.list(f&#34;{self.model_name}/keys/rank_{rank}/&#34;)
+    for key in keys:
+        val = self.get(key)
+        key = key.removeprefix(f&#34;{self.model_name}/keys/rank_{rank}/&#34;)
+        yield key, val</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.connector.S3Connector"><code class="flex name class">
+<span>class <span class="ident">S3Connector</span></span>
+<span>(</span><span>url: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class S3Connector(BaseFileConnector):
+
+    def __init__(self, url: str) -&gt; None:
+        import boto3
+
+        super().__init__(url)
+        self.client = boto3.client(&#34;s3&#34;)
+
+    def glob(self, allow_pattern: Optional[list[str]] = None) -&gt; list[str]:
+        bucket_name, _, paths = list_files(
+            self.client, path=self.url, allow_pattern=allow_pattern
+        )
+        return [f&#34;s3://{bucket_name}/{path}&#34; for path in paths]
+
+    def pull_files(
+        self,
+        allow_pattern: Optional[list[str]] = None,
+        ignore_pattern: Optional[list[str]] = None,
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Pull files from S3 storage into the temporary directory.
+
+        Args:
+            s3_model_path: The S3 path of the model.
+            allow_pattern: A list of patterns of which files to pull.
+            ignore_pattern: A list of patterns of which files not to pull.
+
+        &#34;&#34;&#34;
+        bucket_name, base_dir, files = list_files(
+            self.client, self.url, allow_pattern, ignore_pattern
+        )
+        if len(files) == 0:
+            return
+
+        for file in files:
+            destination_file = os.path.join(self.local_dir, file.removeprefix(base_dir))
+            local_dir = Path(destination_file).parent
+            os.makedirs(local_dir, exist_ok=True)
+            self.client.download_file(bucket_name, file, destination_file)
+
+    def weight_iterator(
+        self, rank: int = 0
+    ) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+        from sglang.srt.model_loader.weight_utils import (
+            runai_safetensors_weights_iterator,
+        )
+
+        # only support safetensor files now
+        hf_weights_files = self.glob(allow_pattern=[&#34;*.safetensors&#34;])
+        return runai_safetensors_weights_iterator(hf_weights_files)
+
+    def close(self):
+        self.client.close()
+        super().close()</code></pre>
+</details>
+<div class="desc"><p>List full file names from remote fs path and filter by allow pattern.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>allow_pattern</code></strong></dt>
+<dd>A list of patterns of which files to pull.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list[str]</code></dt>
+<dd>List of full paths allowed by the pattern</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.connector.base_connector.BaseFileConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseFileConnector">BaseFileConnector</a></li>
+<li><a title="sglang.srt.connector.base_connector.BaseConnector" href="base_connector.html#sglang.srt.connector.base_connector.BaseConnector">BaseConnector</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.connector.S3Connector.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    self.client.close()
+    super().close()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.S3Connector.glob"><code class="name flex">
+<span>def <span class="ident">glob</span></span>(<span>self, allow_pattern: list[str] | None = None) ‑> list[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def glob(self, allow_pattern: Optional[list[str]] = None) -&gt; list[str]:
+    bucket_name, _, paths = list_files(
+        self.client, path=self.url, allow_pattern=allow_pattern
+    )
+    return [f&#34;s3://{bucket_name}/{path}&#34; for path in paths]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.connector.S3Connector.pull_files"><code class="name flex">
+<span>def <span class="ident">pull_files</span></span>(<span>self,<br>allow_pattern: list[str] | None = None,<br>ignore_pattern: list[str] | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pull_files(
+    self,
+    allow_pattern: Optional[list[str]] = None,
+    ignore_pattern: Optional[list[str]] = None,
+) -&gt; None:
+    &#34;&#34;&#34;
+    Pull files from S3 storage into the temporary directory.
+
+    Args:
+        s3_model_path: The S3 path of the model.
+        allow_pattern: A list of patterns of which files to pull.
+        ignore_pattern: A list of patterns of which files not to pull.
+
+    &#34;&#34;&#34;
+    bucket_name, base_dir, files = list_files(
+        self.client, self.url, allow_pattern, ignore_pattern
+    )
+    if len(files) == 0:
+        return
+
+    for file in files:
+        destination_file = os.path.join(self.local_dir, file.removeprefix(base_dir))
+        local_dir = Path(destination_file).parent
+        os.makedirs(local_dir, exist_ok=True)
+        self.client.download_file(bucket_name, file, destination_file)</code></pre>
+</details>
+<div class="desc"><p>Pull files from S3 storage into the temporary directory.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>s3_model_path</code></strong></dt>
+<dd>The S3 path of the model.</dd>
+<dt><strong><code>allow_pattern</code></strong></dt>
+<dd>A list of patterns of which files to pull.</dd>
+<dt><strong><code>ignore_pattern</code></strong></dt>
+<dd>A list of patterns of which files not to pull.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.connector.S3Connector.weight_iterator"><code class="name flex">
+<span>def <span class="ident">weight_iterator</span></span>(<span>self, rank: int = 0) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def weight_iterator(
+    self, rank: int = 0
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    from sglang.srt.model_loader.weight_utils import (
+        runai_safetensors_weights_iterator,
+    )
+
+    # only support safetensor files now
+    hf_weights_files = self.glob(allow_pattern=[&#34;*.safetensors&#34;])
+    return runai_safetensors_weights_iterator(hf_weights_files)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="../index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="sglang.srt.connector.base_connector" href="base_connector.html">sglang.srt.connector.base_connector</a></code></li>
+<li><code><a title="sglang.srt.connector.redis" href="redis.html">sglang.srt.connector.redis</a></code></li>
+<li><code><a title="sglang.srt.connector.s3" href="s3.html">sglang.srt.connector.s3</a></code></li>
+<li><code><a title="sglang.srt.connector.serde" href="serde/index.html">sglang.srt.connector.serde</a></code></li>
+<li><code><a title="sglang.srt.connector.utils" href="utils.html">sglang.srt.connector.utils</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.connector.create_remote_connector" href="#sglang.srt.connector.create_remote_connector">create_remote_connector</a></code></li>
+<li><code><a title="sglang.srt.connector.get_connector_type" href="#sglang.srt.connector.get_connector_type">get_connector_type</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.connector.BaseConnector" href="#sglang.srt.connector.BaseConnector">BaseConnector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.connector.BaseConnector.close" href="#sglang.srt.connector.BaseConnector.close">close</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseConnector.get_local_dir" href="#sglang.srt.connector.BaseConnector.get_local_dir">get_local_dir</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseConnector.pull_files" href="#sglang.srt.connector.BaseConnector.pull_files">pull_files</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseConnector.weight_iterator" href="#sglang.srt.connector.BaseConnector.weight_iterator">weight_iterator</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.connector.BaseFileConnector" href="#sglang.srt.connector.BaseFileConnector">BaseFileConnector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.connector.BaseFileConnector.glob" href="#sglang.srt.connector.BaseFileConnector.glob">glob</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.connector.BaseKVConnector" href="#sglang.srt.connector.BaseKVConnector">BaseKVConnector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.connector.BaseKVConnector.get" href="#sglang.srt.connector.BaseKVConnector.get">get</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseKVConnector.getstr" href="#sglang.srt.connector.BaseKVConnector.getstr">getstr</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseKVConnector.list" href="#sglang.srt.connector.BaseKVConnector.list">list</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseKVConnector.set" href="#sglang.srt.connector.BaseKVConnector.set">set</a></code></li>
+<li><code><a title="sglang.srt.connector.BaseKVConnector.setstr" href="#sglang.srt.connector.BaseKVConnector.setstr">setstr</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.connector.ConnectorType" href="#sglang.srt.connector.ConnectorType">ConnectorType</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.connector.ConnectorType.FS" href="#sglang.srt.connector.ConnectorType.FS">FS</a></code></li>
+<li><code><a title="sglang.srt.connector.ConnectorType.KV" href="#sglang.srt.connector.ConnectorType.KV">KV</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.connector.RedisConnector" href="#sglang.srt.connector.RedisConnector">RedisConnector</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.connector.RedisConnector.close" href="#sglang.srt.connector.RedisConnector.close">close</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.get" href="#sglang.srt.connector.RedisConnector.get">get</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.getstr" href="#sglang.srt.connector.RedisConnector.getstr">getstr</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.list" href="#sglang.srt.connector.RedisConnector.list">list</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.pull_files" href="#sglang.srt.connector.RedisConnector.pull_files">pull_files</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.set" href="#sglang.srt.connector.RedisConnector.set">set</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.setstr" href="#sglang.srt.connector.RedisConnector.setstr">setstr</a></code></li>
+<li><code><a title="sglang.srt.connector.RedisConnector.weight_iterator" href="#sglang.srt.connector.RedisConnector.weight_iterator">weight_iterator</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.connector.S3Connector" href="#sglang.srt.connector.S3Connector">S3Connector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.connector.S3Connector.close" href="#sglang.srt.connector.S3Connector.close">close</a></code></li>
+<li><code><a title="sglang.srt.connector.S3Connector.glob" href="#sglang.srt.connector.S3Connector.glob">glob</a></code></li>
+<li><code><a title="sglang.srt.connector.S3Connector.pull_files" href="#sglang.srt.connector.S3Connector.pull_files">pull_files</a></code></li>
+<li><code><a title="sglang.srt.connector.S3Connector.weight_iterator" href="#sglang.srt.connector.S3Connector.weight_iterator">weight_iterator</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

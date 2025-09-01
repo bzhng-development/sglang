@@ -1,0 +1,1599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.entrypoints.http_server API documentation</title>
+<meta name="description" content="The entry point of inference server. (SRT = SGLang Runtime) …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.entrypoints.http_server</code></h1>
+</header>
+<section id="section-intro">
+<p>The entry point of inference server. (SRT = SGLang Runtime)</p>
+<p>This file implements HTTP APIs for the inference engine via fastapi.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.entrypoints.http_server.abort_request"><code class="name flex">
+<span>async def <span class="ident">abort_request</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.AbortReq" href="../managers/io_struct.html#sglang.srt.managers.io_struct.AbortReq">AbortReq</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/abort_request&#34;)
+async def abort_request(obj: AbortReq, request: Request):
+    &#34;&#34;&#34;Abort a request.&#34;&#34;&#34;
+    try:
+        _global_state.tokenizer_manager.abort_request(
+            rid=obj.rid, abort_all=obj.abort_all
+        )
+        return Response(status_code=200)
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Abort a request.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.available_models"><code class="name flex">
+<span>async def <span class="ident">available_models</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/v1/models&#34;, response_class=ORJSONResponse)
+async def available_models():
+    &#34;&#34;&#34;Show available models. OpenAI-compatible endpoint.&#34;&#34;&#34;
+    served_model_names = [_global_state.tokenizer_manager.served_model_name]
+    model_cards = []
+    for served_model_name in served_model_names:
+        model_cards.append(
+            ModelCard(
+                id=served_model_name,
+                root=served_model_name,
+                max_model_len=_global_state.tokenizer_manager.model_config.context_len,
+            )
+        )
+    return ModelList(data=model_cards)</code></pre>
+</details>
+<div class="desc"><p>Show available models. OpenAI-compatible endpoint.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.classify_request"><code class="name flex">
+<span>async def <span class="ident">classify_request</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.EmbeddingReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.EmbeddingReqInput">EmbeddingReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/classify&#34;, methods=[&#34;POST&#34;, &#34;PUT&#34;])
+async def classify_request(obj: EmbeddingReqInput, request: Request):
+    &#34;&#34;&#34;Handle a reward model request. Now the arguments and return values are the same as embedding models.&#34;&#34;&#34;
+    try:
+        ret = await _global_state.tokenizer_manager.generate_request(
+            obj, request
+        ).__anext__()
+        return ret
+    except ValueError as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Handle a reward model request. Now the arguments and return values are the same as embedding models.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.clear_hicache_storage_backend"><code class="name flex">
+<span>async def <span class="ident">clear_hicache_storage_backend</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/clear_hicache_storage_backend&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def clear_hicache_storage_backend():
+    &#34;&#34;&#34;Clear the hierarchical cache storage backend.&#34;&#34;&#34;
+    ret = await _global_state.tokenizer_manager.clear_hicache_storage()
+    return Response(
+        content=&#34;Hierarchical cache storage backend cleared.\n&#34;,
+        status_code=200 if ret.success else HTTPStatus.BAD_REQUEST,
+    )</code></pre>
+</details>
+<div class="desc"><p>Clear the hierarchical cache storage backend.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.close_session"><code class="name flex">
+<span>async def <span class="ident">close_session</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.CloseSessionReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.CloseSessionReqInput">CloseSessionReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/close_session&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def close_session(obj: CloseSessionReqInput, request: Request):
+    &#34;&#34;&#34;Close the session.&#34;&#34;&#34;
+    try:
+        await _global_state.tokenizer_manager.close_session(obj, request)
+        return Response(status_code=200)
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Close the session.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.configure_logging"><code class="name flex">
+<span>async def <span class="ident">configure_logging</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.ConfigureLoggingReq" href="../managers/io_struct.html#sglang.srt.managers.io_struct.ConfigureLoggingReq">ConfigureLoggingReq</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/configure_logging&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def configure_logging(obj: ConfigureLoggingReq, request: Request):
+    &#34;&#34;&#34;Configure the request logging options.&#34;&#34;&#34;
+    _global_state.tokenizer_manager.configure_logging(obj)
+    return Response(status_code=200)</code></pre>
+</details>
+<div class="desc"><p>Configure the request logging options.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.continue_generation"><code class="name flex">
+<span>async def <span class="ident">continue_generation</span></span>(<span>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/continue_generation&#34;)
+async def continue_generation(request: Request):
+    &#34;&#34;&#34;Continue generation.&#34;&#34;&#34;
+    await _global_state.tokenizer_manager.continue_generation()
+    return ORJSONResponse(
+        content={&#34;message&#34;: &#34;Generation continued successfully.&#34;, &#34;status&#34;: &#34;ok&#34;},
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Continue generation.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.dump_expert_distribution_record_async"><code class="name flex">
+<span>async def <span class="ident">dump_expert_distribution_record_async</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/dump_expert_distribution_record&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def dump_expert_distribution_record_async():
+    &#34;&#34;&#34;Dump expert distribution record.&#34;&#34;&#34;
+    await _global_state.tokenizer_manager.dump_expert_distribution_record()
+    return Response(
+        content=&#34;Dump expert distribution record.\n&#34;,
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Dump expert distribution record.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.encode_request"><code class="name flex">
+<span>async def <span class="ident">encode_request</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.EmbeddingReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.EmbeddingReqInput">EmbeddingReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/encode&#34;, methods=[&#34;POST&#34;, &#34;PUT&#34;])
+async def encode_request(obj: EmbeddingReqInput, request: Request):
+    &#34;&#34;&#34;Handle an embedding request.&#34;&#34;&#34;
+    try:
+        ret = await _global_state.tokenizer_manager.generate_request(
+            obj, request
+        ).__anext__()
+        return ret
+    except ValueError as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Handle an embedding request.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.flush_cache"><code class="name flex">
+<span>async def <span class="ident">flush_cache</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/flush_cache&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def flush_cache():
+    &#34;&#34;&#34;Flush the radix cache.&#34;&#34;&#34;
+    ret = await _global_state.tokenizer_manager.flush_cache()
+    return Response(
+        content=&#34;Cache flushed.\nPlease check backend logs for more details. &#34;
+        &#34;(When there are running or waiting requests, the operation will not be performed.)\n&#34;,
+        status_code=200 if ret.success else HTTPStatus.BAD_REQUEST,
+    )</code></pre>
+</details>
+<div class="desc"><p>Flush the radix cache.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.freeze_gc_async"><code class="name flex">
+<span>async def <span class="ident">freeze_gc_async</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/freeze_gc&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def freeze_gc_async():
+    &#34;&#34;&#34;
+    See engine.freeze_gc for more details.
+    &#34;&#34;&#34;
+    await _global_state.tokenizer_manager.freeze_gc()
+    return Response(
+        content=&#34;Garbage collection frozen.\n&#34;,
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>See engine.freeze_gc for more details.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.generate_from_file_request"><code class="name flex">
+<span>async def <span class="ident">generate_from_file_request</span></span>(<span>file: fastapi.datastructures.UploadFile, request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/generate_from_file&#34;, methods=[&#34;POST&#34;])
+async def generate_from_file_request(file: UploadFile, request: Request):
+    &#34;&#34;&#34;Handle a generate request, this is purely to work with input_embeds.&#34;&#34;&#34;
+    content = await file.read()
+    input_embeds = json.loads(content.decode(&#34;utf-8&#34;))
+
+    obj = GenerateReqInput(
+        input_embeds=input_embeds,
+        sampling_params={
+            &#34;temperature&#34;: 0.0,
+            &#34;max_new_tokens&#34;: 512,
+        },
+    )
+
+    try:
+        ret = await _global_state.tokenizer_manager.generate_request(
+            obj, request
+        ).__anext__()
+        return ret
+    except ValueError as e:
+        logger.error(f&#34;Error: {e}&#34;)
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Handle a generate request, this is purely to work with input_embeds.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.generate_request"><code class="name flex">
+<span>async def <span class="ident">generate_request</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.GenerateReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.GenerateReqInput">GenerateReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/generate&#34;, methods=[&#34;POST&#34;, &#34;PUT&#34;])
+async def generate_request(obj: GenerateReqInput, request: Request):
+    &#34;&#34;&#34;Handle a generate request.&#34;&#34;&#34;
+    if obj.stream:
+
+        async def stream_results() -&gt; AsyncIterator[bytes]:
+            try:
+                async for out in _global_state.tokenizer_manager.generate_request(
+                    obj, request
+                ):
+                    yield b&#34;data: &#34; + orjson.dumps(
+                        out, option=orjson.OPT_NON_STR_KEYS
+                    ) + b&#34;\n\n&#34;
+            except ValueError as e:
+                out = {&#34;error&#34;: {&#34;message&#34;: str(e)}}
+                logger.error(f&#34;[http_server] Error: {e}&#34;)
+                yield b&#34;data: &#34; + orjson.dumps(
+                    out, option=orjson.OPT_NON_STR_KEYS
+                ) + b&#34;\n\n&#34;
+            yield b&#34;data: [DONE]\n\n&#34;
+
+        return StreamingResponse(
+            stream_results(),
+            media_type=&#34;text/event-stream&#34;,
+            background=_global_state.tokenizer_manager.create_abort_task(obj),
+        )
+    else:
+        try:
+            ret = await _global_state.tokenizer_manager.generate_request(
+                obj, request
+            ).__anext__()
+            return ret
+        except ValueError as e:
+            logger.error(f&#34;[http_server] Error: {e}&#34;)
+            return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Handle a generate request.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.get_load"><code class="name flex">
+<span>async def <span class="ident">get_load</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/get_load&#34;)
+async def get_load():
+    return await _global_state.tokenizer_manager.get_load()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.get_model_info"><code class="name flex">
+<span>async def <span class="ident">get_model_info</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/get_model_info&#34;)
+async def get_model_info():
+    &#34;&#34;&#34;Get the model information.&#34;&#34;&#34;
+    result = {
+        &#34;model_path&#34;: _global_state.tokenizer_manager.model_path,
+        &#34;tokenizer_path&#34;: _global_state.tokenizer_manager.server_args.tokenizer_path,
+        &#34;is_generation&#34;: _global_state.tokenizer_manager.is_generation,
+        &#34;preferred_sampling_params&#34;: _global_state.tokenizer_manager.server_args.preferred_sampling_params,
+        &#34;weight_version&#34;: _global_state.tokenizer_manager.server_args.weight_version,
+    }
+    return result</code></pre>
+</details>
+<div class="desc"><p>Get the model information.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.get_server_info"><code class="name flex">
+<span>async def <span class="ident">get_server_info</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/get_server_info&#34;)
+async def get_server_info():
+    # Returns interna states per DP.
+    internal_states: List[Dict[Any, Any]] = (
+        await _global_state.tokenizer_manager.get_internal_state()
+    )
+    return {
+        **dataclasses.asdict(_global_state.tokenizer_manager.server_args),
+        **_global_state.scheduler_info,
+        &#34;internal_states&#34;: internal_states,
+        &#34;version&#34;: __version__,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.get_weight_version"><code class="name flex">
+<span>async def <span class="ident">get_weight_version</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/get_weight_version&#34;)
+async def get_weight_version():
+    &#34;&#34;&#34;Get the current weight version.&#34;&#34;&#34;
+    return {
+        &#34;weight_version&#34;: _global_state.tokenizer_manager.server_args.weight_version
+    }</code></pre>
+</details>
+<div class="desc"><p>Get the current weight version.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.get_weights_by_name"><code class="name flex">
+<span>async def <span class="ident">get_weights_by_name</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.GetWeightsByNameReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.GetWeightsByNameReqInput">GetWeightsByNameReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/get_weights_by_name&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def get_weights_by_name(obj: GetWeightsByNameReqInput, request: Request):
+    &#34;&#34;&#34;Get model parameter by name.&#34;&#34;&#34;
+    try:
+        ret = await _global_state.tokenizer_manager.get_weights_by_name(obj, request)
+        if ret is None:
+            return _create_error_response(&#34;Get parameter by name failed&#34;)
+        else:
+            return ORJSONResponse(ret, status_code=200)
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Get model parameter by name.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.health_generate"><code class="name flex">
+<span>async def <span class="ident">health_generate</span></span>(<span>request: starlette.requests.Request) ‑> starlette.responses.Response</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/health&#34;)
+@app.get(&#34;/health_generate&#34;)
+async def health_generate(request: Request) -&gt; Response:
+    &#34;&#34;&#34;
+    Check the health of the inference server by sending a special request to generate one token.
+
+    If the server is running something, this request will be ignored, so it creates zero overhead.
+    If the server is not running anything, this request will be run, so we know whether the server is healthy.
+    &#34;&#34;&#34;
+
+    if _global_state.tokenizer_manager.gracefully_exit:
+        logger.info(&#34;Health check request received during shutdown. Returning 503.&#34;)
+        return Response(status_code=503)
+
+    if _global_state.tokenizer_manager.server_status == ServerStatus.Starting:
+        return Response(status_code=503)
+
+    sampling_params = {&#34;max_new_tokens&#34;: 1, &#34;temperature&#34;: 0.0}
+    rid = f&#34;HEALTH_CHECK_{time.time()}&#34;
+
+    if _global_state.tokenizer_manager.is_image_gen:
+        # Keep this branch for some internal use cases.
+        raise NotImplementedError(&#34;Image generation is not supported yet.&#34;)
+    elif _global_state.tokenizer_manager.is_generation:
+        gri = GenerateReqInput(
+            rid=rid,
+            input_ids=[0],
+            sampling_params=sampling_params,
+            log_metrics=False,
+        )
+        if (
+            _global_state.tokenizer_manager.server_args.disaggregation_mode
+            != DisaggregationMode.NULL
+        ):
+            gri.bootstrap_host = FAKE_BOOTSTRAP_HOST
+            gri.bootstrap_room = 0
+    else:
+        gri = EmbeddingReqInput(
+            rid=rid, input_ids=[0], sampling_params=sampling_params, log_metrics=False
+        )
+
+    async def gen():
+        async for _ in _global_state.tokenizer_manager.generate_request(gri, request):
+            break
+
+    task = asyncio.create_task(gen())
+
+    # As long as we receive any response from the detokenizer/scheduler, we consider the server is healthy.
+    tic = time.time()
+    while time.time() &lt; tic + HEALTH_CHECK_TIMEOUT:
+        await asyncio.sleep(1)
+        if _global_state.tokenizer_manager.last_receive_tstamp &gt; tic:
+            task.cancel()
+            _global_state.tokenizer_manager.rid_to_state.pop(rid, None)
+            _global_state.tokenizer_manager.server_status = ServerStatus.Up
+            return Response(status_code=200)
+
+    task.cancel()
+    tic_time = time.strftime(&#34;%H:%M:%S&#34;, time.localtime(tic))
+    last_receive_time = time.strftime(
+        &#34;%H:%M:%S&#34;, time.localtime(_global_state.tokenizer_manager.last_receive_tstamp)
+    )
+    logger.error(
+        f&#34;Health check failed. Server couldn&#39;t get a response from detokenizer for last &#34;
+        f&#34;{HEALTH_CHECK_TIMEOUT} seconds. tic start time: {tic_time}. &#34;
+        f&#34;last_heartbeat time: {last_receive_time}&#34;
+    )
+    _global_state.tokenizer_manager.rid_to_state.pop(rid, None)
+    _global_state.tokenizer_manager.server_status = ServerStatus.UnHealthy
+    return Response(status_code=503)</code></pre>
+</details>
+<div class="desc"><p>Check the health of the inference server by sending a special request to generate one token.</p>
+<p>If the server is running something, this request will be ignored, so it creates zero overhead.
+If the server is not running anything, this request will be run, so we know whether the server is healthy.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.init_weights_update_group"><code class="name flex">
+<span>async def <span class="ident">init_weights_update_group</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.InitWeightsUpdateGroupReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.InitWeightsUpdateGroupReqInput">InitWeightsUpdateGroupReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/init_weights_update_group&#34;)
+async def init_weights_update_group(
+    obj: InitWeightsUpdateGroupReqInput, request: Request
+):
+    &#34;&#34;&#34;Initialize the parameter update group.&#34;&#34;&#34;
+    success, message = await _global_state.tokenizer_manager.init_weights_update_group(
+        obj, request
+    )
+    content = {&#34;success&#34;: success, &#34;message&#34;: message}
+    if success:
+        return ORJSONResponse(content, status_code=200)
+    else:
+        return ORJSONResponse(content, status_code=HTTPStatus.BAD_REQUEST)</code></pre>
+</details>
+<div class="desc"><p>Initialize the parameter update group.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.launch_server"><code class="name flex">
+<span>def <span class="ident">launch_server</span></span>(<span>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>pipe_finish_writer: multiprocessing.connection.Connection | None = None,<br>launch_callback: Callable[[], None] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launch_server(
+    server_args: ServerArgs,
+    pipe_finish_writer: Optional[multiprocessing.connection.Connection] = None,
+    launch_callback: Optional[Callable[[], None]] = None,
+):
+    &#34;&#34;&#34;
+    Launch SRT (SGLang Runtime) Server.
+
+    The SRT server consists of an HTTP server and an SRT engine.
+
+    - HTTP server: A FastAPI server that routes requests to the engine.
+    - The engine consists of three components:
+        1. TokenizerManager: Tokenizes the requests and sends them to the scheduler.
+        2. Scheduler (subprocess): Receives requests from the Tokenizer Manager, schedules batches, forwards them, and sends the output tokens to the Detokenizer Manager.
+        3. DetokenizerManager (subprocess): Detokenizes the output tokens and sends the result back to the Tokenizer Manager.
+
+    Note:
+    1. The HTTP server, Engine, and TokenizerManager both run in the main process.
+    2. Inter-process communication is done through IPC (each process uses a different port) via the ZMQ library.
+    &#34;&#34;&#34;
+    tokenizer_manager, template_manager, scheduler_info = _launch_subprocesses(
+        server_args=server_args
+    )
+    set_global_state(
+        _GlobalState(
+            tokenizer_manager=tokenizer_manager,
+            template_manager=template_manager,
+            scheduler_info=scheduler_info,
+        )
+    )
+
+    # Add api key authorization
+    if server_args.api_key:
+        add_api_key_middleware(app, server_args.api_key)
+
+    # Add prometheus middleware
+    if server_args.enable_metrics:
+        add_prometheus_middleware(app)
+        enable_func_timer()
+
+    # Send a warmup request - we will create the thread launch it
+    # in the lifespan after all other warmups have fired.
+    warmup_thread = threading.Thread(
+        target=_wait_and_warmup,
+        args=(
+            server_args,
+            pipe_finish_writer,
+            launch_callback,
+        ),
+    )
+    app.warmup_thread = warmup_thread
+
+    try:
+        # Update logging configs
+        set_uvicorn_logging_configs()
+        app.server_args = server_args
+        # Listen for HTTP requests
+        uvicorn.run(
+            app,
+            host=server_args.host,
+            port=server_args.port,
+            log_level=server_args.log_level_http or server_args.log_level,
+            timeout_keep_alive=5,
+            loop=&#34;uvloop&#34;,
+        )
+    finally:
+        warmup_thread.join()</code></pre>
+</details>
+<div class="desc"><p>Launch SRT (SGLang Runtime) Server.</p>
+<p>The SRT server consists of an HTTP server and an SRT engine.</p>
+<ul>
+<li>HTTP server: A FastAPI server that routes requests to the engine.</li>
+<li>The engine consists of three components:<ol>
+<li>TokenizerManager: Tokenizes the requests and sends them to the scheduler.</li>
+<li>Scheduler (subprocess): Receives requests from the Tokenizer Manager, schedules batches, forwards them, and sends the output tokens to the Detokenizer Manager.</li>
+<li>DetokenizerManager (subprocess): Detokenizes the output tokens and sends the result back to the Tokenizer Manager.</li>
+</ol>
+</li>
+</ul>
+<p>Note:
+1. The HTTP server, Engine, and TokenizerManager both run in the main process.
+2. Inter-process communication is done through IPC (each process uses a different port) via the ZMQ library.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.lifespan"><code class="name flex">
+<span>async def <span class="ident">lifespan</span></span>(<span>fast_api_app: fastapi.applications.FastAPI)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@asynccontextmanager
+async def lifespan(fast_api_app: FastAPI):
+    # Initialize OpenAI serving handlers
+    fast_api_app.state.openai_serving_completion = OpenAIServingCompletion(
+        _global_state.tokenizer_manager, _global_state.template_manager
+    )
+    fast_api_app.state.openai_serving_chat = OpenAIServingChat(
+        _global_state.tokenizer_manager, _global_state.template_manager
+    )
+    fast_api_app.state.openai_serving_embedding = OpenAIServingEmbedding(
+        _global_state.tokenizer_manager, _global_state.template_manager
+    )
+    fast_api_app.state.openai_serving_score = OpenAIServingScore(
+        _global_state.tokenizer_manager
+    )
+    fast_api_app.state.openai_serving_rerank = OpenAIServingRerank(
+        _global_state.tokenizer_manager
+    )
+
+    server_args: ServerArgs = fast_api_app.server_args
+
+    tool_server = None
+    if server_args.tool_server == &#34;demo&#34;:
+        from sglang.srt.entrypoints.openai.tool_server import DemoToolServer
+
+        tool_server = DemoToolServer()
+    elif server_args.tool_server:
+        from sglang.srt.entrypoints.openai.tool_server import MCPToolServer
+
+        tool_server = MCPToolServer()
+        await tool_server.add_tool_server(server_args.tool_server)
+
+    try:
+        from sglang.srt.entrypoints.openai.serving_responses import (
+            OpenAIServingResponses,
+        )
+
+        fast_api_app.state.openai_serving_responses = OpenAIServingResponses(
+            _global_state.tokenizer_manager,
+            _global_state.template_manager,
+            enable_prompt_tokens_details=True,
+            enable_force_include_usage=True,
+            tool_server=tool_server,
+        )
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+        logger.warning(f&#34;Can not initialize OpenAIServingResponses, error: {e}&#34;)
+
+    if server_args.warmups is not None:
+        await execute_warmups(
+            server_args.disaggregation_mode,
+            server_args.warmups.split(&#34;,&#34;),
+            _global_state.tokenizer_manager,
+        )
+        logger.info(&#34;Warmup ended&#34;)
+
+    warmup_thread = getattr(fast_api_app, &#34;warmup_thread&#34;, None)
+    if warmup_thread is not None:
+        warmup_thread.start()
+    yield</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.load_lora_adapter"><code class="name flex">
+<span>async def <span class="ident">load_lora_adapter</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.LoadLoRAAdapterReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.LoadLoRAAdapterReqInput">LoadLoRAAdapterReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/load_lora_adapter&#34;, methods=[&#34;POST&#34;])
+async def load_lora_adapter(obj: LoadLoRAAdapterReqInput, request: Request):
+    &#34;&#34;&#34;Load a new LoRA adapter without re-launching the server.&#34;&#34;&#34;
+    result = await _global_state.tokenizer_manager.load_lora_adapter(obj, request)
+
+    if result.success:
+        return ORJSONResponse(
+            result,
+            status_code=HTTPStatus.OK,
+        )
+    else:
+        return ORJSONResponse(
+            result,
+            status_code=HTTPStatus.BAD_REQUEST,
+        )</code></pre>
+</details>
+<div class="desc"><p>Load a new LoRA adapter without re-launching the server.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.open_session"><code class="name flex">
+<span>async def <span class="ident">open_session</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.OpenSessionReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.OpenSessionReqInput">OpenSessionReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/open_session&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def open_session(obj: OpenSessionReqInput, request: Request):
+    &#34;&#34;&#34;Open a session, and return its unique session id.&#34;&#34;&#34;
+    try:
+        session_id = await _global_state.tokenizer_manager.open_session(obj, request)
+        if session_id is None:
+            raise Exception(
+                &#34;Failed to open the session. Check if a session with the same id is still open.&#34;
+            )
+        return session_id
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Open a session, and return its unique session id.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.openai_v1_chat_completions"><code class="name flex">
+<span>async def <span class="ident">openai_v1_chat_completions</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.ChatCompletionRequest" href="openai/protocol.html#sglang.srt.entrypoints.openai.protocol.ChatCompletionRequest">ChatCompletionRequest</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/v1/chat/completions&#34;, dependencies=[Depends(validate_json_request)])
+async def openai_v1_chat_completions(
+    request: ChatCompletionRequest, raw_request: Request
+):
+    &#34;&#34;&#34;OpenAI-compatible chat completion endpoint.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_chat.handle_request(
+        request, raw_request
+    )</code></pre>
+</details>
+<div class="desc"><p>OpenAI-compatible chat completion endpoint.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.openai_v1_completions"><code class="name flex">
+<span>async def <span class="ident">openai_v1_completions</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.CompletionRequest" href="openai/protocol.html#sglang.srt.entrypoints.openai.protocol.CompletionRequest">CompletionRequest</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/v1/completions&#34;, dependencies=[Depends(validate_json_request)])
+async def openai_v1_completions(request: CompletionRequest, raw_request: Request):
+    &#34;&#34;&#34;OpenAI-compatible text completion endpoint.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_completion.handle_request(
+        request, raw_request
+    )</code></pre>
+</details>
+<div class="desc"><p>OpenAI-compatible text completion endpoint.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.openai_v1_embeddings"><code class="name flex">
+<span>async def <span class="ident">openai_v1_embeddings</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.EmbeddingRequest" href="openai/protocol.html#sglang.srt.entrypoints.openai.protocol.EmbeddingRequest">EmbeddingRequest</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(
+    &#34;/v1/embeddings&#34;,
+    response_class=ORJSONResponse,
+    dependencies=[Depends(validate_json_request)],
+)
+async def openai_v1_embeddings(request: EmbeddingRequest, raw_request: Request):
+    &#34;&#34;&#34;OpenAI-compatible embeddings endpoint.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_embedding.handle_request(
+        request, raw_request
+    )</code></pre>
+</details>
+<div class="desc"><p>OpenAI-compatible embeddings endpoint.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.parse_function_call_request"><code class="name flex">
+<span>async def <span class="ident">parse_function_call_request</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.ParseFunctionCallReq" href="../managers/io_struct.html#sglang.srt.managers.io_struct.ParseFunctionCallReq">ParseFunctionCallReq</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/parse_function_call&#34;)
+async def parse_function_call_request(obj: ParseFunctionCallReq, request: Request):
+    &#34;&#34;&#34;
+    A native API endpoint to parse function calls from a text.
+    &#34;&#34;&#34;
+    # 1) Initialize the parser based on the request body
+    parser = FunctionCallParser(tools=obj.tools, tool_call_parser=obj.tool_call_parser)
+
+    # 2) Call the non-stream parsing method (non-stream)
+    normal_text, calls = parser.parse_non_stream(obj.text)
+
+    # 3) Organize the response content
+    response_data = {
+        &#34;normal_text&#34;: normal_text,
+        &#34;calls&#34;: [
+            call.model_dump() for call in calls
+        ],  # Convert pydantic objects to dictionaries
+    }
+
+    return ORJSONResponse(content=response_data, status_code=200)</code></pre>
+</details>
+<div class="desc"><p>A native API endpoint to parse function calls from a text.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.pause_generation"><code class="name flex">
+<span>async def <span class="ident">pause_generation</span></span>(<span>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/pause_generation&#34;)
+async def pause_generation(request: Request):
+    &#34;&#34;&#34;Pause generation.&#34;&#34;&#34;
+    await _global_state.tokenizer_manager.pause_generation()
+    return ORJSONResponse(
+        content={&#34;message&#34;: &#34;Generation paused successfully.&#34;, &#34;status&#34;: &#34;ok&#34;},
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Pause generation.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.release_memory_occupation"><code class="name flex">
+<span>async def <span class="ident">release_memory_occupation</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.ReleaseMemoryOccupationReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.ReleaseMemoryOccupationReqInput">ReleaseMemoryOccupationReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/release_memory_occupation&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def release_memory_occupation(
+    obj: ReleaseMemoryOccupationReqInput, request: Request
+):
+    &#34;&#34;&#34;Release GPU memory occupation temporarily.&#34;&#34;&#34;
+    try:
+        await _global_state.tokenizer_manager.release_memory_occupation(obj, request)
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Release GPU memory occupation temporarily.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.resume_memory_occupation"><code class="name flex">
+<span>async def <span class="ident">resume_memory_occupation</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.ResumeMemoryOccupationReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.ResumeMemoryOccupationReqInput">ResumeMemoryOccupationReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/resume_memory_occupation&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def resume_memory_occupation(
+    obj: ResumeMemoryOccupationReqInput, request: Request
+):
+    &#34;&#34;&#34;Resume GPU memory occupation.&#34;&#34;&#34;
+    try:
+        await _global_state.tokenizer_manager.resume_memory_occupation(obj, request)
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Resume GPU memory occupation.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.retrieve_model"><code class="name flex">
+<span>async def <span class="ident">retrieve_model</span></span>(<span>model: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/v1/models/{model:path}&#34;, response_class=ORJSONResponse)
+async def retrieve_model(model: str):
+    &#34;&#34;&#34;Retrieves a model instance, providing basic information about the model.&#34;&#34;&#34;
+    served_model_names = [_global_state.tokenizer_manager.served_model_name]
+
+    if model not in served_model_names:
+        return ORJSONResponse(
+            status_code=404,
+            content={
+                &#34;error&#34;: {
+                    &#34;message&#34;: f&#34;The model &#39;{model}&#39; does not exist&#34;,
+                    &#34;type&#34;: &#34;invalid_request_error&#34;,
+                    &#34;param&#34;: &#34;model&#34;,
+                    &#34;code&#34;: &#34;model_not_found&#34;,
+                }
+            },
+        )
+
+    return ModelCard(
+        id=model,
+        root=model,
+        max_model_len=_global_state.tokenizer_manager.model_config.context_len,
+    )</code></pre>
+</details>
+<div class="desc"><p>Retrieves a model instance, providing basic information about the model.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.sagemaker_chat_completions"><code class="name flex">
+<span>async def <span class="ident">sagemaker_chat_completions</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.ChatCompletionRequest" href="openai/protocol.html#sglang.srt.entrypoints.openai.protocol.ChatCompletionRequest">ChatCompletionRequest</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/invocations&#34;)
+async def sagemaker_chat_completions(
+    request: ChatCompletionRequest, raw_request: Request
+):
+    &#34;&#34;&#34;OpenAI-compatible chat completion endpoint.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_chat.handle_request(
+        request, raw_request
+    )</code></pre>
+</details>
+<div class="desc"><p>OpenAI-compatible chat completion endpoint.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.sagemaker_health"><code class="name flex">
+<span>async def <span class="ident">sagemaker_health</span></span>(<span>) ‑> starlette.responses.Response</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/ping&#34;)
+async def sagemaker_health() -&gt; Response:
+    &#34;&#34;&#34;Check the health of the http server.&#34;&#34;&#34;
+    return Response(status_code=200)</code></pre>
+</details>
+<div class="desc"><p>Check the health of the http server.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.separate_reasoning_request"><code class="name flex">
+<span>async def <span class="ident">separate_reasoning_request</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.SeparateReasoningReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.SeparateReasoningReqInput">SeparateReasoningReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/separate_reasoning&#34;)
+async def separate_reasoning_request(obj: SeparateReasoningReqInput, request: Request):
+    &#34;&#34;&#34;
+    A native API endpoint to separate reasoning from a text.
+    &#34;&#34;&#34;
+    # 1) Initialize the parser based on the request body
+    parser = ReasoningParser(model_type=obj.reasoning_parser)
+
+    # 2) Call the non-stream parsing method (non-stream)
+    reasoning_text, normal_text = parser.parse_non_stream(obj.text)
+
+    # 3) Organize the response content
+    response_data = {
+        &#34;reasoning_text&#34;: reasoning_text,
+        &#34;text&#34;: normal_text,
+    }
+
+    return ORJSONResponse(content=response_data, status_code=200)</code></pre>
+</details>
+<div class="desc"><p>A native API endpoint to separate reasoning from a text.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.set_global_state"><code class="name flex">
+<span>def <span class="ident">set_global_state</span></span>(<span>global_state: sglang.srt.entrypoints.http_server._GlobalState)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_global_state(global_state: _GlobalState):
+    global _global_state
+    _global_state = global_state</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.set_internal_state"><code class="name flex">
+<span>async def <span class="ident">set_internal_state</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.SetInternalStateReq" href="../managers/io_struct.html#sglang.srt.managers.io_struct.SetInternalStateReq">SetInternalStateReq</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/set_internal_state&#34;, methods=[&#34;POST&#34;, &#34;PUT&#34;])
+async def set_internal_state(obj: SetInternalStateReq, request: Request):
+    res = await _global_state.tokenizer_manager.set_internal_state(obj)
+    return res</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.slow_down"><code class="name flex">
+<span>async def <span class="ident">slow_down</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.SlowDownReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.SlowDownReqInput">SlowDownReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/slow_down&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def slow_down(obj: SlowDownReqInput, request: Request):
+    &#34;&#34;&#34;Slow down the system deliberately. Only for testing. Example scenario:
+    when we want to test performance of D in large-scale PD disaggregation and have no enough nodes for P,
+    we can use this to slow down D to let it have enough running sequences, and then disable slowdown
+    to let it run in full batch size.
+    &#34;&#34;&#34;
+    try:
+        await _global_state.tokenizer_manager.slow_down(obj, request)
+    except Exception as e:
+        return _create_error_response(e)</code></pre>
+</details>
+<div class="desc"><p>Slow down the system deliberately. Only for testing. Example scenario:
+when we want to test performance of D in large-scale PD disaggregation and have no enough nodes for P,
+we can use this to slow down D to let it have enough running sequences, and then disable slowdown
+to let it run in full batch size.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.start_expert_distribution_record_async"><code class="name flex">
+<span>async def <span class="ident">start_expert_distribution_record_async</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/start_expert_distribution_record&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def start_expert_distribution_record_async():
+    &#34;&#34;&#34;Start recording the expert distribution. Clear the previous record if any.&#34;&#34;&#34;
+    await _global_state.tokenizer_manager.start_expert_distribution_record()
+    return Response(
+        content=&#34;Start recording the expert distribution.\n&#34;,
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Start recording the expert distribution. Clear the previous record if any.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.start_profile_async"><code class="name flex">
+<span>async def <span class="ident">start_profile_async</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.ProfileReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.ProfileReqInput">ProfileReqInput</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/start_profile&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def start_profile_async(obj: Optional[ProfileReqInput] = None):
+    &#34;&#34;&#34;Start profiling.&#34;&#34;&#34;
+    if obj is None:
+        obj = ProfileReqInput()
+
+    await _global_state.tokenizer_manager.start_profile(
+        output_dir=obj.output_dir,
+        start_step=obj.start_step,
+        num_steps=obj.num_steps,
+        activities=obj.activities,
+        with_stack=obj.with_stack,
+        record_shapes=obj.record_shapes,
+        profile_by_stage=obj.profile_by_stage,
+    )
+    return Response(
+        content=&#34;Start profiling.\n&#34;,
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Start profiling.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.stop_expert_distribution_record_async"><code class="name flex">
+<span>async def <span class="ident">stop_expert_distribution_record_async</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/stop_expert_distribution_record&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def stop_expert_distribution_record_async():
+    &#34;&#34;&#34;Stop recording the expert distribution.&#34;&#34;&#34;
+    await _global_state.tokenizer_manager.stop_expert_distribution_record()
+    return Response(
+        content=&#34;Stop recording the expert distribution.\n&#34;,
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Stop recording the expert distribution.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.stop_profile_async"><code class="name flex">
+<span>async def <span class="ident">stop_profile_async</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/stop_profile&#34;, methods=[&#34;GET&#34;, &#34;POST&#34;])
+async def stop_profile_async():
+    &#34;&#34;&#34;Stop profiling.&#34;&#34;&#34;
+    await _global_state.tokenizer_manager.stop_profile()
+    return Response(
+        content=&#34;Stop profiling. This will take some time.\n&#34;,
+        status_code=200,
+    )</code></pre>
+</details>
+<div class="desc"><p>Stop profiling.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.unload_lora_adapter"><code class="name flex">
+<span>async def <span class="ident">unload_lora_adapter</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.UnloadLoRAAdapterReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.UnloadLoRAAdapterReqInput">UnloadLoRAAdapterReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(&#34;/unload_lora_adapter&#34;, methods=[&#34;POST&#34;])
+async def unload_lora_adapter(obj: UnloadLoRAAdapterReqInput, request: Request):
+    &#34;&#34;&#34;Load a new LoRA adapter without re-launching the server.&#34;&#34;&#34;
+    result = await _global_state.tokenizer_manager.unload_lora_adapter(obj, request)
+
+    if result.success:
+        return ORJSONResponse(
+            result,
+            status_code=HTTPStatus.OK,
+        )
+    else:
+        return ORJSONResponse(
+            result,
+            status_code=HTTPStatus.BAD_REQUEST,
+        )</code></pre>
+</details>
+<div class="desc"><p>Load a new LoRA adapter without re-launching the server.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.update_weight_version"><code class="name flex">
+<span>async def <span class="ident">update_weight_version</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.UpdateWeightVersionReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.UpdateWeightVersionReqInput">UpdateWeightVersionReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/update_weight_version&#34;)
+async def update_weight_version(obj: UpdateWeightVersionReqInput, request: Request):
+    &#34;&#34;&#34;Update the weight version. This operation requires no active requests.&#34;&#34;&#34;
+    if obj.abort_all_requests:
+        _global_state.tokenizer_manager.abort_request(abort_all=True)
+
+    # Use a simple approach without the complex lock mechanism for now
+    # since weight_version update is a simple operation that doesn&#39;t affect model weights
+    try:
+        # Update the weight version in server args (the single source of truth)
+        _global_state.tokenizer_manager.server_args.weight_version = obj.new_version
+
+        return ORJSONResponse(
+            {
+                &#34;success&#34;: True,
+                &#34;message&#34;: f&#34;Weight version updated to {obj.new_version}&#34;,
+                &#34;new_version&#34;: obj.new_version,
+            },
+            status_code=HTTPStatus.OK,
+        )
+    except Exception as e:
+        return ORJSONResponse(
+            {
+                &#34;success&#34;: False,
+                &#34;message&#34;: f&#34;Failed to update weight version: {str(e)}&#34;,
+            },
+            status_code=HTTPStatus.BAD_REQUEST,
+        )</code></pre>
+</details>
+<div class="desc"><p>Update the weight version. This operation requires no active requests.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.update_weights_from_disk"><code class="name flex">
+<span>async def <span class="ident">update_weights_from_disk</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.UpdateWeightFromDiskReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.UpdateWeightFromDiskReqInput">UpdateWeightFromDiskReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/update_weights_from_disk&#34;)
+async def update_weights_from_disk(obj: UpdateWeightFromDiskReqInput, request: Request):
+    &#34;&#34;&#34;Update the weights from disk inplace without re-launching the server.&#34;&#34;&#34;
+    success, message, num_paused_requests = (
+        await _global_state.tokenizer_manager.update_weights_from_disk(obj, request)
+    )
+
+    # Update weight version if provided and weights update was successful
+    if success and obj.weight_version is not None:
+        _update_weight_version_if_provided(obj.weight_version)
+        message += f&#34; Weight version updated to {obj.weight_version}.&#34;
+
+    content = {
+        &#34;success&#34;: success,
+        &#34;message&#34;: message,
+        &#34;num_paused_requests&#34;: num_paused_requests,
+    }
+    if success:
+        return ORJSONResponse(
+            content,
+            status_code=HTTPStatus.OK,
+        )
+    else:
+        return ORJSONResponse(
+            content,
+            status_code=HTTPStatus.BAD_REQUEST,
+        )</code></pre>
+</details>
+<div class="desc"><p>Update the weights from disk inplace without re-launching the server.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.update_weights_from_distributed"><code class="name flex">
+<span>async def <span class="ident">update_weights_from_distributed</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.UpdateWeightsFromDistributedReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.UpdateWeightsFromDistributedReqInput">UpdateWeightsFromDistributedReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/update_weights_from_distributed&#34;)
+async def update_weights_from_distributed(
+    obj: UpdateWeightsFromDistributedReqInput, request: Request
+):
+    &#34;&#34;&#34;Update model parameter from distributed online.&#34;&#34;&#34;
+    success, message = (
+        await _global_state.tokenizer_manager.update_weights_from_distributed(
+            obj, request
+        )
+    )
+
+    # Update weight version if provided and weights update was successful
+    if success and obj.weight_version is not None:
+        _update_weight_version_if_provided(obj.weight_version)
+        message += f&#34; Weight version updated to {obj.weight_version}.&#34;
+
+    content = {&#34;success&#34;: success, &#34;message&#34;: message}
+    if success:
+        return ORJSONResponse(content, status_code=200)
+    else:
+        return ORJSONResponse(content, status_code=HTTPStatus.BAD_REQUEST)</code></pre>
+</details>
+<div class="desc"><p>Update model parameter from distributed online.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.update_weights_from_tensor"><code class="name flex">
+<span>async def <span class="ident">update_weights_from_tensor</span></span>(<span>obj: <a title="sglang.srt.managers.io_struct.UpdateWeightsFromTensorReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.UpdateWeightsFromTensorReqInput">UpdateWeightsFromTensorReqInput</a>,<br>request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/update_weights_from_tensor&#34;)
+async def update_weights_from_tensor(
+    obj: UpdateWeightsFromTensorReqInput, request: Request
+):
+    &#34;&#34;&#34;Update the weights from tensor inplace without re-launching the server.
+    Notes:
+    1. Ensure that the model is on the correct device (e.g., GPU) before calling this endpoint. If the model is moved to the CPU unexpectedly, it may cause performance issues or runtime errors.
+    2. HTTP will transmit only the metadata of the tensor, while the tensor itself will be directly copied to the model.
+    3. Any binary data in the named tensors should be base64 encoded.
+    &#34;&#34;&#34;
+
+    success, message = await _global_state.tokenizer_manager.update_weights_from_tensor(
+        obj, request
+    )
+
+    # Update weight version if provided and weights update was successful
+    if success and obj.weight_version is not None:
+        _update_weight_version_if_provided(obj.weight_version)
+        message += f&#34; Weight version updated to {obj.weight_version}.&#34;
+
+    content = {&#34;success&#34;: success, &#34;message&#34;: message}
+    return ORJSONResponse(
+        content, status_code=200 if success else HTTPStatus.BAD_REQUEST
+    )</code></pre>
+</details>
+<div class="desc"><p>Update the weights from tensor inplace without re-launching the server.
+Notes:
+1. Ensure that the model is on the correct device (e.g., GPU) before calling this endpoint. If the model is moved to the CPU unexpectedly, it may cause performance issues or runtime errors.
+2. HTTP will transmit only the metadata of the tensor, while the tensor itself will be directly copied to the model.
+3. Any binary data in the named tensors should be base64 encoded.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.v1_cancel_responses"><code class="name flex">
+<span>async def <span class="ident">v1_cancel_responses</span></span>(<span>response_id: str, raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/v1/responses/{response_id}/cancel&#34;)
+async def v1_cancel_responses(response_id: str, raw_request: Request):
+    &#34;&#34;&#34;Cancel a background response.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_responses.cancel_responses(
+        response_id
+    )</code></pre>
+</details>
+<div class="desc"><p>Cancel a background response.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.v1_rerank_request"><code class="name flex">
+<span>async def <span class="ident">v1_rerank_request</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.V1RerankReqInput" href="openai/protocol.html#sglang.srt.entrypoints.openai.protocol.V1RerankReqInput">V1RerankReqInput</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.api_route(
+    &#34;/v1/rerank&#34;, methods=[&#34;POST&#34;, &#34;PUT&#34;], dependencies=[Depends(validate_json_request)]
+)
+async def v1_rerank_request(request: V1RerankReqInput, raw_request: Request):
+    &#34;&#34;&#34;Endpoint for reranking documents based on query relevance.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_rerank.handle_request(
+        request, raw_request
+    )</code></pre>
+</details>
+<div class="desc"><p>Endpoint for reranking documents based on query relevance.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.v1_responses_request"><code class="name flex">
+<span>async def <span class="ident">v1_responses_request</span></span>(<span>request: dict, raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/v1/responses&#34;, dependencies=[Depends(validate_json_request)])
+async def v1_responses_request(request: dict, raw_request: Request):
+    &#34;&#34;&#34;Endpoint for the responses API with reasoning support.&#34;&#34;&#34;
+
+    request_obj = ResponsesRequest(**request)
+    result = await raw_request.app.state.openai_serving_responses.create_responses(
+        request_obj, raw_request
+    )
+
+    # Handle streaming responses
+    if isinstance(result, AsyncGenerator):
+        return StreamingResponse(
+            result,
+            media_type=&#34;text/event-stream&#34;,
+            headers={&#34;Cache-Control&#34;: &#34;no-cache&#34;, &#34;Connection&#34;: &#34;keep-alive&#34;},
+        )
+
+    return result</code></pre>
+</details>
+<div class="desc"><p>Endpoint for the responses API with reasoning support.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.v1_retrieve_responses"><code class="name flex">
+<span>async def <span class="ident">v1_retrieve_responses</span></span>(<span>response_id: str, raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.get(&#34;/v1/responses/{response_id}&#34;)
+async def v1_retrieve_responses(response_id: str, raw_request: Request):
+    &#34;&#34;&#34;Retrieve a response by ID.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_responses.retrieve_responses(
+        response_id
+    )</code></pre>
+</details>
+<div class="desc"><p>Retrieve a response by ID.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.v1_score_request"><code class="name flex">
+<span>async def <span class="ident">v1_score_request</span></span>(<span>request: <a title="sglang.srt.entrypoints.openai.protocol.ScoringRequest" href="openai/protocol.html#sglang.srt.entrypoints.openai.protocol.ScoringRequest">ScoringRequest</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(&#34;/v1/score&#34;, dependencies=[Depends(validate_json_request)])
+async def v1_score_request(request: ScoringRequest, raw_request: Request):
+    &#34;&#34;&#34;Endpoint for the decoder-only scoring API. See Engine.score() for detailed documentation.&#34;&#34;&#34;
+    return await raw_request.app.state.openai_serving_score.handle_request(
+        request, raw_request
+    )</code></pre>
+</details>
+<div class="desc"><p>Endpoint for the decoder-only scoring API. See Engine.score() for detailed documentation.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.validate_json_request"><code class="name flex">
+<span>async def <span class="ident">validate_json_request</span></span>(<span>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">async def validate_json_request(raw_request: Request):
+    &#34;&#34;&#34;Validate that the request content-type is application/json.&#34;&#34;&#34;
+    content_type = raw_request.headers.get(&#34;content-type&#34;, &#34;&#34;).lower()
+    media_type = content_type.split(&#34;;&#34;, maxsplit=1)[0]
+    if media_type != &#34;application/json&#34;:
+        raise RequestValidationError(
+            errors=[
+                {
+                    &#34;loc&#34;: [&#34;header&#34;, &#34;content-type&#34;],
+                    &#34;msg&#34;: &#34;Unsupported Media Type: Only &#39;application/json&#39; is allowed&#34;,
+                    &#34;type&#34;: &#34;value_error&#34;,
+                }
+            ]
+        )</code></pre>
+</details>
+<div class="desc"><p>Validate that the request content-type is application/json.</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.validation_exception_handler"><code class="name flex">
+<span>async def <span class="ident">validation_exception_handler</span></span>(<span>request: starlette.requests.Request,<br>exc: fastapi.exceptions.RequestValidationError)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    &#34;&#34;&#34;Override FastAPI&#39;s default 422 validation error with 400&#34;&#34;&#34;
+    exc_str = str(exc)
+    errors_str = str(exc.errors())
+
+    if errors_str and errors_str != exc_str:
+        message = f&#34;{exc_str} {errors_str}&#34;
+    else:
+        message = exc_str
+
+    err = ErrorResponse(
+        message=message,
+        type=HTTPStatus.BAD_REQUEST.phrase,
+        code=HTTPStatus.BAD_REQUEST.value,
+    )
+
+    return ORJSONResponse(
+        status_code=400,
+        content=err.model_dump(),
+    )</code></pre>
+</details>
+<div class="desc"><p>Override FastAPI's default 422 validation error with 400</p></div>
+</dd>
+<dt id="sglang.srt.entrypoints.http_server.vertex_generate"><code class="name flex">
+<span>async def <span class="ident">vertex_generate</span></span>(<span>vertex_req: <a title="sglang.srt.managers.io_struct.VertexGenerateReqInput" href="../managers/io_struct.html#sglang.srt.managers.io_struct.VertexGenerateReqInput">VertexGenerateReqInput</a>,<br>raw_request: starlette.requests.Request)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@app.post(os.environ.get(&#34;AIP_PREDICT_ROUTE&#34;, &#34;/vertex_generate&#34;))
+async def vertex_generate(vertex_req: VertexGenerateReqInput, raw_request: Request):
+    if not vertex_req.instances:
+        return []
+    inputs = {}
+    for input_key in (&#34;text&#34;, &#34;input_ids&#34;, &#34;input_embeds&#34;):
+        if vertex_req.instances[0].get(input_key):
+            inputs[input_key] = [
+                instance.get(input_key) for instance in vertex_req.instances
+            ]
+            break
+    image_data = [
+        instance.get(&#34;image_data&#34;)
+        for instance in vertex_req.instances
+        if instance.get(&#34;image_data&#34;) is not None
+    ] or None
+    req = GenerateReqInput(
+        **inputs,
+        image_data=image_data,
+        **(vertex_req.parameters or {}),
+    )
+    ret = await generate_request(req, raw_request)
+    if isinstance(ret, Response):
+        return ret
+    return ORJSONResponse({&#34;predictions&#34;: ret})</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.entrypoints" href="index.html">sglang.srt.entrypoints</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.entrypoints.http_server.abort_request" href="#sglang.srt.entrypoints.http_server.abort_request">abort_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.available_models" href="#sglang.srt.entrypoints.http_server.available_models">available_models</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.classify_request" href="#sglang.srt.entrypoints.http_server.classify_request">classify_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.clear_hicache_storage_backend" href="#sglang.srt.entrypoints.http_server.clear_hicache_storage_backend">clear_hicache_storage_backend</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.close_session" href="#sglang.srt.entrypoints.http_server.close_session">close_session</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.configure_logging" href="#sglang.srt.entrypoints.http_server.configure_logging">configure_logging</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.continue_generation" href="#sglang.srt.entrypoints.http_server.continue_generation">continue_generation</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.dump_expert_distribution_record_async" href="#sglang.srt.entrypoints.http_server.dump_expert_distribution_record_async">dump_expert_distribution_record_async</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.encode_request" href="#sglang.srt.entrypoints.http_server.encode_request">encode_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.flush_cache" href="#sglang.srt.entrypoints.http_server.flush_cache">flush_cache</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.freeze_gc_async" href="#sglang.srt.entrypoints.http_server.freeze_gc_async">freeze_gc_async</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.generate_from_file_request" href="#sglang.srt.entrypoints.http_server.generate_from_file_request">generate_from_file_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.generate_request" href="#sglang.srt.entrypoints.http_server.generate_request">generate_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.get_load" href="#sglang.srt.entrypoints.http_server.get_load">get_load</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.get_model_info" href="#sglang.srt.entrypoints.http_server.get_model_info">get_model_info</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.get_server_info" href="#sglang.srt.entrypoints.http_server.get_server_info">get_server_info</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.get_weight_version" href="#sglang.srt.entrypoints.http_server.get_weight_version">get_weight_version</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.get_weights_by_name" href="#sglang.srt.entrypoints.http_server.get_weights_by_name">get_weights_by_name</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.health_generate" href="#sglang.srt.entrypoints.http_server.health_generate">health_generate</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.init_weights_update_group" href="#sglang.srt.entrypoints.http_server.init_weights_update_group">init_weights_update_group</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.launch_server" href="#sglang.srt.entrypoints.http_server.launch_server">launch_server</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.lifespan" href="#sglang.srt.entrypoints.http_server.lifespan">lifespan</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.load_lora_adapter" href="#sglang.srt.entrypoints.http_server.load_lora_adapter">load_lora_adapter</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.open_session" href="#sglang.srt.entrypoints.http_server.open_session">open_session</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.openai_v1_chat_completions" href="#sglang.srt.entrypoints.http_server.openai_v1_chat_completions">openai_v1_chat_completions</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.openai_v1_completions" href="#sglang.srt.entrypoints.http_server.openai_v1_completions">openai_v1_completions</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.openai_v1_embeddings" href="#sglang.srt.entrypoints.http_server.openai_v1_embeddings">openai_v1_embeddings</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.parse_function_call_request" href="#sglang.srt.entrypoints.http_server.parse_function_call_request">parse_function_call_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.pause_generation" href="#sglang.srt.entrypoints.http_server.pause_generation">pause_generation</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.release_memory_occupation" href="#sglang.srt.entrypoints.http_server.release_memory_occupation">release_memory_occupation</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.resume_memory_occupation" href="#sglang.srt.entrypoints.http_server.resume_memory_occupation">resume_memory_occupation</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.retrieve_model" href="#sglang.srt.entrypoints.http_server.retrieve_model">retrieve_model</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.sagemaker_chat_completions" href="#sglang.srt.entrypoints.http_server.sagemaker_chat_completions">sagemaker_chat_completions</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.sagemaker_health" href="#sglang.srt.entrypoints.http_server.sagemaker_health">sagemaker_health</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.separate_reasoning_request" href="#sglang.srt.entrypoints.http_server.separate_reasoning_request">separate_reasoning_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.set_global_state" href="#sglang.srt.entrypoints.http_server.set_global_state">set_global_state</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.set_internal_state" href="#sglang.srt.entrypoints.http_server.set_internal_state">set_internal_state</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.slow_down" href="#sglang.srt.entrypoints.http_server.slow_down">slow_down</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.start_expert_distribution_record_async" href="#sglang.srt.entrypoints.http_server.start_expert_distribution_record_async">start_expert_distribution_record_async</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.start_profile_async" href="#sglang.srt.entrypoints.http_server.start_profile_async">start_profile_async</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.stop_expert_distribution_record_async" href="#sglang.srt.entrypoints.http_server.stop_expert_distribution_record_async">stop_expert_distribution_record_async</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.stop_profile_async" href="#sglang.srt.entrypoints.http_server.stop_profile_async">stop_profile_async</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.unload_lora_adapter" href="#sglang.srt.entrypoints.http_server.unload_lora_adapter">unload_lora_adapter</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.update_weight_version" href="#sglang.srt.entrypoints.http_server.update_weight_version">update_weight_version</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.update_weights_from_disk" href="#sglang.srt.entrypoints.http_server.update_weights_from_disk">update_weights_from_disk</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.update_weights_from_distributed" href="#sglang.srt.entrypoints.http_server.update_weights_from_distributed">update_weights_from_distributed</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.update_weights_from_tensor" href="#sglang.srt.entrypoints.http_server.update_weights_from_tensor">update_weights_from_tensor</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.v1_cancel_responses" href="#sglang.srt.entrypoints.http_server.v1_cancel_responses">v1_cancel_responses</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.v1_rerank_request" href="#sglang.srt.entrypoints.http_server.v1_rerank_request">v1_rerank_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.v1_responses_request" href="#sglang.srt.entrypoints.http_server.v1_responses_request">v1_responses_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.v1_retrieve_responses" href="#sglang.srt.entrypoints.http_server.v1_retrieve_responses">v1_retrieve_responses</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.v1_score_request" href="#sglang.srt.entrypoints.http_server.v1_score_request">v1_score_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.validate_json_request" href="#sglang.srt.entrypoints.http_server.validate_json_request">validate_json_request</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.validation_exception_handler" href="#sglang.srt.entrypoints.http_server.validation_exception_handler">validation_exception_handler</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.http_server.vertex_generate" href="#sglang.srt.entrypoints.http_server.vertex_generate">vertex_generate</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

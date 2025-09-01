@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.moe.cutlass_moe API documentation</title>
+<meta name="description" content="CUTLASS based Fused MoE kernels.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.moe.cutlass_moe</code></h1>
+</header>
+<section id="section-intro">
+<p>CUTLASS based Fused MoE kernels.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.moe.cutlass_moe.cutlass_fused_experts_fp8"><code class="name flex">
+<span>def <span class="ident">cutlass_fused_experts_fp8</span></span>(<span>a: torch.Tensor,<br>w1_q: torch.Tensor,<br>w2_q: torch.Tensor,<br>w1_scale: torch.Tensor,<br>w2_scale: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>a1_strides: torch.Tensor,<br>c1_strides: torch.Tensor,<br>a2_strides: torch.Tensor,<br>c2_strides: torch.Tensor,<br>workspace: torch.Tensor,<br>a_ptrs: torch.Tensor,<br>b_ptrs: torch.Tensor,<br>out_ptrs: torch.Tensor,<br>a_scales_ptrs: torch.Tensor,<br>b_scales_ptrs: torch.Tensor,<br>expert_offsets: torch.Tensor,<br>problem_sizes1: torch.Tensor,<br>problem_sizes2: torch.Tensor,<br>use_fp8_blockscale: bool = True) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutlass_fused_experts_fp8(
+    a: torch.Tensor,
+    w1_q: torch.Tensor,
+    w2_q: torch.Tensor,
+    w1_scale: torch.Tensor,
+    w2_scale: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    a1_strides: torch.Tensor,
+    c1_strides: torch.Tensor,
+    a2_strides: torch.Tensor,
+    c2_strides: torch.Tensor,
+    workspace: torch.Tensor,
+    a_ptrs: torch.Tensor,
+    b_ptrs: torch.Tensor,
+    out_ptrs: torch.Tensor,
+    a_scales_ptrs: torch.Tensor,
+    b_scales_ptrs: torch.Tensor,
+    expert_offsets: torch.Tensor,
+    problem_sizes1: torch.Tensor,
+    problem_sizes2: torch.Tensor,
+    use_fp8_blockscale: bool = True,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Performs Fused MoE computation using CUTLASS-like kernels with FP8 weights and activations.
+
+    This function implements a Mixture of Experts (MoE) layer with a SwiGLU/SiLU
+    activation, leveraging custom kernels likely derived from CUTLASS principles
+    for grouped matrix multiplication (`fp8_blockwise_scaled_grouped_mm`) and
+    data preparation (`prepare_moe_input`, `silu_and_mul`).
+
+    It handles per-token routing, quantizes input activations to FP8 with
+    per-token scales, performs the expert computations using FP8 GEMMs with
+    pre-quantized FP8 weights (per-block scales), applies the SiLU activation,
+    and combines the results weighted by the router scores.
+
+    Args:
+        a (torch.Tensor): Input activations. Shape: `(m, k)`, where `m` is the total
+            number of tokens and `k` is the hidden size. Expected dtype: `torch.half`
+            or `torch.bfloat16`.
+        w1_q (torch.Tensor): Pre-quantized FP8 weight tensor for the first GEMM
+            (up-projection part of SwiGLU). Expected shape: `(E, k, n*2)`, where
+            `E` is the number of experts, `k` is the hidden size, and `n*2` is the
+            intermediate size (`I`). Expected dtype: `torch.float8_e4m3fn`.
+            Note: This shape implies weights are stored as (num_experts, hidden_size, intermediate_size).
+        w2_q (torch.Tensor): Pre-quantized FP8 weight tensor for the second GEMM
+            (down-projection). Expected shape: `(E, n, k)`, where `n` is half the
+            intermediate size (`I // 2`). Expected dtype: `torch.float8_e4m3fn`.
+            Note: This shape implies weights are stored as (num_experts, intermediate_size // 2, hidden_size).
+        w1_scale (torch.Tensor): Scales corresponding to `w1_q` (per-block scales).
+            Shape: `(E, num_blocks_n, num_blocks_k)`. Dtype: `torch.float32`.
+        w2_scale (torch.Tensor): Scales corresponding to `w2_q` (per-block scales).
+             Shape: `(E, num_blocks_k, num_blocks_n)`. Dtype: `torch.float32`.
+        topk_weights (torch.Tensor): Router weights for the selected top-k experts
+            for each token. Shape: `(m, topk)`. Dtype should ideally match `a`.
+        topk_ids (torch.Tensor): Indices of the selected top-k experts for each token.
+            Shape: `(m, topk)`. Dtype: `torch.int32`.
+        a1_strides (torch.Tensor): Stride information for the first GEMM&#39;s &#39;a&#39; input.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+            Note: Its exact usage within `fp8_blockwise_scaled_grouped_mm` needs clarification
+            as it&#39;s passed as both a_stride and b_stride in the first call.
+        c1_strides (torch.Tensor): Stride information for the first GEMM&#39;s &#39;c&#39; output.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+        a2_strides (torch.Tensor): Stride information for the second GEMM&#39;s &#39;a&#39; input.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+            Note: Its exact usage within `fp8_blockwise_scaled_grouped_mm` needs clarification
+            as it&#39;s passed as both a_stride and b_stride in the second call.
+        c2_strides (torch.Tensor): Stride information for the second GEMM&#39;s &#39;c&#39; output.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+        workspace (torch.Tensor): Reusable workspace for the underlying kernel.
+        a_ptrs (torch.Tensor): Pointers container for calculating offsets of the input activations for each expert.
+        b_ptrs (torch.Tensor): Pointers container for calculating offsets of the input weights for each expert.
+        out_ptrs (torch.Tensor): Pointers container for calculating offsets of the output activations for each expert.
+        a_scales_ptrs (torch.Tensor): Pointers container for calculating offsets of the input scales for each expert.
+        b_scales_ptrs (torch.Tensor): Pointers container for calculating offsets of the input scales for each expert.
+        use_fp8_blockscale (bool, optional): Flag indicating usage of FP8 with
+            block scaling. Currently, only `True` is supported. Defaults to `True`.
+
+    Returns:
+        torch.Tensor: The computed MoE layer output. Shape: `(m, k)`, dtype matches `a`.
+
+    Raises:
+        AssertionError: If input shapes, dtypes, or flags are inconsistent or unsupported.
+        NotImplementedError: If CUDA is not available or `sgl_kernel` is not properly installed.
+    &#34;&#34;&#34;
+    assert use_fp8_blockscale, &#34;Only support fp8 blockscale for now&#34;
+    assert topk_weights.shape == topk_ids.shape, &#34;topk shape mismatch&#34;
+    assert w1_q.dtype == torch.float8_e4m3fn
+    assert w2_q.dtype == torch.float8_e4m3fn
+    assert a.shape[1] == w1_q.shape[1], &#34;Hidden size mismatch w1&#34;
+    assert w1_q.shape[2] == w2_q.shape[1] * 2, &#34;Hidden size mismatch w2&#34;
+    assert w1_q.shape[0] == w2_q.shape[0], &#34;Expert number mismatch&#34;
+    assert w1_q.shape[0] == w2_q.shape[0], &#34;Weights expert number mismatch&#34;
+    assert w1_q.shape[0] == w1_scale.shape[0], &#34;w1 scales expert number mismatch&#34;
+    assert w1_q.shape[0] == w2_scale.shape[0], &#34;w2 scales expert number mismatch&#34;
+    assert a.dtype in [torch.half, torch.bfloat16], &#34;Invalid output dtype&#34;
+
+    if is_cuda:
+        from sglang.srt.layers.quantization.fp8_kernel import (
+            per_group_transpose,
+            per_token_group_quant_fp8_hopper_moe_mn_major,
+            sglang_per_token_group_quant_fp8,
+        )
+
+    out_dtype = a.dtype
+    num_experts = w1_q.size(0)
+    m = a.size(0)
+    k = w1_q.size(1)
+    n = w2_q.size(1)
+
+    topk = topk_ids.size(1)
+    device = a.device
+
+    a_map = torch.empty((topk_ids.numel()), dtype=torch.int32, device=device)
+    c_map = torch.empty((topk_ids.numel()), dtype=torch.int32, device=device)
+
+    prepare_moe_input(
+        topk_ids,
+        expert_offsets,
+        problem_sizes1,
+        problem_sizes2,
+        a_map,
+        c_map,
+        num_experts,
+        n,
+        k,
+    )
+
+    a_q, a1_scale = sglang_per_token_group_quant_fp8(a, 128)
+    rep_a_q = shuffle_rows(a_q, a_map, (m * topk, k))
+    rep_a1_scales = shuffle_rows(a1_scale, a_map, (m * topk, int(k / 128)))
+
+    c1 = torch.empty((m * topk, n * 2), device=device, dtype=out_dtype)
+    c2 = torch.empty((m * topk, k), device=device, dtype=out_dtype)
+
+    a_sf_layout = torch.empty((num_experts, 5), device=device, dtype=torch.int)
+    w_sf_layout = torch.empty((num_experts, 5), device=device, dtype=torch.int)
+
+    fp8_blockwise_scaled_grouped_mm(
+        c1,
+        a_ptrs,
+        b_ptrs,
+        out_ptrs,
+        a_scales_ptrs,
+        b_scales_ptrs,
+        rep_a_q,
+        w1_q,
+        rep_a1_scales,
+        w1_scale,
+        a1_strides,
+        a1_strides,
+        c1_strides,
+        a_sf_layout,
+        w_sf_layout,
+        problem_sizes1,
+        expert_offsets[:-1],
+        workspace,
+    )
+
+    intermediate = torch.empty((m * topk, n), device=device, dtype=out_dtype)
+    silu_and_mul(c1, intermediate)
+
+    intemediate_q, a2_scale = sglang_per_token_group_quant_fp8(intermediate, 128)
+
+    fp8_blockwise_scaled_grouped_mm(
+        c2,
+        a_ptrs,
+        b_ptrs,
+        out_ptrs,
+        a_scales_ptrs,
+        b_scales_ptrs,
+        intemediate_q,
+        w2_q,
+        a2_scale,
+        w2_scale,
+        a2_strides,
+        a2_strides,
+        c2_strides,
+        a_sf_layout,
+        w_sf_layout,
+        problem_sizes2,
+        expert_offsets[:-1],
+        workspace,
+    )
+
+    result = torch.empty((m, k), device=device, dtype=out_dtype)
+    apply_shuffle_mul_sum(c2, result, c_map, topk_weights.to(out_dtype))
+    return result</code></pre>
+</details>
+<div class="desc"><p>Performs Fused MoE computation using CUTLASS-like kernels with FP8 weights and activations.</p>
+<p>This function implements a Mixture of Experts (MoE) layer with a SwiGLU/SiLU
+activation, leveraging custom kernels likely derived from CUTLASS principles
+for grouped matrix multiplication (<code>fp8_blockwise_scaled_grouped_mm</code>) and
+data preparation (<code>prepare_moe_input</code>, <code>silu_and_mul</code>).</p>
+<p>It handles per-token routing, quantizes input activations to FP8 with
+per-token scales, performs the expert computations using FP8 GEMMs with
+pre-quantized FP8 weights (per-block scales), applies the SiLU activation,
+and combines the results weighted by the router scores.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>a</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Input activations. Shape: <code>(m, k)</code>, where <code>m</code> is the total
+number of tokens and <code>k</code> is the hidden size. Expected dtype: <code>torch.half</code>
+or <code>torch.bfloat16</code>.</dd>
+<dt><strong><code>w1_q</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pre-quantized FP8 weight tensor for the first GEMM
+(up-projection part of SwiGLU). Expected shape: <code>(E, k, n*2)</code>, where
+<code>E</code> is the number of experts, <code>k</code> is the hidden size, and <code>n*2</code> is the
+intermediate size (<code>I</code>). Expected dtype: <code>torch.float8_e4m3fn</code>.
+Note: This shape implies weights are stored as (num_experts, hidden_size, intermediate_size).</dd>
+<dt><strong><code>w2_q</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pre-quantized FP8 weight tensor for the second GEMM
+(down-projection). Expected shape: <code>(E, n, k)</code>, where <code>n</code> is half the
+intermediate size (<code>I // 2</code>). Expected dtype: <code>torch.float8_e4m3fn</code>.
+Note: This shape implies weights are stored as (num_experts, intermediate_size // 2, hidden_size).</dd>
+<dt><strong><code>w1_scale</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Scales corresponding to <code>w1_q</code> (per-block scales).
+Shape: <code>(E, num_blocks_n, num_blocks_k)</code>. Dtype: <code>torch.float32</code>.</dd>
+<dt><strong><code>w2_scale</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Scales corresponding to <code>w2_q</code> (per-block scales).
+Shape: <code>(E, num_blocks_k, num_blocks_n)</code>. Dtype: <code>torch.float32</code>.</dd>
+<dt><strong><code>topk_weights</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Router weights for the selected top-k experts
+for each token. Shape: <code>(m, topk)</code>. Dtype should ideally match <code>a</code>.</dd>
+<dt><strong><code>topk_ids</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Indices of the selected top-k experts for each token.
+Shape: <code>(m, topk)</code>. Dtype: <code>torch.int32</code>.</dd>
+<dt><strong><code>a1_strides</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Stride information for the first GEMM's 'a' input.
+Passed directly to the underlying kernel. Expected shape <code>(E,)</code>, dtype <code>torch.int64</code>.
+Note: Its exact usage within <code>fp8_blockwise_scaled_grouped_mm</code> needs clarification
+as it's passed as both a_stride and b_stride in the first call.</dd>
+<dt><strong><code>c1_strides</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Stride information for the first GEMM's 'c' output.
+Passed directly to the underlying kernel. Expected shape <code>(E,)</code>, dtype <code>torch.int64</code>.</dd>
+<dt><strong><code>a2_strides</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Stride information for the second GEMM's 'a' input.
+Passed directly to the underlying kernel. Expected shape <code>(E,)</code>, dtype <code>torch.int64</code>.
+Note: Its exact usage within <code>fp8_blockwise_scaled_grouped_mm</code> needs clarification
+as it's passed as both a_stride and b_stride in the second call.</dd>
+<dt><strong><code>c2_strides</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Stride information for the second GEMM's 'c' output.
+Passed directly to the underlying kernel. Expected shape <code>(E,)</code>, dtype <code>torch.int64</code>.</dd>
+<dt><strong><code>workspace</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Reusable workspace for the underlying kernel.</dd>
+<dt><strong><code>a_ptrs</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pointers container for calculating offsets of the input activations for each expert.</dd>
+<dt><strong><code>b_ptrs</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pointers container for calculating offsets of the input weights for each expert.</dd>
+<dt><strong><code>out_ptrs</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pointers container for calculating offsets of the output activations for each expert.</dd>
+<dt><strong><code>a_scales_ptrs</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pointers container for calculating offsets of the input scales for each expert.</dd>
+<dt><strong><code>b_scales_ptrs</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>Pointers container for calculating offsets of the input scales for each expert.</dd>
+<dt><strong><code>use_fp8_blockscale</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Flag indicating usage of FP8 with
+block scaling. Currently, only <code>True</code> is supported. Defaults to <code>True</code>.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>torch.Tensor</code></dt>
+<dd>The computed MoE layer output. Shape: <code>(m, k)</code>, dtype matches <code>a</code>.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>AssertionError</code></dt>
+<dd>If input shapes, dtypes, or flags are inconsistent or unsupported.</dd>
+<dt><code>NotImplementedError</code></dt>
+<dd>If CUDA is not available or <code>sgl_kernel</code> is not properly installed.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.layers.moe.cutlass_moe.cutlass_moe_fp4"><code class="name flex">
+<span>def <span class="ident">cutlass_moe_fp4</span></span>(<span>a: torch.Tensor,<br>a1_gscale: torch.Tensor,<br>w1_fp4: torch.Tensor,<br>w1_blockscale: torch.Tensor,<br>w1_alphas: torch.Tensor,<br>a2_gscale: torch.Tensor,<br>w2_fp4: torch.Tensor,<br>w2_blockscale: torch.Tensor,<br>w2_alphas: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>params: <a title="sglang.srt.layers.moe.cutlass_moe_params.CutlassMoEParams" href="cutlass_moe_params.html#sglang.srt.layers.moe.cutlass_moe_params.CutlassMoEParams">CutlassMoEParams</a>,<br>apply_router_weight_on_input: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutlass_moe_fp4(
+    a: torch.Tensor,
+    a1_gscale: torch.Tensor,
+    w1_fp4: torch.Tensor,
+    w1_blockscale: torch.Tensor,
+    w1_alphas: torch.Tensor,
+    a2_gscale: torch.Tensor,
+    w2_fp4: torch.Tensor,
+    w2_blockscale: torch.Tensor,
+    w2_alphas: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    params: CutlassMoEParams,
+    apply_router_weight_on_input: bool = False,
+):
+    &#34;&#34;&#34;
+    MoE implementation for FP4 Inputs
+
+    # Gemm 1
+    a: Input tensor: [m, k] (half/bfloat16)
+    a1_gscale: Activation scale per expert: [e]  (float32)
+    w1(gate up) (not an argument to cutlass_moe_fp4): [e, 2 * n, k]
+    w1_fp4: [e, 2 * n, k // 2], dtype: torch.uint8 (stacked fp4: E2M1)
+    (Note: `n` is the up projection output dim, `k` is the input dim in
+     full precision)
+    w1_blockscale: [e, 2 * n, k // block_size] (float8_e4m3)
+                   (Block size = 16 for NVFP4)
+
+    # Gemm 2
+    a2_gscale: Activation scale per expert: [e]
+    w2(down projection) (not an argument to cutlass_moe_fp4): [e, k, n]
+    w2_fp4: [e, k, n // 2], dtype: torch.uint8 (stacked E2M1)
+    w2_blockscale: [e, k, n // block_size], dtype: float8_e4m3
+
+    Strides for activations, weights and output in logical number of elements.
+    The activations &amp; output stride is the number of elements to the next row.
+    The weights stride is the number of elements to the next row per expert.
+    For example, if the weight is [e, n, k], then the b_stride is a tensor of
+    shape [e] with each element being k. Similarly for activations, if the
+    shape is [m, k], then the a_stride has shape [e] with each value k.
+    Similarly for output, if the output is [m, n], then the c_stride is a
+    tensor of shape [e] with each element being k.
+
+    Note: cutlass_fp4_group_mm is designed to accept the strides of
+    activations and weights to be the same, so it is passed in as a single
+    tensor.
+    ab_strides_13: [e] dtype: int64 [Gemm 1: Activation / Weight strides]
+    ab_strides_2: [e] dtype: int64 [Gemm 2: Activation / Weight strides]
+    c_strides_13: [e] dtype: int64 [Gemm 1: Output Strides]
+    c_strides_2: [e] dtype: int64 [Gemm 1: Output Strides]
+
+    topk_weights: [m, topk] dtype: float8
+    topk_ids: [m, topk] dtype: float8
+
+    m, n, k: Unquantized weight shapes, dtype: int
+    e: number of experts for the current rank, dtype: int
+    assumes that topk &lt; k &lt; n to satisfy - up/down projection expectations.
+    &#34;&#34;&#34;
+    assert topk_weights.shape == topk_ids.shape, &#34;topk shape mismatch&#34;
+    assert w1_fp4.dtype == torch.uint8, &#34;weight 1 must be uint8&#34;
+    assert w2_fp4.dtype == torch.uint8, &#34;weight 2 must be uint8&#34;
+    assert (
+        w1_fp4.ndim == 3
+        and w2_fp4.ndim == 3
+        and w1_blockscale.ndim == 3
+        and w2_blockscale.ndim == 3
+    ), &#34;All Weights must be of rank 3 for cutlass_moe_fp4&#34;
+    m_a, k_a = a.shape
+    e_w1, nx2_w1, half_k_w1 = w1_fp4.shape
+    e_w2, k_w2, half_n_w2 = w2_fp4.shape
+
+    assert e_w1 == e_w2 and e_w1 == params.num_experts, (
+        &#34;Number of experts must match&#34;,
+        &#34; between weights.&#34;,
+    )
+    assert (
+        k_a // 2 == half_k_w1 and params.hidden_size == k_w2
+    ), &#34;Hidden size mismatch between a, w1 and w2&#34;
+    assert (
+        nx2_w1 == params.intermediate_size_per_partition * 2
+        and half_n_w2 == params.intermediate_size_per_partition // 2
+    ), (&#34;mismatch in &#34; &#34;expected `n`&#34;)
+    assert 2 * half_k_w1 == k_w2, &#34;Hidden size mismatch w2 and w1&#34;
+    assert a.dtype in [torch.half, torch.bfloat16], &#34;Invalid input dtype&#34;
+
+    out_dtype = a.dtype
+    num_topk = topk_ids.shape[1]
+    device = a.device
+    a_map = torch.empty((topk_ids.numel()), dtype=torch.int32, device=device)
+    c_map = torch.empty((topk_ids.numel()), dtype=torch.int32, device=device)
+    prepare_moe_input(
+        topk_ids,
+        params.expert_offsets,
+        params.problem_sizes1,
+        params.problem_sizes2,
+        a_map,
+        c_map,
+        params.num_experts,
+        params.intermediate_size_per_partition,
+        params.hidden_size,
+        params.blockscale_offsets,
+    )
+
+    rep_a_fp4, rep_a_blockscale = scaled_fp4_experts_quant(
+        a,
+        a1_gscale,
+        params.expert_offsets,
+        params.blockscale_offsets,
+        num_topk,
+        expert_map=a_map,
+    )
+    c1 = cutlass_fp4_group_mm(
+        rep_a_fp4,
+        w1_fp4,
+        rep_a_blockscale,
+        w1_blockscale,
+        w1_alphas,
+        out_dtype,
+        device,
+        params.to_gemm1_args(),
+    )
+    del rep_a_fp4, rep_a_blockscale
+
+    # hidden size dimension is split to one halfpytho sized tensor.
+    intermediate = torch.empty(
+        (m_a * num_topk, w1_fp4.shape[1] // 2), device=device, dtype=out_dtype
+    )
+    silu_and_mul(c1, intermediate)
+
+    int_fp4, int_blockscale = scaled_fp4_experts_quant(
+        intermediate,
+        a2_gscale,
+        params.expert_offsets,
+        params.blockscale_offsets,
+        num_topk,
+    )
+    c2 = cutlass_fp4_group_mm(
+        int_fp4,
+        w2_fp4,
+        int_blockscale,
+        w2_blockscale,
+        w2_alphas,
+        out_dtype,
+        device,
+        params.to_gemm2_args(),
+    )
+    del int_fp4, int_blockscale
+    c2 = shuffle_rows(c2, c_map, (m_a * num_topk, params.hidden_size))
+    c2 = c2.view(m_a, num_topk, params.hidden_size)
+    if not apply_router_weight_on_input:
+        c2 = c2 * topk_weights.view(m_a, num_topk, 1).to(out_dtype)
+    return c2.sum(dim=1).to(out_dtype)</code></pre>
+</details>
+<div class="desc"><p>MoE implementation for FP4 Inputs</p>
+<h1 id="gemm-1">Gemm 1</h1>
+<p>a: Input tensor: [m, k] (half/bfloat16)
+a1_gscale: Activation scale per expert: [e]
+(float32)
+w1(gate up) (not an argument to cutlass_moe_fp4): [e, 2 * n, k]
+w1_fp4: [e, 2 * n, k // 2], dtype: torch.uint8 (stacked fp4: E2M1)
+(Note: <code>n</code> is the up projection output dim, <code>k</code> is the input dim in
+full precision)
+w1_blockscale: [e, 2 * n, k // block_size] (float8_e4m3)
+(Block size = 16 for NVFP4)</p>
+<h1 id="gemm-2">Gemm 2</h1>
+<p>a2_gscale: Activation scale per expert: [e]
+w2(down projection) (not an argument to cutlass_moe_fp4): [e, k, n]
+w2_fp4: [e, k, n // 2], dtype: torch.uint8 (stacked E2M1)
+w2_blockscale: [e, k, n // block_size], dtype: float8_e4m3</p>
+<p>Strides for activations, weights and output in logical number of elements.
+The activations &amp; output stride is the number of elements to the next row.
+The weights stride is the number of elements to the next row per expert.
+For example, if the weight is [e, n, k], then the b_stride is a tensor of
+shape [e] with each element being k. Similarly for activations, if the
+shape is [m, k], then the a_stride has shape [e] with each value k.
+Similarly for output, if the output is [m, n], then the c_stride is a
+tensor of shape [e] with each element being k.</p>
+<p>Note: cutlass_fp4_group_mm is designed to accept the strides of
+activations and weights to be the same, so it is passed in as a single
+tensor.
+ab_strides_13: [e] dtype: int64 [Gemm 1: Activation / Weight strides]
+ab_strides_2: [e] dtype: int64 [Gemm 2: Activation / Weight strides]
+c_strides_13: [e] dtype: int64 [Gemm 1: Output Strides]
+c_strides_2: [e] dtype: int64 [Gemm 1: Output Strides]</p>
+<p>topk_weights: [m, topk] dtype: float8
+topk_ids: [m, topk] dtype: float8</p>
+<p>m, n, k: Unquantized weight shapes, dtype: int
+e: number of experts for the current rank, dtype: int
+assumes that topk &lt; k &lt; n to satisfy - up/down projection expectations.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.moe" href="index.html">sglang.srt.layers.moe</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.cutlass_moe.cutlass_fused_experts_fp8" href="#sglang.srt.layers.moe.cutlass_moe.cutlass_fused_experts_fp8">cutlass_fused_experts_fp8</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.cutlass_moe.cutlass_moe_fp4" href="#sglang.srt.layers.moe.cutlass_moe.cutlass_moe_fp4">cutlass_moe_fp4</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.w8a8_int8 API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.w8a8_int8</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.npu_fused_experts"><code class="name flex">
+<span>def <span class="ident">npu_fused_experts</span></span>(<span>hidden_states: torch.Tensor,<br>w13: torch.Tensor,<br>w13_scale: torch.Tensor,<br>w2: torch.Tensor,<br>w2_scale: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>top_k: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def npu_fused_experts(
+    hidden_states: torch.Tensor,
+    w13: torch.Tensor,
+    w13_scale: torch.Tensor,
+    w2: torch.Tensor,
+    w2_scale: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    top_k: int,
+):
+    original_shape = hidden_states.shape
+    original_dtype = hidden_states.dtype
+    scale_dtype = original_dtype if original_dtype == torch.bfloat16 else torch.float32
+    if len(original_shape) == 3:
+        hidden_states = hidden_states.view(-1, hidden_states.shape[-1])
+    num_tokens = hidden_states.shape[0]
+    num_experts = w13.shape[0]
+    row_idx_len = num_tokens * top_k
+    row_idx = (
+        torch.arange(0, row_idx_len, dtype=torch.int32, device=topk_weights.device)
+        .view(top_k, -1)
+        .permute(1, 0)
+        .contiguous()
+    )
+    hidden_states, expanded_row_idx, expanded_expert_idx = (
+        torch_npu.npu_moe_init_routing(
+            hidden_states, row_idx=row_idx, expert_idx=topk_ids, active_num=num_tokens
+        )
+    )
+    expert_tokens = torch_npu.npu_moe_compute_expert_tokens(
+        expanded_expert_idx, num_experts
+    )
+    expert_tokens = expert_tokens.to(torch.int64)
+    # gmm1: gate_up_proj
+    hidden_states, pertoken_scale = torch_npu.npu_dynamic_quant(hidden_states)
+    hidden_states = torch_npu.npu_grouped_matmul(
+        x=[hidden_states],
+        weight=[w13],
+        scale=[w13_scale.to(scale_dtype)],
+        per_token_scale=[pertoken_scale],
+        split_item=2,
+        group_list_type=0,
+        group_type=0,
+        group_list=expert_tokens,
+        output_dtype=original_dtype,
+    )[0]
+    # act_fn: swiglu
+    hidden_states = torch_npu.npu_swiglu(hidden_states)
+    hidden_states, pertoken_scale = torch_npu.npu_dynamic_quant(hidden_states)
+    # gmm2: down_proj
+    hidden_states = torch_npu.npu_grouped_matmul(
+        x=[hidden_states],
+        weight=[w2],
+        scale=[w2_scale.to(scale_dtype)],
+        per_token_scale=[pertoken_scale],
+        split_item=2,
+        group_list_type=0,
+        group_type=0,
+        group_list=expert_tokens,
+        output_dtype=original_dtype,
+    )[0]
+
+    final_hidden_states = torch_npu.npu_moe_finalize_routing(
+        hidden_states,
+        skip1=None,
+        skip2=None,
+        bias=None,
+        scales=topk_weights,
+        expanded_src_to_dst_row=expanded_row_idx,
+        export_for_source_row=topk_ids,
+    )
+    if len(original_shape) == 3:
+        final_hidden_states = final_hidden_states.view(original_shape)
+    return final_hidden_states</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.npu_wrapper_rmsnorm_forward"><code class="name flex">
+<span>def <span class="ident">npu_wrapper_rmsnorm_forward</span></span>(<span>func)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def npu_wrapper_rmsnorm_forward(func):
+    def _rmsnorm_forward_oot(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+    ) -&gt; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if not x.is_contiguous():
+            x = x.contiguous()
+        if residual is not None:
+            out, _, residual_out = torch_npu.npu_add_rms_norm(
+                residual, x, self.weight.data, self.variance_epsilon
+            )
+            out = out + self.bias
+            return out.to(x.dtype), residual_out
+
+        out = torch_npu.npu_rms_norm(x, self.weight.data, self.variance_epsilon)[0]
+        out = out + self.bias
+        return out.to(x.dtype)
+
+    return _rmsnorm_forward_oot</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.npu_wrapper_rmsnorm_init"><code class="name flex">
+<span>def <span class="ident">npu_wrapper_rmsnorm_init</span></span>(<span>func)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def npu_wrapper_rmsnorm_init(func):
+    def init(self, hidden_size: int, **extra_args) -&gt; None:
+        func(self, hidden_size, **extra_args)
+        self.ignore_anti = True
+        # The Ascend w8a8_int8 quantization requires adding a bias in rmsnorm
+        self.bias = torch.nn.Parameter(torch.zeros(hidden_size), requires_grad=False)
+
+    return init</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethod"><code class="flex name class">
+<span>class <span class="ident">NPU_W8A8DynamicLinearMethod</span></span>
+<span>(</span><span>quantization_config: <a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NPU_W8A8DynamicLinearMethod(LinearMethodBase):
+    &#34;&#34;&#34;Linear method for NPU quantization.
+
+    This class search for specific quantization
+    implementations supported on NPU hardware for linear methods.
+
+    Args:
+        quant_config: The NPU quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quantization_config: W8A8Int8Config) -&gt; None:
+        self.quantization_config = quantization_config
+        self.quant_method = NPU_W8A8DynamicLinearMethodImpl()
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: List[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ) -&gt; None:
+        output_size_per_partition = sum(output_partition_sizes)
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+
+        weight_dict = self.quant_method.get_weight(
+            input_size_per_partition, output_size_per_partition, params_dtype
+        )
+        for weight_name, weight_param in weight_dict.items():
+            param = torch.nn.Parameter(weight_param, requires_grad=False)
+            set_weight_attrs(param, {&#34;input_dim&#34;: 1, &#34;output_dim&#34;: 0})
+            layer.register_parameter(weight_name, param)
+            set_weight_attrs(param, extra_weight_attrs)
+
+        pertensor_dict = self.quant_method.get_pertensor_param(params_dtype)
+        for pertensor_name, pertensor_param in pertensor_dict.items():
+            param = PerTensorScaleParameter(
+                data=pertensor_param, weight_loader=weight_loader
+            )
+            # disable warning
+            param.ignore_warning = True
+            layer.register_parameter(pertensor_name, param)
+
+        perchannel_dict = self.quant_method.get_perchannel_param(
+            output_size_per_partition, params_dtype
+        )
+        for perchannel_name, perchannel_param in perchannel_dict.items():
+            param = torch.nn.Parameter(perchannel_param, requires_grad=False)
+            set_weight_attrs(param, {&#34;output_dim&#34;: 0})
+            layer.register_parameter(perchannel_name, param)
+            set_weight_attrs(param, extra_weight_attrs)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        if hasattr(self.quant_method, &#34;process_weights_after_loading&#34;):
+            self.quant_method.process_weights_after_loading(layer)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        return self.quant_method.apply(layer, x, bias)</code></pre>
+</details>
+<div class="desc"><p>Linear method for NPU quantization.</p>
+<p>This class search for specific quantization
+implementations supported on NPU hardware for linear methods.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The NPU quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl"><code class="flex name class">
+<span>class <span class="ident">NPU_W8A8DynamicLinearMethodImpl</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NPU_W8A8DynamicLinearMethodImpl:
+    &#34;&#34;&#34;Linear method for NPU W8A8_DYNAMIC.&#34;&#34;&#34;
+
+    def __init__(self):
+        self.transpose_weight = True
+
+    @staticmethod
+    def get_weight(
+        input_size: int, output_size: int, params_dtype: torch.dtype
+    ) -&gt; Dict[str, Any]:
+        params_dict = {&#34;weight&#34;: torch.empty(output_size, input_size, dtype=torch.int8)}
+        return params_dict
+
+    @staticmethod
+    def get_pertensor_param(params_dtype: torch.dtype) -&gt; Dict[str, Any]:
+        return {}
+
+    @staticmethod
+    def get_perchannel_param(
+        output_size: int,
+        params_dtype: torch.dtype,
+    ) -&gt; Dict[str, Any]:
+        params_dict = {}
+        params_dict[&#34;weight_scale&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+        params_dict[&#34;weight_offset&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+        return params_dict
+
+    @staticmethod
+    def apply(
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+        tp_rank: Optional[int] = 0,
+    ) -&gt; torch.Tensor:
+        original_dtype = x.dtype
+        quant_out, dynamic_scale = torch_npu.npu_dynamic_quant(x)
+        return torch_npu.npu_quant_matmul(
+            quant_out,
+            layer.weight,
+            layer.weight_scale,
+            pertoken_scale=dynamic_scale,
+            bias=bias,
+            output_dtype=original_dtype,
+        )
+
+    def process_weights_after_loading(self, layer):
+        if self.transpose_weight:
+            layer.weight.data = layer.weight.data.transpose(0, 1).contiguous()
+        layer.weight_scale.data = layer.weight_scale.data.flatten()
+        layer.weight_scale_fp32 = layer.weight_scale.data.to(torch.float32)
+        layer.weight_offset.data = layer.weight_offset.data.flatten()</code></pre>
+</details>
+<div class="desc"><p>Linear method for NPU W8A8_DYNAMIC.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>layer: torch.nn.Module,<br>x: torch.Tensor,<br>bias: Optional[torch.Tensor] = None,<br>tp_rank: Optional[int] = 0) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def apply(
+    layer: torch.nn.Module,
+    x: torch.Tensor,
+    bias: Optional[torch.Tensor] = None,
+    tp_rank: Optional[int] = 0,
+) -&gt; torch.Tensor:
+    original_dtype = x.dtype
+    quant_out, dynamic_scale = torch_npu.npu_dynamic_quant(x)
+    return torch_npu.npu_quant_matmul(
+        quant_out,
+        layer.weight,
+        layer.weight_scale,
+        pertoken_scale=dynamic_scale,
+        bias=bias,
+        output_dtype=original_dtype,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_perchannel_param"><code class="name flex">
+<span>def <span class="ident">get_perchannel_param</span></span>(<span>output_size: int, params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_perchannel_param(
+    output_size: int,
+    params_dtype: torch.dtype,
+) -&gt; Dict[str, Any]:
+    params_dict = {}
+    params_dict[&#34;weight_scale&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+    params_dict[&#34;weight_offset&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_pertensor_param"><code class="name flex">
+<span>def <span class="ident">get_pertensor_param</span></span>(<span>params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_pertensor_param(params_dtype: torch.dtype) -&gt; Dict[str, Any]:
+    return {}</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_weight"><code class="name flex">
+<span>def <span class="ident">get_weight</span></span>(<span>input_size: int, output_size: int, params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_weight(
+    input_size: int, output_size: int, params_dtype: torch.dtype
+) -&gt; Dict[str, Any]:
+    params_dict = {&#34;weight&#34;: torch.empty(output_size, input_size, dtype=torch.int8)}
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.process_weights_after_loading"><code class="name flex">
+<span>def <span class="ident">process_weights_after_loading</span></span>(<span>self, layer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_weights_after_loading(self, layer):
+    if self.transpose_weight:
+        layer.weight.data = layer.weight.data.transpose(0, 1).contiguous()
+    layer.weight_scale.data = layer.weight_scale.data.flatten()
+    layer.weight_scale_fp32 = layer.weight_scale.data.to(torch.float32)
+    layer.weight_offset.data = layer.weight_offset.data.flatten()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethod"><code class="flex name class">
+<span>class <span class="ident">NPU_W8A8LinearMethod</span></span>
+<span>(</span><span>quantization_config: <a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NPU_W8A8LinearMethod(LinearMethodBase):
+    &#34;&#34;&#34;Linear method for NPU quantization.
+
+    This class search for specific quantization
+    implementation supported on NPU hardware for linear methods.
+
+    Args:
+        quant_config: The NPU quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quantization_config: W8A8Int8Config) -&gt; None:
+        self.quantization_config = quantization_config
+        self.quant_method = (
+            NPU_W8A8LinearMethodMTImpl()
+            if useMindIETurbo
+            else NPU_W8A8LinearMethodImpl()
+        )
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: List[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ) -&gt; None:
+        output_size_per_partition = sum(output_partition_sizes)
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+
+        weight_dict = self.quant_method.get_weight(
+            input_size_per_partition, output_size_per_partition, params_dtype
+        )
+        for weight_name, weight_param in weight_dict.items():
+            param = torch.nn.Parameter(weight_param, requires_grad=False)
+            set_weight_attrs(param, {&#34;input_dim&#34;: 1, &#34;output_dim&#34;: 0})
+            layer.register_parameter(weight_name, param)
+            set_weight_attrs(param, extra_weight_attrs)
+
+        pertensor_dict = self.quant_method.get_pertensor_param(params_dtype)
+        for pertensor_name, pertensor_param in pertensor_dict.items():
+            param = PerTensorScaleParameter(
+                data=pertensor_param, weight_loader=weight_loader
+            )
+            # disable warning
+            param.ignore_warning = True
+            layer.register_parameter(pertensor_name, param)
+
+        perchannel_dict = self.quant_method.get_perchannel_param(
+            output_size_per_partition, params_dtype
+        )
+        for perchannel_name, perchannel_param in perchannel_dict.items():
+            param = torch.nn.Parameter(perchannel_param, requires_grad=False)
+            set_weight_attrs(param, {&#34;output_dim&#34;: 0})
+            layer.register_parameter(perchannel_name, param)
+            set_weight_attrs(param, extra_weight_attrs)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        if hasattr(self.quant_method, &#34;process_weights_after_loading&#34;):
+            self.quant_method.process_weights_after_loading(layer)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        return self.quant_method.apply(layer, x, bias)</code></pre>
+</details>
+<div class="desc"><p>Linear method for NPU quantization.</p>
+<p>This class search for specific quantization
+implementation supported on NPU hardware for linear methods.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The NPU quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl"><code class="flex name class">
+<span>class <span class="ident">NPU_W8A8LinearMethodImpl</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NPU_W8A8LinearMethodImpl:
+    &#34;&#34;&#34;Linear method for NPU W8A8.&#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        # aclnn quant matmul requires to transpose matrix B, set to true by default.
+        self.transpose_weight = True
+
+    @staticmethod
+    def get_weight(
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype = torch.bfloat16,
+    ) -&gt; Dict[str, Any]:
+        params_dict = {&#34;weight&#34;: torch.empty(output_size, input_size, dtype=torch.int8)}
+        return params_dict
+
+    @staticmethod
+    def get_pertensor_param(params_dtype: torch.dtype) -&gt; Dict[str, Any]:
+        params_dict = {}
+        params_dict[&#34;input_scale&#34;] = torch.empty(1, dtype=params_dtype)
+        params_dict[&#34;input_offset&#34;] = torch.empty(1, dtype=params_dtype)
+        return params_dict
+
+    @staticmethod
+    def get_perchannel_param(
+        output_size: int,
+        params_dtype: torch.dtype,
+    ) -&gt; Dict[str, Any]:
+        params_dict = {}
+        params_dict[&#34;quant_bias&#34;] = torch.empty(output_size, dtype=torch.int32)
+        if params_dtype == torch.bfloat16:
+            params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.float32)
+        elif params_dtype == torch.float16:
+            params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.int64)
+        params_dict[&#34;weight_scale&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+        params_dict[&#34;weight_offset&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+        return params_dict
+
+    @staticmethod
+    def apply(
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        # To prevent import loops
+        from sglang.srt.layers.linear import RowParallelLinear
+
+        original_dtype = x.dtype
+        if original_dtype != torch.int8:
+            x = torch_npu.npu_quantize(
+                x,
+                layer.aclnn_input_scale_reciprocal,
+                layer.aclnn_input_offset,
+                torch.qint8,
+                -1,
+                False,
+            )
+        # Only fuse bias add into GEMM for rank 0 (this ensures that
+        # bias will not get added more than once in Attention TP&gt;1 case)
+        if isinstance(layer, RowParallelLinear) and layer.tp_rank &gt; 0:
+            quant_bias = None
+        else:
+            quant_bias = layer.quant_bias
+        return torch_npu.npu_quant_matmul(
+            x,
+            layer.weight,
+            layer.deq_scale,
+            bias=quant_bias,
+            output_dtype=original_dtype,
+        )
+
+    def process_weights_after_loading(self, layer):
+        expanding_factor = layer.weight.data.shape[1]
+        layer.aclnn_input_scale = torch.nn.Parameter(
+            layer.input_scale.data.repeat(expanding_factor).to(device=&#34;npu&#34;),
+            requires_grad=False,
+        )
+        layer.aclnn_input_scale_reciprocal = 1 / torch.nn.Parameter(
+            layer.input_scale.data.repeat(expanding_factor).to(device=&#34;npu&#34;),
+            requires_grad=False,
+        )
+        layer.aclnn_input_offset = torch.nn.Parameter(
+            layer.input_offset.data.repeat(expanding_factor).to(device=&#34;npu&#34;),
+            requires_grad=False,
+        )
+        if self.transpose_weight:
+            layer.weight.data = layer.weight.data.transpose(0, 1).contiguous()
+        layer.weight_scale.data = torch.flatten(layer.weight_scale.data)
+        layer.weight_offset.data = torch.flatten(layer.weight_offset.data)</code></pre>
+</details>
+<div class="desc"><p>Linear method for NPU W8A8.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def apply(
+    layer: torch.nn.Module,
+    x: torch.Tensor,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    # To prevent import loops
+    from sglang.srt.layers.linear import RowParallelLinear
+
+    original_dtype = x.dtype
+    if original_dtype != torch.int8:
+        x = torch_npu.npu_quantize(
+            x,
+            layer.aclnn_input_scale_reciprocal,
+            layer.aclnn_input_offset,
+            torch.qint8,
+            -1,
+            False,
+        )
+    # Only fuse bias add into GEMM for rank 0 (this ensures that
+    # bias will not get added more than once in Attention TP&gt;1 case)
+    if isinstance(layer, RowParallelLinear) and layer.tp_rank &gt; 0:
+        quant_bias = None
+    else:
+        quant_bias = layer.quant_bias
+    return torch_npu.npu_quant_matmul(
+        x,
+        layer.weight,
+        layer.deq_scale,
+        bias=quant_bias,
+        output_dtype=original_dtype,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_perchannel_param"><code class="name flex">
+<span>def <span class="ident">get_perchannel_param</span></span>(<span>output_size: int, params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_perchannel_param(
+    output_size: int,
+    params_dtype: torch.dtype,
+) -&gt; Dict[str, Any]:
+    params_dict = {}
+    params_dict[&#34;quant_bias&#34;] = torch.empty(output_size, dtype=torch.int32)
+    if params_dtype == torch.bfloat16:
+        params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.float32)
+    elif params_dtype == torch.float16:
+        params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.int64)
+    params_dict[&#34;weight_scale&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+    params_dict[&#34;weight_offset&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_pertensor_param"><code class="name flex">
+<span>def <span class="ident">get_pertensor_param</span></span>(<span>params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_pertensor_param(params_dtype: torch.dtype) -&gt; Dict[str, Any]:
+    params_dict = {}
+    params_dict[&#34;input_scale&#34;] = torch.empty(1, dtype=params_dtype)
+    params_dict[&#34;input_offset&#34;] = torch.empty(1, dtype=params_dtype)
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_weight"><code class="name flex">
+<span>def <span class="ident">get_weight</span></span>(<span>input_size: int, output_size: int, params_dtype: torch.dtype = torch.bfloat16) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_weight(
+    input_size: int,
+    output_size: int,
+    params_dtype: torch.dtype = torch.bfloat16,
+) -&gt; Dict[str, Any]:
+    params_dict = {&#34;weight&#34;: torch.empty(output_size, input_size, dtype=torch.int8)}
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.process_weights_after_loading"><code class="name flex">
+<span>def <span class="ident">process_weights_after_loading</span></span>(<span>self, layer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_weights_after_loading(self, layer):
+    expanding_factor = layer.weight.data.shape[1]
+    layer.aclnn_input_scale = torch.nn.Parameter(
+        layer.input_scale.data.repeat(expanding_factor).to(device=&#34;npu&#34;),
+        requires_grad=False,
+    )
+    layer.aclnn_input_scale_reciprocal = 1 / torch.nn.Parameter(
+        layer.input_scale.data.repeat(expanding_factor).to(device=&#34;npu&#34;),
+        requires_grad=False,
+    )
+    layer.aclnn_input_offset = torch.nn.Parameter(
+        layer.input_offset.data.repeat(expanding_factor).to(device=&#34;npu&#34;),
+        requires_grad=False,
+    )
+    if self.transpose_weight:
+        layer.weight.data = layer.weight.data.transpose(0, 1).contiguous()
+    layer.weight_scale.data = torch.flatten(layer.weight_scale.data)
+    layer.weight_offset.data = torch.flatten(layer.weight_offset.data)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl"><code class="flex name class">
+<span>class <span class="ident">NPU_W8A8LinearMethodMTImpl</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NPU_W8A8LinearMethodMTImpl:
+    &#34;&#34;&#34;Linear method for NPU W8A8.&#34;&#34;&#34;
+
+    def __init__(self) -&gt; None:
+        self.transpose_weight = True
+
+    @staticmethod
+    def get_weight(
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype = torch.bfloat16,
+    ) -&gt; Dict[str, Any]:
+        params_dict = {&#34;weight&#34;: torch.empty(output_size, input_size, dtype=torch.int8)}
+        return params_dict
+
+    @staticmethod
+    def get_pertensor_param(params_dtype: torch.dtype) -&gt; Dict[str, Any]:
+        params_dict = {}
+        params_dict[&#34;input_scale&#34;] = torch.empty(1, dtype=params_dtype)
+        params_dict[&#34;input_offset&#34;] = torch.empty(1, dtype=torch.int8)
+        return params_dict
+
+    @staticmethod
+    def get_perchannel_param(
+        output_size: int,
+        params_dtype: torch.dtype,
+    ) -&gt; Dict[str, Any]:
+        params_dict = {}
+        params_dict[&#34;quant_bias&#34;] = torch.empty(output_size, dtype=torch.int32)
+        if params_dtype == torch.bfloat16:
+            params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.float32)
+        elif params_dtype == torch.float16:
+            params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.int64)
+        params_dict[&#34;weight_scale&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+        params_dict[&#34;weight_offset&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+        return params_dict
+
+    @staticmethod
+    def apply(
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        # To prevent import loops
+        from sglang.srt.layers.linear import RowParallelLinear
+
+        original_dtype = x.dtype
+        if original_dtype != torch.int8:
+            x = quant_per_tensor(x, layer.input_scale, layer.input_offset)
+
+        # Only fuse bias add into GEMM for rank 0 (this ensures that
+        # bias will not get added more than once in Attention TP&gt;1 case)
+        if isinstance(layer, RowParallelLinear) and layer.tp_rank &gt; 0:
+            quant_bias = None
+        else:
+            quant_bias = layer.quant_bias
+
+        return ops.quant_matmul(
+            x=x, weight=layer.weight, deq_scale=layer.deq_scale, deq_bias=quant_bias
+        )
+
+    def process_weights_after_loading(self, layer):
+        layer.aclnn_deq_scale = torch.nn.Parameter(
+            torch_npu.npu_trans_quant_param(layer.deq_scale.npu()).to(device=&#34;npu&#34;),
+            requires_grad=False,
+        )</code></pre>
+</details>
+<div class="desc"><p>Linear method for NPU W8A8.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def apply(
+    layer: torch.nn.Module,
+    x: torch.Tensor,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    # To prevent import loops
+    from sglang.srt.layers.linear import RowParallelLinear
+
+    original_dtype = x.dtype
+    if original_dtype != torch.int8:
+        x = quant_per_tensor(x, layer.input_scale, layer.input_offset)
+
+    # Only fuse bias add into GEMM for rank 0 (this ensures that
+    # bias will not get added more than once in Attention TP&gt;1 case)
+    if isinstance(layer, RowParallelLinear) and layer.tp_rank &gt; 0:
+        quant_bias = None
+    else:
+        quant_bias = layer.quant_bias
+
+    return ops.quant_matmul(
+        x=x, weight=layer.weight, deq_scale=layer.deq_scale, deq_bias=quant_bias
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_perchannel_param"><code class="name flex">
+<span>def <span class="ident">get_perchannel_param</span></span>(<span>output_size: int, params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_perchannel_param(
+    output_size: int,
+    params_dtype: torch.dtype,
+) -&gt; Dict[str, Any]:
+    params_dict = {}
+    params_dict[&#34;quant_bias&#34;] = torch.empty(output_size, dtype=torch.int32)
+    if params_dtype == torch.bfloat16:
+        params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.float32)
+    elif params_dtype == torch.float16:
+        params_dict[&#34;deq_scale&#34;] = torch.empty(output_size, dtype=torch.int64)
+    params_dict[&#34;weight_scale&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+    params_dict[&#34;weight_offset&#34;] = torch.empty(output_size, 1, dtype=params_dtype)
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_pertensor_param"><code class="name flex">
+<span>def <span class="ident">get_pertensor_param</span></span>(<span>params_dtype: torch.dtype) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_pertensor_param(params_dtype: torch.dtype) -&gt; Dict[str, Any]:
+    params_dict = {}
+    params_dict[&#34;input_scale&#34;] = torch.empty(1, dtype=params_dtype)
+    params_dict[&#34;input_offset&#34;] = torch.empty(1, dtype=torch.int8)
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_weight"><code class="name flex">
+<span>def <span class="ident">get_weight</span></span>(<span>input_size: int, output_size: int, params_dtype: torch.dtype = torch.bfloat16) ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_weight(
+    input_size: int,
+    output_size: int,
+    params_dtype: torch.dtype = torch.bfloat16,
+) -&gt; Dict[str, Any]:
+    params_dict = {&#34;weight&#34;: torch.empty(output_size, input_size, dtype=torch.int8)}
+    return params_dict</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.process_weights_after_loading"><code class="name flex">
+<span>def <span class="ident">process_weights_after_loading</span></span>(<span>self, layer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_weights_after_loading(self, layer):
+    layer.aclnn_deq_scale = torch.nn.Parameter(
+        torch_npu.npu_trans_quant_param(layer.deq_scale.npu()).to(device=&#34;npu&#34;),
+        requires_grad=False,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8MoEMethod"><code class="flex name class">
+<span>class <span class="ident">NPU_W8A8MoEMethod</span></span>
+<span>(</span><span>quantization_config: <a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NPU_W8A8MoEMethod(FusedMoEMethodBase):
+    &#34;&#34;&#34;MoE method for NPU quantization.
+
+    This class search for specific quantization
+    implementations supported on NPU hardware for moe methods.
+
+    Args:
+        quant_config: The NPU quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quantization_config: W8A8Int8Config) -&gt; None:
+        self.quantization_config = quantization_config
+        self.quant_method = self
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ) -&gt; None:
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoeWeightScaleSupported
+
+        self.num_experts = num_experts
+        extra_weight_attrs.update(
+            {&#34;quant_method&#34;: FusedMoeWeightScaleSupported.CHANNEL.value}
+        )
+
+        # weight
+        w13_weight = torch.nn.Parameter(
+            torch.empty(
+                num_experts, 2 * intermediate_size, hidden_size, dtype=torch.int8
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight&#34;, w13_weight)
+        set_weight_attrs(w13_weight, extra_weight_attrs)
+        w2_weight = torch.nn.Parameter(
+            torch.empty(num_experts, hidden_size, intermediate_size, dtype=torch.int8),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight&#34;, w2_weight)
+        set_weight_attrs(w2_weight, extra_weight_attrs)
+        # scale
+        w13_weight_scale = torch.nn.Parameter(
+            torch.empty(num_experts, 2 * intermediate_size, 1, dtype=torch.float32),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight_scale&#34;, w13_weight_scale)
+        set_weight_attrs(w13_weight_scale, extra_weight_attrs)
+        w2_weight_scale = torch.nn.Parameter(
+            torch.empty(num_experts, hidden_size, 1, dtype=torch.float32),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight_scale&#34;, w2_weight_scale)
+        set_weight_attrs(w2_weight_scale, extra_weight_attrs)
+        # offset
+        w13_weight_offset = torch.nn.Parameter(
+            torch.empty(num_experts, 2 * intermediate_size, 1, dtype=torch.float32),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight_offset&#34;, w13_weight_offset)
+        set_weight_attrs(w13_weight_offset, extra_weight_attrs)
+        w2_weight_offset = torch.nn.Parameter(
+            torch.empty(num_experts, hidden_size, 1, dtype=torch.float32),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight_offset&#34;, w2_weight_offset)
+        set_weight_attrs(w2_weight_offset, extra_weight_attrs)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        layer.w13_weight = Parameter(
+            layer.w13_weight.data.transpose(1, 2).contiguous(), requires_grad=False
+        )
+        layer.w2_weight = Parameter(
+            layer.w2_weight.data.transpose(1, 2).contiguous(), requires_grad=False
+        )
+        layer.w13_weight_scale = Parameter(
+            layer.w13_weight_scale.data.squeeze(-1).contiguous(), requires_grad=False
+        )
+        layer.w2_weight_scale = Parameter(
+            layer.w2_weight_scale.data.squeeze(-1).contiguous(), requires_grad=False
+        )
+        layer.w13_weight_offset = Parameter(
+            layer.w13_weight_offset.data.squeeze(-1).contiguous(), requires_grad=False
+        )
+        layer.w2_weight_offset = Parameter(
+            layer.w2_weight_offset.data.squeeze(-1).contiguous(), requires_grad=False
+        )
+
+    def apply(
+        self,
+        layer,
+        x,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+
+        topk_weights, topk_ids, _ = topk_output
+        topk_ids = topk_ids.to(torch.int32)
+        topk_weights = topk_weights.to(x.dtype)
+        return npu_fused_experts(
+            hidden_states=x,
+            w13=layer.w13_weight,
+            w13_scale=layer.w13_weight_scale,
+            w2=layer.w2_weight,
+            w2_scale=layer.w2_weight_scale,
+            topk_weights=topk_weights,
+            topk_ids=topk_ids,
+            top_k=topk_ids.shape[1],
+        )</code></pre>
+</details>
+<div class="desc"><p>MoE method for NPU quantization.</p>
+<p>This class search for specific quantization
+implementations supported on NPU hardware for moe methods.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The NPU quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config"><code class="flex name class">
+<span>class <span class="ident">W8A8Int8Config</span></span>
+<span>(</span><span>quant_config: Dict[str, Any] = {})</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class W8A8Int8Config(QuantizationConfig):
+    &#34;&#34;&#34;Config class for W8A8 Int8 Quantization.
+
+    - Weight: static, per-channel, symmetric
+    - Activation: dynamic, per-token, symmetric
+    &#34;&#34;&#34;
+
+    def __init__(self, quant_config: Dict[str, Any] = {}):
+        super().__init__()
+        self.quant_description = quant_config
+        self.is_dynamic = quant_config.get(&#34;is_dynamic&#34;, False)
+        ignore = cast(List[str], quant_config.get(&#34;ignore&#34;, []))
+        self.ignore = ignore if ignore is not None else []
+        packed_modules_mapping = quant_config.get(&#34;packed_modules_mapping&#34;, {})
+        self.packed_modules_mapping = (
+            packed_modules_mapping if packed_modules_mapping is not None else {}
+        )
+
+        if _is_npu:
+            # Ascend w8a8_int8 quantization with bias, use wrappers to isolate the effects between models
+            for name in self.quant_description.keys():
+                if &#34;norm.bias&#34; in name:
+                    apply_module_patch(
+                        &#34;sglang.srt.layers.layernorm.RMSNorm&#34;,
+                        &#34;__init__&#34;,
+                        [npu_wrapper_rmsnorm_init],
+                    )
+                    apply_module_patch(
+                        &#34;sglang.srt.layers.layernorm.RMSNorm&#34;,
+                        &#34;forward_npu&#34;,
+                        [npu_wrapper_rmsnorm_forward],
+                    )
+
+    @classmethod
+    def get_supported_act_dtypes(cls) -&gt; List[torch.dtype]:
+        return (
+            [torch.float16, torch.bfloat16]
+            if not _is_npu
+            else [torch.int8, torch.float16, torch.bfloat16]
+        )
+
+    @classmethod
+    def get_min_capability(cls) -&gt; int:
+        if _is_npu:
+            raise NotImplementedError(
+                &#39;NPU hardware does not support &#34;get_min_capability&#34; feature.&#39;
+            )
+        else:
+            return 75
+
+    @classmethod
+    def get_name(self) -&gt; str:
+        return &#34;w8a8_int8&#34;
+
+    @classmethod
+    def get_config_filenames(cls) -&gt; List[str]:
+        filenames = []
+        if _is_npu:
+            filenames.append(&#34;quant_model_description.json&#34;)
+        return filenames
+
+    @classmethod
+    def from_config(cls, config: Dict[str, Any]) -&gt; W8A8Int8Config:
+        return cls(config)
+
+    def get_quant_method(
+        self,
+        layer: torch.nn.Module,
+        prefix: str,
+    ) -&gt; Optional[QuantizeMethodBase]:
+        from sglang.srt.layers.linear import LinearBase
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoE
+
+        if _is_npu:
+            if isinstance(layer, LinearBase):
+                key = &#34;model&#34;
+                if &#34;vision_model&#34; in prefix:
+                    key = &#34;vision_model&#34;
+                elif &#34;visual&#34; in prefix:
+                    key = &#34;visual&#34;
+                packed_modules_mapping_subset = self.packed_modules_mapping.get(key, {})
+                prefix_in_quant_config = prefix
+                proj_name = prefix.split(&#34;.&#34;)[-1]
+                if proj_name in packed_modules_mapping_subset:
+                    prefix_in_quant_config = prefix.replace(
+                        proj_name, packed_modules_mapping_subset[proj_name][0]
+                    )
+                self.is_dynamic = (
+                    self.quant_description[prefix_in_quant_config + &#34;.weight&#34;]
+                    == &#34;W8A8_DYNAMIC&#34;
+                )
+                if self.is_layer_skipped(prefix, packed_modules_mapping_subset):
+                    return UnquantizedLinearMethod()
+                return (
+                    NPU_W8A8DynamicLinearMethod(self)
+                    if self.is_dynamic
+                    else NPU_W8A8LinearMethod(self)
+                )
+            elif isinstance(layer, FusedMoE):
+                return NPU_W8A8MoEMethod(self)
+            return None
+
+        if should_ignore_layer(
+            prefix, ignore=self.ignore, fused_mapping=self.packed_modules_mapping
+        ):
+            return UnquantizedLinearMethod()
+        if isinstance(layer, LinearBase):
+            return W8A8Int8LinearMethod(self)
+        elif isinstance(layer, FusedMoE):
+            return W8A8Int8MoEMethod(self)
+        return None
+
+    def is_layer_skipped(
+        self, prefix: str, fused_mapping: Mapping[str, List[str]] = MappingProxyType({})
+    ):
+        # adapted from vllm.model_executor.layers.quantization.utils.quant_utils.is_layer_skipped
+        proj_name = prefix.split(&#34;.&#34;)[-1]
+        if proj_name in fused_mapping:
+            shard_prefixes = [
+                prefix.replace(proj_name, shard_proj_name)
+                for shard_proj_name in fused_mapping[proj_name]
+            ]
+
+            is_skipped = None
+            for shard_prefix in shard_prefixes:
+                is_shard_skipped = (
+                    self.quant_description[shard_prefix + &#34;.weight&#34;] == &#34;FLOAT&#34;
+                )
+
+                if is_skipped is None:
+                    is_skipped = is_shard_skipped
+                elif is_shard_skipped != is_skipped:
+                    raise ValueError(
+                        f&#34;Detected some but not all shards of {prefix} &#34;
+                        &#34;are quantized. All shards of fused layers &#34;
+                        &#34;to have the same precision.&#34;
+                    )
+        else:
+            is_skipped = self.quant_description[prefix + &#34;.weight&#34;] == &#34;FLOAT&#34;
+
+        assert is_skipped is not None
+        return is_skipped
+
+    def get_scaled_act_names(self) -&gt; List[str]:
+        return []</code></pre>
+</details>
+<div class="desc"><p>Config class for W8A8 Int8 Quantization.</p>
+<ul>
+<li>Weight: static, per-channel, symmetric</li>
+<li>Activation: dynamic, per-token, symmetric</li>
+</ul></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config.is_layer_skipped"><code class="name flex">
+<span>def <span class="ident">is_layer_skipped</span></span>(<span>self, prefix: str, fused_mapping: Mapping[str, List[str]] = mappingproxy({}))</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_layer_skipped(
+    self, prefix: str, fused_mapping: Mapping[str, List[str]] = MappingProxyType({})
+):
+    # adapted from vllm.model_executor.layers.quantization.utils.quant_utils.is_layer_skipped
+    proj_name = prefix.split(&#34;.&#34;)[-1]
+    if proj_name in fused_mapping:
+        shard_prefixes = [
+            prefix.replace(proj_name, shard_proj_name)
+            for shard_proj_name in fused_mapping[proj_name]
+        ]
+
+        is_skipped = None
+        for shard_prefix in shard_prefixes:
+            is_shard_skipped = (
+                self.quant_description[shard_prefix + &#34;.weight&#34;] == &#34;FLOAT&#34;
+            )
+
+            if is_skipped is None:
+                is_skipped = is_shard_skipped
+            elif is_shard_skipped != is_skipped:
+                raise ValueError(
+                    f&#34;Detected some but not all shards of {prefix} &#34;
+                    &#34;are quantized. All shards of fused layers &#34;
+                    &#34;to have the same precision.&#34;
+                )
+    else:
+        is_skipped = self.quant_description[prefix + &#34;.weight&#34;] == &#34;FLOAT&#34;
+
+    assert is_skipped is not None
+    return is_skipped</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8LinearMethod"><code class="flex name class">
+<span>class <span class="ident">W8A8Int8LinearMethod</span></span>
+<span>(</span><span>quantization_config: <a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class W8A8Int8LinearMethod(LinearMethodBase):
+
+    def __init__(self, quantization_config: W8A8Int8Config):
+        self.quantization_config = quantization_config
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        if _is_cpu:
+            assert (
+                _is_cpu_amx_available
+            ), &#34;W8A8Int8LinearMethod on CPU requires that CPU has AMX support&#34;
+            _amx_process_weight_after_loading(layer, [&#34;weight&#34;])
+            return
+
+        layer.weight = Parameter(layer.weight.t(), requires_grad=False)
+        layer.weight_scale = Parameter(layer.weight_scale.data, requires_grad=False)
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: List[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+        self.logical_widths = output_partition_sizes
+
+        weight = ModelWeightParameter(
+            data=torch.empty(
+                sum(output_partition_sizes), input_size_per_partition, dtype=torch.int8
+            ),
+            input_dim=1,
+            output_dim=0,
+            weight_loader=weight_loader,
+        )
+        layer.register_parameter(&#34;weight&#34;, weight)
+
+        weight_scale = ChannelQuantScaleParameter(
+            data=torch.empty((sum(output_partition_sizes), 1), dtype=torch.float32),
+            output_dim=0,
+            weight_loader=weight_loader,
+        )
+        layer.register_parameter(&#34;weight_scale&#34;, weight_scale)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ):
+        if use_intel_amx_backend(layer):
+            return torch.ops.sgl_kernel.int8_scaled_mm_with_quant(
+                x,
+                layer.weight,
+                layer.weight_scale,
+                bias,
+                x.dtype,
+                True,  # is_vnni
+            )
+
+        x_q, x_scale = per_token_quant_int8(x)
+
+        return int8_scaled_mm(
+            x_q, layer.weight, x_scale, layer.weight_scale, out_dtype=x.dtype, bias=bias
+        )</code></pre>
+</details>
+<div class="desc"><p>Base class for different (maybe quantized) linear methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8MoEMethod"><code class="flex name class">
+<span>class <span class="ident">W8A8Int8MoEMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class W8A8Int8MoEMethod(FusedMoEMethodBase):
+    &#34;&#34;&#34;MoE method for INT8.
+    Supports loading INT8 checkpoints with static weight scale and
+    dynamic/static activation scale.
+    Also supports loading quantized FP16/BF16 model checkpoints with dynamic
+    activation scaling. The weight scaling factor will be initialized after
+    the model weights are loaded.
+    Args:
+        quant_config: The quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quant_config: W8A8Int8Config):
+        self.quant_config = quant_config
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoeWeightScaleSupported
+
+        tp_size = get_tensor_model_parallel_world_size()
+
+        # WEIGHTS
+        w13_weight = torch.nn.Parameter(
+            torch.empty(
+                num_experts, 2 * intermediate_size, hidden_size, dtype=torch.int8
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight&#34;, w13_weight)
+        set_weight_attrs(w13_weight, extra_weight_attrs)
+
+        w2_weight = torch.nn.Parameter(
+            torch.empty(num_experts, hidden_size, intermediate_size, dtype=torch.int8),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight&#34;, w2_weight)
+        set_weight_attrs(w2_weight, extra_weight_attrs)
+
+        w13_weight_scale = torch.nn.Parameter(
+            torch.ones(num_experts, 2 * intermediate_size, 1, dtype=torch.float32),
+            requires_grad=False,
+        )
+        w2_weight_scale = torch.nn.Parameter(
+            torch.ones(num_experts, hidden_size, 1, dtype=torch.float32),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight_scale&#34;, w13_weight_scale)
+        layer.register_parameter(&#34;w2_weight_scale&#34;, w2_weight_scale)
+
+        extra_weight_attrs.update(
+            {&#34;quant_method&#34;: FusedMoeWeightScaleSupported.CHANNEL.value}
+        )
+
+        set_weight_attrs(w13_weight_scale, extra_weight_attrs)
+        set_weight_attrs(w2_weight_scale, extra_weight_attrs)
+
+        w13_input_scale = None
+        layer.register_parameter(&#34;w13_input_scale&#34;, w13_input_scale)
+
+        w2_input_scale = None
+        layer.register_parameter(&#34;w2_input_scale&#34;, w2_input_scale)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        if _is_cpu:
+            assert (
+                _is_cpu_amx_available
+            ), &#34;W8A8Int8MoEMethod on CPU requires that CPU has AMX support&#34;
+            _amx_process_weight_after_loading(layer, [&#34;w13_weight&#34;, &#34;w2_weight&#34;])
+            return
+
+        layer.w13_weight = Parameter(layer.w13_weight, requires_grad=False)
+        layer.w2_weight = Parameter(layer.w2_weight, requires_grad=False)
+        layer.w13_weight_scale = Parameter(
+            layer.w13_weight_scale.data, requires_grad=False
+        )
+        layer.w2_weight_scale = Parameter(
+            layer.w2_weight_scale.data, requires_grad=False
+        )
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+        from sglang.srt.layers.moe.fused_moe_triton.fused_moe import fused_experts
+
+        if use_intel_amx_backend(layer):
+            from sglang.srt.layers.moe.topk import apply_topk_weights_cpu
+
+            topk_weights, topk_ids, _ = topk_output
+            x, topk_weights = apply_topk_weights_cpu(
+                moe_runner_config.apply_router_weight_on_input, topk_weights, x
+            )
+            return torch.ops.sgl_kernel.fused_experts_cpu(
+                x,
+                layer.w13_weight,
+                layer.w2_weight,
+                topk_weights,
+                topk_ids,
+                False,  # inplace See [Note] inplace should be False in fused_experts.
+                True,  # use_int8_w8a8
+                False,  # use_fp8_w8a16
+                layer.w13_weight_scale,  # w1_scale
+                layer.w2_weight_scale,  # w2_scale
+                None,  # block_size
+                layer.w13_input_scale,  # a1_scale
+                layer.w2_input_scale,  # a2_scale
+                True,  # is_vnni
+            )
+
+        return fused_experts(
+            x,
+            layer.w13_weight,
+            layer.w2_weight,
+            topk_output=topk_output,
+            moe_runner_config=moe_runner_config,
+            use_int8_w8a8=True,
+            per_channel_quant=True,
+            w1_scale=(layer.w13_weight_scale),
+            w2_scale=(layer.w2_weight_scale),
+            a1_scale=layer.w13_input_scale,
+            a2_scale=layer.w2_input_scale,
+        )</code></pre>
+</details>
+<div class="desc"><p>MoE method for INT8.
+Supports loading INT8 checkpoints with static weight scale and
+dynamic/static activation scale.
+Also supports loading quantized FP16/BF16 model checkpoints with dynamic
+activation scaling. The weight scaling factor will be initialized after
+the model weights are loaded.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.npu_fused_experts" href="#sglang.srt.layers.quantization.w8a8_int8.npu_fused_experts">npu_fused_experts</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.npu_wrapper_rmsnorm_forward" href="#sglang.srt.layers.quantization.w8a8_int8.npu_wrapper_rmsnorm_forward">npu_wrapper_rmsnorm_forward</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.npu_wrapper_rmsnorm_init" href="#sglang.srt.layers.quantization.w8a8_int8.npu_wrapper_rmsnorm_init">npu_wrapper_rmsnorm_init</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethod" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethod">NPU_W8A8DynamicLinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl">NPU_W8A8DynamicLinearMethodImpl</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.apply" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_perchannel_param" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_perchannel_param">get_perchannel_param</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_pertensor_param" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_pertensor_param">get_pertensor_param</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_weight" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.get_weight">get_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.process_weights_after_loading" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8DynamicLinearMethodImpl.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethod" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethod">NPU_W8A8LinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl">NPU_W8A8LinearMethodImpl</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.apply" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_perchannel_param" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_perchannel_param">get_perchannel_param</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_pertensor_param" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_pertensor_param">get_pertensor_param</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_weight" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.get_weight">get_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.process_weights_after_loading" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodImpl.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl">NPU_W8A8LinearMethodMTImpl</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.apply" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_perchannel_param" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_perchannel_param">get_perchannel_param</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_pertensor_param" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_pertensor_param">get_pertensor_param</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_weight" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.get_weight">get_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.process_weights_after_loading" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8LinearMethodMTImpl.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8MoEMethod" href="#sglang.srt.layers.quantization.w8a8_int8.NPU_W8A8MoEMethod">NPU_W8A8MoEMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config">W8A8Int8Config</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config.is_layer_skipped" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8Config.is_layer_skipped">is_layer_skipped</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8LinearMethod" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8LinearMethod">W8A8Int8LinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.w8a8_int8.W8A8Int8MoEMethod" href="#sglang.srt.layers.quantization.w8a8_int8.W8A8Int8MoEMethod">W8A8Int8MoEMethod</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

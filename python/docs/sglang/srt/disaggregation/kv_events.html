@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.disaggregation.kv_events API documentation</title>
+<meta name="description" content="Copyright 2025 SGLang Team
+Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+you may not use this file except in compliance with the …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.disaggregation.kv_events</code></h1>
+</header>
+<section id="section-intro">
+<p>Copyright 2025 SGLang Team
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre><code>&lt;http://www.apache.org/licenses/LICENSE-2.0&gt;
+</code></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.AllBlocksCleared"><code class="flex name class">
+<span>class <span class="ident">AllBlocksCleared</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AllBlocksCleared(KVCacheEvent):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Base class for all KV cache-related events</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.KVCacheEvent" href="#sglang.srt.disaggregation.kv_events.KVCacheEvent">KVCacheEvent</a></li>
+<li>msgspec.Struct</li>
+<li>msgspec._core._StructMixin</li>
+</ul>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.BlockRemoved"><code class="flex name class">
+<span>class <span class="ident">BlockRemoved</span></span>
+<span>(</span><span>block_hashes: list[int])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockRemoved(KVCacheEvent):
+    block_hashes: list[int]</code></pre>
+</details>
+<div class="desc"><p>Base class for all KV cache-related events</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.KVCacheEvent" href="#sglang.srt.disaggregation.kv_events.KVCacheEvent">KVCacheEvent</a></li>
+<li>msgspec.Struct</li>
+<li>msgspec._core._StructMixin</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.BlockRemoved.block_hashes"><code class="name">var <span class="ident">block_hashes</span> : list[int]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockRemoved(KVCacheEvent):
+    block_hashes: list[int]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.BlockStored"><code class="flex name class">
+<span>class <span class="ident">BlockStored</span></span>
+<span>(</span><span>block_hashes: list[int],<br>parent_block_hash: int | None,<br>token_ids: list[int],<br>block_size: int,<br>lora_id: int | None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockStored(KVCacheEvent):
+    block_hashes: list[int]
+    parent_block_hash: Optional[int]
+    token_ids: list[int]
+    block_size: int
+    lora_id: Optional[int]</code></pre>
+</details>
+<div class="desc"><p>Base class for all KV cache-related events</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.KVCacheEvent" href="#sglang.srt.disaggregation.kv_events.KVCacheEvent">KVCacheEvent</a></li>
+<li>msgspec.Struct</li>
+<li>msgspec._core._StructMixin</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.BlockStored.block_hashes"><code class="name">var <span class="ident">block_hashes</span> : list[int]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockStored(KVCacheEvent):
+    block_hashes: list[int]
+    parent_block_hash: Optional[int]
+    token_ids: list[int]
+    block_size: int
+    lora_id: Optional[int]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.BlockStored.block_size"><code class="name">var <span class="ident">block_size</span> : int</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockStored(KVCacheEvent):
+    block_hashes: list[int]
+    parent_block_hash: Optional[int]
+    token_ids: list[int]
+    block_size: int
+    lora_id: Optional[int]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.BlockStored.lora_id"><code class="name">var <span class="ident">lora_id</span> : int | None</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockStored(KVCacheEvent):
+    block_hashes: list[int]
+    parent_block_hash: Optional[int]
+    token_ids: list[int]
+    block_size: int
+    lora_id: Optional[int]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.BlockStored.parent_block_hash"><code class="name">var <span class="ident">parent_block_hash</span> : int | None</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockStored(KVCacheEvent):
+    block_hashes: list[int]
+    parent_block_hash: Optional[int]
+    token_ids: list[int]
+    block_size: int
+    lora_id: Optional[int]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.BlockStored.token_ids"><code class="name">var <span class="ident">token_ids</span> : list[int]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockStored(KVCacheEvent):
+    block_hashes: list[int]
+    parent_block_hash: Optional[int]
+    token_ids: list[int]
+    block_size: int
+    lora_id: Optional[int]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventBatch"><code class="flex name class">
+<span>class <span class="ident">EventBatch</span></span>
+<span>(</span><span>ts: float, events: list[typing.Any], attn_dp_rank: int | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventBatch(
+    msgspec.Struct,
+    array_like=True,  # type: ignore[call-arg]
+    omit_defaults=True,  # type: ignore[call-arg]
+    gc=False,  # type: ignore[call-arg]
+):
+    ts: float
+    events: list[Any]
+    attn_dp_rank: Optional[int] = None</code></pre>
+</details>
+<div class="desc"><p>A base class for defining efficient serializable objects.</p>
+<p>Fields are defined using type annotations. Fields may optionally have
+default values, which result in keyword parameters to the constructor.</p>
+<p>Structs automatically define <code>__init__</code>, <code>__eq__</code>, <code>__repr__</code>, and
+<code>__copy__</code> methods. Additional methods can be defined on the class as
+needed. Note that <code>__init__</code>/<code>__new__</code> cannot be overridden, but other
+methods can. A tuple of the field names is available on the class via the
+<code>__struct_fields__</code> attribute if needed.</p>
+<p>Additional class options can be enabled by passing keywords to the class
+definition (see example below). These configuration options may also be
+inspected at runtime through the <code>__struct_config__</code> attribute.</p>
+<h2 id="configuration">Configuration</h2>
+<p>frozen: bool, default False
+Whether instances of this type are pseudo-immutable. If true, attribute
+assignment is disabled and a corresponding <code>__hash__</code> is defined.
+order: bool, default False
+If True, <code>__lt__</code>, `<strong>le</strong><code>, </code><strong>gt</strong><code>, and </code><strong>ge</strong>`` methods
+will be generated for this type.
+eq: bool, default True
+If True (the default), an <code>__eq__</code> method will be generated for this
+type. Set to False to compare based on instance identity alone.
+kw_only: bool, default False
+If True, all fields will be treated as keyword-only arguments in the
+generated <code>__init__</code> method. Default is False.
+omit_defaults: bool, default False
+Whether fields should be omitted from encoding if the corresponding value
+is the default for that field. Enabling this may reduce message size, and
+often also improve encoding &amp; decoding performance.
+forbid_unknown_fields: bool, default False
+If True, an error is raised if an unknown field is encountered while
+decoding structs of this type. If False (the default), no error is raised
+and the unknown field is skipped.
+tag: str, int, bool, callable, or None, default None
+Used along with <code>tag_field</code> for configuring tagged union support. If
+either are non-None, then the struct is considered "tagged". In this case,
+an extra field (the <code>tag_field</code>) and value (the <code>tag</code>) are added to the
+encoded message, which can be used to differentiate message types during
+decoding.</p>
+<p>Set <code>tag=True</code> to enable the default tagged configuration (<code>tag_field</code>
+is <code>"type"</code>, <code>tag</code> is the class name). Alternatively, you can provide
+a string (or less commonly int) value directly to be used as the tag
+(e.g. <code>tag="my-tag-value"</code>).<code>tag</code> can also be passed a callable that
+takes the class qualname and returns a valid tag value (e.g.
+<code>tag=str.lower</code>). See the docs for more information.
+tag_field: str or None, default None
+The field name to use for tagged union support. If <code>tag</code> is non-None,
+then this defaults to <code>"type"</code>. See the <code>tag</code> docs above for more
+information.
+rename: str, mapping, callable, or None, default None
+Controls renaming the field names used when encoding/decoding the struct.
+May be one of <code>"lower"</code>, <code>"upper"</code>, <code>"camel"</code>, <code>"pascal"</code>, or
+<code>"kebab"</code> to rename in lowercase, UPPERCASE, camelCase, PascalCase,
+or kebab-case respectively. May also be a mapping from field names to the
+renamed names (missing fields are not renamed). Alternatively, may be a
+callable that takes the field name and returns a new name or <code>None</code> to
+not rename that field. Default is <code>None</code> for no field renaming.
+repr_omit_defaults: bool, default False
+Whether fields should be omitted from the generated repr if the
+corresponding value is the default for that field.
+array_like: bool, default False
+If True, this struct type will be treated as an array-like type during
+encoding/decoding, rather than a dict-like type (the default). This may
+improve performance, at the cost of a more inscrutable message encoding.
+gc: bool, default True
+Whether garbage collection is enabled for this type. Disabling this <em>may</em>
+help reduce GC pressure, but will prevent reference cycles composed of only
+<code>gc=False</code> from being collected. It is the user's responsibility to ensure
+that reference cycles don't occur when setting <code>gc=False</code>.
+weakref: bool, default False
+Whether instances of this type support weak references. Defaults to False.
+dict: bool, default False
+Whether instances of this type will include a <code>__dict__</code>. Setting this to
+True will allow adding additional undeclared attributes to a struct instance,
+which may be useful for holding private runtime state. Defaults to False.
+cache_hash: bool, default False
+If enabled, the hash of a frozen struct instance will be computed at most
+once, and then cached on the instance for further reuse. For expensive
+hash values this can improve performance at the cost of a small amount of
+memory usage.</p>
+<h2 id="examples">Examples</h2>
+<p>Here we define a new <code>Struct</code> type for describing a dog. It has three fields;
+two required and one optional.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Dog(Struct):
+...     name: str
+...     breed: str
+...     is_good_boy: bool = True
+...
+&gt;&gt;&gt; Dog('snickers', breed='corgi')
+Dog(name='snickers', breed='corgi', is_good_boy=True)
+</code></pre>
+<p>Additional struct options can be set as part of the class definition. Here
+we define a new <code>Struct</code> type for a frozen <code>Point</code> object.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Point(Struct, frozen=True):
+...     x: float
+...     y: float
+...
+&gt;&gt;&gt; {Point(1.5, 2.0): 1}  # frozen structs are hashable
+{Point(x=1.5, y=2.0): 1}
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>msgspec.Struct</li>
+<li>msgspec._core._StructMixin</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.KVEventBatch" href="#sglang.srt.disaggregation.kv_events.KVEventBatch">KVEventBatch</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.EventBatch.attn_dp_rank"><code class="name">var <span class="ident">attn_dp_rank</span> : int | None</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventBatch(
+    msgspec.Struct,
+    array_like=True,  # type: ignore[call-arg]
+    omit_defaults=True,  # type: ignore[call-arg]
+    gc=False,  # type: ignore[call-arg]
+):
+    ts: float
+    events: list[Any]
+    attn_dp_rank: Optional[int] = None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventBatch.events"><code class="name">var <span class="ident">events</span> : list[typing.Any]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventBatch(
+    msgspec.Struct,
+    array_like=True,  # type: ignore[call-arg]
+    omit_defaults=True,  # type: ignore[call-arg]
+    gc=False,  # type: ignore[call-arg]
+):
+    ts: float
+    events: list[Any]
+    attn_dp_rank: Optional[int] = None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventBatch.ts"><code class="name">var <span class="ident">ts</span> : float</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventBatch(
+    msgspec.Struct,
+    array_like=True,  # type: ignore[call-arg]
+    omit_defaults=True,  # type: ignore[call-arg]
+    gc=False,  # type: ignore[call-arg]
+):
+    ts: float
+    events: list[Any]
+    attn_dp_rank: Optional[int] = None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventPublisher"><code class="flex name class">
+<span>class <span class="ident">EventPublisher</span></span>
+<span>(</span><span>attn_dp_rank: int = 0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventPublisher(ABC):
+    &#34;&#34;&#34;
+    Lightweight publisher for EventBatch batches with
+    support for DP attention.
+
+    In DP attention - each rank has its own Scheduler and
+    KV cache instance in order to avoid duplicate events
+    and ensure proper event attribution. In our implementation
+
+    - Each DP rank has its own EventPublisher
+    - Publishers annotate events with the dp rank
+    - This allows consumers to distinguish events from different DP ranks
+    &#34;&#34;&#34;
+
+    def __init__(self, attn_dp_rank: int = 0):
+        self._attn_dp_rank = attn_dp_rank
+
+    @abstractmethod
+    def publish(self, events: EventBatch) -&gt; None:
+        &#34;&#34;&#34;Emit events in order.
+
+        Implementations should guarantee at-least-once delivery and
+        monotonic ordering (e.g., via sequence numbers).
+        &#34;&#34;&#34;
+
+    @abstractmethod
+    def shutdown(self) -&gt; None:
+        &#34;&#34;&#34;Shutdown the publisher.&#34;&#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Lightweight publisher for EventBatch batches with
+support for DP attention.</p>
+<p>In DP attention - each rank has its own Scheduler and
+KV cache instance in order to avoid duplicate events
+and ensure proper event attribution. In our implementation</p>
+<ul>
+<li>Each DP rank has its own EventPublisher</li>
+<li>Publishers annotate events with the dp rank</li>
+<li>This allows consumers to distinguish events from different DP ranks</li>
+</ul></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.NullEventPublisher" href="#sglang.srt.disaggregation.kv_events.NullEventPublisher">NullEventPublisher</a></li>
+<li><a title="sglang.srt.disaggregation.kv_events.ZmqEventPublisher" href="#sglang.srt.disaggregation.kv_events.ZmqEventPublisher">ZmqEventPublisher</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.EventPublisher.publish"><code class="name flex">
+<span>def <span class="ident">publish</span></span>(<span>self,<br>events: <a title="sglang.srt.disaggregation.kv_events.EventBatch" href="#sglang.srt.disaggregation.kv_events.EventBatch">EventBatch</a>) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def publish(self, events: EventBatch) -&gt; None:
+    &#34;&#34;&#34;Emit events in order.
+
+    Implementations should guarantee at-least-once delivery and
+    monotonic ordering (e.g., via sequence numbers).
+    &#34;&#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Emit events in order.</p>
+<p>Implementations should guarantee at-least-once delivery and
+monotonic ordering (e.g., via sequence numbers).</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventPublisher.shutdown"><code class="name flex">
+<span>def <span class="ident">shutdown</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def shutdown(self) -&gt; None:
+    &#34;&#34;&#34;Shutdown the publisher.&#34;&#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Shutdown the publisher.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventPublisherFactory"><code class="flex name class">
+<span>class <span class="ident">EventPublisherFactory</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class EventPublisherFactory:
+    _registry: dict[str, Callable[..., EventPublisher]] = {
+        &#34;null&#34;: NullEventPublisher,
+        &#34;zmq&#34;: ZmqEventPublisher,
+    }
+
+    @classmethod
+    def register_publisher(cls, name: str, ctor: Callable[..., EventPublisher]) -&gt; None:
+        if name in cls._registry:
+            raise KeyError(f&#34;publisher &#39;{name}&#39; already registered&#34;)
+        cls._registry[name] = ctor
+
+    @classmethod
+    def create(cls, config: Optional[str], attn_dp_rank: int = 0) -&gt; EventPublisher:
+        &#34;&#34;&#34;Create publisher from a config mapping.&#34;&#34;&#34;
+        if not config:
+            return NullEventPublisher()
+        config = KVEventsConfig.from_cli(config)
+        config_dict = config.model_dump()
+
+        kind = config_dict.pop(&#34;publisher&#34;, &#34;null&#34;)
+        try:
+            constructor = cls._registry[kind]
+        except KeyError as exc:
+            raise ValueError(f&#34;Unknown event publisher &#39;{kind}&#39;&#34;) from exc
+        return constructor(attn_dp_rank=attn_dp_rank, **config_dict)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.EventPublisherFactory.create"><code class="name flex">
+<span>def <span class="ident">create</span></span>(<span>config: str | None, attn_dp_rank: int = 0) ‑> <a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create publisher from a config mapping.</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.EventPublisherFactory.register_publisher"><code class="name flex">
+<span>def <span class="ident">register_publisher</span></span>(<span>name: str,<br>ctor: Callable[..., <a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a>]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVCacheEvent"><code class="flex name class">
+<span>class <span class="ident">KVCacheEvent</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KVCacheEvent(
+    msgspec.Struct,
+    array_like=True,  # type: ignore[call-arg]
+    omit_defaults=True,  # type: ignore[call-arg]
+    gc=False,  # type: ignore[call-arg]
+    tag=True,
+):
+    &#34;&#34;&#34;Base class for all KV cache-related events&#34;&#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Base class for all KV cache-related events</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>msgspec.Struct</li>
+<li>msgspec._core._StructMixin</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.AllBlocksCleared" href="#sglang.srt.disaggregation.kv_events.AllBlocksCleared">AllBlocksCleared</a></li>
+<li><a title="sglang.srt.disaggregation.kv_events.BlockRemoved" href="#sglang.srt.disaggregation.kv_events.BlockRemoved">BlockRemoved</a></li>
+<li><a title="sglang.srt.disaggregation.kv_events.BlockStored" href="#sglang.srt.disaggregation.kv_events.BlockStored">BlockStored</a></li>
+</ul>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventBatch"><code class="flex name class">
+<span>class <span class="ident">KVEventBatch</span></span>
+<span>(</span><span>ts: float,<br>events: list[<a title="sglang.srt.disaggregation.kv_events.BlockStored" href="#sglang.srt.disaggregation.kv_events.BlockStored">BlockStored</a> | <a title="sglang.srt.disaggregation.kv_events.BlockRemoved" href="#sglang.srt.disaggregation.kv_events.BlockRemoved">BlockRemoved</a> | <a title="sglang.srt.disaggregation.kv_events.AllBlocksCleared" href="#sglang.srt.disaggregation.kv_events.AllBlocksCleared">AllBlocksCleared</a>],<br>attn_dp_rank: int | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KVEventBatch(EventBatch):
+    events: list[Union[BlockStored, BlockRemoved, AllBlocksCleared]]</code></pre>
+</details>
+<div class="desc"><p>A base class for defining efficient serializable objects.</p>
+<p>Fields are defined using type annotations. Fields may optionally have
+default values, which result in keyword parameters to the constructor.</p>
+<p>Structs automatically define <code>__init__</code>, <code>__eq__</code>, <code>__repr__</code>, and
+<code>__copy__</code> methods. Additional methods can be defined on the class as
+needed. Note that <code>__init__</code>/<code>__new__</code> cannot be overridden, but other
+methods can. A tuple of the field names is available on the class via the
+<code>__struct_fields__</code> attribute if needed.</p>
+<p>Additional class options can be enabled by passing keywords to the class
+definition (see example below). These configuration options may also be
+inspected at runtime through the <code>__struct_config__</code> attribute.</p>
+<h2 id="configuration">Configuration</h2>
+<p>frozen: bool, default False
+Whether instances of this type are pseudo-immutable. If true, attribute
+assignment is disabled and a corresponding <code>__hash__</code> is defined.
+order: bool, default False
+If True, <code>__lt__</code>, `<strong>le</strong><code>, </code><strong>gt</strong><code>, and </code><strong>ge</strong>`` methods
+will be generated for this type.
+eq: bool, default True
+If True (the default), an <code>__eq__</code> method will be generated for this
+type. Set to False to compare based on instance identity alone.
+kw_only: bool, default False
+If True, all fields will be treated as keyword-only arguments in the
+generated <code>__init__</code> method. Default is False.
+omit_defaults: bool, default False
+Whether fields should be omitted from encoding if the corresponding value
+is the default for that field. Enabling this may reduce message size, and
+often also improve encoding &amp; decoding performance.
+forbid_unknown_fields: bool, default False
+If True, an error is raised if an unknown field is encountered while
+decoding structs of this type. If False (the default), no error is raised
+and the unknown field is skipped.
+tag: str, int, bool, callable, or None, default None
+Used along with <code>tag_field</code> for configuring tagged union support. If
+either are non-None, then the struct is considered "tagged". In this case,
+an extra field (the <code>tag_field</code>) and value (the <code>tag</code>) are added to the
+encoded message, which can be used to differentiate message types during
+decoding.</p>
+<p>Set <code>tag=True</code> to enable the default tagged configuration (<code>tag_field</code>
+is <code>"type"</code>, <code>tag</code> is the class name). Alternatively, you can provide
+a string (or less commonly int) value directly to be used as the tag
+(e.g. <code>tag="my-tag-value"</code>).<code>tag</code> can also be passed a callable that
+takes the class qualname and returns a valid tag value (e.g.
+<code>tag=str.lower</code>). See the docs for more information.
+tag_field: str or None, default None
+The field name to use for tagged union support. If <code>tag</code> is non-None,
+then this defaults to <code>"type"</code>. See the <code>tag</code> docs above for more
+information.
+rename: str, mapping, callable, or None, default None
+Controls renaming the field names used when encoding/decoding the struct.
+May be one of <code>"lower"</code>, <code>"upper"</code>, <code>"camel"</code>, <code>"pascal"</code>, or
+<code>"kebab"</code> to rename in lowercase, UPPERCASE, camelCase, PascalCase,
+or kebab-case respectively. May also be a mapping from field names to the
+renamed names (missing fields are not renamed). Alternatively, may be a
+callable that takes the field name and returns a new name or <code>None</code> to
+not rename that field. Default is <code>None</code> for no field renaming.
+repr_omit_defaults: bool, default False
+Whether fields should be omitted from the generated repr if the
+corresponding value is the default for that field.
+array_like: bool, default False
+If True, this struct type will be treated as an array-like type during
+encoding/decoding, rather than a dict-like type (the default). This may
+improve performance, at the cost of a more inscrutable message encoding.
+gc: bool, default True
+Whether garbage collection is enabled for this type. Disabling this <em>may</em>
+help reduce GC pressure, but will prevent reference cycles composed of only
+<code>gc=False</code> from being collected. It is the user's responsibility to ensure
+that reference cycles don't occur when setting <code>gc=False</code>.
+weakref: bool, default False
+Whether instances of this type support weak references. Defaults to False.
+dict: bool, default False
+Whether instances of this type will include a <code>__dict__</code>. Setting this to
+True will allow adding additional undeclared attributes to a struct instance,
+which may be useful for holding private runtime state. Defaults to False.
+cache_hash: bool, default False
+If enabled, the hash of a frozen struct instance will be computed at most
+once, and then cached on the instance for further reuse. For expensive
+hash values this can improve performance at the cost of a small amount of
+memory usage.</p>
+<h2 id="examples">Examples</h2>
+<p>Here we define a new <code>Struct</code> type for describing a dog. It has three fields;
+two required and one optional.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Dog(Struct):
+...     name: str
+...     breed: str
+...     is_good_boy: bool = True
+...
+&gt;&gt;&gt; Dog('snickers', breed='corgi')
+Dog(name='snickers', breed='corgi', is_good_boy=True)
+</code></pre>
+<p>Additional struct options can be set as part of the class definition. Here
+we define a new <code>Struct</code> type for a frozen <code>Point</code> object.</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Point(Struct, frozen=True):
+...     x: float
+...     y: float
+...
+&gt;&gt;&gt; {Point(1.5, 2.0): 1}  # frozen structs are hashable
+{Point(x=1.5, y=2.0): 1}
+</code></pre></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.EventBatch" href="#sglang.srt.disaggregation.kv_events.EventBatch">EventBatch</a></li>
+<li>msgspec.Struct</li>
+<li>msgspec._core._StructMixin</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventBatch.events"><code class="name">var <span class="ident">events</span> : list[<a title="sglang.srt.disaggregation.kv_events.BlockStored" href="#sglang.srt.disaggregation.kv_events.BlockStored">BlockStored</a> | <a title="sglang.srt.disaggregation.kv_events.BlockRemoved" href="#sglang.srt.disaggregation.kv_events.BlockRemoved">BlockRemoved</a> | <a title="sglang.srt.disaggregation.kv_events.AllBlocksCleared" href="#sglang.srt.disaggregation.kv_events.AllBlocksCleared">AllBlocksCleared</a>]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KVEventBatch(EventBatch):
+    events: list[Union[BlockStored, BlockRemoved, AllBlocksCleared]]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig"><code class="flex name class">
+<span>class <span class="ident">KVEventsConfig</span></span>
+<span>(</span><span>**data: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KVEventsConfig(BaseModel):
+    &#34;&#34;&#34;Configuration for KV event publishing.&#34;&#34;&#34;
+
+    publisher: str = &#34;null&#34;
+    &#34;&#34;&#34;The publisher to use for publishing kv events. Can be &#34;null&#34;, &#34;zmq&#34;.
+    &#34;&#34;&#34;
+
+    endpoint: str = &#34;tcp://*:5557&#34;
+    &#34;&#34;&#34;The zmq endpoint to use for publishing kv events.
+    &#34;&#34;&#34;
+
+    replay_endpoint: Optional[str] = None
+    &#34;&#34;&#34;The zmq endpoint to use for replaying kv events.
+    &#34;&#34;&#34;
+
+    buffer_steps: int = 10_000
+    &#34;&#34;&#34;The number of steps to cache for replay endpoint. Will only save
+    events from the last N steps for the replay endpoint.
+    &#34;&#34;&#34;
+
+    hwm: int = 100_000
+    &#34;&#34;&#34;The zmq high water mark for the event publisher. After queueing N events,
+    events will start dropping if the consumer is not keeping up.
+    &#34;&#34;&#34;
+
+    max_queue_size: int = 100_000
+    &#34;&#34;&#34;The maximum number of events to queue while waiting for publishing.
+    &#34;&#34;&#34;
+
+    topic: str = &#34;&#34;
+    &#34;&#34;&#34;The topic to use for the event publisher. Consumers can subscribe to
+    this topic to receive events.
+    &#34;&#34;&#34;
+
+    @classmethod
+    def from_cli(cls, cli_value: str) -&gt; &#34;KVEventsConfig&#34;:
+        &#34;&#34;&#34;Parse the CLI value for the event publisher config.&#34;&#34;&#34;
+        return KVEventsConfig.model_validate_json(cli_value)</code></pre>
+</details>
+<div class="desc"><p>Configuration for KV event publishing.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code>self</code> is explicitly positional-only to allow <code>self</code> as a field name.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>pydantic.main.BaseModel</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.buffer_steps"><code class="name">var <span class="ident">buffer_steps</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The number of steps to cache for replay endpoint. Will only save
+events from the last N steps for the replay endpoint.</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.endpoint"><code class="name">var <span class="ident">endpoint</span> : str</code></dt>
+<dd>
+<div class="desc"><p>The zmq endpoint to use for publishing kv events.</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.hwm"><code class="name">var <span class="ident">hwm</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The zmq high water mark for the event publisher. After queueing N events,
+events will start dropping if the consumer is not keeping up.</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.max_queue_size"><code class="name">var <span class="ident">max_queue_size</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The maximum number of events to queue while waiting for publishing.</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.model_config"><code class="name">var <span class="ident">model_config</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.publisher"><code class="name">var <span class="ident">publisher</span> : str</code></dt>
+<dd>
+<div class="desc"><p>The publisher to use for publishing kv events. Can be "null", "zmq".</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.replay_endpoint"><code class="name">var <span class="ident">replay_endpoint</span> : str | None</code></dt>
+<dd>
+<div class="desc"><p>The zmq endpoint to use for replaying kv events.</p></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.topic"><code class="name">var <span class="ident">topic</span> : str</code></dt>
+<dd>
+<div class="desc"><p>The topic to use for the event publisher. Consumers can subscribe to
+this topic to receive events.</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.KVEventsConfig.from_cli"><code class="name flex">
+<span>def <span class="ident">from_cli</span></span>(<span>cli_value: str) ‑> <a title="sglang.srt.disaggregation.kv_events.KVEventsConfig" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig">KVEventsConfig</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parse the CLI value for the event publisher config.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.NullEventPublisher"><code class="flex name class">
+<span>class <span class="ident">NullEventPublisher</span></span>
+<span>(</span><span>attn_dp_rank: int = 0)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NullEventPublisher(EventPublisher):
+    &#34;&#34;&#34;No-op implementation (default when disabled).&#34;&#34;&#34;
+
+    def publish(self, events) -&gt; None:
+        return
+
+    def shutdown(self) -&gt; None:
+        return</code></pre>
+</details>
+<div class="desc"><p>No-op implementation (default when disabled).</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisher.publish" href="#sglang.srt.disaggregation.kv_events.EventPublisher.publish">publish</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisher.shutdown" href="#sglang.srt.disaggregation.kv_events.EventPublisher.shutdown">shutdown</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.ZmqEventPublisher"><code class="flex name class">
+<span>class <span class="ident">ZmqEventPublisher</span></span>
+<span>(</span><span>attn_dp_rank: int,<br>endpoint: str = 'tcp://*:5557',<br>replay_endpoint: str | None = None,<br>buffer_steps: int = 10000,<br>hwm: int = 100000,<br>max_queue_size: int = 100000,<br>topic: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ZmqEventPublisher(EventPublisher):
+    &#34;&#34;&#34;Reliable PUB/ROUTER publisher with an in-memory replay buffer.
+
+    Spawns a separate thread to handle publishing from a queue.
+
+    Parameters
+    ----------
+    endpoint:
+        PUB address. Use ``tcp://*:5557`` to bind or ``tcp://host:5557`` to
+        connect.
+    replay_endpoint:
+        Optional ROUTER address for replay requests. When given, subscribers can
+        request missed batches by sending the starting sequence number as an
+        8-byte big-endian integer.
+    buffer_steps:
+        Number of past batches to keep for replay.
+    hwm:
+        ZeroMQ high-water-mark for PUB socket.
+    max_queue_size:
+        Maximum number of events to buffer in memory.
+    topic:
+        Topic to publish events to.
+    &#34;&#34;&#34;
+
+    SHUTDOWN_TIMEOUT: float = 1.0
+    END_SEQ = (-1).to_bytes(8, &#34;big&#34;, signed=True)
+
+    def __init__(
+        self,
+        attn_dp_rank: int,
+        endpoint: str = &#34;tcp://*:5557&#34;,
+        replay_endpoint: Optional[str] = None,
+        buffer_steps: int = 10_000,
+        hwm: int = 100_000,
+        max_queue_size: int = 100_000,
+        topic: str = &#34;&#34;,
+    ) -&gt; None:
+        # Storage
+        super().__init__(attn_dp_rank)
+        self._event_queue = Queue[Optional[EventBatch]](maxsize=max_queue_size)
+        self._buffer = deque[tuple[int, bytes]](maxlen=buffer_steps)
+
+        # ZMQ sockets
+        self._ctx = zmq.Context.instance()
+        self._pub: Optional[zmq.Socket] = None
+        self._replay: Optional[zmq.Socket] = None
+        self._dp_rank = attn_dp_rank
+        self._endpoint = self.offset_endpoint_port(endpoint, self._dp_rank)
+        self._replay_endpoint = self.offset_endpoint_port(
+            replay_endpoint, self._dp_rank
+        )
+        self._hwm = hwm
+        self._socket_setup()
+
+        # Payload
+        self._seq_gen = count()
+        self._topic_bytes = topic.encode(&#34;utf-8&#34;)
+
+        # Thread
+        self._running = True
+        logger.info(&#34;Starting ZMQ publisher thread&#34;)
+
+        self._thread = threading.Thread(
+            target=self._publisher_thread, daemon=True, name=&#34;zmq-publisher&#34;
+        )
+        self._thread.start()
+
+        atexit.register(self.shutdown)
+
+    def publish(self, events: EventBatch) -&gt; None:
+        if not self._running:
+            raise RuntimeError(&#34;Publisher is closed&#34;)
+        if events.attn_dp_rank is None:
+            events.attn_dp_rank = self._dp_rank
+        self._event_queue.put(events)
+
+    def shutdown(self) -&gt; None:
+        &#34;&#34;&#34;Stop the publisher thread and clean up resources.&#34;&#34;&#34;
+        self._running = False
+        self._event_queue.put_nowait(None)
+
+        start = time.time()
+        pending_items = True
+        while pending_items and (time.time() - start &lt; self.SHUTDOWN_TIMEOUT):
+            pending_items = not self._event_queue.empty()
+            if pending_items:
+                time.sleep(0.1)
+
+        if pending_items:
+            logger.warning(
+                &#34;Warning: Queue still has %s items after %s seconds timeout&#34;,
+                self._event_queue.qsize(),
+                self.SHUTDOWN_TIMEOUT,
+            )
+
+        if self._thread.is_alive():
+            self._thread.join(timeout=self.SHUTDOWN_TIMEOUT)
+
+        # Clean up ZMQ resources
+        try:
+            if self._pub is not None:
+                self._pub.close(linger=0)
+            if self._replay is not None:
+                self._replay.close(linger=0)
+        finally:
+            pass  # Do not terminate context; other sockets may use it
+
+    def _socket_setup(self) -&gt; None:
+        &#34;&#34;&#34;Initialize sockets
+        https://pyzmq.readthedocs.io/en/v19.0.0/morethanbindings.html#thread-safety
+        &#34;&#34;&#34;
+        if self._pub is None:
+            self._pub = self._ctx.socket(zmq.PUB)
+            self._pub.set_hwm(self._hwm)
+            # Heuristic: bind if wildcard / * present, else connect.
+            # bind stable, connect volatile convention
+            if (
+                &#34;*&#34; in self._endpoint
+                or &#34;::&#34; in self._endpoint
+                or self._endpoint.startswith(&#34;ipc://&#34;)
+                or self._endpoint.startswith(&#34;inproc://&#34;)
+            ):
+                self._pub.bind(self._endpoint)
+            else:
+                self._pub.connect(self._endpoint)
+
+        # Set up replay socket: use ROUTER
+        # 1) handles multiple REQ clients (identities)
+        # 2) lets us send back one request → many replies (streamed events)
+        # 3) works in our non‑blocking poll loop alongside PUB
+        if self._replay_endpoint is not None:
+            self._replay = self._ctx.socket(zmq.ROUTER)
+            self._replay.bind(self._replay_endpoint)
+
+    def _publisher_thread(self) -&gt; None:
+        &#34;&#34;&#34;Background thread that processes the event queue.&#34;&#34;&#34;
+        self._pack = msgspec.msgpack.Encoder()
+
+        assert self._pub is not None  # narrows type for mypy
+
+        while self._running or self._event_queue.qsize() &gt; 0:
+            # --- replay (non-critical) ---------------------------------
+            if self._replay is not None and self._replay.poll(0):
+                try:
+                    self._service_replay()
+                except Exception as e:
+                    logger.exception(&#34;Error in replay: %s&#34;, e)
+
+            # --- main queue (critical) ---------------------------------
+            try:
+                event = self._event_queue.get(timeout=0.1)
+                if event is None:
+                    break  # Sentinel received, exit thread
+            except queue.Empty:
+                continue
+
+            try:
+                seq = next(self._seq_gen)
+
+                payload = self._pack.encode(event)
+                seq_bytes = seq.to_bytes(8, &#34;big&#34;)
+                self._pub.send_multipart((self._topic_bytes, seq_bytes, payload))
+
+                self._buffer.append((seq, payload))
+                self._event_queue.task_done()
+
+            except Exception as e:
+                # Publishing failed;  back-off a bit to avoid a tight error loop
+                logger.exception(&#34;Error in publisher thread: %s&#34;, e)
+                time.sleep(0.1)
+
+    def _service_replay(self) -&gt; None:
+        &#34;&#34;&#34;If a replay request is waiting, send buffered batches.&#34;&#34;&#34;
+        assert self._replay is not None  # narrows type for mypy
+
+        frame = self._replay.recv_multipart()
+        if len(frame) != 3:
+            logger.warning(&#34;Invalid replay request: %s&#34;, frame)
+            return
+        client_id, _, start_seq_bytes = frame
+        start_seq = int.from_bytes(start_seq_bytes, &#34;big&#34;)
+
+        for seq, buf in self._buffer:
+            if seq &gt;= start_seq:
+                # [identity, empty_delim, seq_bytes, payload]
+                # (identity, empty_delim) are stripped off by the router
+                # receiving payload is (seq_bytes, payload)
+                self._replay.send_multipart(
+                    (client_id, b&#34;&#34;, seq.to_bytes(8, &#34;big&#34;), buf)
+                )
+        # Send end of sequence marker
+        # receiving payload is (-1, b&#34;&#34;&#34;)
+        self._replay.send_multipart((client_id, b&#34;&#34;, self.END_SEQ, b&#34;&#34;))
+
+    @staticmethod
+    def offset_endpoint_port(
+        endpoint: Optional[str], data_parallel_rank: int
+    ) -&gt; Optional[str]:
+        &#34;&#34;&#34;Helper function to offset the port in an endpoint by
+            the data parallel rank.
+
+        Args:
+            endpoint: The endpoint string
+                (e.g., &#34;tcp://*:5557&#34; or &#34;inproc://cache&#34;)
+            data_parallel_rank: The data parallel rank to offset by
+
+        Returns:
+            The endpoint with the port offset by data_parallel_rank
+                or suffix appended
+        &#34;&#34;&#34;
+        # Do nothing if input is None or data_parallel_rank is 0
+        if not endpoint or data_parallel_rank == 0:
+            return endpoint
+
+        if &#34;inproc&#34; in endpoint:
+            return f&#34;{endpoint}_dp{data_parallel_rank}&#34;
+        if &#34;tcp&#34; in endpoint:
+            if endpoint and &#34;:&#34; in endpoint:
+                # Get everything after the last colon (the port)
+                last_colon_idx = endpoint.rfind(&#34;:&#34;)
+                base_addr = endpoint[:last_colon_idx]
+                base_port = int(endpoint[last_colon_idx + 1 :])
+                new_port = base_port + data_parallel_rank
+                return f&#34;{base_addr}:{new_port}&#34;
+            return endpoint
+        raise ValueError(&#34;Invalid endpoint: must contain &#39;inproc&#39; or &#39;tcp&#39;&#34;)</code></pre>
+</details>
+<div class="desc"><p>Reliable PUB/ROUTER publisher with an in-memory replay buffer.</p>
+<p>Spawns a separate thread to handle publishing from a queue.</p>
+<h2 id="parameters">Parameters</h2>
+<p>endpoint:
+PUB address. Use <code>tcp://*:5557</code> to bind or <code>tcp://host:5557</code> to
+connect.
+replay_endpoint:
+Optional ROUTER address for replay requests. When given, subscribers can
+request missed batches by sending the starting sequence number as an
+8-byte big-endian integer.
+buffer_steps:
+Number of past batches to keep for replay.
+hwm:
+ZeroMQ high-water-mark for PUB socket.
+max_queue_size:
+Maximum number of events to buffer in memory.
+topic:
+Topic to publish events to.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.END_SEQ"><code class="name">var <span class="ident">END_SEQ</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.SHUTDOWN_TIMEOUT"><code class="name">var <span class="ident">SHUTDOWN_TIMEOUT</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.offset_endpoint_port"><code class="name flex">
+<span>def <span class="ident">offset_endpoint_port</span></span>(<span>endpoint: str | None, data_parallel_rank: int) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def offset_endpoint_port(
+    endpoint: Optional[str], data_parallel_rank: int
+) -&gt; Optional[str]:
+    &#34;&#34;&#34;Helper function to offset the port in an endpoint by
+        the data parallel rank.
+
+    Args:
+        endpoint: The endpoint string
+            (e.g., &#34;tcp://*:5557&#34; or &#34;inproc://cache&#34;)
+        data_parallel_rank: The data parallel rank to offset by
+
+    Returns:
+        The endpoint with the port offset by data_parallel_rank
+            or suffix appended
+    &#34;&#34;&#34;
+    # Do nothing if input is None or data_parallel_rank is 0
+    if not endpoint or data_parallel_rank == 0:
+        return endpoint
+
+    if &#34;inproc&#34; in endpoint:
+        return f&#34;{endpoint}_dp{data_parallel_rank}&#34;
+    if &#34;tcp&#34; in endpoint:
+        if endpoint and &#34;:&#34; in endpoint:
+            # Get everything after the last colon (the port)
+            last_colon_idx = endpoint.rfind(&#34;:&#34;)
+            base_addr = endpoint[:last_colon_idx]
+            base_port = int(endpoint[last_colon_idx + 1 :])
+            new_port = base_port + data_parallel_rank
+            return f&#34;{base_addr}:{new_port}&#34;
+        return endpoint
+    raise ValueError(&#34;Invalid endpoint: must contain &#39;inproc&#39; or &#39;tcp&#39;&#34;)</code></pre>
+</details>
+<div class="desc"><p>Helper function to offset the port in an endpoint by
+the data parallel rank.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>endpoint</code></strong></dt>
+<dd>The endpoint string
+(e.g., "tcp://*:5557" or "inproc://cache")</dd>
+<dt><strong><code>data_parallel_rank</code></strong></dt>
+<dd>The data parallel rank to offset by</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>The endpoint with the port offset by data_parallel_rank
+or suffix appended</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.shutdown"><code class="name flex">
+<span>def <span class="ident">shutdown</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shutdown(self) -&gt; None:
+    &#34;&#34;&#34;Stop the publisher thread and clean up resources.&#34;&#34;&#34;
+    self._running = False
+    self._event_queue.put_nowait(None)
+
+    start = time.time()
+    pending_items = True
+    while pending_items and (time.time() - start &lt; self.SHUTDOWN_TIMEOUT):
+        pending_items = not self._event_queue.empty()
+        if pending_items:
+            time.sleep(0.1)
+
+    if pending_items:
+        logger.warning(
+            &#34;Warning: Queue still has %s items after %s seconds timeout&#34;,
+            self._event_queue.qsize(),
+            self.SHUTDOWN_TIMEOUT,
+        )
+
+    if self._thread.is_alive():
+        self._thread.join(timeout=self.SHUTDOWN_TIMEOUT)
+
+    # Clean up ZMQ resources
+    try:
+        if self._pub is not None:
+            self._pub.close(linger=0)
+        if self._replay is not None:
+            self._replay.close(linger=0)
+    finally:
+        pass  # Do not terminate context; other sockets may use it</code></pre>
+</details>
+<div class="desc"><p>Stop the publisher thread and clean up resources.</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisher.publish" href="#sglang.srt.disaggregation.kv_events.EventPublisher.publish">publish</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.disaggregation" href="index.html">sglang.srt.disaggregation</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.AllBlocksCleared" href="#sglang.srt.disaggregation.kv_events.AllBlocksCleared">AllBlocksCleared</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.BlockRemoved" href="#sglang.srt.disaggregation.kv_events.BlockRemoved">BlockRemoved</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.BlockRemoved.block_hashes" href="#sglang.srt.disaggregation.kv_events.BlockRemoved.block_hashes">block_hashes</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.BlockStored" href="#sglang.srt.disaggregation.kv_events.BlockStored">BlockStored</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.BlockStored.block_hashes" href="#sglang.srt.disaggregation.kv_events.BlockStored.block_hashes">block_hashes</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.BlockStored.block_size" href="#sglang.srt.disaggregation.kv_events.BlockStored.block_size">block_size</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.BlockStored.lora_id" href="#sglang.srt.disaggregation.kv_events.BlockStored.lora_id">lora_id</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.BlockStored.parent_block_hash" href="#sglang.srt.disaggregation.kv_events.BlockStored.parent_block_hash">parent_block_hash</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.BlockStored.token_ids" href="#sglang.srt.disaggregation.kv_events.BlockStored.token_ids">token_ids</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.EventBatch" href="#sglang.srt.disaggregation.kv_events.EventBatch">EventBatch</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventBatch.attn_dp_rank" href="#sglang.srt.disaggregation.kv_events.EventBatch.attn_dp_rank">attn_dp_rank</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventBatch.events" href="#sglang.srt.disaggregation.kv_events.EventBatch.events">events</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventBatch.ts" href="#sglang.srt.disaggregation.kv_events.EventBatch.ts">ts</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.EventPublisher" href="#sglang.srt.disaggregation.kv_events.EventPublisher">EventPublisher</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisher.publish" href="#sglang.srt.disaggregation.kv_events.EventPublisher.publish">publish</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisher.shutdown" href="#sglang.srt.disaggregation.kv_events.EventPublisher.shutdown">shutdown</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.EventPublisherFactory" href="#sglang.srt.disaggregation.kv_events.EventPublisherFactory">EventPublisherFactory</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisherFactory.create" href="#sglang.srt.disaggregation.kv_events.EventPublisherFactory.create">create</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.EventPublisherFactory.register_publisher" href="#sglang.srt.disaggregation.kv_events.EventPublisherFactory.register_publisher">register_publisher</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.KVCacheEvent" href="#sglang.srt.disaggregation.kv_events.KVCacheEvent">KVCacheEvent</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.KVEventBatch" href="#sglang.srt.disaggregation.kv_events.KVEventBatch">KVEventBatch</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventBatch.events" href="#sglang.srt.disaggregation.kv_events.KVEventBatch.events">events</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig">KVEventsConfig</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.buffer_steps" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.buffer_steps">buffer_steps</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.endpoint" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.endpoint">endpoint</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.from_cli" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.from_cli">from_cli</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.hwm" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.hwm">hwm</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.max_queue_size" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.max_queue_size">max_queue_size</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.model_config" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.model_config">model_config</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.publisher" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.publisher">publisher</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.replay_endpoint" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.replay_endpoint">replay_endpoint</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.KVEventsConfig.topic" href="#sglang.srt.disaggregation.kv_events.KVEventsConfig.topic">topic</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.NullEventPublisher" href="#sglang.srt.disaggregation.kv_events.NullEventPublisher">NullEventPublisher</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.kv_events.ZmqEventPublisher" href="#sglang.srt.disaggregation.kv_events.ZmqEventPublisher">ZmqEventPublisher</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.END_SEQ" href="#sglang.srt.disaggregation.kv_events.ZmqEventPublisher.END_SEQ">END_SEQ</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.SHUTDOWN_TIMEOUT" href="#sglang.srt.disaggregation.kv_events.ZmqEventPublisher.SHUTDOWN_TIMEOUT">SHUTDOWN_TIMEOUT</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.offset_endpoint_port" href="#sglang.srt.disaggregation.kv_events.ZmqEventPublisher.offset_endpoint_port">offset_endpoint_port</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.kv_events.ZmqEventPublisher.shutdown" href="#sglang.srt.disaggregation.kv_events.ZmqEventPublisher.shutdown">shutdown</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

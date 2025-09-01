@@ -1,0 +1,1836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.llava API documentation</title>
+<meta name="description" content="Inference-only LLaVa model compatible with HuggingFace weights.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.llava</code></h1>
+</header>
+<section id="section-intro">
+<p>Inference-only LLaVa model compatible with HuggingFace weights.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.llava.LlavaBaseForCausalLM"><code class="flex name class">
+<span>class <span class="ident">LlavaBaseForCausalLM</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlavaBaseForCausalLM(nn.Module):
+    def pad_input_ids(self, input_ids: List[int], image_inputs: MultimodalInputs):
+        image_sizes = flatten_nested_list(
+            [item.image_sizes for item in image_inputs.mm_items]
+        )
+
+        pad_values = [item.pad_value for item in image_inputs.mm_items]
+
+        # hardcode for spatial_unpad + anyres
+        if any(
+            item.modality == Modality.MULTI_IMAGES or item.modality == Modality.VIDEO
+            for item in image_inputs.mm_items
+        ):
+            image_aspect_ratio = &#34;pad&#34;
+        else:
+            image_aspect_ratio = &#34;anyres&#34;
+        offset_list = []
+        image_inputs.image_pad_len = []
+        for image_idx, image_s in enumerate(image_sizes):
+            if len(image_sizes) &gt; 16:
+                # 2x2 pooling with stride 2
+                new_image_feature_len = (
+                    math.ceil(self.image_size / self.patch_size / 2) ** 2
+                )
+            else:
+                new_image_feature_len = self.image_feature_len  # multi-image
+
+            height = width = self.num_patches_per_side
+            if &#34;anyres&#34; in image_aspect_ratio:
+                num_patch_width, num_patch_height = get_anyres_image_grid_shape(
+                    image_s,
+                    self.image_grid_pinpoints,
+                    self.vision_tower.config.image_size,
+                )
+                h = num_patch_height * height
+                w = num_patch_width * width
+                new_h, new_w = unpad_image_shape(h, w, image_s)
+
+                if &#34;anyres_max&#34; in self.config.image_aspect_ratio:
+                    matched_anyres_max_num_patches = re.match(
+                        r&#34;anyres_max_(\d+)&#34;, self.config.image_aspect_ratio
+                    )
+                    if matched_anyres_max_num_patches:
+                        max_num_patches = int(matched_anyres_max_num_patches.group(1))
+                    # times = math.sqrt(h * w / (max_num_patches * unit**2))
+                    times = math.sqrt(
+                        new_h * new_w / (max_num_patches * self.image_feature_len)
+                    )
+                    if times &gt; 1.1:
+                        new_h = int(new_h // times)
+                        new_w = int(new_w // times)
+                new_image_feature_len += new_h * (new_w + 1)
+
+            try:
+                offset = input_ids.index(self.config.image_token_index)
+            except ValueError:
+                offset = 0
+            # old_len + pad_len - 1, because we need to remove image_token_id
+            input_ids = (
+                input_ids[:offset]
+                + [pad_values[image_idx % len(pad_values)]] * new_image_feature_len
+                + input_ids[offset + 1 :]
+            )
+            offset_list.append(offset)
+            image_inputs.image_pad_len.append(new_image_feature_len)
+
+        image_inputs.image_offsets = offset_list
+        return input_ids
+
+    def encode_images(
+        self, pixel_values: Union[torch.Tensor, List[torch.Tensor]]
+    ) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        encode images by vision tower and multimodal projector
+        Args:
+            pixel_values: torch.Tensor or List[torch.Tensor]: each tensor for an input image
+        Returns:
+            torch.Tensor: encoded image features from the input image; if multiple, flattened by seq_len axis
+        &#34;&#34;&#34;
+        image_outputs = self.vision_tower(pixel_values, output_hidden_states=True)
+        # NOTE: This is not memory efficient. (output_hidden_states=True) will save all the hidden stated.
+        selected_image_feature = image_outputs.hidden_states[self.vision_feature_layer]
+        if self.vision_feature_select_strategy in [&#34;default&#34;, &#34;patch&#34;]:
+            selected_image_feature = selected_image_feature[:, 1:]
+        elif self.vision_feature_select_strategy == &#34;full&#34;:
+            selected_image_feature = selected_image_feature
+        else:
+            raise ValueError(
+                f&#34;Unexpected select feature strategy: {self.config.vision_feature_select_strategy}&#34;
+            )
+        image_features = self.multi_modal_projector(selected_image_feature)
+        return image_features
+
+    @torch.no_grad()
+    def forward(
+        self,
+        input_ids: torch.LongTensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ) -&gt; torch.Tensor:
+        image_inputs = forward_batch.mm_inputs
+
+        if forward_batch.forward_mode.is_extend():
+            # Clamp input ids. This is because the input_ids for the image tokens are
+            # filled with the hash values of the image for the prefix matching in the radix attention.
+            # There values are useless because their embeddings will be replaced by vision embeddings anyway.
+            input_ids.clamp_(min=0, max=self.config.vocab_size - 1)
+
+            # Embed text inputs
+            input_embeds = self.language_model.model.embed_tokens(input_ids)
+
+            # Got List[List[str]] extend it to List[str]
+            # The length of the List should be equal to batch size
+            modalities_list = []
+            max_image_offset = []
+            for im in image_inputs:
+                if im:
+                    modalities_list.extend([item.modality for item in im.mm_items])
+                if im and im.image_offsets:
+                    max_image_offset.append(
+                        np.max(np.array(im.image_offsets) + np.array(im.image_pad_len))
+                    )
+                else:
+                    max_image_offset.append(-1)
+
+            start_positions = positions[forward_batch.extend_start_loc].cpu().numpy()
+            need_vision = start_positions &lt;= np.array(max_image_offset)
+
+            if need_vision.any():
+                bs = forward_batch.batch_size
+                pixel_values = flatten_nested_list(
+                    [
+                        [item.feature for item in image_inputs[i].mm_items]
+                        for i in range(bs)
+                        if need_vision[i]
+                    ]
+                )
+                image_sizes = [
+                    flatten_nested_list(
+                        [item.image_sizes for item in image_inputs[i].mm_items]
+                    )
+                    for i in range(bs)
+                    if need_vision[i]
+                ]
+
+                ########## Encode Image ########
+
+                if pixel_values[0].ndim == 4:
+                    # llava-hd: BS, num_patch, C=3, H=336, W=336, num_patch obtained from process_images
+                    np.concatenate(pixel_values, axis=0)
+                    # ndim=4
+                    concat_images = torch.tensor(
+                        np.concatenate(pixel_values, axis=0),
+                        device=self.vision_tower.device,
+                    )
+                    image_features = self.encode_images(concat_images)
+                    split_sizes = [image.shape[0] for image in pixel_values]
+                    image_features = torch.split(image_features, split_sizes, dim=0)
+                    # hd image_features: BS, num_patch, 576, 4096
+                else:
+                    # normal pixel: BS, C=3, H=336, W=336
+                    pixel_values = torch.tensor(
+                        np.array(pixel_values), device=self.vision_tower.device
+                    )
+                    image_features = self.encode_images(pixel_values)
+                    # image_features: BS, 576, 4096
+
+                if self.mm_patch_merge_type.startswith(&#34;spatial&#34;):
+                    new_image_features = []
+                    height = width = self.num_patches_per_side
+                    for image_idx, image_feature in enumerate(image_features):
+                        if modalities_list[image_idx] == Modality.IMAGE:
+                            image_aspect_ratio = (
+                                self.config.image_aspect_ratio
+                            )  # single image
+                        elif (
+                            modalities_list[image_idx] == Modality.MULTI_IMAGES
+                            or modalities_list[image_idx] == Modality.VIDEO
+                        ):
+                            image_aspect_ratio = &#34;pad&#34;  # multi image
+                        # image_aspect_ratio = (
+                        #     &#34;anyres&#34; if len(image_sizes[image_idx]) == 1 else &#34;pad&#34;
+                        # )
+                        if (
+                            image_feature.shape[0] &gt; 1
+                            and &#34;anyres&#34; in image_aspect_ratio
+                            and modalities_list[image_idx] == Modality.IMAGE
+                        ):
+                            base_image_feature = image_feature[0]
+                            image_feature = image_feature[1:]
+                            assert height * width == base_image_feature.shape[0]
+
+                            if &#34;anyres_max&#34; in image_aspect_ratio:
+                                matched_anyres_max_num_patches = re.match(
+                                    r&#34;anyres_max_(\d+)&#34;, image_aspect_ratio
+                                )
+                                if matched_anyres_max_num_patches:
+                                    max_num_patches = int(
+                                        matched_anyres_max_num_patches.group(1)
+                                    )
+
+                            if (
+                                image_aspect_ratio == &#34;anyres&#34;
+                                or &#34;anyres_max&#34; in image_aspect_ratio
+                            ):
+                                vision_tower_image_size = self.image_size
+                                try:
+                                    num_patch_width, num_patch_height = (
+                                        get_anyres_image_grid_shape(
+                                            image_sizes[image_idx][0],
+                                            self.config.image_grid_pinpoints,
+                                            vision_tower_image_size,
+                                        )
+                                    )
+                                except Exception as e:
+                                    print(f&#34;Error: {e}&#34;)
+                                    num_patch_width, num_patch_height = 2, 2
+                                image_feature = image_feature.view(
+                                    num_patch_height, num_patch_width, height, width, -1
+                                )
+                            else:
+                                image_feature = image_feature.view(
+                                    2, 2, height, width, -1
+                                )
+
+                            # (
+                            #     num_patch_width,
+                            #     num_patch_height,
+                            # ) = get_anyres_image_grid_shape(
+                            #     image_sizes[image_idx][0],
+                            #     self.image_grid_pinpoints,
+                            #     self.vision_tower.config.image_size,
+                            # )
+
+                            # image_feature = image_feature.view(
+                            #     num_patch_height, num_patch_width, height, width, -1
+                            # )
+
+                            if &#34;unpad&#34; in self.mm_patch_merge_type:
+                                unit = image_feature.shape[2]
+                                image_feature = image_feature.permute(
+                                    4, 0, 2, 1, 3
+                                ).contiguous()
+                                image_feature = image_feature.flatten(1, 2).flatten(
+                                    2, 3
+                                )
+                                image_feature = unpad_image(
+                                    image_feature, image_sizes[image_idx][0]
+                                )
+                                if (
+                                    &#34;anyres_max&#34; in image_aspect_ratio
+                                    and matched_anyres_max_num_patches
+                                ):
+                                    c, h, w = image_feature.shape
+                                    times = math.sqrt(
+                                        h * w / (max_num_patches * unit**2)
+                                    )
+                                    if times &gt; 1.1:
+                                        image_feature = image_feature[None]
+                                        image_feature = nn.functional.interpolate(
+                                            image_feature,
+                                            [int(h // times), int(w // times)],
+                                            mode=&#34;bilinear&#34;,
+                                        )[0]
+                                image_feature = torch.cat(
+                                    (
+                                        image_feature,
+                                        self.language_model.model.image_newline[
+                                            :, None, None
+                                        ].expand(*image_feature.shape[:-1], 1),
+                                    ),
+                                    dim=-1,
+                                )
+                                image_feature = image_feature.flatten(1, 2).transpose(
+                                    0, 1
+                                )
+                            else:
+                                image_feature = image_feature.permute(
+                                    0, 2, 1, 3, 4
+                                ).contiguous()
+                                image_feature = image_feature.flatten(0, 3)
+                            image_feature = torch.cat(
+                                (base_image_feature, image_feature), dim=0
+                            )
+                            image_feature = image_feature.unsqueeze(0)
+                        else:
+                            if modalities_list[image_idx] == Modality.VIDEO:  # video
+                                # 2x2 pooling
+                                num_of_frames = image_feature.shape[0]
+                                image_feature = image_feature.view(
+                                    num_of_frames, height, width, -1
+                                )
+                                image_feature = image_feature.permute(
+                                    0, 3, 1, 2
+                                ).contiguous()  # N, C, H, W
+                                height, weight = image_feature.shape[2:]
+                                scaled_shape = [
+                                    math.ceil(height / 2),
+                                    math.ceil(weight / 2),
+                                ]
+                                image_feature = nn.functional.interpolate(
+                                    image_feature, size=scaled_shape, mode=&#34;bilinear&#34;
+                                )
+                                image_feature = (
+                                    image_feature.flatten(2)
+                                    .transpose(1, 2)
+                                    .contiguous()
+                                )  # N, C, H*W
+                            if &#34;unpad&#34; in self.mm_patch_merge_type:
+                                image_feature = torch.cat(
+                                    (
+                                        image_feature,
+                                        # Expand to (bs, 1, hidden_dim) and concat at the end of the image tokens
+                                        self.language_model.model.image_newline[
+                                            None, None
+                                        ].expand(
+                                            image_feature.shape[0],
+                                            1,
+                                            image_feature.shape[-1],
+                                        ),
+                                    ),
+                                    dim=1,
+                                )
+
+                        new_image_features.append(image_feature)
+                    image_features = new_image_features
+
+                # Fill in the placeholder for the image
+                extend_start_loc_cpu = forward_batch.extend_start_loc.cpu().numpy()
+                extend_seq_lens = forward_batch.extend_seq_lens.cpu().numpy()
+                prefix_lens_cpu = forward_batch.extend_prefix_lens_cpu
+                pt = 0
+                for i in range(bs):
+                    if not need_vision[i]:
+                        continue
+
+                    start_idx = extend_start_loc_cpu[i]
+                    seq_len = extend_seq_lens[i]
+                    prefix_len = prefix_lens_cpu[i]
+
+                    # Multiple images
+                    for image_idx, image_offset in enumerate(
+                        image_inputs[i].image_offsets
+                    ):
+                        if (
+                            image_offset + image_inputs[i].image_pad_len[image_idx]
+                            &lt;= prefix_len
+                        ):
+                            continue
+                        if image_offset &gt;= prefix_len + seq_len:
+                            break
+
+                        tmp_image_feature = image_features[pt][image_idx]
+                        pad_len = tmp_image_feature.shape[0]
+
+                        input_offset = image_offset - prefix_len
+                        left_idx = start_idx + input_offset
+                        right_idx = left_idx + pad_len
+                        assert right_idx &gt; start_idx
+                        if input_offset &lt; 0:
+                            left_idx = start_idx
+                            tmp_image_feature = tmp_image_feature[-input_offset:]
+                        if right_idx &gt; start_idx + seq_len:
+                            tmp_image_feature = tmp_image_feature[
+                                : start_idx + seq_len - right_idx
+                            ]
+                            right_idx = start_idx + seq_len
+                        try:
+                            input_embeds[left_idx:right_idx] = tmp_image_feature
+                        except RuntimeError as e:
+                            print(f&#34;RuntimeError in image encoding: {e}&#34;)
+                            print(f&#34;{input_embeds.shape=}, {tmp_image_feature.shape=}&#34;)
+                            print(
+                                f&#34;{start_idx=}, {image_offset=}, {prefix_len=}, {pad_len=}&#34;
+                            )
+                    pt += 1
+
+            return self.language_model(
+                input_ids, positions, forward_batch, input_embeds=input_embeds
+            )
+        elif forward_batch.forward_mode.is_decode():
+            return self.language_model(input_ids, positions, forward_batch)
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        # Load clip vision model by cfg[&#39;mm_vision_tower&#39;]:
+        # huggingface_name or path_of_clip_relative_to_llava_model_dir
+        # We put the initialization here instead of __init__ to allow it being reused by other subclasses.
+        vision_path = self.config.mm_vision_tower
+        if &#34;clip&#34; in vision_path:
+            self.vision_tower = CLIPVisionModel.from_pretrained(
+                vision_path, torch_dtype=torch.float16
+            ).cuda()
+        elif &#34;siglip&#34; in vision_path:
+            self.vision_tower = SiglipVisionModel.from_pretrained(
+                vision_path, torch_dtype=torch.float16
+            ).cuda()
+            # Siglip needs all feature tokens
+            self.config.mm_vision_select_feature = &#34;full&#34;
+        self.vision_tower.eval()
+
+        self.vision_feature_layer = self.config.mm_vision_select_layer
+        self.vision_feature_select_strategy = self.config.mm_vision_select_feature
+        self.image_size = self.vision_tower.config.image_size
+        self.patch_size = self.vision_tower.config.patch_size
+
+        self.mm_patch_merge_type = getattr(self.config, &#34;mm_patch_merge_type&#34;, &#34;flat&#34;)
+        self.image_aspect_ratio = getattr(self.config, &#34;image_aspect_ratio&#34;, &#34;square&#34;)
+        self.image_grid_pinpoints = getattr(self.config, &#34;image_grid_pinpoints&#34;, None)
+
+        self.image_feature_len = int((self.image_size // self.patch_size) ** 2)
+        if (
+            self.vision_feature_select_strategy == &#34;patch&#34;
+            or self.vision_feature_select_strategy == &#34;full&#34;
+        ):
+            pass
+        elif self.vision_feature_select_strategy == &#34;cls_patch&#34;:
+            self.image_feature_len += 1
+        else:
+            raise ValueError(f&#34;Unexpected select feature: {self.select_feature}&#34;)
+
+        # load mm_projector
+        projector_weights = {
+            &#34;model.mm_projector.0&#34;: &#34;multi_modal_projector.linear_1&#34;,
+            &#34;model.mm_projector.2&#34;: &#34;multi_modal_projector.linear_2&#34;,
+            &#34;model.vision_tower.vision_tower&#34;: &#34;vision_tower&#34;,
+            # Update the vision tower weights if we find them in the checkpoint (it may be finetuned).
+            &#34;model.image_newline&#34;: &#34;language_model.model.image_newline&#34;,
+        }
+        params_dict = dict(self.named_parameters())
+        for name, loaded_weight in weights:
+            if &#34;projector&#34; in name or &#34;vision_tower&#34; in name or &#34;image_newline&#34; in name:
+                for weight_name, param_name in projector_weights.items():
+                    if weight_name in name:
+                        name = name.replace(weight_name, param_name)
+                param = params_dict[name]
+                weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+                weight_loader(param, loaded_weight)
+            else:
+                self.language_model.load_weights([(name, loaded_weight)])
+
+    @property
+    def num_patches_per_side(self):
+        return self.image_size // self.patch_size</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llava.LlavaForConditionalGeneration" href="#sglang.srt.models.llava.LlavaForConditionalGeneration">LlavaForConditionalGeneration</a></li>
+<li><a title="sglang.srt.models.llava.LlavaLlamaForCausalLM" href="#sglang.srt.models.llava.LlavaLlamaForCausalLM">LlavaLlamaForCausalLM</a></li>
+<li><a title="sglang.srt.models.llava.LlavaMistralForCausalLM" href="#sglang.srt.models.llava.LlavaMistralForCausalLM">LlavaMistralForCausalLM</a></li>
+<li><a title="sglang.srt.models.llava.LlavaQwenForCausalLM" href="#sglang.srt.models.llava.LlavaQwenForCausalLM">LlavaQwenForCausalLM</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.llava.LlavaBaseForCausalLM.num_patches_per_side"><code class="name">prop <span class="ident">num_patches_per_side</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def num_patches_per_side(self):
+    return self.image_size // self.patch_size</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images"><code class="name flex">
+<span>def <span class="ident">encode_images</span></span>(<span>self, pixel_values: torch.Tensor | List[torch.Tensor]) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def encode_images(
+    self, pixel_values: Union[torch.Tensor, List[torch.Tensor]]
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    encode images by vision tower and multimodal projector
+    Args:
+        pixel_values: torch.Tensor or List[torch.Tensor]: each tensor for an input image
+    Returns:
+        torch.Tensor: encoded image features from the input image; if multiple, flattened by seq_len axis
+    &#34;&#34;&#34;
+    image_outputs = self.vision_tower(pixel_values, output_hidden_states=True)
+    # NOTE: This is not memory efficient. (output_hidden_states=True) will save all the hidden stated.
+    selected_image_feature = image_outputs.hidden_states[self.vision_feature_layer]
+    if self.vision_feature_select_strategy in [&#34;default&#34;, &#34;patch&#34;]:
+        selected_image_feature = selected_image_feature[:, 1:]
+    elif self.vision_feature_select_strategy == &#34;full&#34;:
+        selected_image_feature = selected_image_feature
+    else:
+        raise ValueError(
+            f&#34;Unexpected select feature strategy: {self.config.vision_feature_select_strategy}&#34;
+        )
+    image_features = self.multi_modal_projector(selected_image_feature)
+    return image_features</code></pre>
+</details>
+<div class="desc"><p>encode images by vision tower and multimodal projector</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pixel_values</code></strong></dt>
+<dd>torch.Tensor or List[torch.Tensor]: each tensor for an input image</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>torch.Tensor</code></dt>
+<dd>encoded image features from the input image; if multiple, flattened by seq_len axis</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaBaseForCausalLM.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.LongTensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.no_grad()
+def forward(
+    self,
+    input_ids: torch.LongTensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+) -&gt; torch.Tensor:
+    image_inputs = forward_batch.mm_inputs
+
+    if forward_batch.forward_mode.is_extend():
+        # Clamp input ids. This is because the input_ids for the image tokens are
+        # filled with the hash values of the image for the prefix matching in the radix attention.
+        # There values are useless because their embeddings will be replaced by vision embeddings anyway.
+        input_ids.clamp_(min=0, max=self.config.vocab_size - 1)
+
+        # Embed text inputs
+        input_embeds = self.language_model.model.embed_tokens(input_ids)
+
+        # Got List[List[str]] extend it to List[str]
+        # The length of the List should be equal to batch size
+        modalities_list = []
+        max_image_offset = []
+        for im in image_inputs:
+            if im:
+                modalities_list.extend([item.modality for item in im.mm_items])
+            if im and im.image_offsets:
+                max_image_offset.append(
+                    np.max(np.array(im.image_offsets) + np.array(im.image_pad_len))
+                )
+            else:
+                max_image_offset.append(-1)
+
+        start_positions = positions[forward_batch.extend_start_loc].cpu().numpy()
+        need_vision = start_positions &lt;= np.array(max_image_offset)
+
+        if need_vision.any():
+            bs = forward_batch.batch_size
+            pixel_values = flatten_nested_list(
+                [
+                    [item.feature for item in image_inputs[i].mm_items]
+                    for i in range(bs)
+                    if need_vision[i]
+                ]
+            )
+            image_sizes = [
+                flatten_nested_list(
+                    [item.image_sizes for item in image_inputs[i].mm_items]
+                )
+                for i in range(bs)
+                if need_vision[i]
+            ]
+
+            ########## Encode Image ########
+
+            if pixel_values[0].ndim == 4:
+                # llava-hd: BS, num_patch, C=3, H=336, W=336, num_patch obtained from process_images
+                np.concatenate(pixel_values, axis=0)
+                # ndim=4
+                concat_images = torch.tensor(
+                    np.concatenate(pixel_values, axis=0),
+                    device=self.vision_tower.device,
+                )
+                image_features = self.encode_images(concat_images)
+                split_sizes = [image.shape[0] for image in pixel_values]
+                image_features = torch.split(image_features, split_sizes, dim=0)
+                # hd image_features: BS, num_patch, 576, 4096
+            else:
+                # normal pixel: BS, C=3, H=336, W=336
+                pixel_values = torch.tensor(
+                    np.array(pixel_values), device=self.vision_tower.device
+                )
+                image_features = self.encode_images(pixel_values)
+                # image_features: BS, 576, 4096
+
+            if self.mm_patch_merge_type.startswith(&#34;spatial&#34;):
+                new_image_features = []
+                height = width = self.num_patches_per_side
+                for image_idx, image_feature in enumerate(image_features):
+                    if modalities_list[image_idx] == Modality.IMAGE:
+                        image_aspect_ratio = (
+                            self.config.image_aspect_ratio
+                        )  # single image
+                    elif (
+                        modalities_list[image_idx] == Modality.MULTI_IMAGES
+                        or modalities_list[image_idx] == Modality.VIDEO
+                    ):
+                        image_aspect_ratio = &#34;pad&#34;  # multi image
+                    # image_aspect_ratio = (
+                    #     &#34;anyres&#34; if len(image_sizes[image_idx]) == 1 else &#34;pad&#34;
+                    # )
+                    if (
+                        image_feature.shape[0] &gt; 1
+                        and &#34;anyres&#34; in image_aspect_ratio
+                        and modalities_list[image_idx] == Modality.IMAGE
+                    ):
+                        base_image_feature = image_feature[0]
+                        image_feature = image_feature[1:]
+                        assert height * width == base_image_feature.shape[0]
+
+                        if &#34;anyres_max&#34; in image_aspect_ratio:
+                            matched_anyres_max_num_patches = re.match(
+                                r&#34;anyres_max_(\d+)&#34;, image_aspect_ratio
+                            )
+                            if matched_anyres_max_num_patches:
+                                max_num_patches = int(
+                                    matched_anyres_max_num_patches.group(1)
+                                )
+
+                        if (
+                            image_aspect_ratio == &#34;anyres&#34;
+                            or &#34;anyres_max&#34; in image_aspect_ratio
+                        ):
+                            vision_tower_image_size = self.image_size
+                            try:
+                                num_patch_width, num_patch_height = (
+                                    get_anyres_image_grid_shape(
+                                        image_sizes[image_idx][0],
+                                        self.config.image_grid_pinpoints,
+                                        vision_tower_image_size,
+                                    )
+                                )
+                            except Exception as e:
+                                print(f&#34;Error: {e}&#34;)
+                                num_patch_width, num_patch_height = 2, 2
+                            image_feature = image_feature.view(
+                                num_patch_height, num_patch_width, height, width, -1
+                            )
+                        else:
+                            image_feature = image_feature.view(
+                                2, 2, height, width, -1
+                            )
+
+                        # (
+                        #     num_patch_width,
+                        #     num_patch_height,
+                        # ) = get_anyres_image_grid_shape(
+                        #     image_sizes[image_idx][0],
+                        #     self.image_grid_pinpoints,
+                        #     self.vision_tower.config.image_size,
+                        # )
+
+                        # image_feature = image_feature.view(
+                        #     num_patch_height, num_patch_width, height, width, -1
+                        # )
+
+                        if &#34;unpad&#34; in self.mm_patch_merge_type:
+                            unit = image_feature.shape[2]
+                            image_feature = image_feature.permute(
+                                4, 0, 2, 1, 3
+                            ).contiguous()
+                            image_feature = image_feature.flatten(1, 2).flatten(
+                                2, 3
+                            )
+                            image_feature = unpad_image(
+                                image_feature, image_sizes[image_idx][0]
+                            )
+                            if (
+                                &#34;anyres_max&#34; in image_aspect_ratio
+                                and matched_anyres_max_num_patches
+                            ):
+                                c, h, w = image_feature.shape
+                                times = math.sqrt(
+                                    h * w / (max_num_patches * unit**2)
+                                )
+                                if times &gt; 1.1:
+                                    image_feature = image_feature[None]
+                                    image_feature = nn.functional.interpolate(
+                                        image_feature,
+                                        [int(h // times), int(w // times)],
+                                        mode=&#34;bilinear&#34;,
+                                    )[0]
+                            image_feature = torch.cat(
+                                (
+                                    image_feature,
+                                    self.language_model.model.image_newline[
+                                        :, None, None
+                                    ].expand(*image_feature.shape[:-1], 1),
+                                ),
+                                dim=-1,
+                            )
+                            image_feature = image_feature.flatten(1, 2).transpose(
+                                0, 1
+                            )
+                        else:
+                            image_feature = image_feature.permute(
+                                0, 2, 1, 3, 4
+                            ).contiguous()
+                            image_feature = image_feature.flatten(0, 3)
+                        image_feature = torch.cat(
+                            (base_image_feature, image_feature), dim=0
+                        )
+                        image_feature = image_feature.unsqueeze(0)
+                    else:
+                        if modalities_list[image_idx] == Modality.VIDEO:  # video
+                            # 2x2 pooling
+                            num_of_frames = image_feature.shape[0]
+                            image_feature = image_feature.view(
+                                num_of_frames, height, width, -1
+                            )
+                            image_feature = image_feature.permute(
+                                0, 3, 1, 2
+                            ).contiguous()  # N, C, H, W
+                            height, weight = image_feature.shape[2:]
+                            scaled_shape = [
+                                math.ceil(height / 2),
+                                math.ceil(weight / 2),
+                            ]
+                            image_feature = nn.functional.interpolate(
+                                image_feature, size=scaled_shape, mode=&#34;bilinear&#34;
+                            )
+                            image_feature = (
+                                image_feature.flatten(2)
+                                .transpose(1, 2)
+                                .contiguous()
+                            )  # N, C, H*W
+                        if &#34;unpad&#34; in self.mm_patch_merge_type:
+                            image_feature = torch.cat(
+                                (
+                                    image_feature,
+                                    # Expand to (bs, 1, hidden_dim) and concat at the end of the image tokens
+                                    self.language_model.model.image_newline[
+                                        None, None
+                                    ].expand(
+                                        image_feature.shape[0],
+                                        1,
+                                        image_feature.shape[-1],
+                                    ),
+                                ),
+                                dim=1,
+                            )
+
+                    new_image_features.append(image_feature)
+                image_features = new_image_features
+
+            # Fill in the placeholder for the image
+            extend_start_loc_cpu = forward_batch.extend_start_loc.cpu().numpy()
+            extend_seq_lens = forward_batch.extend_seq_lens.cpu().numpy()
+            prefix_lens_cpu = forward_batch.extend_prefix_lens_cpu
+            pt = 0
+            for i in range(bs):
+                if not need_vision[i]:
+                    continue
+
+                start_idx = extend_start_loc_cpu[i]
+                seq_len = extend_seq_lens[i]
+                prefix_len = prefix_lens_cpu[i]
+
+                # Multiple images
+                for image_idx, image_offset in enumerate(
+                    image_inputs[i].image_offsets
+                ):
+                    if (
+                        image_offset + image_inputs[i].image_pad_len[image_idx]
+                        &lt;= prefix_len
+                    ):
+                        continue
+                    if image_offset &gt;= prefix_len + seq_len:
+                        break
+
+                    tmp_image_feature = image_features[pt][image_idx]
+                    pad_len = tmp_image_feature.shape[0]
+
+                    input_offset = image_offset - prefix_len
+                    left_idx = start_idx + input_offset
+                    right_idx = left_idx + pad_len
+                    assert right_idx &gt; start_idx
+                    if input_offset &lt; 0:
+                        left_idx = start_idx
+                        tmp_image_feature = tmp_image_feature[-input_offset:]
+                    if right_idx &gt; start_idx + seq_len:
+                        tmp_image_feature = tmp_image_feature[
+                            : start_idx + seq_len - right_idx
+                        ]
+                        right_idx = start_idx + seq_len
+                    try:
+                        input_embeds[left_idx:right_idx] = tmp_image_feature
+                    except RuntimeError as e:
+                        print(f&#34;RuntimeError in image encoding: {e}&#34;)
+                        print(f&#34;{input_embeds.shape=}, {tmp_image_feature.shape=}&#34;)
+                        print(
+                            f&#34;{start_idx=}, {image_offset=}, {prefix_len=}, {pad_len=}&#34;
+                        )
+                pt += 1
+
+        return self.language_model(
+            input_ids, positions, forward_batch, input_embeds=input_embeds
+        )
+    elif forward_batch.forward_mode.is_decode():
+        return self.language_model(input_ids, positions, forward_batch)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaBaseForCausalLM.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    # Load clip vision model by cfg[&#39;mm_vision_tower&#39;]:
+    # huggingface_name or path_of_clip_relative_to_llava_model_dir
+    # We put the initialization here instead of __init__ to allow it being reused by other subclasses.
+    vision_path = self.config.mm_vision_tower
+    if &#34;clip&#34; in vision_path:
+        self.vision_tower = CLIPVisionModel.from_pretrained(
+            vision_path, torch_dtype=torch.float16
+        ).cuda()
+    elif &#34;siglip&#34; in vision_path:
+        self.vision_tower = SiglipVisionModel.from_pretrained(
+            vision_path, torch_dtype=torch.float16
+        ).cuda()
+        # Siglip needs all feature tokens
+        self.config.mm_vision_select_feature = &#34;full&#34;
+    self.vision_tower.eval()
+
+    self.vision_feature_layer = self.config.mm_vision_select_layer
+    self.vision_feature_select_strategy = self.config.mm_vision_select_feature
+    self.image_size = self.vision_tower.config.image_size
+    self.patch_size = self.vision_tower.config.patch_size
+
+    self.mm_patch_merge_type = getattr(self.config, &#34;mm_patch_merge_type&#34;, &#34;flat&#34;)
+    self.image_aspect_ratio = getattr(self.config, &#34;image_aspect_ratio&#34;, &#34;square&#34;)
+    self.image_grid_pinpoints = getattr(self.config, &#34;image_grid_pinpoints&#34;, None)
+
+    self.image_feature_len = int((self.image_size // self.patch_size) ** 2)
+    if (
+        self.vision_feature_select_strategy == &#34;patch&#34;
+        or self.vision_feature_select_strategy == &#34;full&#34;
+    ):
+        pass
+    elif self.vision_feature_select_strategy == &#34;cls_patch&#34;:
+        self.image_feature_len += 1
+    else:
+        raise ValueError(f&#34;Unexpected select feature: {self.select_feature}&#34;)
+
+    # load mm_projector
+    projector_weights = {
+        &#34;model.mm_projector.0&#34;: &#34;multi_modal_projector.linear_1&#34;,
+        &#34;model.mm_projector.2&#34;: &#34;multi_modal_projector.linear_2&#34;,
+        &#34;model.vision_tower.vision_tower&#34;: &#34;vision_tower&#34;,
+        # Update the vision tower weights if we find them in the checkpoint (it may be finetuned).
+        &#34;model.image_newline&#34;: &#34;language_model.model.image_newline&#34;,
+    }
+    params_dict = dict(self.named_parameters())
+    for name, loaded_weight in weights:
+        if &#34;projector&#34; in name or &#34;vision_tower&#34; in name or &#34;image_newline&#34; in name:
+            for weight_name, param_name in projector_weights.items():
+                if weight_name in name:
+                    name = name.replace(weight_name, param_name)
+            param = params_dict[name]
+            weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+            weight_loader(param, loaded_weight)
+        else:
+            self.language_model.load_weights([(name, loaded_weight)])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaBaseForCausalLM.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>image_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(self, input_ids: List[int], image_inputs: MultimodalInputs):
+    image_sizes = flatten_nested_list(
+        [item.image_sizes for item in image_inputs.mm_items]
+    )
+
+    pad_values = [item.pad_value for item in image_inputs.mm_items]
+
+    # hardcode for spatial_unpad + anyres
+    if any(
+        item.modality == Modality.MULTI_IMAGES or item.modality == Modality.VIDEO
+        for item in image_inputs.mm_items
+    ):
+        image_aspect_ratio = &#34;pad&#34;
+    else:
+        image_aspect_ratio = &#34;anyres&#34;
+    offset_list = []
+    image_inputs.image_pad_len = []
+    for image_idx, image_s in enumerate(image_sizes):
+        if len(image_sizes) &gt; 16:
+            # 2x2 pooling with stride 2
+            new_image_feature_len = (
+                math.ceil(self.image_size / self.patch_size / 2) ** 2
+            )
+        else:
+            new_image_feature_len = self.image_feature_len  # multi-image
+
+        height = width = self.num_patches_per_side
+        if &#34;anyres&#34; in image_aspect_ratio:
+            num_patch_width, num_patch_height = get_anyres_image_grid_shape(
+                image_s,
+                self.image_grid_pinpoints,
+                self.vision_tower.config.image_size,
+            )
+            h = num_patch_height * height
+            w = num_patch_width * width
+            new_h, new_w = unpad_image_shape(h, w, image_s)
+
+            if &#34;anyres_max&#34; in self.config.image_aspect_ratio:
+                matched_anyres_max_num_patches = re.match(
+                    r&#34;anyres_max_(\d+)&#34;, self.config.image_aspect_ratio
+                )
+                if matched_anyres_max_num_patches:
+                    max_num_patches = int(matched_anyres_max_num_patches.group(1))
+                # times = math.sqrt(h * w / (max_num_patches * unit**2))
+                times = math.sqrt(
+                    new_h * new_w / (max_num_patches * self.image_feature_len)
+                )
+                if times &gt; 1.1:
+                    new_h = int(new_h // times)
+                    new_w = int(new_w // times)
+            new_image_feature_len += new_h * (new_w + 1)
+
+        try:
+            offset = input_ids.index(self.config.image_token_index)
+        except ValueError:
+            offset = 0
+        # old_len + pad_len - 1, because we need to remove image_token_id
+        input_ids = (
+            input_ids[:offset]
+            + [pad_values[image_idx % len(pad_values)]] * new_image_feature_len
+            + input_ids[offset + 1 :]
+        )
+        offset_list.append(offset)
+        image_inputs.image_pad_len.append(new_image_feature_len)
+
+    image_inputs.image_offsets = offset_list
+    return input_ids</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration"><code class="flex name class">
+<span>class <span class="ident">LlavaForConditionalGeneration</span></span>
+<span>(</span><span>config: transformers.models.llava.configuration_llava.LlavaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlavaForConditionalGeneration(LlavaBaseForCausalLM):
+    &#34;&#34;&#34;
+    An adaptor class to enable support for multiple mmlm such as mistral-community/pixtral-12b
+    It follows the structure of (vision_tower, multi_modal_projector, language_model)
+
+    Once a model config is loaded, text_config and vision_config will be extracted, and
+    LlavaForConditionalGeneration will load the language_model and vision_tower models
+    according to config.
+    &#34;&#34;&#34;
+
+    MULTIMODAL_PROJECTOR_TYPE = LlavaMultiModalProjector
+
+    @property
+    def dtype(self):
+        return self.torch_dtype
+
+    def pad_input_ids(self, input_ids: List[int], image_inputs: MultimodalInputs):
+        if hasattr(self.vision_tower, &#34;pad_input_ids&#34;):
+            return self.vision_tower.pad_input_ids(input_ids, image_inputs)
+        else:
+            return super().pad_input_ids(input_ids, image_inputs)
+
+    def _get_sgl_model_cls(self, config, auto_model_type: Type[AutoModel] = AutoModel):
+        &#34;&#34;&#34;
+        Get the SGLang model implementation class according to config.
+
+        Args:
+            config: The config object of the model.
+            auto_model_type: The type of the auto model.
+
+        Returns:
+            The SGLang model implementation class.
+        &#34;&#34;&#34;
+        config_cls_name = config.__class__.__name__
+        arch_name_mapping = self._config_cls_name_to_arch_name_mapping(auto_model_type)
+        if arch := arch_name_mapping.get(config_cls_name):
+            if isinstance(arch, tuple):
+                arch = arch[0]
+                logger.warning(
+                    f&#34;Multiple {auto_model_type.__name__} models found for submodule config `{config_cls_name}`, defaulting to [0]: {arch.__name__}&#34;
+                )
+            try:
+                return sgl_models.registry.ModelRegistry.resolve_model_cls(arch)[0]
+            except Exception as e:
+                raise ValueError(
+                    f&#34;{auto_model_type.__name__} found a corresponding model `{arch}` for config class `{config_cls_name}`, but failed to load it from SGLang ModelRegistry. \n{e}&#34;
+                )
+        else:
+            raise ValueError(
+                f&#34;{auto_model_type.__name__} cannot find a corresponding model for config class `{config_cls_name}`&#34;
+            )
+
+    @lru_cache
+    def _config_cls_name_to_arch_name_mapping(
+        self, auto_model_type: Type[AutoModel]
+    ) -&gt; Dict[str, str]:
+        mapping = {}
+        for config_cls in auto_model_type._model_mapping.keys():
+            archs = auto_model_type._model_mapping.get(config_cls, None)
+            if archs is not None:
+                if isinstance(archs, tuple):
+                    mapping[config_cls.__name__] = tuple(
+                        arch.__name__ for arch in archs
+                    )
+                else:
+                    mapping[config_cls.__name__] = archs.__name__
+        return mapping
+
+    def __init__(
+        self,
+        config: LlavaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+
+        assert hasattr(config, &#34;text_config&#34;)
+        assert hasattr(config, &#34;vision_config&#34;)
+        self.config = config
+        self.text_config = self.config.text_config
+        self.vision_config = self.config.vision_config
+        self.torch_dtype = getattr(self.config, &#34;torch_dtype&#34;)
+
+        if not getattr(self.text_config, &#34;torch_dtype&#34;):
+            self.text_config.torch_dtype = self.torch_dtype
+        if not getattr(self.vision_config, &#34;torch_dtype&#34;):
+            self.vision_config.torch_dtype = self.torch_dtype
+
+        if not hasattr(self.config, &#34;vocab_size&#34;):
+            self.config.vocab_size = self.text_config.vocab_size
+        if not hasattr(self.config, &#34;image_aspect_ratio&#34;):
+            self.config.image_aspect_ratio = &#34;anyres&#34;
+        if not hasattr(self.config, &#34;image_grid_pinpoints&#34;):
+            # from transformers.models.llava_onevision.configuration_llava_onevision import LlavaOnevisionConfig
+            # self.config.image_grid_pinpoints = LlavaOnevisionConfig().image_grid_pinpoints
+            self.config.image_grid_pinpoints = [
+                [96, 96],
+                [224, 224],
+                [384, 384],
+                [512, 512],
+                [768, 768],
+                [1024, 1024],
+            ]
+        if not hasattr(self.config, &#34;mm_patch_merge_type&#34;):
+            self.config.mm_patch_merge_type = &#34;flat&#34;
+        if not hasattr(self.config, &#34;image_token_index&#34;):
+            self.config.image_token_index = 10
+        if not hasattr(self.config, &#34;projector_hidden_act&#34;):
+            self.config.projector_hidden_act = &#34;gelu&#34;
+
+        self.vision_feature_layer = getattr(self.config, &#34;vision_feature_layer&#34;, -1)
+        self.vision_feature_select_strategy = getattr(
+            self.config, &#34;vision_feature_select_strategy&#34;, &#34;full&#34;
+        )
+        self.image_size = self.vision_config.image_size
+        self.patch_size = self.vision_config.patch_size
+
+        self.mm_patch_merge_type = self.config.mm_patch_merge_type
+        self.image_aspect_ratio = self.config.image_aspect_ratio
+        self.image_grid_pinpoints = self.config.image_grid_pinpoints
+
+        self.image_feature_len = int((self.image_size // self.patch_size) ** 2)
+
+        self.multi_modal_projector = self.MULTIMODAL_PROJECTOR_TYPE(config)
+
+        language_model_cls = self._get_sgl_model_cls(
+            self.text_config, AutoModelForCausalLM
+        )
+        vision_model_cls = self._get_sgl_model_cls(self.vision_config, AutoModel)
+        self.language_model = language_model_cls(
+            self.text_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        self.vision_tower = vision_model_cls(
+            self.vision_config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;vision_tower&#34;, prefix),
+        )
+
+        if &#34;unpad&#34; in getattr(self.config, &#34;mm_patch_merge_type&#34;, &#34;&#34;):
+            self.language_model.model.image_newline = nn.Parameter(
+                torch.empty(self.text_config.hidden_size, dtype=self.torch_dtype)
+            )
+
+    def get_image_feature(self, items: List[MultimodalDataItem]) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Extract features from image inputs.
+
+        Args:
+            items: List of MultimodalDataItem objects containing image data
+                Note that an item can be either &#34;image&#34; or &#34;multi-images&#34;
+
+        Returns:
+            torch.Tensor: features from image inputs, concatenated
+        &#34;&#34;&#34;
+        features = []
+        for item in items:
+            # in each item, we assume pixel_values is always batched
+            pixel_values, image_sizes = item.feature, item.image_sizes
+            image_outputs = self.vision_tower(
+                pixel_values, image_sizes, output_hidden_states=True
+            )
+            selected_image_feature = image_outputs.hidden_states[
+                self.vision_feature_layer
+            ]
+
+            if self.vision_feature_select_strategy in [&#34;default&#34;, &#34;patch&#34;]:
+                selected_image_feature = selected_image_feature[:, 1:]
+            elif self.vision_feature_select_strategy == &#34;full&#34;:
+                selected_image_feature = selected_image_feature
+            else:
+                raise ValueError(
+                    f&#34;Unexpected select feature: {self.vision_feature_select_strategy}&#34;
+                )
+            features.append(
+                self.multi_modal_projector(selected_image_feature.squeeze(0))
+            )
+        ret = torch.cat(features, dim=0)
+        return ret
+
+    def forward(
+        self,
+        input_ids: torch.Tensor,
+        positions: torch.Tensor,
+        forward_batch: ForwardBatch,
+        get_embedding: bool = False,
+    ):
+        hidden_states = general_mm_embed_routine(
+            input_ids=input_ids,
+            forward_batch=forward_batch,
+            get_embedding=get_embedding,
+            language_model=self.language_model,
+            data_embedding_funcs={
+                Modality.IMAGE: self.get_image_feature,
+            },
+            placeholder_tokens=None,  # using mm_item.pad_value
+            positions=positions,
+        )
+
+        return hidden_states
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        &#34;&#34;&#34;Load weights for LlavaForConditionalGeneration.
+
+        Unlike the base class implementation, this one doesn&#39;t need to handle
+        weight name remapping as the weights are already properly structured with
+        &#39;language_model&#39; and &#39;vision_tower&#39; prefixes in the safetensors files.
+        &#34;&#34;&#34;
+        if (
+            self.vision_feature_select_strategy == &#34;patch&#34;
+            or self.vision_feature_select_strategy == &#34;full&#34;
+        ):
+            pass
+        elif self.vision_feature_select_strategy == &#34;cls_patch&#34;:
+            self.image_feature_len += 1
+        else:
+            raise ValueError(
+                f&#34;Unexpected select feature: {self.vision_feature_select_strategy}&#34;
+            )
+
+        # Create dictionaries for direct parameter loading
+        params_dict = dict(self.named_parameters())
+
+        # Load weights directly without remapping
+        for name, loaded_weight in weights:
+            for part in (&#34;language_model&#34;, &#34;vision_tower&#34;):
+                if name.startswith(part):
+                    name = name[len(part + &#34;.&#34;) :]
+                    getattr(self, part).load_weights([(name, loaded_weight)])
+                    break
+            else:
+                param = params_dict[name]
+                weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+                weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>An adaptor class to enable support for multiple mmlm such as mistral-community/pixtral-12b
+It follows the structure of (vision_tower, multi_modal_projector, language_model)</p>
+<p>Once a model config is loaded, text_config and vision_config will be extracted, and
+LlavaForConditionalGeneration will load the language_model and vision_tower models
+according to config.</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration.MULTIMODAL_PROJECTOR_TYPE"><code class="name">var <span class="ident">MULTIMODAL_PROJECTOR_TYPE</span></code></dt>
+<dd>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration.dtype"><code class="name">prop <span class="ident">dtype</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dtype(self):
+    return self.torch_dtype</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>input_ids: torch.Tensor,<br>positions: torch.Tensor,<br>forward_batch: <a title="sglang.srt.model_executor.forward_batch_info.ForwardBatch" href="../model_executor/forward_batch_info.html#sglang.srt.model_executor.forward_batch_info.ForwardBatch">ForwardBatch</a>,<br>get_embedding: bool = False) ‑> Callable[..., Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    input_ids: torch.Tensor,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    get_embedding: bool = False,
+):
+    hidden_states = general_mm_embed_routine(
+        input_ids=input_ids,
+        forward_batch=forward_batch,
+        get_embedding=get_embedding,
+        language_model=self.language_model,
+        data_embedding_funcs={
+            Modality.IMAGE: self.get_image_feature,
+        },
+        placeholder_tokens=None,  # using mm_item.pad_value
+        positions=positions,
+    )
+
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration.get_image_feature"><code class="name flex">
+<span>def <span class="ident">get_image_feature</span></span>(<span>self,<br>items: List[<a title="sglang.srt.managers.schedule_batch.MultimodalDataItem" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalDataItem">MultimodalDataItem</a>]) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_image_feature(self, items: List[MultimodalDataItem]) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Extract features from image inputs.
+
+    Args:
+        items: List of MultimodalDataItem objects containing image data
+            Note that an item can be either &#34;image&#34; or &#34;multi-images&#34;
+
+    Returns:
+        torch.Tensor: features from image inputs, concatenated
+    &#34;&#34;&#34;
+    features = []
+    for item in items:
+        # in each item, we assume pixel_values is always batched
+        pixel_values, image_sizes = item.feature, item.image_sizes
+        image_outputs = self.vision_tower(
+            pixel_values, image_sizes, output_hidden_states=True
+        )
+        selected_image_feature = image_outputs.hidden_states[
+            self.vision_feature_layer
+        ]
+
+        if self.vision_feature_select_strategy in [&#34;default&#34;, &#34;patch&#34;]:
+            selected_image_feature = selected_image_feature[:, 1:]
+        elif self.vision_feature_select_strategy == &#34;full&#34;:
+            selected_image_feature = selected_image_feature
+        else:
+            raise ValueError(
+                f&#34;Unexpected select feature: {self.vision_feature_select_strategy}&#34;
+            )
+        features.append(
+            self.multi_modal_projector(selected_image_feature.squeeze(0))
+        )
+    ret = torch.cat(features, dim=0)
+    return ret</code></pre>
+</details>
+<div class="desc"><p>Extract features from image inputs.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>items</code></strong></dt>
+<dd>List of MultimodalDataItem objects containing image data
+Note that an item can be either "image" or "multi-images"</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>torch.Tensor</code></dt>
+<dd>features from image inputs, concatenated</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration.load_weights"><code class="name flex">
+<span>def <span class="ident">load_weights</span></span>(<span>self, weights: Iterable[Tuple[str, torch.Tensor]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+    &#34;&#34;&#34;Load weights for LlavaForConditionalGeneration.
+
+    Unlike the base class implementation, this one doesn&#39;t need to handle
+    weight name remapping as the weights are already properly structured with
+    &#39;language_model&#39; and &#39;vision_tower&#39; prefixes in the safetensors files.
+    &#34;&#34;&#34;
+    if (
+        self.vision_feature_select_strategy == &#34;patch&#34;
+        or self.vision_feature_select_strategy == &#34;full&#34;
+    ):
+        pass
+    elif self.vision_feature_select_strategy == &#34;cls_patch&#34;:
+        self.image_feature_len += 1
+    else:
+        raise ValueError(
+            f&#34;Unexpected select feature: {self.vision_feature_select_strategy}&#34;
+        )
+
+    # Create dictionaries for direct parameter loading
+    params_dict = dict(self.named_parameters())
+
+    # Load weights directly without remapping
+    for name, loaded_weight in weights:
+        for part in (&#34;language_model&#34;, &#34;vision_tower&#34;):
+            if name.startswith(part):
+                name = name[len(part + &#34;.&#34;) :]
+                getattr(self, part).load_weights([(name, loaded_weight)])
+                break
+        else:
+            param = params_dict[name]
+            weight_loader = getattr(param, &#34;weight_loader&#34;, default_weight_loader)
+            weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Load weights for LlavaForConditionalGeneration.</p>
+<p>Unlike the base class implementation, this one doesn't need to handle
+weight name remapping as the weights are already properly structured with
+'language_model' and 'vision_tower' prefixes in the safetensors files.</p></div>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaForConditionalGeneration.pad_input_ids"><code class="name flex">
+<span>def <span class="ident">pad_input_ids</span></span>(<span>self,<br>input_ids: List[int],<br>image_inputs: <a title="sglang.srt.managers.schedule_batch.MultimodalInputs" href="../managers/schedule_batch.html#sglang.srt.managers.schedule_batch.MultimodalInputs">MultimodalInputs</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pad_input_ids(self, input_ids: List[int], image_inputs: MultimodalInputs):
+    if hasattr(self.vision_tower, &#34;pad_input_ids&#34;):
+        return self.vision_tower.pad_input_ids(input_ids, image_inputs)
+    else:
+        return super().pad_input_ids(input_ids, image_inputs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images">encode_images</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaLlamaForCausalLM"><code class="flex name class">
+<span>class <span class="ident">LlavaLlamaForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llava.configuration_llava.LlavaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlavaLlamaForCausalLM(LlavaBaseForCausalLM):
+    def __init__(
+        self,
+        config: LlavaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+
+        self.config = config
+        self.vision_tower = None
+        self.config.vision_config.hidden_size = config.mm_hidden_size
+        self.config.text_config.hidden_size = config.hidden_size
+
+        self.multi_modal_projector = LlavaMultiModalProjector(config)
+        self.language_model = LlamaForCausalLM(
+            config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        if &#34;unpad&#34; in getattr(config, &#34;mm_patch_merge_type&#34;, &#34;&#34;):
+            self.language_model.model.image_newline = nn.Parameter(
+                torch.empty(config.text_config.hidden_size, dtype=torch.float16)
+            )</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.yivl.YiVLForCausalLM" href="yivl.html#sglang.srt.models.yivl.YiVLForCausalLM">YiVLForCausalLM</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images">encode_images</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaMistralForCausalLM"><code class="flex name class">
+<span>class <span class="ident">LlavaMistralForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llava.configuration_llava.LlavaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlavaMistralForCausalLM(LlavaBaseForCausalLM):
+    def __init__(
+        self,
+        config: LlavaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+
+        self.config = config
+        self.vision_tower = None
+
+        if getattr(self.config, &#34;vision_config&#34;, None) is None:
+            self.config.vision_config = CLIPVisionConfig(self.config.mm_vision_tower)
+        if getattr(self.config, &#34;text_config&#34;, None) is None:
+            self.config.text_config = MistralConfig(self.config._name_or_path)
+
+        self.config.vision_config.hidden_size = config.mm_hidden_size
+        self.config.text_config.hidden_size = config.hidden_size
+
+        if getattr(self.config, &#34;projector_hidden_act&#34;, None) is None:
+            self.config.projector_hidden_act = &#34;gelu&#34;
+        if getattr(self.config, &#34;image_token_index&#34;, None) is None:
+            self.config.image_token_index = 32000
+
+        self.multi_modal_projector = LlavaMultiModalProjector(config)
+        self.language_model = MistralForCausalLM(
+            config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        if &#34;unpad&#34; in getattr(config, &#34;mm_patch_merge_type&#34;, &#34;&#34;):
+            self.language_model.model.image_newline = nn.Parameter(
+                torch.empty(config.text_config.hidden_size, dtype=torch.float16)
+            )</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images">encode_images</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.models.llava.LlavaQwenForCausalLM"><code class="flex name class">
+<span>class <span class="ident">LlavaQwenForCausalLM</span></span>
+<span>(</span><span>config: transformers.models.llava.configuration_llava.LlavaConfig,<br>quant_config: <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a> | None = None,<br>prefix: str = '')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LlavaQwenForCausalLM(LlavaBaseForCausalLM):
+    def __init__(
+        self,
+        config: LlavaConfig,
+        quant_config: Optional[QuantizationConfig] = None,
+        prefix: str = &#34;&#34;,
+    ) -&gt; None:
+        super().__init__()
+
+        self.config = config
+        self.vision_tower = None
+
+        if getattr(self.config, &#34;vision_config&#34;, None) is None:
+            self.config.vision_config = CLIPVisionConfig(self.config.mm_vision_tower)
+        if getattr(self.config, &#34;text_config&#34;, None) is None:
+            self.config.text_config = Qwen2Config(self.config._name_or_path)
+
+        self.config.vision_config.hidden_size = config.mm_hidden_size
+        self.config.text_config.hidden_size = config.hidden_size
+
+        if getattr(self.config, &#34;projector_hidden_act&#34;, None) is None:
+            self.config.projector_hidden_act = &#34;gelu&#34;
+        if getattr(self.config, &#34;image_token_index&#34;, None) is None:
+            self.config.image_token_index = 151646
+
+        self.multi_modal_projector = LlavaMultiModalProjector(config)
+        self.language_model = Qwen2ForCausalLM(
+            config,
+            quant_config=quant_config,
+            prefix=add_prefix(&#34;language_model&#34;, prefix),
+        )
+        if &#34;unpad&#34; in getattr(config, &#34;mm_patch_merge_type&#34;, &#34;&#34;):
+            self.language_model.model.image_newline = nn.Parameter(
+                torch.empty(config.text_config.hidden_size, dtype=torch.float16)
+            )</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></li>
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images">encode_images</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM" href="#sglang.srt.models.llava.LlavaBaseForCausalLM">LlavaBaseForCausalLM</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.encode_images">encode_images</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.forward" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.load_weights" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.num_patches_per_side" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.num_patches_per_side">num_patches_per_side</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaBaseForCausalLM.pad_input_ids" href="#sglang.srt.models.llava.LlavaBaseForCausalLM.pad_input_ids">pad_input_ids</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration" href="#sglang.srt.models.llava.LlavaForConditionalGeneration">LlavaForConditionalGeneration</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration.MULTIMODAL_PROJECTOR_TYPE" href="#sglang.srt.models.llava.LlavaForConditionalGeneration.MULTIMODAL_PROJECTOR_TYPE">MULTIMODAL_PROJECTOR_TYPE</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration.dtype" href="#sglang.srt.models.llava.LlavaForConditionalGeneration.dtype">dtype</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration.forward" href="#sglang.srt.models.llava.LlavaForConditionalGeneration.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration.get_image_feature" href="#sglang.srt.models.llava.LlavaForConditionalGeneration.get_image_feature">get_image_feature</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration.load_weights" href="#sglang.srt.models.llava.LlavaForConditionalGeneration.load_weights">load_weights</a></code></li>
+<li><code><a title="sglang.srt.models.llava.LlavaForConditionalGeneration.pad_input_ids" href="#sglang.srt.models.llava.LlavaForConditionalGeneration.pad_input_ids">pad_input_ids</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llava.LlavaLlamaForCausalLM" href="#sglang.srt.models.llava.LlavaLlamaForCausalLM">LlavaLlamaForCausalLM</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llava.LlavaMistralForCausalLM" href="#sglang.srt.models.llava.LlavaMistralForCausalLM">LlavaMistralForCausalLM</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.llava.LlavaQwenForCausalLM" href="#sglang.srt.models.llava.LlavaQwenForCausalLM">LlavaQwenForCausalLM</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

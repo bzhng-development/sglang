@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod"><code class="flex name class">
+<span>class <span class="ident">CompressedTensorsMoEMethod</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CompressedTensorsMoEMethod(FusedMoEMethodBase):
+    def __new__(cls, *args, **kwargs):
+        if cls is CompressedTensorsMoEMethod:
+            return super().__new__(cls)
+        return super().__new__(cls)
+
+    @staticmethod
+    def get_moe_method(
+        quant_config: CompressedTensorsConfig,
+    ) -&gt; &#34;CompressedTensorsMoEMethod&#34;:
+        # TODO: @dsikka: refactor this to use schemes as other kernels
+        # are supported + check if the layer is being ignored.
+        weight_quant = quant_config.target_scheme_map[&#34;Linear&#34;].get(&#34;weights&#34;)
+        input_quant = quant_config.target_scheme_map[&#34;Linear&#34;].get(&#34;input_activations&#34;)
+
+        if quant_config._is_wNa16_group_channel(weight_quant, input_quant):
+            if not VLLM_AVAILABLE:
+                raise ImportError(
+                    &#34;vllm is not installed, to use CompressedTensorsWNA16MoEMethod, please install vllm.&#34;
+                )
+            return CompressedTensorsWNA16MoEMethod(quant_config)
+        elif quant_config._is_fp8_w8a8(weight_quant, input_quant):
+            return CompressedTensorsW8A8Fp8MoEMethod(quant_config)
+        else:
+            raise RuntimeError(
+                f&#34;Unsupported FusedMoe scheme: {weight_quant}, {input_quant}&#34;
+            )</code></pre>
+</details>
+<div class="desc"><p>Base class for different quantized methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsW8A8Fp8MoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsW8A8Fp8MoEMethod">CompressedTensorsW8A8Fp8MoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsWNA16MoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsWNA16MoEMethod">CompressedTensorsWNA16MoEMethod</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.get_moe_method"><code class="name flex">
+<span>def <span class="ident">get_moe_method</span></span>(<span>quant_config: CompressedTensorsConfig) ‑> '<a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a>'</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_moe_method(
+    quant_config: CompressedTensorsConfig,
+) -&gt; &#34;CompressedTensorsMoEMethod&#34;:
+    # TODO: @dsikka: refactor this to use schemes as other kernels
+    # are supported + check if the layer is being ignored.
+    weight_quant = quant_config.target_scheme_map[&#34;Linear&#34;].get(&#34;weights&#34;)
+    input_quant = quant_config.target_scheme_map[&#34;Linear&#34;].get(&#34;input_activations&#34;)
+
+    if quant_config._is_wNa16_group_channel(weight_quant, input_quant):
+        if not VLLM_AVAILABLE:
+            raise ImportError(
+                &#34;vllm is not installed, to use CompressedTensorsWNA16MoEMethod, please install vllm.&#34;
+            )
+        return CompressedTensorsWNA16MoEMethod(quant_config)
+    elif quant_config._is_fp8_w8a8(weight_quant, input_quant):
+        return CompressedTensorsW8A8Fp8MoEMethod(quant_config)
+    else:
+        raise RuntimeError(
+            f&#34;Unsupported FusedMoe scheme: {weight_quant}, {input_quant}&#34;
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.apply" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.create_weights" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.process_weights_after_loading" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsW8A8Fp8MoEMethod"><code class="flex name class">
+<span>class <span class="ident">CompressedTensorsW8A8Fp8MoEMethod</span></span>
+<span>(</span><span>quant_config: CompressedTensorsConfig)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CompressedTensorsW8A8Fp8MoEMethod(CompressedTensorsMoEMethod):
+
+    def __init__(self, quant_config: CompressedTensorsConfig):
+        self.quant_config = quant_config
+        self.weight_quant = self.quant_config.target_scheme_map[&#34;Linear&#34;].get(&#34;weights&#34;)
+        self.input_quant = self.quant_config.target_scheme_map[&#34;Linear&#34;].get(
+            &#34;input_activations&#34;
+        )
+
+        self.static_input_scales = not self.input_quant.dynamic
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size_per_partition: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoeWeightScaleSupported
+
+        params_dtype = torch.float8_e4m3fn
+
+        # WEIGHTS
+        w13_weight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                2 * intermediate_size_per_partition,
+                hidden_size,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight&#34;, w13_weight)
+        set_weight_attrs(w13_weight, extra_weight_attrs)
+
+        w2_weight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                intermediate_size_per_partition,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight&#34;, w2_weight)
+        set_weight_attrs(w2_weight, extra_weight_attrs)
+
+        # WEIGHT_SCALES
+        # per-tensor quantization
+        if self.weight_quant.strategy == QuantizationStrategy.TENSOR:
+            # Allocate 2 scales for w1 and w3 respectively.
+            # They will be combined to a single scale after weight loading.
+            w13_weight_scale = torch.nn.Parameter(
+                torch.ones(num_experts, 2, dtype=torch.float32), requires_grad=False
+            )
+            w2_weight_scale = torch.nn.Parameter(
+                torch.ones(num_experts, dtype=torch.float32), requires_grad=False
+            )
+            weight_quant_method = FusedMoeWeightScaleSupported.TENSOR.value
+        elif self.weight_quant.strategy == QuantizationStrategy.CHANNEL:
+            w13_weight_scale = torch.nn.Parameter(
+                torch.ones(
+                    num_experts,
+                    2 * intermediate_size_per_partition,
+                    1,
+                    dtype=torch.float32,
+                ),
+                requires_grad=False,
+            )
+            w2_weight_scale = torch.nn.Parameter(
+                torch.ones(num_experts, hidden_size, 1, dtype=torch.float32),
+                requires_grad=False,
+            )
+            weight_quant_method = FusedMoeWeightScaleSupported.CHANNEL.value
+        else:
+            raise ValueError(
+                f&#34;Unsupported weight quantization strategy: {self.weight_quant.strategy}&#34;
+            )
+
+        layer.register_parameter(&#34;w13_weight_scale&#34;, w13_weight_scale)
+        layer.register_parameter(&#34;w2_weight_scale&#34;, w2_weight_scale)
+        # Add the quantization method used (per tensor/grouped/channel)
+        # to ensure the weight scales are loaded in properly
+        extra_weight_attrs.update({&#34;quant_method&#34;: weight_quant_method})
+        set_weight_attrs(w13_weight_scale, extra_weight_attrs)
+        set_weight_attrs(w2_weight_scale, extra_weight_attrs)
+
+        # INPUT_SCALES
+        if self.static_input_scales:
+            assert (
+                self.input_quant.strategy == QuantizationStrategy.TENSOR
+            ), &#34;Only per-tensor quantization is supported for static input scales&#34;
+            w13_input_scale = torch.nn.Parameter(
+                torch.ones(num_experts, dtype=torch.float32), requires_grad=False
+            )
+            layer.register_parameter(&#34;w13_input_scale&#34;, w13_input_scale)
+            set_weight_attrs(w13_input_scale, extra_weight_attrs)
+
+            w2_input_scale = torch.nn.Parameter(
+                torch.ones(num_experts, dtype=torch.float32), requires_grad=False
+            )
+            layer.register_parameter(&#34;w2_input_scale&#34;, w2_input_scale)
+            set_weight_attrs(w2_input_scale, extra_weight_attrs)
+        else:
+            layer.w13_input_scale = None
+            layer.w2_input_scale = None
+
+    def process_weights_after_loading(self, layer: FusedMoE) -&gt; None:
+        # Fp8 moe kernels require a single activation scale.
+        # We take the max of all the scales in case they differ.
+        if self.static_input_scales:
+            if layer.w13_input_scale is None or layer.w2_input_scale is None:
+                raise ValueError(
+                    &#34;QuantConfig has static quantization, but found &#34;
+                    &#34;activation scales are None.&#34;
+                )
+            if not all_close_1d(layer.w13_input_scale) or not all_close_1d(
+                layer.w2_input_scale
+            ):
+                logger.warning(
+                    &#34;Found input_scales that are not equal for &#34;
+                    &#34;fp8 MoE layer. Using the maximum across experts &#34;
+                    &#34;for each layer.&#34;
+                )
+            layer.w13_input_scale = torch.nn.Parameter(
+                layer.w13_input_scale.max(), requires_grad=False
+            )
+            layer.w2_input_scale = torch.nn.Parameter(
+                layer.w2_input_scale.max(), requires_grad=False
+            )
+
+        if is_fp8_fnuz():
+            # Normalize the weights and scales
+            w13_weight, w13_weight_scale, w13_input_scale = (
+                normalize_e4m3fn_to_e4m3fnuz(
+                    layer.w13_weight, layer.w13_weight_scale, layer.w13_input_scale
+                )
+            )
+            w2_weight, w2_weight_scale, w2_input_scale = normalize_e4m3fn_to_e4m3fnuz(
+                layer.w2_weight, layer.w2_weight_scale, layer.w2_input_scale
+            )
+            # Reset the parameter
+            layer.w13_weight = torch.nn.Parameter(w13_weight, requires_grad=False)
+            layer.w13_weight_scale = torch.nn.Parameter(
+                w13_weight_scale, requires_grad=False
+            )
+            if w13_input_scale is not None:
+                layer.w13_input_scale = torch.nn.Parameter(
+                    w13_input_scale, requires_grad=False
+                )
+            layer.w2_weight = torch.nn.Parameter(w2_weight, requires_grad=False)
+            layer.w2_weight_scale = torch.nn.Parameter(
+                w2_weight_scale, requires_grad=False
+            )
+            if w2_input_scale is not None:
+                layer.w2_input_scale = torch.nn.Parameter(
+                    w2_input_scale, requires_grad=False
+                )
+        if self.weight_quant.strategy == QuantizationStrategy.TENSOR:
+            # Fp8 moe kernel needs single weight scale for w13 per expert.
+            # We take the max then dequant and requant each expert.
+            assert layer.w13_weight_scale is not None
+            shard_size = layer.intermediate_size_per_partition
+            max_w13_scales = layer.w13_weight_scale.max(dim=1).values
+            for expert_id in range(layer.num_local_experts):
+                start = 0
+                for shard_id in range(2):
+                    dq_weight = per_tensor_dequantize(
+                        layer.w13_weight[expert_id][start : start + shard_size, :],
+                        layer.w13_weight_scale[expert_id][shard_id],
+                    )
+                    (
+                        layer.w13_weight[expert_id][start : start + shard_size, :],
+                        _,
+                    ) = scaled_fp8_quant(dq_weight, max_w13_scales[expert_id])
+
+                    start += shard_size
+
+            layer.w13_weight_scale = torch.nn.Parameter(
+                max_w13_scales, requires_grad=False
+            )
+
+        if _use_aiter:
+            with torch.no_grad():
+                # Pre-shuffle weights
+                layer.w13_weight = torch.nn.Parameter(
+                    shuffle_weight(layer.w13_weight.data, (16, 16)),
+                    requires_grad=False,
+                )
+                torch.cuda.empty_cache()
+                layer.w2_weight = torch.nn.Parameter(
+                    shuffle_weight(layer.w2_weight.data, (16, 16)),
+                    requires_grad=False,
+                )
+                torch.cuda.empty_cache()
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+        from sglang.srt.layers.moe.fused_moe_triton import fused_experts
+
+        if (
+            _use_aiter
+            and self.weight_quant.strategy == QuantizationStrategy.CHANNEL
+            and moe_runner_config.apply_router_weight_on_input
+        ):
+            topk_weights, topk_ids, _ = topk_output
+            return rocm_fused_experts_tkw1(
+                hidden_states=x,
+                w1=layer.w13_weight,
+                w2=layer.w2_weight,
+                topk_weights=topk_weights,
+                topk_ids=topk_ids,
+                activation=moe_runner_config.activation,
+                apply_router_weight_on_input=moe_runner_config.apply_router_weight_on_input,
+                use_fp8_w8a8=True,
+                per_channel_quant=self.weight_quant.strategy
+                == QuantizationStrategy.CHANNEL,
+                w1_scale=layer.w13_weight_scale,
+                w2_scale=layer.w2_weight_scale,
+                a1_scale=layer.w13_input_scale,
+                a2_scale=layer.w2_input_scale,
+            )
+        else:
+            return fused_experts(
+                x,
+                layer.w13_weight,
+                layer.w2_weight,
+                topk_output=topk_output,
+                moe_runner_config=moe_runner_config,
+                use_fp8_w8a8=True,
+                per_channel_quant=self.weight_quant.strategy
+                == QuantizationStrategy.CHANNEL,
+                w1_scale=layer.w13_weight_scale,
+                w2_scale=layer.w2_weight_scale,
+                a1_scale=layer.w13_input_scale,
+                a2_scale=layer.w2_input_scale,
+            )</code></pre>
+</details>
+<div class="desc"><p>Base class for different quantized methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.apply" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.create_weights" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.process_weights_after_loading" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsWNA16MoEMethod"><code class="flex name class">
+<span>class <span class="ident">CompressedTensorsWNA16MoEMethod</span></span>
+<span>(</span><span>quant_config: CompressedTensorsConfig)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CompressedTensorsWNA16MoEMethod(CompressedTensorsMoEMethod):
+
+    def __init__(self, quant_config: CompressedTensorsConfig):
+        self.quant_config = quant_config
+        # TODO: @dsikka: refactor this to use schemes as other kernels
+        # are supported + check if the layer is being ignored.
+        config = self.quant_config.target_scheme_map[&#34;Linear&#34;].get(&#34;weights&#34;)
+        self.num_bits = config.num_bits
+        self.packed_factor = 32 // config.num_bits
+        self.strategy = config.strategy
+        self.group_size = config.group_size
+        self.actorder = config.actorder
+        assert config.symmetric, &#34;Only symmetric quantization is supported for MoE&#34;
+
+        if not (
+            self.quant_config.quant_format == CompressionFormat.pack_quantized.value
+            and self.num_bits in WNA16_SUPPORTED_BITS
+        ):
+            raise ValueError(
+                &#34;For Fused MoE layers, only &#34;,
+                f&#34;{CompressionFormat.pack_quantized.value} &#34;,
+                &#34;is supported for the following bits: &#34;,
+                f&#34;{WNA16_SUPPORTED_BITS}&#34;,
+            )
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size_per_partition: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+
+        assert (
+            params_dtype == torch.float16
+        ), &#34;float16 is required for MoE compressed models. Set dtype=torch.float16&#34;  # noqa: E501
+
+        intermediate_size_full = extra_weight_attrs.pop(&#34;intermediate_size_full&#34;)
+
+        # Will transpose the loaded weight along the
+        # intermediate and hidden dim sizes. Will
+        # shard for TP along the transposed dims
+        extra_weight_attrs.update(
+            {&#34;is_transposed&#34;: True, &#34;quant_method&#34;: self.strategy}
+        )
+        w13_weight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size // self.packed_factor,
+                2 * intermediate_size_per_partition,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight_packed&#34;, w13_weight)
+        set_weight_attrs(w13_weight, extra_weight_attrs)
+
+        w2_weight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition // self.packed_factor,
+                hidden_size,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight_packed&#34;, w2_weight)
+        set_weight_attrs(w2_weight, extra_weight_attrs)
+
+        # In the case where we have actorder/g_idx,
+        # we do not partition the w2 scales
+        load_full_w2 = self.actorder and self.group_size != -1
+        w2_scales_size = (
+            intermediate_size_full if load_full_w2 else intermediate_size_per_partition
+        )
+
+        self.is_k_full = (not self.actorder) or (
+            intermediate_size_per_partition == intermediate_size_full
+        )
+
+        if self.strategy == &#34;channel&#34;:
+            num_groups_w2 = num_groups_w13 = 1
+            self.group_size = -1
+        else:
+            num_groups_w2 = w2_scales_size // self.group_size
+            num_groups_w13 = hidden_size // self.group_size
+
+        w13_scale = torch.nn.Parameter(
+            torch.ones(
+                num_experts,
+                num_groups_w13,
+                2 * intermediate_size_per_partition,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight_scale&#34;, w13_scale)
+        set_weight_attrs(w13_scale, extra_weight_attrs)
+
+        w2_scale = torch.nn.Parameter(
+            torch.ones(num_experts, num_groups_w2, hidden_size, dtype=params_dtype),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight_scale&#34;, w2_scale)
+        set_weight_attrs(w2_scale, extra_weight_attrs)
+        set_weight_attrs(w2_scale, {&#34;load_full_w2&#34;: load_full_w2})
+
+        w2_weight_shape = torch.nn.Parameter(
+            torch.empty(num_experts, 2), requires_grad=False
+        )
+        layer.register_parameter(&#34;w2_weight_shape&#34;, w2_weight_shape)
+        set_weight_attrs(w2_weight_shape, extra_weight_attrs)
+        w13_weight_shape = torch.nn.Parameter(
+            torch.empty(num_experts, 2), requires_grad=False
+        )
+
+        layer.register_parameter(&#34;w13_weight_shape&#34;, w13_weight_shape)
+        set_weight_attrs(w13_weight_shape, extra_weight_attrs)
+
+        w13_g_idx = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_weight_g_idx&#34;, w13_g_idx)
+        set_weight_attrs(w13_g_idx, extra_weight_attrs)
+
+        w2_g_idx = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_weight_g_idx&#34;, w2_g_idx)
+        set_weight_attrs(w2_g_idx, extra_weight_attrs)
+
+        w13_g_idx_sort_indices = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_g_idx_sort_indices&#34;, w13_g_idx_sort_indices)
+        set_weight_attrs(w13_g_idx_sort_indices, extra_weight_attrs)
+
+        w2_g_idx_sort_indices = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_g_idx_sort_indices&#34;, w2_g_idx_sort_indices)
+        set_weight_attrs(w2_g_idx_sort_indices, extra_weight_attrs)
+
+        layer.a13_scale = None
+        layer.a2_scale = None
+        layer.marlin_state = GPTQMarlinState.REPACK
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+
+        def replace_tensor(name, new_t):
+            # It is important to use resize_() here since it ensures
+            # the same buffer is reused
+            getattr(layer, name).resize_(new_t.shape)
+            getattr(layer, name).copy_(new_t)
+            del new_t
+
+        def get_scale_perms(num_bits: int):
+            scale_perm: List[int] = []
+            for i in range(8):
+                scale_perm.extend([i + 8 * j for j in range(8)])
+            scale_perm_single: List[int] = []
+            for i in range(4):
+                scale_perm_single.extend(
+                    [2 * i + j for j in [0, 1, 8, 9, 16, 17, 24, 25]]
+                )
+            return scale_perm, scale_perm_single
+
+        def marlin_permute_scales(
+            s: torch.Tensor, size_k: int, size_n: int, group_size: int, num_bits: int
+        ):
+            scale_perm, scale_perm_single = get_scale_perms(num_bits)
+            if group_size &lt; size_k and group_size != -1:
+                s = s.reshape((-1, len(scale_perm)))[:, scale_perm]
+            else:
+                s = s.reshape((-1, len(scale_perm_single)))[:, scale_perm_single]
+            s = s.reshape((-1, size_n)).contiguous()
+            return s
+
+        def marlin_moe_permute_scales(
+            s: torch.Tensor, size_k: int, size_n: int, group_size: int, num_bits: int
+        ):
+            num_experts = s.shape[0]
+            output = torch.empty(
+                (num_experts, s.shape[1], s.shape[2]), device=s.device, dtype=s.dtype
+            )
+            for e in range(num_experts):
+                output[e] = marlin_permute_scales(
+                    s[e], size_k, size_n, group_size, num_bits
+                )
+            return output
+
+        size_k2 = layer.w2_weight_packed.shape[2]
+        size_k13 = layer.w13_weight_packed.shape[2]
+
+        num_experts = layer.w13_weight_g_idx.shape[0]
+        device = layer.w13_weight_g_idx.device
+
+        # when running models with grouped act order,
+        # resort to g_idx values provided in checkpoint
+        if self.actorder == &#34;group&#34;:
+            w13_g_idx_sort_indices = torch.empty_like(layer.w13_weight_g_idx)
+            w2_g_idx_sort_indices = torch.empty_like(layer.w2_weight_g_idx)
+            w13_sorted_g_idx = torch.empty_like(layer.w13_weight_g_idx)
+            w2_sorted_g_idx = torch.empty_like(layer.w2_weight_g_idx)
+
+            for e in range(num_experts):
+                w13_g_idx_sort_indices[e] = torch.argsort(layer.w13_weight_g_idx[e]).to(
+                    torch.int32
+                )
+                w2_g_idx_sort_indices[e] = torch.argsort(layer.w2_weight_g_idx[e]).to(
+                    torch.int32
+                )
+                w13_sorted_g_idx[e] = layer.w13_weight_g_idx[e][
+                    w13_g_idx_sort_indices[e]
+                ]
+                w2_sorted_g_idx[e] = layer.w2_weight_g_idx[e][w2_g_idx_sort_indices[e]]
+
+            replace_parameter(layer, &#34;w13_weight_g_idx&#34;, w13_sorted_g_idx)
+            replace_parameter(layer, &#34;w2_weight_g_idx&#34;, w2_sorted_g_idx)
+            replace_parameter(layer, &#34;w13_g_idx_sort_indices&#34;, w13_g_idx_sort_indices)
+            replace_parameter(layer, &#34;w2_g_idx_sort_indices&#34;, w2_g_idx_sort_indices)
+
+        else:
+            layer.w13_weight_g_idx = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+            layer.w2_weight_g_idx = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+            layer.w13_g_idx_sort_indices = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+            layer.w2_g_idx_sort_indices = torch.nn.Parameter(
+                torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+                requires_grad=False,
+            )
+
+        from vllm import _custom_ops as vllm_ops
+
+        marlin_w13_qweight = vllm_ops.gptq_marlin_moe_repack(
+            layer.w13_weight_packed,
+            layer.w13_g_idx_sort_indices,
+            layer.w13_weight_packed.shape[1] * self.packed_factor,
+            layer.w13_weight_packed.shape[2],
+            self.num_bits,
+        )
+        replace_tensor(&#34;w13_weight_packed&#34;, marlin_w13_qweight)
+        marlin_w2_qweight = vllm_ops.gptq_marlin_moe_repack(
+            layer.w2_weight_packed,
+            layer.w2_g_idx_sort_indices,
+            layer.w2_weight_packed.shape[1] * self.packed_factor,
+            layer.w2_weight_packed.shape[2],
+            self.num_bits,
+        )
+        replace_tensor(&#34;w2_weight_packed&#34;, marlin_w2_qweight)
+        # Repack scales
+        marlin_w13_scales = marlin_moe_permute_scales(
+            layer.w13_weight_scale,
+            size_k13,
+            layer.w13_weight_scale.shape[2],
+            self.group_size,
+            self.num_bits,
+        )
+        replace_tensor(&#34;w13_weight_scale&#34;, marlin_w13_scales)
+        marlin_w2_scales = marlin_moe_permute_scales(
+            layer.w2_weight_scale,
+            layer.w2_weight_scale.shape[1]
+            * (self.group_size if self.group_size != -1 else self.packed_factor),
+            size_k2,
+            self.group_size,
+            self.num_bits,
+        )
+        replace_tensor(&#34;w2_weight_scale&#34;, marlin_w2_scales)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: TopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+
+        assert (
+            moe_runner_config.activation == &#34;silu&#34;
+        ), &#34;Only SiLU activation is supported.&#34;
+
+        topk_weights, topk_ids, router_logits = topk_output
+
+        return torch.ops.vllm.fused_marlin_moe(
+            x,
+            layer.w13_weight_packed,
+            layer.w2_weight_packed,
+            layer.w13_weight_scale,
+            layer.w2_weight_scale,
+            router_logits,
+            topk_weights,
+            topk_ids,
+            g_idx1=layer.w13_weight_g_idx,
+            g_idx2=layer.w2_weight_g_idx,
+            sort_indices1=layer.w13_g_idx_sort_indices,
+            sort_indices2=layer.w2_g_idx_sort_indices,
+            num_bits=self.num_bits,
+            is_k_full=self.is_k_full,
+        )</code></pre>
+</details>
+<div class="desc"><p>Base class for different quantized methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.apply" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.create_weights" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.process_weights_after_loading" href="../base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors" href="index.html">sglang.srt.layers.quantization.compressed_tensors</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod">CompressedTensorsMoEMethod</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.get_moe_method" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsMoEMethod.get_moe_method">get_moe_method</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsW8A8Fp8MoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsW8A8Fp8MoEMethod">CompressedTensorsW8A8Fp8MoEMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsWNA16MoEMethod" href="#sglang.srt.layers.quantization.compressed_tensors.compressed_tensors_moe.CompressedTensorsWNA16MoEMethod">CompressedTensorsWNA16MoEMethod</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
