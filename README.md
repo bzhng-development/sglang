@@ -60,6 +60,11 @@ The core features include:
 - [Frontend Tutorial](https://docs.sglang.ai/references/frontend/frontend_tutorial.html)
 - [Contribution Guide](https://docs.sglang.ai/developer_guide/contribution_guide.html)
 
+## Developer Resources
+- [Documentation Guide](docs/README.md) - How to build and contribute to documentation
+- [API Documentation Workflow](docs/dev/API_DOCUMENTATION_WORKFLOW.md) - Generate API reference docs
+- [Function Index Tool](tools/devdocs/function_index/generate_function_index.py) - Code analysis and coverage
+
 ## Benchmark and Performance
 Learn more in the release blogs: [v0.2 blog](https://lmsys.org/blog/2024-07-25-sglang-llama3/), [v0.3 blog](https://lmsys.org/blog/2024-09-04-sglang-v0-3/), [v0.4 blog](https://lmsys.org/blog/2024-12-04-sglang-v0-4/), [Large-scale expert parallelism](https://lmsys.org/blog/2025-05-05-large-scale-ep/).
 

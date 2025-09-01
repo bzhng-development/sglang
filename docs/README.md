@@ -3,6 +3,14 @@
 We recommend new contributors start from writing documentation, which helps you quickly understand SGLang codebase.
 Most documentation files are located under the `docs/` folder.
 
+## Documentation Systems
+
+SGLang uses multiple documentation approaches:
+
+1. **Sphinx Documentation** (Primary) - Main documentation with tutorials and guides
+2. **API Documentation** - Generated API reference using pdoc3
+3. **Function Index** - Code analysis and function listings
+
 ## Docs Workflow
 
 ### Install Dependency
@@ -43,6 +51,50 @@ find . -name '*.ipynb' -exec nbstripout {} \;
 # After these checks pass, push your changes and open a PR on your branch
 pre-commit run --all-files
 ```
+
+## API Documentation Generation
+
+### Generate API Documentation (pdoc3)
+
+For developers who want to generate comprehensive API documentation:
+
+```bash
+# Install sglang from source (required)
+pip install -e python/
+
+# Install pdoc3
+pip install pdoc3
+
+# Generate API documentation
+pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+
+# View the generated documentation
+# Open dev/refs/api/sglang/index.html in your browser
+```
+
+### Generate Function Index
+
+For code analysis and function coverage:
+
+```bash
+# Generate function index with improved minimal and readable formats
+python3 ../tools/devdocs/function_index/generate_function_index.py
+
+# Output files:
+# - dev/refs/code-index/function-index.json (detailed metadata)
+# - dev/refs/code-index/function-index-min.txt (minimal with types)
+# - dev/refs/code-index/function-index-readable.txt (human-readable)
+# - dev/refs/code-index/coverage.md (documentation coverage)
+```
+
+### Clean API Documentation
+
+```bash
+# Clean before regenerating to avoid duplication
+rm -rf dev/refs/api
+pdoc3 --html --output-dir dev/refs/api --skip-errors sglang
+```
+
 ---
 
 ## Documentation Style Guidelines
