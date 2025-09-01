@@ -1,0 +1,100 @@
+
+# python/sglang/srt/disaggregation/decode.py
+  DecodeReqToTokenPool.__init__(size: int, max_context_len: int, device: str, enable_memory_saver: bool, pre_alloc_size: int)
+  DecodeReqToTokenPool.write(indices, values)
+  DecodeReqToTokenPool.available_size()
+  DecodeReqToTokenPool.alloc(need_size: int) -> List[int]
+  DecodeReqToTokenPool.free(free_index: Union[int, List[int]])
+  DecodeReqToTokenPool.clear()
+  DecodePreallocQueue.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, draft_token_to_kv_pool: Optional[KVCache], req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, metadata_buffers: MetadataBuffers, scheduler: Scheduler, transfer_queue: DecodeTransferQueue, tree_cache: BasePrefixCache, gloo_group: ProcessGroup, tp_rank: int, tp_size: int, dp_size: int, gpu_id: int, bootstrap_port: int, max_total_num_tokens: int, prefill_pp_size: int, num_reserved_decode_tokens: int, transfer_backend: TransferBackend)
+  DecodePreallocQueue.add(req: Req, is_retracted: bool) -> None
+  DecodePreallocQueue.extend(reqs: List[Req], is_retracted: bool) -> None
+  DecodePreallocQueue.resume_retracted_reqs() -> List[Req]
+  DecodePreallocQueue.pop_preallocated() -> List[DecodeRequest]
+  DecodePreallocQueue.num_tokens_pre_allocated()
+  DecodeTransferQueue.__init__(gloo_group: ProcessGroup, req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, tp_rank: int, metadata_buffers: MetadataBuffers, scheduler: Scheduler, tree_cache: BasePrefixCache)
+  DecodeTransferQueue.add(decode_req: DecodeRequest) -> None
+  DecodeTransferQueue.extend(decode_reqs: List[DecodeRequest]) -> None
+  DecodeTransferQueue.pop_transferred() -> List[Req]
+  SchedulerDisaggregationDecodeMixin.event_loop_normal_disagg_decode(self: Scheduler)
+  SchedulerDisaggregationDecodeMixin.event_loop_overlap_disagg_decode(self: Scheduler)
+  SchedulerDisaggregationDecodeMixin.get_next_disagg_decode_batch_to_run(self: Scheduler) -> Optional[Tuple[ScheduleBatch, bool]]
+  SchedulerDisaggregationDecodeMixin.get_new_prebuilt_batch(self: Scheduler) -> Optional[ScheduleBatch]
+  SchedulerDisaggregationDecodeMixin.process_decode_queue(self: Scheduler)
+
+# python/sglang/srt/disaggregation/decode_schedule_batch_mixin.py
+  ScheduleBatchDisaggregationDecodeMixin.prepare_for_prebuilt_extend(self: ScheduleBatch)
+  ScheduleBatchDisaggregationDecodeMixin.process_prebuilt_extend(self: ScheduleBatch, server_args: ServerArgs, model_config: ModelConfig)
+
+# python/sglang/srt/disaggregation/kv_events.py
+  EventPublisher.__init__(attn_dp_rank: int)
+  EventPublisher.publish(events: EventBatch) -> None
+  EventPublisher.shutdown() -> None
+  NullEventPublisher.publish(events) -> None
+  NullEventPublisher.shutdown() -> None
+  ZmqEventPublisher.__init__(attn_dp_rank: int, endpoint: str, replay_endpoint: Optional[str], buffer_steps: int, hwm: int, max_queue_size: int, topic: str) -> None
+  ZmqEventPublisher.publish(events: EventBatch) -> None
+  ZmqEventPublisher.shutdown() -> None
+  ZmqEventPublisher.offset_endpoint_port(endpoint: Optional[str], data_parallel_rank: int) -> Optional[str]
+  KVEventsConfig.from_cli(cls, cli_value: str) -> 'KVEventsConfig'
+  EventPublisherFactory.register_publisher(cls, name: str, ctor: Callable[..., EventPublisher]) -> None
+  EventPublisherFactory.create(cls, config: Optional[str], attn_dp_rank: int) -> EventPublisher
+
+# python/sglang/srt/disaggregation/launch_lb.py
+  LBArgs.add_cli_args(parser: argparse.ArgumentParser)
+  LBArgs.from_cli_args(cls, args: argparse.Namespace) -> 'LBArgs'
+main()
+
+# python/sglang/srt/disaggregation/mini_lb.py
+setup_logger()
+  MiniLoadBalancer.__init__(prefill_configs: List[PrefillConfig], decode_servers: List[str], timeout: int)
+  MiniLoadBalancer.add_prefill_server(new_prefill_config: PrefillConfig)
+  MiniLoadBalancer.add_decode_server(new_decode_server: str)
+  MiniLoadBalancer.select_pair()
+  MiniLoadBalancer.generate(modified_request, prefill_server, decode_server, endpoint) -> ORJSONResponse
+  MiniLoadBalancer.generate_stream(modified_request, prefill_server, decode_server, endpoint)
+health_check()
+health_check()
+flush_cache()
+get_server_info()
+get_model_info()
+handle_generate_request(request_data: dict)
+handle_chat_completion_request(request_data: dict)
+handle_completion_request(request_data: dict)
+get_models()
+register(obj: PDRegistryRequest)
+run(prefill_configs, decode_addrs, host, port, timeout)
+
+# python/sglang/srt/disaggregation/prefill.py
+  PrefillBootstrapQueue.__init__(token_to_kv_pool: KVCache, draft_token_to_kv_pool: Optional[KVCache], req_to_metadata_buffer_idx_allocator: ReqToMetadataIdxAllocator, metadata_buffers: MetadataBuffers, tp_rank: int, tp_size: int, gpu_id: int, bootstrap_port: int, gloo_group: ProcessGroup, max_total_num_tokens: int, decode_tp_size: int, decode_dp_size: int, scheduler: Scheduler, pp_rank: int, pp_size: int, transfer_backend: TransferBackend)
+  PrefillBootstrapQueue.add(req: Req, num_kv_heads: int) -> None
+  PrefillBootstrapQueue.extend(reqs: List[Req], num_kv_heads: int) -> None
+  PrefillBootstrapQueue.pop_bootstrapped(return_failed_reqs: bool, rids_to_check: Optional[List[str]]) -> List[Req]
+  SchedulerDisaggregationPrefillMixin.event_loop_normal_disagg_prefill(self: Scheduler) -> None
+  SchedulerDisaggregationPrefillMixin.event_loop_overlap_disagg_prefill(self: Scheduler) -> None
+  SchedulerDisaggregationPrefillMixin.process_batch_result_disagg_prefill(self: Scheduler, batch: ScheduleBatch, result: GenerationBatchResult, launch_done: Optional[threading.Event]) -> None
+  SchedulerDisaggregationPrefillMixin.process_disagg_prefill_inflight_queue(self: Scheduler, rids_to_check: Optional[List[str]]) -> List[Req]
+  SchedulerDisaggregationPrefillMixin.get_transferred_rids(self: Scheduler) -> List[str]
+  SchedulerDisaggregationPrefillMixin.process_prefill_chunk(self: Scheduler) -> None
+  SchedulerDisaggregationPrefillMixin.send_kv_chunk(self: Scheduler, req: Req, last_chunk: bool, end_idx: Optional[int]) -> None
+  SchedulerDisaggregationPrefillMixin.event_loop_pp_disagg_prefill(self: Scheduler)
+  SchedulerDisaggregationPrefillMixin.send_pyobj_to_next_stage(data)
+  SchedulerDisaggregationPrefillMixin.recv_pyobj_from_prev_stage()
+
+# python/sglang/srt/disaggregation/utils.py
+poll_and_all_reduce(pollers, gloo_group)
+  ReqToMetadataIdxAllocator.__init__(size: int)
+  ReqToMetadataIdxAllocator.available_size()
+  ReqToMetadataIdxAllocator.alloc() -> Optional[int]
+  ReqToMetadataIdxAllocator.free(free_index: int)
+  MetadataBuffers.__init__(size: int, hidden_size: int, dtype: torch.dtype, max_top_logprobs_num: int, custom_mem_pool: torch.cuda.MemPool)
+  MetadataBuffers.get_buf_infos()
+  MetadataBuffers.get_buf(idx: int)
+  MetadataBuffers.set_buf(req: Req)
+get_kv_class(transfer_backend: TransferBackend, class_type: KVClassType)
+kv_to_page_indices(kv_indices: np.ndarray, page_size: int)
+kv_to_page_num(num_kv_indices: int, page_size: int)
+  PDRegistryRequest.__post_init__()
+register_disaggregation_server(mode: str, server_port: int, bootstrap_port: int, pdlb_url: str)
+is_mla_backend(target_kv_pool) -> bool
+prepare_abort(req: Req, error_message: str, status_code)

@@ -1,0 +1,237 @@
+================================================================================
+FUNCTION INDEX: nixl module
+================================================================================
+Total Functions: 56
+Documented: 28
+
+
+============================================================
+FILE: python/sglang/srt/disaggregation/nixl/conn.py
+Functions: 22
+============================================================
+
+
+CLASS: KVArgsRegisterInfo
+----------------------------------------
+  L  83: from_zmq(cls, msg: List[bytes])
+
+
+CLASS: NixlKVManager
+----------------------------------------
+  L 114: __init__(self, args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool])
+
+  L 151: check_status(self, bootstrap_room: int)
+
+  L 154: update_status(self, bootstrap_room: int, status: KVPoll)
+
+  L 163: register_buffer_to_engine(self)
+
+  L 191: send_kvcache(self, peer_name: str, prefill_kv_indices: npt.NDArray[np.int32], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int32], dst_gpu_id: int, notif: str)
+
+  L 242: send_aux(self, peer_name: str, prefill_aux_index: int, dst_aux_ptrs: list[int], dst_aux_index: int, notif: str)
+
+  L 275: add_transfer_request(self, bootstrap_room: int, kv_indices: npt.NDArray[np.int32], index_slice: slice, is_last: bool, chunk_id: int, aux_index: Optional[int])
+
+  L 323: update_transfer_status(self)
+
+  L 342: check_transfer_done(self, room: int)
+
+
+CLASS: NixlKVReceiver
+----------------------------------------
+  L 452: __init__(self, mgr: NixlKVManager, bootstrap_addr: str, bootstrap_room: Optional[int], data_parallel_rank: Optional[int])
+
+  L 463: init(self, kv_indices: npt.NDArray[np.int32], aux_index: Optional[int])
+
+  L 489: poll(self)
+         → KVPoll
+
+  L 527: failure_exception(self)
+
+
+CLASS: NixlKVSender
+----------------------------------------
+  L 392: __init__(self, mgr: NixlKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+
+  L 411: init(self, num_kv_indices: int, aux_index: Optional[int])
+
+  L 415: send(self, kv_indices: npt.NDArray[np.int32])
+
+  L 437: poll(self)
+         → KVPoll
+
+  L 447: failure_exception(self)
+
+
+CLASS: TransferInfo
+----------------------------------------
+  L  53: is_dummy(self)
+
+  L  57: from_zmq(cls, msg: List[bytes])
+
+
+CLASS: TransferStatus
+----------------------------------------
+  L 107: is_done(self)
+
+
+============================================================
+FILE: python/sglang/srt/mem_cache/storage/nixl/hicache_nixl.py
+Functions: 9
+============================================================
+
+
+CLASS: HiCacheNixl
+----------------------------------------
+  L  29: __init__(self, file_path: str, plugin: str)
+         📝 Initialize NIXL storage connector.
+
+  L  49: register_buffers(self, buffers: Union[torch.Tensor, List[torch.Tensor], List[tuple]])
+         → Optional[Any]
+         📝 Register tensor(s) or target locations in host memory (list of addr,len tuples) with NIXL.
+
+  L  59: register_files(self, file_paths: List[str], open_file: Optional[bool])
+         → Optional[Any]
+         📝 Register files with NIXL.
+
+  L  66: register_objects(self, keys: List[str], sizes: Optional[List[int]])
+         → Optional[Any]
+         📝 Register objects with NIXL.
+
+  L 161: get(self, key: str, target_location: Optional[torch.Tensor | int], target_sizes: Optional[int])
+         → torch.Tensor | None
+
+  L 176: batch_get(self, keys: List[str], target_locations: Optional[List[torch.Tensor | int]], target_sizes: Optional[List[int]])
+         → List[torch.Tensor | None]
+
+  L 204: set(self, key: str, value: Optional[torch.Tensor], target_location: Optional[int], target_sizes: Optional[int])
+         → bool
+
+  L 216: batch_set(self, keys: List[str], values: Optional[List[torch.Tensor]], target_locations: Optional[List[int]], target_sizes: Optional[List[int]])
+         → bool
+
+  L 243: exists(self, key: str)
+         → bool
+
+
+============================================================
+FILE: python/sglang/srt/mem_cache/storage/nixl/nixl_utils.py
+Functions: 11
+============================================================
+
+
+CLASS: NixlBackendSelection
+----------------------------------------
+  L  18: __init__(self, plugin: str)
+         📝 Initialize backend selection.
+            Args:
+            plugin: Plugin to use (default "auto" selects best available).
+            Can be a file plugin (3FS, POSIX, GDS, GDS_MT) or
+            an object plugin (OBJ).
+
+  L  29: set_bucket(self, bucket_name: str)
+         → None
+         📝 Set AWS bucket name in environment variable.
+
+  L  34: create_backend(self, agent)
+         → bool
+         📝 Create the appropriate NIXL backend based on configuration.
+
+
+CLASS: NixlFileManager
+----------------------------------------
+  L 145: __init__(self, base_dir: str)
+         📝 Initialize file manager.
+            Args:
+            base_dir: Base directory for storing tensor files
+
+  L 158: get_file_path(self, key: str)
+         → str
+         📝 Get full file path for a given key.
+
+  L 162: create_file(self, file_path: str)
+         → bool
+         📝 Create a file if it doesn't exist.
+
+  L 174: open_file(self, file_path: str)
+         → Optional[int]
+         📝 Open a file and return its file descriptor.
+
+  L 183: close_file(self, fd: int)
+         → bool
+         📝 Close a file descriptor.
+
+  L 192: files_to_nixl_tuples(self, file_paths: List[str])
+         → List[Tuple[int, int, int, str]]
+         📝 Create NIXL tuples (offset, length, fd, file_path) for given files.
+
+
+CLASS: NixlRegistration
+----------------------------------------
+  L  89: __init__(self, agent)
+
+  L  92: create_query_tuples(self, key: str, mem_type: str, file_manager)
+         → List[Tuple]
+         📝 Create NIXL tuples for querying memory.
+            Args:
+            key: Key to query (file path for FILE or object key for OBJ)
+            mem_type: Memory type ("FILE" or "OBJ")
+            file_manager: Optional NixlFileManager for FILE memory type
+            Returns:
+            List of NIXL tuples for querying
+
+
+============================================================
+FILE: python/sglang/srt/mem_cache/storage/nixl/test_hicache_nixl_storage.py
+Functions: 14
+============================================================
+
+
+CLASS: TestNixlUnified
+----------------------------------------
+  L  20: setUp(self)
+         📝 Set up test environment.
+
+  L  39: tearDown(self)
+         📝 Clean up test directories.
+
+  L  46: delete_test_file(self, file_path: str)
+         → bool
+         📝 Helper method to delete a test file.
+            Args:
+            file_path: Path to the file to delete
+            Returns:
+            bool: True if file was deleted or didn't exist, False on error
+
+  L  62: verify_tensors_equal(self, expected: torch.Tensor, actual: torch.Tensor)
+         📝 Helper to verify tensor equality.
+
+  L  70: verify_tensor_lists_equal(self, expected: List[torch.Tensor], actual: List[torch.Tensor])
+         📝 Helper to verify lists of tensors are equal.
+
+  L  82: test_single_set_get(self)
+         📝 Test single tensor set/get operations.
+
+  L 115: test_batch_set_get(self)
+         📝 Test batch tensor set/get operations.
+
+  L 150: test_mixed_operations(self)
+         📝 Test mixing single and batch operations.
+
+  L 169: test_data_integrity(self)
+         📝 Test data integrity across operations.
+
+  L 195: test_basic_file_operations(self)
+         📝 Test basic file operations.
+
+  L 206: test_create_nixl_tuples(self)
+         📝 Test creation of NIXL tuples.
+
+  L 216: test_error_handling(self)
+         📝 Test error handling in file operations.
+
+  L 226: test_register_buffers(self)
+         📝 Test registration of memory buffers.
+
+  L 238: test_register_files_with_tuples(self)
+         📝 Test registration of files using NIXL tuples.

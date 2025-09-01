@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified function index generator for SGLang SRT codebase.
+Unified function index generator for SGLang codebase.
 Extracts function signatures and metadata via AST parsing.
 """
 
@@ -327,13 +327,13 @@ def main():
     parser.add_argument(
         "--root",
         type=Path,
-        default=Path("python/sglang/srt"),
+        default=Path("python/sglang"),
         help="Root directory to scan",
     )
     parser.add_argument(
         "--out",
         type=Path,
-        default=Path("docs/dev/refs/code-index"),
+        default=Path("docs/sglang/llm-txt-ref"),
         help="Output directory for artifacts",
     )
     parser.add_argument(
@@ -421,7 +421,7 @@ def main():
 
         # Human-readable format
         readable_lines = generate_human_readable_format(
-            all_functions, "SGLang SRT Complete"
+            all_functions, "SGLang Complete Codebase"
         )
         output_file = args.out / "function-index-readable.txt"
         with open(output_file, "w") as f:
@@ -466,7 +466,7 @@ def main():
     # Write coverage markdown
     output_file = args.out / "coverage.md"
     with open(output_file, "w") as f:
-        f.write("# SGLang SRT Function Coverage Report\n\n")
+        f.write("# SGLang Function Coverage Report\n\n")
         f.write(f"**Total Functions**: {metrics['total_functions']}\n")
         f.write(f"**Files Analyzed**: {metrics['files_analyzed']}\n")
         f.write(f"**Average Functions per File**: {metrics['functions_per_file']}\n\n")

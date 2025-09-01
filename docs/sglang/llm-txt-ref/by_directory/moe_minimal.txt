@@ -1,0 +1,87 @@
+
+# python/sglang/srt/layers/moe/cutlass_moe.py
+cutlass_fused_experts_fp8(a: torch.Tensor, w1_q: torch.Tensor, w2_q: torch.Tensor, w1_scale: torch.Tensor, w2_scale: torch.Tensor, topk_weights: torch.Tensor, topk_ids: torch.Tensor, a1_strides: torch.Tensor, c1_strides: torch.Tensor, a2_strides: torch.Tensor, c2_strides: torch.Tensor, workspace: torch.Tensor, a_ptrs: torch.Tensor, b_ptrs: torch.Tensor, out_ptrs: torch.Tensor, a_scales_ptrs: torch.Tensor, b_scales_ptrs: torch.Tensor, expert_offsets: torch.Tensor, problem_sizes1: torch.Tensor, problem_sizes2: torch.Tensor, use_fp8_blockscale: bool) -> torch.Tensor
+cutlass_moe_fp4(a: torch.Tensor, a1_gscale: torch.Tensor, w1_fp4: torch.Tensor, w1_blockscale: torch.Tensor, w1_alphas: torch.Tensor, a2_gscale: torch.Tensor, w2_fp4: torch.Tensor, w2_blockscale: torch.Tensor, w2_alphas: torch.Tensor, topk_weights: torch.Tensor, topk_ids: torch.Tensor, params: CutlassMoEParams, apply_router_weight_on_input: bool)
+
+# python/sglang/srt/layers/moe/cutlass_moe_params.py
+  CutlassMoEParams.__init__(cutlass_moe_type: CutlassMoEType, device: torch.device, num_experts: int, intermediate_size_per_partition: int, hidden_size: int)
+  CutlassMoEParams.to_gemm1_args() -> dict
+  CutlassMoEParams.to_gemm2_args() -> dict
+
+# python/sglang/srt/layers/moe/cutlass_w4a8_moe.py
+cutlass_w4a8_moe(start_expert_id: int, end_expert_id: int, total_num_experts: int, a: torch.Tensor, w1_q: torch.Tensor, w2_q: torch.Tensor, w1_scale: torch.Tensor, w2_scale: torch.Tensor, topk_weights: torch.Tensor, topk_ids_: torch.Tensor, local_topk_ids: torch.Tensor, a_strides1: torch.Tensor, b_strides1: torch.Tensor, c_strides1: torch.Tensor, a_strides2: torch.Tensor, b_strides2: torch.Tensor, c_strides2: torch.Tensor, s_strides13: torch.Tensor, s_strides2: torch.Tensor, expert_offsets: torch.Tensor, problem_sizes1: torch.Tensor, problem_sizes2: torch.Tensor, a1_scale: Optional[torch.Tensor], a2_scale: Optional[torch.Tensor], apply_router_weight_on_input: bool) -> torch.Tensor
+
+# python/sglang/srt/layers/moe/fused_moe_native.py
+fused_moe_forward_native(layer: torch.nn.Module, x: torch.Tensor, topk_output: StandardTopKOutput, moe_runner_config: MoeRunnerConfig) -> torch.Tensor
+moe_forward_native(layer: torch.nn.Module, x: torch.Tensor, topk_output: StandardTopKOutput, moe_runner_config: MoeRunnerConfig) -> torch.Tensor
+
+# python/sglang/srt/layers/moe/rocm_moe_utils.py
+rocm_aiter_asm_moe_tkw1_impl(hidden_states: torch.Tensor, w1: torch.Tensor, w2: torch.Tensor, topk_weights: torch.Tensor, topk_ids: torch.Tensor, fc1_scale: Optional[torch.Tensor], fc2_scale: Optional[torch.Tensor], fc1_smooth_scale: Optional[torch.Tensor], fc2_smooth_scale: Optional[torch.Tensor], a16: bool, per_tensor_quant_scale: Optional[torch.Tensor], expert_mask: Optional[torch.Tensor], activation_method: int) -> torch.Tensor
+rocm_aiter_asm_moe_tkw1_fake(hidden_states: torch.Tensor, w1: torch.Tensor, w2: torch.Tensor, topk_weights: torch.Tensor, topk_ids: torch.Tensor, fc1_scale: Optional[torch.Tensor], fc2_scale: Optional[torch.Tensor], fc1_smooth_scale: Optional[torch.Tensor], fc2_smooth_scale: Optional[torch.Tensor], a16: bool, per_tensor_quant_scale: Optional[torch.Tensor], expert_mask: Optional[torch.Tensor], activation_method: int) -> torch.Tensor
+rocm_fused_experts_tkw1(hidden_states: torch.Tensor, w1: torch.Tensor, w2: torch.Tensor, topk_weights: torch.Tensor, topk_ids: torch.Tensor, activation: str, apply_router_weight_on_input: bool, use_fp8_w8a8: bool, per_channel_quant: bool, w1_scale: Optional[torch.Tensor], w2_scale: Optional[torch.Tensor], a1_scale: Optional[torch.Tensor], a2_scale: Optional[torch.Tensor], block_shape: Optional[list[int]]) -> torch.Tensor
+
+# python/sglang/srt/layers/moe/router.py
+fused_moe_router_kernel(input_ptr, moe_router_weight_ptr, topk_weights_ptr, topk_ids_ptr, correction_bias_ptr, is_correction_bias: tl.constexpr, num_experts: tl.constexpr, topk: tl.constexpr, moe_softcapping: tl.constexpr, moe_renormalize: tl.constexpr, hidden_dim: tl.constexpr, BLOCK_SIZE: tl.constexpr)
+fused_moe_router_impl(x: torch.Tensor, router_weight: torch.Tensor, topk: int, moe_softcapping: float, correction_bias: Optional[torch.Tensor])
+fused_moe_router_large_bs_kernel(a_ptr, b_ptr, topk_weights_ptr, topk_ids_ptr, bs, num_experts: tl.constexpr, topk: tl.constexpr, moe_softcapping: tl.constexpr, moe_renormalize: tl.constexpr, K: tl.constexpr, BLOCK_SIZE_M: tl.constexpr, BLOCK_SIZE_N: tl.constexpr, BLOCK_SIZE_K: tl.constexpr, stride_am: tl.constexpr, stride_bn: tl.constexpr)
+fused_moe_router_large_bs_impl(x: torch.Tensor, router_weight: torch.Tensor, topk: int, moe_softcapping: float, BLOCK_SIZE_M: int, BLOCK_SIZE_N: int, BLOCK_SIZE_K: int)
+fused_moe_router_shim(moe_softcapping, hidden_states, gating_output, topk, renormalize, correction_bias: Optional[torch.Tensor])
+  FusedMoeRouter.__init__(router_linear, topk, moe_softcapping) -> None
+  FusedMoeRouter.__call__()
+  FusedMoeRouter.forward(x: torch.Tensor, residual: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+  FusedMoeRouter.forward_cuda(x: torch.Tensor, autotune) -> Tuple[torch.Tensor, torch.Tensor]
+  FusedMoeRouter.forward_vllm(x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+
+# python/sglang/srt/layers/moe/topk.py
+  TopKOutputChecker.format_is_standard(topk_output: TopKOutput) -> TypeGuard[StandardTopKOutput]
+  TopKOutputChecker.format_is_triton_kernel(topk_output: TopKOutput) -> TypeGuard[TritonKernelTopKOutput]
+  TopKOutputChecker.format_is_bypassed(topk_output: TopKOutput) -> TypeGuard[BypassedTopKOutput]
+  TopKOutputFormat.is_standard() -> bool
+  TopKOutputFormat.is_triton_kernel() -> bool
+  TopKOutputFormat.is_bypassed() -> bool
+  TopKOutput.format() -> TopKOutputFormat
+  StandardTopKOutput.format() -> TopKOutputFormat
+  TritonKernelTopKOutput.format() -> TopKOutputFormat
+  BypassedTopKOutput.format() -> TopKOutputFormat
+  TopK.__init__(top_k: int)
+  TopK.forward_native(hidden_states: torch.Tensor, router_logits: torch.Tensor) -> TopKOutput
+  TopK.forward_cuda(hidden_states: torch.Tensor, router_logits: torch.Tensor) -> TopKOutput
+  TopK.forward_cpu(hidden_states: torch.Tensor, router_logits: torch.Tensor) -> TopKOutput
+  TopK.forward_npu(hidden_states: torch.Tensor, router_logits: torch.Tensor) -> TopKOutput
+  TopK.empty_topk_output(device: torch.device) -> TopKOutput
+fused_topk_torch_native(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool, correction_bias: torch.Tensor)
+fused_topk_cpu(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool, num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo], correction_bias: torch.Tensor)
+apply_topk_weights_cpu(need_apply, topk_weights, inputs)
+fused_topk(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool, num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo])
+grouped_topk_gpu(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool, num_expert_group: Optional[int], topk_group: Optional[int], num_fused_shared_experts: int, routed_scaling_factor: Optional[float], num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo], apply_routed_scaling_factor_on_output: Optional[bool])
+grouped_topk_cpu(hidden_states: torch.Tensor, gating_output: torch.Tensor, topk: int, renormalize: bool, num_expert_group: Optional[int], topk_group: Optional[int], num_fused_shared_experts: int, routed_scaling_factor: Optional[float], num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo], apply_routed_scaling_factor_on_output: Optional[bool])
+biased_grouped_topk_impl(hidden_states: torch.Tensor, gating_output: torch.Tensor, correction_bias: torch.Tensor, topk: int, renormalize: bool, num_expert_group: Optional[int], topk_group: Optional[int], num_fused_shared_experts: int, routed_scaling_factor: Optional[float], num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo], apply_routed_scaling_factor_on_output: Optional[bool])
+is_power_of_two(n)
+biased_grouped_topk_gpu(hidden_states: torch.Tensor, gating_output: torch.Tensor, correction_bias: torch.Tensor, topk: int, renormalize: bool, num_expert_group: Optional[int], topk_group: Optional[int], num_fused_shared_experts: int, routed_scaling_factor: Optional[float], num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo], apply_routed_scaling_factor_on_output: Optional[bool])
+biased_grouped_topk_cpu(hidden_states: torch.Tensor, gating_output: torch.Tensor, correction_bias: torch.Tensor, topk: int, renormalize: bool, num_expert_group: Optional[int], topk_group: Optional[int], compiled: bool, num_fused_shared_experts: int, routed_scaling_factor: Optional[float], num_token_non_padded: Optional[torch.Tensor], expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo], apply_routed_scaling_factor_on_output: Optional[bool])
+select_experts(hidden_states: torch.Tensor, router_logits: torch.Tensor, topk_config: TopKConfig) -> StandardTopKOutput
+
+# python/sglang/srt/layers/moe/utils.py
+  MoeA2ABackend.is_none()
+  MoeA2ABackend.is_deepep()
+  MoeRunnerBackend.is_auto()
+  MoeRunnerBackend.is_triton()
+  MoeRunnerBackend.is_triton_kernel()
+  MoeRunnerBackend.is_flashinfer_trtllm()
+  MoeRunnerBackend.is_flashinfer_cutlass()
+  MoeRunnerBackend.is_flashinfer_mxfp4()
+  DeepEPMode.enable_normal() -> bool
+  DeepEPMode.enable_low_latency() -> bool
+  DeepEPMode.resolve(is_extend_in_batch: bool) -> DeepEPMode
+  DeepEPMode.is_normal() -> bool
+  DeepEPMode.is_low_latency() -> bool
+  DeepEPMode.is_auto() -> bool
+initialize_moe_config(server_args: ServerArgs)
+get_moe_a2a_backend() -> MoeA2ABackend
+get_moe_runner_backend() -> MoeRunnerBackend
+get_deepep_mode() -> DeepEPMode
+get_deepep_config() -> str
+is_tbo_enabled() -> bool
+get_tbo_token_distribution_threshold() -> float
+should_use_flashinfer_trtllm_moe()
+should_use_flashinfer_cutlass_moe_fp4_allgather()

@@ -1,0 +1,106 @@
+
+# python/sglang/srt/constrained/base_grammar_backend.py
+  BaseGrammarObject.__init__()
+  BaseGrammarObject.accept_token(token: int) -> None
+  BaseGrammarObject.rollback(k: int)
+  BaseGrammarObject.is_terminated()
+  BaseGrammarObject.allocate_vocab_mask(vocab_size: int, batch_size: int, device) -> torch.Tensor
+  BaseGrammarObject.fill_vocab_mask(vocab_mask: torch.Tensor, idx: int) -> None
+  BaseGrammarObject.move_vocab_mask(vocab_mask: torch.Tensor, device) -> torch.Tensor
+  BaseGrammarObject.apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor) -> None
+  BaseGrammarObject.copy() -> 'BaseGrammarObject'
+  BaseGrammarObject.finished()
+  BaseGrammarObject.finished(finished)
+  BaseGrammarObject.try_jump_forward(tokenizer) -> Optional[Tuple[List[int], str]]
+  BaseGrammarObject.jump_forward_str_state(helper: Tuple[List[int], str]) -> Tuple[str, int]
+  BaseGrammarObject.jump_and_retokenize(old_output_ids: List[int], new_output_ids: List[int], next_state: int) -> None
+  BaseGrammarBackend.__init__()
+  BaseGrammarBackend.dispatch_fallback(key_type: str, key_string: str) -> Optional[BaseGrammarObject]
+  BaseGrammarBackend.dispatch_json(key_string: str) -> Optional[BaseGrammarObject]
+  BaseGrammarBackend.dispatch_regex(key_string: str) -> Optional[BaseGrammarObject]
+  BaseGrammarBackend.dispatch_ebnf(key_string: str) -> Optional[BaseGrammarObject]
+  BaseGrammarBackend.dispatch_structural_tag(key_string: str) -> Optional[BaseGrammarObject]
+  BaseGrammarBackend.get_cached_or_future_value(key: Tuple[str, str]) -> Optional[BaseGrammarObject]
+  BaseGrammarBackend.set_cache(key: Tuple[str, str], value: BaseGrammarObject)
+  BaseGrammarBackend.reset()
+create_grammar_backend(server_args: ServerArgs, tokenizer, vocab_size: int, eos_token_ids: Optional[set]) -> Optional[BaseGrammarBackend]
+
+# python/sglang/srt/constrained/llguidance_backend.py
+  GuidanceGrammar.__init__(llguidance_tokenizer: LLTokenizer, serialized_grammar: str)
+  GuidanceGrammar.accept_token(token: int)
+  GuidanceGrammar.fill_vocab_mask(vocab_mask: torch.Tensor, idx: int) -> None
+  GuidanceGrammar.allocate_vocab_mask(vocab_size: int, batch_size: int, device) -> torch.Tensor
+  GuidanceGrammar.move_vocab_mask(vocab_mask: torch.Tensor, device) -> torch.Tensor
+  GuidanceGrammar.apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor) -> None
+  GuidanceGrammar.copy()
+  GuidanceGrammar.try_jump_forward(tokenizer) -> Optional[Tuple[List[int], str]]
+  GuidanceGrammar.jump_forward_str_state(helper: Tuple[List[int], str]) -> Tuple[str, int]
+  GuidanceGrammar.jump_and_retokenize(old_output_ids: List[int], new_output_ids: List[int], next_state: int)
+  GuidanceBackend.__init__(tokenizer, whitespace_pattern: Optional[str], n_vocab: Optional[int])
+  GuidanceBackend.dispatch_json(key_string: str) -> Optional[GuidanceGrammar]
+  GuidanceBackend.dispatch_regex(key_string: str) -> Optional[GuidanceGrammar]
+  GuidanceBackend.dispatch_ebnf(key_string: str) -> Optional[GuidanceGrammar]
+  GuidanceBackend.dispatch_structural_tag(key_string: str) -> Optional[GuidanceGrammar]
+
+# python/sglang/srt/constrained/outlines_backend.py
+  OutlinesGrammar.__init__(guide: RegexGuide, jump_forward_map: Union[OutlinesJumpForwardMap, None]) -> None
+  OutlinesGrammar.accept_token(token: int)
+  OutlinesGrammar.allocate_vocab_mask(vocab_size: int, batch_size: int, device) -> torch.Tensor
+  OutlinesGrammar.move_vocab_mask(vocab_mask: torch.Tensor, device) -> torch.Tensor
+  OutlinesGrammar.fill_vocab_mask(vocab_mask: torch.Tensor, idx: int) -> None
+  OutlinesGrammar.apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor)
+  OutlinesGrammar.copy()
+  OutlinesGrammar.try_jump_forward(tokenizer) -> Optional[Tuple]
+  OutlinesGrammar.jump_forward_str_state(helper: Tuple[List[int], str]) -> Tuple[str, int]
+  OutlinesGrammar.jump_and_retokenize(old_output_ids: List[int], new_output_ids: List[int], next_state: int)
+  OutlinesGrammarBackend.__init__(tokenizer, whitespace_pattern: bool)
+  OutlinesGrammarBackend.dispatch_ebnf(key_string: str)
+  OutlinesGrammarBackend.dispatch_structural_tag(key_string: str)
+  OutlinesGrammarBackend.dispatch_json(key_string: str)
+  OutlinesGrammarBackend.dispatch_regex(key_string: str)
+build_regex_from_object(object: Union[str, BaseModel, Dict], whitespace_pattern: Optional[str])
+
+# python/sglang/srt/constrained/outlines_jump_forward.py
+disk_cache(expire: Optional[float], typed, ignore)
+init_state_to_jump_forward(regex_string)
+  OutlinesJumpForwardMap.__init__(regex_string)
+  OutlinesJumpForwardMap.jump_forward_symbol(state)
+  OutlinesJumpForwardMap.jump_forward_byte(state)
+  OutlinesJumpForwardMap.is_jump_forward_symbol_state(state)
+test_main(regex_string)
+
+# python/sglang/srt/constrained/reasoner_grammar_backend.py
+  ReasonerGrammarObject.__init__(grammar: BaseGrammarObject, think_end_id)
+  ReasonerGrammarObject.accept_token(token: int)
+  ReasonerGrammarObject.allocate_vocab_mask(vocab_size: int, batch_size: int, device) -> torch.Tensor
+  ReasonerGrammarObject.fill_vocab_mask(vocab_mask: torch.Tensor, idx: int) -> None
+  ReasonerGrammarObject.move_vocab_mask(vocab_mask: torch.Tensor, device) -> torch.Tensor
+  ReasonerGrammarObject.apply_vocab_mask()
+  ReasonerGrammarObject.copy() -> BaseGrammarObject
+  ReasonerGrammarObject.finished()
+  ReasonerGrammarObject.finished(finished)
+  ReasonerGrammarObject.try_jump_forward(tokenizer)
+  ReasonerGrammarObject.jump_forward_str_state(helper)
+  ReasonerGrammarObject.jump_and_retokenize(old_output_ids: List[int], new_output_ids: List[int], next_state: int)
+  ReasonerGrammarBackend.__init__(grammar_backend: BaseGrammarBackend, think_end_id)
+
+# python/sglang/srt/constrained/xgrammar_backend.py
+  XGrammarGrammar.__init__(matcher: GrammarMatcher, vocab_size: int, ctx: CompiledGrammar, override_stop_tokens: Optional[Union[List[int], int]], key_string: Optional[str]) -> None
+  XGrammarGrammar.accept_token(token: int)
+  XGrammarGrammar.rollback(k: int)
+  XGrammarGrammar.is_terminated()
+  XGrammarGrammar.allocate_vocab_mask(vocab_size: int, batch_size: int, device) -> torch.Tensor
+  XGrammarGrammar.fill_vocab_mask(vocab_mask: torch.Tensor, idx: int) -> None
+  XGrammarGrammar.move_vocab_mask(vocab_mask: torch.Tensor, device) -> torch.Tensor
+  XGrammarGrammar.apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor) -> None
+  XGrammarGrammar.copy()
+  XGrammarGrammar.try_jump_forward(tokenizer) -> Optional[Tuple[List[int], str]]
+  XGrammarGrammar.jump_forward_str_state(helper: Tuple[List[int], str]) -> Tuple[str, int]
+  XGrammarGrammar.jump_and_retokenize(old_output_ids: List[int], new_output_ids: List[int], next_state: int)
+  XGrammarGrammar.__repr__()
+  XGrammarGrammarBackend.__init__(tokenizer, vocab_size: int, model_eos_token_ids: Optional[List[int]])
+  XGrammarGrammarBackend.dispatch_json(key_string: str) -> Optional[XGrammarGrammar]
+  XGrammarGrammarBackend.dispatch_ebnf(key_string: str) -> Optional[XGrammarGrammar]
+  XGrammarGrammarBackend.dispatch_regex(key_string: str) -> Optional[XGrammarGrammar]
+  XGrammarGrammarBackend.dispatch_structural_tag(key_string: str) -> Optional[XGrammarGrammar]
+  XGrammarGrammarBackend.reset()

@@ -1,0 +1,43 @@
+
+# python/sglang/srt/connector/__init__.py
+create_remote_connector(url) -> BaseConnector
+get_connector_type(client: BaseConnector) -> ConnectorType
+
+# python/sglang/srt/connector/base_connector.py
+  BaseConnector.__init__(url: str)
+  BaseConnector.get_local_dir()
+  BaseConnector.weight_iterator(rank: int) -> Generator[Tuple[str, torch.Tensor], None, None]
+  BaseConnector.pull_files(allow_pattern: Optional[List[str]], ignore_pattern: Optional[List[str]]) -> None
+  BaseConnector.close()
+  BaseConnector.__enter__()
+  BaseConnector.__exit__(exc_type, exc_value, traceback)
+  BaseConnector.__del__()
+  BaseKVConnector.get(key: str) -> Optional[torch.Tensor]
+  BaseKVConnector.getstr(key: str) -> Optional[str]
+  BaseKVConnector.set(key: str, obj: torch.Tensor) -> None
+  BaseKVConnector.setstr(key: str, obj: str) -> None
+  BaseKVConnector.list(prefix: str) -> List[str]
+  BaseFileConnector.glob(allow_pattern: str) -> List[str]
+
+# python/sglang/srt/connector/redis.py
+  RedisConnector.__init__(url: str)
+  RedisConnector.get(key: str) -> Optional[torch.Tensor]
+  RedisConnector.getstr(key: str) -> Optional[str]
+  RedisConnector.set(key: str, tensor: torch.Tensor) -> None
+  RedisConnector.setstr(key: str, obj: str) -> None
+  RedisConnector.list(prefix: str) -> List[str]
+  RedisConnector.weight_iterator(rank: int) -> Generator[Tuple[str, bytes], None, None]
+  RedisConnector.pull_files(allow_pattern: Optional[List[str]], ignore_pattern: Optional[List[str]]) -> None
+  RedisConnector.close()
+
+# python/sglang/srt/connector/s3.py
+list_files(s3, path: str, allow_pattern: Optional[list[str]], ignore_pattern: Optional[list[str]]) -> tuple[str, str, list[str]]
+  S3Connector.__init__(url: str) -> None
+  S3Connector.glob(allow_pattern: Optional[list[str]]) -> list[str]
+  S3Connector.pull_files(allow_pattern: Optional[list[str]], ignore_pattern: Optional[list[str]]) -> None
+  S3Connector.weight_iterator(rank: int) -> Generator[Tuple[str, torch.Tensor], None, None]
+  S3Connector.close()
+
+# python/sglang/srt/connector/utils.py
+parse_model_name(url: str) -> str
+pull_files_from_db(connector: BaseConnector, model_name: str, allow_pattern: Optional[list[str]], ignore_pattern: Optional[list[str]]) -> None

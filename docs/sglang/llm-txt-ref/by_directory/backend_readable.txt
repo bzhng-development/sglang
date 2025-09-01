@@ -1,0 +1,308 @@
+================================================================================
+FUNCTION INDEX: backend module
+================================================================================
+Total Functions: 82
+Documented: 8
+
+
+============================================================
+FILE: python/sglang/lang/backend/anthropic.py
+Functions: 4
+============================================================
+
+
+CLASS: Anthropic
+----------------------------------------
+  L  13: __init__(self, model_name)
+
+  L  23: get_chat_template(self)
+
+  L  26: generate(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L  51: generate_stream(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+
+============================================================
+FILE: python/sglang/lang/backend/base_backend.py
+Functions: 18
+============================================================
+
+
+CLASS: BaseBackend
+----------------------------------------
+  L  10: __init__(self)
+         → None
+
+  L  14: get_model_name(self)
+
+  L  17: get_chat_template(self)
+
+  L  20: cache_prefix(self, prefix_str: str)
+
+  L  23: uncache_prefix(self, rid: str)
+
+  L  26: end_request(self, rid: Union[str, List[str]])
+
+  L  29: begin_program(self, s: StreamExecutor)
+
+  L  32: end_program(self, s: Union[StreamExecutor, List[StreamExecutor]])
+
+  L  35: commit_lazy_operations(self, s: StreamExecutor)
+
+  L  38: fork_program(self, src: StreamExecutor, dst: List[StreamExecutor], position_ids_offset: Optional[List[int]])
+
+  L  46: fill_image(self, s: StreamExecutor)
+
+  L  49: generate(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L  56: generate_stream(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L  63: select(self, s: StreamExecutor, choices: List[str], temperature: float, choices_method: Optional[ChoicesSamplingMethod])
+         → ChoicesDecision
+
+  L  72: concatenate_and_append(self, src_rids: List[str], dst_rid: str)
+
+  L  75: shutdown(self)
+
+  L  78: flush_cache(self)
+
+  L  81: get_server_info(self)
+
+
+============================================================
+FILE: python/sglang/lang/backend/litellm.py
+Functions: 4
+============================================================
+
+
+CLASS: LiteLLM
+----------------------------------------
+  L  16: __init__(self, model_name, chat_template, api_key, organization: Optional[str], base_url: Optional[str], timeout: Optional[float], max_retries: Optional[int], default_headers: Optional[Mapping[str, str]])
+
+  L  47: get_chat_template(self)
+
+  L  50: generate(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L  70: generate_stream(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+
+============================================================
+FILE: python/sglang/lang/backend/openai.py
+Functions: 12
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  25: def create_logit_bias_int(tokenizer)
+         📝 Get logit bias for integer numbers.
+
+  L 383: def openai_completion(client, token_usage, is_chat, retries, prompt)
+         → Union[str, List[str]]
+
+  L 425: def openai_completion_stream(client, token_usage, is_chat, retries, prompt)
+
+
+CLASS: OpenAI
+----------------------------------------
+  L  57: __init__(self, model_name: str, is_chat_model: Optional[bool], chat_template: Optional[ChatTemplate], is_azure: bool)
+
+  L 106: get_chat_template(self)
+
+  L 140: generate(self, s: StreamExecutor, sampling_params: SglSamplingParams, spec_var_name: str)
+
+  L 224: spec_fill(self, value: str)
+
+  L 228: spec_pattern_match(self, comp)
+
+  L 248: role_end_generate(self, s: StreamExecutor)
+
+  L 283: generate_stream(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L 312: select(self, s: StreamExecutor, choices: List[str], temperature: float, choices_method: ChoicesSamplingMethod)
+         → ChoicesDecision
+         📝 Note: `choices_method` is not used by the OpenAI backend.
+
+
+CLASS: TokenUsage
+----------------------------------------
+  L  52: reset(self)
+
+
+============================================================
+FILE: python/sglang/lang/backend/runtime_endpoint.py
+Functions: 26
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 350: def compute_normalized_prompt_logprobs(input_logprobs)
+
+
+CLASS: Runtime
+----------------------------------------
+  L 365: __init__(self, log_level: str)
+         📝 See the arguments in server_args.py::ServerArgs
+
+  L 419: shutdown(self)
+
+  L 426: start_profile(self)
+
+  L 429: stop_profile(self)
+
+  L 432: cache_prefix(self, prefix: str)
+
+  L 435: get_tokenizer(self)
+
+  L 445: async_generate(self, prompt: str, sampling_params: Optional[Dict])
+
+  L 483: generate(self, prompt: Union[str, List[str]], sampling_params: Optional[Dict], return_logprob: Optional[Union[List[bool], bool]], logprob_start_len: Optional[Union[List[int], int]], top_logprobs_num: Optional[Union[List[int], int]], lora_path: Optional[List[Optional[str]]])
+
+  L 507: encode(self, prompt: Union[str, List[str], List[Dict], List[List[Dict]]])
+
+  L 515: get_server_info(self)
+
+  L 526: __del__(self)
+
+
+CLASS: RuntimeEndpoint
+----------------------------------------
+  L  26: __init__(self, base_url: str, api_key: Optional[str], verify: Optional[str], chat_template_name: Optional[str])
+
+  L  55: get_model_name(self)
+
+  L  58: flush_cache(self)
+
+  L  67: get_server_info(self)
+
+  L  76: get_chat_template(self)
+
+  L  79: cache_prefix(self, prefix_str: str)
+
+  L  88: start_profile(self)
+
+  L  96: stop_profile(self)
+
+  L 104: commit_lazy_operations(self, s: StreamExecutor)
+
+  L 115: fill_image(self, s: StreamExecutor)
+
+  L 158: generate(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L 197: generate_stream(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L 247: select(self, s: StreamExecutor, choices: List[str], temperature: float, choices_method: ChoicesSamplingMethod)
+         → ChoicesDecision
+
+  L 316: concatenate_and_append(self, src_rids: List[str], dst_rid: str)
+
+
+============================================================
+FILE: python/sglang/lang/backend/vertexai.py
+Functions: 6
+============================================================
+
+
+CLASS: VertexAI
+----------------------------------------
+  L  21: __init__(self, model_name, safety_settings)
+
+  L  35: get_chat_template(self)
+
+  L  38: generate(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L  62: generate_stream(self, s: StreamExecutor, sampling_params: SglSamplingParams)
+
+  L  85: text_to_vertexai_input(self, text, images)
+
+  L  99: messages_to_vertexai_input(self, messages)
+
+
+============================================================
+FILE: python/sglang/srt/lora/backend/base_backend.py
+Functions: 7
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 100: def get_backend_from_name(name: str)
+         → BaseLoRABackend
+         📝 Get corresponding backend class from backend's name
+
+
+CLASS: BaseLoRABackend
+----------------------------------------
+  L  17: __init__(self, name: str, batch_info: LoRABatchInfo)
+
+  L  21: run_lora_a_sgemm(self, x: torch.Tensor, weights: torch.Tensor)
+         → torch.Tensor
+         📝 Run segment Gemm of lora a modules with current backend.
+            The definition of segment Gemm can be referred to https://docs.flashinfer.ai/api/gemm.html.
+            Args:
+            x: input matrix with shape (s, input_dim), here s is the sum of all sequence lengths
+            weights: a set of lora weights with shape (num_lora, c * r, input_dim),
+            here r is lora rank, c is a multiplier for stacked modules (e.g., c=3 for qkv_proj, c=2 for gate_up_proj)
+            usually input_dim is much larger than r
+            Returns:
+            result with shape (s, c * r)
+
+  L  37: run_lora_b_sgemm(self, x: torch.Tensor, weights: torch.Tensor)
+         → torch.Tensor
+         📝 Run segment Gemm of lora b modules with current backend.
+            The definition of segment Gemm can be referred to https://docs.flashinfer.ai/api/gemm.html.
+            Args:
+            x: input matrix with shape (s, r), here s is the sum of all sequence lengths, r is lora rank
+            weights: a set of lora weights with shape (num_lora, output_dim, r)
+            usually output_dim is much larger than r
+            Returns:
+            result with shape (s, output_dim)
+
+  L  52: run_qkv_lora(self, x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]])
+         → torch.Tensor
+         📝 Run the lora pass for QKV Layer.
+            Args:
+            x: input matrix with shape (s, input_dim), here s is the sum of all sequence lengths
+            qkv_lora_a: lora_a module for qkv, with shape (num_lora, 3 * r, input_dim)
+            qkv_lora_b: lora_b module for qkv.
+            If passed in as a tensor, its shape should be (num_lora,output_dim_q + 2 * output_dim_kv, r)
+            If passed in as a tuple of two tensors, it should contain:
+            a lora_b module for q, with shape (1, num_lora, output_dim_q, r)
+            and a combined lora_b module for kv, with shape (2, num_lora, output_dim_kv, r)
+            Returns:
+            result with shape (s, output_dim_q + 2 * output_dim_kv)
+
+  L  75: run_gate_up_lora(self, x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]])
+         → torch.Tensor
+         📝 Run the lora pass for gate_up_proj, usually attached to MergedColumnParallelLayer.
+            Args:
+            x: input matrix with shape (s, input_dim), here s is the sum of all sequence lengths
+            gate_up_lora_a: lora_a module for gate_up_proj, with shape (num_lora, 2 * r, input_dim)
+            gate_up_lora_b: lora_b module for qkv.
+            If passed in as a tensor, its shape should be (num_lora, 2 * output_dim, r)
+            If passed in as a tuple, it should contain two tensors with shape (num_lora, output_dim, r)
+            Returns:
+            result with shape (s, 2 * output_dim)
+
+  L  96: set_batch_info(self, batch_info: LoRABatchInfo)
+
+
+============================================================
+FILE: python/sglang/srt/lora/backend/triton_backend.py
+Functions: 5
+============================================================
+
+
+CLASS: TritonLoRABackend
+----------------------------------------
+  L  15: __init__(self, name: str, batch_info: LoRABatchInfo)
+
+  L  18: run_lora_a_sgemm(self, x: torch.Tensor, weights: torch.Tensor)
+         → torch.Tensor
+
+  L  23: run_lora_b_sgemm(self, x: torch.Tensor, weights: torch.Tensor, base_output: torch.Tensor)
+         → torch.Tensor
+
+  L  33: run_qkv_lora(self, x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: torch.Tensor, output_offset: torch.Tensor, max_qkv_out_dim: int, base_output: torch.Tensor)
+         → torch.Tensor
+
+  L  61: run_gate_up_lora(self, x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: torch.Tensor, base_output: torch.Tensor)
+         → torch.Tensor

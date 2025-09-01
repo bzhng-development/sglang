@@ -1,0 +1,613 @@
+================================================================================
+FUNCTION INDEX: lang module
+================================================================================
+Total Functions: 176
+Documented: 5
+
+
+============================================================
+FILE: python/sglang/lang/api.py
+Functions: 22
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  23: def function(func: Optional[Callable], num_api_spec_tokens: Optional[int])
+
+  L  35: def Runtime()
+
+  L  42: def Engine()
+
+  L  49: def set_default_backend(backend: BaseBackend)
+
+  L  53: def flush_cache(backend: Optional[BaseBackend])
+
+  L  64: def get_server_info(backend: Optional[BaseBackend])
+
+  L  75: def gen(name: Optional[str],
+        max_tokens: Optional[int],
+        min_tokens: Optional[int],
+        n: Optional[int],
+        stop: Optional[Union[str,
+        List[str]]],
+        stop_token_ids: Optional[List[int]],
+        temperature: Optional[float],
+        top_p: Optional[float],
+        top_k: Optional[int],
+        min_p: Optional[float],
+        frequency_penalty: Optional[float],
+        presence_penalty: Optional[float],
+        ignore_eos: Optional[bool],
+        return_logprob: Optional[bool],
+        logprob_start_len: Optional[int],
+        top_logprobs_num: Optional[int],
+        return_text_in_logprobs: Optional[bool],
+        dtype: Optional[Union[type,
+        str]],
+        choices: Optional[List[str]],
+        choices_method: Optional[ChoicesSamplingMethod],
+        regex: Optional[str],
+        json_schema: Optional[str])
+         📝 Call the model to generate. See the meaning of the arguments in docs/backend/sampling_params.md
+
+  L 140: def gen_int(name: Optional[str],
+        max_tokens: Optional[int],
+        n: Optional[int],
+        stop: Optional[Union[str,
+        List[str]]],
+        stop_token_ids: Optional[List[int]],
+        temperature: Optional[float],
+        top_p: Optional[float],
+        top_k: Optional[int],
+        min_p: Optional[float],
+        frequency_penalty: Optional[float],
+        presence_penalty: Optional[float],
+        ignore_eos: Optional[bool],
+        return_logprob: Optional[bool],
+        logprob_start_len: Optional[int],
+        top_logprobs_num: Optional[int],
+        return_text_in_logprobs: Optional[bool])
+
+  L 181: def gen_string(name: Optional[str],
+        max_tokens: Optional[int],
+        n: Optional[int],
+        stop: Optional[Union[str,
+        List[str]]],
+        stop_token_ids: Optional[List[int]],
+        temperature: Optional[float],
+        top_p: Optional[float],
+        top_k: Optional[int],
+        min_p: Optional[float],
+        frequency_penalty: Optional[float],
+        presence_penalty: Optional[float],
+        ignore_eos: Optional[bool],
+        return_logprob: Optional[bool],
+        logprob_start_len: Optional[int],
+        top_logprobs_num: Optional[int],
+        return_text_in_logprobs: Optional[bool])
+
+  L 222: def image(expr: SglExpr)
+
+  L 226: def video(path: str, num_frames: int)
+
+  L 230: def select(name: Optional[str],
+        choices: Optional[List[str]],
+        temperature: float,
+        choices_method: ChoicesSamplingMethod)
+
+  L 247: def system(expr: Optional[SglExpr])
+
+  L 251: def user(expr: Optional[SglExpr])
+
+  L 255: def assistant(expr: Optional[SglExpr])
+
+  L 259: def system_begin()
+
+  L 263: def system_end()
+
+  L 267: def user_begin()
+
+  L 271: def user_end()
+
+  L 275: def assistant_begin()
+
+  L 279: def assistant_end()
+
+  L 283: def separate_reasoning(expr: Optional[SglExpr], model_type: Optional[str])
+
+
+============================================================
+FILE: python/sglang/lang/chat_template.py
+Functions: 22
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  61: def register_chat_template(template)
+
+  L  65: def register_chat_template_matching_function(func)
+
+  L  69: def get_chat_template(name)
+
+  L  73: def get_chat_template_by_model_path(model_path)
+
+  L 526: def match_deepseek(model_path: str)
+         @register_chat_template_matching_function
+
+  L 534: def match_deepseek_janus_pro(model_path: str)
+         @register_chat_template_matching_function
+
+  L 540: def match_dbrx(model_path: str)
+         @register_chat_template_matching_function
+
+  L 548: def match_vicuna(model_path: str)
+         @register_chat_template_matching_function
+
+  L 554: def match_llama2_chat(model_path: str)
+         @register_chat_template_matching_function
+
+  L 564: def match_mistral(model_path: str)
+         @register_chat_template_matching_function
+
+  L 570: def match_llama3_instruct(model_path: str)
+         @register_chat_template_matching_function
+
+  L 576: def match_chat_ml(model_path: str)
+         @register_chat_template_matching_function
+
+  L 596: def match_chat_yi(model_path: str)
+         @register_chat_template_matching_function
+
+  L 606: def match_gemma_it(model_path: str)
+         @register_chat_template_matching_function
+
+  L 612: def match_openbmb_minicpm(model_path: str)
+         @register_chat_template_matching_function
+
+  L 620: def match_c4ai_command_r(model_path: str)
+         @register_chat_template_matching_function
+
+  L 626: def match_granite_instruct(model_path: str)
+         @register_chat_template_matching_function
+
+  L 632: def match_gemma3_instruct(model_path: str)
+         @register_chat_template_matching_function
+
+  L 638: def match_internvl_chat(model_path: str)
+         @register_chat_template_matching_function
+
+  L 644: def match_interns1_chat(model_path: str)
+         @register_chat_template_matching_function
+
+
+CLASS: ChatTemplate
+----------------------------------------
+  L  22: get_prefix_and_suffix(self, role: str, hist_messages: List[Dict])
+         → Tuple[str, str]
+
+  L  43: get_prompt(self, messages: List[Dict])
+         → str
+
+
+============================================================
+FILE: python/sglang/lang/choices.py
+Functions: 6
+============================================================
+
+
+CLASS: ChoicesSamplingMethod
+----------------------------------------
+  L  17: requires_unconditional_logprobs(self)
+         → bool
+
+  L  21: __call__(self)
+         → ChoicesDecision
+
+
+CLASS: GreedyTokenSelection
+----------------------------------------
+  L  58: __call__(self)
+         → ChoicesDecision
+         📝 Select the option based on greedy logprob selection. For overlapping options
+            where one option is a subset of a longer option, extend the shorter option using
+            its average logprob for comparison against the longer option.
+
+
+CLASS: TokenLengthNormalized
+----------------------------------------
+  L  34: __call__(self)
+         → ChoicesDecision
+         📝 Select the option with the highest token length normalized prompt logprob.
+
+
+CLASS: UnconditionalLikelihoodNormalized
+----------------------------------------
+  L 113: requires_unconditional_logprobs(self)
+         → bool
+
+  L 116: __call__(self)
+         → ChoicesDecision
+         📝 Select the option with the highest average token logprob once normalized by
+            the unconditional token logprobs.
+            The first unconditional token logprob is assumed to be None. If so, it is
+            replaced with 0 for the purposes of normalization.
+
+
+============================================================
+FILE: python/sglang/lang/compiler.py
+Functions: 11
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  11: def compile_func(function, backend)
+
+
+CLASS: CompGraphNode
+----------------------------------------
+  L 214: __init__(self, expr: SglExpr, prev_node, next_nodes, source_node)
+
+  L 222: add_next_node(self, other)
+
+  L 225: __repr__(self)
+
+
+CLASS: CompiledFunction
+----------------------------------------
+  L  18: __init__(self, tracer, function)
+
+  L  26: build_graph(self, tracer)
+
+  L  66: topological_sort(self)
+
+  L  83: print_graph(self)
+
+  L  89: run_internal(self, backend, kwargs, default_sampling_para)
+
+  L 119: run(self)
+
+  L 150: run_batch(self, batch_kwargs)
+
+
+============================================================
+FILE: python/sglang/lang/interpreter.py
+Functions: 43
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  42: def run_internal(state, program, func_args, func_kwargs, sync)
+
+  L  57: def run_program(program,
+        backend,
+        func_args,
+        func_kwargs,
+        default_sampling_para,
+        stream,
+        sync,
+        use_thread)
+
+  L  93: def run_program_batch(program,
+        backend,
+        batch_arguments,
+        default_sampling_para,
+        num_threads,
+        progress_bar,
+        generator_style)
+
+  L 242: def cache_program(program, backend)
+
+
+CLASS: ProgramState
+----------------------------------------
+  L 830: __init__(self, stream_executor: StreamExecutor)
+
+  L 848: system(self, expr: Optional[SglExpr])
+
+  L 851: user(self, expr: Optional[SglExpr])
+
+  L 854: assistant(self, expr: Optional[SglExpr])
+
+  L 858: var_scope(self, name: str)
+
+  L 863: fork(self, size: int, position_ids_offset: Optional[List[int]])
+
+  L 874: copy(self, position_ids_offset: Optional[List[int]])
+
+  L 881: text(self)
+
+  L 884: messages(self)
+
+  L 887: sync(self)
+
+  L 890: error(self)
+
+  L 893: text_iter(self, var_name: Optional[str])
+
+  L 931: text_async_iter(self, var_name: Optional[str], return_meta_data: bool)
+
+  L 976: get_var(self, name)
+
+  L 979: set_var(self, name, value)
+
+  L 982: get_meta_info(self, name)
+
+  L 985: __iadd__(self, other)
+
+  L 991: __getitem__(self, name)
+
+  L 994: __setitem__(self, name, value)
+
+  L 997: __contains__(self, name)
+
+  L1000: __del__(self)
+
+  L1003: __repr__(self)
+         → str
+
+
+CLASS: ProgramStateGroup
+----------------------------------------
+  L1008: __init__(self, states: List[ProgramState], src_state: Optional[ProgramState])
+
+  L1014: join(self, mode: str)
+
+  L1040: __getitem__(self, i: int)
+
+  L1043: __setitem__(self, i: int, value)
+
+  L1046: __iadd__(self, other)
+
+
+CLASS: StreamExecutor
+----------------------------------------
+  L 253: __init__(self, backend, arguments, default_sampling_para, chat_template, stream, num_api_spec_tokens, use_thread)
+
+  L 318: submit(self, expr: SglExpr)
+
+  L 326: sync(self)
+
+  L 330: get_var(self, name)
+
+  L 335: set_var(self, name, value)
+
+  L 338: get_meta_info(self, name, timeout)
+
+  L 346: fork(self, size: int, position_ids_offset: Optional[List[int]])
+
+  L 380: text(self)
+
+  L 384: messages(self)
+
+  L 388: error(self)
+
+  L 392: end(self)
+
+  L 823: __del__(self)
+
+
+============================================================
+FILE: python/sglang/lang/ir.py
+Functions: 59
+============================================================
+
+
+CLASS: SglArgument
+----------------------------------------
+  L 401: __init__(self, name: str, value: str)
+
+  L 406: __repr__(self)
+
+  L 409: __len__(self)
+
+  L 412: __getitem__(self, i)
+
+  L 415: __int__(self)
+
+  L 418: __bool__(self)
+
+  L 421: __format__(self)
+
+
+CLASS: SglCommitLazy
+----------------------------------------
+  L 604: __init__(self)
+
+  L 607: __repr__(self)
+
+
+CLASS: SglConcateAndAppend
+----------------------------------------
+  L 595: __init__(self, states)
+
+  L 599: __repr__(self)
+
+
+CLASS: SglConstantText
+----------------------------------------
+  L 499: __init__(self, value: str)
+
+  L 503: __repr__(self)
+
+
+CLASS: SglExpr
+----------------------------------------
+  L 324: __init__(self)
+
+  L 330: __add__(self, other)
+
+  L 337: __radd__(self, other)
+
+  L 344: concatenate_ir(self, a, b)
+
+  L 355: print_graph_dfs(self)
+
+
+CLASS: SglExprList
+----------------------------------------
+  L 392: __init__(self, expr_list: List[SglExpr])
+
+  L 396: __repr__(self)
+
+
+CLASS: SglFork
+----------------------------------------
+  L 545: __init__(self, number: int, position_ids_offset)
+
+  L 550: __repr__(self)
+
+
+CLASS: SglFunction
+----------------------------------------
+  L 139: __init__(self, func, num_api_spec_tokens, bind_arguments)
+
+  L 151: bind(self)
+
+  L 157: run(self)
+
+  L 216: run_batch(self, batch_kwargs)
+
+  L 293: trace(self)
+
+  L 299: cache(self, backend)
+
+  L 305: compile(self)
+
+  L 310: __call__(self)
+
+
+CLASS: SglGen
+----------------------------------------
+  L 446: __init__(self, name: Optional[str], max_new_tokens: Optional[int], min_new_tokens: Optional[int], n: Optional[int], stop: Optional[Union[str, List[str]]], stop_token_ids: Optional[List[int]], temperature: Optional[float], top_p: Optional[float], top_k: Optional[int], min_p: Optional[float], frequency_penalty: Optional[float], presence_penalty: Optional[float], ignore_eos: Optional[bool], return_logprob: Optional[bool], logprob_start_len: Optional[int], top_logprobs_num: Optional[int], return_text_in_logprobs: Optional[bool], dtype: Optional[type], regex: Optional[str], json_schema: Optional[str])
+         📝 Call the model to generate. See the meaning of the arguments in docs/backend/sampling_params.md
+
+  L 494: __repr__(self)
+
+
+CLASS: SglGetForkItem
+----------------------------------------
+  L 558: __init__(self, index: int)
+
+  L 562: __repr__(self)
+
+
+CLASS: SglImage
+----------------------------------------
+  L 429: __init__(self, path: str)
+
+  L 432: __repr__(self)
+         → str
+
+
+CLASS: SglRoleBegin
+----------------------------------------
+  L 508: __init__(self, role: str)
+
+  L 512: __repr__(self)
+
+
+CLASS: SglRoleEnd
+----------------------------------------
+  L 517: __init__(self, role: str)
+
+  L 521: __repr__(self)
+
+
+CLASS: SglSamplingParams
+----------------------------------------
+  L  41: clone(self)
+
+  L  62: to_openai_kwargs(self)
+
+  L  77: to_vertexai_kwargs(self)
+
+  L  91: to_anthropic_kwargs(self)
+
+  L 107: to_litellm_kwargs(self)
+
+  L 119: to_srt_kwargs(self)
+
+
+CLASS: SglSelect
+----------------------------------------
+  L 527: __init__(self, name: str, choices: List[str], temperature: float, choices_method: ChoicesSamplingMethod)
+
+  L 540: __repr__(self)
+
+
+CLASS: SglSeparateReasoning
+----------------------------------------
+  L 612: __init__(self, model_type: str, expr: SglExpr)
+
+  L 620: process_name_for_reasoning(self, name)
+
+  L 634: __repr__(self)
+
+
+CLASS: SglVarScopeBegin
+----------------------------------------
+  L 577: __init__(self, name: str)
+
+  L 581: __repr__(self)
+
+
+CLASS: SglVarScopeEnd
+----------------------------------------
+  L 586: __init__(self, name: str)
+
+  L 590: __repr__(self)
+
+
+CLASS: SglVariable
+----------------------------------------
+  L 567: __init__(self, name: str, source)
+
+  L 572: __repr__(self)
+
+
+CLASS: SglVideo
+----------------------------------------
+  L 437: __init__(self, path: str, num_frames: int)
+
+  L 441: __repr__(self)
+         → str
+
+
+============================================================
+FILE: python/sglang/lang/tracer.py
+Functions: 13
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  29: def extract_prefix_by_tracing(program, backend)
+
+  L  54: def trace_program(program, arguments, backend)
+
+
+CLASS: TracerProgramState
+----------------------------------------
+  L  76: __init__(self, backend, arguments, only_trace_prefix)
+
+  L 108: fork(self, size: int, position_ids_offset: Optional[List[int]])
+
+  L 175: __iadd__(self, other)
+
+  L 232: get_var(self, name)
+
+  L 240: flatten_nodes(self)
+
+  L 253: __del__(self)
+
+
+CLASS: TracingScope
+----------------------------------------
+  L 260: __init__(self, tracer_state: TracerProgramState)
+
+  L 264: __enter__(self)
+
+  L 268: __exit__(self, exc_type, exc_value, traceback)
+
+  L 272: get_current_scope()
+
+  L 275: add_child_state(self, state: TracerProgramState)

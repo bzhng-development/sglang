@@ -1,0 +1,629 @@
+================================================================================
+FUNCTION INDEX: moe module
+================================================================================
+Total Functions: 71
+Documented: 5
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/cutlass_moe.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  21: def cutlass_fused_experts_fp8(a: torch.Tensor,
+        w1_q: torch.Tensor,
+        w2_q: torch.Tensor,
+        w1_scale: torch.Tensor,
+        w2_scale: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
+        a1_strides: torch.Tensor,
+        c1_strides: torch.Tensor,
+        a2_strides: torch.Tensor,
+        c2_strides: torch.Tensor,
+        workspace: torch.Tensor,
+        a_ptrs: torch.Tensor,
+        b_ptrs: torch.Tensor,
+        out_ptrs: torch.Tensor,
+        a_scales_ptrs: torch.Tensor,
+        b_scales_ptrs: torch.Tensor,
+        expert_offsets: torch.Tensor,
+        problem_sizes1: torch.Tensor,
+        problem_sizes2: torch.Tensor,
+        use_fp8_blockscale: bool)
+         → torch.Tensor
+         📝 Performs Fused MoE computation using CUTLASS-like kernels with FP8 weights and activations.
+            This function implements a Mixture of Experts (MoE) layer with a SwiGLU/SiLU
+            activation, leveraging custom kernels likely derived from CUTLASS principles
+            for grouped matrix multiplication (`fp8_blockwise_scaled_grouped_mm`) and
+            data preparation (`prepare_moe_input`, `silu_and_mul`).
+            It handles per-token routing, quantizes input activations to FP8 with
+            per-token scales, performs the expert computations using FP8 GEMMs with
+            pre-quantized FP8 weights (per-block scales), applies the SiLU activation,
+            and combines the results weighted by the router scores.
+            Args:
+            a (torch.Tensor): Input activations. Shape: `(m, k)`, where `m` is the total
+            number of tokens and `k` is the hidden size. Expected dtype: `torch.half`
+            or `torch.bfloat16`.
+            w1_q (torch.Tensor): Pre-quantized FP8 weight tensor for the first GEMM
+            (up-projection part of SwiGLU). Expected shape: `(E, k, n*2)`, where
+            `E` is the number of experts, `k` is the hidden size, and `n*2` is the
+            intermediate size (`I`). Expected dtype: `torch.float8_e4m3fn`.
+            Note: This shape implies weights are stored as (num_experts, hidden_size, intermediate_size).
+            w2_q (torch.Tensor): Pre-quantized FP8 weight tensor for the second GEMM
+            (down-projection). Expected shape: `(E, n, k)`, where `n` is half the
+            intermediate size (`I // 2`). Expected dtype: `torch.float8_e4m3fn`.
+            Note: This shape implies weights are stored as (num_experts, intermediate_size // 2, hidden_size).
+            w1_scale (torch.Tensor): Scales corresponding to `w1_q` (per-block scales).
+            Shape: `(E, num_blocks_n, num_blocks_k)`. Dtype: `torch.float32`.
+            w2_scale (torch.Tensor): Scales corresponding to `w2_q` (per-block scales).
+            Shape: `(E, num_blocks_k, num_blocks_n)`. Dtype: `torch.float32`.
+            topk_weights (torch.Tensor): Router weights for the selected top-k experts
+            for each token. Shape: `(m, topk)`. Dtype should ideally match `a`.
+            topk_ids (torch.Tensor): Indices of the selected top-k experts for each token.
+            Shape: `(m, topk)`. Dtype: `torch.int32`.
+            a1_strides (torch.Tensor): Stride information for the first GEMM's 'a' input.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+            Note: Its exact usage within `fp8_blockwise_scaled_grouped_mm` needs clarification
+            as it's passed as both a_stride and b_stride in the first call.
+            c1_strides (torch.Tensor): Stride information for the first GEMM's 'c' output.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+            a2_strides (torch.Tensor): Stride information for the second GEMM's 'a' input.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+            Note: Its exact usage within `fp8_blockwise_scaled_grouped_mm` needs clarification
+            as it's passed as both a_stride and b_stride in the second call.
+            c2_strides (torch.Tensor): Stride information for the second GEMM's 'c' output.
+            Passed directly to the underlying kernel. Expected shape `(E,)`, dtype `torch.int64`.
+            workspace (torch.Tensor): Reusable workspace for the underlying kernel.
+            a_ptrs (torch.Tensor): Pointers container for calculating offsets of the input activations for each expert.
+            b_ptrs (torch.Tensor): Pointers container for calculating offsets of the input weights for each expert.
+            out_ptrs (torch.Tensor): Pointers container for calculating offsets of the output activations for each expert.
+            a_scales_ptrs (torch.Tensor): Pointers container for calculating offsets of the input scales for each expert.
+            b_scales_ptrs (torch.Tensor): Pointers container for calculating offsets of the input scales for each expert.
+            use_fp8_blockscale (bool, optional): Flag indicating usage of FP8 with
+            block scaling. Currently, only `True` is supported. Defaults to `True`.
+            Returns:
+            torch.Tensor: The computed MoE layer output. Shape: `(m, k)`, dtype matches `a`.
+            Raises:
+            AssertionError: If input shapes, dtypes, or flags are inconsistent or unsupported.
+            NotImplementedError: If CUDA is not available or `sgl_kernel` is not properly installed.
+
+  L 214: def cutlass_moe_fp4(a: torch.Tensor,
+        a1_gscale: torch.Tensor,
+        w1_fp4: torch.Tensor,
+        w1_blockscale: torch.Tensor,
+        w1_alphas: torch.Tensor,
+        a2_gscale: torch.Tensor,
+        w2_fp4: torch.Tensor,
+        w2_blockscale: torch.Tensor,
+        w2_alphas: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
+        params: CutlassMoEParams,
+        apply_router_weight_on_input: bool)
+         📝 MoE implementation for FP4 Inputs
+            # Gemm 1
+            a: Input tensor: [m, k] (half/bfloat16)
+            a1_gscale: Activation scale per expert: [e]  (float32)
+            w1(gate up) (not an argument to cutlass_moe_fp4): [e, 2 * n, k]
+            w1_fp4: [e, 2 * n, k // 2], dtype: torch.uint8 (stacked fp4: E2M1)
+            (Note: `n` is the up projection output dim, `k` is the input dim in
+            full precision)
+            w1_blockscale: [e, 2 * n, k // block_size] (float8_e4m3)
+            (Block size = 16 for NVFP4)
+            # Gemm 2
+            a2_gscale: Activation scale per expert: [e]
+            w2(down projection) (not an argument to cutlass_moe_fp4): [e, k, n]
+            w2_fp4: [e, k, n // 2], dtype: torch.uint8 (stacked E2M1)
+            w2_blockscale: [e, k, n // block_size], dtype: float8_e4m3
+            Strides for activations, weights and output in logical number of elements.
+            The activations & output stride is the number of elements to the next row.
+            The weights stride is the number of elements to the next row per expert.
+            For example, if the weight is [e, n, k], then the b_stride is a tensor of
+            shape [e] with each element being k. Similarly for activations, if the
+            shape is [m, k], then the a_stride has shape [e] with each value k.
+            Similarly for output, if the output is [m, n], then the c_stride is a
+            tensor of shape [e] with each element being k.
+            Note: cutlass_fp4_group_mm is designed to accept the strides of
+            activations and weights to be the same, so it is passed in as a single
+            tensor.
+            ab_strides_13: [e] dtype: int64 [Gemm 1: Activation / Weight strides]
+            ab_strides_2: [e] dtype: int64 [Gemm 2: Activation / Weight strides]
+            c_strides_13: [e] dtype: int64 [Gemm 1: Output Strides]
+            c_strides_2: [e] dtype: int64 [Gemm 1: Output Strides]
+            topk_weights: [m, topk] dtype: float8
+            topk_ids: [m, topk] dtype: float8
+            m, n, k: Unquantized weight shapes, dtype: int
+            e: number of experts for the current rank, dtype: int
+            assumes that topk < k < n to satisfy - up/down projection expectations.
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/cutlass_moe_params.py
+Functions: 3
+============================================================
+
+
+CLASS: CutlassMoEParams
+----------------------------------------
+  L  90: __init__(self, cutlass_moe_type: CutlassMoEType, device: torch.device, num_experts: int, intermediate_size_per_partition: int, hidden_size: int)
+
+  L 143: to_gemm1_args(self)
+         → dict
+
+  L 157: to_gemm2_args(self)
+         → dict
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/cutlass_w4a8_moe.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  20: def cutlass_w4a8_moe(start_expert_id: int,
+        end_expert_id: int,
+        total_num_experts: int,
+        a: torch.Tensor,
+        w1_q: torch.Tensor,
+        w2_q: torch.Tensor,
+        w1_scale: torch.Tensor,
+        w2_scale: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids_: torch.Tensor,
+        local_topk_ids: torch.Tensor,
+        a_strides1: torch.Tensor,
+        b_strides1: torch.Tensor,
+        c_strides1: torch.Tensor,
+        a_strides2: torch.Tensor,
+        b_strides2: torch.Tensor,
+        c_strides2: torch.Tensor,
+        s_strides13: torch.Tensor,
+        s_strides2: torch.Tensor,
+        expert_offsets: torch.Tensor,
+        problem_sizes1: torch.Tensor,
+        problem_sizes2: torch.Tensor,
+        a1_scale: Optional[torch.Tensor],
+        a2_scale: Optional[torch.Tensor],
+        apply_router_weight_on_input: bool)
+         → torch.Tensor
+         📝 This function computes a w4a8-quantized Mixture of Experts (MoE) layer
+            using two sets of quantized weights, w1_q and w2_q, and top-k gating
+            mechanism. The matrix multiplications are implemented with CUTLASS
+            grouped gemm.
+            Parameters:
+            - a (torch.Tensor): The input tensor to the MoE layer.
+            Shape: [M, K]
+            - w1_q (torch.Tensor): The first set of int4-quantized expert weights.
+            Shape: [num_experts, N * 2,  K // 2]
+            (the weights are passed transposed and int4-packed)
+            - w2_q (torch.Tensor): The second set of int4-quantized expert weights.
+            Shape: [num_experts, K, N // 2]
+            (the weights are passed transposed and int4-packed)
+            - w1_scale (torch.Tensor): The fp32 scale to dequantize w1_q.
+            Shape: [num_experts, K // 512, N * 8]
+            - w2_scale (torch.Tensor): The fp32 scale to dequantize w2_q.
+            Shape: [num_experts, N // 512, K * 4]
+            - topk_weights (torch.Tensor): The weights of each token->expert mapping.
+            - a_strides1 (torch.Tensor): The input strides of the first grouped gemm.
+            - b_strides1 (torch.Tensor): The weights strides of the first grouped gemm.
+            - c_strides1 (torch.Tensor): The output strides of the first grouped gemm.
+            - a_strides2 (torch.Tensor): The input strides of the second grouped gemm.
+            - b_strides2 (torch.Tensor): The weights strides of the second grouped gemm.
+            - c_strides2 (torch.Tensor): The output strides of the second grouped gemm.
+            - s_strides13 (torch.Tensor): The input and scale strides of the first grouped gemm.
+            - s_strides2 (torch.Tensor): The scale strides of the second grouped gemm.
+            - a1_scale (Optional[torch.Tensor]): The optional fp32 scale to quantize a.
+            Shape: scalar or [1, K]
+            - a2_scale (Optional[torch.Tensor]): The optional fp32 scale to
+            quantize the intermediate result between the gemms.
+            Shape: scalar or [1, N]
+            - apply_router_weight_on_input (bool): When true, the topk weights are
+            applied directly on the inputs. This is only applicable when topk is 1.
+            Returns:
+            - torch.Tensor: The fp8 output tensor after applying the MoE layer.
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/fused_moe_native.py
+Functions: 2
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  14: def fused_moe_forward_native(layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: StandardTopKOutput,
+        moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L  41: def moe_forward_native(layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: StandardTopKOutput,
+        moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/rocm_moe_utils.py
+Functions: 3
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  23: def rocm_aiter_asm_moe_tkw1_impl(hidden_states: torch.Tensor,
+        w1: torch.Tensor,
+        w2: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
+        fc1_scale: Optional[torch.Tensor],
+        fc2_scale: Optional[torch.Tensor],
+        fc1_smooth_scale: Optional[torch.Tensor],
+        fc2_smooth_scale: Optional[torch.Tensor],
+        a16: bool,
+        per_tensor_quant_scale: Optional[torch.Tensor],
+        expert_mask: Optional[torch.Tensor],
+        activation_method: int)
+         → torch.Tensor
+
+  L  61: def rocm_aiter_asm_moe_tkw1_fake(hidden_states: torch.Tensor,
+        w1: torch.Tensor,
+        w2: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
+        fc1_scale: Optional[torch.Tensor],
+        fc2_scale: Optional[torch.Tensor],
+        fc1_smooth_scale: Optional[torch.Tensor],
+        fc2_smooth_scale: Optional[torch.Tensor],
+        a16: bool,
+        per_tensor_quant_scale: Optional[torch.Tensor],
+        expert_mask: Optional[torch.Tensor],
+        activation_method: int)
+         → torch.Tensor
+
+  L  89: def rocm_fused_experts_tkw1(hidden_states: torch.Tensor,
+        w1: torch.Tensor,
+        w2: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
+        activation: str,
+        apply_router_weight_on_input: bool,
+        use_fp8_w8a8: bool,
+        per_channel_quant: bool,
+        w1_scale: Optional[torch.Tensor],
+        w2_scale: Optional[torch.Tensor],
+        a1_scale: Optional[torch.Tensor],
+        a2_scale: Optional[torch.Tensor],
+        block_shape: Optional[list[int]])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/router.py
+Functions: 10
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  14: def fused_moe_router_kernel(input_ptr,
+        moe_router_weight_ptr,
+        topk_weights_ptr,
+        topk_ids_ptr,
+        correction_bias_ptr,
+        is_correction_bias: tl.constexpr,
+        num_experts: tl.constexpr,
+        topk: tl.constexpr,
+        moe_softcapping: tl.constexpr,
+        moe_renormalize: tl.constexpr,
+        hidden_dim: tl.constexpr,
+        BLOCK_SIZE: tl.constexpr)
+         @triton.jit
+
+  L 117: def fused_moe_router_impl(x: torch.Tensor,
+        router_weight: torch.Tensor,
+        topk: int,
+        moe_softcapping: float,
+        correction_bias: Optional[torch.Tensor])
+
+  L 160: def fused_moe_router_large_bs_kernel(a_ptr,
+        b_ptr,
+        topk_weights_ptr,
+        topk_ids_ptr,
+        bs,
+        num_experts: tl.constexpr,
+        topk: tl.constexpr,
+        moe_softcapping: tl.constexpr,
+        moe_renormalize: tl.constexpr,
+        K: tl.constexpr,
+        BLOCK_SIZE_M: tl.constexpr,
+        BLOCK_SIZE_N: tl.constexpr,
+        BLOCK_SIZE_K: tl.constexpr,
+        stride_am: tl.constexpr,
+        stride_bn: tl.constexpr)
+         @triton.jit
+
+  L 269: def fused_moe_router_large_bs_impl(x: torch.Tensor,
+        router_weight: torch.Tensor,
+        topk: int,
+        moe_softcapping: float,
+        BLOCK_SIZE_M: int,
+        BLOCK_SIZE_N: int,
+        BLOCK_SIZE_K: int)
+
+  L 312: def fused_moe_router_shim(moe_softcapping,
+        hidden_states,
+        gating_output,
+        topk,
+        renormalize,
+        correction_bias: Optional[torch.Tensor])
+
+
+CLASS: FusedMoeRouter
+----------------------------------------
+  L 356: __init__(self, router_linear, topk, moe_softcapping)
+         → None
+
+  L 361: __call__(self)
+
+  L 364: forward(self, x: torch.Tensor, residual: torch.Tensor)
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 372: forward_cuda(self, x: torch.Tensor, autotune)
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 383: forward_vllm(self, x: torch.Tensor)
+         → Tuple[torch.Tensor, torch.Tensor]
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/topk.py
+Functions: 27
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 355: def fused_topk_torch_native(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        correction_bias: torch.Tensor)
+
+  L 387: def fused_topk_cpu(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo],
+        correction_bias: torch.Tensor)
+
+  L 407: def apply_topk_weights_cpu(need_apply, topk_weights, inputs)
+
+  L 420: def fused_topk(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo])
+
+  L 451: def grouped_topk_gpu(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_expert_group: Optional[int],
+        topk_group: Optional[int],
+        num_fused_shared_experts: int,
+        routed_scaling_factor: Optional[float],
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo],
+        apply_routed_scaling_factor_on_output: Optional[bool])
+         @torch.compile(dynamic=True, backend=get_compiler_backend())
+
+  L 519: def grouped_topk_cpu(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_expert_group: Optional[int],
+        topk_group: Optional[int],
+        num_fused_shared_experts: int,
+        routed_scaling_factor: Optional[float],
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo],
+        apply_routed_scaling_factor_on_output: Optional[bool])
+
+  L 548: def biased_grouped_topk_impl(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        correction_bias: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_expert_group: Optional[int],
+        topk_group: Optional[int],
+        num_fused_shared_experts: int,
+        routed_scaling_factor: Optional[float],
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo],
+        apply_routed_scaling_factor_on_output: Optional[bool])
+         @torch.compile(dynamic=True, backend=get_compiler_backend(), disable=_is_npu)
+
+  L 621: def is_power_of_two(n)
+
+  L 644: def biased_grouped_topk_gpu(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        correction_bias: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_expert_group: Optional[int],
+        topk_group: Optional[int],
+        num_fused_shared_experts: int,
+        routed_scaling_factor: Optional[float],
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo],
+        apply_routed_scaling_factor_on_output: Optional[bool])
+
+  L 723: def biased_grouped_topk_cpu(hidden_states: torch.Tensor,
+        gating_output: torch.Tensor,
+        correction_bias: torch.Tensor,
+        topk: int,
+        renormalize: bool,
+        num_expert_group: Optional[int],
+        topk_group: Optional[int],
+        compiled: bool,
+        num_fused_shared_experts: int,
+        routed_scaling_factor: Optional[float],
+        num_token_non_padded: Optional[torch.Tensor],
+        expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo],
+        apply_routed_scaling_factor_on_output: Optional[bool])
+
+  L 765: def select_experts(hidden_states: torch.Tensor,
+        router_logits: torch.Tensor,
+        topk_config: TopKConfig)
+         → StandardTopKOutput
+
+
+CLASS: BypassedTopKOutput
+----------------------------------------
+  L 178: format(self)
+         → TopKOutputFormat
+
+
+CLASS: StandardTopKOutput
+----------------------------------------
+  L 152: format(self)
+         → TopKOutputFormat
+
+
+CLASS: TopK
+----------------------------------------
+  L 187: __init__(self, top_k: int)
+
+  L 226: forward_native(self, hidden_states: torch.Tensor, router_logits: torch.Tensor)
+         → TopKOutput
+
+  L 243: forward_cuda(self, hidden_states: torch.Tensor, router_logits: torch.Tensor)
+         → TopKOutput
+
+  L 280: forward_cpu(self, hidden_states: torch.Tensor, router_logits: torch.Tensor)
+         → TopKOutput
+
+  L 296: forward_npu(self, hidden_states: torch.Tensor, router_logits: torch.Tensor)
+         → TopKOutput
+
+  L 344: empty_topk_output(self, device: torch.device)
+         → TopKOutput
+
+
+CLASS: TopKOutput
+----------------------------------------
+  L 139: format(self)
+         → TopKOutputFormat
+         📝 The format of the output.
+
+
+CLASS: TopKOutputChecker
+----------------------------------------
+  L 105: format_is_standard(topk_output: TopKOutput)
+         → TypeGuard[StandardTopKOutput]
+
+  L 109: format_is_triton_kernel(topk_output: TopKOutput)
+         → TypeGuard[TritonKernelTopKOutput]
+
+  L 115: format_is_bypassed(topk_output: TopKOutput)
+         → TypeGuard[BypassedTopKOutput]
+
+
+CLASS: TopKOutputFormat
+----------------------------------------
+  L 124: is_standard(self)
+         → bool
+
+  L 127: is_triton_kernel(self)
+         → bool
+
+  L 130: is_bypassed(self)
+         → bool
+
+
+CLASS: TritonKernelTopKOutput
+----------------------------------------
+  L 164: format(self)
+         → TopKOutputFormat
+
+
+============================================================
+FILE: python/sglang/srt/layers/moe/utils.py
+Functions: 23
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 110: def initialize_moe_config(server_args: ServerArgs)
+
+  L 130: def get_moe_a2a_backend()
+         → MoeA2ABackend
+
+  L 138: def get_moe_runner_backend()
+         → MoeRunnerBackend
+
+  L 146: def get_deepep_mode()
+         → DeepEPMode
+
+  L 154: def get_deepep_config()
+         → str
+
+  L 162: def is_tbo_enabled()
+         → bool
+
+  L 170: def get_tbo_token_distribution_threshold()
+         → float
+
+  L 181: def should_use_flashinfer_trtllm_moe()
+         @lru_cache(maxsize=1)
+
+  L 191: def should_use_flashinfer_cutlass_moe_fp4_allgather()
+         📝 Perform FP4 quantize before all-gather for flashinfer cutlass moe to reduce communication cost for high-throughput serving.
+         @lru_cache(maxsize=1)
+
+
+CLASS: DeepEPMode
+----------------------------------------
+  L  76: enable_normal(self)
+         → bool
+
+  L  79: enable_low_latency(self)
+         → bool
+
+  L  82: resolve(self, is_extend_in_batch: bool)
+         → DeepEPMode
+
+  L  91: is_normal(self)
+         → bool
+
+  L  94: is_low_latency(self)
+         → bool
+
+  L  97: is_auto(self)
+         → bool
+
+
+CLASS: MoeA2ABackend
+----------------------------------------
+  L  35: is_none(self)
+
+  L  38: is_deepep(self)
+
+
+CLASS: MoeRunnerBackend
+----------------------------------------
+  L  51: is_auto(self)
+
+  L  54: is_triton(self)
+
+  L  57: is_triton_kernel(self)
+
+  L  60: is_flashinfer_trtllm(self)
+
+  L  63: is_flashinfer_cutlass(self)
+
+  L  66: is_flashinfer_mxfp4(self)

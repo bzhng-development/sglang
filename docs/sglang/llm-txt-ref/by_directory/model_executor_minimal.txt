@@ -1,0 +1,105 @@
+
+# python/sglang/srt/model_executor/cuda_graph_runner.py
+get_is_capture_mode()
+model_capture_mode()
+freeze_gc(enable_cudagraph_gc: bool)
+patch_model(model: torch.nn.Module, enable_compile: bool, num_tokens: int, tp_group: GroupCoordinator)
+set_torch_compile_config()
+get_batch_sizes_to_capture(model_runner: ModelRunner)
+get_global_graph_memory_pool()
+set_global_graph_memory_pool(val)
+  CudaGraphRunner.__init__(model_runner: ModelRunner)
+  CudaGraphRunner.can_run(forward_batch: ForwardBatch)
+  CudaGraphRunner.capture() -> None
+  CudaGraphRunner.capture_one_batch_size(bs: int, forward: Callable)
+  CudaGraphRunner.recapture_if_needed(forward_batch: ForwardBatch)
+  CudaGraphRunner.replay_prepare(forward_batch: ForwardBatch, pp_proxy_tensors: Optional[PPProxyTensors])
+  CudaGraphRunner.replay(forward_batch: ForwardBatch, skip_attn_backend_init: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[LogitsProcessorOutput, PPProxyTensors]
+  CudaGraphRunner.get_spec_info(num_tokens: int)
+
+# python/sglang/srt/model_executor/forward_batch_info.py
+  ForwardMode.is_prefill()
+  ForwardMode.is_extend()
+  ForwardMode.is_decode()
+  ForwardMode.is_mixed()
+  ForwardMode.is_idle()
+  ForwardMode.is_decode_or_idle()
+  ForwardMode.is_target_verify()
+  ForwardMode.is_draft_extend()
+  ForwardMode.is_extend_or_draft_extend_or_mixed()
+  ForwardMode.is_cuda_graph()
+  ForwardMode.is_dummy_first()
+  ForwardMode.is_split_prefill()
+  CaptureHiddenMode.need_capture()
+  CaptureHiddenMode.is_full()
+  CaptureHiddenMode.is_last()
+  CaptureHiddenMode.__lt__(other)
+  ForwardBatch.init_new(cls, batch: ModelWorkerBatch, model_runner: ModelRunner)
+  ForwardBatch.merge_mm_inputs() -> Optional[MultimodalInputs]
+  ForwardBatch.contains_image_inputs() -> bool
+  ForwardBatch.contains_audio_inputs() -> bool
+  ForwardBatch.contains_video_inputs() -> bool
+  ForwardBatch.contains_mm_inputs() -> bool
+  ForwardBatch.get_max_chunk_capacity()
+  ForwardBatch.set_prefix_chunk_idx(idx: int)
+  ForwardBatch.set_attn_attend_prefix_cache(attn_attend_prefix_cache: bool)
+  ForwardBatch.prepare_chunked_kv_indices(device: torch.device)
+  ForwardBatch.prepare_mlp_sync_batch(model_runner: ModelRunner)
+  ForwardBatch.post_forward_mlp_sync_batch(logits_output: LogitsProcessorOutput)
+  ForwardBatch.get_prefix_chunk_seq_lens(prefix_lens: torch.Tensor, num_prefix_chunks: int, prefix_chunk_len: int)
+  ForwardBatch.prepare_chunked_prefix_cache_info(device: torch.device)
+  ForwardBatch.can_run_tbo()
+enable_num_token_non_padded(server_args)
+  PPProxyTensors.__init__(tensors)
+  PPProxyTensors.__getitem__(key: Union[str, slice])
+  PPProxyTensors.__setitem__(key: str, value: torch.Tensor)
+  PPProxyTensors.__len__()
+  PPProxyTensors.__eq__(other: object)
+  PPProxyTensors.__repr__() -> str
+compute_position(attn_backend: str, extend_prefix_lens: torch.Tensor, extend_seq_lens: torch.Tensor, extend_seq_lens_sum: int)
+compute_position_triton(extend_prefix_lens: torch.Tensor, extend_seq_lens: torch.Tensor, extend_seq_lens_sum)
+compute_position_kernel(positions, extend_start_loc, extend_prefix_lens, extend_seq_lens, has_prefix: tl.constexpr)
+compute_position_torch(extend_prefix_lens: torch.Tensor, extend_seq_lens: torch.Tensor)
+clamp_position(seq_lens)
+create_chunked_prefix_cache_kv_indices(req_to_token_ptr, req_pool_indices_ptr, chunk_start_idx_ptr, chunk_seq_lens_ptr, chunk_cu_seq_lens_ptr, chunk_kv_indices_ptr, req_to_token_ptr_stride: tl.constexpr)
+
+# python/sglang/srt/model_executor/model_runner.py
+  RankZeroFilter.__init__(is_rank_zero)
+  RankZeroFilter.filter(record)
+  ModelRunner.__init__(model_config: ModelConfig, mem_fraction_static: float, gpu_id: int, tp_rank: int, tp_size: int, moe_ep_rank: int, moe_ep_size: int, pp_rank: int, pp_size: int, nccl_port: int, server_args: ServerArgs, dp_rank: Optional[int], is_draft_worker: bool, req_to_token_pool: Optional[ReqToTokenPool], token_to_kv_pool_allocator: Optional[BaseTokenToKVPoolAllocator])
+  ModelRunner.initialize(min_per_gpu_memory: float)
+  ModelRunner.model_specific_adjustment()
+  ModelRunner.init_torch_distributed()
+  ModelRunner.load_model()
+  ModelRunner.update_expert_location(new_expert_location_metadata: ExpertLocationMetadata, update_layer_ids: List[int])
+  ModelRunner.update_weights_from_disk(model_path: str, load_format: str) -> tuple[bool, str]
+  ModelRunner.init_weights_update_group(master_address, master_port, rank_offset, world_size, group_name, backend)
+  ModelRunner.update_weights_from_distributed(names, dtypes, shapes, group_name)
+  ModelRunner.update_weights_from_tensor(named_tensors: List[Tuple[str, Union[torch.Tensor, 'LocalSerializedTensor']]], load_format: Optional[str])
+  ModelRunner.get_weights_by_name(name: str, truncate_size: int) -> Optional[torch.Tensor]
+  ModelRunner.init_lora_manager()
+  ModelRunner.load_lora_adapter(lora_ref: LoRARef)
+  ModelRunner.unload_lora_adapter(lora_ref: LoRARef)
+  ModelRunner.profile_max_num_token(total_gpu_memory: int)
+  ModelRunner.set_num_token_hybrid()
+  ModelRunner.init_memory_pool(total_gpu_memory: int, max_num_reqs: Optional[int], max_total_tokens: Optional[int])
+  ModelRunner.init_cublas()
+  ModelRunner.init_attention_backend()
+  ModelRunner.init_double_sparsity_channel_config(selected_channel)
+  ModelRunner.init_device_graphs()
+  ModelRunner.init_threads_binding()
+  ModelRunner.apply_torch_tp()
+  ModelRunner.forward_decode(forward_batch: ForwardBatch, skip_attn_backend_init: bool, pp_proxy_tensors) -> LogitsProcessorOutput
+  ModelRunner.forward_extend(forward_batch: ForwardBatch, skip_attn_backend_init: bool, pp_proxy_tensors) -> LogitsProcessorOutput
+  ModelRunner.forward_idle(forward_batch: ForwardBatch, pp_proxy_tensors) -> LogitsProcessorOutput
+  ModelRunner.forward_split_prefill(forward_batch: ForwardBatch, reinit_attn_backend: bool, forward_count: int) -> LogitsProcessorOutput
+  ModelRunner.forward(forward_batch: ForwardBatch, skip_attn_backend_init: bool, pp_proxy_tensors: Optional[PPProxyTensors], reinit_attn_backend: bool, split_forward_count: int) -> Tuple[Union[LogitsProcessorOutput, PPProxyTensors], bool]
+  ModelRunner.sample(logits_output: LogitsProcessorOutput, forward_batch: ForwardBatch) -> torch.Tensor
+  ModelRunner.model_is_mrope() -> bool
+  ModelRunner.save_remote_model(url: str)
+  ModelRunner.save_sharded_model(path: str, pattern: Optional[str], max_size: Optional[int])
+  LocalSerializedTensor.get(rank: int)
+
+# python/sglang/srt/model_executor/npu_graph_runner.py
+  NPUGraphRunner.__init__(model_runner: ModelRunner)
+  NPUGraphRunner.replay(forward_batch: ForwardBatch, skip_attn_backend_init: bool, pp_proxy_tensors: Optional[PPProxyTensors]) -> Union[LogitsProcessorOutput, PPProxyTensors]

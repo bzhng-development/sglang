@@ -40,10 +40,12 @@ sglang-code/
 │   ├── Makefile                    # Build system
 │   ├── serve.sh                    # Local dev server
 │   ├── generate_api_docs.sh        # API doc helper script
+│   ├── sglang/                     # Developer documentation
+│   │   ├── llm-txt-ref/            # Function analysis (AST-extracted)
+│   │   └── README.md               # Developer reference
 │   └── dev/                        # Developer documentation
 │       ├── refs/                   # Reference materials
-│       │   ├── api/                # Generated API docs (pdoc)
-│       │   └── code-index/         # Function analysis (custom tool)
+│       │   └── api/                # Generated API docs (pdoc3)
 │       └── runbooks/               # Development runbooks
 └── python/docs/                    # GENERATED: Raw API output (can be removed)
     └── sglang/                     # Complete module documentation
@@ -54,8 +56,8 @@ sglang-code/
 | Location | Purpose | Audience | Auto-Generated |
 |----------|---------|----------|----------------|
 | `docs/` | User guides, tutorials | End users | ❌ Manual |
-| `docs/dev/refs/api/` | Clean API reference | Developers | ✅ pdoc |
-| `docs/dev/refs/code-index/` | Code analysis | Contributors | ✅ Custom tool |
+| `docs/dev/refs/api/` | Clean API reference | Developers | ✅ pdoc3 |
+| `docs/sglang/llm-txt-ref/` | Code analysis | Contributors | ✅ Custom tool |
 | `python/docs/` | Raw API dump | None (cleanup target) | ✅ pdoc |
 
 ---
@@ -102,7 +104,7 @@ bash serve.sh # Alternative serving method
 
 **Purpose**: Clean, curated API reference for developers
 **Technology Stack**:
-- Modern pdoc (v15.0.4)
+- pdoc3 (legacy, stable version)
 - Selective module inclusion
 - Interactive search functionality
 
@@ -117,12 +119,13 @@ cd docs
 
 # Method 2: Direct pdoc command
 pip install -e ../python/
-pip install pdoc
+uv pip install pdoc3
 rm -rf dev/refs/api
-pdoc sglang -o dev/refs/api
+pdoc3 --html --output-dir docs --skip-errors sglang
 
-# Method 3: With environment variable
-PDOC_ALLOW_EXEC=1 pdoc sglang -o dev/refs/api
+# Method 3: With UV package manager
+uv pip install pdoc3
+pdoc3 --html --output-dir docs --skip-errors sglang
 ```
 
 **Key Entry Points**:
@@ -146,14 +149,18 @@ PDOC_ALLOW_EXEC=1 pdoc sglang -o dev/refs/api
 
 **Generation**:
 ```bash
-cd docs
-python3 ../tools/devdocs/function_index/generate_function_index.py
+python3 tools/devdocs/function_index/generate_function_index.py \
+  --root python/sglang \
+  --out docs/sglang/llm-txt-ref \
+  --format both \
+  --per-directory
 
-# Output files created in docs/dev/refs/code-index/:
+# Output files created in docs/sglang/llm-txt-ref/:
 # - function-index.json (complete metadata)
 # - function-index-min.txt (minimal with types)
 # - function-index-readable.txt (human-readable)
 # - coverage.md (documentation coverage report)
+# - by_directory/ (per-module breakdowns)
 ```
 
 **Features**:
@@ -201,13 +208,16 @@ python3 ../tools/devdocs/function_index/generate_function_index.py
 
 1. **Generate function index**:
    ```bash
-   cd docs
-   python3 ../tools/devdocs/function_index/generate_function_index.py
+   python3 tools/devdocs/function_index/generate_function_index.py \
+     --root python/sglang \
+     --out docs/sglang/llm-txt-ref \
+     --format both \
+     --per-directory
    ```
 
 2. **Check coverage**:
    ```bash
-   cat dev/refs/code-index/coverage.md
+   cat docs/sglang/llm-txt-ref/coverage.md
    ```
 
 ---

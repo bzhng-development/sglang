@@ -1,0 +1,519 @@
+================================================================================
+FUNCTION INDEX: root module
+================================================================================
+Total Functions: 106
+Documented: 31
+
+
+============================================================
+FILE: python/sglang/bench_offline_throughput.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 197: def throughput_test_once(backend_name: str,
+        backend,
+        reqs: List[DatasetRow],
+        ignore_eos: bool,
+        extra_request_body: Dict,
+        profile: bool)
+
+  L 278: def monitor_trace_file(known_files, directory, interval)
+
+  L 310: def throughput_test(server_args: ServerArgs, bench_args: BenchArgs)
+
+
+CLASS: BenchArgs
+----------------------------------------
+  L  65: add_cli_args(parser: argparse.ArgumentParser)
+
+  L 192: from_cli_args(cls, args: argparse.Namespace)
+
+
+============================================================
+FILE: python/sglang/bench_one_batch.py
+Functions: 13
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 150: def load_model(server_args, port_args, tp_rank)
+
+  L 180: def prepare_inputs_for_correctness_test(bench_args, tokenizer, custom_prompts)
+
+  L 216: def prepare_extend_inputs_for_correctness_test(bench_args,
+        input_ids,
+        reqs,
+        model_runner)
+
+  L 230: def prepare_synthetic_inputs_for_latency_test(batch_size,
+        input_len,
+        custom_inputs)
+
+  L 261: def extend(reqs, model_runner)
+         @torch.no_grad
+
+  L 281: def decode(input_token_ids, batch, model_runner)
+         @torch.no_grad
+
+  L 332: def correctness_test(server_args, port_args, bench_args, tp_rank)
+
+  L 380: def synchronize(device)
+
+  L 384: def latency_test_run_once(run_name,
+        model_runner,
+        rank_print,
+        reqs,
+        batch_size,
+        input_len,
+        output_len,
+        device,
+        log_decode_step,
+        profile,
+        profile_record_shapes,
+        profile_filename_prefix)
+
+  L 507: def latency_test(server_args, port_args, bench_args, tp_rank)
+
+  L 607: def main(server_args, bench_args)
+
+
+CLASS: BenchArgs
+----------------------------------------
+  L 100: add_cli_args(parser: argparse.ArgumentParser)
+
+  L 142: from_cli_args(cls, args: argparse.Namespace)
+
+
+============================================================
+FILE: python/sglang/bench_one_batch_server.py
+Functions: 8
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  96: def launch_server_internal(server_args)
+
+  L 105: def launch_server_process(server_args: ServerArgs)
+
+  L 126: def run_one_case(url: str,
+        batch_size: int,
+        input_len: int,
+        output_len: int,
+        temperature: float,
+        return_logprob: bool,
+        stream_interval: int,
+        input_len_step_percentage: float,
+        run_name: str,
+        result_filename: str,
+        tokenizer,
+        profile: bool,
+        profile_steps: int,
+        profile_by_stage: bool)
+
+  L 255: def get_report_summary(result: List[Tuple],
+        server_args: ServerArgs,
+        bench_args: BenchArgs)
+
+  L 320: def run_benchmark(server_args: ServerArgs, bench_args: BenchArgs)
+
+  L 418: def main()
+
+
+CLASS: BenchArgs
+----------------------------------------
+  L  52: add_cli_args(parser: argparse.ArgumentParser)
+
+  L  88: from_cli_args(cls, args: argparse.Namespace)
+
+
+============================================================
+FILE: python/sglang/bench_serving.py
+Functions: 32
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  98: def remove_prefix(text: str, prefix: str)
+         → str
+
+  L 102: def remove_suffix(text: str, suffix: str)
+         → str
+
+  L 106: def get_auth_headers()
+         → Dict[str, str]
+
+  L 116: async def async_request_trt_llm(request_func_input: RequestFuncInput,
+        pbar: Optional[tqdm])
+         → RequestFuncOutput
+
+  L 185: async def async_request_openai_completions(request_func_input: RequestFuncInput,
+        pbar: Optional[tqdm])
+         → RequestFuncOutput
+
+  L 270: async def async_request_openai_chat_completions(request_func_input: RequestFuncInput,
+        pbar: Optional[tqdm])
+         → RequestFuncOutput
+         📝 Makes a request to the OpenAI Chat Completions API.
+            Handles both streaming and non-streaming responses, including support
+            for image data in messages. Calculates and returns various performance
+            metrics.
+            Args:
+            request_func_input: Input parameters for the request.
+            pbar: Optional tqdm progress bar to update.
+            Returns:
+            RequestFuncOutput: Output of the request, including generated text,
+            latency, TTFT, ITL, and success status.
+
+  L 405: async def async_request_truss(request_func_input: RequestFuncInput,
+        pbar: Optional[tqdm])
+         → RequestFuncOutput
+
+  L 483: async def async_request_sglang_generate(request_func_input: RequestFuncInput,
+        pbar: Optional[tqdm])
+         → RequestFuncOutput
+
+  L 580: async def async_request_gserver(request_func_input: RequestFuncInput,
+        pbar: Optional[tqdm])
+         → RequestFuncOutput
+
+  L 587: async def async_request_profile(api_url: str)
+         → RequestFuncOutput
+
+  L 605: def get_model(pretrained_model_name_or_path: str)
+         → str
+
+  L 620: def get_tokenizer(pretrained_model_name_or_path: str)
+         → Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
+
+  L 643: def get_dataset(args, tokenizer)
+
+  L 755: def download_and_cache_file(url: str, filename: Optional[str])
+         📝 Read and cache a file from a url.
+
+  L 789: def is_file_valid_json(path)
+
+  L 813: def sample_mmmu_requests(num_requests: int,
+        tokenizer: PreTrainedTokenizerBase,
+        fixed_output_len: Optional[int],
+        apply_chat_template: bool,
+        random_sample: bool)
+         → List[DatasetRow]
+         📝 Sample requests from the MMMU dataset using HuggingFace datasets.
+            Args:
+            num_requests: Number of requests to sample.
+            tokenizer: Tokenizer to use for token counting.
+            fixed_output_len: If provided, use this fixed output length for all requests.
+            apply_chat_template: Whether to apply the chat template to the prompt.
+            random_sample: Whether to randomly sample or take the first N.
+            Returns:
+            List of tuples (prompt, prompt_token_len, output_token_len).
+
+  L 944: def sample_sharegpt_requests(dataset_path: str,
+        num_requests: int,
+        tokenizer: PreTrainedTokenizerBase,
+        fixed_output_len: Optional[int],
+        context_len: Optional[int],
+        prompt_suffix: Optional[str],
+        apply_chat_template)
+         → List[DatasetRow]
+
+  L1030: def sample_random_requests(input_len: int,
+        output_len: int,
+        num_prompts: int,
+        range_ratio: float,
+        tokenizer: PreTrainedTokenizerBase,
+        dataset_path: str,
+        random_sample: bool,
+        return_text: bool)
+         → List[DatasetRow]
+
+  L1133: def parse_random_image_resolution(image_resolution: str)
+         → Tuple[int, int]
+         📝 Parse image resolution into (width, height).
+            Supports presets '1080p', '720p', '360p' and custom 'heightxwidth' format
+            (e.g., '1080x1920' means height=1080, width=1920).
+
+  L1163: def sample_random_image_requests(num_requests: int,
+        num_images: int,
+        input_len: int,
+        output_len: int,
+        range_ratio: float,
+        tokenizer: PreTrainedTokenizerBase,
+        apply_chat_template: bool,
+        image_resolution: str)
+         → List[DatasetRow]
+         📝 Generate requests with random images.
+            - Each request includes ``num_images`` random images.
+            - Supported resolutions: 4k (3840x2160), 1080p (1920x1080), 720p (1280x720), 360p (640x360),
+            or custom 'heightxwidth' (e.g., 1080x1920).
+            - Text lengths follow the 'random' dataset sampling rule. ``prompt_len``
+            only counts text tokens and excludes image data.
+
+  L1259: def gen_prompt(tokenizer, token_num)
+         📝 Generate a random prompt of specified token length using tokenizer vocabulary.
+
+  L1266: def get_gen_prefix_cache_path(args, tokenizer)
+         📝 Create cache directory under ~/.cache/sglang/benchmark
+
+  L1279: def sample_generated_shared_prefix_requests(num_groups: int,
+        prompts_per_group: int,
+        system_prompt_len: int,
+        question_len: int,
+        output_len: int,
+        tokenizer: PreTrainedTokenizerBase,
+        args: argparse.Namespace)
+         → List[DatasetRow]
+         📝 Generate benchmark requests with shared system prompts using random tokens and caching.
+
+  L1359: async def get_request(input_requests: List[DatasetRow], request_rate: float)
+         → AsyncGenerator[DatasetRow, None]
+
+  L1377: def calculate_metrics(input_requests: List[DatasetRow],
+        outputs: List[RequestFuncOutput],
+        dur_s: float,
+        tokenizer: PreTrainedTokenizerBase,
+        backend: str)
+         → Tuple[BenchmarkMetrics, List[int]]
+
+  L1456: async def benchmark(backend: str,
+        api_url: str,
+        base_url: str,
+        model_id: str,
+        tokenizer: PreTrainedTokenizerBase,
+        input_requests: List[DatasetRow],
+        request_rate: float,
+        max_concurrency: Optional[int],
+        disable_tqdm: bool,
+        lora_names: List[str],
+        extra_request_body: Dict[str,
+        Any],
+        profile: bool,
+        pd_separated: bool,
+        flush_cache: bool,
+        warmup_requests: int)
+
+  L1756: def check_chat_template(model_path)
+
+  L1765: def set_global_args(args_: argparse.Namespace)
+         📝 Set the global args.
+
+  L1771: def run_benchmark(args_: argparse.Namespace)
+
+  L1926: def set_ulimit(target_soft_limit)
+
+
+CLASS: LoRAPathAction
+----------------------------------------
+  L1938: __call__(self, parser, namespace, values, option_string)
+
+
+CLASS: RequestFuncOutput
+----------------------------------------
+  L  92: init_new(request_func_input: RequestFuncInput)
+
+
+============================================================
+FILE: python/sglang/check_env.py
+Functions: 6
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  15: def is_cuda_v2()
+
+  L  54: def get_package_versions(packages)
+         📝 Get versions of specified packages.
+
+  L  69: def get_cuda_info()
+         📝 Get CUDA-related information if available.
+
+  L 233: def get_gpu_topology()
+         📝 Get GPU topology information.
+
+  L 265: def get_hypervisor_vendor()
+
+  L 276: def check_env()
+         📝 Check and print environment information.
+
+
+============================================================
+FILE: python/sglang/compile_deep_gemm.py
+Functions: 7
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  56: async def warm_up_compile(disaggregation_mode: str,
+        tokenizer_manager: TokenizerManager)
+         @warmup('compile-deep-gemm')
+
+  L  75: def launch_server_internal(server_args)
+
+  L  84: def launch_server_process_and_send_one_request(server_args: ServerArgs,
+        compile_args: CompileArgs)
+
+  L 138: def refine_server_args(server_args: ServerArgs, compile_args: CompileArgs)
+
+  L 149: def run_compile(server_args: ServerArgs, compile_args: CompileArgs)
+
+
+CLASS: CompileArgs
+----------------------------------------
+  L  43: add_cli_args(parser: argparse.ArgumentParser)
+
+  L  47: from_cli_args(cls, args: argparse.Namespace)
+
+
+============================================================
+FILE: python/sglang/global_config.py
+Functions: 1
+============================================================
+
+
+CLASS: GlobalConfig
+----------------------------------------
+  L  14: __init__(self)
+
+
+============================================================
+FILE: python/sglang/profiler.py
+Functions: 1
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  72: def run_profile(url: Optional[str],
+        num_steps: int,
+        activities: List[str],
+        output_dir: Optional[str],
+        profile_name: Optional[str],
+        profile_by_stage: bool)
+
+
+============================================================
+FILE: python/sglang/utils.py
+Functions: 33
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  31: def execute_once(func)
+
+  L  45: def info_once(message: str)
+         @execute_once
+
+  L  49: def convert_json_schema_to_str(json_schema: Union[dict, str, Type[BaseModel]])
+         → str
+         📝 Convert a JSON schema to a string.
+            Parameters
+            ----------
+            json_schema
+            The JSON schema.
+            Returns
+            -------
+            str
+            The JSON schema converted to a string.
+            Raises
+            ------
+            ValueError
+            If the schema is not a dictionary, a string or a Pydantic class.
+
+  L  79: def get_exception_traceback()
+
+  L  85: def is_same_type(values: list)
+         📝 Return whether the elements in values are of the same type.
+
+  L  94: def read_jsonl(filename: str)
+         📝 Read a JSONL file.
+
+  L 103: def dump_state_text(filename: str, states: list, mode: str)
+         📝 Dump program state in a text file.
+
+  L 133: def http_request(url, json, stream, api_key, verify, method: Optional[str])
+         📝 A faster version of requests.post with low-level urllib API.
+
+  L 164: def encode_image_base64(image_path: Union[str, bytes])
+         📝 Encode an image in base64.
+
+  L 180: def encode_frame(frame)
+
+  L 203: def encode_video_base64(video_path: str, num_frames: int)
+
+  L 274: def find_printable_text(text: str)
+         📝 Returns the longest printable substring of text that contains only entire words.
+
+  L 316: def download_and_cache_file(url: str, filename: Optional[str])
+         📝 Read and cache a file from a url.
+
+  L 350: def is_in_ci()
+
+  L 356: def print_highlight(html_content: str)
+
+  L 367: def reserve_port(host, start, end)
+         📝 Reserve an available port by trying to bind a socket.
+            Returns a tuple (port, lock_socket) where `lock_socket` is kept open to hold the lock.
+
+  L 388: def release_port(lock_socket)
+         📝 Release the reserved port by closing the lock socket.
+
+  L 398: def execute_shell_command(command: str)
+         → subprocess.Popen
+         📝 Execute a shell command and return its process handle.
+
+  L 407: def launch_server_cmd(command: str, host: str, port: int)
+         📝 Launch the server using the given command.
+            If no port is specified, a free port is reserved.
+
+  L 426: def terminate_process(process)
+         📝 Terminate the process and automatically release the reserved port.
+
+  L 439: def wait_for_server(base_url: str, timeout: int)
+         → None
+         📝 Wait for the server to be ready by polling the /v1/models endpoint.
+            Args:
+            base_url: The base URL of the server
+            timeout: Maximum time to wait in seconds. None means wait forever.
+
+  L 482: def trim_overlap(existing_text, new_chunk)
+         📝 Finds the largest suffix of 'existing_text' that is a prefix of 'new_chunk'
+            and removes that overlap from the start of 'new_chunk'.
+
+  L 496: def stream_and_merge(llm, prompt, sampling_params)
+         📝 1) Streams the text,
+            2) Removes chunk overlaps,
+            3) Returns the merged text.
+
+  L 510: async def async_stream_and_merge(llm, prompt, sampling_params)
+         📝 Streams tokens asynchronously, removes chunk overlaps,
+            and yields the cleaned chunk in real time for printing.
+
+  L 524: def resolve_obj_by_qualname(qualname: str)
+         → Any
+         📝 Resolve an object by its fully qualified name.
+
+
+CLASS: HttpResponse
+----------------------------------------
+  L 122: __init__(self, resp)
+
+  L 125: json(self)
+
+  L 129: status_code(self)
+
+
+CLASS: LazyImport
+----------------------------------------
+  L 296: __init__(self, module_name: str, class_name: str)
+
+  L 307: __getattr__(self, name: str)
+
+  L 311: __call__(self)
+
+
+CLASS: TypeBasedDispatcher
+----------------------------------------
+  L 472: __init__(self, mapping: List[Tuple[Type, Callable]])
+
+  L 475: __call__(self, obj: Any)

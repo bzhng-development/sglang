@@ -1,0 +1,2113 @@
+================================================================================
+FUNCTION INDEX: quantization module
+================================================================================
+Total Functions: 466
+Documented: 48
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/__init__.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 124: def get_quantization_config(quantization: str)
+         → Type[QuantizationConfig]
+
+  L 143: def monkey_patch_isinstance_for_vllm_base_layer(reverse: bool)
+         📝 Patch isinstance so that the `get_quant_method` in vllm's QuantizationConfig
+            can recognize sglang layers
+
+  L 179: def monkey_patch_moe_apply(class_obj: 'FusedMoEMethodBase')
+         📝 Monkey patch the apply function of vllm's FusedMoEMethodBase.
+            Convert sglang arguments to vllm arguments.
+
+  L 215: def monkey_patch_quant_configs()
+         📝 Apply all monkey patches in one place.
+
+
+CLASS: DummyConfig
+----------------------------------------
+  L  34: override_quantization_method(self)
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/awq.py
+Functions: 33
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  67: def is_layer_skipped_awq(prefix: str, modules_to_not_convert: List[str])
+
+
+CLASS: AWQConfig
+----------------------------------------
+  L  77: __init__(self, weight_bits: int, group_size: int, zero_point: bool, modules_to_not_convert: Optional[List[str]])
+         → None
+
+  L  97: __repr__(self)
+         → str
+
+  L 105: get_scaled_act_names(self)
+         → List[str]
+
+  L 108: get_name(self)
+         → str
+
+  L 111: get_supported_act_dtypes(self)
+         → List[torch.dtype]
+
+  L 115: get_min_capability(cls)
+         → int
+
+  L 120: get_config_filenames()
+         → List[str]
+
+  L 128: from_config(cls, config: Dict[str, Any])
+         → AWQConfig
+
+  L 137: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[LinearMethodBase]
+
+
+CLASS: AWQLinearMethod
+----------------------------------------
+  L 326: __init__(self, quant_config: AWQConfig)
+
+  L 329: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 396: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 401: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: AWQMarlinConfig
+----------------------------------------
+  L 158: __init__(self, weight_bits: int, group_size: int, zero_point: bool, lm_head_quantized: bool, modules_to_not_convert: Optional[list[str]], full_config: dict[str, Any])
+         → None
+
+  L 188: __repr__(self)
+         → str
+
+  L 197: get_scaled_act_names(self)
+         → List[str]
+
+  L 201: get_name(cls)
+         → str
+
+  L 205: get_supported_act_dtypes(cls)
+         → list[torch.dtype]
+
+  L 209: get_min_capability(cls)
+         → int
+
+  L 213: get_config_filenames(cls)
+         → list[str]
+
+  L 217: from_config(cls, config: dict[str, Any])
+         → AWQMarlinConfig
+
+  L 235: override_quantization_method(cls, hf_quant_cfg, user_quant)
+         → Optional[str]
+
+  L 258: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 294: is_awq_marlin_compatible(cls, quant_config: dict[str, Any])
+
+
+CLASS: AWQMarlinLinearMethod
+----------------------------------------
+  L 428: __init__(self, quant_config: AWQMarlinConfig)
+         → None
+
+  L 431: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: list[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+         → None
+
+  L 509: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 549: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: AWQMoEMethod
+----------------------------------------
+  L 572: __init__(self, quant_config: AWQMarlinConfig)
+
+  L 578: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+
+  L 674: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 739: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: StandardTopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/awq_triton.py
+Functions: 4
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  14: def awq_dequantize_kernel(qweight_ptr,
+        scales_ptr,
+        zeros_ptr,
+        group_size,
+        result_ptr,
+        num_cols,
+        num_rows,
+        BLOCK_SIZE_X: tl.constexpr,
+        BLOCK_SIZE_Y: tl.constexpr)
+         @triton.jit
+
+  L 111: def awq_gemm_kernel(a_ptr,
+        b_ptr,
+        c_ptr,
+        zeros_ptr,
+        scales_ptr,
+        M,
+        N,
+        K,
+        group_size,
+        BLOCK_SIZE_M: tl.constexpr,
+        BLOCK_SIZE_N: tl.constexpr,
+        BLOCK_SIZE_K: tl.constexpr,
+        SPLIT_K: tl.constexpr)
+         @triton.jit
+
+  L 235: def awq_dequantize_triton(qweight: torch.Tensor,
+        scales: torch.Tensor,
+        zeros: torch.Tensor,
+        block_size_x: int,
+        block_size_y: int)
+         → torch.Tensor
+
+  L 289: def awq_gemm_triton(input: torch.Tensor,
+        qweight: torch.Tensor,
+        scales: torch.Tensor,
+        qzeros: torch.Tensor,
+        split_k_iters: int,
+        block_size_m: int,
+        block_size_n: int,
+        block_size_k: int)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/base_config.py
+Functions: 19
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 202: def method_has_implemented_embedding(method_class: Type[QuantizeMethodBase])
+         → bool
+         📝 Not all quant methods have embedding implemented, so we need to check that
+            it exists for our given method. We check this by making sure the function
+            has been changed from the base implementation.
+
+
+CLASS: FusedMoEMethodBase
+----------------------------------------
+  L  87: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L  99: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+CLASS: LinearMethodBase
+----------------------------------------
+  L  47: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+         📝 Create weights for a linear layer.
+            The weights will be set as attributes of the layer.
+            Args:
+            layer: The layer that is using the LinearMethodBase factory.
+            input_size_per_partition: Size of the weight input dim on rank X.
+            output_partition_sizes: Sizes of the output dim of each logical
+            weight on rank X. E.g., output_partition_sizes for QKVLinear
+            is a list contains the width of Wq, Wk, Wv on rank X.
+            input_size: Size of the input dim of the weight across all ranks.
+            output_size: Size of the output dim of the weight across all ranks.
+            params_dtype: Datatype of the parameters.
+
+  L  73: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+         📝 Apply the weights in layer to the input tensor.
+            Expects create_weights to have been called before on the layer.
+
+
+CLASS: QuantizationConfig
+----------------------------------------
+  L 112: __init__(self)
+
+  L 118: get_name(self)
+         → str
+         📝 Name of the quantization method.
+
+  L 123: get_supported_act_dtypes(self)
+         → List[torch.dtype]
+         📝 List of supported activation dtypes.
+
+  L 129: get_min_capability(cls)
+         → int
+         📝 Minimum GPU capability to support the quantization method.
+            E.g., 70 for Volta, 75 for Turing, 80 for Ampere.
+            This requirement is due to the custom CUDA kernels used by the
+            quantization method.
+
+  L 140: get_config_filenames()
+         → List[str]
+         📝 List of filenames to search for in the model directory.
+
+  L 146: from_config(cls, config: Dict[str, Any])
+         → 'QuantizationConfig'
+         📝 Create a config class from the model's quantization config.
+
+  L 151: override_quantization_method(cls, hf_quant_cfg, user_quant)
+         → Optional[str]
+         📝 Detects if this quantization method can support a given checkpoint
+            format by overriding the user specified quantization method --
+            this method should only be overwritten by subclasses in exceptional
+            circumstances
+
+  L 161: get_from_keys(config: Dict[str, Any], keys: List[str])
+         → Any
+         📝 Get a value from the model's quantization config.
+
+  L 171: get_from_keys_or(config: Dict[str, Any], keys: List[str], default: Any)
+         → Any
+         📝 Get a optional value from the model's quantization config.
+
+  L 179: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+         📝 Get the quantize method to use for the quantized layer.
+            Args:
+            layer: The layer for the quant method.
+            prefix: The full name of the layer in the state dict
+            Returns:
+            The quantize method. None if the given layer doesn't support quant
+            method.
+
+  L 194: get_scaled_act_names(self)
+         → List[str]
+         📝 Returns the activation function names that should be post-scaled.
+            For now, this is only used by AWQ.
+
+
+CLASS: QuantizeMethodBase
+----------------------------------------
+  L  20: create_weights(self, layer: torch.nn.Module)
+         📝 Create weights for a layer.
+            The weights will be set as attributes of the layer.
+
+  L  29: apply(self, layer: torch.nn.Module)
+         → torch.Tensor
+         📝 Apply the weights in layer to the input tensor.
+            Expects create_weights to have been called before on the layer.
+
+  L  35: process_weights_after_loading(self, layer: nn.Module)
+         → None
+         📝 Process the weight after loading.
+            This can be used for example, to transpose weights for computation.
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/blockwise_int8.py
+Functions: 16
+============================================================
+
+
+CLASS: BlockInt8Config
+----------------------------------------
+  L  36: __init__(self, is_checkpoint_int8_serialized: bool, activation_scheme: str, ignored_layers: Optional[List[str]], weight_block_size: List[int])
+         → None
+
+  L  69: get_name(cls)
+         → str
+
+  L  73: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L  77: get_min_capability(cls)
+         → int
+
+  L  81: get_config_filenames(cls)
+         → List[str]
+
+  L  85: from_config(cls, config: Dict[str, Any])
+         → BlockInt8Config
+
+  L  98: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 112: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: BlockInt8LinearMethod
+----------------------------------------
+  L 128: __init__(self, quant_config: BlockInt8Config)
+
+  L 133: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 214: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 222: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: BlockInt8MoEMethod
+----------------------------------------
+  L 250: __init__(self, quant_config: BlockInt8Config)
+
+  L 255: create_weights(self, layer: Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L 343: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 347: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/fp8.py
+Functions: 23
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  23: def dummy_func()
+
+  L 491: def get_tile_tokens_dim(num_tokens, top_k, num_experts)
+
+
+CLASS: Fp8Config
+----------------------------------------
+  L 113: __init__(self, is_checkpoint_fp8_serialized: bool, activation_scheme: str, ignored_layers: Optional[List[str]], weight_block_size: List[int])
+         → None
+
+  L 143: get_name(cls)
+         → str
+
+  L 147: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 151: get_min_capability(cls)
+         → int
+
+  L 155: get_config_filenames(cls)
+         → List[str]
+
+  L 159: from_config(cls, config: Dict[str, Any])
+         → Fp8Config
+
+  L 172: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 186: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: Fp8KVCacheMethod
+----------------------------------------
+  L1210: __init__(self, quant_config: Fp8Config)
+
+
+CLASS: Fp8LinearMethod
+----------------------------------------
+  L 208: __init__(self, quant_config: Union[Fp8Config, W4AFp8Config])
+
+  L 224: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 332: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 442: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: Fp8MoEMethod
+----------------------------------------
+  L 514: __init__(self, quant_config: Fp8Config)
+
+  L 525: create_weights(self, layer: Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L 749: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 911: process_weights_hip_int4(self, layer: Module)
+
+  L 954: process_weights_hip_scale_padding(self, layer: Module)
+
+  L 987: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L1082: apply_with_router_logits(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L1141: maybe_apply_hip_fused_experts(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, activation: str, no_combine: bool)
+         → Optional[torch.Tensor]
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/fp8_kernel.py
+Functions: 26
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  72: def is_fp8_fnuz()
+         → bool
+         @lru_cache()
+
+  L  89: def deep_gemm_fp8_fp8_bf16_nt(A: torch.Tensor,
+        As: torch.Tensor,
+        B: torch.Tensor,
+        Bs: torch.Tensor,
+        C: torch.Tensor)
+         → None
+
+  L  98: def deep_gemm_fp8_fp8_bf16_nt_fake(A: torch.Tensor,
+        As: torch.Tensor,
+        B: torch.Tensor,
+        Bs: torch.Tensor,
+        C: torch.Tensor)
+         → None
+
+  L 394: def per_token_group_quant_8bit(x: torch.Tensor,
+        group_size: int,
+        dst_dtype: torch.dtype,
+        eps: float,
+        column_major_scales: bool,
+        scale_tma_aligned: bool,
+        scale_ue8m0: bool,
+        fuse_silu_and_mul: bool,
+        masked_m: Optional[torch.Tensor])
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 427: def create_per_token_group_quant_fp8_output_scale(x_shape,
+        device,
+        group_size,
+        column_major_scales: bool,
+        scale_tma_aligned: bool,
+        scale_ue8m0: bool)
+
+  L 471: def sglang_per_token_group_quant_fp8(x: torch.Tensor,
+        group_size: int,
+        eps: float,
+        column_major_scales: bool,
+        scale_tma_aligned: bool,
+        scale_ue8m0: bool,
+        fuse_silu_and_mul: bool,
+        masked_m: Optional[torch.Tensor])
+
+  L 507: def sglang_per_token_group_quant_8bit(x: torch.Tensor,
+        group_size: int,
+        dst_dtype: torch.dtype,
+        eps: float,
+        column_major_scales: bool,
+        scale_tma_aligned: bool,
+        scale_ue8m0: bool,
+        fuse_silu_and_mul: bool,
+        masked_m: Optional[torch.Tensor])
+
+  L 546: def sglang_per_token_quant_fp8(x: torch.Tensor, dtype: torch.dtype)
+
+  L 608: def static_quant_fp8(x: torch.Tensor, x_s: torch.Tensor, repeat_scale: bool)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 Function to perform static quantization using the given scale on an input tensor `x`.
+            It converts the tensor values into signed float8 values and returns the
+            quantized tensor along with the scaling factor used for quantization.
+            Args:
+            x: The input tenosr with ndim >= 2.
+            x_s: The quantization scale.
+            repeat_scale: Whether to broadcast per-tensor scale to per-channel scale.
+            dtype: The dype of output tensor.
+            Returns:
+            Tuple[torch.Tensor, torch.Tensor]: The quantized tensor and the scaling factor for quantization.
+
+  L 909: def get_w8a8_block_fp8_configs(N: int, K: int, block_n: int, block_k: int)
+         → Optional[Dict[int, Any]]
+         📝 Return optimized configurations for the w8a8 block fp8 kernel.
+            The return value will be a dictionary that maps an irregular grid of
+            batch sizes to configurations of the w8a8 block fp8 kernel. To evaluate the
+            kernel on a given batch size bs, the closest batch size in the grid should
+            be picked and the associated configuration chosen to invoke the kernel.
+         @functools.lru_cache
+
+  L 950: def select_w8a8_block_fp8_matmul_kernel(M, N, META)
+
+  L 956: def use_w8a8_block_fp8_matmul_unrolledx4(M, N, META)
+
+  L 965: def select_w8a8_block_fp8_matmul_kernel(M, N, META)
+
+  L 972: def prepare_block_fp8_matmul_inputs(A: torch.Tensor,
+        B: torch.Tensor,
+        As: torch.Tensor,
+        Bs: torch.Tensor,
+        block_size: List[int],
+        output_dtype: torch.dtype)
+         → Tuple[int, int, int]
+
+  L1020: def w8a8_block_fp8_matmul_deepgemm(A: torch.Tensor,
+        B: torch.Tensor,
+        As: torch.Tensor,
+        Bs: torch.Tensor,
+        block_size: List[int],
+        output_dtype: torch.dtype)
+         → torch.Tensor
+
+  L1041: def w8a8_block_fp8_matmul_triton(A: torch.Tensor,
+        B: torch.Tensor,
+        As: torch.Tensor,
+        Bs: torch.Tensor,
+        block_size: List[int],
+        output_dtype: torch.dtype)
+         → torch.Tensor
+         📝 This function performs matrix multiplication with block-wise quantization.
+            It takes two input tensors `A` and `B` with scales `As` and `Bs`.
+            The output is returned in the specified `output_dtype`.
+            Args:
+            A: The input tensor, e.g., activation.
+            B: The input tensor, e.g., weight.
+            As: The per-token-group quantization scale for `A`.
+            Bs: The per-block quantization scale for `B`.
+            block_size: The block size for per-block quantization. It should be 2-dim, e.g., [128, 128].
+            output_dytpe: The dtype of the returned tensor.
+            Returns:
+            torch.Tensor: The result of matmul.
+
+  L1122: def w8a8_block_fp8_matmul(A: torch.Tensor,
+        B: torch.Tensor,
+        As: torch.Tensor,
+        Bs: torch.Tensor,
+        block_size: List[int],
+        output_dtype: torch.dtype)
+         → torch.Tensor
+
+  L1192: def per_tensor_quant_mla_fp8(x: torch.Tensor, x_s_out: torch.Tensor, eps: float)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 This function quantizes input values to float8 values with tensor-wise quantization
+            and specialized for mla absorbed case.
+
+  L1288: def per_token_group_quant_mla_deep_gemm_masked_fp8(x: torch.Tensor,
+        group_size: int,
+        eps: float,
+        dtype: torch.dtype)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 This function quantizes input values to float8 values with per-token-group-quantization
+            for deep_gemm grouped_gemm_masked and specialized for mla absorbed case.
+
+  L1358: def scaled_fp8_quant(input: torch.Tensor,
+        scale: Optional[torch.Tensor],
+        num_token_padding: Optional[int],
+        use_per_token_if_dynamic: bool)
+         → tuple[torch.Tensor, torch.Tensor]
+
+  L1402: def scaled_fp8_quant(input: torch.Tensor,
+        scale: Optional[torch.Tensor],
+        num_token_padding: Optional[int],
+        use_per_token_if_dynamic: bool)
+         → tuple[torch.Tensor, torch.Tensor]
+
+  L1500: def per_token_group_quant_fp8_hopper_moe_mn_major(A: torch.Tensor,
+        expert_offsets: torch.Tensor,
+        problem_sizes: torch.Tensor,
+        group_size: int,
+        expert_tokens_alignment: int)
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L1568: def per_group_transpose(a: torch.Tensor,
+        expert_offsets: torch.Tensor,
+        M_ALIGNMENT: int)
+         → torch.Tensor
+
+  L1591: def is_weak_contiguous(x: torch.Tensor)
+
+  L1600: def scaled_mm_kernel(a_ptr,
+        b_ptr,
+        scale_a_ptr,
+        scale_b_ptr,
+        c_ptr,
+        bias_ptr,
+        M,
+        N,
+        K,
+        stride_am,
+        stride_ak,
+        stride_bk,
+        stride_bn,
+        stride_cm,
+        stride_cn,
+        ACCUMULATOR_DTYPE: tl.constexpr,
+        BLOCK_SIZE_M: tl.constexpr,
+        BLOCK_SIZE_N: tl.constexpr,
+        BLOCK_SIZE_K: tl.constexpr,
+        BLOCK_SIZE_SCALE_A: tl.constexpr,
+        BLOCK_SIZE_SCALE_B: tl.constexpr)
+         @triton.jit
+
+  L1723: def triton_scaled_mm(input: torch.Tensor,
+        weight: torch.Tensor,
+        scale_a: torch.Tensor,
+        scale_b: torch.Tensor,
+        out_dtype: type[torch.dtype],
+        bias: Optional[torch.Tensor],
+        block_size_m: int,
+        block_size_n: int,
+        block_size_k: int,
+        use_heuristic)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/fp8_utils.py
+Functions: 20
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  63: def use_rowwise_torch_scaled_mm()
+
+  L  81: def cutlass_fp8_supported()
+
+  L  93: def normalize_e4m3fn_to_e4m3fnuz(weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor])
+         → Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor]]
+
+  L 118: def cutlass_block_fp8_supported()
+         → bool
+
+  L 140: def dispatch_w8a8_block_fp8_linear()
+         → Callable
+
+  L 153: def flashinfer_gemm_w8a8_block_fp8_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        block_size: List[int],
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 185: def cutlass_w8a8_block_fp8_linear_with_fallback(input: torch.Tensor,
+        weight: torch.Tensor,
+        block_size: List[int],
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 218: def deepgemm_w8a8_block_fp8_linear_with_fallback(input: torch.Tensor,
+        weight: torch.Tensor,
+        block_size: List[int],
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 269: def aiter_w8a8_block_fp8_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        block_size: List[int],
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 292: def triton_w8a8_block_fp8_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        block_size: List[int],
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 315: def dequant_mxfp4(w_block: torch.Tensor, w_scale: torch.Tensor, out_dtype)
+         → torch.Tensor
+         📝 :param w_block: (batch, n, k, 16), uint8, pack two mxfp4 into one byte
+            :param w_scale: (batch, n, k), uint8
+            :return: (batch, n, k * 32), float32
+
+  L 342: def input_to_float8(x: torch.Tensor, dtype: torch.dtype)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 This function quantizes input values to float8 values with tensor-wise quantization.
+
+  L 361: def block_quant_to_tensor_quant(x_q_block: torch.Tensor,
+        x_s: torch.Tensor,
+        block_size: List[int])
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 This function converts block-wise quantization to tensor-wise quantization.
+            The inputs are block-wise quantization tensor `x_q_block`, block-wise quantization scale
+            and the block size.
+            The outputs are tensor-wise quantization tensor and tensor-wise quantization scale.
+            Note only float8 is supported for now.
+
+  L 404: def block_quant_dequant(x_q_block: torch.Tensor,
+        x_s: torch.Tensor,
+        block_size: List[int],
+        dtype: torch.dtype)
+         → torch.Tensor
+         📝 This function converts block-wise quantization to unquantized.
+            The inputs are block-wise quantization tensor `x_q_block`, block-wise quantization scale
+            and the block size.
+            The output is an unquantized tensor with dtype.
+
+  L 427: def requant_weight_ue8m0_inplace(weight, weight_scale_inv, weight_block_size)
+
+  L 471: def per_block_cast_to_fp8(x: torch.Tensor)
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 488: def ceil_to_ue8m0(x: torch.Tensor)
+
+  L 492: def channel_quant_to_tensor_quant(x_q_channel: torch.Tensor, x_s: torch.Tensor)
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 542: def apply_fp8_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        input_scale_ub: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor],
+        cutlass_fp8_supported: bool,
+        use_per_token_if_dynamic: bool,
+        pad_output: Optional[bool],
+        compressed_tensor_quant: bool)
+         → torch.Tensor
+
+  L 809: def can_auto_enable_marlin_fp8()
+         → bool
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/fpgemm_fp8.py
+Functions: 12
+============================================================
+
+
+CLASS: FBGEMMFp8Config
+----------------------------------------
+  L  43: __init__(self, ignore_list: list[str], input_scale_ub: float)
+
+  L  58: get_name(cls)
+         → str
+
+  L  62: get_supported_act_dtypes(cls)
+         → list[torch.dtype]
+
+  L  66: get_min_capability(cls)
+         → int
+
+  L  70: get_config_filenames(cls)
+         → list[str]
+
+  L  74: from_config(cls, config: dict[str, Any])
+         → FBGEMMFp8Config
+
+  L  79: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L  92: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: FBGEMMFp8LinearMethod
+----------------------------------------
+  L  98: __init__(self, quant_config: FBGEMMFp8Config)
+
+  L 105: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: list[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 155: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 176: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/gptq.py
+Functions: 34
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  62: def check_marlin_format(hf_quant_cfg: Dict[str, Any])
+         → bool
+
+  L  70: def gptq_marlin_moe_repack(b_q_weight: torch.Tensor,
+        perm: torch.Tensor,
+        size_k: int,
+        size_n: int,
+        num_bits: int)
+         → torch.Tensor
+
+
+CLASS: GPTQConfig
+----------------------------------------
+  L 106: __init__(self, weight_bits: int, group_size: int, desc_act: bool, lm_head_quantized: bool, dynamic: Dict[str, Dict[str, Union[int, bool]]])
+         → None
+
+  L 151: __repr__(self)
+         → str
+
+  L 160: get_scaled_act_names(self)
+         → List[str]
+         📝 Returns the activation function names that should be post-scaled.
+            For now, this is only used by AWQ.
+
+  L 168: get_name(cls)
+         → str
+
+  L 172: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 177: get_min_capability(cls)
+         → int
+
+  L 181: get_config_filenames(cls)
+         → List[str]
+
+  L 185: from_config(cls, config: Dict[str, Any])
+         → GPTQConfig
+
+  L 195: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[LinearMethodBase]
+
+
+CLASS: GPTQLinearMethod
+----------------------------------------
+  L 399: __init__(self, quant_config: GPTQConfig)
+
+  L 402: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: list[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 513: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 531: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: GPTQMarlinConfig
+----------------------------------------
+  L 219: __init__(self, weight_bits: int, group_size: int, desc_act: bool, is_sym: bool, lm_head_quantized: bool, dynamic: Dict[str, Dict[str, Union[int, bool]]], full_config: Dict[str, Any])
+         → None
+
+  L 277: __repr__(self)
+         → str
+
+  L 286: get_scaled_act_names(self)
+         → List[str]
+         📝 Returns the activation function names that should be post-scaled.
+            For now, this is only used by AWQ.
+
+  L 294: get_name(cls)
+         → str
+
+  L 298: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 302: get_min_capability(cls)
+         → int
+
+  L 306: get_config_filenames(cls)
+         → List[str]
+
+  L 310: from_config(cls, config: Dict[str, Any])
+         → GPTQMarlinConfig
+
+  L 330: override_quantization_method(cls, hf_quant_cfg, user_quant)
+         → Optional[str]
+
+  L 356: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 367: is_gptq_marlin_compatible(cls, quant_config: Dict[str, Any])
+
+
+CLASS: GPTQMarlinLinearMethod
+----------------------------------------
+  L 563: __init__(self, quant_config: GPTQMarlinConfig)
+         → None
+
+  L 572: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: list[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+         → None
+
+  L 685: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 779: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: GPTQMarlinMoEMethod
+----------------------------------------
+  L 825: __init__(self, quant_config: GPTQMarlinConfig)
+         → None
+
+  L 828: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+
+  L 974: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L1055: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/int8_kernel.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  51: def per_token_quant_int8(x, scale_dtype, cal_sum)
+
+  L 126: def per_token_group_quant_int8(x: torch.Tensor,
+        group_size: int,
+        eps: float,
+        dtype: torch.dtype)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 Function to perform per-token-group quantization on an input tensor `x`.
+            It converts the tensor values into signed int8 values and returns the
+            quantized tensor along with the scaling factor used for quantization.
+            Args:
+            x: The input tenosr with ndim >= 2.
+            group_size: The group size used for quantization.
+            eps: The minimum to avoid dividing zero.
+            dtype: The dype of output tensor. Note that only `torch.int8` is supported for now.
+            Returns:
+            Tuple[torch.Tensor, torch.Tensor]: The quantized tensor and the scaling factor for quantization.
+
+  L 185: def sglang_per_token_group_quant_int8(x: torch.Tensor,
+        group_size: int,
+        eps: float,
+        dtype: torch.dtype)
+
+  L 298: def get_w8a8_block_int8_configs(N: int, K: int, block_n: int, block_k: int)
+         → Optional[Dict[int, Any]]
+         📝 Return optimized configurations for the w8a8 block fp8 kernel.
+            The return value will be a dictionary that maps an irregular grid of
+            batch sizes to configurations of the w8a8 block fp8 kernel. To evaluate the
+            kernel on a given batch size bs, the closest batch size in the grid should
+            be picked and the associated configuration chosen to invoke the kernel.
+         @functools.lru_cache
+
+  L 339: def w8a8_block_int8_matmul(A: torch.Tensor,
+        B: torch.Tensor,
+        As: torch.Tensor,
+        Bs: torch.Tensor,
+        block_size: List[int],
+        output_dtype: torch.dtype)
+         → torch.Tensor
+         📝 This function performs matrix multiplication with block-wise quantization.
+            It takes two input tensors `A` and `B` with scales `As` and `Bs`.
+            The output is returned in the specified `output_dtype`.
+            Args:
+            A: The input tensor, e.g., activation.
+            B: The input tensor, e.g., weight.
+            As: The per-token-group quantization scale for `A`.
+            Bs: The per-block quantization scale for `B`.
+            block_size: The block size for per-block quantization. It should be 2-dim, e.g., [128, 128].
+            output_dytpe: The dtype of the returned tensor.
+            Returns:
+            torch.Tensor: The result of matmul.
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/int8_utils.py
+Functions: 3
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  11: def apply_w8a8_block_int8_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        block_size: List[int],
+        weight_scale: torch.Tensor,
+        input_scale: Optional[torch.Tensor],
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L  34: def input_to_int8(x: torch.Tensor, dtype: torch.dtype)
+         → Tuple[torch.Tensor, torch.Tensor]
+         📝 This function quantizes input values to int8 values with tensor-wise quantization.
+
+  L  47: def block_dequant(x_q_block: torch.Tensor,
+        x_s: torch.Tensor,
+        block_size: List[int])
+         → torch.Tensor
+         📝 This function conducts block-wise dequantization.
+            The inputs are block-wise quantization tensor `x_q_block`, block-wise quantization scale
+            and the block size.
+            The outputs are dequantized tensor.
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/kv_cache.py
+Functions: 4
+============================================================
+
+
+CLASS: BaseKVCacheMethod
+----------------------------------------
+  L  28: __init__(self, quant_config: QuantizationConfig)
+
+  L  31: create_weights(self, layer: torch.nn.Module)
+         📝 Create "weight" (aka k_scale and v_scale) for an attention layer.
+
+  L  45: apply(self, layer: torch.nn.Module)
+         → torch.Tensor
+
+  L  48: process_weights_after_loading(self, layer: RadixAttention)
+         → None
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/marlin_utils.py
+Functions: 38
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  63: def query_marlin_supported_quant_types(has_zp: Optional[bool],
+        include_fp_type: bool,
+        device_capability: Optional[int])
+
+  L 134: def check_marlin_supported(quant_type: ScalarType,
+        group_size: int,
+        has_zp: bool,
+        device_capability: Optional[int])
+         → bool
+
+  L 144: def verify_marlin_supported(quant_type: ScalarType,
+        group_size: int,
+        has_zp: bool)
+         → None
+
+  L 153: def verify_marlin_supports_shape(output_size_per_partition: int,
+        input_size_per_partition: int,
+        input_size: int,
+        group_size: int)
+         → None
+
+  L 189: def check_marlin_supports_shape(output_size_per_partition: int,
+        input_size_per_partition: int,
+        input_size: int,
+        group_size: int)
+         → tuple[bool, Optional[str]]
+
+  L 204: def check_marlin_supports_layer(layer: LinearBase, group_size: int)
+         → bool
+
+  L 220: def check_moe_marlin_supports_layer(layer: FusedMoE, group_size: int)
+         → bool
+
+  L 244: def marlin_make_workspace(device: torch.device, max_blocks_per_sm: int)
+         → torch.Tensor
+
+  L 255: def marlin_is_k_full(act_order: bool, is_row_parallel: bool)
+         → bool
+
+  L 259: def marlin_repeat_scales_on_all_ranks(act_order: bool,
+        group_size: int,
+        is_row_parallel: bool)
+         → bool
+
+  L 268: def marlin_make_empty_g_idx(device: torch.device)
+         → torch.Tensor
+
+  L 274: def marlin_make_empty_zp(device: torch.device)
+         → torch.Tensor
+
+  L 280: def marlin_sort_g_idx(g_idx: torch.Tensor)
+         → tuple[torch.Tensor, torch.Tensor]
+
+  L 285: def get_scale_perms()
+
+  L 295: def marlin_permute_scales(s: torch.Tensor,
+        size_k: int,
+        size_n: int,
+        group_size: int)
+         → torch.Tensor
+
+  L 309: def marlin_permute_bias(s: torch.Tensor)
+         → torch.Tensor
+
+  L 316: def marlin_moe_permute_scales(s: torch.Tensor,
+        size_k: int,
+        size_n: int,
+        group_size: int)
+
+  L 334: def marlin_zero_points(zp: torch.Tensor,
+        size_k: int,
+        size_n: int,
+        num_bits: int)
+         → torch.Tensor
+
+  L 357: def awq_to_marlin_zero_points(q_zp_packed: torch.Tensor,
+        size_k: int,
+        size_n: int,
+        num_bits: int)
+         → torch.Tensor
+
+  L 381: def moe_awq_to_marlin_zero_points(q_zp_packed: torch.Tensor,
+        size_k: int,
+        size_n: int,
+        num_bits: int)
+
+  L 395: def maybe_warn_marlin_atomic_add(device, dtype)
+
+  L 407: def maybe_warn_marlin_atomic_add_env()
+
+  L 423: def should_use_atomic_add_reduce(m: int,
+        n: int,
+        k: int,
+        device: torch.device,
+        dtype: torch.dtype)
+         → bool
+
+  L 448: def apply_gptq_marlin_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        weight_zp: torch.Tensor,
+        g_idx: torch.Tensor,
+        g_idx_sort_indices: torch.Tensor,
+        workspace: torch.Tensor,
+        wtype: ScalarType,
+        output_size_per_partition: int,
+        input_size_per_partition: int,
+        is_k_full: bool,
+        bias: Optional[torch.Tensor],
+        use_fp32_reduce: bool)
+         → torch.Tensor
+
+  L 500: def apply_awq_marlin_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        weight_zp: torch.Tensor,
+        g_idx: torch.Tensor,
+        g_idx_sort_indices: torch.Tensor,
+        workspace: torch.Tensor,
+        quant_type: ScalarType,
+        output_size_per_partition: int,
+        input_size_per_partition: int,
+        bias: Optional[torch.Tensor],
+        use_fp32_reduce: bool)
+         → torch.Tensor
+
+
+CLASS: MarlinConfig
+----------------------------------------
+  L 556: __init__(self, group_size: int, lm_head_quantized: bool)
+         → None
+
+  L 592: __repr__(self)
+         → str
+
+  L 599: get_name(cls)
+         → str
+
+  L 603: get_supported_act_dtypes(cls)
+         → list[torch.dtype]
+
+  L 608: get_min_capability(cls)
+         → int
+
+  L 612: get_config_filenames(cls)
+         → list[str]
+
+  L 616: from_config(cls, config: dict[str, Any])
+         → 'MarlinConfig'
+
+  L 622: override_quantization_method(cls, hf_quant_cfg, user_quant)
+         → Optional[str]
+
+  L 642: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[MarlinLinearMethod]
+
+
+CLASS: MarlinLinearMethod
+----------------------------------------
+  L 662: __init__(self, quant_config: MarlinConfig)
+
+  L 665: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: list[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 777: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 783: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/marlin_utils_fp8.py
+Functions: 6
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  27: def fp8_fused_exponent_bias_into_scales(scales)
+
+  L  41: def apply_fp8_marlin_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        workspace: torch.Tensor,
+        size_n: int,
+        size_k: int,
+        bias: Optional[torch.Tensor],
+        use_fp32_reduce: bool)
+         → torch.Tensor
+
+  L  83: def prepare_fp8_layer_for_marlin(layer: torch.nn.Module, size_k_first: bool)
+         → None
+
+  L 175: def prepare_moe_fp8_layer_for_marlin(layer: torch.nn.Module, size_k_first: bool)
+         → None
+
+  L 305: def pack_fp8_to_int32(fp8_tensor: torch.Tensor, size_k_first: bool)
+         → torch.Tensor
+         📝 Repack FP8 weights to gptq format (packed int32 elements)
+
+  L 322: def marlin_quant_fp8_torch(weight, group_size)
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/modelopt_quant.py
+Functions: 38
+============================================================
+
+
+CLASS: ModelOptFp4Config
+----------------------------------------
+  L 487: __init__(self, is_checkpoint_nvfp4_serialized: bool, kv_cache_quant_algo: str, group_size: int, exclude_modules: List[str])
+         → None
+
+  L 505: get_name(cls)
+         → str
+
+  L 509: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 513: get_min_capability(cls)
+         → int
+
+  L 517: get_config_filenames(cls)
+         → List[str]
+
+  L 521: from_config(cls, config: Dict[str, Any])
+         → ModelOptFp4Config
+
+  L 595: is_layer_excluded(self, prefix: str, exclude_modules: list)
+
+  L 611: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 633: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: ModelOptFp4LinearMethod
+----------------------------------------
+  L 652: __init__(self, quant_config: ModelOptFp4Config)
+
+  L 655: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 729: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 766: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: ModelOptFp8Config
+----------------------------------------
+  L  78: __init__(self, is_checkpoint_fp8_serialized: bool, kv_cache_quant_method: Optional[str], exclude_modules: Optional[List[str]])
+         → None
+         📝 Args:
+            is_checkpoint_fp8_serialized (bool): Indicates if the checkpoint uses serialized FP8 format.
+
+  L  97: get_name(cls)
+         → str
+
+  L 101: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 105: get_min_capability(cls)
+         → int
+
+  L 109: get_config_filenames(cls)
+         → List[str]
+
+  L 113: from_config(cls, config: Dict[str, Any])
+         → ModelOptFp8Config
+
+  L 168: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 195: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: ModelOptFp8KVCacheMethod
+----------------------------------------
+  L 304: __init__(self, quant_config: ModelOptFp8Config)
+
+
+CLASS: ModelOptFp8LinearMethod
+----------------------------------------
+  L 213: __init__(self, quant_config: ModelOptFp8Config)
+
+  L 218: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], params_dtype: torch.dtype)
+         → None
+         📝 Creates and registers weights, weight scales, and input scales for FP8 quantization.
+
+  L 270: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+         📝 Requantizes weights after loading using the maximum scale.
+
+  L 282: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+         📝 Applies FP8 linear transformation.
+
+
+CLASS: ModelOptFp8MoEMethod
+----------------------------------------
+  L 316: __init__(self, quant_config: ModelOptFp8Config)
+
+  L 320: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L 397: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+         📝 Process FP8 MoE weights after loading from serialized checkpoint.
+            Only supports pre-quantized checkpoints with FP8 weights and scales.
+
+  L 460: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+CLASS: ModelOptNvFp4FusedMoEMethod
+----------------------------------------
+  L 811: __init__(self, quant_config: ModelOptFp4Config)
+
+  L 823: enable_flashinfer_cutlass_moe(self)
+         → bool
+
+  L 829: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+
+  L 951: swizzle_blockscale(self, scale: torch.Tensor)
+
+  L 976: prepare_static_weights_for_kernel(self, gemm1_weights, gemm2_weights, gemm1_scales_linear_fp4_bytes, gemm2_scales_linear_fp4_bytes, hidden_size, intermediate_size, num_experts)
+
+  L1109: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+         📝 Process FP4 MoE weights after loading from serialized checkpoint.
+            Only supports pre-quantized checkpoints with FP8 weights and scales.
+
+  L1244: load_up_proj_weight_first(self)
+         → bool
+
+  L1248: apply(self, layer: FusedMoE, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/moe_wna16.py
+Functions: 16
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  29: def get_weight_perm(num_bits: int)
+
+  L 216: def is_layer_skipped_quant(prefix: str, modules_to_not_convert: List[str])
+
+
+CLASS: MoeWNA16Config
+----------------------------------------
+  L  62: __init__(self, linear_quant_method: str, weight_bits: int, group_size: int, has_zp: bool, lm_head_quantized: bool, modules_to_not_convert: Optional[List[str]], full_config: Dict[str, Any])
+         → None
+
+  L 109: get_name(cls)
+         → str
+
+  L 113: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 117: get_min_capability(cls)
+         → int
+
+  L 121: get_config_filenames(cls)
+         → List[str]
+
+  L 124: get_scaled_act_names(self)
+         → List[str]
+
+  L 128: from_config(cls, config: Dict[str, Any])
+         → MoeWNA16Config
+
+  L 155: override_quantization_method(cls, hf_quant_cfg, user_quant)
+         → Optional[str]
+
+  L 161: is_moe_wna16_compatible(cls, quant_config: Dict[str, Any])
+
+  L 185: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+
+CLASS: MoeWNA16Method
+----------------------------------------
+  L 227: __init__(self, quant_config: MoeWNA16Config)
+
+  L 230: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+
+  L 352: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L 385: get_weight_loader(layer, weight_loader)
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/mxfp4.py
+Functions: 17
+============================================================
+
+
+CLASS: Mxfp4Config
+----------------------------------------
+  L 172: __init__(self, ignored_layers: Optional[list[str]], is_checkpoint_mxfp4_serialized: bool)
+
+  L 182: from_config(cls, config)
+
+  L 202: get_min_capability(cls)
+         → int
+
+  L 206: get_name(cls)
+         → str
+
+  L 210: get_supported_act_dtypes(cls)
+         → list[torch.dtype]
+
+  L 214: get_config_filenames(cls)
+         → list[str]
+
+  L 217: is_static_cfg(self)
+
+  L 220: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional['QuantizeMethodBase']
+
+  L 247: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: Mxfp4DynamicQuantMoEMethod
+----------------------------------------
+  L 726: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+
+  L 783: mxfp4_quantize(self, w)
+
+  L 801: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 811: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+CLASS: Mxfp4MoEMethod
+----------------------------------------
+  L 253: __init__(self, prefix: str)
+
+  L 281: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype, with_bias: bool)
+
+  L 389: process_weights_after_loading(self, layer)
+
+  L 616: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/mxfp4_tensor.py
+Functions: 2
+============================================================
+
+
+CLASS: MXFP4QuantizeUtil
+----------------------------------------
+  L  29: quantize(cls, input: torch.Tensor, block_size: Optional[int])
+         → tuple
+         📝 Converting a tensor to a quantized format based on MXFP4 quantization. Only E4M3 is supported.
+            Args:
+            input (torch.Tensor): The input tensor to be quantized.
+            block_sizes (dict | None): The block sizes for quantization.
+
+  L  77: dequantize(cls, quantized_data, dtype: torch.dtype, scale, block_sizes)
+         📝 Dequantze MXFP4 packed tensor to a target dtype.
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/petit.py
+Functions: 15
+============================================================
+
+
+CLASS: PetitNvFp4Config
+----------------------------------------
+  L  36: __init__(self, is_checkpoint_nvfp4_serialized: bool, kv_cache_quant_algo: str, group_size: int, exclude_modules: List[str])
+         → None
+
+  L  54: get_name(cls)
+         → str
+
+  L  58: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L  62: get_min_capability(cls)
+         → int
+
+  L  67: get_config_filenames(cls)
+         → List[str]
+
+  L  71: from_config(cls, config: Dict[str, Any])
+         → 'PetitNvFp4Config'
+
+  L 101: override_quantization_method(cls, hf_quant_cfg, user_quant)
+         → Optional[str]
+
+  L 108: is_petit_nvfp4_compatible(cls, quant_config: Dict[str, Any])
+         → bool
+
+  L 112: is_layer_excluded(self, prefix: str, exclude_modules: list)
+
+  L 119: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional['QuantizeMethodBase']
+
+  L 130: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: PetitNvFp4LinearMethod
+----------------------------------------
+  L 149: __init__(self, quant_config: PetitNvFp4Config)
+
+  L 152: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 226: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 238: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/petit_utils.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  17: def prepare_nvfp4_layer_for_petit(layer: torch.nn.Module)
+         → None
+
+  L  22: def apply_petit_nvfp4_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        weight_scale_2: torch.Tensor,
+        size_n: int,
+        size_k: int,
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L  55: def verify_petit_nvfp4_supported(quant_method: str, group_size: Optional[int])
+         → None
+
+  L  61: def prepare_nvfp4_layer_for_petit(layer: torch.nn.Module)
+         → None
+
+  L  78: def apply_petit_nvfp4_linear(input: torch.Tensor,
+        weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        weight_scale_2: torch.Tensor,
+        size_n: int,
+        size_k: int,
+        bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/qoq.py
+Functions: 13
+============================================================
+
+
+CLASS: QoQConfig
+----------------------------------------
+  L  40: __init__(self, weight_bits: int, group_size: int)
+         → None
+
+  L  61: __repr__(self)
+         → str
+
+  L  67: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L  71: get_min_capability(cls)
+         → int
+
+  L  75: get_name(cls)
+         → str
+
+  L  79: get_config_filenames(cls)
+         → List[str]
+         📝 List of filenames to search for in the model directory.
+
+  L  87: from_config(cls, config: Dict[str, Any])
+         → QoQConfig
+
+  L  92: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 103: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: QoQLinearMethod
+----------------------------------------
+  L 114: __init__(self, quant_config: QoQConfig)
+
+  L 117: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 210: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 219: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/unquant.py
+Functions: 14
+============================================================
+
+
+CLASS: UnquantizedEmbeddingMethod
+----------------------------------------
+  L  47: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+         📝 Create weights for embedding layer.
+
+  L  70: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L  78: embedding(self, layer: torch.nn.Module, input_: torch.Tensor)
+         → torch.Tensor
+
+
+CLASS: UnquantizedFusedMoEMethod
+----------------------------------------
+  L 135: __init__(self, use_triton_kernels: bool)
+
+  L 153: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype, with_bias: bool)
+
+  L 206: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 225: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L 240: forward_cuda(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L 314: forward_cpu(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L 361: forward_npu(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+  L 377: forward_tpu(self)
+         → torch.Tensor
+
+
+CLASS: UnquantizedLinearMethod
+----------------------------------------
+  L  85: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 107: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 111: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/utils.py
+Functions: 20
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  20: def get_scalar_types()
+         📝 Returns:
+            tuple: (ScalarType, scalar_types)
+
+  L  47: def is_layer_skipped(prefix: str,
+        ignored_layers: List[str],
+        fused_mapping: Mapping[str,
+        List[str]])
+         → bool
+
+  L  98: def per_tensor_dequantize(tensor: torch.Tensor,
+        inv_scale: Union[float,
+        torch.Tensor])
+         → torch.Tensor
+
+  L 106: def all_close_1d(x: torch.Tensor)
+         → bool
+
+  L 111: def convert_to_channelwise(weight_scale: torch.Tensor,
+        logical_widths: List[int])
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 134: def requantize_with_max_scale(weight: torch.Tensor,
+        weight_scale: torch.Tensor,
+        logical_widths: List[int])
+         → Tuple[torch.Tensor, torch.Tensor]
+
+  L 162: def update_tensor_inplace(old: torch.Tensor, new: torch.Tensor)
+         → None
+
+  L 169: def replace_parameter(mod: torch.nn.Module,
+        name: str,
+        new: Union[torch.Tensor,
+        torch.nn.Parameter])
+         → None
+
+  L 192: def assert_fp8_all_close(a: torch.Tensor, b: torch.Tensor)
+
+  L 215: def override_config(config: QuantizationConfig, prefix: str)
+
+  L 247: def get_dynamic_override(config: QuantizationConfig,
+        layer_name: str,
+        key: Optional[str],
+        default_value: Union[int,
+        bool,
+        None])
+         → Union[Dict, int, bool, None]
+
+  L 268: def get_linear_quant_method(config: QuantizationConfig,
+        layer: torch.nn.Module,
+        prefix: str,
+        linear_method_cls: type)
+
+  L 301: def get_pack_factor(num_bits)
+
+  L 306: def permute_rows(q_w: torch.Tensor,
+        w_ref: torch.Tensor,
+        group_size: int,
+        test_perm: Optional[torch.Tensor])
+
+  L 336: def pack_cols(q_w: torch.Tensor, num_bits: int, size_k: int, size_n: int)
+
+  L 362: def pack_rows(q_w: torch.Tensor, num_bits: int, size_k: int, size_n: int)
+
+  L 386: def unpack_cols(packed_q_w: torch.Tensor,
+        num_bits: int,
+        size_k: int,
+        size_n: int)
+
+  L 419: def quantize_weights(w: torch.Tensor,
+        quant_type: ScalarType,
+        group_size: Optional[int],
+        zero_points: bool,
+        ref_zero_points_after_scales: bool)
+
+  L 518: def gptq_quantize_weights(w: torch.Tensor,
+        quant_type: ScalarType,
+        group_size: int,
+        act_order: bool,
+        test_perm: Optional[torch.Tensor])
+
+  L 552: def sort_weights(q_w: torch.Tensor, g_idx: torch.Tensor)
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/w4afp8.py
+Functions: 12
+============================================================
+
+
+CLASS: W4AFp8Config
+----------------------------------------
+  L  33: __init__(self, is_checkpoint_fp8_serialized: bool, is_checkpoint_w4afp8_serialized: bool, linear_activation_scheme: str, moe_activation_scheme: str, ignored_layers: Optional[List[str]], weight_block_size: Optional[List[int]], group_size: int)
+         → None
+
+  L  57: get_name(cls)
+         → str
+
+  L  61: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L  65: get_min_capability(cls)
+         → int
+
+  L  69: get_config_filenames(cls)
+         → List[str]
+
+  L  73: from_config(cls, config: Dict[str, Any])
+         → W4AFp8Config
+
+  L  88: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 103: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: W4AFp8MoEMethod
+----------------------------------------
+  L 109: __init__(self, quant_config: W4AFp8Config)
+
+  L 112: create_weights(self, layer: EPMoE, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L 252: process_weights_after_loading(self, layer: Module)
+         → None
+
+  L 281: apply(self, layer: EPMoE, x: torch.Tensor, topk_output: StandardTopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/w8a8_fp8.py
+Functions: 16
+============================================================
+
+
+CLASS: W8A8FP8MoEMethod
+----------------------------------------
+  L 204: __init__(self, quant_config: W8A8Fp8Config)
+
+  L 207: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L 259: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 269: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: StandardTopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+CLASS: W8A8Fp8Config
+----------------------------------------
+  L  54: __init__(self, is_checkpoint_fp8_serialized: bool)
+
+  L  58: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L  62: get_min_capability(cls)
+         → int
+
+  L  66: get_name(self)
+         → str
+
+  L  70: get_config_filenames(cls)
+         → List[str]
+
+  L  74: from_config(cls, config: Dict[str, Any])
+         → W8A8Fp8Config
+
+  L  81: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L  95: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: W8A8Fp8LinearMethod
+----------------------------------------
+  L 101: __init__(self, quantization_config: W8A8Fp8Config)
+
+  L 105: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 137: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 178: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+
+
+============================================================
+FILE: python/sglang/srt/layers/quantization/w8a8_int8.py
+Functions: 50
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  75: def npu_wrapper_rmsnorm_init(func)
+
+  L  86: def npu_wrapper_rmsnorm_forward(func)
+
+  L 108: def npu_fused_experts(hidden_states: torch.Tensor,
+        w13: torch.Tensor,
+        w13_scale: torch.Tensor,
+        w2: torch.Tensor,
+        w2_scale: torch.Tensor,
+        topk_weights: torch.Tensor,
+        topk_ids: torch.Tensor,
+        top_k: int)
+
+
+CLASS: NPU_W8A8DynamicLinearMethod
+----------------------------------------
+  L 827: __init__(self, quantization_config: W8A8Int8Config)
+         → None
+
+  L 831: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+         → None
+
+  L 871: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 875: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: NPU_W8A8DynamicLinearMethodImpl
+----------------------------------------
+  L 767: __init__(self)
+
+  L 771: get_weight(input_size: int, output_size: int, params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 778: get_pertensor_param(params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 782: get_perchannel_param(output_size: int, params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 792: apply(layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor], tp_rank: Optional[int])
+         → torch.Tensor
+
+  L 809: process_weights_after_loading(self, layer)
+
+
+CLASS: NPU_W8A8LinearMethod
+----------------------------------------
+  L 703: __init__(self, quantization_config: W8A8Int8Config)
+         → None
+
+  L 711: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+         → None
+
+  L 751: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 755: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+
+CLASS: NPU_W8A8LinearMethodImpl
+----------------------------------------
+  L 537: __init__(self)
+         → None
+
+  L 542: get_weight(input_size: int, output_size: int, params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 551: get_pertensor_param(params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 558: get_perchannel_param(output_size: int, params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 573: apply(layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 605: process_weights_after_loading(self, layer)
+
+
+CLASS: NPU_W8A8LinearMethodMTImpl
+----------------------------------------
+  L 628: __init__(self)
+         → None
+
+  L 632: get_weight(input_size: int, output_size: int, params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 641: get_pertensor_param(params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 648: get_perchannel_param(output_size: int, params_dtype: torch.dtype)
+         → Dict[str, Any]
+
+  L 663: apply(layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+         → torch.Tensor
+
+  L 686: process_weights_after_loading(self, layer)
+
+
+CLASS: NPU_W8A8MoEMethod
+----------------------------------------
+  L 894: __init__(self, quantization_config: W8A8Int8Config)
+         → None
+
+  L 898: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+         → None
+
+  L 956: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 976: apply(self, layer, x, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor
+
+
+CLASS: W8A8Int8Config
+----------------------------------------
+  L 191: __init__(self, quant_config: Dict[str, Any])
+
+  L 218: get_supported_act_dtypes(cls)
+         → List[torch.dtype]
+
+  L 226: get_min_capability(cls)
+         → int
+
+  L 235: get_name(self)
+         → str
+
+  L 239: get_config_filenames(cls)
+         → List[str]
+
+  L 246: from_config(cls, config: Dict[str, Any])
+         → W8A8Int8Config
+
+  L 249: get_quant_method(self, layer: torch.nn.Module, prefix: str)
+         → Optional[QuantizeMethodBase]
+
+  L 296: is_layer_skipped(self, prefix: str, fused_mapping: Mapping[str, List[str]])
+
+  L 327: get_scaled_act_names(self)
+         → List[str]
+
+
+CLASS: W8A8Int8LinearMethod
+----------------------------------------
+  L 333: __init__(self, quantization_config: W8A8Int8Config)
+
+  L 336: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 347: create_weights(self, layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+
+  L 378: apply(self, layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+
+
+CLASS: W8A8Int8MoEMethod
+----------------------------------------
+  L 412: __init__(self, quant_config: W8A8Int8Config)
+
+  L 415: create_weights(self, layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size: int, params_dtype: torch.dtype)
+
+  L 469: process_weights_after_loading(self, layer: torch.nn.Module)
+         → None
+
+  L 486: apply(self, layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig)
+         → torch.Tensor

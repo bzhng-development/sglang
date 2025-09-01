@@ -1,0 +1,139 @@
+
+# python/sglang/srt/distributed/device_communicators/cuda_wrapper.py
+find_loaded_library(lib_name) -> Optional[str]
+  CudaRTLibrary.__init__(so_file: Optional[str])
+  CudaRTLibrary.CUDART_CHECK(result: cudaError_t) -> None
+  CudaRTLibrary.cudaGetErrorString(error: cudaError_t) -> str
+  CudaRTLibrary.cudaSetDevice(device: int) -> None
+  CudaRTLibrary.cudaDeviceSynchronize() -> None
+  CudaRTLibrary.cudaDeviceReset() -> None
+  CudaRTLibrary.cudaMalloc(size: int) -> ctypes.c_void_p
+  CudaRTLibrary.cudaFree(devPtr: ctypes.c_void_p) -> None
+  CudaRTLibrary.cudaMemset(devPtr: ctypes.c_void_p, value: int, count: int) -> None
+  CudaRTLibrary.cudaMemcpy(dst: ctypes.c_void_p, src: ctypes.c_void_p, count: int) -> None
+  CudaRTLibrary.cudaIpcGetMemHandle(devPtr: ctypes.c_void_p) -> cudaIpcMemHandle_t
+  CudaRTLibrary.cudaIpcOpenMemHandle(handle: cudaIpcMemHandle_t) -> ctypes.c_void_p
+
+# python/sglang/srt/distributed/device_communicators/custom_all_reduce.py
+  CustomAllreduce.__init__(group: ProcessGroup, device: Union[int, str, torch.device], max_size) -> None
+  CustomAllreduce.create_shared_buffer(size_in_bytes: int, group: Optional[ProcessGroup]) -> List[int]
+  CustomAllreduce.free_shared_buffer(pointers: List[int], group: Optional[ProcessGroup]) -> None
+  CustomAllreduce.capture()
+  CustomAllreduce.register_buffer(inp: torch.Tensor)
+  CustomAllreduce.register_graph_buffers()
+  CustomAllreduce.should_custom_ar(inp: torch.Tensor)
+  CustomAllreduce.all_reduce_reg(inp: torch.Tensor, out: torch.Tensor)
+  CustomAllreduce.all_reduce_unreg(inp: torch.Tensor, out: torch.Tensor)
+  CustomAllreduce.all_reduce(inp: torch.Tensor)
+  CustomAllreduce.custom_all_reduce(input: torch.Tensor) -> Optional[torch.Tensor]
+  CustomAllreduce.close()
+  CustomAllreduce.__del__()
+
+# python/sglang/srt/distributed/device_communicators/custom_all_reduce_utils.py
+update_environment_variables(envs: Dict[str, str])
+producer(batch_src: Sequence[int], producer_queue, consumer_queue, result_queue, cuda_visible_devices: Optional[str])
+consumer(batch_tgt: Sequence[int], producer_queue, consumer_queue, result_queue, cuda_visible_devices: Optional[str])
+can_actually_p2p(batch_src: Sequence[int], batch_tgt: Sequence[int]) -> Sequence[bool]
+gpu_p2p_access_check(src: int, tgt: int) -> bool
+with_nvml_context(fn: Callable[_P, _R]) -> Callable[_P, _R]
+is_full_nvlink(physical_device_ids: List[int], world_size: int) -> bool
+is_weak_contiguous(inp: torch.Tensor)
+
+# python/sglang/srt/distributed/device_communicators/hpu_communicator.py
+  HpuCommunicator.__init__(group: ProcessGroup)
+  HpuCommunicator.all_reduce(x: torch.Tensor) -> torch.Tensor
+  HpuCommunicator.all_gather(x: torch.Tensor, dim: int) -> torch.Tensor
+
+# python/sglang/srt/distributed/device_communicators/npu_communicator.py
+  NpuCommunicator.__init__(group: ProcessGroup)
+  NpuCommunicator.all_reduce(x: torch.Tensor) -> torch.Tensor
+  NpuCommunicator.all_gather(x: torch.Tensor, dim: int) -> torch.Tensor
+
+# python/sglang/srt/distributed/device_communicators/pymscclpp.py
+mscclpp_is_weak_contiguous(inp: torch.Tensor)
+mscclpp_convert_to_bytes(size_str)
+mscclpp_bench_time(func, test_niter: int, warmup_niter: int)
+  PyMscclppCommunicator.__init__(group: ProcessGroup, device: Union[int, str, torch.device], max_bytes) -> None
+  PyMscclppCommunicator.pre_tune_config(dtype) -> bool
+  PyMscclppCommunicator.should_mscclpp_allreduce(inp: torch.Tensor, op: ReduceOp) -> bool
+  PyMscclppCommunicator.all_reduce(tensor: torch.Tensor, op: ReduceOp)
+  PyMscclppCommunicator.change_state(enable: Optional[bool])
+
+# python/sglang/srt/distributed/device_communicators/pynccl.py
+  PyNcclCommunicator.__init__(group: Union[ProcessGroup, StatelessProcessGroup], device: Union[int, str, torch.device], library_path: Optional[str])
+  PyNcclCommunicator.all_reduce(tensor: torch.Tensor, op: ReduceOp, stream)
+  PyNcclCommunicator.all_gather(output_tensor: torch.Tensor, input_tensor: torch.Tensor, stream, sizes: Optional[list[int]])
+  PyNcclCommunicator.reduce_scatter(output_tensor: torch.Tensor, input_tensor: torch.Tensor, op: ReduceOp, stream, sizes: Optional[list[int]])
+  PyNcclCommunicator.send(tensor: torch.Tensor, dst: int, stream)
+  PyNcclCommunicator.recv(tensor: torch.Tensor, src: int, stream)
+  PyNcclCommunicator.broadcast(tensor: torch.Tensor, src: int, stream)
+  PyNcclCommunicator.register_comm_window_raw(ptr: int, size: int)
+  PyNcclCommunicator.deregister_comm_window(window)
+  PyNcclCommunicator.group_start()
+  PyNcclCommunicator.group_end()
+  PyNcclCommunicator.change_state(enable: Optional[bool], stream: Optional[torch.cuda.Stream])
+
+# python/sglang/srt/distributed/device_communicators/pynccl_allocator.py
+is_symmetric_memory_enabled()
+set_graph_pool_id(graph_pool_id)
+get_nccl_mem_pool()
+  use_symmetric_memory.__init__(group_coordinator: GroupCoordinator)
+  use_symmetric_memory.__enter__()
+  use_symmetric_memory.tag(tensor: torch.Tensor)
+  use_symmetric_memory.__exit__(exc_type, exc_val, exc_tb)
+
+# python/sglang/srt/distributed/device_communicators/pynccl_wrapper.py
+find_nccl_library() -> str
+  ncclDataTypeEnum.from_torch(cls, dtype: torch.dtype) -> int
+  ncclRedOpTypeEnum.from_torch(cls, op: ReduceOp) -> int
+  NCCLLibrary.__init__(so_file: Optional[str])
+  NCCLLibrary.ncclGetErrorString(result: ncclResult_t) -> str
+  NCCLLibrary.NCCL_CHECK(result: ncclResult_t) -> None
+  NCCLLibrary.ncclGetRawVersion() -> int
+  NCCLLibrary.ncclGetVersion() -> str
+  NCCLLibrary.ncclGetUniqueId() -> ncclUniqueId
+  NCCLLibrary.ncclCommInitRank(world_size: int, unique_id: ncclUniqueId, rank: int) -> ncclComm_t
+  NCCLLibrary.ncclAllReduce(sendbuff: buffer_type, recvbuff: buffer_type, count: int, datatype: int, op: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclReduce(sendbuff: buffer_type, recvbuff: buffer_type, count: int, datatype: int, op: int, root: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclReduceScatter(sendbuff: buffer_type, recvbuff: buffer_type, count: int, datatype: int, op: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclAllGather(sendbuff: buffer_type, recvbuff: buffer_type, count: int, datatype: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclSend(sendbuff: buffer_type, count: int, datatype: int, dest: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclRecv(recvbuff: buffer_type, count: int, datatype: int, src: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclBroadcast(sendbuff: buffer_type, recvbuff: buffer_type, count: int, datatype: int, root: int, comm: ncclComm_t, stream: cudaStream_t) -> None
+  NCCLLibrary.ncclCommDestroy(comm: ncclComm_t) -> None
+  NCCLLibrary.ncclCommWindowRegister(comm: ncclComm_t, buff: buffer_type, size: int, win_flags: int) -> ncclWindow_t
+  NCCLLibrary.ncclCommWindowDeregister(comm: ncclComm_t, window: ncclWindow_t) -> None
+  NCCLLibrary.ncclGroupStart() -> None
+  NCCLLibrary.ncclGroupEnd() -> None
+
+# python/sglang/srt/distributed/device_communicators/quick_all_reduce.py
+qr_rocm_arch_available()
+  QuickAllReduce.__init__(group: ProcessGroup, device: Union[int, str, torch.device]) -> None
+  QuickAllReduce.init_quick_all_reduce()
+  QuickAllReduce.create_shared_buffer()
+  QuickAllReduce.should_quick_allreduce(inp: torch.Tensor)
+  QuickAllReduce.quick_all_reduce(inp: torch.Tensor)
+  QuickAllReduce.close()
+  QuickAllReduce.__del__()
+
+# python/sglang/srt/distributed/device_communicators/shm_broadcast.py
+  ShmRingBuffer.__init__(n_reader: int, max_chunk_bytes: int, max_chunks: int, name: Optional[str])
+  ShmRingBuffer.__reduce__()
+  ShmRingBuffer.__del__()
+  ShmRingBuffer.get_data(current_idx: int)
+  ShmRingBuffer.get_metadata(current_idx: int)
+  MessageQueue.__init__(n_reader, n_local_reader, local_reader_ranks: Optional[List[int]], max_chunk_bytes: int, max_chunks: int, connect_ip: Optional[str])
+  MessageQueue.export_handle() -> Handle
+  MessageQueue.create_from_handle(handle: Handle, rank) -> 'MessageQueue'
+  MessageQueue.wait_until_ready()
+  MessageQueue.acquire_write()
+  MessageQueue.acquire_read()
+  MessageQueue.enqueue(obj)
+  MessageQueue.dequeue()
+  MessageQueue.broadcast_object(obj)
+  MessageQueue.create_from_process_group(pg: ProcessGroup, max_chunk_bytes, max_chunks, writer_rank) -> 'MessageQueue'
+
+# python/sglang/srt/distributed/device_communicators/xpu_communicator.py
+  XpuCommunicator.__init__(group: ProcessGroup)
+  XpuCommunicator.all_reduce(x: torch.Tensor) -> torch.Tensor
+  XpuCommunicator.gather(input_: torch.Tensor, rank_in_group: int, dst: int, dim: int)

@@ -1,0 +1,116 @@
+================================================================================
+FUNCTION INDEX: cpp_radix_tree module
+================================================================================
+Total Functions: 13
+Documented: 13
+
+
+============================================================
+FILE: python/sglang/srt/mem_cache/cpp_radix_tree/radix_tree.py
+Functions: 13
+============================================================
+
+
+CLASS: RadixTreeCpp
+----------------------------------------
+  L  33: __init__(self, disabled: bool, host_size: Optional[int], page_size: int, write_through_threshold: int)
+         📝 Initializes the RadixTreeCpp instance.
+            Args:
+            disabled (bool): If True, the radix tree is disabled.
+            host_size (Optional[int]): Size of the radix tree on the CPU. None means no CPU tree.
+            page_size (int): Size of the page for the radix tree.
+            write_through_threshold (int): Threshold for writing through from GPU to CPU.
+
+  L  52: match_prefix(self, prefix: List[int])
+         → Tuple[List[torch.Tensor], int, TreeNodeCpp, TreeNodeCpp]
+         📝 Matches a prefix in the radix tree.
+            Args:
+            prefix (List[int]): The prefix to match.
+            Returns:
+            Tuple[List[torch.Tensor], TreeNodeCpp, TreeNodeCpp]:
+            0. A list of indices that is matched by the prefix on the GPU.
+            1. Sum length of the indices matched on the CPU.
+            2. The last node of the prefix matched on the GPU.
+            3. The last node of the prefix matched on the CPU.
+
+  L  68: evict(self, num_tokens: int)
+         → List[torch.Tensor]
+         📝 Evicts a number of tokens from the radix tree.
+            Args:
+            num_tokens (int): The number of tokens to evict.
+            Returns:
+            List[torch.Tensor]: A list of indices that were evicted.
+
+  L  78: lock_ref(self, handle: TreeNodeCpp, lock: bool)
+         → None
+         📝 Locks or unlocks a reference to a tree node.
+            After locking, the node will not be evicted from the radix tree.
+            Args:
+            handle (TreeNodeCpp): The tree node to lock or unlock.
+            lock (bool): If True, locks the node; if False, unlocks it.
+
+  L  88: writing_through(self, key: List[int], indices: torch.Tensor)
+         → Tuple[List[Tuple[IOHandle, torch.Tensor, torch.Tensor]], int]
+         📝 Inserts a key-value pair into the radix tree and perform write-through check.
+            Args:
+            key (List[int]): The key to insert.
+            indices (torch.Tensor): The value associated with the key.
+            Returns:
+            Tuple[List[Tuple[IOHandle, torch.Tensor, torch.Tensor]], int]:
+            0. A list of (IOHandle, device indices, host indices) tuples.
+            These IOhandles require write-through to the CPU in python side.
+            1. The number of indices that are matched on device.
+
+  L 104: loading_onboard(self, host_node: TreeNodeCpp, new_device_indices: torch.Tensor)
+         → Tuple[IOHandle, List[torch.Tensor]]
+         📝 Updates the device indices of tree nodes within a range on the tree.
+            Args:
+            host_node (TreeNodeCpp): The tree node on the host, must be descendant of device_node.
+            new_device_indices (torch.Tensor): The new device indices to set.
+            The length of this tensor must be exactly host indices length.
+            Returns:
+            Tuple[IOHandle, List[torch.Tensor]]:
+            0. An IOHandle that requires loading to the CPU in python side.
+            1. A list of host indices corresponding to the new device indices.
+
+  L 122: commit_writing_through(self, handle: IOHandle, success: bool)
+         → None
+         📝 Commits the write-through process for a tree node.
+            Args:
+            handle (IOHandle): The IOHandle to commit.
+            success (bool): If True, commits the write-through; if False, just indicates failure.
+
+  L 131: commit_loading_onboard(self, handle: IOHandle, success: bool)
+         → None
+         📝 Commits the load onboard process for tree nodes within a range on the tree.
+            Args:
+            handle (IOHandle): The IOHandle to commit.
+            success (bool): If True, commits the load-onboard; if False, just indicates failure.
+
+  L 140: evictable_size(self)
+         → int
+         📝 Returns the size of the evictable part of the radix tree.
+            This is the size of the part that can be evicted from the GPU (ref_count = 0).
+            Returns:
+            int: The size of the evictable part.
+
+  L 149: protected_size(self)
+         → int
+         📝 Returns the size of the protected part of the radix tree.
+            This is the size of the part that cannot be evicted from the GPU (ref_count > 0).
+            Returns:
+            int: The size of the protected part.
+
+  L 158: total_size(self)
+         → int
+         📝 Returns the total size of the radix tree (including CPU nodes).
+            Returns:
+            int: The total size of the radix tree.
+
+  L 166: reset(self)
+         → None
+         📝 Resets the radix tree, clearing all nodes and indices.
+
+  L 172: debug_print(self)
+         → None
+         📝 Prints the internal state of the radix tree for debugging purposes.

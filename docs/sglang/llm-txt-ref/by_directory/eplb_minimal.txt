@@ -1,0 +1,130 @@
+
+# python/sglang/srt/eplb/eplb_manager.py
+  EPLBManager.__init__(model_runner: 'ModelRunner')
+  EPLBManager.on_forward_pass_end()
+  EPLBManager.rebalance()
+
+# python/sglang/srt/eplb/expert_distribution.py
+  ExpertDistributionRecorder.init_new(server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+  ExpertDistributionRecorder.with_current_layer(layer_idx)
+  ExpertDistributionRecorder.with_debug_name(debug_name)
+  ExpertDistributionRecorder.disable_this_region()
+  ExpertDistributionRecorder.with_forward_pass(forward_pass_id: int, forward_batch: ForwardBatch)
+  ExpertDistributionRecorder.on_select_experts(topk_ids: torch.Tensor)
+  ExpertDistributionRecorder.on_deepep_dispatch_normal(local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+  ExpertDistributionRecorder.on_deepep_dispatch_low_latency(local_physical_count_of_layer: torch.Tensor)
+  ExpertDistributionRecorder.start_record()
+  ExpertDistributionRecorder.stop_record()
+  ExpertDistributionRecorder.dump_record(output_mode: _OutputMode)
+  ExpertDistributionRecorder.recording()
+  _ExpertDistributionRecorderReal.__init__(server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+  _ExpertDistributionRecorderReal.with_current_layer(layer_idx)
+  _ExpertDistributionRecorderReal.with_debug_name(debug_name)
+  _ExpertDistributionRecorderReal.with_forward_pass(forward_pass_id: int, forward_batch: ForwardBatch)
+  _ExpertDistributionRecorderReal.disable_this_region()
+  _ExpertDistributionRecorderReal.on_select_experts(topk_ids: torch.Tensor)
+  _ExpertDistributionRecorderReal.on_deepep_dispatch_normal(local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+  _ExpertDistributionRecorderReal.on_deepep_dispatch_low_latency(local_physical_count_of_layer: torch.Tensor)
+  _ExpertDistributionRecorderReal.start_record()
+  _ExpertDistributionRecorderReal.stop_record()
+  _ExpertDistributionRecorderReal.dump_record(output_mode: _OutputMode)
+  _ExpertDistributionRecorderReal.recording()
+get_global_expert_distribution_recorder()
+set_global_expert_distribution_recorder(value)
+  _SinglePassGatherer.init_new(server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int) -> '_SinglePassGatherer'
+  _SinglePassGatherer.__init__(expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+  _SinglePassGatherer.on_forward_pass_start(forward_batch: ForwardBatch)
+  _SinglePassGatherer.on_select_experts(layer_idx: int, topk_ids: torch.Tensor)
+  _SinglePassGatherer.on_deepep_dispatch_normal(layer_idx: int, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+  _SinglePassGatherer.on_deepep_dispatch_low_latency(layer_idx: int, local_physical_count_of_layer: torch.Tensor)
+  _SinglePassGatherer.reset()
+  _SinglePassGatherer.collect() -> Dict
+  _DetailSinglePassGatherer.__init__(server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+  _DetailSinglePassGatherer.on_forward_pass_start(forward_batch: ForwardBatch)
+  _DetailSinglePassGatherer.on_select_experts(layer_idx: int, topk_ids: torch.Tensor)
+  _DetailSinglePassGatherer.on_deepep_dispatch_normal(layer_idx: int, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+  _DetailSinglePassGatherer.reset()
+  _DetailSinglePassGatherer.collect() -> Dict
+  _LayerBasedCpuSinglePassGatherer.__init__()
+  _LayerBasedCpuSinglePassGatherer.reset()
+  _LayerBasedGpuSinglePassGatherer.__init__()
+  _LayerBasedGpuSinglePassGatherer.reset()
+  _LayerBasedGpuSinglePassGatherer.collect() -> Dict
+  _SelectExpertsSinglePassGatherer.__init__()
+  _SelectExpertsSinglePassGatherer.on_select_experts(layer_idx: int, topk_ids: torch.Tensor)
+  _DeepepNormalSinglePassGatherer.__init__()
+  _DeepepNormalSinglePassGatherer.on_deepep_dispatch_normal(layer_idx: int, local_physical_count_of_layer: List[int], num_tokens_per_rank, num_tokens_per_rdma_rank, num_tokens_per_expert)
+  _DeepepNormalSinglePassGatherer.collect() -> Dict
+  _DeepepLowLatencySinglePassGatherer.__init__()
+  _DeepepLowLatencySinglePassGatherer.on_deepep_dispatch_low_latency(layer_idx: int, local_physical_count_of_layer: torch.Tensor)
+  _Accumulator.init_new(server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int) -> '_Accumulator'
+  _Accumulator.get_class(server_args: ServerArgs) -> Type['_Accumulator']
+  _Accumulator.__init__(server_args: ServerArgs, expert_location_metadata: 'ExpertLocationMetadata', rank: int)
+  _Accumulator.get_single_pass_gatherer_keys()
+  _Accumulator.get_single_pass_gatherer_key(debug_name: Optional[str])
+  _Accumulator.append(forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+  _Accumulator.reset()
+  _Accumulator.dump(output_mode: _OutputMode)
+  _UtilizationRateAccumulatorMixin.__init__()
+  _UtilizationRateAccumulatorMixin.append(forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+  _UtilizationRateAccumulatorMixin.reset()
+  _DequeCollection.__init__(maxlens: List[int])
+  _DequeCollection.append(value)
+  _DequeCollection.clear()
+  _DequeCollection.mean() -> Dict[int, float]
+  _DetailAccumulator.__init__()
+  _DetailAccumulator.get_single_pass_gatherer_keys()
+  _DetailAccumulator.get_single_pass_gatherer_key(debug_name: Optional[str])
+  _DetailAccumulator.append(forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+  _DetailAccumulator.reset()
+  _DetailAccumulator.dump(output_mode: _OutputMode)
+  _StatAccumulator.__init__()
+  _StatAccumulator.append(forward_pass_id: int, gatherer_key: str, single_pass_data: Dict)
+  _StatAccumulator.reset()
+  _StatAccumulator.dump(output_mode: _OutputMode)
+  _Buffer.init_new(item_shape: Tuple, buffer_size: int, dtype, device)
+  _Buffer.append(value: torch.Tensor)
+  _Buffer.get_all() -> torch.Tensor
+  _Buffer.reset()
+  _CircularBuffer.__init__(item_shape: Tuple, buffer_size: int, dtype, device)
+  _CircularBuffer.append(value: torch.Tensor)
+  _CircularBuffer.get_all() -> torch.Tensor
+  _CircularBuffer.reset()
+  _InfiniteBuffer.__init__(item_shape: Tuple, dtype, device)
+  _InfiniteBuffer.append(value: torch.Tensor)
+  _InfiniteBuffer.get_all() -> torch.Tensor
+  _InfiniteBuffer.reset()
+compute_gpu_physical_count(physical_count_of_whatever: torch.Tensor, num_gpu: int)
+compute_utilization_rate(gpu_physical_count_of_batch: torch.Tensor)
+
+# python/sglang/srt/eplb/expert_location.py
+  ExpertLocationMetadata.num_layers() -> int
+  ExpertLocationMetadata.num_physical_experts() -> int
+  ExpertLocationMetadata.num_local_physical_experts() -> int
+  ExpertLocationMetadata.num_logical_experts() -> int
+  ExpertLocationMetadata.ep_size()
+  ExpertLocationMetadata.__post_init__()
+  ExpertLocationMetadata.init_trivial(server_args: ServerArgs, model_config: ModelConfig)
+  ExpertLocationMetadata.init_by_mapping(server_args: ServerArgs, model_config: ModelConfig, physical_to_logical_map)
+  ExpertLocationMetadata.init_by_eplb(server_args: ServerArgs, model_config: ModelConfig, logical_count: torch.Tensor)
+  ExpertLocationMetadata.update(other: 'ExpertLocationMetadata', update_layer_ids: List[int])
+  ExpertLocationMetadata.logical_to_all_physical(layer_id: int, logical_expert_id: int) -> List[int]
+get_global_expert_location_metadata()
+set_global_expert_location_metadata(value)
+compute_logical_to_rank_dispatch_physical_map(logical_to_all_physical_map: torch.Tensor, num_gpus: int, num_physical_experts: int, ep_rank: int, seed: int)
+  ModelConfigForExpertLocation.from_model_config(model_config: ModelConfig)
+compute_initial_expert_location_metadata(server_args: ServerArgs, model_config: ModelConfig) -> Optional[ExpertLocationMetadata]
+
+# python/sglang/srt/eplb/expert_location_dispatch.py
+  ExpertLocationDispatchInfo.init_new(cls, layer_id: int)
+transform_select_experts_inputs(router_logits: torch.Tensor, correction_bias: Optional[torch.Tensor], info: Optional[ExpertLocationDispatchInfo])
+topk_ids_logical_to_physical(topk_ids: torch.Tensor, info: Optional[ExpertLocationDispatchInfo]) -> torch.Tensor
+
+# python/sglang/srt/eplb/expert_location_updater.py
+  ExpertLocationUpdater.__init__()
+  ExpertLocationUpdater.update(routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]], new_expert_location_metadata: ExpertLocationMetadata, update_layer_ids: List[int], nnodes: int, rank: int)
+create_temp_buffers(sample_tensors)
+update_expert_weights_single_layer(routed_experts_weights: List[torch.Tensor], temp_buffers: List[torch.Tensor], old_physical_to_logical_map: List[int], new_physical_to_logical_map: List[int], num_local_physical_experts: int, num_gpu_per_node: int, rank: int, world_size: Optional[int], debug: bool, log_metrics: bool)
+  _ChunkUtils.__init__()
+  _ChunkUtils.chunk_value_from_element_value(element_value)
+  _ChunkUtils.element_values_from_chunk_value(chunk_value) -> List

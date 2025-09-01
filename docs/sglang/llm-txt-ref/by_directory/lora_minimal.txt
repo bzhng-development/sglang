@@ -1,0 +1,91 @@
+
+# python/sglang/srt/lora/layers.py
+  BaseLayerWithLoRA.__init__(base_layer: nn.Module, lora_backend: BaseLoRABackend)
+  BaseLayerWithLoRA.forward(x: torch.Tensor)
+  BaseLayerWithLoRA.set_lora_info()
+  BaseLayerWithLoRA.slice_lora_a_weights(A: torch.Tensor, tp_rank: int)
+  BaseLayerWithLoRA.slice_lora_b_weights(B: torch.Tensor, tp_rank: int)
+  VocabParallelEmbeddingWithLoRA.__init__(base_layer: VocabParallelEmbedding, lora_backend: BaseLoRABackend) -> None
+  ColumnParallelLinearWithLoRA.__init__(base_layer: ColumnParallelLinear, lora_backend: BaseLoRABackend) -> None
+  ColumnParallelLinearWithLoRA.set_lora_info(A_buffer: torch.Tensor, B_buffer: torch.Tensor)
+  ColumnParallelLinearWithLoRA.apply_lora(base_output: torch.Tensor, x: torch.Tensor) -> torch.Tensor
+  ColumnParallelLinearWithLoRA.forward(input_: torch.Tensor)
+  ColumnParallelLinearWithLoRA.slice_lora_a_weights(A: torch.Tensor, tp_rank: int)
+  ColumnParallelLinearWithLoRA.slice_lora_b_weights(B: torch.Tensor, tp_rank: int)
+  MergedColumnParallelLinearWithLoRA.__init__(base_layer: MergedColumnParallelLinear, lora_backend: BaseLoRABackend) -> None
+  MergedColumnParallelLinearWithLoRA.set_lora_info(A_buffer: torch.Tensor, B_buffer: torch.Tensor)
+  MergedColumnParallelLinearWithLoRA.apply_lora(base_output: torch.Tensor, x: torch.Tensor) -> torch.Tensor
+  MergedColumnParallelLinearWithLoRA.slice_lora_a_weights(A: torch.Tensor, tp_rank: int)
+  MergedColumnParallelLinearWithLoRA.slice_lora_b_weights(B: torch.Tensor, tp_rank: int)
+  QKVParallelLinearWithLoRA.__init__(base_layer: QKVParallelLinear, lora_backend: BaseLoRABackend) -> None
+  QKVParallelLinearWithLoRA.set_lora_info(A_buffer_qkv: torch.Tensor, B_buffer_qkv: torch.Tensor)
+  QKVParallelLinearWithLoRA.apply_lora(base_output: torch.Tensor, x: torch.Tensor) -> torch.Tensor
+  QKVParallelLinearWithLoRA.slice_lora_a_weights(A: torch.Tensor, tp_rank: int)
+  QKVParallelLinearWithLoRA.slice_lora_b_weights(B: torch.Tensor, tp_rank: int) -> torch.Tensor
+  RowParallelLinearWithLoRA.__init__(base_layer: RowParallelLinear, lora_backend: BaseLoRABackend) -> None
+  RowParallelLinearWithLoRA.set_lora_info(A_buffer: torch.Tensor, B_buffer: torch.Tensor)
+  RowParallelLinearWithLoRA.apply_lora(base_output: torch.Tensor, x: torch.Tensor) -> torch.Tensor
+  RowParallelLinearWithLoRA.forward(input_: torch.Tensor, skip_all_reduce)
+  RowParallelLinearWithLoRA.slice_lora_a_weights(A: torch.Tensor, tp_rank: int)
+  RowParallelLinearWithLoRA.slice_lora_b_weights(B: torch.Tensor, tp_rank: int)
+get_lora_layer(layer: nn.Module, lora_backend: BaseLoRABackend) -> BaseLayerWithLoRA
+
+# python/sglang/srt/lora/lora.py
+  LoRALayer.__init__(config: LoRAConfig, base_hf_config: AutoConfig)
+  LoRAAdapter.__init__(uid: str, config: LoRAConfig, base_hf_config: AutoConfig, load_config: LoadConfig, lora_backend: BaseLoRABackend)
+  LoRAAdapter.initialize_weights()
+  LoRAAdapter.normalize_qkv_proj(weight_names: List[str], weights: Dict[str, torch.Tensor])
+  LoRAAdapter.normalize_gate_up_proj(weight_names: List[str], weights: Dict[str, torch.Tensor])
+
+# python/sglang/srt/lora/lora_config.py
+  LoRAConfig.__init__(path: str) -> None
+  LoRAConfig.get_lora_config(dummy)
+
+# python/sglang/srt/lora/lora_manager.py
+  LoRAManager.__init__(base_model: torch.nn.Module, base_hf_config: AutoConfig, max_loras_per_batch: int, load_config: LoadConfig, dtype: torch.dtype, lora_backend: str, tp_size: int, tp_rank: int, max_lora_rank: Optional[int], target_modules: Optional[Iterable[str]], lora_paths: Optional[List[LoRARef]])
+  LoRAManager.init_cuda_graph_batch_info(max_bs_in_cuda_graph: int)
+  LoRAManager.create_lora_update_result(success: bool, error_message: str) -> LoRAUpdateResult
+  LoRAManager.load_lora_adapter(lora_ref: LoRARef) -> LoRAUpdateResult
+  LoRAManager.validate_new_adapter(lora_config: LoRAConfig, lora_ref: LoRARef)
+  LoRAManager.unload_lora_adapter(lora_ref: LoRARef) -> LoRAUpdateResult
+  LoRAManager.validate_lora_batch(lora_ids: set[str]) -> bool
+  LoRAManager.prepare_lora_batch(forward_batch: ForwardBatch)
+  LoRAManager.update_lora_info()
+  LoRAManager.init_state(max_lora_rank: Optional[int], target_modules: Optional[Iterable[str]], lora_paths: Optional[List[LoRARef]])
+  LoRAManager.init_lora_adapters(lora_paths: Optional[List[LoRARef]])
+  LoRAManager.init_lora_shapes(max_lora_rank: Optional[int], target_modules: Optional[Iterable[str]])
+  LoRAManager.load_lora_weights(lora_ref: LoRARef)
+  LoRAManager.init_memory_pool()
+  LoRAManager.set_lora_module(module_name, module)
+  LoRAManager.init_lora_modules()
+
+# python/sglang/srt/lora/lora_registry.py
+  LoRARef.__post_init__()
+  LoRARef.__str__() -> str
+  LoRARegistry.__init__(lora_paths: Optional[List[LoRARef]])
+  LoRARegistry.register(lora_ref: LoRARef)
+  LoRARegistry.unregister(lora_name: str) -> str
+  LoRARegistry.acquire(lora_name: Union[str, List[str]]) -> Union[str, List[str]]
+  LoRARegistry.release(lora_id: Union[str, List[str]])
+  LoRARegistry.wait_for_unload(lora_id: str)
+  LoRARegistry.num_registered_loras() -> int
+
+# python/sglang/srt/lora/mem_pool.py
+  EmptySlot.__repr__()
+  EmptySlot.__new__(cls)
+  LoRAMemoryPool.__init__(base_hf_config: AutoConfig, max_loras_per_batch: int, dtype: torch.dtype, tp_size: int, tp_rank: int, max_lora_rank: int, target_modules: Set[str], base_model: torch.nn.Module)
+  LoRAMemoryPool.can_support(config: Union[LoRAConfig, Iterable[LoRAConfig]]) -> bool
+  LoRAMemoryPool.get_lora_A_shape(module_name: str, base_model: torch.nn.Module, max_lora_dim: int) -> Tuple[int]
+  LoRAMemoryPool.get_lora_B_shape(module_name: str, base_model: torch.nn.Module, max_lora_dim: int) -> Tuple[int]
+  LoRAMemoryPool.init_buffers(base_model: torch.nn.Module)
+  LoRAMemoryPool.prepare_lora_batch(cur_uids: Set[Optional[str]], lora_adapters: Dict[str, LoRAAdapter], lora_modules: List[Dict[str, BaseLayerWithLoRA]], lora_refs: Dict[str, LoRARef])
+  LoRAMemoryPool.load_lora_weight_to_buffer(uid: str, buffer_id: int, lora_adapter: LoRAAdapter, lora_modules: List[Dict[str, BaseLayerWithLoRA]])
+  LoRAMemoryPool.get_tensor(target_module: str, layer_id: int, lora_type: LoRAType) -> torch.Tensor
+  LoRAMemoryPool.get_buffer_id(lora_uid: str)
+
+# python/sglang/srt/lora/utils.py
+get_layer_id(name: str) -> int
+get_hidden_dim(module_name: str, config: AutoConfig, base_model: torch.nn.Module) -> Tuple[int]
+get_normalized_target_modules(target_modules: Iterable[str]) -> set[str]
+get_stacked_multiply(module_name: str) -> int
+get_target_module_name(full_module_name: str, target_modules: Set[str]) -> str

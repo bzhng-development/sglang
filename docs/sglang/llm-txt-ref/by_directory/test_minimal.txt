@@ -1,0 +1,270 @@
+
+# python/sglang/test/doc_patch.py
+patched_post_init()
+launch_server_cmd(command: str, host: str, port: int)
+
+# python/sglang/test/few_shot_gsm8k.py
+get_one_example(lines, i, include_answer)
+get_few_shot_examples(lines, k)
+get_answer_value(answer_str)
+run_eval(args)
+
+# python/sglang/test/few_shot_gsm8k_engine.py
+get_one_example(lines, i, include_answer)
+get_few_shot_examples(lines, k)
+get_answer_value(answer_str)
+concurrent_generate(engine, prompts, sampling_param)
+run_eval(args)
+
+# python/sglang/test/run_eval.py
+run_eval(args)
+
+# python/sglang/test/runners.py
+get_dtype_str(torch_dtype)
+get_top_logprobs(logits, k)
+get_token_ids_logprobs(logits, token_ids)
+  HFRunner.__init__(model_path: str, torch_dtype: torch.dtype, model_type: str, output_str_only: bool, trust_remote_code: bool, patch_model_do_sample_false: bool)
+  HFRunner.needs_trust_remote_code(model_path)
+  HFRunner.start_model_process(in_queue, out_queue, model_path, torch_dtype)
+  HFRunner.forward(prompts: Union[List[List[str]], List[str], List[torch.Tensor]], image_data: Optional[List[str]], max_new_tokens: int, lora_paths: Optional[List[str]], token_ids_logprob: Optional[int])
+  HFRunner.terminate()
+  HFRunner.__enter__()
+  HFRunner.__exit__(exc_type, exc_value, traceback)
+  HFRunner.forward_generation_raw(base_model, prompts: Union[List[str], List[torch.Tensor]], max_new_tokens: int, tokenizer, torch_dtype: torch.dtype, lora_paths: Optional[List[str]], output_str_only: bool, token_ids_logprob: Optional[int], patch_model_do_sample_false: Optional[bool]) -> ModelOutput
+  SRTRunner.__init__(model_path: str, torch_dtype: torch.dtype, model_type: str, tp_size: int, model_impl: str, port: int, lora_paths: Optional[Union[List[str], List[dict[str, str]]]], max_loras_per_batch: int, attention_backend: Optional[str], prefill_attention_backend: Optional[str], decode_attention_backend: Optional[str], lora_backend: str, disable_cuda_graph: bool, disable_radix_cache: bool, chunked_prefill_size: Optional[int], dp_size: int, tokenizer_path: Optional[str], mem_fraction_static: float, trust_remote_code: bool, speculative_draft_model_path: Optional[str], speculative_algorithm: Optional[str], speculative_num_steps: Optional[int], speculative_eagle_topk: Optional[int], speculative_num_draft_tokens: Optional[int], disable_overlap_schedule: bool, disable_custom_all_reduce: bool, torchao_config: Optional[str], cuda_graph_max_bs: int, sleep_on_idle, max_lora_rank: Optional[int], lora_target_modules: Optional[List[str]], enable_lora: Optional[bool], max_loaded_loras: Optional[int])
+  SRTRunner.load_lora_adapter(lora_name: str, lora_path: str, pinned: bool)
+  SRTRunner.unload_lora_adapter(lora_name: str)
+  SRTRunner.forward(prompts: Union[List[List[str]], List[str], List[torch.Tensor]], image_data: Optional[List[str]], max_new_tokens: int, lora_paths: Optional[List[str]], logprob_start_len: int, top_k: Optional[int], token_ids_logprob: Optional[List[int]])
+  SRTRunner.batch_forward(prompts: Union[List[str], List[torch.Tensor]], image_data: Optional[List[str]], max_new_tokens, lora_paths)
+  SRTRunner.__enter__()
+  SRTRunner.__exit__(exc_type, exc_value, traceback)
+  SRTRunner.forward_generation_raw(engine: Engine, prompts: Union[List[str], List[torch.Tensor]], max_new_tokens: int, lora_paths: Optional[List[str]], logprob_start_len: int, top_k: Optional[int], token_ids_logprob: Optional[List[int]])
+  SRTRunner.batch_forward_generation_raw(prompts: Union[List[str], List[torch.Tensor]], max_new_tokens, lora_paths, engine)
+monkey_patch_gemma2_sdpa()
+check_close_model_outputs(hf_outputs: ModelOutput, srt_outputs: ModelOutput, prefill_tolerance: float, decode_tolerance: float, rouge_l_tolerance: float, debug_text: str, check_logprobs: bool)
+
+# python/sglang/test/send_one.py
+  BenchArgs.add_cli_args(parser: argparse.ArgumentParser)
+  BenchArgs.from_cli_args(cls, args: argparse.Namespace)
+send_one_prompt(args)
+
+# python/sglang/test/simple_eval_common.py
+  SamplerBase.__call__(message_list: MessageList) -> str
+  Eval.__call__(sampler: SamplerBase) -> EvalResult
+  LargerHttpxClient.__init__()
+  ChatCompletionSampler.__init__(base_url: str, model: Optional[str], system_message: Optional[str], temperature: float, reasoning_effort: Optional[str], max_tokens: int)
+  ChatCompletionSampler.__call__(message_list: MessageList) -> str
+format_multichoice_question(row)
+check_equality(sampler: SamplerBase, expr1: str, expr2: str)
+aggregate_results(single_eval_results: List[SingleEvalResult], default_stats: Tuple[str], name2stats: Optional[Dict[str, Tuple[str]]]) -> EvalResult
+map_with_progress(f: callable, xs: List[Any], num_threads: int)
+message_to_html(message: Message) -> str
+make_report(eval_result: EvalResult) -> str
+make_report_from_example_htmls(htmls: List[str])
+download_dataset(path, url)
+set_ulimit(target_soft_limit)
+
+# python/sglang/test/simple_eval_gpqa.py
+  GPQAEval.__init__(filename: str, num_examples: Optional[int], num_threads: int, n_repeats: int)
+  GPQAEval.__call__(sampler: SamplerBase) -> EvalResult
+
+# python/sglang/test/simple_eval_humaneval.py
+evaluate_functional_correctness(sample: Dict[str, str], completions: List[str], n_workers: int, timeout: float)
+  HumanEval.__init__(num_examples: Optional[int], num_threads: int, num_samples_per_task: int, ks_passes: List[int], timeout: int)
+  HumanEval.__call__(sampler: SamplerBase) -> EvalResult
+
+# python/sglang/test/simple_eval_math.py
+  MathEval.__init__(filename: str, equality_checker: SamplerBase, num_examples: Optional[int], num_threads: int)
+  MathEval.__call__(sampler: SamplerBase) -> EvalResult
+
+# python/sglang/test/simple_eval_mgsm.py
+parse_answer(answer: str, answer_prefix: str) -> str
+score_mgsm(target: str, prediction: str) -> bool
+get_lang_examples(lang: str) -> list[dict[str, str]]
+get_all_examples() -> list[dict[str, str]]
+  MGSMEval.__init__(num_examples_per_lang: int, num_threads: int, languages: Optional[list[str]])
+  MGSMEval.__call__(sampler: SamplerBase) -> EvalResult
+
+# python/sglang/test/simple_eval_mmlu.py
+  MMLUEval.__init__(filename: str, num_examples: Optional[int], num_threads: int)
+  MMLUEval.__call__(sampler: SamplerBase) -> EvalResult
+
+# python/sglang/test/test_activation.py
+  TestGeluAndMul.setUpClass(cls)
+  TestGeluAndMul.test_gelu_and_mul()
+  TestQuickGELU.setUpClass(cls)
+  TestQuickGELU.test_quick_gelu()
+
+# python/sglang/test/test_block_fp8.py
+native_per_token_group_quant_fp8(x, group_size, eps, dtype)
+  TestPerTokenGroupQuantFP8.setUpClass(cls)
+  TestPerTokenGroupQuantFP8.test_per_token_group_quant_fp8()
+native_static_quant_fp8(x, x_s, dtype)
+  TestStaticQuantFP8.setUpClass(cls)
+  TestStaticQuantFP8.test_static_quant_fp8()
+  TestPerTensorQuantMlaFP8.setUpClass(cls)
+  TestPerTensorQuantMlaFP8.test_per_tensor_quant_mla_fp8()
+  TestPerTokenGroupQuantMlaDeepGemmMaskedFP8.setUpClass(cls)
+  TestPerTokenGroupQuantMlaDeepGemmMaskedFP8.test_per_token_group_quant_mla_deep_gemm_masked_fp8()
+native_w8a8_block_fp8_matmul(A, B, As, Bs, block_size, output_dtype)
+  TestW8A8BlockFP8Matmul.setUpClass(cls)
+  TestW8A8BlockFP8Matmul.test_w8a8_block_fp8_matmul()
+torch_w8a8_block_fp8_moe(a, w1, w2, w1_s, w2_s, score, topk, block_shape)
+  TestW8A8BlockFP8FusedMoE.setUpClass(cls)
+  TestW8A8BlockFP8FusedMoE.test_w8a8_block_fp8_fused_moe()
+torch_w8a8_block_fp8_bmm(a, a_s, w, w_s, block_shape, out_dtype)
+  TestW8A8BlockFP8BatchedDeepGemm.setUpClass(cls)
+  TestW8A8BlockFP8BatchedDeepGemm.test_w8a8_block_fp8_batched_deep_gemm()
+
+# python/sglang/test/test_block_fp8_deep_gemm_blackwell.py
+ceil_div(x: int, y: int) -> int
+align(x: int, y: int) -> int
+per_token_group_quant_fp8(x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+per_block_quant_fp8(x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+ceil_to_ue8m0(x: torch.Tensor)
+per_token_group_quant_mxfp8(x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+per_block_quant_mxfp8(x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
+native_w8a8_block_fp8_matmul(A, B, As, Bs, block_size, output_dtype)
+block_quant_dequant(x_q_block: torch.Tensor, x_s: torch.Tensor, block_size: List[int], dtype: torch.dtype) -> torch.Tensor
+  TestDeepGemmBlackwell.setUpClass(cls)
+  TestDeepGemmBlackwell.test_deep_gemm_blackwell()
+
+# python/sglang/test/test_block_fp8_ep.py
+ep_moe(hidden_states: torch.Tensor, w1: torch.Tensor, w2: torch.Tensor, router_logits: torch.Tensor, topk_config: TopKConfig, num_experts: int, fp8_dtype: torch.types, num_experts_per_partition: int, start_expert_id: int, end_expert_id: int, use_fp8_w8a8: bool, w1_scale_inv: Optional[torch.Tensor], w2_scale_inv: Optional[torch.Tensor], block_shape: Optional[List[int]])
+block_dequant(x_q_block: torch.Tensor, x_s: torch.Tensor, block_size: List[int]) -> Tuple[torch.Tensor, torch.Tensor]
+  TestW8A8BlockFP8EPMoE.setUpClass(cls)
+  TestW8A8BlockFP8EPMoE.test_w8a8_block_fp8_ep_moe()
+
+# python/sglang/test/test_custom_ops.py
+test_scaled_fp8_quant_per_tensor(dtype) -> None
+test_scaled_fp8_quant_per_token_dynamic(dtype) -> None
+test_scaled_fp8_quant_with_padding(dtype) -> None
+
+# python/sglang/test/test_cutlass_moe.py
+calc_diff(x, y)
+get_model_config(tp_size: int)
+to_fp8(tensor: torch.Tensor) -> torch.Tensor
+run_test(tp_size, batch_size, model_config, check)
+main(tp_size, batch_sizes, check)
+
+# python/sglang/test/test_cutlass_w4a8_moe.py
+pack_int4_values_to_int8(int4_values_interleaved: torch.Tensor) -> torch.Tensor
+pack_interleave(num_experts, ref_weight, ref_scale)
+test_cutlass_w4a8_moe(M, N, K, E, ep_size, topk, group_size, dtype)
+cutlass_moe(a: torch.Tensor, w1_q: torch.Tensor, w2_q: torch.Tensor, w1_scale: torch.Tensor, w2_scale: torch.Tensor, topk_weights: torch.Tensor, topk_ids_: torch.Tensor, a_strides1: torch.Tensor, b_strides1: torch.Tensor, c_strides1: torch.Tensor, a_strides2: torch.Tensor, b_strides2: torch.Tensor, c_strides2: torch.Tensor, s_strides13: torch.Tensor, s_strides2: torch.Tensor, start_expert_id: int, end_expert_id: int, E: int, a1_scale: Optional[torch.Tensor], a2_scale: Optional[torch.Tensor], expert_map: Optional[torch.Tensor], apply_router_weight_on_input: bool)
+ref(x: torch.Tensor, num_experts: int, topk_weights: torch.Tensor, topk_ids: torch.Tensor, ref_weight_1: torch.Tensor, ref_weight_2: torch.Tensor, ref_weight_scale_1: torch.Tensor, ref_weight_scale_2: torch.Tensor, has_pre_quant: bool, has_alpha: bool, pre_quant_scale_1: Optional[torch.Tensor], pre_quant_scale_2: Optional[torch.Tensor], alpha_1: Optional[torch.Tensor], alpha_2: Optional[torch.Tensor])
+
+# python/sglang/test/test_deepep_utils.py
+init_dist(local_rank: int, num_local_ranks: int)
+calc_diff(x: torch.Tensor, y: torch.Tensor)
+per_token_cast_to_fp8(x: torch.Tensor)
+per_token_cast_back(x_fp8: torch.Tensor, x_scales: torch.Tensor)
+inplace_unique(x: torch.Tensor, num_slots: int)
+create_grouped_scores(scores: torch.Tensor, group_idx: torch.Tensor, num_groups: int)
+bench(fn, num_warmups: int, num_tests: int, post_fn)
+  empty_suppress.__enter__()
+  empty_suppress.__exit__()
+  suppress_stdout_stderr.__enter__()
+  suppress_stdout_stderr.__exit__()
+bench_kineto(fn, kernel_names, num_tests: int, suppress_kineto_output: bool, trace_path: Optional[str], barrier_comm_profiling: bool)
+hash_tensor(t: torch.Tensor)
+
+# python/sglang/test/test_dynamic_grad_mode.py
+  TestDynamicGradMode.test_inference()
+  TestDynamicGradMode.test_no_grad()
+  TestDynamicGradMode.test_nested_inference()
+  TestDynamicGradMode.test_nested_no_grad()
+
+# python/sglang/test/test_fp4_moe.py
+convert_swizzled_to_linear(a_sf_swizzled: torch.Tensor, m, k, block_size)
+dequantize_nvfp4_to_dtype(tensor_fp4, tensor_sf, global_scale, dtype, device, block_size)
+break_fp4_bytes(a, dtype)
+torch_moe(a, w1, w2, score, topk, expert_map)
+check_moe(m: int, n: int, k: int, e: int, topk: int, dtype: torch.dtype, moe_impl: Callable, flip_w13: bool)
+test_cutlass_fp4_moe_no_graph(m: int, n: int, k: int, e: int, topk: int, dtype: torch.dtype)
+test_flashinfer_fp4_moe_no_graph(m: int, n: int, k: int, e: int, topk: int, dtype: torch.dtype)
+
+# python/sglang/test/test_layernorm.py
+  TestRMSNorm.setUpClass(cls)
+  TestRMSNorm.test_rms_norm()
+  TestGemmaRMSNorm.setUpClass(cls)
+  TestGemmaRMSNorm.test_gemma_rms_norm()
+
+# python/sglang/test/test_marlin_moe.py
+stack_and_dev(tensors: list[torch.Tensor])
+torch_experts(a: torch.Tensor, w1: torch.Tensor, w2: torch.Tensor, topk_weight: torch.Tensor, topk_ids: torch.Tensor, global_num_experts: int, expert_map: Optional[torch.Tensor], quant_dtype: Optional[torch.dtype], apply_router_weights_on_input: bool) -> torch.Tensor
+torch_moe(a: torch.Tensor, w1: torch.Tensor, w2: torch.Tensor, score: torch.Tensor, topk: int, global_num_experts: int, expert_map: Optional[torch.Tensor]) -> torch.Tensor
+marlin_moe_generate_valid_test_cases()
+test_fused_marlin_moe(m: int, n: int, k: int, e: int, topk: int, dtype: torch.dtype, group_size: int, act_order: bool, quant_type: ScalarType, is_k_full: bool)
+
+# python/sglang/test/test_marlin_utils.py
+  MarlinWorkspace.__init__(out_features, min_thread_n, max_parallel)
+marlin_permute_weights(q_w, size_k, size_n, perm, tile)
+marlin_weights(q_w, size_k, size_n, num_bits, perm)
+get_weight_perm(num_bits: int)
+marlin_quantize(w: torch.Tensor, quant_type: ScalarType, group_size: int, act_order: bool, test_perm: Optional[torch.Tensor])
+awq_marlin_quantize(w: torch.Tensor, quant_type: ScalarType, group_size: int)
+
+# python/sglang/test/test_programs.py
+test_few_shot_qa()
+test_mt_bench()
+test_select(check_answer)
+test_decode_int()
+test_decode_json_regex()
+test_decode_json()
+test_expert_answer(check_answer)
+test_tool_use()
+test_react()
+test_parallel_decoding()
+test_parallel_encoding(check_answer)
+test_image_qa()
+test_stream()
+test_regex()
+test_dtype_gen()
+test_completion_speculative()
+test_chat_completion_speculative()
+test_hellaswag_select()
+test_gen_min_new_tokens()
+
+# python/sglang/test/test_utils.py
+is_in_ci()
+is_in_amd_ci()
+call_generate_lightllm(prompt, temperature, max_tokens, stop, url)
+find_available_port(base_port: int)
+call_generate_vllm(prompt, temperature, max_tokens, stop, n, url)
+call_generate_outlines(prompt, temperature, max_tokens, stop, regex, n, url)
+call_generate_srt_raw(prompt, temperature, max_tokens, stop, url)
+call_generate_guidance(prompt, temperature, max_tokens, stop, n, regex, model)
+call_select_lightllm(context, choices, url)
+call_select_vllm(context, choices, url)
+call_select_guidance(context, choices, model)
+add_common_other_args_and_parse(parser: argparse.ArgumentParser)
+auto_config_device() -> str
+add_common_sglang_args_and_parse(parser: argparse.ArgumentParser)
+select_sglang_backend(args: argparse.Namespace)
+get_call_generate(args: argparse.Namespace)
+get_call_select(args: argparse.Namespace)
+try_cached_model(model_repo: str)
+popen_launch_server(model: str, base_url: str, timeout: float, api_key: Optional[str], other_args: list[str], env: Optional[dict], return_stdout_stderr: Optional[tuple], device: str, pd_separated: bool)
+popen_launch_pd_server(model: str, base_url: str, timeout: float, api_key: Optional[str], other_args: list[str], env: Optional[dict])
+run_with_timeout(func: Callable, args: tuple, kwargs: Optional[dict], timeout: float)
+run_unittest_files(files: List[TestFile], timeout_per_file: float)
+get_similarities(vec1, vec2)
+get_benchmark_args(base_url, dataset_name, dataset_path, tokenizer, num_prompts, sharegpt_output_len, random_input_len, random_output_len, sharegpt_context_len, request_rate, disable_stream, disable_ignore_eos, seed: int, device, pd_separated: bool, lora_name)
+run_bench_serving(model, num_prompts, request_rate, other_server_args, dataset_name, dataset_path, tokenizer, random_input_len, random_output_len, sharegpt_context_len, disable_stream, disable_ignore_eos, need_warmup, seed: int, device, background_task: Optional[Callable[[str, asyncio.Event], Awaitable[None]]], lora_name: Optional[str])
+run_bench_serving_multi(model, base_url, other_server_args, benchmark_args, need_warmup, pd_separated)
+run_bench_one_batch(model, other_args)
+run_bench_offline_throughput(model, other_args)
+run_bench_one_batch_server(model, base_url, server_args, bench_args, other_server_args, simulate_spec_acc_lens)
+lcs(X, Y)
+calculate_rouge_l(output_strs_list1, output_strs_list2)
+read_output(output_lines: List[str], filename: str)
+run_and_check_memory_leak(workload_func, disable_radix_cache, enable_mixed_chunk, disable_overlap, chunked_prefill_size, assert_has_abort)
+run_command_and_capture_output(command, env: Optional[dict])
+run_mmlu_test(disable_radix_cache, enable_mixed_chunk, disable_overlap, chunked_prefill_size)
+run_mulit_request_test(disable_radix_cache, enable_mixed_chunk, enable_overlap, chunked_prefill_size)
+write_github_step_summary(content)
+run_logprob_check(self: unittest.TestCase, arg: Tuple)
+send_generate_requests(base_url: str, num_requests: int) -> List[str]
+send_concurrent_generate_requests(base_url: str, num_requests: int) -> List[str]
+dump_bench_raw_result(path: str, states, preds, labels)

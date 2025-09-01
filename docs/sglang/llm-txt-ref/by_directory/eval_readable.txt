@@ -1,0 +1,67 @@
+================================================================================
+FUNCTION INDEX: eval module
+================================================================================
+Total Functions: 14
+Documented: 0
+
+
+============================================================
+FILE: python/sglang/eval/llama3_eval.py
+Functions: 9
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  39: async def fetch_responses(client,
+        prompt,
+        semaphore,
+        index,
+        provider,
+        model_size,
+        output_dir,
+        max_tokens)
+
+  L  87: def get_client(provider)
+
+  L 103: async def benchmark(args)
+
+  L 144: def get_mmlu_answer(response)
+
+  L 150: def get_mmlu_cot_answer(response)
+
+  L 172: def get_answer_gsm8k(response)
+
+  L 190: def get_dataset_from_task(task, response_path, model_size)
+
+  L 221: def analyze(task, response_path, model_size)
+
+
+CLASS: CustomAsyncHTTPXClient
+----------------------------------------
+  L  80: send(self, request: httpx.Request)
+         → httpx.Response
+
+
+============================================================
+FILE: python/sglang/eval/loogle_eval.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  15: def get_client(api_url: str)
+         → openai.AsyncOpenAI
+
+  L  21: def get_dataset()
+
+  L  25: async def fetch_response(client: openai.AsyncOpenAI,
+        context: str,
+        question: str,
+        semaphore: asyncio.Semaphore,
+        index: int,
+        model: str,
+        output_dir: Path)
+
+  L  66: async def benchmark(args)
+
+  L  98: def analyse(args)

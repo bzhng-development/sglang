@@ -1,0 +1,18 @@
+
+# python/sglang/eval/llama3_eval.py
+fetch_responses(client, prompt, semaphore, index, provider, model_size, output_dir, max_tokens)
+  CustomAsyncHTTPXClient.send(request: httpx.Request) -> httpx.Response
+get_client(provider)
+benchmark(args)
+get_mmlu_answer(response)
+get_mmlu_cot_answer(response)
+get_answer_gsm8k(response)
+get_dataset_from_task(task, response_path, model_size)
+analyze(task, response_path, model_size)
+
+# python/sglang/eval/loogle_eval.py
+get_client(api_url: str) -> openai.AsyncOpenAI
+get_dataset()
+fetch_response(client: openai.AsyncOpenAI, context: str, question: str, semaphore: asyncio.Semaphore, index: int, model: str, output_dir: Path)
+benchmark(args)
+analyse(args)

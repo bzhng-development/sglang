@@ -1,0 +1,316 @@
+================================================================================
+FUNCTION INDEX: lora module
+================================================================================
+Total Functions: 77
+Documented: 23
+
+
+============================================================
+FILE: python/sglang/srt/lora/layers.py
+Functions: 29
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 305: def get_lora_layer(layer: nn.Module, lora_backend: BaseLoRABackend)
+         → BaseLayerWithLoRA
+
+
+CLASS: BaseLayerWithLoRA
+----------------------------------------
+  L  21: __init__(self, base_layer: nn.Module, lora_backend: BaseLoRABackend)
+
+  L  31: forward(self, x: torch.Tensor)
+
+  L  34: set_lora_info(self)
+
+  L  37: slice_lora_a_weights(self, A: torch.Tensor, tp_rank: int)
+
+  L  40: slice_lora_b_weights(self, B: torch.Tensor, tp_rank: int)
+
+
+CLASS: ColumnParallelLinearWithLoRA
+----------------------------------------
+  L  63: __init__(self, base_layer: ColumnParallelLinear, lora_backend: BaseLoRABackend)
+         → None
+
+  L  70: set_lora_info(self, A_buffer: torch.Tensor, B_buffer: torch.Tensor)
+
+  L  79: apply_lora(self, base_output: torch.Tensor, x: torch.Tensor)
+         → torch.Tensor
+
+  L  88: forward(self, input_: torch.Tensor)
+
+  L 105: slice_lora_a_weights(self, A: torch.Tensor, tp_rank: int)
+
+  L 108: slice_lora_b_weights(self, B: torch.Tensor, tp_rank: int)
+
+
+CLASS: MergedColumnParallelLinearWithLoRA
+----------------------------------------
+  L 117: __init__(self, base_layer: MergedColumnParallelLinear, lora_backend: BaseLoRABackend)
+         → None
+
+  L 124: set_lora_info(self, A_buffer: torch.Tensor, B_buffer: torch.Tensor)
+
+  L 133: apply_lora(self, base_output: torch.Tensor, x: torch.Tensor)
+         → torch.Tensor
+
+  L 142: slice_lora_a_weights(self, A: torch.Tensor, tp_rank: int)
+
+  L 145: slice_lora_b_weights(self, B: torch.Tensor, tp_rank: int)
+
+
+CLASS: QKVParallelLinearWithLoRA
+----------------------------------------
+  L 161: __init__(self, base_layer: QKVParallelLinear, lora_backend: BaseLoRABackend)
+         → None
+
+  L 183: set_lora_info(self, A_buffer_qkv: torch.Tensor, B_buffer_qkv: torch.Tensor)
+
+  L 192: apply_lora(self, base_output: torch.Tensor, x: torch.Tensor)
+         → torch.Tensor
+
+  L 203: slice_lora_a_weights(self, A: torch.Tensor, tp_rank: int)
+
+  L 206: slice_lora_b_weights(self, B: torch.Tensor, tp_rank: int)
+         → torch.Tensor
+
+
+CLASS: RowParallelLinearWithLoRA
+----------------------------------------
+  L 235: __init__(self, base_layer: RowParallelLinear, lora_backend: BaseLoRABackend)
+         → None
+
+  L 242: set_lora_info(self, A_buffer: torch.Tensor, B_buffer: torch.Tensor)
+
+  L 247: apply_lora(self, base_output: torch.Tensor, x: torch.Tensor)
+         → torch.Tensor
+
+  L 256: forward(self, input_: torch.Tensor, skip_all_reduce)
+
+  L 294: slice_lora_a_weights(self, A: torch.Tensor, tp_rank: int)
+
+  L 301: slice_lora_b_weights(self, B: torch.Tensor, tp_rank: int)
+
+
+CLASS: VocabParallelEmbeddingWithLoRA
+----------------------------------------
+  L  53: __init__(self, base_layer: VocabParallelEmbedding, lora_backend: BaseLoRABackend)
+         → None
+
+
+============================================================
+FILE: python/sglang/srt/lora/lora.py
+Functions: 5
+============================================================
+
+
+CLASS: LoRAAdapter
+----------------------------------------
+  L  48: __init__(self, uid: str, config: LoRAConfig, base_hf_config: AutoConfig, load_config: LoadConfig, lora_backend: BaseLoRABackend)
+
+  L  75: initialize_weights(self)
+
+  L  97: normalize_qkv_proj(self, weight_names: List[str], weights: Dict[str, torch.Tensor])
+
+  L 150: normalize_gate_up_proj(self, weight_names: List[str], weights: Dict[str, torch.Tensor])
+
+
+CLASS: LoRALayer
+----------------------------------------
+  L  38: __init__(self, config: LoRAConfig, base_hf_config: AutoConfig)
+
+
+============================================================
+FILE: python/sglang/srt/lora/lora_config.py
+Functions: 2
+============================================================
+
+
+CLASS: LoRAConfig
+----------------------------------------
+  L  22: __init__(self, path: str)
+         → None
+
+  L  37: get_lora_config(self, dummy)
+
+
+============================================================
+FILE: python/sglang/srt/lora/lora_manager.py
+Functions: 16
+============================================================
+
+
+CLASS: LoRAManager
+----------------------------------------
+  L  46: __init__(self, base_model: torch.nn.Module, base_hf_config: AutoConfig, max_loras_per_batch: int, load_config: LoadConfig, dtype: torch.dtype, lora_backend: str, tp_size: int, tp_rank: int, max_lora_rank: Optional[int], target_modules: Optional[Iterable[str]], lora_paths: Optional[List[LoRARef]])
+
+  L  81: init_cuda_graph_batch_info(self, max_bs_in_cuda_graph: int)
+
+  L 109: create_lora_update_result(self, success: bool, error_message: str)
+         → LoRAUpdateResult
+
+  L 121: load_lora_adapter(self, lora_ref: LoRARef)
+         → LoRAUpdateResult
+         📝 Load a single LoRA adapter from the specified path.
+            Args:
+            lora_ref (LoRARef): The LoRARef object containing the LoRA name, path, and ID.
+
+  L 155: validate_new_adapter(self, lora_config: LoRAConfig, lora_ref: LoRARef)
+         📝 Validate if an adapter can be loaded into the current LoRA memory pool and generate error if it is incompatible.
+
+  L 178: unload_lora_adapter(self, lora_ref: LoRARef)
+         → LoRAUpdateResult
+         📝 Unload LoRA adapters by their names. This will remove the adapters from the memory pool and
+            delete the corresponding LoRA modules.
+
+  L 203: validate_lora_batch(self, lora_ids: set[str])
+         → bool
+         📝 Validate if the LoRA IDs in the batch can be loaded into the current LoRA memory pool.
+
+  L 234: prepare_lora_batch(self, forward_batch: ForwardBatch)
+
+  L 347: update_lora_info(self)
+         📝 Update all LoRA modules to associate them with the latest memory buffer.
+
+  L 369: init_state(self, max_lora_rank: Optional[int], target_modules: Optional[Iterable[str]], lora_paths: Optional[List[LoRARef]])
+         📝 Initialize the internal (mutable) state of the LoRAManager.
+            When `lora_paths` is provided and not empty, it might be used for inferring LoRA shape info such as
+            the target modules and max_lora_rank.
+
+  L 395: init_lora_adapters(self, lora_paths: Optional[List[LoRARef]])
+
+  L 416: init_lora_shapes(self, max_lora_rank: Optional[int], target_modules: Optional[Iterable[str]])
+         📝 Infer LoRA target modules and max_lora_rank from loaded adapters if not provided.
+
+  L 463: load_lora_weights(self, lora_ref: LoRARef)
+         📝 Load the weights of a LoRA adapter to CPU memory and conducts post-loading validation.
+
+  L 477: init_memory_pool(self)
+         📝 (Re)initialize the LoRA memory pool based on the current configurations.
+
+  L 490: set_lora_module(self, module_name, module)
+
+  L 495: init_lora_modules(self)
+
+
+============================================================
+FILE: python/sglang/srt/lora/lora_registry.py
+Functions: 9
+============================================================
+
+
+CLASS: LoRARef
+----------------------------------------
+  L  40: __post_init__(self)
+
+  L  44: __str__(self)
+         → str
+
+
+CLASS: LoRARegistry
+----------------------------------------
+  L  62: __init__(self, lora_paths: Optional[List[LoRARef]])
+
+  L  84: register(self, lora_ref: LoRARef)
+         📝 Register a new LoRARef object in the registry.
+            Args:
+            lora_ref (LoRARef): The LoRARef object to register.
+
+  L  94: unregister(self, lora_name: str)
+         → str
+         📝 Unregister a LoRARef object from the registry and returns the removed LoRA ID.
+            Args:
+            lora_name (str): The name of the LoRA model to unregister.
+
+  L 111: acquire(self, lora_name: Union[str, List[str]])
+         → Union[str, List[str]]
+         📝 Queries registry for LoRA IDs based on LoRA names and start tracking the usage of the corresponding LoRA adapters
+            by incrementing its counter.
+
+  L 151: release(self, lora_id: Union[str, List[str]])
+         📝 Decrements the usage counter for a LoRA adapter, indicating that it is no longer in use.
+
+  L 170: wait_for_unload(self, lora_id: str)
+         📝 Waits until the usage counter for a LoRA adapter reaches zero, indicating that it is no longer in use.
+            This is useful for ensuring that a LoRA adapter can be safely unloaded.
+            This method itself is not synchronized, which is safe because it should only be called during LoRA unloading,
+            which itself is guaranteed to be sequential.
+
+  L 203: num_registered_loras(self)
+         → int
+         📝 Returns the total number of LoRA adapters currently registered.
+
+
+============================================================
+FILE: python/sglang/srt/lora/mem_pool.py
+Functions: 11
+============================================================
+
+
+CLASS: EmptySlot
+----------------------------------------
+  L  32: __repr__(self)
+
+  L  35: __new__(cls)
+
+
+CLASS: LoRAMemoryPool
+----------------------------------------
+  L  47: __init__(self, base_hf_config: AutoConfig, max_loras_per_batch: int, dtype: torch.dtype, tp_size: int, tp_rank: int, max_lora_rank: int, target_modules: Set[str], base_model: torch.nn.Module)
+
+  L  87: can_support(self, config: Union[LoRAConfig, Iterable[LoRAConfig]])
+         → bool
+         📝 Check if the memory pool can support the given LoRA adapters.
+
+  L 106: get_lora_A_shape(self, module_name: str, base_model: torch.nn.Module, max_lora_dim: int)
+         → Tuple[int]
+         📝 Given a module_name (might be a stacked name), return the hidden dims of modules' input and output.
+
+  L 122: get_lora_B_shape(self, module_name: str, base_model: torch.nn.Module, max_lora_dim: int)
+         → Tuple[int]
+         📝 Given a module_name (might be a stacked name), return the hidden dims of modules' input and output.
+
+  L 137: init_buffers(self, base_model: torch.nn.Module)
+
+  L 170: prepare_lora_batch(self, cur_uids: Set[Optional[str]], lora_adapters: Dict[str, LoRAAdapter], lora_modules: List[Dict[str, BaseLayerWithLoRA]], lora_refs: Dict[str, LoRARef])
+
+  L 214: load_lora_weight_to_buffer(self, uid: str, buffer_id: int, lora_adapter: LoRAAdapter, lora_modules: List[Dict[str, BaseLayerWithLoRA]])
+
+  L 286: get_tensor(self, target_module: str, layer_id: int, lora_type: LoRAType)
+         → torch.Tensor
+
+  L 294: get_buffer_id(self, lora_uid: str)
+
+
+============================================================
+FILE: python/sglang/srt/lora/utils.py
+Functions: 5
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  40: def get_layer_id(name: str)
+         → int
+         📝 Extract integer id of layer from its name in string.
+
+  L  50: def get_hidden_dim(module_name: str,
+        config: AutoConfig,
+        base_model: torch.nn.Module)
+         → Tuple[int]
+         📝 Given a module_name (might be a stacked name), return the hidden dims of modules' input and output.
+
+  L  87: def get_normalized_target_modules(target_modules: Iterable[str])
+         → set[str]
+         📝 Mapping a list of target module name to names of the normalized LoRA weights.
+
+  L 108: def get_stacked_multiply(module_name: str)
+         → int
+         📝 Mapping a lora module name to its magnification at output dimension
+
+  L 119: def get_target_module_name(full_module_name: str, target_modules: Set[str])
+         → str
+         📝 Get the target module name in target_modules that can match full_module_name.
+            If there is a target module name in target_modules that can match full_module_name, return this name
+            Else raise ValueError.

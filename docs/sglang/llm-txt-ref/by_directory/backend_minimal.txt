@@ -1,0 +1,98 @@
+
+# python/sglang/lang/backend/anthropic.py
+  Anthropic.__init__(model_name)
+  Anthropic.get_chat_template()
+  Anthropic.generate(s: StreamExecutor, sampling_params: SglSamplingParams)
+  Anthropic.generate_stream(s: StreamExecutor, sampling_params: SglSamplingParams)
+
+# python/sglang/lang/backend/base_backend.py
+  BaseBackend.__init__() -> None
+  BaseBackend.get_model_name()
+  BaseBackend.get_chat_template()
+  BaseBackend.cache_prefix(prefix_str: str)
+  BaseBackend.uncache_prefix(rid: str)
+  BaseBackend.end_request(rid: Union[str, List[str]])
+  BaseBackend.begin_program(s: StreamExecutor)
+  BaseBackend.end_program(s: Union[StreamExecutor, List[StreamExecutor]])
+  BaseBackend.commit_lazy_operations(s: StreamExecutor)
+  BaseBackend.fork_program(src: StreamExecutor, dst: List[StreamExecutor], position_ids_offset: Optional[List[int]])
+  BaseBackend.fill_image(s: StreamExecutor)
+  BaseBackend.generate(s: StreamExecutor, sampling_params: SglSamplingParams)
+  BaseBackend.generate_stream(s: StreamExecutor, sampling_params: SglSamplingParams)
+  BaseBackend.select(s: StreamExecutor, choices: List[str], temperature: float, choices_method: Optional[ChoicesSamplingMethod]) -> ChoicesDecision
+  BaseBackend.concatenate_and_append(src_rids: List[str], dst_rid: str)
+  BaseBackend.shutdown()
+  BaseBackend.flush_cache()
+  BaseBackend.get_server_info()
+
+# python/sglang/lang/backend/litellm.py
+  LiteLLM.__init__(model_name, chat_template, api_key, organization: Optional[str], base_url: Optional[str], timeout: Optional[float], max_retries: Optional[int], default_headers: Optional[Mapping[str, str]])
+  LiteLLM.get_chat_template()
+  LiteLLM.generate(s: StreamExecutor, sampling_params: SglSamplingParams)
+  LiteLLM.generate_stream(s: StreamExecutor, sampling_params: SglSamplingParams)
+
+# python/sglang/lang/backend/openai.py
+create_logit_bias_int(tokenizer)
+  TokenUsage.reset()
+  OpenAI.__init__(model_name: str, is_chat_model: Optional[bool], chat_template: Optional[ChatTemplate], is_azure: bool)
+  OpenAI.get_chat_template()
+  OpenAI.generate(s: StreamExecutor, sampling_params: SglSamplingParams, spec_var_name: str)
+  OpenAI.spec_fill(value: str)
+  OpenAI.spec_pattern_match(comp)
+  OpenAI.role_end_generate(s: StreamExecutor)
+  OpenAI.generate_stream(s: StreamExecutor, sampling_params: SglSamplingParams)
+  OpenAI.select(s: StreamExecutor, choices: List[str], temperature: float, choices_method: ChoicesSamplingMethod) -> ChoicesDecision
+openai_completion(client, token_usage, is_chat, retries, prompt) -> Union[str, List[str]]
+openai_completion_stream(client, token_usage, is_chat, retries, prompt)
+
+# python/sglang/lang/backend/runtime_endpoint.py
+  RuntimeEndpoint.__init__(base_url: str, api_key: Optional[str], verify: Optional[str], chat_template_name: Optional[str])
+  RuntimeEndpoint.get_model_name()
+  RuntimeEndpoint.flush_cache()
+  RuntimeEndpoint.get_server_info()
+  RuntimeEndpoint.get_chat_template()
+  RuntimeEndpoint.cache_prefix(prefix_str: str)
+  RuntimeEndpoint.start_profile()
+  RuntimeEndpoint.stop_profile()
+  RuntimeEndpoint.commit_lazy_operations(s: StreamExecutor)
+  RuntimeEndpoint.fill_image(s: StreamExecutor)
+  RuntimeEndpoint.generate(s: StreamExecutor, sampling_params: SglSamplingParams)
+  RuntimeEndpoint.generate_stream(s: StreamExecutor, sampling_params: SglSamplingParams)
+  RuntimeEndpoint.select(s: StreamExecutor, choices: List[str], temperature: float, choices_method: ChoicesSamplingMethod) -> ChoicesDecision
+  RuntimeEndpoint.concatenate_and_append(src_rids: List[str], dst_rid: str)
+compute_normalized_prompt_logprobs(input_logprobs)
+  Runtime.__init__(log_level: str)
+  Runtime.shutdown()
+  Runtime.start_profile()
+  Runtime.stop_profile()
+  Runtime.cache_prefix(prefix: str)
+  Runtime.get_tokenizer()
+  Runtime.async_generate(prompt: str, sampling_params: Optional[Dict])
+  Runtime.generate(prompt: Union[str, List[str]], sampling_params: Optional[Dict], return_logprob: Optional[Union[List[bool], bool]], logprob_start_len: Optional[Union[List[int], int]], top_logprobs_num: Optional[Union[List[int], int]], lora_path: Optional[List[Optional[str]]])
+  Runtime.encode(prompt: Union[str, List[str], List[Dict], List[List[Dict]]])
+  Runtime.get_server_info()
+  Runtime.__del__()
+
+# python/sglang/lang/backend/vertexai.py
+  VertexAI.__init__(model_name, safety_settings)
+  VertexAI.get_chat_template()
+  VertexAI.generate(s: StreamExecutor, sampling_params: SglSamplingParams)
+  VertexAI.generate_stream(s: StreamExecutor, sampling_params: SglSamplingParams)
+  VertexAI.text_to_vertexai_input(text, images)
+  VertexAI.messages_to_vertexai_input(messages)
+
+# python/sglang/srt/lora/backend/base_backend.py
+  BaseLoRABackend.__init__(name: str, batch_info: LoRABatchInfo)
+  BaseLoRABackend.run_lora_a_sgemm(x: torch.Tensor, weights: torch.Tensor) -> torch.Tensor
+  BaseLoRABackend.run_lora_b_sgemm(x: torch.Tensor, weights: torch.Tensor) -> torch.Tensor
+  BaseLoRABackend.run_qkv_lora(x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]]) -> torch.Tensor
+  BaseLoRABackend.run_gate_up_lora(x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: Union[torch.Tensor, Tuple[torch.Tensor]]) -> torch.Tensor
+  BaseLoRABackend.set_batch_info(batch_info: LoRABatchInfo)
+get_backend_from_name(name: str) -> BaseLoRABackend
+
+# python/sglang/srt/lora/backend/triton_backend.py
+  TritonLoRABackend.__init__(name: str, batch_info: LoRABatchInfo)
+  TritonLoRABackend.run_lora_a_sgemm(x: torch.Tensor, weights: torch.Tensor) -> torch.Tensor
+  TritonLoRABackend.run_lora_b_sgemm(x: torch.Tensor, weights: torch.Tensor, base_output: torch.Tensor) -> torch.Tensor
+  TritonLoRABackend.run_qkv_lora(x: torch.Tensor, qkv_lora_a: torch.Tensor, qkv_lora_b: torch.Tensor, output_offset: torch.Tensor, max_qkv_out_dim: int, base_output: torch.Tensor) -> torch.Tensor
+  TritonLoRABackend.run_gate_up_lora(x: torch.Tensor, gate_up_lora_a: torch.Tensor, gate_up_lora_b: torch.Tensor, base_output: torch.Tensor) -> torch.Tensor

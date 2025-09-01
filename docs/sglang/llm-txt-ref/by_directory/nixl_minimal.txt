@@ -1,0 +1,64 @@
+
+# python/sglang/srt/disaggregation/nixl/conn.py
+  TransferInfo.is_dummy()
+  TransferInfo.from_zmq(cls, msg: List[bytes])
+  KVArgsRegisterInfo.from_zmq(cls, msg: List[bytes])
+  TransferStatus.is_done()
+  NixlKVManager.__init__(args: KVArgs, disaggregation_mode: DisaggregationMode, server_args: ServerArgs, is_mla_backend: Optional[bool])
+  NixlKVManager.check_status(bootstrap_room: int)
+  NixlKVManager.update_status(bootstrap_room: int, status: KVPoll)
+  NixlKVManager.register_buffer_to_engine()
+  NixlKVManager.send_kvcache(peer_name: str, prefill_kv_indices: npt.NDArray[np.int32], dst_kv_ptrs: list[int], dst_kv_indices: npt.NDArray[np.int32], dst_gpu_id: int, notif: str)
+  NixlKVManager.send_aux(peer_name: str, prefill_aux_index: int, dst_aux_ptrs: list[int], dst_aux_index: int, notif: str)
+  NixlKVManager.add_transfer_request(bootstrap_room: int, kv_indices: npt.NDArray[np.int32], index_slice: slice, is_last: bool, chunk_id: int, aux_index: Optional[int])
+  NixlKVManager.update_transfer_status()
+  NixlKVManager.check_transfer_done(room: int)
+  NixlKVSender.__init__(mgr: NixlKVManager, bootstrap_addr: str, bootstrap_room: int, dest_tp_ranks: List[int], pp_rank: int)
+  NixlKVSender.init(num_kv_indices: int, aux_index: Optional[int])
+  NixlKVSender.send(kv_indices: npt.NDArray[np.int32])
+  NixlKVSender.poll() -> KVPoll
+  NixlKVSender.failure_exception()
+  NixlKVReceiver.__init__(mgr: NixlKVManager, bootstrap_addr: str, bootstrap_room: Optional[int], data_parallel_rank: Optional[int])
+  NixlKVReceiver.init(kv_indices: npt.NDArray[np.int32], aux_index: Optional[int])
+  NixlKVReceiver.poll() -> KVPoll
+  NixlKVReceiver.failure_exception()
+
+# python/sglang/srt/mem_cache/storage/nixl/hicache_nixl.py
+  HiCacheNixl.__init__(file_path: str, plugin: str)
+  HiCacheNixl.register_buffers(buffers: Union[torch.Tensor, List[torch.Tensor], List[tuple]]) -> Optional[Any]
+  HiCacheNixl.register_files(file_paths: List[str], open_file: Optional[bool]) -> Optional[Any]
+  HiCacheNixl.register_objects(keys: List[str], sizes: Optional[List[int]]) -> Optional[Any]
+  HiCacheNixl.get(key: str, target_location: Optional[torch.Tensor | int], target_sizes: Optional[int]) -> torch.Tensor | None
+  HiCacheNixl.batch_get(keys: List[str], target_locations: Optional[List[torch.Tensor | int]], target_sizes: Optional[List[int]]) -> List[torch.Tensor | None]
+  HiCacheNixl.set(key: str, value: Optional[torch.Tensor], target_location: Optional[int], target_sizes: Optional[int]) -> bool
+  HiCacheNixl.batch_set(keys: List[str], values: Optional[List[torch.Tensor]], target_locations: Optional[List[int]], target_sizes: Optional[List[int]]) -> bool
+  HiCacheNixl.exists(key: str) -> bool
+
+# python/sglang/srt/mem_cache/storage/nixl/nixl_utils.py
+  NixlBackendSelection.__init__(plugin: str)
+  NixlBackendSelection.set_bucket(bucket_name: str) -> None
+  NixlBackendSelection.create_backend(agent) -> bool
+  NixlRegistration.__init__(agent)
+  NixlRegistration.create_query_tuples(key: str, mem_type: str, file_manager) -> List[Tuple]
+  NixlFileManager.__init__(base_dir: str)
+  NixlFileManager.get_file_path(key: str) -> str
+  NixlFileManager.create_file(file_path: str) -> bool
+  NixlFileManager.open_file(file_path: str) -> Optional[int]
+  NixlFileManager.close_file(fd: int) -> bool
+  NixlFileManager.files_to_nixl_tuples(file_paths: List[str]) -> List[Tuple[int, int, int, str]]
+
+# python/sglang/srt/mem_cache/storage/nixl/test_hicache_nixl_storage.py
+  TestNixlUnified.setUp()
+  TestNixlUnified.tearDown()
+  TestNixlUnified.delete_test_file(file_path: str) -> bool
+  TestNixlUnified.verify_tensors_equal(expected: torch.Tensor, actual: torch.Tensor)
+  TestNixlUnified.verify_tensor_lists_equal(expected: List[torch.Tensor], actual: List[torch.Tensor])
+  TestNixlUnified.test_single_set_get()
+  TestNixlUnified.test_batch_set_get()
+  TestNixlUnified.test_mixed_operations()
+  TestNixlUnified.test_data_integrity()
+  TestNixlUnified.test_basic_file_operations()
+  TestNixlUnified.test_create_nixl_tuples()
+  TestNixlUnified.test_error_handling()
+  TestNixlUnified.test_register_buffers()
+  TestNixlUnified.test_register_files_with_tuples()

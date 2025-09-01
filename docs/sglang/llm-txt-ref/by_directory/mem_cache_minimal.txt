@@ -1,0 +1,355 @@
+
+# python/sglang/srt/mem_cache/allocator.py
+  BaseTokenToKVPoolAllocator.__init__(size: int, page_size: int, dtype: torch.dtype, device: str, kvcache: KVCache, need_sort: bool)
+  BaseTokenToKVPoolAllocator.debug_print() -> str
+  BaseTokenToKVPoolAllocator.available_size()
+  BaseTokenToKVPoolAllocator.get_kvcache()
+  BaseTokenToKVPoolAllocator.restore_state(state)
+  BaseTokenToKVPoolAllocator.backup_state()
+  BaseTokenToKVPoolAllocator.free_group_begin()
+  BaseTokenToKVPoolAllocator.free_group_end()
+  BaseTokenToKVPoolAllocator.merge_and_sort_free()
+  BaseTokenToKVPoolAllocator.get_cpu_copy()
+  BaseTokenToKVPoolAllocator.load_cpu_copy()
+  BaseTokenToKVPoolAllocator.alloc_extend()
+  BaseTokenToKVPoolAllocator.alloc_decode()
+  BaseTokenToKVPoolAllocator.clear()
+  BaseTokenToKVPoolAllocator.alloc(need_size: int)
+  BaseTokenToKVPoolAllocator.free(free_index: torch.Tensor)
+  TokenToKVPoolAllocator.__init__(size: int, dtype: torch.dtype, device: str, kvcache: KVCache, need_sort: bool)
+  TokenToKVPoolAllocator.clear()
+  TokenToKVPoolAllocator.available_size()
+  TokenToKVPoolAllocator.alloc(need_size: int)
+  TokenToKVPoolAllocator.free(free_index: torch.Tensor)
+  TokenToKVPoolAllocator.get_cpu_copy(indices)
+  TokenToKVPoolAllocator.load_cpu_copy(kv_cache_cpu, indices)
+  SWATokenToKVPoolAllocator.__init__(size: int, size_swa: int, dtype: torch.dtype, device: str, kvcache: SWAKVPool, need_sort: bool)
+  SWATokenToKVPoolAllocator.available_size()
+  SWATokenToKVPoolAllocator.full_available_size()
+  SWATokenToKVPoolAllocator.swa_available_size()
+  SWATokenToKVPoolAllocator.size_full()
+  SWATokenToKVPoolAllocator.size_swa()
+  SWATokenToKVPoolAllocator.debug_print() -> str
+  SWATokenToKVPoolAllocator.get_kvcache()
+  SWATokenToKVPoolAllocator.translate_loc_from_full_to_swa(kv_indices: torch.Tensor)
+  SWATokenToKVPoolAllocator.alloc(need_size: int)
+  SWATokenToKVPoolAllocator.free(free_index: torch.Tensor)
+  SWATokenToKVPoolAllocator.free_swa(free_index: torch.Tensor)
+  SWATokenToKVPoolAllocator.backup_state()
+  SWATokenToKVPoolAllocator.restore_state(state)
+  SWATokenToKVPoolAllocator.clear()
+alloc_extend_kernel(pre_lens_ptr, seq_lens_ptr, last_loc_ptr, free_page_ptr, out_indices, ret_values, bs_upper: tl.constexpr, page_size: tl.constexpr, max_num_extend_tokens: tl.constexpr)
+alloc_decode_kernel(seq_lens_ptr, last_loc_ptr, free_page_ptr, out_indices, ret_values, bs_upper: tl.constexpr, page_size: tl.constexpr)
+  PagedTokenToKVPoolAllocator.__init__(size: int, page_size: int, dtype: torch.dtype, device: str, kvcache: KVCache, need_sort: bool)
+  PagedTokenToKVPoolAllocator.alloc(need_size: int)
+  PagedTokenToKVPoolAllocator.alloc_extend(prefix_lens: torch.Tensor, seq_lens: torch.Tensor, last_loc: torch.Tensor, extend_num_tokens: int)
+  PagedTokenToKVPoolAllocator.alloc_decode(seq_lens: torch.Tensor, last_loc: torch.Tensor)
+  PagedTokenToKVPoolAllocator.free(free_index: torch.Tensor)
+  PagedTokenToKVPoolAllocator.clear()
+  PagedTokenToKVPoolAllocator.get_cpu_copy(indices)
+  PagedTokenToKVPoolAllocator.load_cpu_copy(kv_cache_cpu, indices)
+
+# python/sglang/srt/mem_cache/allocator_ascend.py
+alloc_extend_kernel_ascend(prefix_lens, seq_lens, last_loc, free_pages, out_indices, page_size, device)
+  AscendPagedTokenToKVPoolAllocator.alloc_extend(prefix_lens: torch.Tensor, seq_lens: torch.Tensor, last_loc: torch.Tensor, extend_num_tokens: int)
+  AscendPagedTokenToKVPoolAllocator.alloc_decode(seq_lens: torch.Tensor, last_loc: torch.Tensor)
+
+# python/sglang/srt/mem_cache/base_prefix_cache.py
+  BasePrefixCache.reset()
+  BasePrefixCache.match_prefix(key: List[int]) -> MatchResult
+  BasePrefixCache.cache_finished_req(req: Req)
+  BasePrefixCache.cache_unfinished_req(req: Req)
+  BasePrefixCache.evict(num_tokens: int)
+  BasePrefixCache.inc_lock_ref(node: Any)
+  BasePrefixCache.dec_lock_ref(node: Any, swa_uuid_for_lock: Optional[str])
+  BasePrefixCache.evictable_size()
+  BasePrefixCache.full_evictable_size()
+  BasePrefixCache.swa_evictable_size()
+  BasePrefixCache.protected_size()
+  BasePrefixCache.full_protected_size()
+  BasePrefixCache.swa_protected_size()
+  BasePrefixCache.total_size()
+  BasePrefixCache.pretty_print()
+  BasePrefixCache.init_load_back(last_host_node: Any, host_hit_length: int) -> Tuple[torch.Tensor, Any]
+  BasePrefixCache.ready_to_load_host_cache() -> Any
+  BasePrefixCache.check_hicache_events() -> Any
+  BasePrefixCache.take_events()
+
+# python/sglang/srt/mem_cache/chunk_cache.py
+  ChunkCache.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, page_size: int)
+  ChunkCache.reset()
+  ChunkCache.match_prefix() -> MatchResult
+  ChunkCache.cache_finished_req(req: Req)
+  ChunkCache.cache_unfinished_req(req: Req, chunked)
+  ChunkCache.evict(num_tokens: int)
+  ChunkCache.inc_lock_ref(node: Any)
+  ChunkCache.dec_lock_ref(node: Any, swa_uuid_for_lock: Optional[str])
+  ChunkCache.pretty_print()
+  SWAChunkCache.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: SWATokenToKVPoolAllocator, page_size: int)
+  SWAChunkCache.evict_swa(req: Req, prelen: int, attention_chunk_size: int)
+  SWAChunkCache.evict(num_tokens: int)
+
+# python/sglang/srt/mem_cache/hicache_storage.py
+get_hash_str(token_ids: List[int], prior_hash: str) -> str
+  HiCacheStorage.get(key: str, target_location: Optional[Any], target_sizes: Optional[Any]) -> torch.Tensor | None
+  HiCacheStorage.batch_get(keys: List[str], target_locations: Optional[Any], target_sizes: Optional[Any]) -> List[torch.Tensor | None] | int
+  HiCacheStorage.set(key: str, value: Optional[Any], target_location: Optional[Any], target_sizes: Optional[Any]) -> bool
+  HiCacheStorage.batch_set(keys: List[str], values: Optional[Any], target_locations: Optional[Any], target_sizes: Optional[Any]) -> bool
+  HiCacheStorage.exists(key: str) -> bool
+  HiCacheStorage.delete(key: str) -> bool
+  HiCacheStorage.clear() -> bool
+  HiCacheStorage.batch_exists(keys: List[str]) -> int
+  HiCacheFile.__init__(storage_config: HiCacheStorageConfig, file_path: str)
+  HiCacheFile.get(key: str, target_location: torch.Tensor, target_sizes: Optional[Any]) -> torch.Tensor | None
+  HiCacheFile.batch_get(keys: List[str], target_locations: List[torch.Tensor], target_sizes: Optional[Any]) -> List[torch.Tensor | None]
+  HiCacheFile.set(key: str, value: Optional[Any], target_location: Optional[Any], target_sizes: Optional[Any]) -> bool
+  HiCacheFile.batch_set(keys: List[str], values: Optional[Any], target_locations: Optional[Any], target_sizes: Optional[Any]) -> bool
+  HiCacheFile.exists(key: str) -> bool
+  HiCacheFile.delete(key: str) -> None
+  HiCacheFile.clear() -> bool
+
+# python/sglang/srt/mem_cache/hiradix_cache.py
+  HiRadixCache.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, tp_cache_group: torch.distributed.ProcessGroup, page_size: int, hicache_ratio: float, hicache_size: int, hicache_write_policy: str, hicache_io_backend: str, hicache_mem_layout: str, hicache_storage_backend: Optional[str], hicache_storage_prefetch_policy: Optional[str], model_name: Optional[str], storage_backend_extra_config: Optional[str])
+  HiRadixCache.reset()
+  HiRadixCache.get_height(node: TreeNode)
+  HiRadixCache.clear_storage_backend()
+  HiRadixCache.write_backup(node: TreeNode, write_back)
+  HiRadixCache.write_backup_storage(node: TreeNode)
+  HiRadixCache.writing_check(write_back)
+  HiRadixCache.loading_check()
+  HiRadixCache.evictable_size()
+  HiRadixCache.evict(num_tokens: int)
+  HiRadixCache.evict_host(num_tokens: int)
+  HiRadixCache.load_back(node: TreeNode, mem_quota: Optional[int]) -> Optional[torch.Tensor]
+  HiRadixCache.init_load_back(last_node: TreeNode, host_hit_length: int, mem_quota: Optional[int])
+  HiRadixCache.ready_to_load_host_cache()
+  HiRadixCache.check_hicache_events()
+  HiRadixCache.drain_storage_control_queues()
+  HiRadixCache.can_terminate_prefetch(operation: PrefetchOperation)
+  HiRadixCache.check_prefetch_progress(req_id: str) -> bool
+  HiRadixCache.match_prefix(key: List[int])
+  HiRadixCache.prefetch_from_storage(req_id: str, last_host_node: TreeNode, new_input_tokens: List[int], last_hash: Optional[str])
+  HiRadixCache.insert(key: List, value, chunked)
+
+# python/sglang/srt/mem_cache/lora_radix_cache.py
+  LoRAKey.__init__(lora_id: str, token_ids: List[int])
+  LoRAKey.__len__()
+get_child_key(key: LoRAKey)
+  LoRATreeNode.__init__(id: Optional[int])
+  LoRATreeNode.evicted()
+  LoRATreeNode.__lt__(other: 'LoRATreeNode')
+  LoRARadixCache.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, page_size: int, disable: bool)
+  LoRARadixCache.reset()
+  LoRARadixCache.match_prefix(key: List[int]) -> MatchResult
+  LoRARadixCache.match_prefix_with_lora_id(key: LoRAKey) -> MatchResult
+  LoRARadixCache.insert(key: LoRAKey, value)
+  LoRARadixCache.cache_finished_req(req: Req)
+  LoRARadixCache.cache_unfinished_req(req: Req, chunked)
+  LoRARadixCache.pretty_print()
+  LoRARadixCache.total_size()
+  LoRARadixCache.evict(num_tokens: int)
+  LoRARadixCache.inc_lock_ref(node: LoRATreeNode)
+  LoRARadixCache.dec_lock_ref(node: LoRATreeNode)
+  LoRARadixCache.evictable_size()
+  LoRARadixCache.protected_size()
+  LoRARadixCache.all_values_flatten()
+
+# python/sglang/srt/mem_cache/memory_pool.py
+  ReqToTokenPool.__init__(size: int, max_context_len: int, device: str, enable_memory_saver: bool)
+  ReqToTokenPool.write(indices, values)
+  ReqToTokenPool.available_size()
+  ReqToTokenPool.alloc(need_size: int) -> List[int]
+  ReqToTokenPool.free(free_index: Union[int, List[int]])
+  ReqToTokenPool.clear()
+  KVCache.__init__(size: int, page_size: int, dtype: torch.dtype, layer_num: int, device: str, enable_memory_saver: bool, start_layer: Optional[int], end_layer: Optional[int])
+  KVCache.get_key_buffer(layer_id: int) -> torch.Tensor
+  KVCache.get_value_buffer(layer_id: int) -> torch.Tensor
+  KVCache.get_kv_buffer(layer_id: int) -> Tuple[torch.Tensor, torch.Tensor]
+  KVCache.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor) -> None
+  KVCache.register_layer_transfer_counter(layer_transfer_counter)
+  KVCache.get_cpu_copy(indices)
+  KVCache.load_cpu_copy(kv_cache_cpu, indices)
+  MHATokenToKVPool.__init__(size: int, page_size: int, dtype: torch.dtype, head_num: int, head_dim: int, layer_num: int, device: str, enable_memory_saver: bool, start_layer: Optional[int], end_layer: Optional[int])
+  MHATokenToKVPool.get_kv_size_bytes()
+  MHATokenToKVPool.get_contiguous_buf_infos()
+  MHATokenToKVPool.maybe_get_custom_mem_pool()
+  MHATokenToKVPool.get_cpu_copy(indices)
+  MHATokenToKVPool.load_cpu_copy(kv_cache_cpu, indices)
+  MHATokenToKVPool.get_key_buffer(layer_id: int)
+  MHATokenToKVPool.get_value_buffer(layer_id: int)
+  MHATokenToKVPool.get_kv_buffer(layer_id: int)
+  MHATokenToKVPool.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor, k_scale: Optional[float], v_scale: Optional[float], layer_id_override: Optional[int])
+  MHATokenToKVPool.move_kv_cache(tgt_loc: torch.Tensor, src_loc: torch.Tensor)
+  SWAKVPool.__init__(size: int, size_swa: int, dtype: torch.dtype, head_num: int, head_dim: int, swa_attention_layer_ids: List[int], full_attention_layer_ids: List[int], enable_kvcache_transpose: bool, device: str)
+  SWAKVPool.get_kv_size_bytes()
+  SWAKVPool.get_contiguous_buf_infos()
+  SWAKVPool.get_key_buffer(layer_id: int)
+  SWAKVPool.get_value_buffer(layer_id: int)
+  SWAKVPool.get_kv_buffer(layer_id: int)
+  SWAKVPool.translate_loc_from_full_to_swa(kv_indices: torch.Tensor)
+  SWAKVPool.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor, k_scale: float, v_scale: float)
+  AscendTokenToKVPool.get_contiguous_buf_infos()
+  AscendTokenToKVPool.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor, k_scale: Optional[float], v_scale: Optional[float])
+set_mla_kv_buffer_kernel(kv_buffer_ptr, cache_k_nope_ptr, cache_k_rope_ptr, loc_ptr, buffer_stride: tl.constexpr, nope_stride: tl.constexpr, rope_stride: tl.constexpr, nope_dim: tl.constexpr, rope_dim: tl.constexpr, BLOCK: tl.constexpr)
+set_mla_kv_buffer_triton(kv_buffer: torch.Tensor, loc: torch.Tensor, cache_k_nope: torch.Tensor, cache_k_rope: torch.Tensor)
+  MLATokenToKVPool.__init__(size: int, page_size: int, dtype: torch.dtype, kv_lora_rank: int, qk_rope_head_dim: int, layer_num: int, device: str, enable_memory_saver: bool, start_layer: Optional[int], end_layer: Optional[int])
+  MLATokenToKVPool.get_kv_size_bytes()
+  MLATokenToKVPool.get_contiguous_buf_infos()
+  MLATokenToKVPool.maybe_get_custom_mem_pool()
+  MLATokenToKVPool.get_key_buffer(layer_id: int)
+  MLATokenToKVPool.get_value_buffer(layer_id: int)
+  MLATokenToKVPool.get_kv_buffer(layer_id: int)
+  MLATokenToKVPool.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor)
+  MLATokenToKVPool.set_mla_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k_nope: torch.Tensor, cache_k_rope: torch.Tensor)
+  MLATokenToKVPool.get_cpu_copy(indices)
+  MLATokenToKVPool.load_cpu_copy(kv_cache_cpu, indices)
+  AscendMLAPagedTokenToKVPool.__init__(size: int, page_size: int, dtype: torch.dtype, kv_lora_rank: int, qk_rope_head_dim: int, layer_num: int, device: str, enable_memory_saver: bool, start_layer: Optional[int], end_layer: Optional[int])
+  AscendMLAPagedTokenToKVPool.get_kv_size_bytes()
+  AscendMLAPagedTokenToKVPool.get_kv_buffer(layer_id: int)
+  AscendMLAPagedTokenToKVPool.get_key_buffer(layer_id: int)
+  AscendMLAPagedTokenToKVPool.get_value_buffer(layer_id: int)
+  AscendMLAPagedTokenToKVPool.get_contiguous_buf_infos()
+  AscendMLAPagedTokenToKVPool.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor)
+  DoubleSparseTokenToKVPool.__init__(size: int, page_size: int, dtype: torch.dtype, head_num: int, head_dim: int, layer_num: int, device: str, heavy_channel_num: int, enable_memory_saver: bool, start_layer: Optional[int], end_layer: Optional[int])
+  DoubleSparseTokenToKVPool.get_key_buffer(layer_id: int)
+  DoubleSparseTokenToKVPool.get_value_buffer(layer_id: int)
+  DoubleSparseTokenToKVPool.get_label_buffer(layer_id: int)
+  DoubleSparseTokenToKVPool.get_kv_buffer(layer_id: int)
+  DoubleSparseTokenToKVPool.set_kv_buffer(layer: RadixAttention, loc: torch.Tensor, cache_k: torch.Tensor, cache_v: torch.Tensor, cache_label: torch.Tensor)
+copy_all_layer_kv_cache(data_ptrs, strides, tgt_loc_ptr, src_loc_ptr, num_locs, num_locs_upper: tl.constexpr)
+
+# python/sglang/srt/mem_cache/memory_pool_host.py
+synchronized(debug_only)
+  HostKVCache.__init__(device_pool: KVCache, host_to_device_ratio: float, host_size: int, page_size: int, layout: str, pin_memory: bool, device: str)
+  HostKVCache.get_size_per_token()
+  HostKVCache.init_kv_buffer()
+  HostKVCache.load_to_device_per_layer(device_pool, host_indices, device_indices, layer_id, io_backend) -> None
+  HostKVCache.backup_from_device_all_layer(device_pool, host_indices, device_indices, io_backend) -> None
+  HostKVCache.get_flat_data_page(index) -> torch.Tensor
+  HostKVCache.get_dummy_flat_data_page() -> torch.Tensor
+  HostKVCache.set_from_flat_data_page(index: int, data_page: torch.Tensor) -> None
+  HostKVCache.clear()
+  HostKVCache.available_size()
+  HostKVCache.alloc(need_size: int) -> torch.Tensor
+  HostKVCache.free(indices: torch.Tensor) -> int
+  HostKVCache.get_state(indices: torch.Tensor) -> MemoryStateInt
+  HostKVCache.is_reserved(indices: torch.Tensor) -> bool
+  HostKVCache.is_protected(indices: torch.Tensor) -> bool
+  HostKVCache.is_synced(indices: torch.Tensor) -> bool
+  HostKVCache.is_backup(indices: torch.Tensor) -> bool
+  HostKVCache.update_backup(indices: torch.Tensor)
+  HostKVCache.update_prefetch(indices: torch.Tensor)
+  HostKVCache.update_synced(indices: torch.Tensor)
+  HostKVCache.protect_write(indices: torch.Tensor)
+  HostKVCache.protect_load(indices: torch.Tensor)
+  HostKVCache.complete_io(indices: torch.Tensor)
+  MHATokenToKVPoolHost.__init__(device_pool: MHATokenToKVPool, host_to_device_ratio: float, host_size: int, page_size: int, layout: str, pin_memory: bool, device: str)
+  MHATokenToKVPoolHost.get_size_per_token()
+  MHATokenToKVPoolHost.get_ksize_per_token()
+  MHATokenToKVPoolHost.init_kv_buffer()
+  MHATokenToKVPoolHost.k_buffer()
+  MHATokenToKVPoolHost.v_buffer()
+  MHATokenToKVPoolHost.load_to_device_per_layer(device_pool, host_indices, device_indices, layer_id, io_backend)
+  MHATokenToKVPoolHost.backup_from_device_all_layer(device_pool, host_indices, device_indices, io_backend)
+  MHATokenToKVPoolHost.get_flat_data_page(index) -> torch.Tensor
+  MHATokenToKVPoolHost.get_dummy_flat_data_page() -> torch.Tensor
+  MHATokenToKVPoolHost.set_from_flat_data_page(index: int, data_page: torch.Tensor) -> None
+  MHATokenToKVPoolHost.get_buffer_meta(keys, indices, local_rank)
+  MHATokenToKVPoolHost.get_buffer_with_hash(keys, indices)
+  MLATokenToKVPoolHost.__init__(device_pool: MLATokenToKVPool, host_to_device_ratio: float, host_size: int, page_size: int, layout: str, pin_memory: bool, device: str)
+  MLATokenToKVPoolHost.get_size_per_token()
+  MLATokenToKVPoolHost.get_ksize_per_token()
+  MLATokenToKVPoolHost.init_kv_buffer()
+  MLATokenToKVPoolHost.load_to_device_per_layer(device_pool, host_indices, device_indices, layer_id, io_backend)
+  MLATokenToKVPoolHost.backup_from_device_all_layer(device_pool, host_indices, device_indices, io_backend)
+  MLATokenToKVPoolHost.get_flat_data_page(index) -> torch.Tensor
+  MLATokenToKVPoolHost.get_dummy_flat_data_page() -> torch.Tensor
+  MLATokenToKVPoolHost.set_from_flat_data_page(index: int, data_page: torch.Tensor) -> None
+  MLATokenToKVPoolHost.get_buffer_meta(keys, indices, local_rank)
+  MLATokenToKVPoolHost.get_buffer_with_hash(keys, indices)
+
+# python/sglang/srt/mem_cache/multimodal_cache.py
+  MultiModalCache.__init__(max_size: int)
+  MultiModalCache.put(mm_hash: int, embedding: torch.Tensor) -> bool
+  MultiModalCache.has(mm_hash: int) -> bool
+  MultiModalCache.get(mm_hash: int) -> torch.Tensor
+  MultiModalCache.clear()
+  MultiModalCache.__len__()
+
+# python/sglang/srt/mem_cache/radix_cache.py
+  TreeNode.__init__(id: Optional[int])
+  TreeNode.evicted()
+  TreeNode.backuped()
+  TreeNode.protect_host()
+  TreeNode.release_host()
+  TreeNode.get_last_hash_value() -> Optional[str]
+  TreeNode.__lt__(other: 'TreeNode')
+  RadixCache.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: BaseTokenToKVPoolAllocator, page_size: int, disable: bool, enable_kv_cache_events: bool)
+  RadixCache.reset()
+  RadixCache.match_prefix(key: List[int]) -> MatchResult
+  RadixCache.insert(key: List, value, chunked)
+  RadixCache.cache_finished_req(req: Req)
+  RadixCache.cache_unfinished_req(req: Req, chunked)
+  RadixCache.pretty_print()
+  RadixCache.total_size()
+  RadixCache.evict(num_tokens: int)
+  RadixCache.inc_lock_ref(node: TreeNode)
+  RadixCache.dec_lock_ref(node: TreeNode)
+  RadixCache.evictable_size()
+  RadixCache.protected_size()
+  RadixCache.all_values_flatten()
+  RadixCache.take_events()
+
+# python/sglang/srt/mem_cache/radix_cache_cpp.py
+  RadixCacheCpp.__init__(disable: bool, use_hicache: bool, req_to_token_pool: ReqToTokenPool, token_to_kv_pool: BaseTokenToKVPoolAllocator, tp_cache_group: torch.distributed.ProcessGroup, page_size: int, hicache_ratio: float, hicache_size: int, hicache_write_policy: str, enable_kv_cache_events: bool, hicache_oracle: bool, enable_write_cancel: bool)
+  RadixCacheCpp.reset()
+  RadixCacheCpp.match_prefix(key: List[int]) -> MatchResult
+  RadixCacheCpp.dec_lock_ref(node: TreeNodeCpp)
+  RadixCacheCpp.inc_lock_ref(node: TreeNodeCpp)
+  RadixCacheCpp.evict(num_tokens: int)
+  RadixCacheCpp.evictable_size()
+  RadixCacheCpp.protected_size()
+  RadixCacheCpp.total_size()
+  RadixCacheCpp.cache_finished_req(req: Req)
+  RadixCacheCpp.cache_unfinished_req(req: Req, chunked)
+  RadixCacheCpp.pretty_print()
+
+# python/sglang/srt/mem_cache/swa_radix_cache.py
+  TreeNode.__init__(id: Optional[int])
+  TreeNode.evicted()
+  TreeNode.backuped()
+  TreeNode.__lt__(other: 'TreeNode')
+gen_swa_uuid() -> int
+  LRUList.__init__(swa: bool)
+  LRUList.reset_node_mru(node)
+  LRUList.reset_node_and_parents_mru(node, root_node)
+  LRUList.insert_mru(node)
+  LRUList.remove_node(node: TreeNode)
+  LRUList.get_lru_no_lock() -> Optional[TreeNode]
+  LRUList.get_leaf_lru_no_lock() -> Optional[TreeNode]
+  LRUList.get_prev_no_lock(node: TreeNode, check_id: bool) -> Optional[TreeNode]
+  LRUList.get_prev_leaf_no_lock(node: TreeNode, check_id: bool)
+  LRUList.in_list(node: Optional[TreeNode])
+  LRUList.sanity_check_evictable_size()
+  LRUList.sanity_check(tree_cache: 'SWARadixCache')
+  SWARadixCache.__init__(req_to_token_pool: ReqToTokenPool, token_to_kv_pool_allocator: SWATokenToKVPoolAllocator, sliding_window_size: int, page_size: int, disable: bool)
+  SWARadixCache.reset() -> None
+  SWARadixCache.match_prefix(key: List[int]) -> MatchResult
+  SWARadixCache.insert(key: List, value, prev_prefix_len: int) -> int
+  SWARadixCache.cache_finished_req(req: Req) -> None
+  SWARadixCache.cache_unfinished_req(req: Req, chunked) -> None
+  SWARadixCache.pretty_print() -> None
+  SWARadixCache.total_size() -> Tuple[int, int]
+  SWARadixCache.evict(full_num_tokens: int, swa_num_tokens: int) -> None
+  SWARadixCache.inc_lock_ref(node: TreeNode) -> Optional[int]
+  SWARadixCache.dec_lock_ref(node: TreeNode, swa_uuid_for_lock: Optional[int])
+  SWARadixCache.sanity_check()
+  SWARadixCache.evictable_size() -> Tuple[int, int]
+  SWARadixCache.full_evictable_size() -> int
+  SWARadixCache.swa_evictable_size() -> int
+  SWARadixCache.full_lru_list_evictable_size() -> int
+  SWARadixCache.swa_lru_list_evictable_size() -> int
+  SWARadixCache.protected_size() -> Tuple[int, int]
+  SWARadixCache.full_protected_size() -> int
+  SWARadixCache.swa_protected_size() -> int
+  SWARadixCache.all_values_flatten() -> torch.Tensor

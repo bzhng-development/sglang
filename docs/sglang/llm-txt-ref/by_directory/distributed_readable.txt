@@ -1,0 +1,421 @@
+================================================================================
+FUNCTION INDEX: distributed module
+================================================================================
+Total Functions: 87
+Documented: 47
+
+
+============================================================
+FILE: python/sglang/srt/distributed/communication_op.py
+Functions: 4
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  11: def tensor_model_parallel_all_reduce(input_: torch.Tensor)
+         → torch.Tensor
+         📝 All-reduce the input tensor across model parallel group.
+
+  L  16: def tensor_model_parallel_all_gather(input_: torch.Tensor, dim: int)
+         → torch.Tensor
+         📝 All-gather the input tensor across model parallel group.
+
+  L  23: def tensor_model_parallel_gather(input_: torch.Tensor, dst: int, dim: int)
+         → Optional[torch.Tensor]
+         📝 Gather the input tensor across model parallel group.
+
+  L  30: def broadcast_tensor_dict(tensor_dict: Optional[Dict[Any,
+        Union[torch.Tensor,
+        Any]]],
+        src: int)
+
+
+============================================================
+FILE: python/sglang/srt/distributed/naive_distributed.py
+Functions: 8
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 104: def get_naive_distributed()
+
+  L 109: def set_naive_distributed(instance: NaiveDistributed)
+
+
+CLASS: NaiveDistributed
+----------------------------------------
+  L  14: __init__(self, rank: int, world_size: int, rendezvous: str)
+
+  L  25: get_rank(self)
+
+  L  28: get_world_size(self)
+
+  L  31: scatter(self, tensor: torch.Tensor, scatter_list: List[torch.Tensor], src: int)
+
+  L  69: all_gather_object(self, obj: Any)
+         → List[Any]
+
+  L  95: barrier(self)
+
+
+============================================================
+FILE: python/sglang/srt/distributed/parallel_state.py
+Functions: 63
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L 117: def inplace_all_reduce(tensor: torch.Tensor, group_name: str)
+         → None
+
+  L 124: def inplace_all_reduce_fake(tensor: torch.Tensor, group_name: str)
+         → None
+
+  L 134: def outplace_all_reduce(tensor: torch.Tensor,
+        group_name: str,
+        outplace_all_reduce_method: str)
+         → torch.Tensor
+
+  L 143: def outplace_all_reduce_fake(tensor: torch.Tensor,
+        group_name: str,
+        outplace_all_reduce_method: str)
+         → torch.Tensor
+
+  L 155: def reg_all_gather_into_tensor(output: torch.Tensor,
+        input: torch.Tensor,
+        group_name: str)
+         → None
+
+  L 164: def reg_all_gather_into_tensor_fake(output: torch.Tensor,
+        input: torch.Tensor,
+        group_name: str)
+         → None
+
+  L1187: def get_world_group()
+         → GroupCoordinator
+
+  L1192: def init_world_group(ranks: List[int], local_rank: int, backend: str)
+         → GroupCoordinator
+
+  L1209: def init_model_parallel_group(group_ranks: List[List[int]],
+        local_rank: int,
+        backend: str,
+        use_custom_allreduce: Optional[bool],
+        use_message_queue_broadcaster: bool,
+        group_name: Optional[str],
+        use_mscclpp_allreduce: Optional[bool])
+         → GroupCoordinator
+
+  L1245: def set_pdmux_status(enable_prefill_multiplexing: bool)
+
+  L1250: def get_tp_group()
+         → GroupCoordinator
+
+  L1264: def get_moe_ep_group()
+         → GroupCoordinator
+
+  L1269: def get_moe_tp_group()
+         → GroupCoordinator
+
+  L1280: def get_pp_group()
+         → GroupCoordinator
+
+  L1290: def graph_capture()
+         📝 `graph_capture` is a context manager which should surround the code that
+            is capturing the CUDA graph. Its main purpose is to ensure that the
+            some operations will be run after the graph is captured, before the graph
+            is replayed. It returns a `GraphCaptureContext` object which contains the
+            necessary data for the graph capture. Currently, it only contains the
+            stream that the graph capture is running on. This stream is set to the
+            current CUDA stream when the context manager is entered and reset to the
+            default stream when the context manager is exited. This is to ensure that
+            the graph capture is running on a separate stream from the default stream,
+            in order to explicitly distinguish the kernels to capture
+            from other kernels possibly launched on background in the default stream.
+         @contextmanager
+
+  L1316: def set_custom_all_reduce(enable: bool)
+
+  L1321: def set_mscclpp_all_reduce(enable: bool)
+
+  L1326: def init_distributed_environment(world_size: int,
+        rank: int,
+        distributed_init_method: str,
+        local_rank: int,
+        backend: str,
+        timeout: Optional[int])
+
+  L1381: def initialize_model_parallel(tensor_model_parallel_size: int,
+        expert_model_parallel_size: int,
+        pipeline_model_parallel_size: int,
+        backend: Optional[str],
+        duplicate_tp_group: bool)
+         → None
+         📝 Initialize model parallel groups.
+            Arguments:
+            tensor_model_parallel_size: number of GPUs used for tensor model
+            parallelism.
+            pipeline_model_parallel_size: number of GPUs used for pipeline model
+            parallelism.
+            Let's say we have a total of 8 GPUs denoted by g0 ... g7 and we
+            use 2 GPUs to parallelize the model tensor, and 4 GPUs to parallelize
+            the model pipeline. The present function will
+            create 4 tensor model-parallel groups and 2 pipeline model-parallel groups:
+            4 tensor model-parallel groups:
+            [g0, g1], [g2, g3], [g4, g5], [g6, g7]
+            2 pipeline model-parallel groups:
+            [g0, g2, g4, g6], [g1, g3, g5, g7]
+            Note that for efficiency, the caller should make sure adjacent ranks
+            are on the same DGX box. For example if we are using 2 DGX-1 boxes
+            with a total of 16 GPUs, rank 0 to 7 belong to the first box and
+            ranks 8 to 15 belong to the second box.
+
+  L1518: def ensure_model_parallel_initialized(tensor_model_parallel_size: int,
+        expert_model_parallel_size: int,
+        pipeline_model_parallel_size: int,
+        backend: Optional[str])
+         → None
+         📝 Helper to initialize model parallel groups if they are not initialized,
+            or ensure tensor-parallel and pipeline-parallel sizes are equal to expected
+            values if the model parallel groups are initialized.
+
+  L1551: def model_parallel_is_initialized()
+         📝 Check if tensor and pipeline parallel groups are initialized.
+
+  L1560: def patch_tensor_parallel_group(tp_group: GroupCoordinator)
+         📝 Patch the tp group temporarily until this function ends.
+            This method is for draft workers of speculative decoding to run draft model
+            with different tp degree from that of target model workers.
+            Args:
+            tp_group (GroupCoordinator): the tp group coordinator
+         @contextmanager
+
+  L1584: def get_tensor_model_parallel_world_size()
+         📝 Return world size for the tensor model parallel group.
+
+  L1589: def get_tensor_model_parallel_rank()
+         📝 Return my rank for the tensor model parallel group.
+
+  L1594: def get_moe_expert_parallel_world_size()
+         📝 Return world size for the moe expert parallel group.
+
+  L1599: def get_moe_expert_parallel_rank()
+         📝 Return my rank for the moe expert parallel group.
+
+  L1604: def get_moe_tensor_parallel_world_size()
+         📝 Return world size for the moe tensor parallel group.
+
+  L1609: def get_moe_tensor_parallel_rank()
+         📝 Return my rank for the moe tensor parallel group.
+
+  L1614: def destroy_model_parallel()
+         📝 Set the groups to none and destroy them.
+
+  L1627: def destroy_distributed_environment()
+
+  L1636: def cleanup_dist_env_and_memory(shutdown_ray: bool)
+
+  L1661: def in_the_same_node_as(pg: ProcessGroup, source_rank: int)
+         → List[bool]
+         📝 This is a collective operation that returns if each rank is in the same node
+            as the source rank. It tests if processes are attached to the same
+            memory system (shared access to shared memory).
+
+  L1732: def monkey_patch_vllm_parallel_state(reverse: bool)
+
+
+CLASS: GroupCoordinator
+----------------------------------------
+  L 214: __init__(self, group_ranks: List[List[int]], local_rank: int, torch_distributed_backend: Union[str, Backend], use_pynccl: bool, use_pymscclpp: bool, use_custom_allreduce: bool, use_hpu_communicator: bool, use_xpu_communicator: bool, use_npu_communicator: bool, use_message_queue_broadcaster: bool, group_name: Optional[str])
+
+  L 367: __repr__(self)
+
+  L 375: first_rank(self)
+         📝 Return the global rank of the first process in the group
+
+  L 380: last_rank(self)
+         📝 Return the global rank of the last process in the group
+
+  L 385: is_first_rank(self)
+         📝 Return whether the caller is the first process in the group
+
+  L 390: is_last_rank(self)
+         📝 Return whether the caller is the last process in the group
+
+  L 395: next_rank(self)
+         📝 Return the global rank of the process that follows the caller
+
+  L 402: prev_rank(self)
+         📝 Return the global rank of the process that precedes the caller
+
+  L 409: graph_capture(self, graph_capture_context: Optional[GraphCaptureContext])
+
+  L 469: all_reduce(self, input_: torch.Tensor)
+         → torch.Tensor
+         📝 User-facing all-reduce function before we actually call the
+            all-reduce operation.
+            We need this because Dynamo does not support passing an arbitrary
+            object (`self` in this case) to a custom op. We need to pass the
+            group name as a string, and then look up the group coordinator from
+            the group name, dispatch the all-reduce operation to the group
+            coordinator.
+            In addition, PyTorch custom ops do not support mutation or returning
+            a new tensor in the same op. So we need to figure out if the op is
+            in-place or out-of-place ahead of time.
+
+  L 576: reduce_scatter_tensor(self, output: torch.Tensor, input: torch.Tensor)
+         → None
+
+  L 585: reduce_scatter(self, output: torch.Tensor, input_list: List[torch.Tensor])
+         → None
+
+  L 594: reduce_scatterv(self, input_: torch.Tensor, output: Optional[torch.Tensor], sizes: Optional[List[int]])
+         → torch.Tensor
+
+  L 636: all_gather_into_tensor(self, output: torch.Tensor, input: torch.Tensor)
+
+  L 644: all_gather(self, input_: torch.Tensor, dim: int, output_tensor_list: Optional[List[torch.Tensor]])
+         → torch.Tensor
+
+  L 717: all_gatherv(self, input_: Union[torch.Tensor, List[torch.Tensor]], sizes: Optional[List[int]])
+         → Union[torch.Tensor, List[torch.Tensor]]
+         📝 Supports varying sizes per rank and input tensor list.
+            `sizes`: a list of len(world_size) with the number of items per rank to gather.
+
+  L 765: gather(self, input_: torch.Tensor, dst: int, dim: int)
+         → Optional[torch.Tensor]
+         📝 NOTE: We assume that the input tensor is on the same device across
+            all the ranks.
+            NOTE: `dst` is the local rank of the destination rank.
+
+  L 800: broadcast(self, input_: torch.Tensor, src: int)
+         📝 Broadcast the input tensor.
+            NOTE: `src` is the local rank of the source rank.
+
+  L 815: broadcast_object(self, obj: Optional[Any], src: int)
+         📝 Broadcast the input object.
+            NOTE: `src` is the local rank of the source rank.
+
+  L 839: broadcast_object_list(self, obj_list: List[Any], src: int, group: Optional[ProcessGroup])
+         📝 Broadcast the input object list.
+            NOTE: `src` is the local rank of the source rank.
+
+  L 856: all_gather_object(self, obj: Any)
+         → List[Any]
+
+  L 861: send_object(self, obj: Any, dst: int)
+         → None
+         📝 Send the input object list to the destination rank.
+
+  L 895: recv_object(self, src: int)
+         → Any
+         📝 Receive the input object list from the source rank.
+
+  L 933: broadcast_tensor_dict(self, tensor_dict: Optional[Dict[str, Union[torch.Tensor, Any]]], src: int, group: Optional[ProcessGroup], metadata_group: Optional[ProcessGroup])
+         → Optional[Dict[str, Union[torch.Tensor, Any]]]
+         📝 Broadcast the input tensor dictionary.
+            NOTE: `src` is the local rank of the source rank.
+
+  L1015: send_tensor_dict(self, tensor_dict: Dict[str, Union[torch.Tensor, Any]], dst: Optional[int], all_gather_group: Optional['GroupCoordinator'])
+         → Optional[Dict[str, Union[torch.Tensor, Any]]]
+         📝 Send the input tensor dictionary.
+            NOTE: `dst` is the local rank of the source rank.
+
+  L1070: recv_tensor_dict(self, src: Optional[int], all_gather_group: Optional['GroupCoordinator'])
+         → Optional[Dict[str, Union[torch.Tensor, Any]]]
+         📝 Recv the input tensor dictionary.
+            NOTE: `src` is the local rank of the source rank.
+
+  L1132: barrier(self)
+         📝 Barrier synchronization among the group.
+            NOTE: don't use `device_group` here! `barrier` in NCCL is
+            terrible because it is internally a broadcast operation with
+            secretly created GPU tensors. It is easy to mess up the current
+            device. Use the CPU group instead.
+
+  L1141: send(self, tensor: torch.Tensor, dst: Optional[int])
+         → None
+         📝 Sends a tensor to the destination rank in a non-blocking way
+
+  L1153: recv(self, size: torch.Size, dtype: torch.dtype, src: Optional[int])
+         → torch.Tensor
+         📝 Receives a tensor from the source rank.
+
+  L1169: destroy(self)
+
+
+============================================================
+FILE: python/sglang/srt/distributed/utils.py
+Functions: 12
+============================================================
+
+MODULE FUNCTIONS:
+----------------------------------------
+  L  21: def ensure_divisibility(numerator, denominator)
+         📝 Ensure that numerator is divisible by the denominator.
+
+  L  28: def divide(numerator, denominator)
+         📝 Ensure that numerator is divisible by the denominator and return
+            the division value.
+
+  L  35: def split_tensor_along_last_dim(tensor: torch.Tensor,
+        num_partitions: int,
+        contiguous_split_chunks: bool)
+         → Sequence[torch.Tensor]
+         📝 Split a tensor along its last dimension.
+            Arguments:
+            tensor: input tensor.
+            num_partitions: number of partitions to split the tensor
+            contiguous_split_chunks: If True, make each chunk contiguous
+            in memory.
+            Returns:
+            A list of Tensors
+
+  L  63: def get_pp_indices(num_hidden_layers: int, pp_rank: int, pp_size: int)
+         → Tuple[int, int]
+         📝 Try to evenly distribute layers across partitions.
+            If the number of layers is not divisible by the number of partitions,
+            the last partition will have the remaining layers.
+
+
+CLASS: StatelessProcessGroup
+----------------------------------------
+  L 118: __post_init__(self)
+
+  L 124: send_obj(self, obj: Any, dst: int)
+         📝 Send an object to a destination rank.
+
+  L 132: expire_data(self)
+         📝 Expire data that is older than `data_expiration_seconds` seconds.
+
+  L 143: recv_obj(self, src: int)
+         → Any
+         📝 Receive an object from a source rank.
+
+  L 151: broadcast_obj(self, obj: Optional[Any], src: int)
+         → Any
+         📝 Broadcast an object from a source rank to all other ranks.
+            It does not clean up after all ranks have received the object.
+            Use it for limited times, e.g., for initialization.
+
+  L 169: all_gather_obj(self, obj: Any)
+         → list[Any]
+         📝 All gather an object from all ranks.
+
+  L 181: barrier(self)
+         📝 A barrier to synchronize all ranks.
+
+  L 190: create(host: str, port: int, rank: int, world_size: int, data_expiration_seconds: int)
+         → 'StatelessProcessGroup'
+         📝 A replacement for `torch.distributed.init_process_group` that does not
+            pollute the global state.
+            If we have process A and process B called `torch.distributed.init_process_group`
+            to form a group, and then we want to form another group with process A, B, C,
+            D, it is not possible in PyTorch, because process A and process B have already
+            formed a group, and process C and process D cannot join that group. This
+            function is a workaround for this issue.
+            `torch.distributed.init_process_group` is a global call, while this function
+            is a stateless call. It will return a `StatelessProcessGroup` object that can be
+            used for exchanging metadata. With this function, process A and process B
+            can call `StatelessProcessGroup.create` to form a group, and then process A, B,
+            C, and D can call `StatelessProcessGroup.create` to form another group.

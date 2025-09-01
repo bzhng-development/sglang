@@ -1,0 +1,38 @@
+
+# python/sglang/srt/layers/quantization/compressed_tensors/compressed_tensors.py
+  DeviceCapability.as_version_str() -> str
+  DeviceCapability.to_int() -> int
+  CompressedTensorsConfig.__init__(target_scheme_map: Dict[str, Any], ignore: List[str], quant_format: str, sparsity_scheme_map: Dict[str, SparsityCompressionConfig], sparsity_ignore_list: List[str], kv_cache_scheme: Optional[Dict[str, Any]], config: Optional[Dict[str, Any]], packed_modules_mapping: Dict[str, List[str]])
+  CompressedTensorsConfig.get_linear_method() -> CompressedTensorsLinearMethod
+  CompressedTensorsConfig.get_supported_act_dtypes(cls) -> List[torch.dtype]
+  CompressedTensorsConfig.get_min_capability(cls) -> int
+  CompressedTensorsConfig.get_name() -> str
+  CompressedTensorsConfig.get_scaled_act_names() -> List[str]
+  CompressedTensorsConfig.get_quant_method(layer: torch.nn.Module, prefix: str) -> Optional[QuantizeMethodBase]
+  CompressedTensorsConfig.from_config(cls, config: Dict[str, Any]) -> CompressedTensorsConfig
+  CompressedTensorsConfig.get_config_filenames(cls) -> List[str]
+  CompressedTensorsConfig.get_scheme(layer: torch.nn.Module, layer_name: Optional[str]) -> Optional[CompressedTensorsScheme]
+  CompressedTensorsConfig.get_cache_scale(name: str) -> Optional[str]
+  CompressedTensorsConfig.supports_cutlass_24(weight_quant: Optional[QuantizationArgs], input_quant: Optional[QuantizationArgs], sparsity_scheme: Optional[SparsityCompressionConfig]) -> bool
+  CompressedTensorsLinearMethod.__init__(quantization_config: CompressedTensorsConfig)
+  CompressedTensorsLinearMethod.process_weights_after_loading(layer: torch.nn.Module) -> None
+  CompressedTensorsLinearMethod.create_weights(layer: torch.nn.Module, input_size_per_partition: int, output_partition_sizes: List[int], input_size: int, output_size: int, params_dtype: torch.dtype)
+  CompressedTensorsLinearMethod.apply(layer: torch.nn.Module, x: torch.Tensor, bias: Optional[torch.Tensor])
+
+# python/sglang/srt/layers/quantization/compressed_tensors/compressed_tensors_moe.py
+  CompressedTensorsMoEMethod.__new__(cls)
+  CompressedTensorsMoEMethod.get_moe_method(quant_config: CompressedTensorsConfig) -> 'CompressedTensorsMoEMethod'
+  CompressedTensorsW8A8Fp8MoEMethod.__init__(quant_config: CompressedTensorsConfig)
+  CompressedTensorsW8A8Fp8MoEMethod.create_weights(layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+  CompressedTensorsW8A8Fp8MoEMethod.process_weights_after_loading(layer: FusedMoE) -> None
+  CompressedTensorsW8A8Fp8MoEMethod.apply(layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig) -> torch.Tensor
+  CompressedTensorsWNA16MoEMethod.__init__(quant_config: CompressedTensorsConfig)
+  CompressedTensorsWNA16MoEMethod.create_weights(layer: torch.nn.Module, num_experts: int, hidden_size: int, intermediate_size_per_partition: int, params_dtype: torch.dtype)
+  CompressedTensorsWNA16MoEMethod.process_weights_after_loading(layer: torch.nn.Module) -> None
+  CompressedTensorsWNA16MoEMethod.apply(layer: torch.nn.Module, x: torch.Tensor, topk_output: TopKOutput, moe_runner_config: MoeRunnerConfig) -> torch.Tensor
+
+# python/sglang/srt/layers/quantization/compressed_tensors/utils.py
+is_activation_quantization_format(format: str) -> bool
+should_ignore_layer(layer_name: Optional[str], ignore: Iterable[str], fused_mapping: Mapping[str, List[str]]) -> bool
+check_equal_or_regex_match(layer_name: str, targets: Iterable[str]) -> bool
+find_matched_target(layer_name: Optional[str], module: Module, targets: Iterable[str], fused_mapping: Mapping[str, List[str]]) -> str
