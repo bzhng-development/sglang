@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.moe.fused_moe_triton.fused_moe API documentation</title>
+<meta name="description" content="Fused MoE kernel.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.moe.fused_moe_triton.fused_moe</code></h1>
+</header>
+<section id="section-intro">
+<p>Fused MoE kernel.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts"><code class="name flex">
+<span>def <span class="ident">fused_experts</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_output: StandardTopKOutput,<br>moe_runner_config: MoeRunnerConfig,<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fused_experts(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_output: StandardTopKOutput,
+    moe_runner_config: MoeRunnerConfig,
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+):
+    topk_weights, topk_ids, _ = topk_output
+    if moe_runner_config.inplace:
+        assert not moe_runner_config.no_combine, &#34;no combine + inplace makes no sense&#34;
+        torch.ops.sglang.inplace_fused_experts(
+            hidden_states,
+            w1,
+            w2,
+            topk_weights,
+            topk_ids,
+            b1,
+            b2,
+            moe_runner_config.activation,
+            moe_runner_config.apply_router_weight_on_input,
+            use_fp8_w8a8,
+            use_int8_w8a8,
+            use_int8_w8a16,
+            use_int4_w4a16,
+            per_channel_quant,
+            w1_scale,
+            w2_scale,
+            w1_zp,
+            w2_zp,
+            a1_scale,
+            a2_scale,
+            block_shape,
+            moe_runner_config.routed_scaling_factor,
+            moe_runner_config.gemm1_alpha,
+            moe_runner_config.gemm1_clamp_limit,
+        )
+        return hidden_states
+    else:
+        return torch.ops.sglang.outplace_fused_experts(
+            hidden_states,
+            w1,
+            w2,
+            topk_weights,
+            topk_ids,
+            b1,
+            b2,
+            moe_runner_config.activation,
+            moe_runner_config.apply_router_weight_on_input,
+            use_fp8_w8a8,
+            use_int8_w8a8,
+            use_int8_w8a16,
+            use_int4_w4a16,
+            per_channel_quant,
+            w1_scale,
+            w2_scale,
+            w1_zp,
+            w2_zp,
+            a1_scale,
+            a2_scale,
+            block_shape,
+            no_combine=moe_runner_config.no_combine,
+            routed_scaling_factor=moe_runner_config.routed_scaling_factor,
+            gemm1_alpha=moe_runner_config.gemm1_alpha,
+            gemm1_limit=moe_runner_config.gemm1_clamp_limit,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl"><code class="name flex">
+<span>def <span class="ident">fused_experts_impl</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>inplace: bool = False,<br>activation: str = 'silu',<br>apply_router_weight_on_input: bool = False,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None,<br>no_combine: bool = False,<br>routed_scaling_factor: Optional[float] = None,<br>gemm1_alpha: Optional[float] = None,<br>gemm1_limit: Optional[float] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fused_experts_impl(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    inplace: bool = False,
+    activation: str = &#34;silu&#34;,
+    apply_router_weight_on_input: bool = False,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+    no_combine: bool = False,
+    routed_scaling_factor: Optional[float] = None,
+    gemm1_alpha: Optional[float] = None,
+    gemm1_limit: Optional[float] = None,
+):
+    padded_size = padding_size
+    if not (use_fp8_w8a8 or use_int8_w8a8) or block_shape is not None or _use_aiter:
+        padded_size = 0
+
+    # Check constraints.
+    if use_int4_w4a16:
+        assert hidden_states.shape[1] // 2 == w1.shape[2], &#34;Hidden size mismatch&#34;
+    else:
+        assert (
+            hidden_states.shape[1] == w1.shape[2] - padded_size
+        ), f&#34;Hidden size mismatch&#34;
+    assert topk_weights.shape == topk_ids.shape, &#34;topk shape mismatch&#34;
+    assert hidden_states.is_contiguous(), &#34;Hidden_states must be contiguous&#34;
+    assert w1.is_contiguous(), &#34;Expert weights1 must be contiguous&#34;
+    assert w2.is_contiguous(), &#34;Expert weights2 must be contiguous&#34;
+    assert hidden_states.dtype in [torch.float32, torch.float16, torch.bfloat16]
+
+    num_tokens, _ = hidden_states.shape
+    E, N, _ = w1.shape
+    # We execute the fused_moe kernel in chunks to circumvent this issue:
+    # https://github.com/vllm-project/vllm/issues/5938
+    CHUNK_SIZE = 64 * 1024
+    M = min(num_tokens, CHUNK_SIZE)
+    config_dtype = get_config_dtype_str(
+        use_fp8_w8a8=use_fp8_w8a8,
+        use_int8_w8a8=use_int8_w8a8,
+        use_int8_w8a16=use_int8_w8a16,
+        use_int4_w4a16=use_int4_w4a16,
+        dtype=hidden_states.dtype,
+    )
+
+    get_config_func = functools.partial(
+        try_get_optimal_moe_config,
+        w1.shape,
+        (w2.shape[0], w2.shape[1], w2.shape[2] - padded_size),
+        topk_ids.shape[1],
+        config_dtype,
+        block_shape=block_shape,
+    )
+
+    config = get_config_func(M)
+
+    cache = torch.empty(
+        M * topk_ids.shape[1] * max(N, w2.shape[1]),
+        device=hidden_states.device,
+        dtype=hidden_states.dtype,
+    )
+    intermediate_cache1 = cache[: M * topk_ids.shape[1] * N].view(
+        (M, topk_ids.shape[1], N),
+    )
+    intermediate_cache2 = torch.empty(
+        (M * topk_ids.shape[1], N // 2),
+        device=hidden_states.device,
+        dtype=hidden_states.dtype,
+    )
+    intermediate_cache3 = cache[: M * topk_ids.shape[1] * w2.shape[1]].view(
+        (M, topk_ids.shape[1], w2.shape[1]),
+    )
+
+    compute_type = tl.bfloat16 if hidden_states.dtype == torch.bfloat16 else tl.float16
+
+    if no_combine:
+        assert not inplace
+        out_hidden_states = torch.empty(
+            (num_tokens, topk_ids.shape[1], w2.shape[1]),
+            device=hidden_states.device,
+            dtype=hidden_states.dtype,
+        )
+    elif inplace:
+        out_hidden_states = hidden_states
+    else:
+        out_hidden_states = torch.empty_like(hidden_states)
+
+    for chunk in range((num_tokens // CHUNK_SIZE) + 1):
+        begin_chunk_idx, end_chunk_idx = (
+            chunk * CHUNK_SIZE,
+            min((chunk + 1) * CHUNK_SIZE, num_tokens),
+        )
+        curr_hidden_states = hidden_states[begin_chunk_idx:end_chunk_idx]
+        tokens_in_chunk, _ = curr_hidden_states.shape
+
+        if tokens_in_chunk == 0:
+            break
+
+        if tokens_in_chunk &lt; CHUNK_SIZE and chunk &gt; 0:
+            # Adjust the intermediate cache size and config for the last
+            # chunk. Note that in most cases we only have one chunk
+            # so the cache size and config are already set correctly and
+            # do not need to be adjusted.
+            intermediate_cache1 = intermediate_cache1[:tokens_in_chunk]
+            intermediate_cache2 = intermediate_cache2[
+                : tokens_in_chunk * topk_ids.shape[1]
+            ]
+            intermediate_cache3 = intermediate_cache3[:tokens_in_chunk]
+            config = get_config_func(tokens_in_chunk)
+
+        curr_topk_ids = topk_ids[begin_chunk_idx:end_chunk_idx]
+        curr_topk_weights = topk_weights[begin_chunk_idx:end_chunk_idx]
+
+        sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+            curr_topk_ids, config[&#34;BLOCK_SIZE_M&#34;], E
+        )
+
+        invoke_fused_moe_kernel(
+            curr_hidden_states,
+            w1,
+            b1,
+            intermediate_cache1,
+            a1_scale,
+            w1_scale,
+            w1_zp,
+            curr_topk_weights,
+            curr_topk_ids,
+            sorted_token_ids,
+            expert_ids,
+            num_tokens_post_padded,
+            apply_router_weight_on_input,
+            topk_ids.shape[1],
+            config,
+            compute_type=compute_type,
+            use_fp8_w8a8=use_fp8_w8a8,
+            use_int8_w8a8=use_int8_w8a8,
+            use_int8_w8a16=use_int8_w8a16,
+            use_int4_w4a16=use_int4_w4a16,
+            per_channel_quant=per_channel_quant,
+            block_shape=block_shape,
+        )
+        if activation == &#34;silu&#34;:
+            if gemm1_alpha is not None:
+                assert gemm1_limit is not None
+                intermediate_cache2 = swiglu_with_alpha_and_limit(
+                    intermediate_cache1.view(-1, N),
+                    gemm1_alpha,
+                    gemm1_limit,
+                )
+            elif _is_cuda or _is_hip:
+                silu_and_mul(intermediate_cache1.view(-1, N), intermediate_cache2)
+            else:
+                vllm_ops.silu_and_mul(
+                    intermediate_cache2, intermediate_cache1.view(-1, N)
+                )
+        elif activation == &#34;gelu&#34;:
+            assert gemm1_alpha is None, &#34;gemm1_alpha is not supported for gelu&#34;
+            assert gemm1_limit is None, &#34;gemm1_limit is not supported for gelu&#34;
+            if _is_cuda or _is_hip:
+                gelu_and_mul(intermediate_cache1.view(-1, N), intermediate_cache2)
+            else:
+                vllm_ops.gelu_and_mul(
+                    intermediate_cache2, intermediate_cache1.view(-1, N)
+                )
+        else:
+            raise ValueError(f&#34;Unsupported activation: {activation=}&#34;)
+
+        invoke_fused_moe_kernel(
+            intermediate_cache2,
+            w2,
+            b2,
+            (
+                intermediate_cache3
+                if not no_combine and topk_ids.shape[1] != 1
+                else out_hidden_states[begin_chunk_idx:end_chunk_idx].unsqueeze(0)
+            ),
+            a2_scale,
+            w2_scale,
+            w2_zp,
+            curr_topk_weights,
+            curr_topk_ids,
+            sorted_token_ids,
+            expert_ids,
+            num_tokens_post_padded,
+            not apply_router_weight_on_input,
+            1,
+            config,
+            compute_type=compute_type,
+            use_fp8_w8a8=use_fp8_w8a8,
+            use_int8_w8a8=use_int8_w8a8,
+            use_int8_w8a16=use_int8_w8a16,
+            use_int4_w4a16=use_int4_w4a16,
+            per_channel_quant=per_channel_quant,
+            block_shape=block_shape,
+        )
+
+        if routed_scaling_factor is None:
+            routed_scaling_factor = 1.0
+
+        if no_combine:
+            pass
+        elif _is_cuda:
+            if topk_ids.shape[1] == 1 and routed_scaling_factor == 1.0:
+                pass  # we write directly into out_hidden_states
+            elif topk_ids.shape[1] == 2 and routed_scaling_factor == 1.0:
+                torch.add(
+                    intermediate_cache3[:, 0],
+                    intermediate_cache3[:, 1],
+                    out=out_hidden_states[begin_chunk_idx:end_chunk_idx],
+                ).squeeze(dim=1)
+            else:
+                # According to micro benchmark results, torch.compile can get better performance for small token.
+                if tokens_in_chunk &lt;= 32:
+                    moe_sum_reduce_torch_compile(
+                        intermediate_cache3.view(*intermediate_cache3.shape),
+                        out_hidden_states[begin_chunk_idx:end_chunk_idx],
+                        routed_scaling_factor,
+                    )
+                else:
+                    moe_sum_reduce_triton(
+                        intermediate_cache3.view(*intermediate_cache3.shape),
+                        out_hidden_states[begin_chunk_idx:end_chunk_idx],
+                        routed_scaling_factor,
+                    )
+        elif _is_hip:
+            if _use_aiter:
+                moe_sum(
+                    intermediate_cache3.view(*intermediate_cache3.shape),
+                    out_hidden_states[begin_chunk_idx:end_chunk_idx],
+                )
+            else:
+                # According to micro benchmark results, torch.compile can get better performance for small token.
+                if tokens_in_chunk &lt;= 32:
+                    moe_sum_reduce_torch_compile(
+                        intermediate_cache3.view(*intermediate_cache3.shape),
+                        out_hidden_states[begin_chunk_idx:end_chunk_idx],
+                        routed_scaling_factor,
+                    )
+                else:
+                    moe_sum_reduce_triton(
+                        intermediate_cache3.view(*intermediate_cache3.shape),
+                        out_hidden_states[begin_chunk_idx:end_chunk_idx],
+                        routed_scaling_factor,
+                    )
+        else:
+            vllm_ops.moe_sum(
+                intermediate_cache3.view(*intermediate_cache3.shape),
+                out_hidden_states[begin_chunk_idx:end_chunk_idx],
+            )
+
+    return out_hidden_states</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_moe"><code class="name flex">
+<span>def <span class="ident">fused_moe</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_output: StandardTopKOutput,<br>moe_runner_config: MoeRunnerConfig = MoeRunnerConfig(activation='silu', apply_router_weight_on_input=False, inplace=True, no_combine=False, routed_scaling_factor=None, gemm1_alpha=None, gemm1_clamp_limit=None),<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fused_moe(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_output: StandardTopKOutput,
+    moe_runner_config: MoeRunnerConfig = MoeRunnerConfig(),
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    This function computes a Mixture of Experts (MoE) layer using two sets of
+    weights, w1 and w2, and top-k gating mechanism.
+
+    Parameters:
+    - hidden_states (torch.Tensor): The input tensor to the MoE layer.
+    - w1 (torch.Tensor): The first set of expert weights.
+    - w2 (torch.Tensor): The second set of expert weights.
+    - topk_output (StandardTopKOutput): The top-k output of the experts.
+    - moe_runner_config (MoeRunnerConfig): The configuration for the MoE runner.
+    - b1 (Optional[torch.Tensor]): Optional bias for w1.
+    - b2 (Optional[torch.Tensor]): Optional bias for w2.
+    - use_fp8_w8a8 (bool): If True, use fp8 arithmetic to compute the inner
+        products for w1 and w2. Defaults to False.
+    - use_int8_w8a8 (bool): If True, use int8 arithmetic to compute the inner
+        products for w1 and w2. Defaults to False.
+    - use_int8_w8a16 (bool): If True, use fp8 arithmetic to compute the inner
+        products for w1 and w2. Defaults to False.
+    - use_int4_w4a16 (bool): If True, use matmul of int4 weight and bf16/fp16
+        activation to compute the inner products for w1 and w2.
+        Defaults to False.
+    - w1_scale (Optional[torch.Tensor]): Optional scale to be used for
+        w1.
+    - w2_scale (Optional[torch.Tensor]): Optional scale to be used for
+        w2.
+    - a1_scale (Optional[torch.Tensor]): Optional scale to be used for
+        a1.
+    - a2_scale (Optional[torch.Tensor]): Optional scale to be used for
+        a2.
+    - block_shape: (Optional[List[int]]): Optional block size for block-wise
+        quantization.
+    - gemm1_alpha (Optional[float]): Optional gemm1_alpha for the activation
+        function.
+    - gemm1_limit (Optional[float]): Optional gemm1_limit for the swiglu activation
+        function.
+
+    Returns:
+    - torch.Tensor: The output tensor after applying the MoE layer.
+    &#34;&#34;&#34;
+
+    return fused_experts(
+        hidden_states,
+        w1,
+        w2,
+        topk_output,
+        moe_runner_config=moe_runner_config,
+        b1=b1,
+        b2=b2,
+        use_fp8_w8a8=use_fp8_w8a8,
+        use_int8_w8a8=use_int8_w8a8,
+        use_int8_w8a16=use_int8_w8a16,
+        use_int4_w4a16=use_int4_w4a16,
+        per_channel_quant=per_channel_quant,
+        w1_scale=w1_scale,
+        w2_scale=w2_scale,
+        w1_zp=w1_zp,
+        w2_zp=w2_zp,
+        a1_scale=a1_scale,
+        a2_scale=a2_scale,
+        block_shape=block_shape,
+    )</code></pre>
+</details>
+<div class="desc"><p>This function computes a Mixture of Experts (MoE) layer using two sets of
+weights, w1 and w2, and top-k gating mechanism.</p>
+<p>Parameters:
+- hidden_states (torch.Tensor): The input tensor to the MoE layer.
+- w1 (torch.Tensor): The first set of expert weights.
+- w2 (torch.Tensor): The second set of expert weights.
+- topk_output (StandardTopKOutput): The top-k output of the experts.
+- moe_runner_config (MoeRunnerConfig): The configuration for the MoE runner.
+- b1 (Optional[torch.Tensor]): Optional bias for w1.
+- b2 (Optional[torch.Tensor]): Optional bias for w2.
+- use_fp8_w8a8 (bool): If True, use fp8 arithmetic to compute the inner
+products for w1 and w2. Defaults to False.
+- use_int8_w8a8 (bool): If True, use int8 arithmetic to compute the inner
+products for w1 and w2. Defaults to False.
+- use_int8_w8a16 (bool): If True, use fp8 arithmetic to compute the inner
+products for w1 and w2. Defaults to False.
+- use_int4_w4a16 (bool): If True, use matmul of int4 weight and bf16/fp16
+activation to compute the inner products for w1 and w2.
+Defaults to False.
+- w1_scale (Optional[torch.Tensor]): Optional scale to be used for
+w1.
+- w2_scale (Optional[torch.Tensor]): Optional scale to be used for
+w2.
+- a1_scale (Optional[torch.Tensor]): Optional scale to be used for
+a1.
+- a2_scale (Optional[torch.Tensor]): Optional scale to be used for
+a2.
+- block_shape: (Optional[List[int]]): Optional block size for block-wise
+quantization.
+- gemm1_alpha (Optional[float]): Optional gemm1_alpha for the activation
+function.
+- gemm1_limit (Optional[float]): Optional gemm1_limit for the swiglu activation
+function.</p>
+<p>Returns:
+- torch.Tensor: The output tensor after applying the MoE layer.</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_config_dtype_str"><code class="name flex">
+<span>def <span class="ident">get_config_dtype_str</span></span>(<span>dtype: torch.dtype,<br>use_int8_w8a16: Optional[bool] = False,<br>use_int4_w4a16: Optional[bool] = False,<br>use_fp8_w8a8: Optional[bool] = False,<br>use_int8_w8a8: Optional[bool] = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_config_dtype_str(
+    dtype: torch.dtype,
+    use_int8_w8a16: Optional[bool] = False,
+    use_int4_w4a16: Optional[bool] = False,
+    use_fp8_w8a8: Optional[bool] = False,
+    use_int8_w8a8: Optional[bool] = False,
+):
+    if use_fp8_w8a8:
+        return &#34;fp8_w8a8&#34;
+    elif use_int8_w8a8:
+        return &#34;int8_w8a8&#34;
+    elif use_int4_w4a16:
+        return &#34;int4_w4a16&#34;
+    elif use_int8_w8a16:
+        return &#34;int8_w8a16&#34;
+    elif dtype == torch.float:
+        # avoiding cases where kernel fails when float32 MoE
+        # use fp16/bfloat16 configs
+        return &#34;float32&#34;
+    return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_config_file_name"><code class="name flex">
+<span>def <span class="ident">get_config_file_name</span></span>(<span>E: int, N: int, dtype: Optional[str], block_shape: Optional[int] = None) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_config_file_name(
+    E: int, N: int, dtype: Optional[str], block_shape: Optional[int] = None
+) -&gt; str:
+    device_name = get_device_name().replace(&#34; &#34;, &#34;_&#34;)
+    dtype_selector = &#34;&#34; if not dtype else f&#34;,dtype={dtype}&#34;
+    block_shape_selector = (
+        &#34;&#34; if not block_shape or not all(block_shape) else f&#34;,block_shape={block_shape}&#34;
+    )
+    return f&#34;E={E},N={N},device_name={device_name}{dtype_selector}{block_shape_selector}.json&#34;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_default_config"><code class="name flex">
+<span>def <span class="ident">get_default_config</span></span>(<span>M: int,<br>E: int,<br>N: int,<br>K: int,<br>topk: int,<br>dtype: Optional[str],<br>is_marlin: bool,<br>block_shape: Optional[List[int]] = None) ‑> Dict[str, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_default_config(
+    M: int,
+    E: int,
+    N: int,
+    K: int,
+    topk: int,
+    dtype: Optional[str],
+    is_marlin: bool,
+    block_shape: Optional[List[int]] = None,
+) -&gt; Dict[str, int]:
+    if dtype == &#34;fp8_w8a8&#34;:
+        if block_shape is None:
+            config = {
+                &#34;BLOCK_SIZE_M&#34;: 128,
+                &#34;BLOCK_SIZE_N&#34;: 256,
+                &#34;BLOCK_SIZE_K&#34;: 128,
+                &#34;GROUP_SIZE_M&#34;: 32,
+                &#34;num_warps&#34;: 8,
+                &#34;num_stages&#34;: 2 if _is_hip else 4,
+            }
+            if M &lt;= E:
+                config = {
+                    &#34;BLOCK_SIZE_M&#34;: 64,
+                    &#34;BLOCK_SIZE_N&#34;: 128,
+                    &#34;BLOCK_SIZE_K&#34;: 128,
+                    &#34;GROUP_SIZE_M&#34;: 1,
+                    &#34;num_warps&#34;: 4,
+                    &#34;num_stages&#34;: 2 if _is_hip else 4,
+                }
+        else:
+            # Block-wise quant: BLOCK_SIZE_K must be divisible by block_shape[1]
+            config = {
+                &#34;BLOCK_SIZE_M&#34;: 64,
+                &#34;BLOCK_SIZE_N&#34;: block_shape[0],
+                &#34;BLOCK_SIZE_K&#34;: block_shape[1],
+                &#34;GROUP_SIZE_M&#34;: 32,
+                &#34;num_warps&#34;: 4,
+                &#34;num_stages&#34;: 2 if _is_hip else 3,
+            }
+    else:
+        config = {
+            &#34;BLOCK_SIZE_M&#34;: 64,
+            &#34;BLOCK_SIZE_N&#34;: 64,
+            &#34;BLOCK_SIZE_K&#34;: 32,
+            &#34;GROUP_SIZE_M&#34;: 8,
+        }
+        # A heuristic: fused marlin works faster with this config for small M
+        if M &lt;= E or (is_marlin and M &lt;= 32):
+            config = {
+                &#34;BLOCK_SIZE_M&#34;: 16,
+                &#34;BLOCK_SIZE_N&#34;: 32,
+                &#34;BLOCK_SIZE_K&#34;: 64,
+                &#34;GROUP_SIZE_M&#34;: 1,
+            }
+    return config</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_moe_configs"><code class="name flex">
+<span>def <span class="ident">get_moe_configs</span></span>(<span>E: int,<br>N: int,<br>dtype: Optional[str],<br>block_n: Optional[int] = 0,<br>block_k: Optional[int] = 0) ‑> Dict[int, Any] | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@functools.lru_cache
+def get_moe_configs(
+    E: int,
+    N: int,
+    dtype: Optional[str],
+    block_n: Optional[int] = 0,
+    block_k: Optional[int] = 0,
+) -&gt; Optional[Dict[int, Any]]:
+    &#34;&#34;&#34;
+    Return optimized configurations for the fused MoE kernel.
+
+    The return value will be a dictionary that maps an irregular grid of
+    batch sizes to configurations of the fused_moe kernel. To evaluate the
+    kernel on a given batch size bs, the closest batch size in the grid should
+    be picked and the associated configuration chosen to invoke the kernel.
+    &#34;&#34;&#34;
+    # Supported Triton versions, should be sorted from the newest to the oldest
+    supported_triton_versions = [&#34;3.3.1&#34;, &#34;3.2.0&#34;, &#34;3.1.0&#34;]
+
+    # First look up if an optimized configuration is available in the configs
+    # directory
+    json_file_name = get_config_file_name(E, N, dtype, [block_n, block_k])
+
+    # We found that using the fused_moe_kernel config from Triton 3.1.0 with Triton 3.2.0 results in negative performance gains,
+    # so we also include the Triton version as a key for finding the fused_moe_kernel config to achieve the best performance.
+    triton_version = triton.__version__
+    version_dir = f&#34;triton_{triton_version.replace(&#39;.&#39;, &#39;_&#39;)}&#34;
+    config_file_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        &#34;configs&#34;,
+        version_dir,
+        json_file_name,
+    )
+    if os.path.exists(config_file_path):
+        with open(config_file_path) as f:
+            # Please note that although we find the config files, performance might still be suboptimal.
+            # This is because the tuning environment might differ from your current environment.
+            # For example, updating the Triton version might cause all old configs to become suboptimal.
+            # To achieve the best performance, consider re-tuning the Triton fused MOE kernel in your environment.
+            # For the tuning method, refer to: https://github.com/sgl-project/sglang/tree/main/benchmark/kernels/fused_moe_triton
+            logger.info(f&#34;Using MoE kernel config from {config_file_path}.&#34;)
+            # If a configuration has been found, return it
+            return {int(key): val for key, val in json.load(f).items()}
+
+    # Searching for other triton versions that supports the same config
+    for try_triton_version in supported_triton_versions:
+        if try_triton_version == triton_version:
+            continue
+        try_config_file_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            &#34;configs&#34;,
+            f&#34;triton_{try_triton_version.replace(&#39;.&#39;, &#39;_&#39;)}&#34;,
+            json_file_name,
+        )
+        if os.path.exists(try_config_file_path):
+            with open(try_config_file_path) as f:
+                logger.warning(
+                    f&#34;Config file not found at {config_file_path}. Fallback to triton version {try_triton_version} and use MoE kernel config from {try_config_file_path}. Performance might be sub-optimal!&#34;,
+                )
+                # If a configuration has been found, return it
+                return {int(key): val for key, val in json.load(f).items()}
+
+    # If no optimized configuration is available, we will use the default
+    # configuration
+    logger.warning(
+        (
+            &#34;Using default MoE kernel config. Performance might be sub-optimal! &#34;
+            &#34;Config file not found at %s, you can create them with https://github.com/sgl-project/sglang/tree/main/benchmark/kernels/fused_moe_triton&#34;
+        ),
+        config_file_path,
+    )
+    return None</code></pre>
+</details>
+<div class="desc"><p>Return optimized configurations for the fused MoE kernel.</p>
+<p>The return value will be a dictionary that maps an irregular grid of
+batch sizes to configurations of the fused_moe kernel. To evaluate the
+kernel on a given batch size bs, the closest batch size in the grid should
+be picked and the associated configuration chosen to invoke the kernel.</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.inplace_fused_experts"><code class="name flex">
+<span>def <span class="ident">inplace_fused_experts</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>activation: str = 'silu',<br>apply_router_weight_on_input: bool = False,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None,<br>routed_scaling_factor: Optional[float] = None,<br>gemm1_alpha: Optional[float] = None,<br>gemm1_limit: Optional[float] = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inplace_fused_experts(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    activation: str = &#34;silu&#34;,
+    apply_router_weight_on_input: bool = False,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+    routed_scaling_factor: Optional[float] = None,
+    gemm1_alpha: Optional[float] = None,
+    gemm1_limit: Optional[float] = None,
+) -&gt; None:
+    fused_experts_impl(
+        hidden_states,
+        w1,
+        w2,
+        topk_weights,
+        topk_ids,
+        b1,
+        b2,
+        True,
+        activation,
+        apply_router_weight_on_input,
+        use_fp8_w8a8,
+        use_int8_w8a8,
+        use_int8_w8a16,
+        use_int4_w4a16,
+        per_channel_quant,
+        w1_scale,
+        w2_scale,
+        w1_zp,
+        w2_zp,
+        a1_scale,
+        a2_scale,
+        block_shape,
+        False,
+        routed_scaling_factor,
+        gemm1_alpha,
+        gemm1_limit,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.inplace_fused_experts_fake"><code class="name flex">
+<span>def <span class="ident">inplace_fused_experts_fake</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>activation: str = 'silu',<br>apply_router_weight_on_input: bool = False,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None,<br>routed_scaling_factor: Optional[float] = None,<br>gemm1_alpha: Optional[float] = None,<br>gemm1_limit: Optional[float] = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def inplace_fused_experts_fake(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    activation: str = &#34;silu&#34;,
+    apply_router_weight_on_input: bool = False,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+    routed_scaling_factor: Optional[float] = None,
+    gemm1_alpha: Optional[float] = None,
+    gemm1_limit: Optional[float] = None,
+) -&gt; None:
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.invoke_fused_moe_kernel"><code class="name flex">
+<span>def <span class="ident">invoke_fused_moe_kernel</span></span>(<span>A: torch.Tensor,<br>B: torch.Tensor,<br>bias: Optional[torch.Tensor],<br>C: torch.Tensor,<br>A_scale: Optional[torch.Tensor],<br>B_scale: Optional[torch.Tensor],<br>B_zp: Optional[torch.Tensor],<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>sorted_token_ids: torch.Tensor,<br>expert_ids: torch.Tensor,<br>num_tokens_post_padded: torch.Tensor,<br>mul_routed_weight: bool,<br>top_k: int,<br>config: Dict[str, Any],<br>compute_type: tl.dtype,<br>use_fp8_w8a8: bool,<br>use_int8_w8a8: bool,<br>use_int8_w8a16: bool,<br>use_int4_w4a16: bool,<br>per_channel_quant: bool,<br>block_shape: Optional[List[int]] = None,<br>no_combine: bool = False) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def invoke_fused_moe_kernel(
+    A: torch.Tensor,
+    B: torch.Tensor,
+    bias: Optional[torch.Tensor],
+    C: torch.Tensor,
+    A_scale: Optional[torch.Tensor],
+    B_scale: Optional[torch.Tensor],
+    B_zp: Optional[torch.Tensor],
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    sorted_token_ids: torch.Tensor,
+    expert_ids: torch.Tensor,
+    num_tokens_post_padded: torch.Tensor,
+    mul_routed_weight: bool,
+    top_k: int,
+    config: Dict[str, Any],
+    compute_type: tl.dtype,
+    use_fp8_w8a8: bool,
+    use_int8_w8a8: bool,
+    use_int8_w8a16: bool,
+    use_int4_w4a16: bool,
+    per_channel_quant: bool,
+    block_shape: Optional[List[int]] = None,
+    no_combine: bool = False,
+) -&gt; None:
+    assert topk_weights.stride(1) == 1
+    assert sorted_token_ids.stride(0) == 1
+
+    padded_size = 0
+    if use_fp8_w8a8:
+        assert B_scale is not None
+        if block_shape is None:
+            # activation tensor-wise fp8 quantization, dynamic or static
+            padded_size = padding_size
+            # activations apply per-token quantization when weights apply per-channel quantization by default
+            A, A_scale = scaled_fp8_quant(
+                A, A_scale, use_per_token_if_dynamic=per_channel_quant
+            )
+        else:
+            # activation block-wise fp8 quantization
+            assert len(block_shape) == 2
+            block_n, block_k = block_shape[0], block_shape[1]
+            if _is_cuda:
+                A, A_scale = sglang_per_token_group_quant_fp8(A, block_k)
+            else:
+                A, A_scale = per_token_group_quant_fp8(A, block_k)
+            assert triton.cdiv(A.shape[-1], block_k) == A_scale.shape[-1]
+            assert triton.cdiv(B.shape[-2], block_n) == B_scale.shape[-2]
+            assert triton.cdiv(B.shape[-1], block_k) == B_scale.shape[-1]
+    elif use_int8_w8a8:
+        assert B_scale is not None
+        if block_shape is None:
+            # activation channel-wise int8 quantization
+            assert (
+                per_channel_quant
+            ), &#34;int8 quantization only supports channel-wise quantization except for block-wise quantization&#34;
+            A, A_scale = per_token_quant_int8(A)
+        else:
+            # activation block-wise int8 quantization
+            assert len(block_shape) == 2
+            block_n, block_k = block_shape[0], block_shape[1]
+            if _is_cuda:
+                A, A_scale = sglang_per_token_group_quant_int8(A, block_k)
+            else:
+                A, A_scale = per_token_group_quant_int8(A, block_k)
+            assert triton.cdiv(A.shape[-1], block_k) == A_scale.shape[-1]
+            assert triton.cdiv(B.shape[-2], block_n) == B_scale.shape[-2]
+            assert triton.cdiv(B.shape[-1], block_k) == B_scale.shape[-1]
+    elif use_int8_w8a16 or use_int4_w4a16:
+        assert B_scale is not None
+        assert block_shape is None or block_shape[0] == 0
+    else:
+        assert A_scale is None
+        assert B_scale is None
+
+    grid = lambda META: (
+        triton.cdiv(sorted_token_ids.shape[0], META[&#34;BLOCK_SIZE_M&#34;])
+        * triton.cdiv(B.shape[1], META[&#34;BLOCK_SIZE_N&#34;]),
+    )
+
+    K = B.shape[2] - padded_size
+    if K % config[&#34;BLOCK_SIZE_K&#34;] == 0:
+        even_Ks = True
+    else:
+        even_Ks = False
+
+    if (
+        (use_int8_w8a16 or use_int4_w4a16)
+        and block_shape is not None
+        and block_shape[1] &gt; 0
+    ):
+        assert B_scale is not None and B_scale.ndim == 3
+        assert B_zp is None or B_zp.ndim == 3
+        assert bias is None
+        fused_moe_kernel_gptq_awq[grid](
+            A,
+            B,
+            C,
+            B_scale,
+            B_zp,
+            topk_weights,
+            sorted_token_ids,
+            expert_ids,
+            num_tokens_post_padded,
+            B.shape[1],
+            A.shape[1],
+            sorted_token_ids.shape[0],
+            topk_ids.numel(),
+            A.stride(0),
+            A.stride(1),
+            B.stride(0),
+            B.stride(2),
+            B.stride(1),
+            C.stride(1),
+            C.stride(2),
+            B_scale.stride(0),
+            B_scale.stride(2),
+            B_scale.stride(1),
+            B_zp.stride(0) if B_zp is not None else 0,
+            B_zp.stride(2) if B_zp is not None else 0,
+            B_zp.stride(1) if B_zp is not None else 0,
+            group_size=block_shape[1],
+            MUL_ROUTED_WEIGHT=mul_routed_weight,
+            top_k=top_k,
+            compute_type=compute_type,
+            has_zp=B_zp is not None,
+            use_int4_w4a16=use_int4_w4a16,
+            use_int8_w8a16=use_int8_w8a16,
+            even_Ks=even_Ks,
+            **config,
+        )
+
+    else:
+
+        fused_moe_kernel[grid](
+            A,
+            B,
+            bias,
+            C,
+            A_scale,
+            B_scale,
+            topk_weights,
+            sorted_token_ids,
+            expert_ids,
+            num_tokens_post_padded,
+            B.shape[1],
+            B.shape[2] - padded_size,
+            sorted_token_ids.shape[0],
+            topk_ids.numel(),
+            A.stride(0),
+            A.stride(1),
+            B.stride(0),
+            B.stride(2),
+            B.stride(1),
+            bias.stride(0) if bias is not None else 0,
+            bias.stride(1) if bias is not None else 0,
+            C.stride(1),
+            C.stride(2),
+            A_scale.stride(0) if A_scale is not None and A_scale.ndim == 2 else 0,
+            A_scale.stride(1) if A_scale is not None and A_scale.ndim == 2 else 0,
+            B_scale.stride(0) if B_scale is not None and B_scale.ndim &gt;= 2 else 0,
+            B_scale.stride(2) if B_scale is not None and B_scale.ndim == 3 else 0,
+            B_scale.stride(1) if B_scale is not None and B_scale.ndim &gt;= 2 else 0,
+            0 if block_shape is None else block_shape[0],
+            0 if block_shape is None else block_shape[1],
+            MUL_ROUTED_WEIGHT=mul_routed_weight,
+            top_k=top_k,
+            compute_type=compute_type,
+            use_fp8_w8a8=use_fp8_w8a8,
+            use_int8_w8a8=use_int8_w8a8,
+            use_int8_w8a16=use_int8_w8a16,
+            per_channel_quant=per_channel_quant,
+            even_Ks=even_Ks,
+            **config,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_align_block_size"><code class="name flex">
+<span>def <span class="ident">moe_align_block_size</span></span>(<span>topk_ids: torch.Tensor, block_size: int, num_experts: int) ‑> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def moe_align_block_size(
+    topk_ids: torch.Tensor, block_size: int, num_experts: int
+) -&gt; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    &#34;&#34;&#34;
+    Aligns the token distribution across experts to be compatible with block
+    size for matrix multiplication.
+
+    Parameters:
+    - topk_ids: A tensor of shape [total_tokens, top_k] representing the
+        top-k expert indices for each token.
+    - block_size: The block size used in block matrix multiplication.
+    - num_experts: The total number of experts.
+
+    Returns:
+    - sorted_token_ids: A tensor containing the sorted token indices according
+        to their allocated expert.
+    - expert_ids: A tensor indicating the assigned expert index for each block.
+    - num_tokens_post_padded: The total number of tokens after padding,
+        ensuring divisibility by block_size.
+
+    This function pads the number of tokens that each expert needs to process
+    so that it is divisible by block_size.
+    Padding ensures that during block matrix multiplication, the dimensions
+    align correctly.
+
+    Example:
+    Given topk_ids = [[2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 2, 3]],
+    block_size = 4, and num_experts = 4:
+    - We initially have 12 tokens (after repeating &#39;top_k&#39; times) and 4 experts,
+        with each expert needing to process 3 tokens.
+    - As block_size is 4, we pad 1 token for each expert.
+    - First, flatten topk_ids to [2, 3, 4, 1, 2, 4, 1, 3, 4, 1, 2, 3].
+    - Then append padding tokens [12, 12, 12, 12] for each block.
+    - After sorting by expert index, we obtain token_ids
+        [3, 6, 9, 12, 0, 4, 10, 12, 1, 7, 11, 12, 2, 5, 8, 12].
+        Tokens 12 are non-existent (padding) and are ignored in
+        the subsequent matrix multiplication.
+    - The padding ensures that the total number of tokens is now divisible
+        by block_size for proper block matrix operations.
+    &#34;&#34;&#34;
+    max_num_tokens_padded = topk_ids.numel() + (num_experts + 1) * (block_size - 1)
+    sorted_ids = torch.empty(
+        (max_num_tokens_padded,), dtype=torch.int32, device=topk_ids.device
+    )
+    max_num_m_blocks = triton.cdiv(max_num_tokens_padded, block_size)
+    expert_ids = torch.empty(
+        (max_num_m_blocks,), dtype=torch.int32, device=topk_ids.device
+    )
+    num_tokens_post_pad = torch.empty((1), dtype=torch.int32, device=topk_ids.device)
+
+    # In EP, expert_ids for filtered experts are -1. We have num_experts + 1 ids in total.
+    cumsum_buffer = torch.empty(
+        (num_experts + 2,), dtype=torch.int32, device=topk_ids.device
+    )
+
+    # Threshold based on benchmark results
+    fuse_sorted_ids_padding = sorted_ids.shape[0] &lt;= 4096
+    if not fuse_sorted_ids_padding:
+        sorted_ids.fill_(topk_ids.numel())
+
+    sgl_moe_align_block_size(
+        topk_ids,
+        num_experts + 1,
+        block_size,
+        sorted_ids,
+        expert_ids,
+        num_tokens_post_pad,
+        cumsum_buffer,
+        fuse_sorted_ids_padding,
+    )
+    return sorted_ids, expert_ids, num_tokens_post_pad</code></pre>
+</details>
+<div class="desc"><p>Aligns the token distribution across experts to be compatible with block
+size for matrix multiplication.</p>
+<p>Parameters:
+- topk_ids: A tensor of shape [total_tokens, top_k] representing the
+top-k expert indices for each token.
+- block_size: The block size used in block matrix multiplication.
+- num_experts: The total number of experts.</p>
+<p>Returns:
+- sorted_token_ids: A tensor containing the sorted token indices according
+to their allocated expert.
+- expert_ids: A tensor indicating the assigned expert index for each block.
+- num_tokens_post_padded: The total number of tokens after padding,
+ensuring divisibility by block_size.</p>
+<p>This function pads the number of tokens that each expert needs to process
+so that it is divisible by block_size.
+Padding ensures that during block matrix multiplication, the dimensions
+align correctly.</p>
+<p>Example:
+Given topk_ids = [[2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 2, 3]],
+block_size = 4, and num_experts = 4:
+- We initially have 12 tokens (after repeating 'top_k' times) and 4 experts,
+with each expert needing to process 3 tokens.
+- As block_size is 4, we pad 1 token for each expert.
+- First, flatten topk_ids to [2, 3, 4, 1, 2, 4, 1, 3, 4, 1, 2, 3].
+- Then append padding tokens [12, 12, 12, 12] for each block.
+- After sorting by expert index, we obtain token_ids
+[3, 6, 9, 12, 0, 4, 10, 12, 1, 7, 11, 12, 2, 5, 8, 12].
+Tokens 12 are non-existent (padding) and are ignored in
+the subsequent matrix multiplication.
+- The padding ensures that the total number of tokens is now divisible
+by block_size for proper block matrix operations.</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_sum_reduce_torch_compile"><code class="name flex">
+<span>def <span class="ident">moe_sum_reduce_torch_compile</span></span>(<span>x, out, routed_scaling_factor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.compile
+def moe_sum_reduce_torch_compile(x, out, routed_scaling_factor):
+    torch.sum(x, dim=1, out=out)
+    out.mul_(routed_scaling_factor)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_sum_reduce_triton"><code class="name flex">
+<span>def <span class="ident">moe_sum_reduce_triton</span></span>(<span>input: torch.Tensor, output: torch.Tensor, routed_scaling_factor: float)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def moe_sum_reduce_triton(
+    input: torch.Tensor, output: torch.Tensor, routed_scaling_factor: float
+):
+    assert input.is_contiguous()
+    assert output.is_contiguous()
+
+    token_num, topk_num, hidden_dim = input.shape
+    assert output.shape[0] == token_num and output.shape[1] == hidden_dim
+
+    BLOCK_M = 1
+    BLOCK_DIM = 2048
+    NUM_STAGE = 1
+    num_warps = 8
+
+    grid = (
+        triton.cdiv(token_num, BLOCK_M),
+        triton.cdiv(hidden_dim, BLOCK_DIM),
+    )
+
+    _moe_sum_reduce_kernel[grid](
+        input,
+        *input.stride(),
+        output,
+        *output.stride(),
+        token_num=token_num,
+        topk_num=topk_num,
+        hidden_dim=hidden_dim,
+        routed_scaling_factor=routed_scaling_factor,
+        BLOCK_M=BLOCK_M,
+        BLOCK_DIM=BLOCK_DIM,
+        NUM_STAGE=NUM_STAGE,
+        num_warps=num_warps,
+    )
+    return</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.outplace_fused_experts"><code class="name flex">
+<span>def <span class="ident">outplace_fused_experts</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>activation: str = 'silu',<br>apply_router_weight_on_input: bool = False,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None,<br>no_combine: bool = False,<br>routed_scaling_factor: Optional[float] = None,<br>gemm1_alpha: Optional[float] = None,<br>gemm1_limit: Optional[float] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outplace_fused_experts(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    activation: str = &#34;silu&#34;,
+    apply_router_weight_on_input: bool = False,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+    no_combine: bool = False,
+    routed_scaling_factor: Optional[float] = None,
+    gemm1_alpha: Optional[float] = None,
+    gemm1_limit: Optional[float] = None,
+) -&gt; torch.Tensor:
+    return fused_experts_impl(
+        hidden_states,
+        w1,
+        w2,
+        topk_weights,
+        topk_ids,
+        b1,
+        b2,
+        False,
+        activation,
+        apply_router_weight_on_input,
+        use_fp8_w8a8,
+        use_int8_w8a8,
+        use_int8_w8a16,
+        use_int4_w4a16,
+        per_channel_quant,
+        w1_scale,
+        w2_scale,
+        w1_zp,
+        w2_zp,
+        a1_scale,
+        a2_scale,
+        block_shape,
+        no_combine=no_combine,
+        routed_scaling_factor=routed_scaling_factor,
+        gemm1_alpha=gemm1_alpha,
+        gemm1_limit=gemm1_limit,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.outplace_fused_experts_fake"><code class="name flex">
+<span>def <span class="ident">outplace_fused_experts_fake</span></span>(<span>hidden_states: torch.Tensor,<br>w1: torch.Tensor,<br>w2: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids: torch.Tensor,<br>b1: Optional[torch.Tensor] = None,<br>b2: Optional[torch.Tensor] = None,<br>activation: str = 'silu',<br>apply_router_weight_on_input: bool = False,<br>use_fp8_w8a8: bool = False,<br>use_int8_w8a8: bool = False,<br>use_int8_w8a16: bool = False,<br>use_int4_w4a16: bool = False,<br>per_channel_quant: bool = False,<br>w1_scale: Optional[torch.Tensor] = None,<br>w2_scale: Optional[torch.Tensor] = None,<br>w1_zp: Optional[torch.Tensor] = None,<br>w2_zp: Optional[torch.Tensor] = None,<br>a1_scale: Optional[torch.Tensor] = None,<br>a2_scale: Optional[torch.Tensor] = None,<br>block_shape: Optional[List[int]] = None,<br>no_combine: bool = False,<br>routed_scaling_factor: Optional[float] = None,<br>gemm1_alpha: Optional[float] = None,<br>gemm1_limit: Optional[float] = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def outplace_fused_experts_fake(
+    hidden_states: torch.Tensor,
+    w1: torch.Tensor,
+    w2: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids: torch.Tensor,
+    b1: Optional[torch.Tensor] = None,
+    b2: Optional[torch.Tensor] = None,
+    activation: str = &#34;silu&#34;,
+    apply_router_weight_on_input: bool = False,
+    use_fp8_w8a8: bool = False,
+    use_int8_w8a8: bool = False,
+    use_int8_w8a16: bool = False,
+    use_int4_w4a16: bool = False,
+    per_channel_quant: bool = False,
+    w1_scale: Optional[torch.Tensor] = None,
+    w2_scale: Optional[torch.Tensor] = None,
+    w1_zp: Optional[torch.Tensor] = None,
+    w2_zp: Optional[torch.Tensor] = None,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    block_shape: Optional[List[int]] = None,
+    no_combine: bool = False,
+    routed_scaling_factor: Optional[float] = None,
+    gemm1_alpha: Optional[float] = None,
+    gemm1_limit: Optional[float] = None,
+) -&gt; torch.Tensor:
+    return torch.empty_like(hidden_states)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.swiglu_with_alpha_and_limit"><code class="name flex">
+<span>def <span class="ident">swiglu_with_alpha_and_limit</span></span>(<span>x, gemm1_alpha, gemm1_limit)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@torch.compile
+def swiglu_with_alpha_and_limit(x, gemm1_alpha, gemm1_limit):
+    gate, up = x[..., ::2], x[..., 1::2]
+    gate = gate.clamp(min=None, max=gemm1_limit)
+    up = up.clamp(min=-gemm1_limit, max=gemm1_limit)
+    return gate * torch.sigmoid(gate * gemm1_alpha) * (up + 1)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.fused_moe_triton.fused_moe.try_get_optimal_moe_config"><code class="name flex">
+<span>def <span class="ident">try_get_optimal_moe_config</span></span>(<span>w1_shape: Tuple[int, ...],<br>w2_shape: Tuple[int, ...],<br>top_k: int,<br>dtype: Optional[str],<br>M: int,<br>is_marlin: bool = False,<br>block_shape: Optional[List[int]] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def try_get_optimal_moe_config(
+    w1_shape: Tuple[int, ...],
+    w2_shape: Tuple[int, ...],
+    top_k: int,
+    dtype: Optional[str],
+    M: int,
+    is_marlin: bool = False,
+    block_shape: Optional[List[int]] = None,
+):
+    from sglang.srt.layers.moe.fused_moe_triton import get_config
+
+    override_config = get_config()
+    if override_config:
+        config = override_config
+    else:
+        # First try to load optimal config from the file
+        E, _, N = w2_shape
+        block_n = block_shape[0] if block_shape else 0
+        block_k = block_shape[1] if block_shape else 0
+        configs = get_moe_configs(E, N, dtype, block_n, block_k)
+
+        if configs:
+            # If an optimal configuration map has been found, look up the
+            # optimal config
+            config = configs[min(configs.keys(), key=lambda x: abs(x - M))]
+        else:
+            # Else use the default config
+            config = get_default_config(
+                M, E, N, w1_shape[2], top_k, dtype, is_marlin, block_shape
+            )
+    return config</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton" href="index.html">sglang.srt.layers.moe.fused_moe_triton</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts">fused_experts</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl">fused_experts_impl</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_moe" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_moe">fused_moe</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_config_dtype_str" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_config_dtype_str">get_config_dtype_str</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_config_file_name" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_config_file_name">get_config_file_name</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_default_config" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_default_config">get_default_config</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_moe_configs" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.get_moe_configs">get_moe_configs</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.inplace_fused_experts" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.inplace_fused_experts">inplace_fused_experts</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.inplace_fused_experts_fake" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.inplace_fused_experts_fake">inplace_fused_experts_fake</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.invoke_fused_moe_kernel" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.invoke_fused_moe_kernel">invoke_fused_moe_kernel</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_align_block_size" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_align_block_size">moe_align_block_size</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_sum_reduce_torch_compile" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_sum_reduce_torch_compile">moe_sum_reduce_torch_compile</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_sum_reduce_triton" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.moe_sum_reduce_triton">moe_sum_reduce_triton</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.outplace_fused_experts" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.outplace_fused_experts">outplace_fused_experts</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.outplace_fused_experts_fake" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.outplace_fused_experts_fake">outplace_fused_experts_fake</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.swiglu_with_alpha_and_limit" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.swiglu_with_alpha_and_limit">swiglu_with_alpha_and_limit</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.fused_moe_triton.fused_moe.try_get_optimal_moe_config" href="#sglang.srt.layers.moe.fused_moe_triton.fused_moe.try_get_optimal_moe_config">try_get_optimal_moe_config</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.moe.cutlass_w4a8_moe API documentation</title>
+<meta name="description" content="Cutlass W4A8 MoE kernel.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.moe.cutlass_w4a8_moe</code></h1>
+</header>
+<section id="section-intro">
+<p>Cutlass W4A8 MoE kernel.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.moe.cutlass_w4a8_moe.cutlass_w4a8_moe"><code class="name flex">
+<span>def <span class="ident">cutlass_w4a8_moe</span></span>(<span>start_expert_id: int,<br>end_expert_id: int,<br>total_num_experts: int,<br>a: torch.Tensor,<br>w1_q: torch.Tensor,<br>w2_q: torch.Tensor,<br>w1_scale: torch.Tensor,<br>w2_scale: torch.Tensor,<br>topk_weights: torch.Tensor,<br>topk_ids_: torch.Tensor,<br>local_topk_ids: torch.Tensor,<br>a_strides1: torch.Tensor,<br>b_strides1: torch.Tensor,<br>c_strides1: torch.Tensor,<br>a_strides2: torch.Tensor,<br>b_strides2: torch.Tensor,<br>c_strides2: torch.Tensor,<br>s_strides13: torch.Tensor,<br>s_strides2: torch.Tensor,<br>expert_offsets: torch.Tensor,<br>problem_sizes1: torch.Tensor,<br>problem_sizes2: torch.Tensor,<br>a1_scale: torch.Tensor | None = None,<br>a2_scale: torch.Tensor | None = None,<br>apply_router_weight_on_input: bool = False) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutlass_w4a8_moe(
+    start_expert_id: int,
+    end_expert_id: int,
+    total_num_experts: int,
+    a: torch.Tensor,
+    w1_q: torch.Tensor,
+    w2_q: torch.Tensor,
+    w1_scale: torch.Tensor,
+    w2_scale: torch.Tensor,
+    topk_weights: torch.Tensor,
+    topk_ids_: torch.Tensor,
+    local_topk_ids: torch.Tensor,
+    a_strides1: torch.Tensor,
+    b_strides1: torch.Tensor,
+    c_strides1: torch.Tensor,
+    a_strides2: torch.Tensor,
+    b_strides2: torch.Tensor,
+    c_strides2: torch.Tensor,
+    s_strides13: torch.Tensor,
+    s_strides2: torch.Tensor,
+    expert_offsets: torch.Tensor,
+    problem_sizes1: torch.Tensor,
+    problem_sizes2: torch.Tensor,
+    a1_scale: Optional[torch.Tensor] = None,
+    a2_scale: Optional[torch.Tensor] = None,
+    apply_router_weight_on_input: bool = False,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    This function computes a w4a8-quantized Mixture of Experts (MoE) layer
+    using two sets of quantized weights, w1_q and w2_q, and top-k gating
+    mechanism. The matrix multiplications are implemented with CUTLASS
+    grouped gemm.
+
+    Parameters:
+    - a (torch.Tensor): The input tensor to the MoE layer.
+        Shape: [M, K]
+    - w1_q (torch.Tensor): The first set of int4-quantized expert weights.
+        Shape: [num_experts, N * 2,  K // 2]
+        (the weights are passed transposed and int4-packed)
+    - w2_q (torch.Tensor): The second set of int4-quantized expert weights.
+        Shape: [num_experts, K, N // 2]
+        (the weights are passed transposed and int4-packed)
+    - w1_scale (torch.Tensor): The fp32 scale to dequantize w1_q.
+        Shape: [num_experts, K // 512, N * 8]
+    - w2_scale (torch.Tensor): The fp32 scale to dequantize w2_q.
+        Shape: [num_experts, N // 512, K * 4]
+    - topk_weights (torch.Tensor): The weights of each token-&gt;expert mapping.
+    - a_strides1 (torch.Tensor): The input strides of the first grouped gemm.
+    - b_strides1 (torch.Tensor): The weights strides of the first grouped gemm.
+    - c_strides1 (torch.Tensor): The output strides of the first grouped gemm.
+    - a_strides2 (torch.Tensor): The input strides of the second grouped gemm.
+    - b_strides2 (torch.Tensor): The weights strides of the second grouped gemm.
+    - c_strides2 (torch.Tensor): The output strides of the second grouped gemm.
+    - s_strides13 (torch.Tensor): The input and scale strides of the first grouped gemm.
+    - s_strides2 (torch.Tensor): The scale strides of the second grouped gemm.
+    - a1_scale (Optional[torch.Tensor]): The optional fp32 scale to quantize a.
+        Shape: scalar or [1, K]
+    - a2_scale (Optional[torch.Tensor]): The optional fp32 scale to
+        quantize the intermediate result between the gemms.
+        Shape: scalar or [1, N]
+    - apply_router_weight_on_input (bool): When true, the topk weights are
+        applied directly on the inputs. This is only applicable when topk is 1.
+
+    Returns:
+    - torch.Tensor: The fp8 output tensor after applying the MoE layer.
+    &#34;&#34;&#34;
+    assert topk_weights.shape == topk_ids_.shape, &#34;topk shape mismatch&#34;
+    assert w1_q.dtype == torch.int8
+    assert w2_q.dtype == torch.int8
+    assert a.shape[1] // 2 == w1_q.shape[2], &#34;Hidden size mismatch w1&#34;
+    assert w1_q.shape[2] * 2 == w2_q.shape[1], &#34;Hidden size mismatch w2&#34;
+    assert w1_q.shape[0] == w2_q.shape[0], &#34;Expert number mismatch&#34;
+    assert w1_q.shape[0] == w1_scale.shape[0], &#34;w1 scales expert number mismatch&#34;
+    assert w1_q.shape[0] == w2_scale.shape[0], &#34;w2 scales expert number mismatch&#34;
+    assert (
+        w1_scale.shape[1] == w1_q.shape[2] * 2 / 512
+        and w1_scale.shape[2] == w1_q.shape[1] * 4
+    ), &#34;W1 scale shape mismatch&#34;
+    assert (
+        w2_scale.shape[1] == w2_q.shape[2] * 2 / 512
+        and w2_scale.shape[2] == w2_q.shape[1] * 4
+    ), &#34;W2 scale shape mismatch&#34;
+
+    assert a_strides1.shape[0] == w1_q.shape[0], &#34;A Strides 1 expert number mismatch&#34;
+    assert b_strides1.shape[0] == w1_q.shape[0], &#34;B Strides 1 expert number mismatch&#34;
+    assert a_strides2.shape[0] == w2_q.shape[0], &#34;A Strides 2 expert number  mismatch&#34;
+    assert b_strides2.shape[0] == w2_q.shape[0], &#34;B Strides 2 expert number mismatch&#34;
+    num_experts = w1_q.size(0)
+    m = a.size(0)
+    k = w1_q.size(2) * 2  # w1_q is transposed and packed
+    n = w2_q.size(2) * 2  # w2_q is transposed and packed
+    topk = topk_ids_.size(1)
+
+    if apply_router_weight_on_input:
+        assert topk == 1, &#34;apply_router_weight_on_input is only implemented for topk=1&#34;
+
+    device = a.device
+
+    _, src2dst, _ = run_cutlass_moe_ep_preproess(
+        local_topk_ids,
+        num_experts,
+    )
+
+    gateup_input = torch.empty(
+        (m * topk, k),
+        device=device,
+        dtype=torch.float8_e4m3fn,
+    )
+
+    pre_reorder_triton_kernel_for_cutlass_moe[(m,)](
+        a,
+        gateup_input,
+        src2dst,
+        local_topk_ids,
+        a1_scale,
+        total_num_experts,
+        topk,
+        k,
+        BLOCK_SIZE=512,
+    )
+
+    # NOTE: a_map and c_map are not used in the get_cutlass_w4a8_moe_mm_data kernel,
+    # they are kept to allow for a quick switch of the permutation logic
+    # from the current triton kernel implementation to the cutlass-based one if needed.
+    a_map = torch.empty((local_topk_ids.numel()), dtype=torch.int32, device=device)
+    c_map = torch.empty((local_topk_ids.numel()), dtype=torch.int32, device=device)
+    get_cutlass_w4a8_moe_mm_data(
+        local_topk_ids,
+        expert_offsets,
+        problem_sizes1,
+        problem_sizes2,
+        a_map,
+        c_map,
+        num_experts,
+        n,
+        k,
+    )
+
+    c1 = torch.empty((m * topk, n * 2), device=device, dtype=torch.half)
+    c2 = torch.zeros((m * topk, k), device=device, dtype=torch.half)
+
+    cutlass_w4a8_moe_mm(
+        c1,
+        gateup_input,
+        w1_q,
+        a1_scale.float(),
+        w1_scale,
+        expert_offsets[:-1],
+        problem_sizes1,
+        a_strides1,
+        b_strides1,
+        c_strides1,
+        s_strides13,
+        128,
+        topk,
+    )
+
+    intermediate = torch.empty((m * topk, n), device=device, dtype=torch.half)
+    silu_and_mul(c1, intermediate)
+
+    intermediate_q = torch.empty(
+        intermediate.shape, dtype=torch.float8_e4m3fn, device=device
+    )
+    sgl_per_tensor_quant_fp8(intermediate, intermediate_q, a2_scale.float(), True)
+
+    cutlass_w4a8_moe_mm(
+        c2,
+        intermediate_q,
+        w2_q,
+        a2_scale.float(),
+        w2_scale,
+        expert_offsets[:-1],
+        problem_sizes2,
+        a_strides2,
+        b_strides2,
+        c_strides2,
+        s_strides2,
+        128,
+        topk,
+    )
+
+    output = torch.empty_like(a)
+    post_reorder_triton_kernel_for_cutlass_moe[(m,)](
+        c2,
+        output,
+        src2dst,
+        local_topk_ids,
+        topk_weights,
+        num_experts,
+        topk,
+        k,
+        0,
+        BLOCK_SIZE=512,
+    )
+    return output</code></pre>
+</details>
+<div class="desc"><p>This function computes a w4a8-quantized Mixture of Experts (MoE) layer
+using two sets of quantized weights, w1_q and w2_q, and top-k gating
+mechanism. The matrix multiplications are implemented with CUTLASS
+grouped gemm.</p>
+<p>Parameters:
+- a (torch.Tensor): The input tensor to the MoE layer.
+Shape: [M, K]
+- w1_q (torch.Tensor): The first set of int4-quantized expert weights.
+Shape: [num_experts, N * 2,
+K // 2]
+(the weights are passed transposed and int4-packed)
+- w2_q (torch.Tensor): The second set of int4-quantized expert weights.
+Shape: [num_experts, K, N // 2]
+(the weights are passed transposed and int4-packed)
+- w1_scale (torch.Tensor): The fp32 scale to dequantize w1_q.
+Shape: [num_experts, K // 512, N * 8]
+- w2_scale (torch.Tensor): The fp32 scale to dequantize w2_q.
+Shape: [num_experts, N // 512, K * 4]
+- topk_weights (torch.Tensor): The weights of each token-&gt;expert mapping.
+- a_strides1 (torch.Tensor): The input strides of the first grouped gemm.
+- b_strides1 (torch.Tensor): The weights strides of the first grouped gemm.
+- c_strides1 (torch.Tensor): The output strides of the first grouped gemm.
+- a_strides2 (torch.Tensor): The input strides of the second grouped gemm.
+- b_strides2 (torch.Tensor): The weights strides of the second grouped gemm.
+- c_strides2 (torch.Tensor): The output strides of the second grouped gemm.
+- s_strides13 (torch.Tensor): The input and scale strides of the first grouped gemm.
+- s_strides2 (torch.Tensor): The scale strides of the second grouped gemm.
+- a1_scale (Optional[torch.Tensor]): The optional fp32 scale to quantize a.
+Shape: scalar or [1, K]
+- a2_scale (Optional[torch.Tensor]): The optional fp32 scale to
+quantize the intermediate result between the gemms.
+Shape: scalar or [1, N]
+- apply_router_weight_on_input (bool): When true, the topk weights are
+applied directly on the inputs. This is only applicable when topk is 1.</p>
+<p>Returns:
+- torch.Tensor: The fp8 output tensor after applying the MoE layer.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.moe" href="index.html">sglang.srt.layers.moe</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.cutlass_w4a8_moe.cutlass_w4a8_moe" href="#sglang.srt.layers.moe.cutlass_w4a8_moe.cutlass_w4a8_moe">cutlass_w4a8_moe</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

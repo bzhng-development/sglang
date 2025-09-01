@@ -1,0 +1,1826 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.attention.flashinfer_mla_backend API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.attention.flashinfer_mla_backend</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.fast_mla_decode_plan"><code class="name flex">
+<span>def <span class="ident">fast_mla_decode_plan</span></span>(<span>self,<br>qo_indptr_cpu: torch.Tensor,<br>kv_indptr_cpu: torch.Tensor,<br>kv_indices: torch.Tensor,<br>kv_len_arr_cpu: torch.Tensor,<br>num_heads: int,<br>head_dim_ckv: int,<br>head_dim_kpe: int,<br>page_size: int,<br>causal: bool,<br>sm_scale: float,<br>q_data_type: torch.dtype,<br>kv_data_type: torch.dtype) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fast_mla_decode_plan(
+    self,
+    qo_indptr_cpu: torch.Tensor,
+    kv_indptr_cpu: torch.Tensor,
+    kv_indices: torch.Tensor,
+    kv_len_arr_cpu: torch.Tensor,
+    num_heads: int,
+    head_dim_ckv: int,
+    head_dim_kpe: int,
+    page_size: int,
+    causal: bool,
+    sm_scale: float,
+    q_data_type: torch.dtype,
+    kv_data_type: torch.dtype,
+) -&gt; None:
+    &#34;&#34;&#34;A faster version of BatchMLAPagedAttentionWrapper::plan,
+    for skipping the stream synchronization in original plan function during
+    cuda graph replaying.
+    &#34;&#34;&#34;
+    self._causal = causal
+    self._page_size = page_size
+    self._sm_scale = sm_scale
+
+    try:
+        # Standard version with just the required arguments (no use_profiler)
+        self._cached_module.plan.default(
+            self._float_workspace_buffer,
+            self._int_workspace_buffer,
+            self._pin_memory_int_workspace_buffer,
+            qo_indptr_cpu,
+            kv_indptr_cpu,
+            kv_len_arr_cpu,
+            num_heads,
+            head_dim_ckv,
+            causal,
+        )
+    except Exception as e:
+        raise RuntimeError(f&#34;Error in alternate MLA plan: {e}&#34;)</code></pre>
+</details>
+<div class="desc"><p>A faster version of BatchMLAPagedAttentionWrapper::plan,
+for skipping the stream synchronization in original plan function during
+cuda graph replaying.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.DecodeMetadata"><code class="flex name class">
+<span>class <span class="ident">DecodeMetadata</span></span>
+<span>(</span><span>decode_wrapper: BatchMLAPagedAttentionWrapper)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class DecodeMetadata:
+    decode_wrapper: BatchMLAPagedAttentionWrapper</code></pre>
+</details>
+<div class="desc"><p>DecodeMetadata(decode_wrapper: 'BatchMLAPagedAttentionWrapper')</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.DecodeMetadata.decode_wrapper"><code class="name">var <span class="ident">decode_wrapper</span> : BatchMLAPagedAttentionWrapper</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAAttnBackend"><code class="flex name class">
+<span>class <span class="ident">FlashInferMLAAttnBackend</span></span>
+<span>(</span><span>model_runner: ModelRunner,<br>skip_prefill: bool = False,<br>kv_indptr_buf: Optional[torch.Tensor] = None,<br>q_indptr_decode_buf: Optional[torch.Tensor] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FlashInferMLAAttnBackend(AttentionBackend):
+    &#34;&#34;&#34;Flashinfer attention kernels.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        model_runner: ModelRunner,
+        skip_prefill: bool = False,
+        kv_indptr_buf: Optional[torch.Tensor] = None,
+        q_indptr_decode_buf: Optional[torch.Tensor] = None,
+    ):
+        super().__init__()
+
+        # Parse constants
+        self.max_context_len = model_runner.model_config.context_len
+        self.device = model_runner.device
+        self.skip_prefill = skip_prefill
+        self.enable_chunk_kv = (
+            not skip_prefill
+            and global_server_args_dict[&#34;disaggregation_mode&#34;] != &#34;decode&#34;
+            and not global_server_args_dict[&#34;disable_chunked_prefix_cache&#34;]
+            and not global_server_args_dict[&#34;flashinfer_mla_disable_ragged&#34;]
+        )
+        self.page_size = model_runner.page_size
+
+        # Allocate buffers
+        global global_workspace_buffer
+        if global_workspace_buffer is None:
+            # different from flashinfer zero_init_global_workspace_buffer
+            global_workspace_buffer = torch.empty(
+                global_config.flashinfer_workspace_size,
+                dtype=torch.uint8,
+                device=model_runner.device,
+            )
+        self.workspace_buffer = global_workspace_buffer
+
+        max_bs = model_runner.req_to_token_pool.size
+        if kv_indptr_buf is None:
+            self.kv_indptr = torch.zeros(
+                (max_bs + 1,), dtype=torch.int32, device=model_runner.device
+            )
+        else:
+            self.kv_indptr = kv_indptr_buf
+
+        if not self.skip_prefill:
+            self.qo_indptr = torch.zeros(
+                (max_bs + 1,), dtype=torch.int32, device=model_runner.device
+            )
+
+        if q_indptr_decode_buf is None:
+            self.q_indptr_decode = torch.arange(
+                0, max_bs + 1, dtype=torch.int32, device=model_runner.device
+            )
+        else:
+            self.q_indptr_decode = q_indptr_decode_buf
+
+        self.fmha_backend = &#34;auto&#34;
+        if is_sm100_supported():
+            self.fmha_backend = &#34;cutlass&#34;
+        self.prefill_wrapper_ragged = BatchPrefillWithRaggedKVCacheWrapper(
+            self.workspace_buffer, &#34;NHD&#34;, backend=self.fmha_backend
+        )
+
+        if not self.skip_prefill:
+            self.prefill_wrapper_paged = BatchMLAPagedAttentionWrapper(
+                self.workspace_buffer,
+                backend=&#34;auto&#34;,
+            )
+
+            # FlashinferMLA backend uses mla wrapper for target verify
+            self.prefill_wrapper_verify = BatchMLAPagedAttentionWrapper(
+                self.workspace_buffer,
+                backend=&#34;auto&#34;,
+            )
+
+        self.decode_wrapper = BatchMLAPagedAttentionWrapper(
+            self.workspace_buffer, backend=&#34;auto&#34;
+        )
+
+        # Create indices updater
+        if not skip_prefill:
+            self.indices_updater_prefill = FlashInferMLAIndicesUpdaterPrefill(
+                model_runner, self
+            )
+            if self.enable_chunk_kv:
+                self.mha_chunk_kv_cache = FlashInferMhaChunkKVRunner(model_runner, self)
+
+        self.indices_updater_decode = FlashInferMLAIndicesUpdaterDecode(
+            model_runner, self
+        )
+
+        # Other metadata
+        self.forward_metadata: Union[PrefillMetadata, DecodeMetadata] = None
+        self.decode_cuda_graph_metadata = {}
+        self.prefill_cuda_graph_metadata = {}  # For verify
+
+    def init_forward_metadata(self, forward_batch: ForwardBatch):
+        if forward_batch.forward_mode.is_decode_or_idle():
+            self.indices_updater_decode.update(
+                forward_batch.req_pool_indices,
+                forward_batch.seq_lens,
+                forward_batch.seq_lens_sum,
+                decode_wrapper=self.decode_wrapper,
+                init_metadata_replay=False,
+            )
+            self.forward_metadata = DecodeMetadata(self.decode_wrapper)
+        elif forward_batch.forward_mode.is_draft_extend():
+            self.indices_updater_prefill.update(
+                forward_batch.req_pool_indices,
+                forward_batch.seq_lens,
+                forward_batch.seq_lens_sum,
+                prefix_lens=None,
+                prefill_wrapper_paged=self.prefill_wrapper_paged,
+                use_ragged=False,
+                spec_info=forward_batch.spec_info,
+            )
+            self.forward_metadata = PrefillMetadata(self.prefill_wrapper_paged, False)
+        elif forward_batch.forward_mode.is_target_verify():
+            self.indices_updater_prefill.update(
+                forward_batch.req_pool_indices,
+                forward_batch.seq_lens,
+                forward_batch.seq_lens_sum,
+                prefix_lens=None,
+                prefill_wrapper_paged=self.prefill_wrapper_verify,
+                use_ragged=False,
+                spec_info=forward_batch.spec_info,
+            )
+            self.forward_metadata = PrefillMetadata(self.prefill_wrapper_verify, False)
+        else:
+            prefix_lens = forward_batch.extend_prefix_lens
+            extend_no_prefix = not any(forward_batch.extend_prefix_lens_cpu)
+            use_ragged = (
+                not global_server_args_dict[&#34;flashinfer_mla_disable_ragged&#34;]
+                and extend_no_prefix
+            )
+
+            self.indices_updater_prefill.update(
+                forward_batch.req_pool_indices,
+                forward_batch.seq_lens,
+                forward_batch.seq_lens_sum,
+                prefix_lens,
+                prefill_wrapper_paged=self.prefill_wrapper_paged,
+                use_ragged=use_ragged,
+            )
+            self.forward_metadata = PrefillMetadata(
+                self.prefill_wrapper_paged, use_ragged
+            )
+
+    def init_cuda_graph_state(
+        self,
+        max_bs: int,
+        max_num_tokens: int,
+        kv_indices_buf: Optional[torch.Tensor] = None,
+    ):
+        if kv_indices_buf is None:
+            cuda_graph_kv_indices = torch.zeros(
+                (max_bs * self.max_context_len,),
+                dtype=torch.int32,
+                device=&#34;cuda&#34;,
+            )
+        else:
+            cuda_graph_kv_indices = kv_indices_buf
+
+        self.cuda_graph_kv_indices = cuda_graph_kv_indices
+        self.cuda_graph_qo_indptr = self.q_indptr_decode.clone()
+        self.cuda_graph_kv_indptr = self.kv_indptr.clone()
+        self.cuda_graph_kv_lens = torch.ones(
+            (max_bs,), dtype=torch.int32, device=self.device
+        )
+
+        # For fast decode plan in graph replaying
+        self.cuda_graph_qo_indptr_cpu = self.cuda_graph_qo_indptr.to(&#34;cpu&#34;)
+        self.cuda_graph_kv_indptr_cpu = self.cuda_graph_kv_indptr.to(&#34;cpu&#34;)
+        self.fast_decode_kwargs = {
+            &#34;qo_indptr_cpu&#34;: self.cuda_graph_qo_indptr_cpu,
+            &#34;kv_indptr_cpu&#34;: self.cuda_graph_kv_indptr_cpu,
+            &#34;kv_indices&#34;: self.cuda_graph_kv_indices,
+        }
+
+    def init_forward_metadata_capture_cuda_graph(
+        self,
+        bs: int,
+        num_tokens: int,
+        req_pool_indices: torch.Tensor,
+        seq_lens: torch.Tensor,
+        encoder_lens: Optional[torch.Tensor],
+        forward_mode: ForwardMode,
+        spec_info: Optional[SpecInfo],
+    ):
+        if forward_mode.is_decode_or_idle():
+            decode_wrapper = BatchMLAPagedAttentionWrapper(
+                self.workspace_buffer,
+                use_cuda_graph=True,
+                qo_indptr=self.cuda_graph_qo_indptr[: num_tokens + 1],
+                kv_indptr=self.cuda_graph_kv_indptr[: num_tokens + 1],
+                kv_indices=self.cuda_graph_kv_indices,
+                kv_len_arr=self.cuda_graph_kv_lens[:num_tokens],
+                backend=&#34;auto&#34;,
+            )
+
+            seq_lens_sum = seq_lens.sum().item()
+            self.indices_updater_decode.update(
+                req_pool_indices,
+                seq_lens,
+                seq_lens_sum,
+                decode_wrapper=decode_wrapper,
+                init_metadata_replay=False,
+                spec_info=spec_info,
+            )
+            self.decode_cuda_graph_metadata[bs] = decode_wrapper
+            self.forward_metadata = DecodeMetadata(decode_wrapper)
+            decode_wrapper.plan = partial(fast_mla_decode_plan, decode_wrapper)
+        elif forward_mode.is_target_verify():
+            verify_wrapper = BatchMLAPagedAttentionWrapper(
+                self.workspace_buffer,
+                use_cuda_graph=True,
+                qo_indptr=self.cuda_graph_qo_indptr[: bs + 1],
+                kv_indptr=self.cuda_graph_kv_indptr[: bs + 1],
+                kv_indices=self.cuda_graph_kv_indices,
+                kv_len_arr=self.cuda_graph_kv_lens[:bs],
+                backend=&#34;auto&#34;,
+            )
+            seq_lens_sum = seq_lens.sum().item()
+            self.indices_updater_prefill.update(
+                req_pool_indices,
+                seq_lens,
+                seq_lens_sum,
+                prefix_lens=None,
+                prefill_wrapper_paged=verify_wrapper,
+                use_ragged=False,
+                spec_info=spec_info,
+            )
+            self.prefill_cuda_graph_metadata[bs] = verify_wrapper
+            self.forward_metadata = PrefillMetadata(verify_wrapper, False)
+        elif forward_mode.is_draft_extend():
+            draft_extend_wrapper = BatchMLAPagedAttentionWrapper(
+                self.workspace_buffer,
+                use_cuda_graph=True,
+                qo_indptr=self.cuda_graph_qo_indptr[: bs + 1],
+                kv_indptr=self.cuda_graph_kv_indptr[: bs + 1],
+                kv_indices=self.cuda_graph_kv_indices,
+                kv_len_arr=self.cuda_graph_kv_lens[:bs],
+                backend=&#34;auto&#34;,
+            )
+            seq_lens_sum = seq_lens.sum().item()
+            self.indices_updater_prefill.update(
+                req_pool_indices,
+                seq_lens,
+                seq_lens_sum,
+                prefix_lens=None,
+                prefill_wrapper_paged=draft_extend_wrapper,
+                use_ragged=False,
+                spec_info=spec_info,
+            )
+            self.prefill_cuda_graph_metadata[bs] = draft_extend_wrapper
+            self.forward_metadata = PrefillMetadata(draft_extend_wrapper, False)
+        else:
+            raise ValueError(f&#34;Invalid mode: {forward_mode=}&#34;)
+
+    def init_forward_metadata_replay_cuda_graph(
+        self,
+        bs: int,
+        req_pool_indices: torch.Tensor,
+        seq_lens: torch.Tensor,
+        seq_lens_sum: int,
+        encoder_lens: Optional[torch.Tensor],
+        forward_mode: ForwardMode,
+        spec_info: Optional[SpecInfo],
+        seq_lens_cpu: Optional[torch.Tensor],
+    ):
+        if forward_mode.is_decode_or_idle():
+            assert seq_lens_cpu is not None
+            kv_len_arr_cpu = seq_lens_cpu[:bs]
+            self.cuda_graph_kv_indptr_cpu[1 : bs + 1] = torch.cumsum(
+                kv_len_arr_cpu, dim=0
+            )
+            self.fast_decode_kwargs.update(
+                {
+                    &#34;qo_indptr_cpu&#34;: self.cuda_graph_qo_indptr_cpu[: bs + 1],
+                    &#34;kv_indptr_cpu&#34;: self.cuda_graph_kv_indptr_cpu[: bs + 1],
+                    &#34;kv_len_arr_cpu&#34;: kv_len_arr_cpu,
+                }
+            )
+
+            self.indices_updater_decode.update(
+                req_pool_indices[:bs],
+                seq_lens[:bs],
+                seq_lens_sum,
+                decode_wrapper=self.decode_cuda_graph_metadata[bs],
+                init_metadata_replay=True,
+                spec_info=spec_info,
+                **self.fast_decode_kwargs,
+            )
+        elif forward_mode.is_target_verify():
+            self.indices_updater_prefill.update(
+                req_pool_indices[:bs],
+                seq_lens[:bs],
+                seq_lens_sum,
+                prefix_lens=None,
+                prefill_wrapper_paged=self.prefill_cuda_graph_metadata[bs],
+                use_ragged=False,
+                spec_info=spec_info,
+            )
+        elif forward_mode.is_draft_extend():
+            self.indices_updater_prefill.update(
+                req_pool_indices[:bs],
+                seq_lens[:bs],
+                seq_lens_sum,
+                prefix_lens=None,
+                prefill_wrapper_paged=self.prefill_cuda_graph_metadata[bs],
+                use_ragged=False,
+                spec_info=spec_info,
+            )
+        else:
+            raise ValueError(f&#34;Invalid forward mode: {forward_mode=}&#34;)
+
+    def get_cuda_graph_seq_len_fill_value(self):
+        return 1
+
+    def init_mha_chunk_metadata(self, forward_batch: ForwardBatch):
+        &#34;&#34;&#34;Init the metadata for a forward pass.&#34;&#34;&#34;
+        self.mha_chunk_kv_cache.update_wrapper(forward_batch)
+
+    def forward_extend(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        layer: RadixAttention,
+        forward_batch: ForwardBatch,
+        save_kv_cache: bool = True,
+        q_rope: Optional[torch.Tensor] = None,
+        k_rope: Optional[torch.Tensor] = None,
+    ):
+        if (
+            forward_batch.attn_attend_prefix_cache is not None
+            and forward_batch.mha_return_lse
+        ):  # MHA Chunk
+            assert self.enable_chunk_kv
+            assert q_rope is None
+            assert k_rope is None
+            o1, s1 = self.mha_chunk_kv_cache.forward(q, k, v, layer, forward_batch)
+            return o1, s1
+
+        cache_loc = forward_batch.out_cache_loc
+        logits_soft_cap = layer.logit_cap
+        prefill_wrapper_paged = self.forward_metadata.prefill_wrapper
+
+        # Save kv cache
+        if save_kv_cache and k is not None:
+            assert v is not None
+            if save_kv_cache:
+                if k_rope is not None:
+                    forward_batch.token_to_kv_pool.set_mla_kv_buffer(
+                        layer, cache_loc, k, k_rope
+                    )
+                else:
+                    forward_batch.token_to_kv_pool.set_kv_buffer(layer, cache_loc, k, v)
+        if q_rope is not None:
+            q = q.view(-1, layer.tp_q_head_num, layer.v_head_dim)
+            q_rope = q_rope.view(
+                -1, layer.tp_q_head_num, layer.head_dim - layer.v_head_dim
+            )
+
+        if self.forward_metadata.use_ragged:
+            # ragged prefill
+            if q_rope is not None:
+                q = torch.cat([q, q_rope], dim=-1)
+            qall = q.view(-1, layer.tp_q_head_num, layer.head_dim)
+            if k_rope is not None:
+                k = torch.cat([k, k_rope], dim=-1)
+            o = self.prefill_wrapper_ragged.forward(
+                qall,
+                k.view(-1, layer.tp_k_head_num, layer.head_dim).to(q.dtype),
+                v.view(-1, layer.tp_k_head_num, layer.v_head_dim).to(q.dtype),
+                causal=True,
+                sm_scale=layer.scaling,
+                logits_soft_cap=logits_soft_cap,
+            )
+        else:
+            # mla paged prefill
+            k_buf = forward_batch.token_to_kv_pool.get_key_buffer(layer.layer_id).to(
+                q.dtype
+            )
+            if q_rope is None:
+                qall = q.view(-1, layer.tp_q_head_num, layer.head_dim)
+                q, q_rope = (
+                    qall[:, :, : layer.v_head_dim],
+                    qall[:, :, layer.v_head_dim :],
+                )
+            o = q.new_empty(q.shape)
+            o = prefill_wrapper_paged.run(
+                q,
+                q_rope,
+                k_buf[:, :, : layer.v_head_dim],
+                k_buf[:, :, layer.v_head_dim :],
+                out=o,
+            )
+
+        return o.view(-1, layer.tp_q_head_num * layer.v_head_dim)
+
+    def forward_decode(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        layer: RadixAttention,
+        forward_batch: ForwardBatch,
+        save_kv_cache: bool = True,
+        # For multi-head latent attention
+        q_rope: Optional[torch.Tensor] = None,
+        k_rope: Optional[torch.Tensor] = None,
+    ):
+        decode_wrapper = self.forward_metadata.decode_wrapper
+        cache_loc = forward_batch.out_cache_loc
+
+        if k is not None:
+            assert v is not None
+            if save_kv_cache:
+                if k_rope is not None:
+                    forward_batch.token_to_kv_pool.set_mla_kv_buffer(
+                        layer,
+                        cache_loc,
+                        k,
+                        k_rope,
+                    )
+                else:
+                    forward_batch.token_to_kv_pool.set_kv_buffer(
+                        layer,
+                        cache_loc,
+                        k,
+                        v,
+                    )
+
+        # Reshape inputs
+        if q_rope is not None:
+            q_nope = q.view(-1, layer.tp_q_head_num, layer.v_head_dim)
+            q_rope = q_rope.view(
+                -1, layer.tp_q_head_num, layer.head_dim - layer.v_head_dim
+            )
+        else:
+            reshaped_q = q.view(-1, layer.tp_q_head_num, layer.head_dim)
+            q_nope = reshaped_q[:, :, : layer.v_head_dim]
+            q_rope = reshaped_q[:, :, layer.v_head_dim :]
+
+        k_buffer = forward_batch.token_to_kv_pool.get_key_buffer(layer.layer_id).to(
+            q.dtype
+        )
+
+        o = q_nope.new_empty(q_nope.shape)
+        # Direct call to run without the wrapper
+        o = decode_wrapper.run(
+            q_nope,
+            q_rope,
+            k_buffer[:, :, : layer.v_head_dim],
+            k_buffer[:, :, layer.v_head_dim :],
+            out=o,
+        )
+
+        return o.view(-1, layer.tp_q_head_num * layer.v_head_dim)</code></pre>
+</details>
+<div class="desc"><p>Flashinfer attention kernels.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend">AttentionBackend</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.attention.cutlass_mla_backend.CutlassMLABackend" href="cutlass_mla_backend.html#sglang.srt.layers.attention.cutlass_mla_backend.CutlassMLABackend">CutlassMLABackend</a></li>
+<li><a title="sglang.srt.layers.attention.trtllm_mla_backend.TRTLLMMLABackend" href="trtllm_mla_backend.html#sglang.srt.layers.attention.trtllm_mla_backend.TRTLLMMLABackend">TRTLLMMLABackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAAttnBackend.init_mha_chunk_metadata"><code class="name flex">
+<span>def <span class="ident">init_mha_chunk_metadata</span></span>(<span>self, forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_mha_chunk_metadata(self, forward_batch: ForwardBatch):
+    &#34;&#34;&#34;Init the metadata for a forward pass.&#34;&#34;&#34;
+    self.mha_chunk_kv_cache.update_wrapper(forward_batch)</code></pre>
+</details>
+<div class="desc"><p>Init the metadata for a forward pass.</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend">AttentionBackend</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.forward" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.forward_decode" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.forward_decode">forward_decode</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.forward_extend" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.forward_extend">forward_extend</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.get_cuda_graph_seq_len_fill_value" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.get_cuda_graph_seq_len_fill_value">get_cuda_graph_seq_len_fill_value</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_cuda_graph_state" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_cuda_graph_state">init_cuda_graph_state</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_forward_metadata" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_forward_metadata">init_forward_metadata</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_forward_metadata_capture_cuda_graph" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_forward_metadata_capture_cuda_graph">init_forward_metadata_capture_cuda_graph</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_forward_metadata_replay_cuda_graph" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.init_forward_metadata_replay_cuda_graph">init_forward_metadata_replay_cuda_graph</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.base_attn_backend.AttentionBackend.support_triton" href="base_attn_backend.html#sglang.srt.layers.attention.base_attn_backend.AttentionBackend.support_triton">support_triton</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode"><code class="flex name class">
+<span>class <span class="ident">FlashInferMLAIndicesUpdaterDecode</span></span>
+<span>(</span><span>model_runner: ModelRunner, attn_backend: AttentionBackend)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FlashInferMLAIndicesUpdaterDecode:
+    def __init__(self, model_runner: ModelRunner, attn_backend: AttentionBackend):
+        # Parse Constants
+        self.num_local_heads = (
+            model_runner.model_config.num_attention_heads // get_attention_tp_size()
+        )
+        self.kv_lora_rank = model_runner.model_config.kv_lora_rank
+        self.qk_nope_head_dim = model_runner.model_config.qk_nope_head_dim
+        self.qk_rope_head_dim = model_runner.model_config.qk_rope_head_dim
+        self.scaling = model_runner.model_config.scaling
+        self.data_type = model_runner.dtype
+        self.attn_backend = attn_backend
+
+        # Buffers and wrappers
+        self.kv_indptr = attn_backend.kv_indptr
+        self.req_to_token = model_runner.req_to_token_pool.req_to_token
+        self.q_indptr = attn_backend.q_indptr_decode
+
+    def update(
+        self,
+        req_pool_indices: torch.Tensor,
+        seq_lens: torch.Tensor,
+        seq_lens_sum: int,
+        decode_wrapper: BatchMLAPagedAttentionWrapper,
+        init_metadata_replay: bool = False,
+        spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+        **fast_decode_kwargs,
+    ):
+        decode_wrapper = decode_wrapper or self.decode_wrapper
+        self.call_begin_forward(
+            decode_wrapper,
+            req_pool_indices,
+            seq_lens,
+            seq_lens_sum,
+            self.q_indptr,
+            self.kv_indptr,
+            init_metadata_replay,
+            spec_info,
+            **fast_decode_kwargs,
+        )
+
+    def call_begin_forward(
+        self,
+        wrapper: BatchMLAPagedAttentionWrapper,
+        req_pool_indices: torch.Tensor,
+        paged_kernel_lens: torch.Tensor,
+        paged_kernel_lens_sum: int,
+        q_indptr: torch.Tensor,
+        kv_indptr: torch.Tensor,
+        init_metadata_replay: bool = False,
+        spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+        **fast_decode_kwargs,
+    ):
+        bs = len(req_pool_indices)
+        q_indptr = q_indptr[: bs + 1]
+        kv_lens = paged_kernel_lens.to(torch.int32)
+        sm_scale = self.scaling
+        if spec_info is None:
+            kv_indptr[1 : bs + 1] = torch.cumsum(paged_kernel_lens, dim=0)
+            kv_indptr = kv_indptr[: bs + 1]
+            kv_indices = (
+                torch.empty(paged_kernel_lens_sum, dtype=torch.int32, device=&#34;cuda&#34;)
+                if not init_metadata_replay
+                else fast_decode_kwargs[&#34;kv_indices&#34;]
+            )
+            create_flashinfer_kv_indices_triton[(bs,)](
+                self.req_to_token,
+                req_pool_indices,
+                paged_kernel_lens,
+                kv_indptr,
+                None,
+                kv_indices,
+                self.req_to_token.shape[1],
+            )
+        else:
+            kv_indptr, kv_indices = spec_info.kv_indptr, spec_info.kv_indices
+
+        if not init_metadata_replay:
+            wrapper.plan(
+                q_indptr,
+                kv_indptr,
+                kv_indices,
+                kv_lens,
+                self.num_local_heads,
+                self.kv_lora_rank,
+                self.qk_rope_head_dim,
+                1,
+                False,
+                sm_scale,
+                self.data_type,
+                self.data_type,
+            )
+        else:
+            wrapper.plan(
+                fast_decode_kwargs[&#34;qo_indptr_cpu&#34;],
+                fast_decode_kwargs[&#34;kv_indptr_cpu&#34;],
+                kv_indices,
+                fast_decode_kwargs[&#34;kv_len_arr_cpu&#34;],
+                self.num_local_heads,
+                self.kv_lora_rank,
+                self.qk_rope_head_dim,
+                1,
+                False,
+                sm_scale,
+                self.data_type,
+                self.data_type,
+            )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode.call_begin_forward"><code class="name flex">
+<span>def <span class="ident">call_begin_forward</span></span>(<span>self,<br>wrapper: BatchMLAPagedAttentionWrapper,<br>req_pool_indices: torch.Tensor,<br>paged_kernel_lens: torch.Tensor,<br>paged_kernel_lens_sum: int,<br>q_indptr: torch.Tensor,<br>kv_indptr: torch.Tensor,<br>init_metadata_replay: bool = False,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,<br>**fast_decode_kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def call_begin_forward(
+    self,
+    wrapper: BatchMLAPagedAttentionWrapper,
+    req_pool_indices: torch.Tensor,
+    paged_kernel_lens: torch.Tensor,
+    paged_kernel_lens_sum: int,
+    q_indptr: torch.Tensor,
+    kv_indptr: torch.Tensor,
+    init_metadata_replay: bool = False,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+    **fast_decode_kwargs,
+):
+    bs = len(req_pool_indices)
+    q_indptr = q_indptr[: bs + 1]
+    kv_lens = paged_kernel_lens.to(torch.int32)
+    sm_scale = self.scaling
+    if spec_info is None:
+        kv_indptr[1 : bs + 1] = torch.cumsum(paged_kernel_lens, dim=0)
+        kv_indptr = kv_indptr[: bs + 1]
+        kv_indices = (
+            torch.empty(paged_kernel_lens_sum, dtype=torch.int32, device=&#34;cuda&#34;)
+            if not init_metadata_replay
+            else fast_decode_kwargs[&#34;kv_indices&#34;]
+        )
+        create_flashinfer_kv_indices_triton[(bs,)](
+            self.req_to_token,
+            req_pool_indices,
+            paged_kernel_lens,
+            kv_indptr,
+            None,
+            kv_indices,
+            self.req_to_token.shape[1],
+        )
+    else:
+        kv_indptr, kv_indices = spec_info.kv_indptr, spec_info.kv_indices
+
+    if not init_metadata_replay:
+        wrapper.plan(
+            q_indptr,
+            kv_indptr,
+            kv_indices,
+            kv_lens,
+            self.num_local_heads,
+            self.kv_lora_rank,
+            self.qk_rope_head_dim,
+            1,
+            False,
+            sm_scale,
+            self.data_type,
+            self.data_type,
+        )
+    else:
+        wrapper.plan(
+            fast_decode_kwargs[&#34;qo_indptr_cpu&#34;],
+            fast_decode_kwargs[&#34;kv_indptr_cpu&#34;],
+            kv_indices,
+            fast_decode_kwargs[&#34;kv_len_arr_cpu&#34;],
+            self.num_local_heads,
+            self.kv_lora_rank,
+            self.qk_rope_head_dim,
+            1,
+            False,
+            sm_scale,
+            self.data_type,
+            self.data_type,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self,<br>req_pool_indices: torch.Tensor,<br>seq_lens: torch.Tensor,<br>seq_lens_sum: int,<br>decode_wrapper: BatchMLAPagedAttentionWrapper,<br>init_metadata_replay: bool = False,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,<br>**fast_decode_kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(
+    self,
+    req_pool_indices: torch.Tensor,
+    seq_lens: torch.Tensor,
+    seq_lens_sum: int,
+    decode_wrapper: BatchMLAPagedAttentionWrapper,
+    init_metadata_replay: bool = False,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+    **fast_decode_kwargs,
+):
+    decode_wrapper = decode_wrapper or self.decode_wrapper
+    self.call_begin_forward(
+        decode_wrapper,
+        req_pool_indices,
+        seq_lens,
+        seq_lens_sum,
+        self.q_indptr,
+        self.kv_indptr,
+        init_metadata_replay,
+        spec_info,
+        **fast_decode_kwargs,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill"><code class="flex name class">
+<span>class <span class="ident">FlashInferMLAIndicesUpdaterPrefill</span></span>
+<span>(</span><span>model_runner: ModelRunner, attn_backend: AttentionBackend)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FlashInferMLAIndicesUpdaterPrefill:
+    def __init__(self, model_runner: ModelRunner, attn_backend: AttentionBackend):
+        # Parse Constants
+        self.num_local_heads = (
+            model_runner.model_config.num_attention_heads // get_attention_tp_size()
+        )
+        self.kv_lora_rank = model_runner.model_config.kv_lora_rank
+        self.qk_nope_head_dim = model_runner.model_config.qk_nope_head_dim
+        self.qk_rope_head_dim = model_runner.model_config.qk_rope_head_dim
+        self.v_head_dim = model_runner.model_config.v_head_dim
+        self.scaling = model_runner.model_config.scaling
+        self.data_type = model_runner.dtype
+        self.q_data_type = model_runner.dtype
+        self.attn_backend = attn_backend
+
+        # Buffers and wrappers
+        self.kv_indptr = attn_backend.kv_indptr
+        self.qo_indptr = attn_backend.qo_indptr
+        self.req_to_token = model_runner.req_to_token_pool.req_to_token
+        self.prefill_wrapper_ragged = attn_backend.prefill_wrapper_ragged
+
+    def update(
+        self,
+        req_pool_indices: torch.Tnesor,
+        seq_lens: torch.Tensor,
+        seq_lens_sum: int,
+        prefix_lens: torch.Tensor,
+        prefill_wrapper_paged: BatchMLAPagedAttentionWrapper,
+        use_ragged: bool,
+        spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+    ):
+        if use_ragged:
+            paged_kernel_lens = prefix_lens
+            paged_kernel_lens_sum = paged_kernel_lens.sum().item()
+        else:
+            paged_kernel_lens = seq_lens
+            paged_kernel_lens_sum = seq_lens_sum
+
+        self.call_begin_forward(
+            self.prefill_wrapper_ragged,
+            prefill_wrapper_paged,
+            req_pool_indices,
+            paged_kernel_lens,
+            paged_kernel_lens_sum,
+            seq_lens,
+            prefix_lens,
+            self.kv_indptr,
+            self.qo_indptr,
+            use_ragged,
+            spec_info,
+        )
+
+    def call_begin_forward(
+        self,
+        wrapper_ragged: BatchPrefillWithRaggedKVCacheWrapper,
+        wrapper_paged: BatchMLAPagedAttentionWrapper,
+        req_pool_indices: torch.Tensor,
+        paged_kernel_lens: torch.Tensor,
+        paged_kernel_lens_sum: int,
+        seq_lens: torch.Tensor,
+        prefix_lens: torch.Tensor,
+        kv_indptr: torch.Tensor,
+        qo_indptr: torch.Tensor,
+        use_ragged: bool,
+        spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+    ):
+        bs = len(seq_lens)
+        sm_scale = self.scaling
+
+        if spec_info is None:
+            assert len(seq_lens) == len(req_pool_indices)
+            kv_indptr[1 : bs + 1] = torch.cumsum(paged_kernel_lens, dim=0)
+            kv_indptr = kv_indptr[: bs + 1]
+            kv_indices = torch.empty(
+                paged_kernel_lens_sum,
+                dtype=torch.int32,
+                device=req_pool_indices.device,
+            )
+            create_flashinfer_kv_indices_triton[(bs,)](
+                self.req_to_token,
+                req_pool_indices,
+                paged_kernel_lens,
+                kv_indptr,
+                None,
+                kv_indices,
+                self.req_to_token.shape[1],
+            )
+            qo_indptr[1 : bs + 1] = torch.cumsum(seq_lens - prefix_lens, dim=0)
+            qo_indptr = qo_indptr[: bs + 1]
+            custom_mask = None
+        else:
+            assert isinstance(spec_info, EagleDraftInput) or isinstance(
+                spec_info, EagleVerifyInput
+            )
+            # TODO: Support topk &gt; 1 with custom mask
+            kv_indices, kv_indptr, qo_indptr, custom_mask = (
+                spec_info.generate_attn_arg_prefill(
+                    req_pool_indices,
+                    paged_kernel_lens,
+                    paged_kernel_lens_sum,
+                    self.req_to_token,
+                )
+            )
+
+        if use_ragged:
+            # ragged prefill
+            wrapper_ragged.begin_forward(
+                qo_indptr=qo_indptr,
+                kv_indptr=qo_indptr,
+                num_qo_heads=self.num_local_heads,
+                num_kv_heads=self.num_local_heads,
+                head_dim_qk=self.qk_nope_head_dim + self.qk_rope_head_dim,
+                head_dim_vo=self.v_head_dim,
+                q_data_type=self.q_data_type,
+                causal=True,
+            )
+        else:
+            # mla paged prefill
+            kv_len_arr = kv_indptr[1:] - kv_indptr[:-1]
+            wrapper_paged.plan(
+                qo_indptr,
+                kv_indptr,
+                kv_indices,
+                kv_len_arr,
+                self.num_local_heads,
+                self.kv_lora_rank,
+                self.qk_rope_head_dim,
+                1,
+                True,
+                sm_scale,
+                self.q_data_type,
+                self.data_type,
+            )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill.call_begin_forward"><code class="name flex">
+<span>def <span class="ident">call_begin_forward</span></span>(<span>self,<br>wrapper_ragged: BatchPrefillWithRaggedKVCacheWrapper,<br>wrapper_paged: BatchMLAPagedAttentionWrapper,<br>req_pool_indices: torch.Tensor,<br>paged_kernel_lens: torch.Tensor,<br>paged_kernel_lens_sum: int,<br>seq_lens: torch.Tensor,<br>prefix_lens: torch.Tensor,<br>kv_indptr: torch.Tensor,<br>qo_indptr: torch.Tensor,<br>use_ragged: bool,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def call_begin_forward(
+    self,
+    wrapper_ragged: BatchPrefillWithRaggedKVCacheWrapper,
+    wrapper_paged: BatchMLAPagedAttentionWrapper,
+    req_pool_indices: torch.Tensor,
+    paged_kernel_lens: torch.Tensor,
+    paged_kernel_lens_sum: int,
+    seq_lens: torch.Tensor,
+    prefix_lens: torch.Tensor,
+    kv_indptr: torch.Tensor,
+    qo_indptr: torch.Tensor,
+    use_ragged: bool,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+):
+    bs = len(seq_lens)
+    sm_scale = self.scaling
+
+    if spec_info is None:
+        assert len(seq_lens) == len(req_pool_indices)
+        kv_indptr[1 : bs + 1] = torch.cumsum(paged_kernel_lens, dim=0)
+        kv_indptr = kv_indptr[: bs + 1]
+        kv_indices = torch.empty(
+            paged_kernel_lens_sum,
+            dtype=torch.int32,
+            device=req_pool_indices.device,
+        )
+        create_flashinfer_kv_indices_triton[(bs,)](
+            self.req_to_token,
+            req_pool_indices,
+            paged_kernel_lens,
+            kv_indptr,
+            None,
+            kv_indices,
+            self.req_to_token.shape[1],
+        )
+        qo_indptr[1 : bs + 1] = torch.cumsum(seq_lens - prefix_lens, dim=0)
+        qo_indptr = qo_indptr[: bs + 1]
+        custom_mask = None
+    else:
+        assert isinstance(spec_info, EagleDraftInput) or isinstance(
+            spec_info, EagleVerifyInput
+        )
+        # TODO: Support topk &gt; 1 with custom mask
+        kv_indices, kv_indptr, qo_indptr, custom_mask = (
+            spec_info.generate_attn_arg_prefill(
+                req_pool_indices,
+                paged_kernel_lens,
+                paged_kernel_lens_sum,
+                self.req_to_token,
+            )
+        )
+
+    if use_ragged:
+        # ragged prefill
+        wrapper_ragged.begin_forward(
+            qo_indptr=qo_indptr,
+            kv_indptr=qo_indptr,
+            num_qo_heads=self.num_local_heads,
+            num_kv_heads=self.num_local_heads,
+            head_dim_qk=self.qk_nope_head_dim + self.qk_rope_head_dim,
+            head_dim_vo=self.v_head_dim,
+            q_data_type=self.q_data_type,
+            causal=True,
+        )
+    else:
+        # mla paged prefill
+        kv_len_arr = kv_indptr[1:] - kv_indptr[:-1]
+        wrapper_paged.plan(
+            qo_indptr,
+            kv_indptr,
+            kv_indices,
+            kv_len_arr,
+            self.num_local_heads,
+            self.kv_lora_rank,
+            self.qk_rope_head_dim,
+            1,
+            True,
+            sm_scale,
+            self.q_data_type,
+            self.data_type,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self,<br>req_pool_indices: torch.Tnesor,<br>seq_lens: torch.Tensor,<br>seq_lens_sum: int,<br>prefix_lens: torch.Tensor,<br>prefill_wrapper_paged: BatchMLAPagedAttentionWrapper,<br>use_ragged: bool,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(
+    self,
+    req_pool_indices: torch.Tnesor,
+    seq_lens: torch.Tensor,
+    seq_lens_sum: int,
+    prefix_lens: torch.Tensor,
+    prefill_wrapper_paged: BatchMLAPagedAttentionWrapper,
+    use_ragged: bool,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+):
+    if use_ragged:
+        paged_kernel_lens = prefix_lens
+        paged_kernel_lens_sum = paged_kernel_lens.sum().item()
+    else:
+        paged_kernel_lens = seq_lens
+        paged_kernel_lens_sum = seq_lens_sum
+
+    self.call_begin_forward(
+        self.prefill_wrapper_ragged,
+        prefill_wrapper_paged,
+        req_pool_indices,
+        paged_kernel_lens,
+        paged_kernel_lens_sum,
+        seq_lens,
+        prefix_lens,
+        self.kv_indptr,
+        self.qo_indptr,
+        use_ragged,
+        spec_info,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend"><code class="flex name class">
+<span>class <span class="ident">FlashInferMLAMultiStepDraftBackend</span></span>
+<span>(</span><span>model_runner: ModelRunner, topk: int, speculative_num_steps: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FlashInferMLAMultiStepDraftBackend:
+    &#34;&#34;&#34;
+    Wrap multiple flashinfer mla attention backends as one for multiple consecutive
+    draft decoding steps.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        model_runner: ModelRunner,
+        topk: int,
+        speculative_num_steps: int,
+    ):
+        from sglang.srt.speculative.eagle_utils import generate_draft_decode_kv_indices
+
+        if topk &gt; 1:
+            raise ValueError(
+                &#34;Currently Flashinfer MLA only supports topk=1 for speculative decoding&#34;
+            )
+        self.topk = topk
+        self.speculative_num_steps = speculative_num_steps
+        self.generate_draft_decode_kv_indices = generate_draft_decode_kv_indices
+
+        max_bs = model_runner.req_to_token_pool.size * self.topk
+        self.kv_indptr = torch.zeros(
+            (
+                self.speculative_num_steps,
+                max_bs + 1,
+            ),
+            dtype=torch.int32,
+            device=model_runner.device,
+        )
+        self.q_indptr_decode = torch.arange(
+            0, max_bs + 1, dtype=torch.int32, device=model_runner.device
+        )
+
+        self.attn_backends = []
+        for i in range(self.speculative_num_steps):
+            self.attn_backends.append(
+                FlashInferMLAAttnBackend(
+                    model_runner,
+                    skip_prefill=True,
+                    kv_indptr_buf=self.kv_indptr[i],
+                    q_indptr_decode_buf=self.q_indptr_decode,
+                )
+            )
+
+        self.max_context_len = self.attn_backends[0].max_context_len
+
+        # Cached variables for generate_draft_decode_kv_indices
+        self.pool_len = model_runner.req_to_token_pool.req_to_token.shape[1]
+        self.page_size = model_runner.server_args.page_size
+
+    def common_template(
+        self,
+        forward_batch: ForwardBatch,
+        kv_indices_buffer: torch.Tensor,
+        call_fn: Callable,
+    ):
+        num_seqs = forward_batch.batch_size
+        bs = self.topk * num_seqs
+        seq_lens_sum = forward_batch.seq_lens_sum
+
+        self.generate_draft_decode_kv_indices[
+            (self.speculative_num_steps, num_seqs, self.topk)
+        ](
+            forward_batch.req_pool_indices,
+            forward_batch.req_to_token_pool.req_to_token,
+            forward_batch.seq_lens,
+            kv_indices_buffer,
+            self.kv_indptr,
+            forward_batch.positions,
+            self.pool_len,
+            kv_indices_buffer.shape[1],
+            self.kv_indptr.shape[1],
+            next_power_of_2(num_seqs),
+            next_power_of_2(self.speculative_num_steps),
+            next_power_of_2(bs),
+            self.page_size,
+        )
+
+        assert forward_batch.spec_info is not None
+        assert isinstance(forward_batch.spec_info, EagleDraftInput)
+
+        for i in range(self.speculative_num_steps - 1):
+            forward_batch.spec_info.kv_indptr = self.kv_indptr[i, : bs + 1]
+            forward_batch.spec_info.kv_indices = kv_indices_buffer[i][
+                : seq_lens_sum * self.topk + bs * (i + 1)
+            ]
+            call_fn(i, forward_batch)
+
+    def init_forward_metadata(self, forward_batch: ForwardBatch):
+        kv_indices = torch.zeros(
+            (
+                self.speculative_num_steps,
+                forward_batch.batch_size * self.topk * self.max_context_len,
+            ),
+            dtype=torch.int32,
+            device=&#34;cuda&#34;,
+        )
+
+        def call_fn(i, forward_batch):
+            assert forward_batch.spec_info is not None
+            assert isinstance(forward_batch.spec_info, EagleDraftInput)
+            forward_batch.spec_info.kv_indptr = (
+                forward_batch.spec_info.kv_indptr.clone()
+            )
+            forward_batch.spec_info.kv_indices = (
+                forward_batch.spec_info.kv_indices.clone()
+            )
+            self.attn_backends[i].init_forward_metadata(forward_batch)
+
+        self.common_template(forward_batch, kv_indices, call_fn)
+
+    def init_cuda_graph_state(self, max_bs: int, max_num_tokens: int):
+        self.cuda_graph_kv_indices = torch.zeros(
+            (self.speculative_num_steps, max_bs * self.max_context_len),
+            dtype=torch.int32,
+            device=&#34;cuda&#34;,
+        )
+
+        for i in range(self.speculative_num_steps):
+            self.attn_backends[i].init_cuda_graph_state(
+                max_bs, max_num_tokens, kv_indices_buf=self.cuda_graph_kv_indices[i]
+            )
+
+    def init_forward_metadata_capture_cuda_graph(self, forward_batch: ForwardBatch):
+        def call_fn(i, forward_batch):
+            self.attn_backends[i].init_forward_metadata_capture_cuda_graph(
+                forward_batch.batch_size,
+                forward_batch.batch_size * self.topk,
+                forward_batch.req_pool_indices,
+                forward_batch.seq_lens,
+                encoder_lens=None,
+                forward_mode=ForwardMode.DECODE,
+                spec_info=forward_batch.spec_info,
+            )
+
+        self.common_template(forward_batch, self.cuda_graph_kv_indices, call_fn)
+
+    def init_forward_metadata_replay_cuda_graph(
+        self, forward_batch: ForwardBatch, bs: int
+    ):
+        def call_fn(i, forward_batch):
+            self.attn_backends[i].init_forward_metadata_replay_cuda_graph(
+                bs,
+                forward_batch.req_pool_indices,
+                forward_batch.seq_lens,
+                seq_lens_sum=-1,
+                encoder_lens=None,
+                forward_mode=ForwardMode.DECODE,
+                spec_info=forward_batch.spec_info,
+                seq_lens_cpu=forward_batch.seq_lens_cpu,
+            )
+
+        self.common_template(forward_batch, self.cuda_graph_kv_indices, call_fn)</code></pre>
+</details>
+<div class="desc"><p>Wrap multiple flashinfer mla attention backends as one for multiple consecutive
+draft decoding steps.</p></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.attention.trtllm_mla_backend.TRTLLMMLAMultiStepDraftBackend" href="trtllm_mla_backend.html#sglang.srt.layers.attention.trtllm_mla_backend.TRTLLMMLAMultiStepDraftBackend">TRTLLMMLAMultiStepDraftBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.common_template"><code class="name flex">
+<span>def <span class="ident">common_template</span></span>(<span>self,<br>forward_batch: ForwardBatch,<br>kv_indices_buffer: torch.Tensor,<br>call_fn: Callable)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def common_template(
+    self,
+    forward_batch: ForwardBatch,
+    kv_indices_buffer: torch.Tensor,
+    call_fn: Callable,
+):
+    num_seqs = forward_batch.batch_size
+    bs = self.topk * num_seqs
+    seq_lens_sum = forward_batch.seq_lens_sum
+
+    self.generate_draft_decode_kv_indices[
+        (self.speculative_num_steps, num_seqs, self.topk)
+    ](
+        forward_batch.req_pool_indices,
+        forward_batch.req_to_token_pool.req_to_token,
+        forward_batch.seq_lens,
+        kv_indices_buffer,
+        self.kv_indptr,
+        forward_batch.positions,
+        self.pool_len,
+        kv_indices_buffer.shape[1],
+        self.kv_indptr.shape[1],
+        next_power_of_2(num_seqs),
+        next_power_of_2(self.speculative_num_steps),
+        next_power_of_2(bs),
+        self.page_size,
+    )
+
+    assert forward_batch.spec_info is not None
+    assert isinstance(forward_batch.spec_info, EagleDraftInput)
+
+    for i in range(self.speculative_num_steps - 1):
+        forward_batch.spec_info.kv_indptr = self.kv_indptr[i, : bs + 1]
+        forward_batch.spec_info.kv_indices = kv_indices_buffer[i][
+            : seq_lens_sum * self.topk + bs * (i + 1)
+        ]
+        call_fn(i, forward_batch)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_cuda_graph_state"><code class="name flex">
+<span>def <span class="ident">init_cuda_graph_state</span></span>(<span>self, max_bs: int, max_num_tokens: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_cuda_graph_state(self, max_bs: int, max_num_tokens: int):
+    self.cuda_graph_kv_indices = torch.zeros(
+        (self.speculative_num_steps, max_bs * self.max_context_len),
+        dtype=torch.int32,
+        device=&#34;cuda&#34;,
+    )
+
+    for i in range(self.speculative_num_steps):
+        self.attn_backends[i].init_cuda_graph_state(
+            max_bs, max_num_tokens, kv_indices_buf=self.cuda_graph_kv_indices[i]
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata"><code class="name flex">
+<span>def <span class="ident">init_forward_metadata</span></span>(<span>self, forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_forward_metadata(self, forward_batch: ForwardBatch):
+    kv_indices = torch.zeros(
+        (
+            self.speculative_num_steps,
+            forward_batch.batch_size * self.topk * self.max_context_len,
+        ),
+        dtype=torch.int32,
+        device=&#34;cuda&#34;,
+    )
+
+    def call_fn(i, forward_batch):
+        assert forward_batch.spec_info is not None
+        assert isinstance(forward_batch.spec_info, EagleDraftInput)
+        forward_batch.spec_info.kv_indptr = (
+            forward_batch.spec_info.kv_indptr.clone()
+        )
+        forward_batch.spec_info.kv_indices = (
+            forward_batch.spec_info.kv_indices.clone()
+        )
+        self.attn_backends[i].init_forward_metadata(forward_batch)
+
+    self.common_template(forward_batch, kv_indices, call_fn)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph"><code class="name flex">
+<span>def <span class="ident">init_forward_metadata_capture_cuda_graph</span></span>(<span>self, forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_forward_metadata_capture_cuda_graph(self, forward_batch: ForwardBatch):
+    def call_fn(i, forward_batch):
+        self.attn_backends[i].init_forward_metadata_capture_cuda_graph(
+            forward_batch.batch_size,
+            forward_batch.batch_size * self.topk,
+            forward_batch.req_pool_indices,
+            forward_batch.seq_lens,
+            encoder_lens=None,
+            forward_mode=ForwardMode.DECODE,
+            spec_info=forward_batch.spec_info,
+        )
+
+    self.common_template(forward_batch, self.cuda_graph_kv_indices, call_fn)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph"><code class="name flex">
+<span>def <span class="ident">init_forward_metadata_replay_cuda_graph</span></span>(<span>self, forward_batch: ForwardBatch, bs: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_forward_metadata_replay_cuda_graph(
+    self, forward_batch: ForwardBatch, bs: int
+):
+    def call_fn(i, forward_batch):
+        self.attn_backends[i].init_forward_metadata_replay_cuda_graph(
+            bs,
+            forward_batch.req_pool_indices,
+            forward_batch.seq_lens,
+            seq_lens_sum=-1,
+            encoder_lens=None,
+            forward_mode=ForwardMode.DECODE,
+            spec_info=forward_batch.spec_info,
+            seq_lens_cpu=forward_batch.seq_lens_cpu,
+        )
+
+    self.common_template(forward_batch, self.cuda_graph_kv_indices, call_fn)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner"><code class="flex name class">
+<span>class <span class="ident">FlashInferMhaChunkKVRunner</span></span>
+<span>(</span><span>model_runner: ModelRunner, attn_backend: "'FlashInferMlaAttnBackend'")</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class FlashInferMhaChunkKVRunner:
+    def __init__(
+        self, model_runner: ModelRunner, attn_backend: &#34;FlashInferMlaAttnBackend&#34;
+    ):
+        # Parse Constants
+        self.num_local_heads = (
+            model_runner.model_config.num_attention_heads // get_attention_tp_size()
+        )
+        self.qk_nope_head_dim = model_runner.model_config.qk_nope_head_dim
+        self.qk_rope_head_dim = model_runner.model_config.qk_rope_head_dim
+        self.v_head_dim = model_runner.model_config.v_head_dim
+        self.data_type = model_runner.dtype
+        self.q_data_type = model_runner.dtype
+
+        # Buffers and wrappers
+        self.qo_indptr = attn_backend.qo_indptr
+        self.workspace_buffer = attn_backend.workspace_buffer
+        self.fmha_backend = attn_backend.fmha_backend
+
+        self.chunk_ragged_wrappers = []
+        self.ragged_wrapper = attn_backend.prefill_wrapper_ragged
+
+    def update_prefix_chunks(self, num_prefix_chunks: int):
+        while num_prefix_chunks &gt; len(self.chunk_ragged_wrappers):
+            ragged_wrapper = BatchPrefillWithRaggedKVCacheWrapper(
+                self.workspace_buffer, &#34;NHD&#34;, backend=self.fmha_backend
+            )
+            self.chunk_ragged_wrappers.append(ragged_wrapper)
+
+    def update_wrapper(
+        self,
+        forward_batch: ForwardBatch,
+    ):
+        assert forward_batch.num_prefix_chunks is not None
+        num_prefix_chunks = forward_batch.num_prefix_chunks
+        self.update_prefix_chunks(num_prefix_chunks)
+
+        prefix_lens = forward_batch.extend_prefix_lens
+        seq_lens = forward_batch.seq_lens
+
+        bs = len(seq_lens)
+        qo_indptr = self.qo_indptr
+        qo_indptr[1 : bs + 1] = torch.cumsum(seq_lens - prefix_lens, dim=0)
+        qo_indptr = qo_indptr[: bs + 1]
+
+        for chunk_idx in range(forward_batch.num_prefix_chunks):
+            # MHA for chunked prefix kv cache when running model with MLA
+            assert forward_batch.prefix_chunk_idx is not None
+            assert forward_batch.prefix_chunk_cu_seq_lens is not None
+            assert forward_batch.prefix_chunk_max_seq_lens is not None
+
+            kv_indptr = forward_batch.prefix_chunk_cu_seq_lens[chunk_idx]
+            wrapper = self.chunk_ragged_wrappers[chunk_idx]
+            wrapper.begin_forward(
+                qo_indptr=qo_indptr,
+                kv_indptr=kv_indptr,
+                num_qo_heads=self.num_local_heads,
+                num_kv_heads=self.num_local_heads,
+                head_dim_qk=self.qk_nope_head_dim + self.qk_rope_head_dim,
+                head_dim_vo=self.v_head_dim,
+                q_data_type=self.q_data_type,
+                causal=False,
+            )
+        # ragged prefill
+        self.ragged_wrapper.begin_forward(
+            qo_indptr=qo_indptr,
+            kv_indptr=qo_indptr,
+            num_qo_heads=self.num_local_heads,
+            num_kv_heads=self.num_local_heads,
+            head_dim_qk=self.qk_nope_head_dim + self.qk_rope_head_dim,
+            head_dim_vo=self.v_head_dim,
+            q_data_type=self.q_data_type,
+            causal=True,
+        )
+
+    def forward(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        v: torch.Tensor,
+        layer: RadixAttention,
+        forward_batch: ForwardBatch,
+    ):
+        logits_soft_cap = layer.logit_cap
+        if forward_batch.attn_attend_prefix_cache:
+            chunk_idx = forward_batch.prefix_chunk_idx
+            assert chunk_idx &gt;= 0
+            wrapper = self.chunk_ragged_wrappers[chunk_idx]
+            o1, s1 = wrapper.forward_return_lse(
+                q.view(-1, layer.tp_q_head_num, layer.head_dim),
+                k.view(-1, layer.tp_k_head_num, layer.head_dim).to(q.dtype),
+                v.view(-1, layer.tp_v_head_num, layer.v_head_dim).to(q.dtype),
+                causal=False,
+                sm_scale=layer.scaling,
+                logits_soft_cap=logits_soft_cap,
+            )
+        else:
+            o1, s1 = self.ragged_wrapper.forward_return_lse(
+                q.view(-1, layer.tp_q_head_num, layer.head_dim),
+                k.view(-1, layer.tp_k_head_num, layer.head_dim).to(q.dtype),
+                v.view(-1, layer.tp_v_head_num, layer.v_head_dim).to(q.dtype),
+                causal=True,
+                sm_scale=layer.scaling,
+                logits_soft_cap=logits_soft_cap,
+            )
+
+        return o1, s1</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>q: torch.Tensor,<br>k: torch.Tensor,<br>v: torch.Tensor,<br>layer: RadixAttention,<br>forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    layer: RadixAttention,
+    forward_batch: ForwardBatch,
+):
+    logits_soft_cap = layer.logit_cap
+    if forward_batch.attn_attend_prefix_cache:
+        chunk_idx = forward_batch.prefix_chunk_idx
+        assert chunk_idx &gt;= 0
+        wrapper = self.chunk_ragged_wrappers[chunk_idx]
+        o1, s1 = wrapper.forward_return_lse(
+            q.view(-1, layer.tp_q_head_num, layer.head_dim),
+            k.view(-1, layer.tp_k_head_num, layer.head_dim).to(q.dtype),
+            v.view(-1, layer.tp_v_head_num, layer.v_head_dim).to(q.dtype),
+            causal=False,
+            sm_scale=layer.scaling,
+            logits_soft_cap=logits_soft_cap,
+        )
+    else:
+        o1, s1 = self.ragged_wrapper.forward_return_lse(
+            q.view(-1, layer.tp_q_head_num, layer.head_dim),
+            k.view(-1, layer.tp_k_head_num, layer.head_dim).to(q.dtype),
+            v.view(-1, layer.tp_v_head_num, layer.v_head_dim).to(q.dtype),
+            causal=True,
+            sm_scale=layer.scaling,
+            logits_soft_cap=logits_soft_cap,
+        )
+
+    return o1, s1</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.update_prefix_chunks"><code class="name flex">
+<span>def <span class="ident">update_prefix_chunks</span></span>(<span>self, num_prefix_chunks: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_prefix_chunks(self, num_prefix_chunks: int):
+    while num_prefix_chunks &gt; len(self.chunk_ragged_wrappers):
+        ragged_wrapper = BatchPrefillWithRaggedKVCacheWrapper(
+            self.workspace_buffer, &#34;NHD&#34;, backend=self.fmha_backend
+        )
+        self.chunk_ragged_wrappers.append(ragged_wrapper)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.update_wrapper"><code class="name flex">
+<span>def <span class="ident">update_wrapper</span></span>(<span>self, forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_wrapper(
+    self,
+    forward_batch: ForwardBatch,
+):
+    assert forward_batch.num_prefix_chunks is not None
+    num_prefix_chunks = forward_batch.num_prefix_chunks
+    self.update_prefix_chunks(num_prefix_chunks)
+
+    prefix_lens = forward_batch.extend_prefix_lens
+    seq_lens = forward_batch.seq_lens
+
+    bs = len(seq_lens)
+    qo_indptr = self.qo_indptr
+    qo_indptr[1 : bs + 1] = torch.cumsum(seq_lens - prefix_lens, dim=0)
+    qo_indptr = qo_indptr[: bs + 1]
+
+    for chunk_idx in range(forward_batch.num_prefix_chunks):
+        # MHA for chunked prefix kv cache when running model with MLA
+        assert forward_batch.prefix_chunk_idx is not None
+        assert forward_batch.prefix_chunk_cu_seq_lens is not None
+        assert forward_batch.prefix_chunk_max_seq_lens is not None
+
+        kv_indptr = forward_batch.prefix_chunk_cu_seq_lens[chunk_idx]
+        wrapper = self.chunk_ragged_wrappers[chunk_idx]
+        wrapper.begin_forward(
+            qo_indptr=qo_indptr,
+            kv_indptr=kv_indptr,
+            num_qo_heads=self.num_local_heads,
+            num_kv_heads=self.num_local_heads,
+            head_dim_qk=self.qk_nope_head_dim + self.qk_rope_head_dim,
+            head_dim_vo=self.v_head_dim,
+            q_data_type=self.q_data_type,
+            causal=False,
+        )
+    # ragged prefill
+    self.ragged_wrapper.begin_forward(
+        qo_indptr=qo_indptr,
+        kv_indptr=qo_indptr,
+        num_qo_heads=self.num_local_heads,
+        num_kv_heads=self.num_local_heads,
+        head_dim_qk=self.qk_nope_head_dim + self.qk_rope_head_dim,
+        head_dim_vo=self.v_head_dim,
+        q_data_type=self.q_data_type,
+        causal=True,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata"><code class="flex name class">
+<span>class <span class="ident">PrefillMetadata</span></span>
+<span>(</span><span>prefill_wrapper: BatchMLAPagedAttentionWrapper, use_ragged: bool)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class PrefillMetadata:
+    prefill_wrapper: BatchMLAPagedAttentionWrapper
+    use_ragged: bool</code></pre>
+</details>
+<div class="desc"><p>PrefillMetadata(prefill_wrapper: 'BatchMLAPagedAttentionWrapper', use_ragged: 'bool')</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata.prefill_wrapper"><code class="name">var <span class="ident">prefill_wrapper</span> : BatchMLAPagedAttentionWrapper</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata.use_ragged"><code class="name">var <span class="ident">use_ragged</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.attention" href="index.html">sglang.srt.layers.attention</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.fast_mla_decode_plan" href="#sglang.srt.layers.attention.flashinfer_mla_backend.fast_mla_decode_plan">fast_mla_decode_plan</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.DecodeMetadata" href="#sglang.srt.layers.attention.flashinfer_mla_backend.DecodeMetadata">DecodeMetadata</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.DecodeMetadata.decode_wrapper" href="#sglang.srt.layers.attention.flashinfer_mla_backend.DecodeMetadata.decode_wrapper">decode_wrapper</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAAttnBackend" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAAttnBackend">FlashInferMLAAttnBackend</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAAttnBackend.init_mha_chunk_metadata" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAAttnBackend.init_mha_chunk_metadata">init_mha_chunk_metadata</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode">FlashInferMLAIndicesUpdaterDecode</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode.call_begin_forward" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode.call_begin_forward">call_begin_forward</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode.update" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterDecode.update">update</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill">FlashInferMLAIndicesUpdaterPrefill</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill.call_begin_forward" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill.call_begin_forward">call_begin_forward</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill.update" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAIndicesUpdaterPrefill.update">update</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend">FlashInferMLAMultiStepDraftBackend</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.common_template" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.common_template">common_template</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_cuda_graph_state" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_cuda_graph_state">init_cuda_graph_state</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata">init_forward_metadata</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata_capture_cuda_graph">init_forward_metadata_capture_cuda_graph</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMLAMultiStepDraftBackend.init_forward_metadata_replay_cuda_graph">init_forward_metadata_replay_cuda_graph</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner">FlashInferMhaChunkKVRunner</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.forward" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.update_prefix_chunks" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.update_prefix_chunks">update_prefix_chunks</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.update_wrapper" href="#sglang.srt.layers.attention.flashinfer_mla_backend.FlashInferMhaChunkKVRunner.update_wrapper">update_wrapper</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata" href="#sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata">PrefillMetadata</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata.prefill_wrapper" href="#sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata.prefill_wrapper">prefill_wrapper</a></code></li>
+<li><code><a title="sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata.use_ragged" href="#sglang.srt.layers.attention.flashinfer_mla_backend.PrefillMetadata.use_ragged">use_ragged</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.managers.scheduler_metrics_mixin API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.managers.scheduler_metrics_mixin</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.managers.scheduler_metrics_mixin.KvMetrics"><code class="flex name class">
+<span>class <span class="ident">KvMetrics</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KvMetrics:
+    def __init__(self):
+        self.request_active_slots = None
+        self.request_total_slots = None
+        self.kv_active_blocks = None
+        self.kv_total_blocks = None
+        self.num_requests_waiting = None
+        self.gpu_cache_usage_perc = None
+        self.gpu_prefix_cache_hit_rate = None
+        self.data_parallel_rank = None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin"><code class="flex name class">
+<span>class <span class="ident">SchedulerMetricsMixin</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SchedulerMetricsMixin:
+    def init_metrics(self, tp_rank: int, pp_rank: int, dp_rank: Optional[int]):
+        self.last_gen_throughput: float = 0.0
+        self.last_input_throughput: float = 0.0
+        self.step_time_dict = defaultdict(list)  # Dict[batch size -&gt; step time]
+        self.spec_num_total_accepted_tokens = 0
+        self.spec_num_total_forward_ct = 0
+        self.cum_spec_accept_length = 0
+        self.cum_spec_accept_count = 0
+        self.total_retracted_reqs = 0
+        self.stats = SchedulerStats()
+        if self.enable_metrics:
+            engine_type = &#34;unified&#34;
+            labels = {
+                &#34;model_name&#34;: self.server_args.served_model_name,
+                &#34;engine_type&#34;: engine_type,
+                &#34;tp_rank&#34;: tp_rank,
+                &#34;pp_rank&#34;: pp_rank,
+            }
+            if dp_rank is not None:
+                labels[&#34;dp_rank&#34;] = dp_rank
+            self.metrics_collector = SchedulerMetricsCollector(labels=labels)
+
+    def init_kv_events(self, kv_events_config: Optional[str]):
+        if self.enable_kv_cache_events:
+            self.kv_event_publisher = EventPublisherFactory.create(
+                kv_events_config, self.attn_dp_rank
+            )
+
+    def log_prefill_stats(
+        self,
+        adder: PrefillAdder,
+        can_run_list: List[Req],
+        running_bs: int,
+    ):
+        gap_latency = time.perf_counter() - self.last_prefill_stats_tic
+        self.last_prefill_stats_tic = time.perf_counter()
+        self.last_input_throughput = self.last_prefill_tokens / gap_latency
+        self.last_prefill_tokens = adder.log_input_tokens
+
+        if self.is_hybrid:
+            (
+                full_num_used,
+                swa_num_used,
+                full_token_usage,
+                swa_token_usage,
+                _,
+                _,
+                _,
+                _,
+            ) = self._get_swa_token_info()
+            num_used = max(full_num_used, swa_num_used)
+            token_usage = max(full_token_usage, swa_token_usage)
+            token_msg = (
+                f&#34;full token usage: {full_token_usage:.2f}, &#34;
+                f&#34;swa token usage: {swa_token_usage:.2f}, &#34;
+            )
+        else:
+            num_used, token_usage, _, _ = self._get_token_info()
+            token_msg = f&#34;token usage: {token_usage:.2f}, &#34;
+
+        num_new_seq = len(can_run_list)
+        f = (
+            f&#34;Prefill batch. &#34;
+            f&#34;#new-seq: {num_new_seq}, &#34;
+            f&#34;#new-token: {adder.log_input_tokens}, &#34;
+            f&#34;#cached-token: {adder.log_hit_tokens}, &#34;
+            f&#34;{token_msg}&#34;
+        )
+
+        if self.disaggregation_mode == DisaggregationMode.PREFILL:
+            f += f&#34;#unbootstrapped-req: {len(self.disagg_prefill_bootstrap_queue.queue)}, &#34;
+            f += f&#34;#queue-req: {len(self.waiting_queue)}, &#34;
+            f += f&#34;#transferring-req: {len(self.disagg_prefill_inflight_queue)}, &#34;
+            f += f&#34;input throughput (token/s): {self.last_input_throughput:.2f}, &#34;
+        else:
+            f += f&#34;#running-req: {running_bs}, &#34;
+            f += f&#34;#queue-req: {len(self.waiting_queue)}, &#34;
+
+        logger.info(f)
+
+        if self.enable_metrics:
+            total_tokens = adder.log_input_tokens + adder.log_hit_tokens
+
+            cache_hit_rate = (
+                adder.log_hit_tokens / total_tokens if total_tokens &gt; 0 else 0.0
+            )
+            self.stats.num_running_reqs = running_bs
+            self.stats.num_used_tokens = num_used
+            self.stats.token_usage = round(token_usage, 2)
+            self.stats.num_queue_reqs = len(self.waiting_queue)
+            self.stats.cache_hit_rate = cache_hit_rate
+
+            total_queue_latency = 0
+            for req in can_run_list:
+                total_queue_latency += req.queue_time_end - req.queue_time_start
+            self.stats.avg_request_queue_latency = total_queue_latency / num_new_seq
+
+            if self.disaggregation_mode == DisaggregationMode.PREFILL:
+                self.stats.num_prefill_prealloc_queue_reqs = len(
+                    self.disagg_prefill_bootstrap_queue.queue
+                )
+                self.stats.num_prefill_inflight_queue_reqs = len(
+                    self.disagg_prefill_inflight_queue
+                )
+
+            self.metrics_collector.log_stats(self.stats)
+            self._emit_kv_metrics()
+        self._publish_kv_events()
+
+    def log_decode_stats(
+        self, can_run_cuda_graph: bool, running_batch: ScheduleBatch = None
+    ):
+        batch = running_batch or self.running_batch
+
+        gap_latency = time.perf_counter() - self.last_decode_stats_tic
+        self.last_decode_stats_tic = time.perf_counter()
+        self.last_gen_throughput = self.num_generated_tokens / gap_latency
+        self.num_generated_tokens = 0
+        num_running_reqs = len(batch.reqs)
+        if self.is_hybrid:
+            (
+                full_num_used,
+                swa_num_used,
+                full_token_usage,
+                swa_token_usage,
+                _,
+                _,
+                _,
+                _,
+            ) = self._get_swa_token_info()
+            num_used = max(full_num_used, swa_num_used)
+            token_usage = max(full_token_usage, swa_token_usage)
+            token_msg = (
+                f&#34;#full token: {full_num_used}, &#34;
+                f&#34;full token usage: {full_token_usage:.2f}, &#34;
+                f&#34;#swa token: {swa_num_used}, &#34;
+                f&#34;swa token usage: {swa_token_usage:.2f}, &#34;
+            )
+        else:
+            num_used, token_usage, _, _ = self._get_token_info()
+            token_msg = f&#34;#token: {num_used}, &#34; f&#34;token usage: {token_usage:.2f}, &#34;
+
+        if RECORD_STEP_TIME:
+            self.step_time_dict[num_running_reqs].append(
+                gap_latency / self.server_args.decode_log_interval
+            )
+
+        msg = f&#34;Decode batch. #running-req: {num_running_reqs}, {token_msg}&#34;
+
+        if self.spec_algorithm.is_none():
+            spec_accept_length = 0
+        else:
+            spec_accept_length = (
+                self.spec_num_total_accepted_tokens / self.spec_num_total_forward_ct
+            )
+            self.cum_spec_accept_length += self.spec_num_total_accepted_tokens
+            self.cum_spec_accept_count += self.spec_num_total_forward_ct
+            self.spec_num_total_accepted_tokens = self.spec_num_total_forward_ct = 0
+            msg += f&#34;accept len: {spec_accept_length:.2f}, &#34;
+
+        if self.disaggregation_mode == DisaggregationMode.DECODE:
+            msg += f&#34;pre-allocated usage: {self.disagg_decode_prealloc_queue.num_tokens_pre_allocated / self.max_total_num_tokens:.2f}, &#34;
+            msg += f&#34;#retracted-req: {len(self.disagg_decode_prealloc_queue.retracted_queue)}, &#34;
+
+        msg += (
+            f&#34;cuda graph: {can_run_cuda_graph}, &#34;
+            f&#34;gen throughput (token/s): {self.last_gen_throughput:.2f}, &#34;
+            f&#34;#queue-req: {len(self.waiting_queue)}, &#34;
+        )
+
+        logger.info(msg)
+        if self.enable_metrics:
+            self.stats.num_running_reqs = num_running_reqs
+            self.stats.num_used_tokens = num_used
+            self.stats.token_usage = round(token_usage, 2)
+            self.stats.cache_hit_rate = 0.0
+            self.stats.gen_throughput = self.last_gen_throughput
+            self.stats.num_queue_reqs = len(self.waiting_queue)
+            self.stats.num_grammar_queue_reqs = len(self.grammar_queue)
+            self.stats.spec_accept_length = spec_accept_length
+            self.stats.total_retracted_reqs = self.total_retracted_reqs
+            self.metrics_collector.log_stats(self.stats)
+            if self.disaggregation_mode == DisaggregationMode.DECODE:
+                self.stats.num_decode_prealloc_queue_reqs = len(
+                    self.disagg_decode_prealloc_queue.queue
+                )
+                self.stats.num_decode_transfer_queue_reqs = len(
+                    self.disagg_decode_transfer_queue.queue
+                )
+            self._emit_kv_metrics()
+        self._publish_kv_events()
+
+    def _emit_kv_metrics(self):
+        kv_metrics = KvMetrics()
+        kv_metrics.request_active_slots = self.stats.num_running_reqs
+        kv_metrics.request_total_slots = self.max_running_requests
+        kv_metrics.kv_active_blocks = int(
+            self.stats.token_usage * self.max_total_num_tokens
+        )
+        kv_metrics.kv_total_blocks = self.max_total_num_tokens
+        kv_metrics.num_requests_waiting = self.stats.num_queue_reqs
+        kv_metrics.gpu_cache_usage_perc = self.stats.token_usage
+        kv_metrics.gpu_prefix_cache_hit_rate = self.stats.cache_hit_rate
+        kv_metrics.data_parallel_rank = self.dp_rank if self.dp_rank is not None else 0
+
+        if not self.send_metrics_from_scheduler.closed:
+            self.send_metrics_from_scheduler.send_pyobj(kv_metrics)
+
+    def _publish_kv_events(self):
+        if self.enable_kv_cache_events:
+            events = self.tree_cache.take_events()
+            if events:
+                batch = KVEventBatch(ts=time.time(), events=events)
+                self.kv_event_publisher.publish(batch)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.managers.scheduler.Scheduler" href="scheduler.html#sglang.srt.managers.scheduler.Scheduler">Scheduler</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.init_kv_events"><code class="name flex">
+<span>def <span class="ident">init_kv_events</span></span>(<span>self, kv_events_config: str | None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_kv_events(self, kv_events_config: Optional[str]):
+    if self.enable_kv_cache_events:
+        self.kv_event_publisher = EventPublisherFactory.create(
+            kv_events_config, self.attn_dp_rank
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.init_metrics"><code class="name flex">
+<span>def <span class="ident">init_metrics</span></span>(<span>self, tp_rank: int, pp_rank: int, dp_rank: int | None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def init_metrics(self, tp_rank: int, pp_rank: int, dp_rank: Optional[int]):
+    self.last_gen_throughput: float = 0.0
+    self.last_input_throughput: float = 0.0
+    self.step_time_dict = defaultdict(list)  # Dict[batch size -&gt; step time]
+    self.spec_num_total_accepted_tokens = 0
+    self.spec_num_total_forward_ct = 0
+    self.cum_spec_accept_length = 0
+    self.cum_spec_accept_count = 0
+    self.total_retracted_reqs = 0
+    self.stats = SchedulerStats()
+    if self.enable_metrics:
+        engine_type = &#34;unified&#34;
+        labels = {
+            &#34;model_name&#34;: self.server_args.served_model_name,
+            &#34;engine_type&#34;: engine_type,
+            &#34;tp_rank&#34;: tp_rank,
+            &#34;pp_rank&#34;: pp_rank,
+        }
+        if dp_rank is not None:
+            labels[&#34;dp_rank&#34;] = dp_rank
+        self.metrics_collector = SchedulerMetricsCollector(labels=labels)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.log_decode_stats"><code class="name flex">
+<span>def <span class="ident">log_decode_stats</span></span>(<span>self,<br>can_run_cuda_graph: bool,<br>running_batch: <a title="sglang.srt.managers.schedule_batch.ScheduleBatch" href="schedule_batch.html#sglang.srt.managers.schedule_batch.ScheduleBatch">ScheduleBatch</a> = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_decode_stats(
+    self, can_run_cuda_graph: bool, running_batch: ScheduleBatch = None
+):
+    batch = running_batch or self.running_batch
+
+    gap_latency = time.perf_counter() - self.last_decode_stats_tic
+    self.last_decode_stats_tic = time.perf_counter()
+    self.last_gen_throughput = self.num_generated_tokens / gap_latency
+    self.num_generated_tokens = 0
+    num_running_reqs = len(batch.reqs)
+    if self.is_hybrid:
+        (
+            full_num_used,
+            swa_num_used,
+            full_token_usage,
+            swa_token_usage,
+            _,
+            _,
+            _,
+            _,
+        ) = self._get_swa_token_info()
+        num_used = max(full_num_used, swa_num_used)
+        token_usage = max(full_token_usage, swa_token_usage)
+        token_msg = (
+            f&#34;#full token: {full_num_used}, &#34;
+            f&#34;full token usage: {full_token_usage:.2f}, &#34;
+            f&#34;#swa token: {swa_num_used}, &#34;
+            f&#34;swa token usage: {swa_token_usage:.2f}, &#34;
+        )
+    else:
+        num_used, token_usage, _, _ = self._get_token_info()
+        token_msg = f&#34;#token: {num_used}, &#34; f&#34;token usage: {token_usage:.2f}, &#34;
+
+    if RECORD_STEP_TIME:
+        self.step_time_dict[num_running_reqs].append(
+            gap_latency / self.server_args.decode_log_interval
+        )
+
+    msg = f&#34;Decode batch. #running-req: {num_running_reqs}, {token_msg}&#34;
+
+    if self.spec_algorithm.is_none():
+        spec_accept_length = 0
+    else:
+        spec_accept_length = (
+            self.spec_num_total_accepted_tokens / self.spec_num_total_forward_ct
+        )
+        self.cum_spec_accept_length += self.spec_num_total_accepted_tokens
+        self.cum_spec_accept_count += self.spec_num_total_forward_ct
+        self.spec_num_total_accepted_tokens = self.spec_num_total_forward_ct = 0
+        msg += f&#34;accept len: {spec_accept_length:.2f}, &#34;
+
+    if self.disaggregation_mode == DisaggregationMode.DECODE:
+        msg += f&#34;pre-allocated usage: {self.disagg_decode_prealloc_queue.num_tokens_pre_allocated / self.max_total_num_tokens:.2f}, &#34;
+        msg += f&#34;#retracted-req: {len(self.disagg_decode_prealloc_queue.retracted_queue)}, &#34;
+
+    msg += (
+        f&#34;cuda graph: {can_run_cuda_graph}, &#34;
+        f&#34;gen throughput (token/s): {self.last_gen_throughput:.2f}, &#34;
+        f&#34;#queue-req: {len(self.waiting_queue)}, &#34;
+    )
+
+    logger.info(msg)
+    if self.enable_metrics:
+        self.stats.num_running_reqs = num_running_reqs
+        self.stats.num_used_tokens = num_used
+        self.stats.token_usage = round(token_usage, 2)
+        self.stats.cache_hit_rate = 0.0
+        self.stats.gen_throughput = self.last_gen_throughput
+        self.stats.num_queue_reqs = len(self.waiting_queue)
+        self.stats.num_grammar_queue_reqs = len(self.grammar_queue)
+        self.stats.spec_accept_length = spec_accept_length
+        self.stats.total_retracted_reqs = self.total_retracted_reqs
+        self.metrics_collector.log_stats(self.stats)
+        if self.disaggregation_mode == DisaggregationMode.DECODE:
+            self.stats.num_decode_prealloc_queue_reqs = len(
+                self.disagg_decode_prealloc_queue.queue
+            )
+            self.stats.num_decode_transfer_queue_reqs = len(
+                self.disagg_decode_transfer_queue.queue
+            )
+        self._emit_kv_metrics()
+    self._publish_kv_events()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.log_prefill_stats"><code class="name flex">
+<span>def <span class="ident">log_prefill_stats</span></span>(<span>self,<br>adder: <a title="sglang.srt.managers.schedule_policy.PrefillAdder" href="schedule_policy.html#sglang.srt.managers.schedule_policy.PrefillAdder">PrefillAdder</a>,<br>can_run_list: List[<a title="sglang.srt.managers.schedule_batch.Req" href="schedule_batch.html#sglang.srt.managers.schedule_batch.Req">Req</a>],<br>running_bs: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_prefill_stats(
+    self,
+    adder: PrefillAdder,
+    can_run_list: List[Req],
+    running_bs: int,
+):
+    gap_latency = time.perf_counter() - self.last_prefill_stats_tic
+    self.last_prefill_stats_tic = time.perf_counter()
+    self.last_input_throughput = self.last_prefill_tokens / gap_latency
+    self.last_prefill_tokens = adder.log_input_tokens
+
+    if self.is_hybrid:
+        (
+            full_num_used,
+            swa_num_used,
+            full_token_usage,
+            swa_token_usage,
+            _,
+            _,
+            _,
+            _,
+        ) = self._get_swa_token_info()
+        num_used = max(full_num_used, swa_num_used)
+        token_usage = max(full_token_usage, swa_token_usage)
+        token_msg = (
+            f&#34;full token usage: {full_token_usage:.2f}, &#34;
+            f&#34;swa token usage: {swa_token_usage:.2f}, &#34;
+        )
+    else:
+        num_used, token_usage, _, _ = self._get_token_info()
+        token_msg = f&#34;token usage: {token_usage:.2f}, &#34;
+
+    num_new_seq = len(can_run_list)
+    f = (
+        f&#34;Prefill batch. &#34;
+        f&#34;#new-seq: {num_new_seq}, &#34;
+        f&#34;#new-token: {adder.log_input_tokens}, &#34;
+        f&#34;#cached-token: {adder.log_hit_tokens}, &#34;
+        f&#34;{token_msg}&#34;
+    )
+
+    if self.disaggregation_mode == DisaggregationMode.PREFILL:
+        f += f&#34;#unbootstrapped-req: {len(self.disagg_prefill_bootstrap_queue.queue)}, &#34;
+        f += f&#34;#queue-req: {len(self.waiting_queue)}, &#34;
+        f += f&#34;#transferring-req: {len(self.disagg_prefill_inflight_queue)}, &#34;
+        f += f&#34;input throughput (token/s): {self.last_input_throughput:.2f}, &#34;
+    else:
+        f += f&#34;#running-req: {running_bs}, &#34;
+        f += f&#34;#queue-req: {len(self.waiting_queue)}, &#34;
+
+    logger.info(f)
+
+    if self.enable_metrics:
+        total_tokens = adder.log_input_tokens + adder.log_hit_tokens
+
+        cache_hit_rate = (
+            adder.log_hit_tokens / total_tokens if total_tokens &gt; 0 else 0.0
+        )
+        self.stats.num_running_reqs = running_bs
+        self.stats.num_used_tokens = num_used
+        self.stats.token_usage = round(token_usage, 2)
+        self.stats.num_queue_reqs = len(self.waiting_queue)
+        self.stats.cache_hit_rate = cache_hit_rate
+
+        total_queue_latency = 0
+        for req in can_run_list:
+            total_queue_latency += req.queue_time_end - req.queue_time_start
+        self.stats.avg_request_queue_latency = total_queue_latency / num_new_seq
+
+        if self.disaggregation_mode == DisaggregationMode.PREFILL:
+            self.stats.num_prefill_prealloc_queue_reqs = len(
+                self.disagg_prefill_bootstrap_queue.queue
+            )
+            self.stats.num_prefill_inflight_queue_reqs = len(
+                self.disagg_prefill_inflight_queue
+            )
+
+        self.metrics_collector.log_stats(self.stats)
+        self._emit_kv_metrics()
+    self._publish_kv_events()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.managers" href="index.html">sglang.srt.managers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.managers.scheduler_metrics_mixin.KvMetrics" href="#sglang.srt.managers.scheduler_metrics_mixin.KvMetrics">KvMetrics</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin" href="#sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin">SchedulerMetricsMixin</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.init_kv_events" href="#sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.init_kv_events">init_kv_events</a></code></li>
+<li><code><a title="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.init_metrics" href="#sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.init_metrics">init_metrics</a></code></li>
+<li><code><a title="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.log_decode_stats" href="#sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.log_decode_stats">log_decode_stats</a></code></li>
+<li><code><a title="sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.log_prefill_stats" href="#sglang.srt.managers.scheduler_metrics_mixin.SchedulerMetricsMixin.log_prefill_stats">log_prefill_stats</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

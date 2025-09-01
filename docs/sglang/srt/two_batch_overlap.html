@@ -1,0 +1,1175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.two_batch_overlap API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.two_batch_overlap</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.two_batch_overlap.compute_split_indices_for_cuda_graph_replay"><code class="name flex">
+<span>def <span class="ident">compute_split_indices_for_cuda_graph_replay</span></span>(<span>forward_mode: ForwardMode,<br>cuda_graph_num_tokens: int,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_split_indices_for_cuda_graph_replay(
+    forward_mode: ForwardMode,
+    cuda_graph_num_tokens: int,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]],
+):
+    forward_mode_for_tbo_split = (
+        forward_mode if forward_mode != ForwardMode.IDLE else ForwardMode.DECODE
+    )
+    token_num_per_seq = get_token_num_per_seq(
+        forward_mode=forward_mode, spec_info=spec_info
+    )
+    tbo_split_seq_index = compute_split_seq_index(
+        forward_mode=forward_mode_for_tbo_split,
+        num_tokens=cuda_graph_num_tokens,
+        extend_lens=None,
+        token_num_per_seq=token_num_per_seq,
+    )
+    tbo_split_token_index = compute_split_token_index(
+        split_seq_index=tbo_split_seq_index,
+        forward_mode=forward_mode_for_tbo_split,
+        extend_seq_lens=None,
+        token_num_per_seq=token_num_per_seq,
+    )
+    return tbo_split_seq_index, tbo_split_token_index</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.compute_split_seq_index"><code class="name flex">
+<span>def <span class="ident">compute_split_seq_index</span></span>(<span>forward_mode: "'ForwardMode'",<br>num_tokens: int,<br>extend_lens: Optional[Sequence[int]],<br>token_num_per_seq: Optional[int]) ‑> int | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_split_seq_index(
+    forward_mode: &#34;ForwardMode&#34;,
+    num_tokens: int,
+    extend_lens: Optional[Sequence[int]],
+    token_num_per_seq: Optional[int],
+) -&gt; Optional[int]:
+    if forward_mode == ForwardMode.EXTEND:
+        assert extend_lens is not None
+        return _split_extend_seqs(extend_lens)
+    elif forward_mode.is_target_verify() or forward_mode.is_decode():
+        assert token_num_per_seq is not None
+        return (num_tokens // token_num_per_seq) // 2
+    elif forward_mode.is_idle():
+        assert num_tokens == 0
+        return 0
+    else:
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.compute_split_token_index"><code class="name flex">
+<span>def <span class="ident">compute_split_token_index</span></span>(<span>split_seq_index: int,<br>forward_mode: "'ForwardMode'",<br>extend_seq_lens: Optional[Sequence[int]],<br>token_num_per_seq: Optional[int]) ‑> int</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_split_token_index(
+    split_seq_index: int,
+    forward_mode: &#34;ForwardMode&#34;,
+    extend_seq_lens: Optional[Sequence[int]],
+    token_num_per_seq: Optional[int],
+) -&gt; int:
+    if forward_mode == ForwardMode.EXTEND:
+        assert extend_seq_lens is not None
+        if _is_two_chunk_split_enabled(extend_seq_lens):
+            return sum(extend_seq_lens) // 2
+        return sum(extend_seq_lens[:split_seq_index])
+    elif forward_mode.is_target_verify() or forward_mode.is_decode():
+        assert token_num_per_seq is not None
+        return split_seq_index * token_num_per_seq
+    elif forward_mode.is_idle():
+        assert split_seq_index == 0
+        return 0
+    else:
+        raise NotImplementedError</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.get_token_num_per_seq"><code class="name flex">
+<span>def <span class="ident">get_token_num_per_seq</span></span>(<span>forward_mode: ForwardMode,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_token_num_per_seq(
+    forward_mode: ForwardMode,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]] = None,
+):
+    if forward_mode.is_target_verify():
+        return spec_info.draft_token_num
+    elif forward_mode.is_decode():
+        return 1
+    elif forward_mode.is_idle():
+        return 0
+    else:
+        # For extend, we should not use `token_num_per_seq`.
+        return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.model_forward_maybe_tbo"><code class="name flex">
+<span>def <span class="ident">model_forward_maybe_tbo</span></span>(<span>layers,<br>enable_tbo: bool,<br>positions: torch.Tensor,<br>forward_batch: ForwardBatch,<br>hidden_states: torch.Tensor,<br>input_data_scatter_mode: ScatterMode,<br>residual: Optional[torch.Tensor],<br>zero_allocator: Optional[BumpAllocator] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def model_forward_maybe_tbo(
+    layers,
+    enable_tbo: bool,
+    positions: torch.Tensor,
+    forward_batch: ForwardBatch,
+    hidden_states: torch.Tensor,
+    input_data_scatter_mode: ScatterMode,
+    residual: Optional[torch.Tensor],
+    zero_allocator: Optional[BumpAllocator] = None,
+):
+    inputs = dict(
+        positions=positions,
+        hidden_states=hidden_states,
+        forward_batch=forward_batch,
+        residual=residual,
+        zero_allocator=zero_allocator,
+    )
+    layer_input_scatter_mode = layers[0].layer_scatter_modes.layer_input_mode
+    operations_strategy = OperationsStrategy.init_new_tbo(
+        layers, forward_batch.global_forward_mode
+    )
+    if enable_tbo:
+        return _model_forward_tbo(
+            inputs=inputs,
+            operations_strategy=operations_strategy,
+            input_data_scatter_mode=input_data_scatter_mode,
+            layer_input_scatter_mode=layer_input_scatter_mode,
+        )
+    else:
+        return _model_forward_non_tbo(inputs, operations_strategy)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.split_spec_info"><code class="name flex">
+<span>def <span class="ident">split_spec_info</span></span>(<span>spec_info: Optional[EagleVerifyInput],<br>start_seq_index: int,<br>end_seq_index: int,<br>start_token_index: int,<br>end_token_index: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def split_spec_info(
+    spec_info: Optional[EagleVerifyInput],
+    start_seq_index: int,
+    end_seq_index: int,
+    start_token_index: int,
+    end_token_index: int,
+):
+    if spec_info is None:
+        return None
+    if spec_info.draft_token is not None:
+        draft_token = spec_info.draft_token[start_token_index:end_token_index]
+    else:
+        draft_token = None
+    if spec_info.custom_mask is not None and spec_info.draft_token is not None:
+        custom_mask_start = _compute_mask_offset(start_seq_index, spec_info)
+        if end_seq_index == spec_info.seq_lens_cpu.shape[0]:
+            custom_mask_end = spec_info.custom_mask.shape[0]
+        else:
+            custom_mask_end = _compute_mask_offset(end_seq_index, spec_info)
+
+        if custom_mask_end &gt; custom_mask_start:
+            custom_mask = spec_info.custom_mask[custom_mask_start:custom_mask_end]
+        else:
+            custom_mask = spec_info.custom_mask
+    else:
+        custom_mask = spec_info.custom_mask
+    if spec_info.positions is not None:
+        positions = spec_info.positions[start_token_index:end_token_index]
+    else:
+        positions = None
+    if spec_info.retrive_index is not None:
+        retrive_index = spec_info.retrive_index[start_seq_index:end_seq_index]
+    else:
+        retrive_index = None
+    if spec_info.retrive_next_token is not None:
+        retrive_next_token = spec_info.retrive_next_token[start_seq_index:end_seq_index]
+    else:
+        retrive_next_token = None
+    if spec_info.retrive_next_sibling is not None:
+        retrive_next_sibling = spec_info.retrive_next_sibling[
+            start_seq_index:end_seq_index
+        ]
+    else:
+        retrive_next_sibling = None
+    if spec_info.retrive_cum_len is not None:
+        retrive_cum_len = spec_info.retrive_cum_len[start_seq_index:end_seq_index]
+    else:
+        retrive_cum_len = None
+
+    if spec_info.seq_lens_cpu is not None:
+        seq_lens_cpu = spec_info.seq_lens_cpu[start_seq_index:end_seq_index]
+    else:
+        seq_lens_cpu = None
+    if seq_lens_cpu is not None:
+        seq_lens_sum = seq_lens_cpu.sum()
+    else:
+        seq_lens_sum = None
+    output_spec_info = replace(
+        spec_info,
+        custom_mask=custom_mask,
+        draft_token=draft_token,
+        positions=positions,
+        retrive_index=retrive_index,
+        retrive_next_token=retrive_next_token,
+        retrive_next_sibling=retrive_next_sibling,
+        retrive_cum_len=retrive_cum_len,
+        seq_lens_cpu=seq_lens_cpu,
+        seq_lens_sum=seq_lens_sum,
+    )
+    return output_spec_info</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher"><code class="flex name class">
+<span>class <span class="ident">MaybeTboDeepEPDispatcher</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaybeTboDeepEPDispatcher:
+    def __init__(self, **kwargs):
+        num_inner_dispatchers = 2 if is_tbo_enabled() else 1
+        self._inners = [
+            DeepEPDispatcher(**kwargs) for _ in range(num_inner_dispatchers)
+        ]
+
+    def _execute(self, name, tbo_subbatch_index: Optional[int] = None, **kwargs):
+        return getattr(self._inners[tbo_subbatch_index or 0], name)(**kwargs)
+
+    def dispatch(self, **kwargs) -&gt; DispatchOutput:
+        return self._execute(&#34;dispatch&#34;, **kwargs)
+
+    def dispatch_a(self, **kwargs):
+        return self._execute(&#34;dispatch_a&#34;, **kwargs)
+
+    def dispatch_b(self, **kwargs):
+        return self._execute(&#34;dispatch_b&#34;, **kwargs)
+
+    def combine(self, **kwargs) -&gt; torch.Tensor:
+        return self._execute(&#34;combine&#34;, **kwargs)
+
+    def combine_a(self, **kwargs):
+        return self._execute(&#34;combine_a&#34;, **kwargs)
+
+    def combine_b(self, **kwargs):
+        return self._execute(&#34;combine_b&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine"><code class="name flex">
+<span>def <span class="ident">combine</span></span>(<span>self, **kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine(self, **kwargs) -&gt; torch.Tensor:
+    return self._execute(&#34;combine&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine_a"><code class="name flex">
+<span>def <span class="ident">combine_a</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine_a(self, **kwargs):
+    return self._execute(&#34;combine_a&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine_b"><code class="name flex">
+<span>def <span class="ident">combine_b</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine_b(self, **kwargs):
+    return self._execute(&#34;combine_b&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch"><code class="name flex">
+<span>def <span class="ident">dispatch</span></span>(<span>self, **kwargs) ‑> DispatchOutput</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch(self, **kwargs) -&gt; DispatchOutput:
+    return self._execute(&#34;dispatch&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch_a"><code class="name flex">
+<span>def <span class="ident">dispatch_a</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_a(self, **kwargs):
+    return self._execute(&#34;dispatch_a&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch_b"><code class="name flex">
+<span>def <span class="ident">dispatch_b</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_b(self, **kwargs):
+    return self._execute(&#34;dispatch_b&#34;, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin"><code class="flex name class">
+<span>class <span class="ident">TboCudaGraphRunnerPlugin</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TboCudaGraphRunnerPlugin:
+    def __init__(self):
+        self._tbo_children_num_token_non_padded = torch.zeros((2,), dtype=torch.int32)
+
+    def capture_one_batch_size(self, batch: ForwardBatch, num_tokens: int):
+        if not is_tbo_enabled():
+            return
+        token_num_per_seq = get_token_num_per_seq(
+            forward_mode=batch.forward_mode, spec_info=batch.spec_info
+        )
+
+        batch.tbo_split_seq_index = compute_split_seq_index(
+            forward_mode=batch.forward_mode,
+            num_tokens=num_tokens,
+            extend_lens=None,
+            token_num_per_seq=token_num_per_seq,
+        )
+        # For simplicity, when two_batch_overlap is enabled, we only capture CUDA Graph for tbo=true
+        assert batch.tbo_split_seq_index is not None, f&#34;{num_tokens=}&#34;
+
+        self._tbo_children_num_token_non_padded[...] = (
+            TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded(batch)
+        )
+
+        TboForwardBatchPreparer.prepare_raw(
+            batch,
+            tbo_children_num_token_non_padded=self._tbo_children_num_token_non_padded,
+        )
+
+    def replay_prepare(
+        self,
+        forward_mode: ForwardMode,
+        bs: int,
+        num_token_non_padded: int,
+        spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]],
+    ):
+        token_num_per_seq = get_token_num_per_seq(
+            forward_mode=forward_mode, spec_info=spec_info
+        )
+        tbo_split_seq_index, tbo_split_token_index = (
+            compute_split_indices_for_cuda_graph_replay(
+                forward_mode=forward_mode,
+                cuda_graph_num_tokens=bs * token_num_per_seq,
+                spec_info=spec_info,
+            )
+        )
+
+        self._tbo_children_num_token_non_padded[...] = (
+            TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded_raw(
+                tbo_split_token_index=tbo_split_token_index,
+                num_token_non_padded=num_token_non_padded,
+            )
+        )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin.capture_one_batch_size"><code class="name flex">
+<span>def <span class="ident">capture_one_batch_size</span></span>(<span>self, batch: ForwardBatch, num_tokens: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def capture_one_batch_size(self, batch: ForwardBatch, num_tokens: int):
+    if not is_tbo_enabled():
+        return
+    token_num_per_seq = get_token_num_per_seq(
+        forward_mode=batch.forward_mode, spec_info=batch.spec_info
+    )
+
+    batch.tbo_split_seq_index = compute_split_seq_index(
+        forward_mode=batch.forward_mode,
+        num_tokens=num_tokens,
+        extend_lens=None,
+        token_num_per_seq=token_num_per_seq,
+    )
+    # For simplicity, when two_batch_overlap is enabled, we only capture CUDA Graph for tbo=true
+    assert batch.tbo_split_seq_index is not None, f&#34;{num_tokens=}&#34;
+
+    self._tbo_children_num_token_non_padded[...] = (
+        TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded(batch)
+    )
+
+    TboForwardBatchPreparer.prepare_raw(
+        batch,
+        tbo_children_num_token_non_padded=self._tbo_children_num_token_non_padded,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin.replay_prepare"><code class="name flex">
+<span>def <span class="ident">replay_prepare</span></span>(<span>self,<br>forward_mode: ForwardMode,<br>bs: int,<br>num_token_non_padded: int,<br>spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def replay_prepare(
+    self,
+    forward_mode: ForwardMode,
+    bs: int,
+    num_token_non_padded: int,
+    spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]],
+):
+    token_num_per_seq = get_token_num_per_seq(
+        forward_mode=forward_mode, spec_info=spec_info
+    )
+    tbo_split_seq_index, tbo_split_token_index = (
+        compute_split_indices_for_cuda_graph_replay(
+            forward_mode=forward_mode,
+            cuda_graph_num_tokens=bs * token_num_per_seq,
+            spec_info=spec_info,
+        )
+    )
+
+    self._tbo_children_num_token_non_padded[...] = (
+        TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded_raw(
+            tbo_split_token_index=tbo_split_token_index,
+            num_token_non_padded=num_token_non_padded,
+        )
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboDPAttentionPreparer"><code class="flex name class">
+<span>class <span class="ident">TboDPAttentionPreparer</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TboDPAttentionPreparer:
+    def prepare_all_gather(
+        self,
+        local_batch: ScheduleBatch,
+    ):
+
+        deepep_mode = get_deepep_mode()
+        enable_deepep_moe = get_moe_a2a_backend().is_deepep()
+        enable_two_batch_overlap = is_tbo_enabled()
+
+        self.enable_two_batch_overlap = enable_two_batch_overlap
+
+        if local_batch is not None:
+            token_num_per_seq = get_token_num_per_seq(
+                forward_mode=local_batch.forward_mode, spec_info=local_batch.spec_info
+            )
+
+            if (
+                local_batch.forward_mode.is_target_verify()
+                or local_batch.forward_mode.is_decode()
+            ):
+                num_tokens = local_batch.batch_size() * token_num_per_seq
+            else:
+                num_tokens = local_batch.extend_num_tokens
+            self.local_tbo_split_seq_index = compute_split_seq_index(
+                forward_mode=local_batch.forward_mode,
+                num_tokens=num_tokens,
+                extend_lens=local_batch.extend_lens,
+                token_num_per_seq=token_num_per_seq,
+            )
+            resolved_deepep_mode = deepep_mode.resolve(local_batch.is_extend_in_batch)
+            local_can_run_tbo = (self.local_tbo_split_seq_index is not None) and not (
+                (
+                    local_batch.forward_mode.is_extend()
+                    and not local_batch.forward_mode.is_target_verify()
+                )
+                and enable_deepep_moe
+                and (resolved_deepep_mode.is_low_latency())
+            )
+        else:
+            self.local_tbo_split_seq_index = 0
+            local_can_run_tbo = True
+
+        local_forward_mode = self._compute_local_forward_mode(local_batch)
+
+        return local_can_run_tbo, local_forward_mode
+
+    def compute_output(self, partial_global_info):
+        local_can_run_tbo_aggregated = min(partial_global_info[:, 0, 0].tolist())
+        forward_modes = partial_global_info[:, 0, 1].tolist()
+
+        global_forward_mode, forward_mode_agree = self._compute_global_forward_mode(
+            forward_modes
+        )
+
+        can_run_tbo = (
+            self.enable_two_batch_overlap
+            and local_can_run_tbo_aggregated
+            and forward_mode_agree
+        )
+
+        tbo_split_seq_index = self.local_tbo_split_seq_index if can_run_tbo else None
+        global_forward_mode = global_forward_mode if can_run_tbo else None
+        return tbo_split_seq_index, global_forward_mode
+
+    @staticmethod
+    def _compute_local_forward_mode(local_batch):
+        return (
+            local_batch.forward_mode if local_batch is not None else ForwardMode.IDLE
+        ).value
+
+    @staticmethod
+    def _compute_global_forward_mode(forward_modes):
+        forward_modes_excluding_idle = [
+            x for x in forward_modes if x != ForwardMode.IDLE.value
+        ]
+
+        if not forward_modes_excluding_idle:
+            return ForwardMode.IDLE, False
+
+        forward_mode_agree = TboDPAttentionPreparer._is_all_same(
+            forward_modes_excluding_idle
+        )
+        global_forward_mode = (
+            ForwardMode(forward_modes_excluding_idle[0]) if forward_mode_agree else None
+        )
+        return global_forward_mode, forward_mode_agree
+
+    @staticmethod
+    def _is_all_same(x):
+        return all(value == x[0] for value in x)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.two_batch_overlap.TboDPAttentionPreparer.compute_output"><code class="name flex">
+<span>def <span class="ident">compute_output</span></span>(<span>self, partial_global_info)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_output(self, partial_global_info):
+    local_can_run_tbo_aggregated = min(partial_global_info[:, 0, 0].tolist())
+    forward_modes = partial_global_info[:, 0, 1].tolist()
+
+    global_forward_mode, forward_mode_agree = self._compute_global_forward_mode(
+        forward_modes
+    )
+
+    can_run_tbo = (
+        self.enable_two_batch_overlap
+        and local_can_run_tbo_aggregated
+        and forward_mode_agree
+    )
+
+    tbo_split_seq_index = self.local_tbo_split_seq_index if can_run_tbo else None
+    global_forward_mode = global_forward_mode if can_run_tbo else None
+    return tbo_split_seq_index, global_forward_mode</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboDPAttentionPreparer.prepare_all_gather"><code class="name flex">
+<span>def <span class="ident">prepare_all_gather</span></span>(<span>self, local_batch: ScheduleBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prepare_all_gather(
+    self,
+    local_batch: ScheduleBatch,
+):
+
+    deepep_mode = get_deepep_mode()
+    enable_deepep_moe = get_moe_a2a_backend().is_deepep()
+    enable_two_batch_overlap = is_tbo_enabled()
+
+    self.enable_two_batch_overlap = enable_two_batch_overlap
+
+    if local_batch is not None:
+        token_num_per_seq = get_token_num_per_seq(
+            forward_mode=local_batch.forward_mode, spec_info=local_batch.spec_info
+        )
+
+        if (
+            local_batch.forward_mode.is_target_verify()
+            or local_batch.forward_mode.is_decode()
+        ):
+            num_tokens = local_batch.batch_size() * token_num_per_seq
+        else:
+            num_tokens = local_batch.extend_num_tokens
+        self.local_tbo_split_seq_index = compute_split_seq_index(
+            forward_mode=local_batch.forward_mode,
+            num_tokens=num_tokens,
+            extend_lens=local_batch.extend_lens,
+            token_num_per_seq=token_num_per_seq,
+        )
+        resolved_deepep_mode = deepep_mode.resolve(local_batch.is_extend_in_batch)
+        local_can_run_tbo = (self.local_tbo_split_seq_index is not None) and not (
+            (
+                local_batch.forward_mode.is_extend()
+                and not local_batch.forward_mode.is_target_verify()
+            )
+            and enable_deepep_moe
+            and (resolved_deepep_mode.is_low_latency())
+        )
+    else:
+        self.local_tbo_split_seq_index = 0
+        local_can_run_tbo = True
+
+    local_forward_mode = self._compute_local_forward_mode(local_batch)
+
+    return local_can_run_tbo, local_forward_mode</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer"><code class="flex name class">
+<span>class <span class="ident">TboForwardBatchPreparer</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TboForwardBatchPreparer:
+    @classmethod
+    def prepare(cls, batch: ForwardBatch, is_draft_worker: bool = False):
+        if batch.tbo_split_seq_index is None or is_draft_worker:
+            return
+
+        tbo_children_num_token_non_padded = (
+            cls.compute_tbo_children_num_token_non_padded(batch)
+        )
+        cls.prepare_raw(
+            batch, tbo_children_num_token_non_padded=tbo_children_num_token_non_padded
+        )
+
+    @classmethod
+    def prepare_raw(
+        cls, batch: ForwardBatch, tbo_children_num_token_non_padded: torch.Tensor
+    ):
+        from sglang.srt.layers.attention.tbo_backend import TboAttnBackend
+
+        tbo_split_token_index = cls._compute_split_token_index(batch)
+
+        is_enable_two_chunk = (
+            batch.forward_mode == ForwardMode.EXTEND
+            and _is_two_chunk_split_enabled(batch.extend_seq_lens_cpu)
+        )
+
+        if _tbo_debug:
+            logger.info(
+                f&#34;TboForwardBatchPreparer.prepare &#34;
+                f&#34;is_enable_two_chunk={is_enable_two_chunk} &#34;
+                f&#34;tbo_split_seq_index={batch.tbo_split_seq_index} &#34;
+                f&#34;tbo_split_token_index={tbo_split_token_index} &#34;
+                f&#34;extend_seq_lens={batch.extend_seq_lens_cpu} &#34;
+                f&#34;bs={batch.batch_size} &#34;
+                f&#34;forward_mode={batch.forward_mode}&#34;
+            )
+
+        assert isinstance(batch.attn_backend, TboAttnBackend)
+        attn_backend_child_a, attn_backend_child_b = batch.attn_backend.children
+
+        [out_num_token_non_padded_a, out_num_token_non_padded_b] = (
+            tbo_children_num_token_non_padded
+        )
+
+        child_a = cls.filter_batch(
+            batch,
+            start_token_index=0,
+            end_token_index=tbo_split_token_index,
+            start_seq_index=0,
+            end_seq_index=(
+                batch.tbo_split_seq_index + 1
+                if is_enable_two_chunk
+                else batch.tbo_split_seq_index
+            ),
+            output_attn_backend=attn_backend_child_a,
+            out_num_token_non_padded=out_num_token_non_padded_a,
+        )
+        child_b = cls.filter_batch(
+            batch,
+            start_token_index=tbo_split_token_index,
+            end_token_index=batch.input_ids.shape[0],
+            start_seq_index=batch.tbo_split_seq_index,
+            end_seq_index=batch.batch_size,
+            output_attn_backend=attn_backend_child_b,
+            out_num_token_non_padded=out_num_token_non_padded_b,
+        )
+
+        if is_enable_two_chunk:
+            cls.derive_fields_related_to_seq_len_for_two_chunk(
+                batch,
+                child_a=child_a,
+                child_b=child_b,
+                tbo_split_seq_index=batch.tbo_split_seq_index,
+            )
+
+        assert batch.tbo_children is None
+        batch.tbo_children = [child_a, child_b]
+
+    @classmethod
+    def derive_fields_related_to_seq_len_for_two_chunk(
+        cls,
+        batch: ForwardBatch,
+        *,
+        child_a: ForwardBatch,
+        child_b: ForwardBatch,
+        tbo_split_seq_index: int,
+    ):
+        extend_seq_lens_cpu = batch.extend_seq_lens_cpu
+        overall_seq_lens_sum = sum(extend_seq_lens_cpu)
+        half_seq_lens_sum = overall_seq_lens_sum // 2
+        left_last_seq_token_num = half_seq_lens_sum - sum(
+            extend_seq_lens_cpu[:tbo_split_seq_index]
+        )
+        right_first_seq_token_num = (
+            extend_seq_lens_cpu[tbo_split_seq_index] - left_last_seq_token_num
+        )
+
+        # making deepcopy to be extra safe
+        child_a.extend_seq_lens_cpu = copy.deepcopy(child_a.extend_seq_lens_cpu)
+        child_a.extend_seq_lens_cpu[-1] = left_last_seq_token_num
+        child_b.extend_seq_lens_cpu = copy.deepcopy(child_b.extend_seq_lens_cpu)
+        child_b.extend_seq_lens_cpu[0] = right_first_seq_token_num
+        for child in [child_a, child_b]:
+            _update_device_and_sum_field_from_cpu_field(
+                batch=child,
+                cpu_field=&#34;extend_seq_lens_cpu&#34;,
+                device_field=&#34;extend_seq_lens&#34;,
+                sum_field=&#34;extend_num_tokens&#34;,
+            )
+
+        assert (
+            child_a.extend_num_tokens == half_seq_lens_sum
+        ), f&#34;{child_a.extend_num_tokens=}, {half_seq_lens_sum=}&#34;
+
+        child_a.seq_lens_cpu = copy.deepcopy(child_a.seq_lens_cpu)
+        child_a.seq_lens_cpu[-1] = (
+            child_a.extend_seq_lens_cpu[-1] + child_a.extend_prefix_lens_cpu[-1]
+        )
+        _update_device_and_sum_field_from_cpu_field(
+            batch=child_a,
+            cpu_field=&#34;seq_lens_cpu&#34;,
+            device_field=&#34;seq_lens&#34;,
+            sum_field=&#34;seq_lens_sum&#34;,
+        )
+
+        child_b.extend_prefix_lens_cpu = copy.deepcopy(child_b.extend_prefix_lens_cpu)
+        child_b.extend_prefix_lens_cpu[0] += left_last_seq_token_num
+        _update_device_and_sum_field_from_cpu_field(
+            batch=child_b,
+            cpu_field=&#34;extend_prefix_lens_cpu&#34;,
+            device_field=&#34;extend_prefix_lens&#34;,
+            sum_field=None,
+        )
+        _, child_b.extend_start_loc = compute_position(
+            global_server_args_dict[&#34;attention_backend&#34;],
+            child_b.extend_prefix_lens,
+            child_b.extend_seq_lens,
+            child_b.extend_num_tokens,
+        )
+
+    @classmethod
+    def filter_batch(
+        cls,
+        batch: ForwardBatch,
+        *,
+        start_token_index: int,
+        end_token_index: int,
+        start_seq_index: int,
+        end_seq_index: int,
+        output_attn_backend: AttentionBackend,
+        out_num_token_non_padded: torch.Tensor,
+    ):
+        assert (
+            end_token_index &gt;= start_token_index
+        ), f&#34;{end_token_index=}, {start_token_index=}, batch={batch}&#34;
+        num_tokens = batch.input_ids.shape[0]
+        num_seqs = batch.batch_size
+
+        output_dict = dict()
+
+        for key in [
+            &#34;input_ids&#34;,
+            &#34;positions&#34;,
+            &#34;out_cache_loc&#34;,
+        ]:
+            old_value = getattr(batch, key)
+            assert (
+                old_value.shape[0] == num_tokens
+            ), f&#34;{key=} {old_value=} {num_tokens=} {batch=}&#34;
+            output_dict[key] = old_value[start_token_index:end_token_index]
+
+        for key in [
+            &#34;req_pool_indices&#34;,
+            &#34;seq_lens&#34;,
+            &#34;seq_lens_cpu&#34;,
+            &#34;extend_seq_lens&#34;,
+            &#34;extend_prefix_lens&#34;,
+            &#34;extend_start_loc&#34;,
+            &#34;extend_prefix_lens_cpu&#34;,
+            &#34;extend_seq_lens_cpu&#34;,
+            &#34;extend_logprob_start_lens_cpu&#34;,
+            &#34;lora_ids&#34;,
+        ]:
+            old_value = getattr(batch, key)
+            if old_value is None:
+                continue
+            elif batch.forward_mode.is_target_verify() and (
+                key == &#34;extend_seq_lens&#34;
+                or key == &#34;extend_prefix_lens&#34;
+                or key == &#34;extend_start_loc&#34;
+                or key == &#34;extend_prefix_lens_cpu&#34;
+                or key == &#34;extend_seq_lens_cpu&#34;
+                or key == &#34;extend_logprob_start_lens_cpu&#34;
+            ):
+                output_dict[key] = None
+                continue
+            assert (
+                len(old_value) == num_seqs
+            ), f&#34;{key=} {old_value=} {num_seqs=} {batch=}&#34;
+            output_dict[key] = old_value[start_seq_index:end_seq_index]
+
+        spec_info = getattr(batch, &#34;spec_info&#34;)
+        output_spec_info = split_spec_info(
+            spec_info=spec_info,
+            start_token_index=start_token_index,
+            end_token_index=end_token_index,
+            start_seq_index=start_seq_index,
+            end_seq_index=end_seq_index,
+        )
+        output_dict[&#34;spec_info&#34;] = output_spec_info
+        for key in [
+            &#34;forward_mode&#34;,
+            &#34;is_extend_in_batch&#34;,
+            &#34;return_logprob&#34;,
+            &#34;req_to_token_pool&#34;,
+            &#34;token_to_kv_pool&#34;,
+            &#34;can_run_dp_cuda_graph&#34;,
+            &#34;dp_padding_mode&#34;,
+            &#34;global_forward_mode&#34;,
+            &#34;spec_algorithm&#34;,
+            &#34;capture_hidden_mode&#34;,
+            &#34;padded_static_len&#34;,
+            &#34;mrope_positions&#34;,  # only used by qwen2-vl, thus not care
+            &#34;split_index&#34;,  # for split prefill
+            &#34;orig_seq_lens&#34;,  # only used by qwen-1m, thus not care
+        ]:
+            output_dict[key] = getattr(batch, key)
+        if not batch.forward_mode.is_target_verify():
+            assert (
+                _compute_extend_num_tokens(batch.input_ids, batch.forward_mode)
+                == batch.extend_num_tokens
+            ), f&#34;{batch=}&#34;
+        extend_num_tokens = _compute_extend_num_tokens(
+            output_dict[&#34;input_ids&#34;], output_dict[&#34;forward_mode&#34;]
+        )
+
+        # TODO improve, e.g. unify w/ `init_raw`
+        if (
+            global_server_args_dict[&#34;moe_dense_tp_size&#34;] == 1
+            and batch.global_dp_buffer_len is not None
+        ):
+            sum_len = end_token_index - start_token_index
+            global_dp_buffer_len = sum_len
+        else:
+            global_dp_buffer_len = None
+
+        output_dict.update(
+            dict(
+                batch_size=end_seq_index - start_seq_index,
+                seq_lens_sum=(
+                    output_dict[&#34;seq_lens_cpu&#34;].sum()
+                    if &#34;seq_lens_cpu&#34; in output_dict
+                    else None
+                ),
+                extend_num_tokens=extend_num_tokens,
+                attn_backend=output_attn_backend,
+                num_token_non_padded=out_num_token_non_padded,
+                tbo_split_seq_index=None,
+                tbo_parent_token_range=(start_token_index, end_token_index),
+                tbo_children=None,
+                global_num_tokens_gpu=None,
+                global_num_tokens_cpu=None,
+                global_dp_buffer_len=global_dp_buffer_len,
+                global_num_tokens_for_logprob_gpu=None,
+                global_num_tokens_for_logprob_cpu=None,
+                sampling_info=None,
+                # For logits and logprobs post processing, thus we do not care
+                temp_scaled_logprobs=False,
+                temperature=None,
+                top_p_normalized_logprobs=False,
+                top_p=None,
+                mm_inputs=None,
+                top_logprobs_nums=None,
+                token_ids_logprobs=None,
+                next_token_logits_buffer=None,
+            )
+        )
+
+        errors = []
+        for field in dataclasses.fields(ForwardBatch):
+            if getattr(batch, field.name) is not None and field.name not in output_dict:
+                errors.append(
+                    f&#34;Field {field.name} has value, but is not yet supported (value={getattr(batch, field.name)} batch={batch})&#34;
+                )
+        if len(errors) &gt; 0:
+            raise Exception(f&#34;{len(errors)} errors happen:\n&#34; + &#34;\n\n&#34;.join(errors))
+
+        return ForwardBatch(**output_dict)
+
+    @classmethod
+    def compute_tbo_children_num_token_non_padded(cls, batch: ForwardBatch):
+        return cls.compute_tbo_children_num_token_non_padded_raw(
+            tbo_split_token_index=cls._compute_split_token_index(batch),
+            num_token_non_padded=len(batch.input_ids),
+        )
+
+    @classmethod
+    def compute_tbo_children_num_token_non_padded_raw(
+        cls, tbo_split_token_index: int, num_token_non_padded: int
+    ):
+        # TODO we may make padding on both sub-batches to make it slightly more balanced
+        value_a = min(tbo_split_token_index, num_token_non_padded)
+        value_b = max(0, num_token_non_padded - tbo_split_token_index)
+        return torch.tensor([value_a, value_b], dtype=torch.int32).to(
+            device=global_server_args_dict[&#34;device&#34;], non_blocking=True
+        )
+
+    @classmethod
+    def _compute_split_token_index(cls, batch: ForwardBatch):
+        token_num_per_seq = get_token_num_per_seq(
+            forward_mode=batch.forward_mode, spec_info=batch.spec_info
+        )
+        return compute_split_token_index(
+            split_seq_index=batch.tbo_split_seq_index,
+            forward_mode=batch.forward_mode,
+            extend_seq_lens=batch.extend_seq_lens_cpu,
+            token_num_per_seq=token_num_per_seq,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded"><code class="name flex">
+<span>def <span class="ident">compute_tbo_children_num_token_non_padded</span></span>(<span>batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded_raw"><code class="name flex">
+<span>def <span class="ident">compute_tbo_children_num_token_non_padded_raw</span></span>(<span>tbo_split_token_index: int, num_token_non_padded: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.derive_fields_related_to_seq_len_for_two_chunk"><code class="name flex">
+<span>def <span class="ident">derive_fields_related_to_seq_len_for_two_chunk</span></span>(<span>batch: ForwardBatch,<br>*,<br>child_a: ForwardBatch,<br>child_b: ForwardBatch,<br>tbo_split_seq_index: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.filter_batch"><code class="name flex">
+<span>def <span class="ident">filter_batch</span></span>(<span>batch: ForwardBatch,<br>*,<br>start_token_index: int,<br>end_token_index: int,<br>start_seq_index: int,<br>end_seq_index: int,<br>output_attn_backend: AttentionBackend,<br>out_num_token_non_padded: torch.Tensor)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.prepare"><code class="name flex">
+<span>def <span class="ident">prepare</span></span>(<span>batch: ForwardBatch, is_draft_worker: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.prepare_raw"><code class="name flex">
+<span>def <span class="ident">prepare_raw</span></span>(<span>batch: ForwardBatch, tbo_children_num_token_non_padded: torch.Tensor)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.two_batch_overlap.compute_split_indices_for_cuda_graph_replay" href="#sglang.srt.two_batch_overlap.compute_split_indices_for_cuda_graph_replay">compute_split_indices_for_cuda_graph_replay</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.compute_split_seq_index" href="#sglang.srt.two_batch_overlap.compute_split_seq_index">compute_split_seq_index</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.compute_split_token_index" href="#sglang.srt.two_batch_overlap.compute_split_token_index">compute_split_token_index</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.get_token_num_per_seq" href="#sglang.srt.two_batch_overlap.get_token_num_per_seq">get_token_num_per_seq</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.model_forward_maybe_tbo" href="#sglang.srt.two_batch_overlap.model_forward_maybe_tbo">model_forward_maybe_tbo</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.split_spec_info" href="#sglang.srt.two_batch_overlap.split_spec_info">split_spec_info</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher">MaybeTboDeepEPDispatcher</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine">combine</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine_a" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine_a">combine_a</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine_b" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.combine_b">combine_b</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch">dispatch</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch_a" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch_a">dispatch_a</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch_b" href="#sglang.srt.two_batch_overlap.MaybeTboDeepEPDispatcher.dispatch_b">dispatch_b</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin" href="#sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin">TboCudaGraphRunnerPlugin</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin.capture_one_batch_size" href="#sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin.capture_one_batch_size">capture_one_batch_size</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin.replay_prepare" href="#sglang.srt.two_batch_overlap.TboCudaGraphRunnerPlugin.replay_prepare">replay_prepare</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.two_batch_overlap.TboDPAttentionPreparer" href="#sglang.srt.two_batch_overlap.TboDPAttentionPreparer">TboDPAttentionPreparer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.two_batch_overlap.TboDPAttentionPreparer.compute_output" href="#sglang.srt.two_batch_overlap.TboDPAttentionPreparer.compute_output">compute_output</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboDPAttentionPreparer.prepare_all_gather" href="#sglang.srt.two_batch_overlap.TboDPAttentionPreparer.prepare_all_gather">prepare_all_gather</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer">TboForwardBatchPreparer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded">compute_tbo_children_num_token_non_padded</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded_raw" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer.compute_tbo_children_num_token_non_padded_raw">compute_tbo_children_num_token_non_padded_raw</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.derive_fields_related_to_seq_len_for_two_chunk" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer.derive_fields_related_to_seq_len_for_two_chunk">derive_fields_related_to_seq_len_for_two_chunk</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.filter_batch" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer.filter_batch">filter_batch</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.prepare" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer.prepare">prepare</a></code></li>
+<li><code><a title="sglang.srt.two_batch_overlap.TboForwardBatchPreparer.prepare_raw" href="#sglang.srt.two_batch_overlap.TboForwardBatchPreparer.prepare_raw">prepare_raw</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

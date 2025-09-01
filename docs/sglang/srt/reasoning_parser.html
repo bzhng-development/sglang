@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.reasoning_parser API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.reasoning_parser</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.reasoning_parser.BaseReasoningFormatDetector"><code class="flex name class">
+<span>class <span class="ident">BaseReasoningFormatDetector</span></span>
+<span>(</span><span>think_start_token: str,<br>think_end_token: str,<br>force_reasoning: bool = False,<br>stream_reasoning: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseReasoningFormatDetector:
+    &#34;&#34;&#34;Base class providing two sets of interfaces: one-time and streaming incremental.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        think_start_token: str,
+        think_end_token: str,
+        force_reasoning: bool = False,
+        stream_reasoning: bool = True,
+    ):
+        self.think_start_token = think_start_token
+        self.think_end_token = think_end_token
+        self._in_reasoning = force_reasoning
+        self.stream_reasoning = stream_reasoning
+
+        self._buffer = &#34;&#34;
+        self.stripped_think_start = False
+
+    def detect_and_parse(self, text: str) -&gt; StreamingParseResult:
+        &#34;&#34;&#34;
+        One-time parsing: Detects and parses reasoning sections in the provided text.
+        Returns both reasoning content and normal text separately.
+        &#34;&#34;&#34;
+        in_reasoning = self._in_reasoning or self.think_start_token in text
+
+        if not in_reasoning:
+            return StreamingParseResult(normal_text=text)
+
+        # The text is considered to be in a reasoning block.
+        processed_text = text.replace(self.think_start_token, &#34;&#34;).strip()
+
+        if self.think_end_token not in processed_text:
+            # Assume reasoning was truncated before `&lt;/think&gt;` token
+            return StreamingParseResult(reasoning_text=processed_text)
+
+        # Extract reasoning content
+        splits = processed_text.split(self.think_end_token, maxsplit=1)
+        reasoning_text = splits[0]
+        normal_text = splits[1].strip()
+
+        return StreamingParseResult(
+            normal_text=normal_text, reasoning_text=reasoning_text
+        )
+
+    def parse_streaming_increment(self, new_text: str) -&gt; StreamingParseResult:
+        &#34;&#34;&#34;
+        Streaming incremental parsing for reasoning content.
+        Handles partial reasoning tags and content.
+
+        If stream_reasoning is False:
+            Accumulates reasoning content until the end tag is found
+        If stream_reasoning is True:
+            Streams reasoning content as it arrives
+        &#34;&#34;&#34;
+        self._buffer += new_text
+        current_text = self._buffer
+
+        # If the current text is a prefix of the think token, keep buffering
+        if any(
+            token.startswith(current_text) and token != current_text
+            for token in [self.think_start_token, self.think_end_token]
+        ):
+            return StreamingParseResult()
+
+        # Strip `&lt;think&gt;` token if present
+        if not self.stripped_think_start and self.think_start_token in current_text:
+            current_text = current_text.replace(self.think_start_token, &#34;&#34;)
+            self.stripped_think_start = True
+            self._in_reasoning = True
+
+        # Handle end of reasoning block
+        if self._in_reasoning and self.think_end_token in current_text:
+            end_idx = current_text.find(self.think_end_token)
+
+            reasoning_text = current_text[:end_idx]
+
+            self._buffer = &#34;&#34;
+            self._in_reasoning = False
+            normal_text = current_text[end_idx + len(self.think_end_token) :]
+
+            return StreamingParseResult(
+                normal_text=normal_text, reasoning_text=reasoning_text.rstrip()
+            )
+
+        # Continue with reasoning content
+        if self._in_reasoning:
+            if self.stream_reasoning:
+                # Stream the content immediately
+                self._buffer = &#34;&#34;
+                return StreamingParseResult(reasoning_text=current_text)
+            else:
+                return StreamingParseResult()
+
+        # If we&#39;re not in a reasoning block return as normal text
+        if not self._in_reasoning:
+            self._buffer = &#34;&#34;
+            return StreamingParseResult(normal_text=current_text)
+
+        return StreamingParseResult()</code></pre>
+</details>
+<div class="desc"><p>Base class providing two sets of interfaces: one-time and streaming incremental.</p></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.reasoning_parser.DeepSeekR1Detector" href="#sglang.srt.reasoning_parser.DeepSeekR1Detector">DeepSeekR1Detector</a></li>
+<li><a title="sglang.srt.reasoning_parser.GptOssDetector" href="#sglang.srt.reasoning_parser.GptOssDetector">GptOssDetector</a></li>
+<li><a title="sglang.srt.reasoning_parser.KimiDetector" href="#sglang.srt.reasoning_parser.KimiDetector">KimiDetector</a></li>
+<li><a title="sglang.srt.reasoning_parser.Qwen3Detector" href="#sglang.srt.reasoning_parser.Qwen3Detector">Qwen3Detector</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse"><code class="name flex">
+<span>def <span class="ident">detect_and_parse</span></span>(<span>self, text: str) ‑> <a title="sglang.srt.reasoning_parser.StreamingParseResult" href="#sglang.srt.reasoning_parser.StreamingParseResult">StreamingParseResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def detect_and_parse(self, text: str) -&gt; StreamingParseResult:
+    &#34;&#34;&#34;
+    One-time parsing: Detects and parses reasoning sections in the provided text.
+    Returns both reasoning content and normal text separately.
+    &#34;&#34;&#34;
+    in_reasoning = self._in_reasoning or self.think_start_token in text
+
+    if not in_reasoning:
+        return StreamingParseResult(normal_text=text)
+
+    # The text is considered to be in a reasoning block.
+    processed_text = text.replace(self.think_start_token, &#34;&#34;).strip()
+
+    if self.think_end_token not in processed_text:
+        # Assume reasoning was truncated before `&lt;/think&gt;` token
+        return StreamingParseResult(reasoning_text=processed_text)
+
+    # Extract reasoning content
+    splits = processed_text.split(self.think_end_token, maxsplit=1)
+    reasoning_text = splits[0]
+    normal_text = splits[1].strip()
+
+    return StreamingParseResult(
+        normal_text=normal_text, reasoning_text=reasoning_text
+    )</code></pre>
+</details>
+<div class="desc"><p>One-time parsing: Detects and parses reasoning sections in the provided text.
+Returns both reasoning content and normal text separately.</p></div>
+</dd>
+<dt id="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment"><code class="name flex">
+<span>def <span class="ident">parse_streaming_increment</span></span>(<span>self, new_text: str) ‑> <a title="sglang.srt.reasoning_parser.StreamingParseResult" href="#sglang.srt.reasoning_parser.StreamingParseResult">StreamingParseResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_streaming_increment(self, new_text: str) -&gt; StreamingParseResult:
+    &#34;&#34;&#34;
+    Streaming incremental parsing for reasoning content.
+    Handles partial reasoning tags and content.
+
+    If stream_reasoning is False:
+        Accumulates reasoning content until the end tag is found
+    If stream_reasoning is True:
+        Streams reasoning content as it arrives
+    &#34;&#34;&#34;
+    self._buffer += new_text
+    current_text = self._buffer
+
+    # If the current text is a prefix of the think token, keep buffering
+    if any(
+        token.startswith(current_text) and token != current_text
+        for token in [self.think_start_token, self.think_end_token]
+    ):
+        return StreamingParseResult()
+
+    # Strip `&lt;think&gt;` token if present
+    if not self.stripped_think_start and self.think_start_token in current_text:
+        current_text = current_text.replace(self.think_start_token, &#34;&#34;)
+        self.stripped_think_start = True
+        self._in_reasoning = True
+
+    # Handle end of reasoning block
+    if self._in_reasoning and self.think_end_token in current_text:
+        end_idx = current_text.find(self.think_end_token)
+
+        reasoning_text = current_text[:end_idx]
+
+        self._buffer = &#34;&#34;
+        self._in_reasoning = False
+        normal_text = current_text[end_idx + len(self.think_end_token) :]
+
+        return StreamingParseResult(
+            normal_text=normal_text, reasoning_text=reasoning_text.rstrip()
+        )
+
+    # Continue with reasoning content
+    if self._in_reasoning:
+        if self.stream_reasoning:
+            # Stream the content immediately
+            self._buffer = &#34;&#34;
+            return StreamingParseResult(reasoning_text=current_text)
+        else:
+            return StreamingParseResult()
+
+    # If we&#39;re not in a reasoning block return as normal text
+    if not self._in_reasoning:
+        self._buffer = &#34;&#34;
+        return StreamingParseResult(normal_text=current_text)
+
+    return StreamingParseResult()</code></pre>
+</details>
+<div class="desc"><p>Streaming incremental parsing for reasoning content.
+Handles partial reasoning tags and content.</p>
+<p>If stream_reasoning is False:
+Accumulates reasoning content until the end tag is found
+If stream_reasoning is True:
+Streams reasoning content as it arrives</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.reasoning_parser.DeepSeekR1Detector"><code class="flex name class">
+<span>class <span class="ident">DeepSeekR1Detector</span></span>
+<span>(</span><span>stream_reasoning: bool = True, force_reasoning: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepSeekR1Detector(BaseReasoningFormatDetector):
+    &#34;&#34;&#34;
+    Detector for DeepSeek-R1 model.
+    Assumes reasoning format:
+      (&lt;think&gt;)*(.*)&lt;/think&gt;
+    Returns all the text before the &lt;/think&gt; tag as `reasoning_text`
+    and the rest of the text as `normal_text`.
+
+    Supported models:
+      - DeepSeek-R1: Always generates thinking content without &lt;think&gt; start tag
+      - DeepSeek-R1-0528: Generates thinking content with &lt;think&gt; start tag
+
+    Format patterns:
+      - DeepSeek-R1: &#34;I need to think about this...&lt;/think&gt;The answer is 42.&#34;
+      - DeepSeek-R1-0528: &#34;&lt;think&gt;I need to think about this...&lt;/think&gt;The answer is 42.&#34;
+
+    Args:
+        stream_reasoning (bool): If False, accumulates reasoning content until the end tag.
+            If True, streams reasoning content as it arrives.
+    &#34;&#34;&#34;
+
+    def __init__(self, stream_reasoning: bool = True, force_reasoning: bool = True):
+        # DeepSeek-R1 is assumed to be reasoning until `&lt;/think&gt;` token
+        super().__init__(
+            &#34;&lt;think&gt;&#34;,
+            &#34;&lt;/think&gt;&#34;,
+            force_reasoning=True,
+            stream_reasoning=stream_reasoning,
+        )
+        # https://github.com/sgl-project/sglang/pull/3202#discussion_r1950153599</code></pre>
+</details>
+<div class="desc"><p>Detector for DeepSeek-R1 model.
+Assumes reasoning format:
+(<think>)<em>(.</em>)</think>
+Returns all the text before the </think> tag as <code>reasoning_text</code>
+and the rest of the text as <code>normal_text</code>.</p>
+<p>Supported models:
+- DeepSeek-R1: Always generates thinking content without <think> start tag
+- DeepSeek-R1-0528: Generates thinking content with <think> start tag</p>
+<p>Format patterns:
+- DeepSeek-R1: "I need to think about this&hellip;</think>The answer is 42."
+- DeepSeek-R1-0528: "<think>I need to think about this&hellip;</think>The answer is 42."</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream_reasoning</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If False, accumulates reasoning content until the end tag.
+If True, streams reasoning content as it arrives.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.reasoning_parser.GptOssDetector"><code class="flex name class">
+<span>class <span class="ident">GptOssDetector</span></span>
+<span>(</span><span>stream_reasoning: bool = True, force_reasoning: bool = True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GptOssDetector(BaseReasoningFormatDetector):
+    &#34;&#34;&#34;
+    Detector for T4-style reasoning format (GPT-OSS), using the HarmonyParser.
+    &#34;&#34;&#34;
+
+    def __init__(self, stream_reasoning: bool = True, force_reasoning: bool = True):
+        super().__init__(
+            &#34;&lt;|channel|&gt;analysis&lt;|message|&gt;&#34;,
+            &#34;&lt;|end|&gt;&#34;,
+            force_reasoning=force_reasoning,
+            stream_reasoning=stream_reasoning,
+        )
+        self.parser = HarmonyParser()
+
+    def detect_and_parse(self, text: str) -&gt; StreamingParseResult:
+        events = self.parser.parse(text)
+        # Flush the buffer for one-shot parsing
+        events += self.parser.parse(&#34;&#34;)
+
+        reasoning_text = &#34;&#34;.join(
+            [e.content for e in events if e.event_type == &#34;reasoning&#34;]
+        )
+        normal_parts = []
+        for e in events:
+            if e.event_type == &#34;normal&#34;:
+                normal_parts.append(e.content)
+            elif e.event_type == &#34;tool_call&#34;:
+                # Use raw_text to preserve structural markers for function call detector
+                normal_parts.append(e.raw_text if e.raw_text else e.content)
+        normal_text = &#34;&#34;.join(normal_parts)
+        # Tool call events preserve raw text with structural markers
+
+        return StreamingParseResult(
+            normal_text=normal_text,
+            reasoning_text=reasoning_text,
+        )
+
+    def parse_streaming_increment(self, new_text: str) -&gt; StreamingParseResult:
+        events = self.parser.parse(new_text)
+
+        reasoning_text = &#34;&#34;.join(
+            [e.content for e in events if e.event_type == &#34;reasoning&#34;]
+        )
+        normal_parts = []
+        for e in events:
+            if e.event_type == &#34;normal&#34;:
+                normal_parts.append(e.content)
+            elif e.event_type == &#34;tool_call&#34;:
+                # Use raw_text to preserve structural markers for function call detector
+                normal_parts.append(e.raw_text if e.raw_text else e.content)
+        normal_text = &#34;&#34;.join(normal_parts)
+
+        return StreamingParseResult(
+            normal_text=normal_text,
+            reasoning_text=reasoning_text,
+        )</code></pre>
+</details>
+<div class="desc"><p>Detector for T4-style reasoning format (GPT-OSS), using the HarmonyParser.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.reasoning_parser.KimiDetector"><code class="flex name class">
+<span>class <span class="ident">KimiDetector</span></span>
+<span>(</span><span>stream_reasoning: bool = True, force_reasoning: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KimiDetector(BaseReasoningFormatDetector):
+    &#34;&#34;&#34;
+    Detector for Kimi Thinking model.
+    Assumes reasoning format:
+      ◁think▷*(.*)◁/think▷
+    Returns all the text before the ◁/think▷ tag as `reasoning_text`
+    and the rest of the text as `normal_text`.
+    &#34;&#34;&#34;
+
+    def __init__(self, stream_reasoning: bool = True, force_reasoning: bool = False):
+        super().__init__(
+            &#34;◁think▷&#34;,
+            &#34;◁/think▷&#34;,
+            force_reasoning=False,
+            stream_reasoning=stream_reasoning,
+        )</code></pre>
+</details>
+<div class="desc"><p>Detector for Kimi Thinking model.
+Assumes reasoning format:
+◁think▷<em>(.</em>)◁/think▷
+Returns all the text before the ◁/think▷ tag as <code>reasoning_text</code>
+and the rest of the text as <code>normal_text</code>.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.reasoning_parser.Qwen3Detector"><code class="flex name class">
+<span>class <span class="ident">Qwen3Detector</span></span>
+<span>(</span><span>stream_reasoning: bool = True, force_reasoning: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Qwen3Detector(BaseReasoningFormatDetector):
+    &#34;&#34;&#34;
+    Detector for Qwen3 models (e.g., Qwen/Qwen3-235B-A22B).
+    Assumes reasoning format:
+      (&lt;think&gt;)*(.*)&lt;/think&gt;
+
+    Qwen3 models released before 07/2025 supports switching between thinking mode and normal
+    mode using `enable_thinking` parameter in the request parameter.
+      - enable_thinking=True: &#34;&lt;think&gt;reasoning content&lt;/think&gt;The answer is 42.&#34;
+      - enable_thinking=False: &#34;The answer is 42.&#34; (no thinking tokens)
+
+    Args:
+        stream_reasoning (bool): If False, accumulates reasoning content until the end tag.
+            If True, streams reasoning content as it arrives.
+    &#34;&#34;&#34;
+
+    def __init__(self, stream_reasoning: bool = True, force_reasoning: bool = False):
+        super().__init__(
+            &#34;&lt;think&gt;&#34;,
+            &#34;&lt;/think&gt;&#34;,
+            force_reasoning=force_reasoning,
+            stream_reasoning=stream_reasoning,
+        )</code></pre>
+</details>
+<div class="desc"><p>Detector for Qwen3 models (e.g., Qwen/Qwen3-235B-A22B).
+Assumes reasoning format:
+(<think>)<em>(.</em>)</think></p>
+<p>Qwen3 models released before 07/2025 supports switching between thinking mode and normal
+mode using <code>enable_thinking</code> parameter in the request parameter.
+- enable_thinking=True: "<think>reasoning content</think>The answer is 42."
+- enable_thinking=False: "The answer is 42." (no thinking tokens)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>stream_reasoning</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If False, accumulates reasoning content until the end tag.
+If True, streams reasoning content as it arrives.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.reasoning_parser.ReasoningParser"><code class="flex name class">
+<span>class <span class="ident">ReasoningParser</span></span>
+<span>(</span><span>model_type: str | None = None,<br>stream_reasoning: bool = True,<br>force_reasoning: bool | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ReasoningParser:
+    &#34;&#34;&#34;
+    Parser that handles both streaming and non-streaming scenarios for extracting
+    reasoning content from model outputs.
+
+    Args:
+        model_type (str): Type of model to parse reasoning from
+        stream_reasoning (bool): If False, accumulates reasoning content until complete.
+            If True, streams reasoning content as it arrives.
+    &#34;&#34;&#34;
+
+    DetectorMap: Dict[str, Type[BaseReasoningFormatDetector]] = {
+        &#34;deepseek-r1&#34;: DeepSeekR1Detector,
+        &#34;deepseek-v3&#34;: Qwen3Detector,
+        &#34;glm45&#34;: Qwen3Detector,
+        &#34;gpt-oss&#34;: GptOssDetector,
+        &#34;kimi&#34;: KimiDetector,
+        &#34;qwen3&#34;: Qwen3Detector,
+        &#34;qwen3-thinking&#34;: Qwen3Detector,
+        &#34;step3&#34;: DeepSeekR1Detector,
+    }
+
+    def __init__(
+        self,
+        model_type: Optional[str] = None,
+        stream_reasoning: bool = True,
+        force_reasoning: Optional[bool] = None,
+    ):
+        if not model_type:
+            raise ValueError(&#34;Model type must be specified&#34;)
+
+        detector_class = self.DetectorMap.get(model_type.lower())
+        if not detector_class:
+            raise ValueError(f&#34;Unsupported model type: {model_type}&#34;)
+
+        # Special cases where we override force_reasoning
+        if model_type.lower() in {&#34;qwen3-thinking&#34;, &#34;gpt-oss&#34;}:
+            force_reasoning = True
+
+        # Only pass force_reasoning if explicitly set, let detectors use their defaults
+        kwargs = {&#34;stream_reasoning&#34;: stream_reasoning}
+        if force_reasoning is not None:
+            kwargs[&#34;force_reasoning&#34;] = force_reasoning
+
+        self.detector = detector_class(**kwargs)
+
+    def parse_non_stream(self, full_text: str) -&gt; Tuple[Optional[str], Optional[str]]:
+        &#34;&#34;&#34;Non-streaming call: one-time parsing&#34;&#34;&#34;
+        ret = self.detector.detect_and_parse(full_text)
+        return ret.reasoning_text, ret.normal_text
+
+    def parse_stream_chunk(
+        self, chunk_text: str
+    ) -&gt; Tuple[Optional[str], Optional[str]]:
+        &#34;&#34;&#34;Streaming call: incremental parsing&#34;&#34;&#34;
+        ret = self.detector.parse_streaming_increment(chunk_text)
+        return ret.reasoning_text, ret.normal_text</code></pre>
+</details>
+<div class="desc"><p>Parser that handles both streaming and non-streaming scenarios for extracting
+reasoning content from model outputs.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model_type</code></strong> :&ensp;<code>str</code></dt>
+<dd>Type of model to parse reasoning from</dd>
+<dt><strong><code>stream_reasoning</code></strong> :&ensp;<code>bool</code></dt>
+<dd>If False, accumulates reasoning content until complete.
+If True, streams reasoning content as it arrives.</dd>
+</dl></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.reasoning_parser.ReasoningParser.DetectorMap"><code class="name">var <span class="ident">DetectorMap</span> : Dict[str, Type[<a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a>]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.reasoning_parser.ReasoningParser.parse_non_stream"><code class="name flex">
+<span>def <span class="ident">parse_non_stream</span></span>(<span>self, full_text: str) ‑> Tuple[str | None, str | None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_non_stream(self, full_text: str) -&gt; Tuple[Optional[str], Optional[str]]:
+    &#34;&#34;&#34;Non-streaming call: one-time parsing&#34;&#34;&#34;
+    ret = self.detector.detect_and_parse(full_text)
+    return ret.reasoning_text, ret.normal_text</code></pre>
+</details>
+<div class="desc"><p>Non-streaming call: one-time parsing</p></div>
+</dd>
+<dt id="sglang.srt.reasoning_parser.ReasoningParser.parse_stream_chunk"><code class="name flex">
+<span>def <span class="ident">parse_stream_chunk</span></span>(<span>self, chunk_text: str) ‑> Tuple[str | None, str | None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_stream_chunk(
+    self, chunk_text: str
+) -&gt; Tuple[Optional[str], Optional[str]]:
+    &#34;&#34;&#34;Streaming call: incremental parsing&#34;&#34;&#34;
+    ret = self.detector.parse_streaming_increment(chunk_text)
+    return ret.reasoning_text, ret.normal_text</code></pre>
+</details>
+<div class="desc"><p>Streaming call: incremental parsing</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.reasoning_parser.StreamingParseResult"><code class="flex name class">
+<span>class <span class="ident">StreamingParseResult</span></span>
+<span>(</span><span>normal_text: str | None = None, reasoning_text: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StreamingParseResult:
+    &#34;&#34;&#34;Result of streaming incremental parsing.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        normal_text: Optional[str] = None,
+        reasoning_text: Optional[str] = None,
+    ):
+        self.normal_text = normal_text or &#34;&#34;
+        self.reasoning_text = reasoning_text or &#34;&#34;</code></pre>
+</details>
+<div class="desc"><p>Result of streaming incremental parsing.</p></div>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector">BaseReasoningFormatDetector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment" href="#sglang.srt.reasoning_parser.BaseReasoningFormatDetector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.DeepSeekR1Detector" href="#sglang.srt.reasoning_parser.DeepSeekR1Detector">DeepSeekR1Detector</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.GptOssDetector" href="#sglang.srt.reasoning_parser.GptOssDetector">GptOssDetector</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.KimiDetector" href="#sglang.srt.reasoning_parser.KimiDetector">KimiDetector</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.Qwen3Detector" href="#sglang.srt.reasoning_parser.Qwen3Detector">Qwen3Detector</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.ReasoningParser" href="#sglang.srt.reasoning_parser.ReasoningParser">ReasoningParser</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.reasoning_parser.ReasoningParser.DetectorMap" href="#sglang.srt.reasoning_parser.ReasoningParser.DetectorMap">DetectorMap</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.ReasoningParser.parse_non_stream" href="#sglang.srt.reasoning_parser.ReasoningParser.parse_non_stream">parse_non_stream</a></code></li>
+<li><code><a title="sglang.srt.reasoning_parser.ReasoningParser.parse_stream_chunk" href="#sglang.srt.reasoning_parser.ReasoningParser.parse_stream_chunk">parse_stream_chunk</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.reasoning_parser.StreamingParseResult" href="#sglang.srt.reasoning_parser.StreamingParseResult">StreamingParseResult</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

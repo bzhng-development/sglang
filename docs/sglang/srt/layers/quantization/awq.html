@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.awq API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.awq</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.awq.is_layer_skipped_awq"><code class="name flex">
+<span>def <span class="ident">is_layer_skipped_awq</span></span>(<span>prefix: str, modules_to_not_convert: List[str])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_layer_skipped_awq(prefix: str, modules_to_not_convert: List[str]):
+    return any(module_name in prefix for module_name in modules_to_not_convert)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.awq.AWQConfig"><code class="flex name class">
+<span>class <span class="ident">AWQConfig</span></span>
+<span>(</span><span>weight_bits: int,<br>group_size: int,<br>zero_point: bool,<br>modules_to_not_convert: Optional[List[str]] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AWQConfig(QuantizationConfig):
+    &#34;&#34;&#34;Config class for AWQ.
+
+    Reference: https://arxiv.org/abs/2306.00978
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        weight_bits: int,
+        group_size: int,
+        zero_point: bool,
+        modules_to_not_convert: Optional[List[str]] = None,
+    ) -&gt; None:
+        super().__init__()
+        self.weight_bits = weight_bits
+        self.group_size = group_size
+        self.zero_point = zero_point
+        self.modules_to_not_convert = modules_to_not_convert or []
+
+        if self.weight_bits != 4:
+            raise ValueError(
+                &#34;Currently, only 4-bit weight quantization is supported for &#34;
+                f&#34;AWQ, but got {self.weight_bits} bits.&#34;
+            )
+        self.pack_factor = 32 // self.weight_bits
+
+    def __repr__(self) -&gt; str:
+        return (
+            f&#34;AWQConfig(weight_bits={self.weight_bits}, &#34;
+            f&#34;group_size={self.group_size}, &#34;
+            f&#34;zero_point={self.zero_point}, &#34;
+            f&#34;modules_to_not_convert={self.modules_to_not_convert})&#34;
+        )
+
+    def get_scaled_act_names(self) -&gt; List[str]:
+        return []
+
+    def get_name(self) -&gt; str:
+        return &#34;awq&#34;
+
+    def get_supported_act_dtypes(self) -&gt; List[torch.dtype]:
+        return [torch.half]
+
+    @classmethod
+    def get_min_capability(cls) -&gt; int:
+        # The AWQ kernel only supports Turing or newer GPUs.
+        return 75
+
+    @staticmethod
+    def get_config_filenames() -&gt; List[str]:
+        return [
+            &#34;quant_config.json&#34;,  # E.g., casperhansen/vicuna-7b-v1.5-awq
+            # E.g., abhinavkulkarni/mosaicml-mpt-7b-instruct-w4-g128-awq
+            &#34;quantize_config.json&#34;,
+        ]
+
+    @classmethod
+    def from_config(cls, config: Dict[str, Any]) -&gt; AWQConfig:
+        weight_bits = cls.get_from_keys(config, [&#34;w_bit&#34;, &#34;bits&#34;])
+        group_size = cls.get_from_keys(config, [&#34;q_group_size&#34;, &#34;group_size&#34;])
+        zero_point = cls.get_from_keys(config, [&#34;zero_point&#34;])
+        modules_to_not_convert = cls.get_from_keys_or(
+            config, [&#34;modules_to_not_convert&#34;], None
+        )
+        return cls(weight_bits, group_size, zero_point, modules_to_not_convert)
+
+    def get_quant_method(
+        self, layer: torch.nn.Module, prefix: str
+    ) -&gt; Optional[LinearMethodBase]:
+        from sglang.srt.layers.linear import LinearBase
+
+        if isinstance(layer, LinearBase):
+            if is_layer_skipped_awq(prefix, self.modules_to_not_convert):
+                return UnquantizedLinearMethod()
+            return AWQLinearMethod(self)
+        return None</code></pre>
+</details>
+<div class="desc"><p>Config class for AWQ.</p>
+<p>Reference: <a href="https://arxiv.org/abs/2306.00978">https://arxiv.org/abs/2306.00978</a></p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.awq.AWQLinearMethod"><code class="flex name class">
+<span>class <span class="ident">AWQLinearMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.awq.AWQConfig" href="#sglang.srt.layers.quantization.awq.AWQConfig">AWQConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AWQLinearMethod(LinearMethodBase):
+    &#34;&#34;&#34;Linear method for AWQ.
+
+    Args:
+        quant_config: The AWQ quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quant_config: AWQConfig):
+        self.quant_config = quant_config
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: List[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        if input_size_per_partition % self.quant_config.group_size != 0:
+            raise ValueError(
+                &#34;The input size is not aligned with the quantized &#34;
+                &#34;weight shape. This can be caused by too large &#34;
+                &#34;tensor parallel size.&#34;
+            )
+
+        output_size_per_partition = sum(output_partition_sizes)
+        if output_size_per_partition % self.quant_config.pack_factor != 0:
+            raise ValueError(
+                &#34;The output size is not aligned with the quantized &#34;
+                &#34;weight shape. This can be caused by too large &#34;
+                &#34;tensor parallel size.&#34;
+            )
+
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+        qweight = PackedvLLMParameter(
+            data=torch.empty(
+                input_size_per_partition,
+                output_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            output_dim=1,
+            packed_dim=1,
+            packed_factor=self.quant_config.pack_factor,
+            weight_loader=weight_loader,
+        )
+
+        qzeros = PackedvLLMParameter(
+            data=torch.empty(
+                input_size_per_partition // self.quant_config.group_size,
+                output_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            output_dim=1,
+            packed_dim=1,
+            packed_factor=self.quant_config.pack_factor,
+            weight_loader=weight_loader,
+        )
+
+        scales = GroupQuantScaleParameter(
+            data=torch.empty(
+                input_size_per_partition // self.quant_config.group_size,
+                output_size_per_partition,
+                dtype=params_dtype,
+            ),
+            input_dim=0,
+            output_dim=1,
+            weight_loader=weight_loader,
+        )
+
+        layer.register_parameter(&#34;qweight&#34;, qweight)
+        layer.register_parameter(&#34;qzeros&#34;, qzeros)
+        layer.register_parameter(&#34;scales&#34;, scales)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        layer.qweight = torch.nn.Parameter(layer.qweight.data, requires_grad=False)
+        layer.qzeros = torch.nn.Parameter(layer.qzeros.data, requires_grad=False)
+        layer.scales = torch.nn.Parameter(layer.scales.data, requires_grad=False)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        qweight = layer.qweight
+        scales = layer.scales
+        qzeros = layer.qzeros
+        pack_factor = self.quant_config.pack_factor
+        out_shape = x.shape[:-1] + (qweight.shape[-1] * pack_factor,)
+        reshaped_x = x.reshape(-1, x.shape[-1])
+        out = awq_dequantize(qweight, scales, qzeros)
+        out = torch.matmul(reshaped_x, out)
+
+        if bias is not None:
+            out.add_(bias)
+        return out.reshape(out_shape)</code></pre>
+</details>
+<div class="desc"><p>Linear method for AWQ.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The AWQ quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.awq.AWQMarlinConfig"><code class="flex name class">
+<span>class <span class="ident">AWQMarlinConfig</span></span>
+<span>(</span><span>weight_bits: int,<br>group_size: int,<br>zero_point: bool,<br>lm_head_quantized: bool,<br>modules_to_not_convert: Optional[list[str]],<br>full_config: dict[str, Any])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AWQMarlinConfig(QuantizationConfig):
+    &#34;&#34;&#34;Config class for AWQ Marlin&#34;&#34;&#34;
+
+    # num_bits -&gt; type
+    TYPE_MAP = {
+        4: scalar_types.uint4,
+        8: scalar_types.uint8,
+    }
+
+    def __init__(
+        self,
+        weight_bits: int,
+        group_size: int,
+        zero_point: bool,
+        lm_head_quantized: bool,
+        modules_to_not_convert: Optional[list[str]],
+        full_config: dict[str, Any],
+    ) -&gt; None:
+        super().__init__()
+        self.pack_factor = 32 // weight_bits  # packed into int32
+        self.group_size = group_size
+        self.zero_point = zero_point
+        self.lm_head_quantized = lm_head_quantized
+        self.weight_bits = weight_bits
+        self.modules_to_not_convert = modules_to_not_convert or []
+        self.full_config = full_config
+
+        if self.weight_bits not in self.TYPE_MAP:
+            raise ValueError(
+                f&#34;Unsupported num_bits = {self.weight_bits}. &#34;
+                f&#34;Supported num_bits = {self.TYPE_MAP.keys()}&#34;
+            )
+
+        self.quant_type = self.TYPE_MAP[self.weight_bits]
+
+        verify_marlin_supported(
+            self.quant_type, group_size=self.group_size, has_zp=self.zero_point
+        )
+
+    def __repr__(self) -&gt; str:
+        return (
+            f&#34;AWQMarlinConfig(quant_type={self.quant_type}, &#34;
+            f&#34;group_size={self.group_size}, &#34;
+            f&#34;zero_point={self.zero_point}, &#34;
+            f&#34;lm_head_quantized={self.lm_head_quantized}, &#34;
+            f&#34;modules_to_not_convert={self.modules_to_not_convert})&#34;
+        )
+
+    def get_scaled_act_names(self) -&gt; List[str]:
+        return []
+
+    @classmethod
+    def get_name(cls) -&gt; str:
+        return &#34;awq_marlin&#34;
+
+    @classmethod
+    def get_supported_act_dtypes(cls) -&gt; list[torch.dtype]:
+        return [torch.half, torch.bfloat16]
+
+    @classmethod
+    def get_min_capability(cls) -&gt; int:
+        return 80
+
+    @classmethod
+    def get_config_filenames(cls) -&gt; list[str]:
+        return [&#34;quantize_config.json&#34;]
+
+    @classmethod
+    def from_config(cls, config: dict[str, Any]) -&gt; AWQMarlinConfig:
+        weight_bits = cls.get_from_keys(config, [&#34;bits&#34;])
+        group_size = cls.get_from_keys(config, [&#34;group_size&#34;])
+        zero_point = cls.get_from_keys(config, [&#34;zero_point&#34;])
+        lm_head_quantized = cls.get_from_keys_or(config, [&#34;lm_head&#34;], default=False)
+        modules_to_not_convert = cls.get_from_keys_or(
+            config, [&#34;modules_to_not_convert&#34;], None
+        )
+        return cls(
+            weight_bits,
+            group_size,
+            zero_point,
+            lm_head_quantized,
+            modules_to_not_convert,
+            config,
+        )
+
+    @classmethod
+    def override_quantization_method(cls, hf_quant_cfg, user_quant) -&gt; Optional[str]:
+        can_convert = cls.is_awq_marlin_compatible(hf_quant_cfg)
+        is_valid_user_quant = (
+            user_quant is None or user_quant == &#34;marlin&#34; or user_quant == &#34;awq_marlin&#34;
+        )
+
+        if can_convert and is_valid_user_quant:
+            msg = (
+                &#34;The model is convertible to {} during runtime.&#34;
+                &#34; Using {} kernel.&#34;.format(cls.get_name(), cls.get_name())
+            )
+            logger.info(msg)
+            return cls.get_name()
+
+        if can_convert and user_quant == &#34;awq&#34;:
+            logger.info(
+                &#34;Detected that the model can run with awq_marlin&#34;
+                &#34;, however you specified quantization=awq explicitly,&#34;
+                &#34; so forcing awq. Use quantization=awq_marlin for&#34;
+                &#34; faster inference&#34;
+            )
+        return None
+
+    def get_quant_method(
+        self, layer: torch.nn.Module, prefix: str
+    ) -&gt; Optional[QuantizeMethodBase]:
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoE
+        from sglang.srt.layers.vocab_parallel_embedding import ParallelLMHead
+
+        if isinstance(layer, LinearBase) or (
+            isinstance(layer, ParallelLMHead) and self.lm_head_quantized
+        ):
+            if is_layer_skipped_awq(prefix, self.modules_to_not_convert):
+                return UnquantizedLinearMethod()
+            # Check if the layer is supported by AWQMarlin.
+            if not check_marlin_supports_layer(layer, self.group_size):
+                logger.warning_once(
+                    &#34;Layer &#39;%s&#39; is not supported by AWQMarlin. Falling back to unoptimized AWQ kernels.&#34;,  # noqa: E501
+                    prefix,
+                )
+                return AWQConfig.from_config(self.full_config).get_quant_method(
+                    layer, prefix
+                )
+            return AWQMarlinLinearMethod(self)
+        elif isinstance(layer, FusedMoE):
+            from sglang.srt.layers.quantization.moe_wna16 import MoeWNA16Config
+
+            if not check_moe_marlin_supports_layer(layer, self.group_size):
+                logger.warning_once(
+                    f&#34;Layer &#39;{prefix}&#39; is not supported by AWQMoeMarlin. &#34;
+                    &#34;Falling back to Moe WNA16 kernels.&#34;
+                )
+                return MoeWNA16Config.from_config(self.full_config).get_quant_method(
+                    layer, prefix
+                )
+            return AWQMoEMethod(self)
+        return None
+
+    @classmethod
+    def is_awq_marlin_compatible(cls, quant_config: dict[str, Any]):
+        # Extract data from quant config.
+        quant_method = quant_config.get(&#34;quant_method&#34;, &#34;&#34;).lower()
+        num_bits = quant_config.get(&#34;bits&#34;)
+        group_size = quant_config.get(&#34;group_size&#34;)
+        zero_point = quant_config.get(&#34;zero_point&#34;)
+
+        if not _is_cuda:
+            return False
+
+        if quant_method != &#34;awq&#34;:
+            return False
+
+        # If we cannot find the info needed in the config, cannot convert.
+        if num_bits is None or group_size is None or zero_point is None:
+            return False
+
+        if num_bits not in cls.TYPE_MAP:
+            return False
+
+        return check_marlin_supported(
+            quant_type=cls.TYPE_MAP[num_bits], group_size=group_size, has_zp=zero_point
+        )</code></pre>
+</details>
+<div class="desc"><p>Config class for AWQ Marlin</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.awq.AWQMarlinConfig.TYPE_MAP"><code class="name">var <span class="ident">TYPE_MAP</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.quantization.awq.AWQMarlinConfig.is_awq_marlin_compatible"><code class="name flex">
+<span>def <span class="ident">is_awq_marlin_compatible</span></span>(<span>quant_config: dict[str, Any])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.from_config">from_config</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_config_filenames">get_config_filenames</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys">get_from_keys</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_from_keys_or">get_from_keys_or</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_min_capability">get_min_capability</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_name">get_name</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_quant_method">get_quant_method</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_scaled_act_names">get_scaled_act_names</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.get_supported_act_dtypes">get_supported_act_dtypes</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig.override_quantization_method">override_quantization_method</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.awq.AWQMarlinLinearMethod"><code class="flex name class">
+<span>class <span class="ident">AWQMarlinLinearMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.awq.AWQMarlinConfig" href="#sglang.srt.layers.quantization.awq.AWQMarlinConfig">AWQMarlinConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AWQMarlinLinearMethod(LinearMethodBase):
+    &#34;&#34;&#34;Linear method for AWQ Marlin.
+
+    Args:
+        quant_config: The AWQ Marlin quantization config.
+    &#34;&#34;&#34;
+
+    def __init__(self, quant_config: AWQMarlinConfig) -&gt; None:
+        self.quant_config = quant_config
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        input_size_per_partition: int,
+        output_partition_sizes: list[int],
+        input_size: int,
+        output_size: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ) -&gt; None:
+        del output_size
+        output_size_per_partition = sum(output_partition_sizes)
+        weight_loader = extra_weight_attrs.get(&#34;weight_loader&#34;)
+
+        # Normalize group_size
+        if self.quant_config.group_size != -1:
+            group_size = self.quant_config.group_size
+        else:
+            group_size = input_size
+
+        verify_marlin_supports_shape(
+            output_size_per_partition=output_size_per_partition,
+            input_size_per_partition=input_size_per_partition,
+            input_size=input_size,
+            group_size=group_size,
+        )
+
+        qweight = PackedvLLMParameter(
+            data=torch.empty(
+                input_size_per_partition,
+                output_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            output_dim=1,
+            packed_dim=1,
+            packed_factor=self.quant_config.pack_factor,
+            weight_loader=weight_loader,
+        )
+
+        num_groups = input_size_per_partition // group_size
+
+        qzeros = PackedvLLMParameter(
+            data=torch.empty(
+                num_groups,
+                output_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            input_dim=0,
+            output_dim=1,
+            packed_dim=1,
+            packed_factor=self.quant_config.pack_factor,
+            weight_loader=weight_loader,
+        )
+
+        scales = GroupQuantScaleParameter(
+            data=torch.empty(
+                num_groups,
+                output_size_per_partition,
+                dtype=params_dtype,
+            ),
+            input_dim=0,
+            output_dim=1,
+            weight_loader=weight_loader,
+        )
+
+        layer.register_parameter(&#34;qweight&#34;, qweight)
+        layer.register_parameter(&#34;qzeros&#34;, qzeros)
+        layer.register_parameter(&#34;scales&#34;, scales)
+
+        layer.input_size_per_partition = input_size_per_partition
+        layer.output_size_per_partition = output_size_per_partition
+        layer.num_groups = num_groups
+
+    # TODO: Update this docs
+    # Checkpoints are serialized in AutoAWQ format, which is different from the
+    # marlin format. This function is called after the weights are loaded.
+    # Here, we handle the repacking
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        device = layer.qweight.device
+        layer.qweight = torch.nn.Parameter(layer.qweight.data, requires_grad=False)
+        layer.qzeros = torch.nn.Parameter(layer.qzeros.data, requires_grad=False)
+        layer.scales = torch.nn.Parameter(layer.scales.data, requires_grad=False)
+
+        # Allocate marlin workspace
+        layer.workspace = marlin_make_workspace(device)
+
+        # Repack weights from AWQ format to marlin format.
+        marlin_qweight = awq_marlin_repack(
+            layer.qweight,
+            size_k=layer.input_size_per_partition,
+            size_n=layer.output_size_per_partition,
+            num_bits=self.quant_config.quant_type.size_bits,
+        )
+        replace_parameter(layer, &#34;qweight&#34;, marlin_qweight)
+
+        # Permute scales from AWQ format to marlin format.
+        marlin_scales = marlin_permute_scales(
+            layer.scales,
+            size_k=layer.input_size_per_partition,
+            size_n=layer.output_size_per_partition,
+            group_size=self.quant_config.group_size,
+        )
+        replace_parameter(layer, &#34;scales&#34;, marlin_scales)
+
+        # Permute zero-points from AWQ format to marlin format.
+        marlin_zp = awq_to_marlin_zero_points(
+            layer.qzeros,
+            size_k=layer.num_groups,
+            size_n=layer.output_size_per_partition,
+            num_bits=self.quant_config.quant_type.size_bits,
+        )
+        replace_parameter(layer, &#34;qzeros&#34;, marlin_zp)
+
+        # Not-used
+        layer.g_idx = marlin_make_empty_g_idx(device)
+        layer.g_idx_sort_indices = marlin_make_empty_g_idx(device)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        bias: Optional[torch.Tensor] = None,
+    ) -&gt; torch.Tensor:
+        return apply_awq_marlin_linear(
+            input=x,
+            weight=layer.qweight,
+            weight_scale=layer.scales,
+            weight_zp=layer.qzeros,
+            g_idx=layer.g_idx,
+            g_idx_sort_indices=layer.g_idx_sort_indices,
+            workspace=layer.workspace,
+            quant_type=self.quant_config.quant_type,
+            output_size_per_partition=layer.output_size_per_partition,
+            input_size_per_partition=layer.input_size_per_partition,
+            bias=bias,
+        )</code></pre>
+</details>
+<div class="desc"><p>Linear method for AWQ Marlin.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>quant_config</code></strong></dt>
+<dd>The AWQ Marlin quantization config.</dd>
+</dl></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase">LinearMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.LinearMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.LinearMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.quantization.awq.AWQMoEMethod"><code class="flex name class">
+<span>class <span class="ident">AWQMoEMethod</span></span>
+<span>(</span><span>quant_config: <a title="sglang.srt.layers.quantization.awq.AWQMarlinConfig" href="#sglang.srt.layers.quantization.awq.AWQMarlinConfig">AWQMarlinConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AWQMoEMethod(FusedMoEMethodBase):
+
+    def __init__(self, quant_config: AWQMarlinConfig):
+        self.quant_config = quant_config
+        if self.quant_config.weight_bits != 4:
+            raise ValueError(&#34;AWQMoEMethod only supports 4bit now.&#34;)
+        self.quant_type = scalar_types.uint4
+
+    def create_weights(
+        self,
+        layer: torch.nn.Module,
+        num_experts: int,
+        hidden_size: int,
+        intermediate_size_per_partition: int,
+        params_dtype: torch.dtype,
+        **extra_weight_attrs,
+    ):
+        # Delay the import to avoid circular dependency
+        from sglang.srt.layers.moe.fused_moe_triton import FusedMoeWeightScaleSupported
+
+        extra_weight_attrs.update(
+            {
+                &#34;is_transposed&#34;: True,
+                &#34;quant_method&#34;: FusedMoeWeightScaleSupported.GROUP.value,
+            }
+        )
+
+        w13_qweight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                hidden_size,
+                2 * intermediate_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_qweight&#34;, w13_qweight)
+        set_weight_attrs(w13_qweight, extra_weight_attrs)
+
+        w2_qweight = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                intermediate_size_per_partition,
+                hidden_size // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_qweight&#34;, w2_qweight)
+        set_weight_attrs(w2_qweight, extra_weight_attrs)
+
+        num_groups_w13 = hidden_size // self.quant_config.group_size
+        num_groups_w2 = intermediate_size_per_partition // self.quant_config.group_size
+
+        # WEIGHT_SCALES
+        # Allocate 2 scales for w1 and w3 respectively.
+        w13_scales = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                num_groups_w13,
+                intermediate_size_per_partition * 2,
+                dtype=params_dtype,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_scales&#34;, w13_scales)
+        set_weight_attrs(w13_scales, extra_weight_attrs)
+
+        w2_scales = torch.nn.Parameter(
+            torch.empty(num_experts, num_groups_w2, hidden_size, dtype=params_dtype),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_scales&#34;, w2_scales)
+        set_weight_attrs(w2_scales, extra_weight_attrs)
+
+        # WEIGHT_ZERO_POINT
+        # Allocate 2 zero points for w1 and w3 respectively.
+        w13_qzeros = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                num_groups_w13,
+                2 * intermediate_size_per_partition // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w13_qzeros&#34;, w13_qzeros)
+        set_weight_attrs(w13_qzeros, extra_weight_attrs)
+
+        w2_qzeros = torch.nn.Parameter(
+            torch.empty(
+                num_experts,
+                num_groups_w2,
+                hidden_size // self.quant_config.pack_factor,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter(&#34;w2_qzeros&#34;, w2_qzeros)
+        set_weight_attrs(w2_qzeros, extra_weight_attrs)
+
+        device = layer.w13_qweight.device
+        layer.workspace = marlin_make_workspace(device, 4)
+
+    def process_weights_after_loading(self, layer: torch.nn.Module) -&gt; None:
+        num_experts = layer.w13_qweight.shape[0]
+        device = layer.w13_qweight.device
+
+        layer.w13_g_idx_sort_indices = torch.nn.Parameter(
+            torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+            requires_grad=False,
+        )
+        layer.w2_g_idx_sort_indices = torch.nn.Parameter(
+            torch.empty((num_experts, 0), dtype=torch.int32, device=device),
+            requires_grad=False,
+        )
+
+        marlin_w13_qweight = awq_marlin_moe_repack(
+            layer.w13_qweight,
+            layer.w13_g_idx_sort_indices,
+            size_k=layer.w13_qweight.shape[1],
+            size_n=layer.w13_qweight.shape[2] * self.quant_config.pack_factor,
+            num_bits=self.quant_config.weight_bits,
+        )
+        replace_parameter(layer, &#34;w13_qweight&#34;, marlin_w13_qweight)
+
+        marlin_w2_qweight = awq_marlin_moe_repack(
+            layer.w2_qweight,
+            layer.w2_g_idx_sort_indices,
+            size_k=layer.w2_qweight.shape[1],
+            size_n=layer.w2_qweight.shape[2] * self.quant_config.pack_factor,
+            num_bits=self.quant_config.weight_bits,
+        )
+        replace_parameter(layer, &#34;w2_qweight&#34;, marlin_w2_qweight)
+
+        # hidden_size-&gt;intermediate_size
+        marlin_w13_scales = marlin_moe_permute_scales(
+            s=layer.w13_scales,
+            size_k=layer.intermediate_size_per_partition,
+            size_n=layer.w13_scales.shape[2],
+            group_size=self.quant_config.group_size,
+        )
+
+        replace_parameter(layer, &#34;w13_scales&#34;, marlin_w13_scales)
+
+        marlin_w2_scales = marlin_moe_permute_scales(
+            s=layer.w2_scales,
+            size_k=layer.intermediate_size_per_partition,
+            size_n=layer.w2_scales.shape[2],
+            group_size=self.quant_config.group_size,
+        )
+        replace_parameter(layer, &#34;w2_scales&#34;, marlin_w2_scales)
+
+        marlin_w13_zp = moe_awq_to_marlin_zero_points(
+            layer.w13_qzeros,
+            size_k=layer.w13_qzeros.shape[1],
+            size_n=layer.w13_qzeros.shape[2] * self.quant_config.pack_factor,
+            num_bits=self.quant_config.weight_bits,
+        )
+        replace_parameter(layer, &#34;w13_qzeros&#34;, marlin_w13_zp)
+
+        marlin_w2_zp = moe_awq_to_marlin_zero_points(
+            layer.w2_qzeros,
+            size_k=layer.w2_qzeros.shape[1],
+            size_n=layer.w2_qzeros.shape[2] * self.quant_config.pack_factor,
+            num_bits=self.quant_config.weight_bits,
+        )
+        replace_parameter(layer, &#34;w2_qzeros&#34;, marlin_w2_zp)
+
+    def apply(
+        self,
+        layer: torch.nn.Module,
+        x: torch.Tensor,
+        topk_output: StandardTopKOutput,
+        moe_runner_config: MoeRunnerConfig,
+    ) -&gt; torch.Tensor:
+        assert (
+            moe_runner_config.activation == &#34;silu&#34;
+        ), &#34;Only SiLU activation is supported.&#34;
+
+        # The input must currently be float16
+        orig_dtype = x.dtype
+        x = x.half()
+
+        topk_weights, topk_ids, router_logits = topk_output
+
+        return fused_marlin_moe(
+            x,
+            layer.w13_qweight,
+            layer.w2_qweight,
+            layer.w13_scales,
+            layer.w2_scales,
+            router_logits,
+            topk_weights,
+            topk_ids,
+            sort_indices1=layer.w13_g_idx_sort_indices,
+            sort_indices2=layer.w2_g_idx_sort_indices,
+            w1_zeros=layer.w13_qzeros,
+            w2_zeros=layer.w2_qzeros,
+            num_bits=self.quant_config.weight_bits,
+        ).to(orig_dtype)</code></pre>
+</details>
+<div class="desc"><p>Base class for different quantized methods.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></li>
+<li><a title="sglang.srt.layers.quantization.base_config.QuantizeMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase">QuantizeMethodBase</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase" href="base_config.html#sglang.srt.layers.quantization.base_config.FusedMoEMethodBase">FusedMoEMethodBase</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.apply" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.apply">apply</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.create_weights" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.create_weights">create_weights</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.base_config.FusedMoEMethodBase.process_weights_after_loading" href="base_config.html#sglang.srt.layers.quantization.base_config.QuantizeMethodBase.process_weights_after_loading">process_weights_after_loading</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.awq.is_layer_skipped_awq" href="#sglang.srt.layers.quantization.awq.is_layer_skipped_awq">is_layer_skipped_awq</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.awq.AWQConfig" href="#sglang.srt.layers.quantization.awq.AWQConfig">AWQConfig</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.awq.AWQLinearMethod" href="#sglang.srt.layers.quantization.awq.AWQLinearMethod">AWQLinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.awq.AWQMarlinConfig" href="#sglang.srt.layers.quantization.awq.AWQMarlinConfig">AWQMarlinConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.awq.AWQMarlinConfig.TYPE_MAP" href="#sglang.srt.layers.quantization.awq.AWQMarlinConfig.TYPE_MAP">TYPE_MAP</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.awq.AWQMarlinConfig.is_awq_marlin_compatible" href="#sglang.srt.layers.quantization.awq.AWQMarlinConfig.is_awq_marlin_compatible">is_awq_marlin_compatible</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.awq.AWQMarlinLinearMethod" href="#sglang.srt.layers.quantization.awq.AWQMarlinLinearMethod">AWQMarlinLinearMethod</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.quantization.awq.AWQMoEMethod" href="#sglang.srt.layers.quantization.awq.AWQMoEMethod">AWQMoEMethod</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

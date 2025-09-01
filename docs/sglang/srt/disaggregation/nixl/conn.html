@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.disaggregation.nixl.conn API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.disaggregation.nixl.conn</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo"><code class="flex name class">
+<span>class <span class="ident">KVArgsRegisterInfo</span></span>
+<span>(</span><span>room: str,<br>endpoint: str,<br>dst_port: int,<br>agent_name: str,<br>agent_metadata: bytes,<br>dst_kv_ptrs: list[int],<br>dst_aux_ptrs: list[int],<br>gpu_id: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class KVArgsRegisterInfo:
+    &#34;&#34;&#34;Contains base pointers and other info which only needs to be sent once by KVReceiver. Received by prefill bootstrap thread.&#34;&#34;&#34;
+
+    room: str
+    endpoint: str
+    dst_port: int
+    agent_name: str
+    agent_metadata: bytes
+    dst_kv_ptrs: list[int]
+    dst_aux_ptrs: list[int]
+    gpu_id: int
+
+    @classmethod
+    def from_zmq(cls, msg: List[bytes]):
+        return cls(
+            room=str(msg[0].decode(&#34;ascii&#34;)),
+            endpoint=msg[1].decode(&#34;ascii&#34;),
+            dst_port=int(msg[2].decode(&#34;ascii&#34;)),
+            agent_name=msg[3].decode(&#34;ascii&#34;),
+            agent_metadata=msg[4],
+            dst_kv_ptrs=list(struct.unpack(f&#34;{len(msg[5])//8}Q&#34;, msg[5])),
+            dst_aux_ptrs=list(struct.unpack(f&#34;{len(msg[6])//8}Q&#34;, msg[6])),
+            gpu_id=int(msg[7].decode(&#34;ascii&#34;)),
+        )</code></pre>
+</details>
+<div class="desc"><p>Contains base pointers and other info which only needs to be sent once by KVReceiver. Received by prefill bootstrap thread.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.from_zmq"><code class="name flex">
+<span>def <span class="ident">from_zmq</span></span>(<span>msg: List[bytes])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.agent_metadata"><code class="name">var <span class="ident">agent_metadata</span> : bytes</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.agent_name"><code class="name">var <span class="ident">agent_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_aux_ptrs"><code class="name">var <span class="ident">dst_aux_ptrs</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_kv_ptrs"><code class="name">var <span class="ident">dst_kv_ptrs</span> : list[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_port"><code class="name">var <span class="ident">dst_port</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.endpoint"><code class="name">var <span class="ident">endpoint</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.gpu_id"><code class="name">var <span class="ident">gpu_id</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.room"><code class="name">var <span class="ident">room</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVBootstrapServer"><code class="flex name class">
+<span>class <span class="ident">NixlKVBootstrapServer</span></span>
+<span>(</span><span>port: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NixlKVBootstrapServer(CommonKVBootstrapServer):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.common.conn.CommonKVBootstrapServer" href="../common/conn.html#sglang.srt.disaggregation.common.conn.CommonKVBootstrapServer">CommonKVBootstrapServer</a></li>
+<li><a title="sglang.srt.disaggregation.base.conn.BaseKVBootstrapServer" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVBootstrapServer">BaseKVBootstrapServer</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.disaggregation.common.conn.CommonKVBootstrapServer" href="../common/conn.html#sglang.srt.disaggregation.common.conn.CommonKVBootstrapServer">CommonKVBootstrapServer</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.disaggregation.common.conn.CommonKVBootstrapServer.close" href="../common/conn.html#sglang.srt.disaggregation.common.conn.CommonKVBootstrapServer.close">close</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager"><code class="flex name class">
+<span>class <span class="ident">NixlKVManager</span></span>
+<span>(</span><span>args: KVArgs,<br>disaggregation_mode: DisaggregationMode,<br>server_args: ServerArgs,<br>is_mla_backend: Optional[bool] = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NixlKVManager(CommonKVManager):
+    def __init__(
+        self,
+        args: KVArgs,
+        disaggregation_mode: DisaggregationMode,
+        server_args: ServerArgs,
+        is_mla_backend: Optional[bool] = False,
+    ):
+        super().__init__(args, disaggregation_mode, server_args, is_mla_backend)
+        try:
+            from nixl._api import nixl_agent
+        except ImportError as e:
+            raise ImportError(
+                &#34;Please install NIXL by following the instructions at &#34;
+                &#34;https://github.com/ai-dynamo/nixl/blob/main/README.md &#34;
+                &#34;to run SGLang with NixlTransferEngine.&#34;
+            ) from e
+        self.agent = nixl_agent(str(uuid.uuid4()))
+        self.local_ip = get_local_ip_auto()
+        self.server_socket = zmq.Context().socket(zmq.PULL)
+        if is_valid_ipv6_address(self.local_ip):
+            self.server_socket.setsockopt(zmq.IPV6, 1)
+        self.register_buffer_to_engine()
+
+        if self.disaggregation_mode == DisaggregationMode.PREFILL:
+            self.request_status: Dict[int, KVPoll] = {}
+            self.transfer_infos: Dict[int, Dict[str, TransferInfo]] = {}
+            self.decode_kv_args_table: Dict[str, KVArgsRegisterInfo] = {}
+            self._start_bootstrap_thread()
+        elif self.disaggregation_mode == DisaggregationMode.DECODE:
+            self.transfer_statuses: Dict[int, TransferStatus] = defaultdict(
+                TransferStatus
+            )
+        else:
+            raise ValueError(
+                f&#34;Unsupported DisaggregationMode: {self.disaggregation_mode}&#34;
+            )
+
+    def check_status(self, bootstrap_room: int):
+        return self.request_status[bootstrap_room]
+
+    def update_status(self, bootstrap_room: int, status: KVPoll):
+        if bootstrap_room not in self.request_status:
+            self.request_status[bootstrap_room] = status
+        else:
+            # NOTE: The prefill engine could recv bootstrapping first
+            self.request_status[bootstrap_room] = max(
+                self.request_status[bootstrap_room], status
+            )
+
+    def register_buffer_to_engine(self):
+        kv_addrs = []
+        for kv_data_ptr, kv_data_len in zip(
+            self.kv_args.kv_data_ptrs, self.kv_args.kv_data_lens
+        ):
+            kv_addrs.append((kv_data_ptr, kv_data_len, self.kv_args.gpu_id, &#34;&#34;))
+        self.kv_descs = self.agent.register_memory(kv_addrs, &#34;VRAM&#34;, is_sorted=False)
+        logger.debug(f&#34;Register kv tensors, len(kv_addr)= {len(kv_addrs)}&#34;)
+        if not self.kv_descs:
+            raise Exception(&#34;NIXL memory registration failed for kv tensors&#34;)
+        aux_addrs = []
+        for aux_data_ptr, aux_data_len in zip(
+            self.kv_args.aux_data_ptrs, self.kv_args.aux_data_lens
+        ):
+            aux_addrs.append((aux_data_ptr, aux_data_len, 0, &#34;&#34;))
+        self.aux_descs = self.agent.register_memory(aux_addrs, &#34;DRAM&#34;, is_sorted=False)
+        logger.debug(f&#34;Register aux tensors, len(aux_addrs)= {len(aux_addrs)}&#34;)
+        if not self.aux_descs:
+            raise Exception(&#34;NIXL memory registration failed for aux tensors&#34;)
+
+    def _add_remote_peer(self, decode_kv_args: KVArgsRegisterInfo):
+        agent_name = decode_kv_args.agent_name
+        if agent_name in self.decode_kv_args_table:
+            logger.info(f&#34;Peer {agent_name} was already registered, ignoring.&#34;)
+            return
+        self.decode_kv_args_table[agent_name] = decode_kv_args
+        self.agent.add_remote_agent(decode_kv_args.agent_metadata)
+
+    def send_kvcache(
+        self,
+        peer_name: str,
+        prefill_kv_indices: npt.NDArray[np.int32],
+        dst_kv_ptrs: list[int],
+        dst_kv_indices: npt.NDArray[np.int32],
+        dst_gpu_id: int,
+        notif: str,
+    ):
+        # group by indices
+        prefill_kv_blocks, dst_kv_blocks = group_concurrent_contiguous(
+            prefill_kv_indices, dst_kv_indices
+        )
+
+        logger.debug(f&#34;sending kvcache to {peer_name} with notif {notif}&#34;)
+        # Make descs
+        num_layers = len(self.kv_args.kv_data_ptrs)
+        src_addrs = []
+        dst_addrs = []
+        for layer_id in range(num_layers):
+            src_ptr = self.kv_args.kv_data_ptrs[layer_id]
+            dst_ptr = dst_kv_ptrs[layer_id]
+            item_len = self.kv_args.kv_item_lens[layer_id]
+
+            for prefill_index, decode_index in zip(prefill_kv_blocks, dst_kv_blocks):
+                src_addr = src_ptr + int(prefill_index[0]) * item_len
+                dst_addr = dst_ptr + int(decode_index[0]) * item_len
+                length = item_len * len(prefill_index)
+                src_addrs.append((src_addr, length, self.kv_args.gpu_id))
+                dst_addrs.append((dst_addr, length, dst_gpu_id))
+
+        logger.debug(
+            f&#34;len(src_addrs): before group: {len(prefill_kv_indices)}, after group: {len(src_addrs)}&#34;
+        )
+        src_descs = self.agent.get_xfer_descs(src_addrs, &#34;VRAM&#34;, is_sorted=False)
+        dst_descs = self.agent.get_xfer_descs(dst_addrs, &#34;VRAM&#34;, is_sorted=False)
+        # Transfer data
+        xfer_handle = self.agent.initialize_xfer(
+            &#34;WRITE&#34;,
+            src_descs,
+            dst_descs,
+            peer_name,
+            notif.encode(&#34;ascii&#34;),  # type: ignore
+        )
+        if not xfer_handle:
+            raise Exception(&#34;KVSender failed to create transfer&#34;)
+        state = self.agent.transfer(xfer_handle)
+        if state == &#34;ERR&#34;:
+            raise Exception(&#34;KVSender failed to post transfer&#34;)
+        return xfer_handle
+
+    def send_aux(
+        self,
+        peer_name: str,
+        prefill_aux_index: int,
+        dst_aux_ptrs: list[int],
+        dst_aux_index: int,
+        notif: str,
+    ):
+        # Make descs
+        aux_item_len = self.kv_args.aux_item_lens[0]
+        prefill_aux_addr = (
+            self.kv_args.aux_data_ptrs[0] + prefill_aux_index * aux_item_len
+        )
+        decode_aux_addr = dst_aux_ptrs[0] + dst_aux_index * aux_item_len
+        src_addrs = [(prefill_aux_addr, aux_item_len, 0)]
+        dst_addrs = [(decode_aux_addr, aux_item_len, 0)]
+        src_descs = self.agent.get_xfer_descs(src_addrs, &#34;DRAM&#34;, is_sorted=False)
+        dst_descs = self.agent.get_xfer_descs(dst_addrs, &#34;DRAM&#34;, is_sorted=False)
+        # Transfer data
+        xfer_handle = self.agent.initialize_xfer(
+            &#34;WRITE&#34;,
+            src_descs,
+            dst_descs,
+            peer_name,
+            notif.encode(&#34;ascii&#34;),  # type: ignore
+        )
+        if not xfer_handle:
+            raise Exception(&#34;KVSender failed to create transfer&#34;)
+        state = self.agent.transfer(xfer_handle)
+        if state == &#34;ERR&#34;:
+            raise Exception(&#34;KVSender failed to post transfer&#34;)
+        return xfer_handle
+
+    def add_transfer_request(
+        self,
+        bootstrap_room: int,
+        kv_indices: npt.NDArray[np.int32],
+        index_slice: slice,
+        is_last: bool,
+        chunk_id: int,
+        aux_index: Optional[int] = None,
+    ):
+        assert self.disaggregation_mode == DisaggregationMode.PREFILL
+        assert not is_last or (is_last and aux_index is not None)
+
+        reqs_to_be_processed = self.transfer_infos[bootstrap_room].values()
+        handles = []
+        for req in reqs_to_be_processed:
+            assert bootstrap_room == req.room
+            if req.is_dummy():
+                continue
+
+            chunked_dst_kv_indice = req.dst_kv_indices[index_slice]
+            assert len(chunked_dst_kv_indice) == len(kv_indices)
+            assert req.agent_name in self.decode_kv_args_table
+
+            notif = &#34;_&#34;.join([str(req.room), &#34;kv&#34;, str(chunk_id), str(int(is_last))])
+            kv_xfer_handle = self.send_kvcache(
+                req.agent_name,
+                kv_indices,
+                self.decode_kv_args_table[req.agent_name].dst_kv_ptrs,
+                chunked_dst_kv_indice,
+                self.decode_kv_args_table[req.agent_name].gpu_id,
+                notif,
+            )
+            handles.append(kv_xfer_handle)
+            # Only the last chunk we need to send the aux data.
+            if is_last:
+                assert aux_index is not None
+                aux_xfer_handle = self.send_aux(
+                    req.agent_name,
+                    aux_index,
+                    self.decode_kv_args_table[req.agent_name].dst_aux_ptrs,
+                    req.dst_aux_index,
+                    str(req.room) + &#34;_aux&#34;,
+                )
+                handles.append(aux_xfer_handle)
+        if is_last:
+            del self.transfer_infos[bootstrap_room]
+        return handles
+
+    def update_transfer_status(self):
+        # Process notifications from received transfers.
+        notif_map = self.agent.get_new_notifs()
+        for peer_name, messages in notif_map.items():
+            # We could also check that self.bootstrap_info[&#39;agent_name&#39;] matches
+            # the message sender. But the bootstrap room alone should be
+            # sufficient to map the status.
+            for msg in messages:
+                components = msg.decode(&#34;ascii&#34;).split(&#34;_&#34;)
+                room = int(components[0])
+                if components[1] == &#34;kv&#34;:
+                    chunk_id = int(components[2])
+                    is_last = bool(int(components[3]))
+                    self.transfer_statuses[room].received_kvs.add(chunk_id)
+                    if is_last:
+                        self.transfer_statuses[room].num_kvs_expected = chunk_id + 1
+                elif components[1] == &#34;aux&#34;:
+                    self.transfer_statuses[room].received_aux = True
+
+    def check_transfer_done(self, room: int):
+        if room not in self.transfer_statuses:
+            return False
+        return self.transfer_statuses[room].is_done()
+
+    def _bind_server_socket(self):
+        self.server_socket.bind(format_tcp_address(self.local_ip, self.rank_port))
+
+    def _start_bootstrap_thread(self):
+        self._bind_server_socket()
+
+        def bootstrap_thread():
+            &#34;&#34;&#34;This thread recvs transfer info from the decode engine&#34;&#34;&#34;
+            while True:
+                waiting_req_bytes = self.server_socket.recv_multipart()
+                logger.debug(
+                    f&#34;Received multipart with total byte size {sum(len(x) for x in waiting_req_bytes)}&#34;
+                )
+                assert (
+                    waiting_req_bytes[0] == GUARD
+                ), f&#34;First message should be {GUARD}. Foreign traffic?&#34;
+                waiting_req_bytes = waiting_req_bytes[1:]
+                room = waiting_req_bytes[0].decode(&#34;ascii&#34;)
+                agent_name = waiting_req_bytes[3].decode(&#34;ascii&#34;)
+                if room == &#34;None&#34;:
+                    # Register new peer and save KV base pointers.
+                    self._add_remote_peer(
+                        KVArgsRegisterInfo.from_zmq(waiting_req_bytes)
+                    )
+                    logger.debug(f&#34;Register KVArgs from {agent_name} successfully&#34;)
+                    continue
+                room = int(room)
+                if room not in self.transfer_infos:
+                    self.transfer_infos[room] = {}
+                self.transfer_infos[room][agent_name] = TransferInfo.from_zmq(
+                    waiting_req_bytes
+                )
+                required_dst_info_num = self.transfer_infos[room][
+                    agent_name
+                ].required_dst_info_num
+                logger.debug(f&#34;got info {room=} {agent_name=} {required_dst_info_num=}&#34;)
+                if len(self.transfer_infos[room]) == required_dst_info_num:
+                    logger.debug(f&#34;{room=} is bootstrapped&#34;)
+                    self.update_status(room, KVPoll.WaitingForInput)
+
+        threading.Thread(target=bootstrap_thread).start()</code></pre>
+</details>
+<div class="desc"><p>Base class for managing transfers states</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.common.conn.CommonKVManager" href="../common/conn.html#sglang.srt.disaggregation.common.conn.CommonKVManager">CommonKVManager</a></li>
+<li><a title="sglang.srt.disaggregation.base.conn.BaseKVManager" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVManager">BaseKVManager</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.add_transfer_request"><code class="name flex">
+<span>def <span class="ident">add_transfer_request</span></span>(<span>self,<br>bootstrap_room: int,<br>kv_indices: npt.NDArray[np.int32],<br>index_slice: slice,<br>is_last: bool,<br>chunk_id: int,<br>aux_index: Optional[int] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_transfer_request(
+    self,
+    bootstrap_room: int,
+    kv_indices: npt.NDArray[np.int32],
+    index_slice: slice,
+    is_last: bool,
+    chunk_id: int,
+    aux_index: Optional[int] = None,
+):
+    assert self.disaggregation_mode == DisaggregationMode.PREFILL
+    assert not is_last or (is_last and aux_index is not None)
+
+    reqs_to_be_processed = self.transfer_infos[bootstrap_room].values()
+    handles = []
+    for req in reqs_to_be_processed:
+        assert bootstrap_room == req.room
+        if req.is_dummy():
+            continue
+
+        chunked_dst_kv_indice = req.dst_kv_indices[index_slice]
+        assert len(chunked_dst_kv_indice) == len(kv_indices)
+        assert req.agent_name in self.decode_kv_args_table
+
+        notif = &#34;_&#34;.join([str(req.room), &#34;kv&#34;, str(chunk_id), str(int(is_last))])
+        kv_xfer_handle = self.send_kvcache(
+            req.agent_name,
+            kv_indices,
+            self.decode_kv_args_table[req.agent_name].dst_kv_ptrs,
+            chunked_dst_kv_indice,
+            self.decode_kv_args_table[req.agent_name].gpu_id,
+            notif,
+        )
+        handles.append(kv_xfer_handle)
+        # Only the last chunk we need to send the aux data.
+        if is_last:
+            assert aux_index is not None
+            aux_xfer_handle = self.send_aux(
+                req.agent_name,
+                aux_index,
+                self.decode_kv_args_table[req.agent_name].dst_aux_ptrs,
+                req.dst_aux_index,
+                str(req.room) + &#34;_aux&#34;,
+            )
+            handles.append(aux_xfer_handle)
+    if is_last:
+        del self.transfer_infos[bootstrap_room]
+    return handles</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.check_status"><code class="name flex">
+<span>def <span class="ident">check_status</span></span>(<span>self, bootstrap_room: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_status(self, bootstrap_room: int):
+    return self.request_status[bootstrap_room]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.check_transfer_done"><code class="name flex">
+<span>def <span class="ident">check_transfer_done</span></span>(<span>self, room: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_transfer_done(self, room: int):
+    if room not in self.transfer_statuses:
+        return False
+    return self.transfer_statuses[room].is_done()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.register_buffer_to_engine"><code class="name flex">
+<span>def <span class="ident">register_buffer_to_engine</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_buffer_to_engine(self):
+    kv_addrs = []
+    for kv_data_ptr, kv_data_len in zip(
+        self.kv_args.kv_data_ptrs, self.kv_args.kv_data_lens
+    ):
+        kv_addrs.append((kv_data_ptr, kv_data_len, self.kv_args.gpu_id, &#34;&#34;))
+    self.kv_descs = self.agent.register_memory(kv_addrs, &#34;VRAM&#34;, is_sorted=False)
+    logger.debug(f&#34;Register kv tensors, len(kv_addr)= {len(kv_addrs)}&#34;)
+    if not self.kv_descs:
+        raise Exception(&#34;NIXL memory registration failed for kv tensors&#34;)
+    aux_addrs = []
+    for aux_data_ptr, aux_data_len in zip(
+        self.kv_args.aux_data_ptrs, self.kv_args.aux_data_lens
+    ):
+        aux_addrs.append((aux_data_ptr, aux_data_len, 0, &#34;&#34;))
+    self.aux_descs = self.agent.register_memory(aux_addrs, &#34;DRAM&#34;, is_sorted=False)
+    logger.debug(f&#34;Register aux tensors, len(aux_addrs)= {len(aux_addrs)}&#34;)
+    if not self.aux_descs:
+        raise Exception(&#34;NIXL memory registration failed for aux tensors&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.send_aux"><code class="name flex">
+<span>def <span class="ident">send_aux</span></span>(<span>self,<br>peer_name: str,<br>prefill_aux_index: int,<br>dst_aux_ptrs: list[int],<br>dst_aux_index: int,<br>notif: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_aux(
+    self,
+    peer_name: str,
+    prefill_aux_index: int,
+    dst_aux_ptrs: list[int],
+    dst_aux_index: int,
+    notif: str,
+):
+    # Make descs
+    aux_item_len = self.kv_args.aux_item_lens[0]
+    prefill_aux_addr = (
+        self.kv_args.aux_data_ptrs[0] + prefill_aux_index * aux_item_len
+    )
+    decode_aux_addr = dst_aux_ptrs[0] + dst_aux_index * aux_item_len
+    src_addrs = [(prefill_aux_addr, aux_item_len, 0)]
+    dst_addrs = [(decode_aux_addr, aux_item_len, 0)]
+    src_descs = self.agent.get_xfer_descs(src_addrs, &#34;DRAM&#34;, is_sorted=False)
+    dst_descs = self.agent.get_xfer_descs(dst_addrs, &#34;DRAM&#34;, is_sorted=False)
+    # Transfer data
+    xfer_handle = self.agent.initialize_xfer(
+        &#34;WRITE&#34;,
+        src_descs,
+        dst_descs,
+        peer_name,
+        notif.encode(&#34;ascii&#34;),  # type: ignore
+    )
+    if not xfer_handle:
+        raise Exception(&#34;KVSender failed to create transfer&#34;)
+    state = self.agent.transfer(xfer_handle)
+    if state == &#34;ERR&#34;:
+        raise Exception(&#34;KVSender failed to post transfer&#34;)
+    return xfer_handle</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.send_kvcache"><code class="name flex">
+<span>def <span class="ident">send_kvcache</span></span>(<span>self,<br>peer_name: str,<br>prefill_kv_indices: npt.NDArray[np.int32],<br>dst_kv_ptrs: list[int],<br>dst_kv_indices: npt.NDArray[np.int32],<br>dst_gpu_id: int,<br>notif: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_kvcache(
+    self,
+    peer_name: str,
+    prefill_kv_indices: npt.NDArray[np.int32],
+    dst_kv_ptrs: list[int],
+    dst_kv_indices: npt.NDArray[np.int32],
+    dst_gpu_id: int,
+    notif: str,
+):
+    # group by indices
+    prefill_kv_blocks, dst_kv_blocks = group_concurrent_contiguous(
+        prefill_kv_indices, dst_kv_indices
+    )
+
+    logger.debug(f&#34;sending kvcache to {peer_name} with notif {notif}&#34;)
+    # Make descs
+    num_layers = len(self.kv_args.kv_data_ptrs)
+    src_addrs = []
+    dst_addrs = []
+    for layer_id in range(num_layers):
+        src_ptr = self.kv_args.kv_data_ptrs[layer_id]
+        dst_ptr = dst_kv_ptrs[layer_id]
+        item_len = self.kv_args.kv_item_lens[layer_id]
+
+        for prefill_index, decode_index in zip(prefill_kv_blocks, dst_kv_blocks):
+            src_addr = src_ptr + int(prefill_index[0]) * item_len
+            dst_addr = dst_ptr + int(decode_index[0]) * item_len
+            length = item_len * len(prefill_index)
+            src_addrs.append((src_addr, length, self.kv_args.gpu_id))
+            dst_addrs.append((dst_addr, length, dst_gpu_id))
+
+    logger.debug(
+        f&#34;len(src_addrs): before group: {len(prefill_kv_indices)}, after group: {len(src_addrs)}&#34;
+    )
+    src_descs = self.agent.get_xfer_descs(src_addrs, &#34;VRAM&#34;, is_sorted=False)
+    dst_descs = self.agent.get_xfer_descs(dst_addrs, &#34;VRAM&#34;, is_sorted=False)
+    # Transfer data
+    xfer_handle = self.agent.initialize_xfer(
+        &#34;WRITE&#34;,
+        src_descs,
+        dst_descs,
+        peer_name,
+        notif.encode(&#34;ascii&#34;),  # type: ignore
+    )
+    if not xfer_handle:
+        raise Exception(&#34;KVSender failed to create transfer&#34;)
+    state = self.agent.transfer(xfer_handle)
+    if state == &#34;ERR&#34;:
+        raise Exception(&#34;KVSender failed to post transfer&#34;)
+    return xfer_handle</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.update_status"><code class="name flex">
+<span>def <span class="ident">update_status</span></span>(<span>self, bootstrap_room: int, status: KVPoll)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_status(self, bootstrap_room: int, status: KVPoll):
+    if bootstrap_room not in self.request_status:
+        self.request_status[bootstrap_room] = status
+    else:
+        # NOTE: The prefill engine could recv bootstrapping first
+        self.request_status[bootstrap_room] = max(
+            self.request_status[bootstrap_room], status
+        )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVManager.update_transfer_status"><code class="name flex">
+<span>def <span class="ident">update_transfer_status</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_transfer_status(self):
+    # Process notifications from received transfers.
+    notif_map = self.agent.get_new_notifs()
+    for peer_name, messages in notif_map.items():
+        # We could also check that self.bootstrap_info[&#39;agent_name&#39;] matches
+        # the message sender. But the bootstrap room alone should be
+        # sufficient to map the status.
+        for msg in messages:
+            components = msg.decode(&#34;ascii&#34;).split(&#34;_&#34;)
+            room = int(components[0])
+            if components[1] == &#34;kv&#34;:
+                chunk_id = int(components[2])
+                is_last = bool(int(components[3]))
+                self.transfer_statuses[room].received_kvs.add(chunk_id)
+                if is_last:
+                    self.transfer_statuses[room].num_kvs_expected = chunk_id + 1
+            elif components[1] == &#34;aux&#34;:
+                self.transfer_statuses[room].received_aux = True</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVReceiver"><code class="flex name class">
+<span>class <span class="ident">NixlKVReceiver</span></span>
+<span>(</span><span>mgr: <a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager">NixlKVManager</a>,<br>bootstrap_addr: str,<br>bootstrap_room: Optional[int] = None,<br>data_parallel_rank: Optional[int] = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NixlKVReceiver(CommonKVReceiver):
+    def __init__(
+        self,
+        mgr: NixlKVManager,
+        bootstrap_addr: str,
+        bootstrap_room: Optional[int] = None,
+        data_parallel_rank: Optional[int] = None,
+    ):
+        self.started_transfer = False
+        self.conclude_state = None
+        super().__init__(mgr, bootstrap_addr, bootstrap_room, data_parallel_rank)
+
+    def init(self, kv_indices: npt.NDArray[np.int32], aux_index: Optional[int] = None):
+        for bootstrap_info in self.bootstrap_infos:
+            logger.debug(
+                f&#34;Fetched bootstrap info: {bootstrap_info} for engine rank: {self.kv_mgr.kv_args.engine_rank}&#34;
+            )
+            sock, lock = self._connect_to_bootstrap_server(bootstrap_info)
+            is_dummy = bootstrap_info[&#34;is_dummy&#34;]
+            logger.debug(
+                f&#34;Sending to prefill server with bootstrap room {self.bootstrap_room} {is_dummy=}&#34;
+            )
+            with lock:
+                sock.send_multipart(
+                    [
+                        GUARD,
+                        str(self.bootstrap_room).encode(&#34;ascii&#34;),
+                        self.kv_mgr.local_ip.encode(&#34;ascii&#34;),
+                        str(self.kv_mgr.rank_port).encode(&#34;ascii&#34;),
+                        self.kv_mgr.agent.name.encode(&#34;ascii&#34;),
+                        kv_indices.tobytes() if not is_dummy else b&#34;&#34;,
+                        str(aux_index).encode(&#34;ascii&#34;),
+                        str(self.required_dst_info_num).encode(&#34;ascii&#34;),
+                    ]
+                )
+
+        self.started_transfer = True
+
+    def poll(self) -&gt; KVPoll:
+        if self.conclude_state is not None:
+            return self.conclude_state
+        if not self.started_transfer:
+            return KVPoll.WaitingForInput  # type: ignore
+
+        self.kv_mgr.update_transfer_status()
+        if self.kv_mgr.check_transfer_done(self.bootstrap_room):  # type: ignore
+            self.conclude_state = KVPoll.Success
+            del self.kv_mgr.transfer_statuses[self.bootstrap_room]
+            return KVPoll.Success  # type: ignore
+        return KVPoll.WaitingForInput  # type: ignore
+
+    def _register_kv_args(self):
+        for bootstrap_info in self.bootstrap_infos:
+            sock, lock = self._connect_to_bootstrap_server(bootstrap_info)
+            packed_kv_data_ptrs = b&#34;&#34;.join(
+                struct.pack(&#34;Q&#34;, ptr) for ptr in self.kv_mgr.kv_args.kv_data_ptrs
+            )
+            packed_aux_data_ptrs = b&#34;&#34;.join(
+                struct.pack(&#34;Q&#34;, ptr) for ptr in self.kv_mgr.kv_args.aux_data_ptrs
+            )
+
+            with lock:
+                sock.send_multipart(
+                    [
+                        GUARD,
+                        &#34;None&#34;.encode(&#34;ascii&#34;),
+                        self.kv_mgr.local_ip.encode(&#34;ascii&#34;),
+                        str(self.kv_mgr.rank_port).encode(&#34;ascii&#34;),
+                        self.kv_mgr.agent.name.encode(&#34;ascii&#34;),
+                        self.kv_mgr.agent.get_agent_metadata(),
+                        packed_kv_data_ptrs,
+                        packed_aux_data_ptrs,
+                        str(self.kv_mgr.kv_args.gpu_id).encode(&#34;ascii&#34;),
+                    ]
+                )
+
+    def failure_exception(self):
+        raise Exception(&#34;Fake KVReceiver Exception&#34;)</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.common.conn.CommonKVReceiver" href="../common/conn.html#sglang.srt.disaggregation.common.conn.CommonKVReceiver">CommonKVReceiver</a></li>
+<li><a title="sglang.srt.disaggregation.base.conn.BaseKVReceiver" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVReceiver">BaseKVReceiver</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.disaggregation.common.conn.CommonKVReceiver" href="../common/conn.html#sglang.srt.disaggregation.common.conn.CommonKVReceiver">CommonKVReceiver</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.disaggregation.common.conn.CommonKVReceiver.failure_exception" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVReceiver.failure_exception">failure_exception</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.common.conn.CommonKVReceiver.init" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVReceiver.init">init</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.common.conn.CommonKVReceiver.poll" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVReceiver.poll">poll</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.NixlKVSender"><code class="flex name class">
+<span>class <span class="ident">NixlKVSender</span></span>
+<span>(</span><span>mgr: <a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager">NixlKVManager</a>,<br>bootstrap_addr: str,<br>bootstrap_room: int,<br>dest_tp_ranks: List[int],<br>pp_rank: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class NixlKVSender(BaseKVSender):
+
+    def __init__(
+        self,
+        mgr: NixlKVManager,
+        bootstrap_addr: str,
+        bootstrap_room: int,
+        dest_tp_ranks: List[int],
+        pp_rank: int,
+    ):
+        self.kv_mgr = mgr
+        self.bootstrap_room = bootstrap_room
+        self.aux_index = None
+        self.bootstrap_server_url = bootstrap_addr
+        self.xfer_handles = []
+        self.has_sent = False
+        self.chunk_id = 0
+        self.kv_mgr.update_status(self.bootstrap_room, KVPoll.Bootstrapping)
+        # inner state
+        self.curr_idx = 0
+
+    def init(self, num_kv_indices: int, aux_index: Optional[int] = None):
+        self.num_kv_indices = num_kv_indices
+        self.aux_index = aux_index
+
+    def send(
+        self,
+        kv_indices: npt.NDArray[np.int32],
+    ):
+        index_slice = slice(self.curr_idx, self.curr_idx + len(kv_indices))
+        self.curr_idx += len(kv_indices)
+        is_last = self.curr_idx == self.num_kv_indices
+
+        new_xfer_handles = self.kv_mgr.add_transfer_request(
+            self.bootstrap_room,
+            kv_indices,
+            index_slice,
+            is_last,
+            self.chunk_id,
+            self.aux_index,
+        )
+        self.xfer_handles.extend(new_xfer_handles)
+        self.chunk_id += 1
+        if is_last:
+            self.has_sent = True
+            del self.kv_mgr.request_status[self.bootstrap_room]
+
+    def poll(self) -&gt; KVPoll:
+        if not self.has_sent:
+            return self.kv_mgr.check_status(self.bootstrap_room)
+        states = [self.kv_mgr.agent.check_xfer_state(x) for x in self.xfer_handles]
+        if all([x == &#34;DONE&#34; for x in states]):
+            return KVPoll.Success  # type: ignore
+        if any([x == &#34;ERR&#34; for x in states]):
+            raise Exception(&#34;KVSender transfer encountered an error.&#34;)
+        return KVPoll.WaitingForInput  # type: ignore
+
+    def failure_exception(self):
+        raise Exception(&#34;Fake KVSender Exception&#34;)</code></pre>
+</details>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.disaggregation.base.conn.BaseKVSender" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVSender">BaseKVSender</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.disaggregation.base.conn.BaseKVSender" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVSender">BaseKVSender</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.disaggregation.base.conn.BaseKVSender.failure_exception" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVSender.failure_exception">failure_exception</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.base.conn.BaseKVSender.init" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVSender.init">init</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.base.conn.BaseKVSender.poll" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVSender.poll">poll</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.base.conn.BaseKVSender.send" href="../base/conn.html#sglang.srt.disaggregation.base.conn.BaseKVSender.send">send</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo"><code class="flex name class">
+<span>class <span class="ident">TransferInfo</span></span>
+<span>(</span><span>room: int,<br>endpoint: str,<br>dst_port: int,<br>agent_name: str,<br>dst_kv_indices: npt.NDArray[np.int32],<br>dst_aux_index: int,<br>required_dst_info_num: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class TransferInfo:
+    &#34;&#34;&#34;Contains indices for a transfer, sent by KVReceiver. Received by prefill bootstrap thread.&#34;&#34;&#34;
+
+    room: int
+    endpoint: str
+    dst_port: int
+    agent_name: str
+    dst_kv_indices: npt.NDArray[np.int32]
+    dst_aux_index: int
+    required_dst_info_num: int
+
+    def is_dummy(self):
+        return self.dst_kv_indices.size == 0
+
+    @classmethod
+    def from_zmq(cls, msg: List[bytes]):
+        return cls(
+            room=int(msg[0].decode(&#34;ascii&#34;)),
+            endpoint=msg[1].decode(&#34;ascii&#34;),
+            dst_port=int(msg[2].decode(&#34;ascii&#34;)),
+            agent_name=msg[3].decode(&#34;ascii&#34;),
+            dst_kv_indices=np.frombuffer(msg[4], dtype=np.int32),
+            dst_aux_index=int(msg[5].decode(&#34;ascii&#34;)),
+            required_dst_info_num=int(msg[6].decode(&#34;ascii&#34;)),
+        )</code></pre>
+</details>
+<div class="desc"><p>Contains indices for a transfer, sent by KVReceiver. Received by prefill bootstrap thread.</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.from_zmq"><code class="name flex">
+<span>def <span class="ident">from_zmq</span></span>(<span>msg: List[bytes])</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.agent_name"><code class="name">var <span class="ident">agent_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_aux_index"><code class="name">var <span class="ident">dst_aux_index</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_kv_indices"><code class="name">var <span class="ident">dst_kv_indices</span> : numpy.ndarray[tuple[typing.Any, ...], numpy.dtype[numpy.int32]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_port"><code class="name">var <span class="ident">dst_port</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.endpoint"><code class="name">var <span class="ident">endpoint</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.required_dst_info_num"><code class="name">var <span class="ident">required_dst_info_num</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.room"><code class="name">var <span class="ident">room</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferInfo.is_dummy"><code class="name flex">
+<span>def <span class="ident">is_dummy</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_dummy(self):
+    return self.dst_kv_indices.size == 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferStatus"><code class="flex name class">
+<span>class <span class="ident">TransferStatus</span></span>
+<span>(</span><span>received_kvs: Set[int] = &lt;factory&gt;,<br>num_kvs_expected: Optional[int] = None,<br>received_aux: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class TransferStatus:
+    &#34;&#34;&#34;Used by KV Receiver to know when a transfer is done.&#34;&#34;&#34;
+
+    # KV chunk IDs that have been received.
+    received_kvs: Set[int] = dataclasses.field(default_factory=set)
+    # Number of kv chunks to expect, will know this after last chunk is received.
+    num_kvs_expected: Optional[int] = None
+    # Whether aux data has been received.
+    received_aux: bool = False
+
+    def is_done(self):
+        if self.num_kvs_expected is None:
+            return False
+        return self.num_kvs_expected == len(self.received_kvs) and self.received_aux</code></pre>
+</details>
+<div class="desc"><p>Used by KV Receiver to know when a transfer is done.</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferStatus.num_kvs_expected"><code class="name">var <span class="ident">num_kvs_expected</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferStatus.received_aux"><code class="name">var <span class="ident">received_aux</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferStatus.received_kvs"><code class="name">var <span class="ident">received_kvs</span> : Set[int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.disaggregation.nixl.conn.TransferStatus.is_done"><code class="name flex">
+<span>def <span class="ident">is_done</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_done(self):
+    if self.num_kvs_expected is None:
+        return False
+    return self.num_kvs_expected == len(self.received_kvs) and self.received_aux</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.disaggregation.nixl" href="index.html">sglang.srt.disaggregation.nixl</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo">KVArgsRegisterInfo</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.agent_metadata" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.agent_metadata">agent_metadata</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.agent_name" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.agent_name">agent_name</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_aux_ptrs" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_aux_ptrs">dst_aux_ptrs</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_kv_ptrs" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_kv_ptrs">dst_kv_ptrs</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_port" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.dst_port">dst_port</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.endpoint" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.endpoint">endpoint</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.from_zmq" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.from_zmq">from_zmq</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.gpu_id" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.gpu_id">gpu_id</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.room" href="#sglang.srt.disaggregation.nixl.conn.KVArgsRegisterInfo.room">room</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVBootstrapServer" href="#sglang.srt.disaggregation.nixl.conn.NixlKVBootstrapServer">NixlKVBootstrapServer</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager">NixlKVManager</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.add_transfer_request" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.add_transfer_request">add_transfer_request</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.check_status" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.check_status">check_status</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.check_transfer_done" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.check_transfer_done">check_transfer_done</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.register_buffer_to_engine" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.register_buffer_to_engine">register_buffer_to_engine</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.send_aux" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.send_aux">send_aux</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.send_kvcache" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.send_kvcache">send_kvcache</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.update_status" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.update_status">update_status</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVManager.update_transfer_status" href="#sglang.srt.disaggregation.nixl.conn.NixlKVManager.update_transfer_status">update_transfer_status</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVReceiver" href="#sglang.srt.disaggregation.nixl.conn.NixlKVReceiver">NixlKVReceiver</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.NixlKVSender" href="#sglang.srt.disaggregation.nixl.conn.NixlKVSender">NixlKVSender</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo">TransferInfo</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.agent_name" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.agent_name">agent_name</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_aux_index" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_aux_index">dst_aux_index</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_kv_indices" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_kv_indices">dst_kv_indices</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_port" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.dst_port">dst_port</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.endpoint" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.endpoint">endpoint</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.from_zmq" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.from_zmq">from_zmq</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.is_dummy" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.is_dummy">is_dummy</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.required_dst_info_num" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.required_dst_info_num">required_dst_info_num</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferInfo.room" href="#sglang.srt.disaggregation.nixl.conn.TransferInfo.room">room</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.disaggregation.nixl.conn.TransferStatus" href="#sglang.srt.disaggregation.nixl.conn.TransferStatus">TransferStatus</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferStatus.is_done" href="#sglang.srt.disaggregation.nixl.conn.TransferStatus.is_done">is_done</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferStatus.num_kvs_expected" href="#sglang.srt.disaggregation.nixl.conn.TransferStatus.num_kvs_expected">num_kvs_expected</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferStatus.received_aux" href="#sglang.srt.disaggregation.nixl.conn.TransferStatus.received_aux">received_aux</a></code></li>
+<li><code><a title="sglang.srt.disaggregation.nixl.conn.TransferStatus.received_kvs" href="#sglang.srt.disaggregation.nixl.conn.TransferStatus.received_kvs">received_kvs</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

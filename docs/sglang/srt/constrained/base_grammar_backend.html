@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.constrained.base_grammar_backend API documentation</title>
+<meta name="description" content="The baseclass of a backend for grammar-guided constrained decoding.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.constrained.base_grammar_backend</code></h1>
+</header>
+<section id="section-intro">
+<p>The baseclass of a backend for grammar-guided constrained decoding.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.create_grammar_backend"><code class="name flex">
+<span>def <span class="ident">create_grammar_backend</span></span>(<span>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>tokenizer,<br>vocab_size: int,<br>eos_token_ids: set | None = None) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend">BaseGrammarBackend</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_grammar_backend(
+    server_args: ServerArgs,
+    tokenizer,
+    vocab_size: int,
+    eos_token_ids: Optional[set] = None,
+) -&gt; Optional[BaseGrammarBackend]:
+    if server_args.grammar_backend == &#34;outlines&#34;:
+        from sglang.srt.constrained.outlines_backend import OutlinesGrammarBackend
+
+        grammar_backend = OutlinesGrammarBackend(
+            tokenizer,
+            whitespace_pattern=server_args.constrained_json_whitespace_pattern,
+        )
+    elif server_args.grammar_backend == &#34;xgrammar&#34;:
+        from sglang.srt.constrained.xgrammar_backend import XGrammarGrammarBackend
+
+        # Convert Set[int] to List[int] if needed
+        eos_list = list(eos_token_ids) if eos_token_ids else None
+
+        grammar_backend = XGrammarGrammarBackend(
+            tokenizer, vocab_size=vocab_size, model_eos_token_ids=eos_list
+        )
+    elif server_args.grammar_backend == &#34;llguidance&#34;:
+        from sglang.srt.constrained.llguidance_backend import GuidanceBackend
+
+        grammar_backend = GuidanceBackend(
+            tokenizer=tokenizer,
+            whitespace_pattern=server_args.constrained_json_whitespace_pattern,
+        )
+    elif server_args.grammar_backend == &#34;none&#34;:
+        return None
+    else:
+        raise ValueError(f&#34;Invalid grammar backend: {server_args.grammar_backend}&#34;)
+
+    if server_args.reasoning_parser and hasattr(tokenizer, &#34;think_end_id&#34;):
+        from sglang.srt.constrained.reasoner_grammar_backend import (
+            ReasonerGrammarBackend,
+        )
+
+        grammar_backend = ReasonerGrammarBackend(
+            grammar_backend, tokenizer.think_end_id
+        )
+
+    return grammar_backend</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend"><code class="flex name class">
+<span>class <span class="ident">BaseGrammarBackend</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseGrammarBackend:
+    def __init__(self):
+        self.executor = ThreadPoolExecutor()
+        self.cache: Dict[Tuple[str, str], CacheEntry] = {}
+
+    def _not_supported(self, key_type: str, key_string: str) -&gt; None:
+        logger.warning(f&#34;Skip unsupported {key_type=}, {key_string=}&#34;)
+
+    def dispatch_fallback(
+        self, key_type: str, key_string: str
+    ) -&gt; Optional[BaseGrammarObject]:
+        &#34;&#34;&#34;
+        This function should not be reached in any case.
+        &#34;&#34;&#34;
+        raise ValueError(f&#34;Invalid key_type: {key_type}={key_string}&#34;)
+
+    def dispatch_json(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+        return self._not_supported(&#34;json&#34;, key_string)
+
+    def dispatch_regex(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+        return self._not_supported(&#34;regex&#34;, key_string)
+
+    def dispatch_ebnf(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+        return self._not_supported(&#34;ebnf&#34;, key_string)
+
+    def dispatch_structural_tag(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+        return self._not_supported(&#34;structural_tag&#34;, key_string)
+
+    def _init_value_dispatch(self, key: Tuple[str, str]) -&gt; Optional[BaseGrammarObject]:
+        key_type, key_string = key
+        if key_type == &#34;json&#34;:
+            return self.dispatch_json(key_string)
+        elif key_type == &#34;regex&#34;:
+            return self.dispatch_regex(key_string)
+        elif key_type == &#34;ebnf&#34;:
+            return self.dispatch_ebnf(key_string)
+        elif key_type == &#34;structural_tag&#34;:
+            return self.dispatch_structural_tag(key_string)
+        elif key_type == &#34;structural_pattern&#34;:
+            return self.dispatch_structural_pattern(key_string)
+        else:
+            return self.dispatch_fallback(key_type, key_string)
+
+    def get_cached_or_future_value(
+        self, key: Tuple[str, str]
+    ) -&gt; Optional[BaseGrammarObject]:
+        value = self.cache.get(key)
+        if value:
+            return value.copy(), True
+        value = self.executor.submit(self._init_value_dispatch, key)
+        return value, False
+
+    def set_cache(self, key: Tuple[str, str], value: BaseGrammarObject):
+        self.cache[key] = value
+
+    def reset(self):
+        self.cache.clear()</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.constrained.llguidance_backend.GuidanceBackend" href="llguidance_backend.html#sglang.srt.constrained.llguidance_backend.GuidanceBackend">GuidanceBackend</a></li>
+<li><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend" href="outlines_backend.html#sglang.srt.constrained.outlines_backend.OutlinesGrammarBackend">OutlinesGrammarBackend</a></li>
+<li><a title="sglang.srt.constrained.reasoner_grammar_backend.ReasonerGrammarBackend" href="reasoner_grammar_backend.html#sglang.srt.constrained.reasoner_grammar_backend.ReasonerGrammarBackend">ReasonerGrammarBackend</a></li>
+<li><a title="sglang.srt.constrained.xgrammar_backend.XGrammarGrammarBackend" href="xgrammar_backend.html#sglang.srt.constrained.xgrammar_backend.XGrammarGrammarBackend">XGrammarGrammarBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_ebnf"><code class="name flex">
+<span>def <span class="ident">dispatch_ebnf</span></span>(<span>self, key_string: str) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_ebnf(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+    return self._not_supported(&#34;ebnf&#34;, key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_fallback"><code class="name flex">
+<span>def <span class="ident">dispatch_fallback</span></span>(<span>self, key_type: str, key_string: str) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_fallback(
+    self, key_type: str, key_string: str
+) -&gt; Optional[BaseGrammarObject]:
+    &#34;&#34;&#34;
+    This function should not be reached in any case.
+    &#34;&#34;&#34;
+    raise ValueError(f&#34;Invalid key_type: {key_type}={key_string}&#34;)</code></pre>
+</details>
+<div class="desc"><p>This function should not be reached in any case.</p></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_json"><code class="name flex">
+<span>def <span class="ident">dispatch_json</span></span>(<span>self, key_string: str) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_json(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+    return self._not_supported(&#34;json&#34;, key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_regex"><code class="name flex">
+<span>def <span class="ident">dispatch_regex</span></span>(<span>self, key_string: str) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_regex(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+    return self._not_supported(&#34;regex&#34;, key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_structural_tag"><code class="name flex">
+<span>def <span class="ident">dispatch_structural_tag</span></span>(<span>self, key_string: str) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_structural_tag(self, key_string: str) -&gt; Optional[BaseGrammarObject]:
+    return self._not_supported(&#34;structural_tag&#34;, key_string)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.get_cached_or_future_value"><code class="name flex">
+<span>def <span class="ident">get_cached_or_future_value</span></span>(<span>self, key: Tuple[str, str]) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a> | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cached_or_future_value(
+    self, key: Tuple[str, str]
+) -&gt; Optional[BaseGrammarObject]:
+    value = self.cache.get(key)
+    if value:
+        return value.copy(), True
+    value = self.executor.submit(self._init_value_dispatch, key)
+    return value, False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset(self):
+    self.cache.clear()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.set_cache"><code class="name flex">
+<span>def <span class="ident">set_cache</span></span>(<span>self,<br>key: Tuple[str, str],<br>value: <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_cache(self, key: Tuple[str, str], value: BaseGrammarObject):
+    self.cache[key] = value</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject"><code class="flex name class">
+<span>class <span class="ident">BaseGrammarObject</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseGrammarObject:
+
+    def __init__(self):
+        self._finished = False
+
+    def accept_token(self, token: int) -&gt; None:
+        &#34;&#34;&#34;
+        Accept a token in the grammar.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def rollback(self, k: int):
+        raise NotImplementedError()
+
+    def is_terminated(self):
+        return False
+
+    def allocate_vocab_mask(
+        self, vocab_size: int, batch_size: int, device
+    ) -&gt; torch.Tensor:
+        raise NotImplementedError()
+
+    def fill_vocab_mask(self, vocab_mask: torch.Tensor, idx: int) -&gt; None:
+        raise NotImplementedError()
+
+    @staticmethod
+    def move_vocab_mask(vocab_mask: torch.Tensor, device) -&gt; torch.Tensor:
+        raise NotImplementedError()
+
+    @staticmethod
+    def apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor) -&gt; None:
+        raise NotImplementedError()
+
+    def copy(self) -&gt; &#34;BaseGrammarObject&#34;:
+        return self
+
+    @property
+    def finished(self):
+        return self._finished
+
+    @finished.setter
+    def finished(self, finished):
+        self._finished = finished
+
+    def try_jump_forward(self, tokenizer) -&gt; Optional[Tuple[List[int], str]]:
+        &#34;&#34;&#34;
+        Try to jump forward in the grammar.
+
+        Returns:
+            A jump forward helper which may be used in `jump_forward_str_state`.
+            None if the jump forward is not possible.
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def jump_forward_str_state(self, helper: Tuple[List[int], str]) -&gt; Tuple[str, int]:
+        &#34;&#34;&#34;
+        Jump forward for the grammar.
+
+        Returns:
+            A tuple of the jump forward string and the next state of the grammar
+            (which can be used in `jump_and_retokenize` if needed).
+        &#34;&#34;&#34;
+        raise NotImplementedError()
+
+    def jump_and_retokenize(
+        self, old_output_ids: List[int], new_output_ids: List[int], next_state: int
+    ) -&gt; None:
+        &#34;&#34;&#34;
+        Jump forward occurs, and update the grammar state if needed.
+        &#34;&#34;&#34;
+        raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.constrained.llguidance_backend.GuidanceGrammar" href="llguidance_backend.html#sglang.srt.constrained.llguidance_backend.GuidanceGrammar">GuidanceGrammar</a></li>
+<li><a title="sglang.srt.constrained.outlines_backend.OutlinesGrammar" href="outlines_backend.html#sglang.srt.constrained.outlines_backend.OutlinesGrammar">OutlinesGrammar</a></li>
+<li><a title="sglang.srt.constrained.reasoner_grammar_backend.ReasonerGrammarObject" href="reasoner_grammar_backend.html#sglang.srt.constrained.reasoner_grammar_backend.ReasonerGrammarObject">ReasonerGrammarObject</a></li>
+<li><a title="sglang.srt.constrained.xgrammar_backend.XGrammarGrammar" href="xgrammar_backend.html#sglang.srt.constrained.xgrammar_backend.XGrammarGrammar">XGrammarGrammar</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.apply_vocab_mask"><code class="name flex">
+<span>def <span class="ident">apply_vocab_mask</span></span>(<span>logits: torch.Tensor, vocab_mask: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def apply_vocab_mask(logits: torch.Tensor, vocab_mask: torch.Tensor) -&gt; None:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.move_vocab_mask"><code class="name flex">
+<span>def <span class="ident">move_vocab_mask</span></span>(<span>vocab_mask: torch.Tensor, device) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def move_vocab_mask(vocab_mask: torch.Tensor, device) -&gt; torch.Tensor:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.finished"><code class="name">prop <span class="ident">finished</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def finished(self):
+    return self._finished</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.accept_token"><code class="name flex">
+<span>def <span class="ident">accept_token</span></span>(<span>self, token: int) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def accept_token(self, token: int) -&gt; None:
+    &#34;&#34;&#34;
+    Accept a token in the grammar.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Accept a token in the grammar.</p></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.allocate_vocab_mask"><code class="name flex">
+<span>def <span class="ident">allocate_vocab_mask</span></span>(<span>self, vocab_size: int, batch_size: int, device) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def allocate_vocab_mask(
+    self, vocab_size: int, batch_size: int, device
+) -&gt; torch.Tensor:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def copy(self) -&gt; &#34;BaseGrammarObject&#34;:
+    return self</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.fill_vocab_mask"><code class="name flex">
+<span>def <span class="ident">fill_vocab_mask</span></span>(<span>self, vocab_mask: torch.Tensor, idx: int) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fill_vocab_mask(self, vocab_mask: torch.Tensor, idx: int) -&gt; None:
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.is_terminated"><code class="name flex">
+<span>def <span class="ident">is_terminated</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_terminated(self):
+    return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_and_retokenize"><code class="name flex">
+<span>def <span class="ident">jump_and_retokenize</span></span>(<span>self, old_output_ids: List[int], new_output_ids: List[int], next_state: int) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def jump_and_retokenize(
+    self, old_output_ids: List[int], new_output_ids: List[int], next_state: int
+) -&gt; None:
+    &#34;&#34;&#34;
+    Jump forward occurs, and update the grammar state if needed.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Jump forward occurs, and update the grammar state if needed.</p></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_forward_str_state"><code class="name flex">
+<span>def <span class="ident">jump_forward_str_state</span></span>(<span>self, helper: Tuple[List[int], str]) ‑> Tuple[str, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def jump_forward_str_state(self, helper: Tuple[List[int], str]) -&gt; Tuple[str, int]:
+    &#34;&#34;&#34;
+    Jump forward for the grammar.
+
+    Returns:
+        A tuple of the jump forward string and the next state of the grammar
+        (which can be used in `jump_and_retokenize` if needed).
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Jump forward for the grammar.</p>
+<h2 id="returns">Returns</h2>
+<p>A tuple of the jump forward string and the next state of the grammar
+(which can be used in <code>jump_and_retokenize</code> if needed).</p></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.rollback"><code class="name flex">
+<span>def <span class="ident">rollback</span></span>(<span>self, k: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rollback(self, k: int):
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.try_jump_forward"><code class="name flex">
+<span>def <span class="ident">try_jump_forward</span></span>(<span>self, tokenizer) ‑> Tuple[List[int], str] | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def try_jump_forward(self, tokenizer) -&gt; Optional[Tuple[List[int], str]]:
+    &#34;&#34;&#34;
+    Try to jump forward in the grammar.
+
+    Returns:
+        A jump forward helper which may be used in `jump_forward_str_state`.
+        None if the jump forward is not possible.
+    &#34;&#34;&#34;
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"><p>Try to jump forward in the grammar.</p>
+<h2 id="returns">Returns</h2>
+<p>A jump forward helper which may be used in <code>jump_forward_str_state</code>.
+None if the jump forward is not possible.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.CacheEntry"><code class="flex name class">
+<span>class <span class="ident">CacheEntry</span></span>
+<span>(</span><span>value: <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a>,<br>event: threading.Event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class CacheEntry:
+    value: BaseGrammarObject
+    event: Event</code></pre>
+</details>
+<div class="desc"><p>CacheEntry(value: sglang.srt.constrained.base_grammar_backend.BaseGrammarObject, event: threading.Event)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.constrained.base_grammar_backend.CacheEntry.event"><code class="name">var <span class="ident">event</span> : threading.Event</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.constrained.base_grammar_backend.CacheEntry.value"><code class="name">var <span class="ident">value</span> : <a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.constrained" href="index.html">sglang.srt.constrained</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.create_grammar_backend" href="#sglang.srt.constrained.base_grammar_backend.create_grammar_backend">create_grammar_backend</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend">BaseGrammarBackend</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_ebnf" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_ebnf">dispatch_ebnf</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_fallback" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_fallback">dispatch_fallback</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_json" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_json">dispatch_json</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_regex" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_regex">dispatch_regex</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_structural_tag" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.dispatch_structural_tag">dispatch_structural_tag</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.get_cached_or_future_value" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.get_cached_or_future_value">get_cached_or_future_value</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.reset" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.reset">reset</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.set_cache" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarBackend.set_cache">set_cache</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject">BaseGrammarObject</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.accept_token" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.accept_token">accept_token</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.allocate_vocab_mask" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.allocate_vocab_mask">allocate_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.apply_vocab_mask" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.apply_vocab_mask">apply_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.copy" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.copy">copy</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.fill_vocab_mask" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.fill_vocab_mask">fill_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.finished" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.finished">finished</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.is_terminated" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.is_terminated">is_terminated</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_and_retokenize" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_and_retokenize">jump_and_retokenize</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_forward_str_state" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.jump_forward_str_state">jump_forward_str_state</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.move_vocab_mask" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.move_vocab_mask">move_vocab_mask</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.rollback" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.rollback">rollback</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.try_jump_forward" href="#sglang.srt.constrained.base_grammar_backend.BaseGrammarObject.try_jump_forward">try_jump_forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.constrained.base_grammar_backend.CacheEntry" href="#sglang.srt.constrained.base_grammar_backend.CacheEntry">CacheEntry</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.CacheEntry.event" href="#sglang.srt.constrained.base_grammar_backend.CacheEntry.event">event</a></code></li>
+<li><code><a title="sglang.srt.constrained.base_grammar_backend.CacheEntry.value" href="#sglang.srt.constrained.base_grammar_backend.CacheEntry.value">value</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

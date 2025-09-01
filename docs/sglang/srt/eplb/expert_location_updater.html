@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.eplb.expert_location_updater API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.eplb.expert_location_updater</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.eplb.expert_location_updater.create_temp_buffers"><code class="name flex">
+<span>def <span class="ident">create_temp_buffers</span></span>(<span>sample_tensors)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_temp_buffers(sample_tensors):
+    return [torch.empty_like(tensor) for tensor in sample_tensors]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.eplb.expert_location_updater.update_expert_weights_single_layer"><code class="name flex">
+<span>def <span class="ident">update_expert_weights_single_layer</span></span>(<span>routed_experts_weights: List[torch.Tensor],<br>temp_buffers: List[torch.Tensor],<br>old_physical_to_logical_map: List[int],<br>new_physical_to_logical_map: List[int],<br>num_local_physical_experts: int,<br>num_gpu_per_node: int,<br>rank: int,<br>world_size: int | None = None,<br>debug: bool = False,<br>log_metrics: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update_expert_weights_single_layer(
+    routed_experts_weights: List[torch.Tensor],
+    temp_buffers: List[torch.Tensor],
+    old_physical_to_logical_map: List[int],  # (num_physical_Experts,)
+    new_physical_to_logical_map: List[int],  # (num_physical_Experts,)
+    num_local_physical_experts: int,
+    num_gpu_per_node: int,
+    rank: int,
+    world_size: Optional[int] = None,
+    debug: bool = False,
+    log_metrics: bool = False,
+):
+    assert all(
+        tensor.shape[0] == num_local_physical_experts
+        for tensor in routed_experts_weights
+    ), f&#34;{num_local_physical_experts=} {[x.shape for x in routed_experts_weights]=}&#34;
+    assert isinstance(old_physical_to_logical_map, list)
+    assert isinstance(new_physical_to_logical_map, list)
+
+    if _LOG_INPUT:
+        logger.info(
+            &#34;update_expert_weights_single_layer &#34;
+            f&#34;{[x.shape for x in routed_experts_weights]=} &#34;
+            f&#34;{[x.shape for x in temp_buffers]=} &#34;
+            f&#34;{old_physical_to_logical_map=} &#34;
+            f&#34;{new_physical_to_logical_map=} &#34;
+            f&#34;{num_local_physical_experts=} &#34;
+            f&#34;{num_gpu_per_node=} &#34;
+            f&#34;{rank=} &#34;
+            f&#34;{world_size=} &#34;
+        )
+
+    output_logs = [] if debug else None
+
+    num_physical_experts = len(old_physical_to_logical_map)
+    num_tensors = len(routed_experts_weights)
+
+    self_node_id = rank // num_gpu_per_node
+
+    local_expert_location_range = (
+        rank * num_local_physical_experts,
+        (rank + 1) * num_local_physical_experts,
+    )
+
+    def _entrypoint():
+        # List[Tuple[logical_expert_id, List[P2POp]]]
+        p2p_op_infos: List[Tuple[int, List[P2POp]]] = []
+        # List[Tuple[temp_buffers_expert_location, routed_experts_weights_expert_location]]
+        buffer2weight_copy_infos: List[Tuple[int, int]] = []
+
+        _handle_recv(buffer2weight_copy_infos, p2p_op_infos)
+        _create_isend_ops(p2p_op_infos)
+        _execute_p2p_ops(p2p_op_infos)
+        _execute_buffer2weight_copies(buffer2weight_copy_infos)
+
+        if log_metrics:
+            _log_p2p_op_metrics(
+                p2p_op_infos,
+                world_size=world_size,
+                num_gpu_per_node=num_gpu_per_node,
+                self_node_id=self_node_id,
+            )
+
+        if debug:
+            output_logs.append(f&#34;{p2p_op_infos=}&#34;)
+            output_logs.append(f&#34;{buffer2weight_copy_infos=}&#34;)
+
+    def _handle_recv(buffer2weight_copy_infos, p2p_op_infos):
+        for dst_expert_location in range(*local_expert_location_range):
+            _handle_recv_of_dst_expert_location(
+                dst_expert_location, buffer2weight_copy_infos, p2p_op_infos
+            )
+
+    def _handle_recv_of_dst_expert_location(
+        dst_expert_location: int, buffer2weight_copy_infos, p2p_op_infos
+    ):
+        logical_expert_id = new_physical_to_logical_map[dst_expert_location]
+
+        # case 1: unchanged
+        if old_physical_to_logical_map[dst_expert_location] == logical_expert_id:
+            if debug:
+                output_logs.append(
+                    f&#34;handle_recv_of_dst_expert_location {dst_expert_location=} case=unchanged&#34;
+                )
+            return
+
+        # case 2: same-gpu
+        for src_expert_location in range(*local_expert_location_range):
+            if old_physical_to_logical_map[src_expert_location] == logical_expert_id:
+                for i in range(num_tensors):
+                    _get_tensor(temp_buffers, i, dst_expert_location).copy_(
+                        _get_tensor(routed_experts_weights, i, src_expert_location)
+                    )
+                buffer2weight_copy_infos.append(
+                    (dst_expert_location, dst_expert_location)
+                )
+                if debug:
+                    output_logs.append(
+                        f&#34;handle_recv_of_dst_expert_location {dst_expert_location=} case=same-gpu {src_expert_location=}&#34;
+                    )
+                return
+
+        # case 3: free-rider
+        for src_expert_location in range(
+            rank * num_local_physical_experts, dst_expert_location
+        ):
+            if new_physical_to_logical_map[src_expert_location] == logical_expert_id:
+                buffer2weight_copy_infos.append(
+                    (src_expert_location, dst_expert_location)
+                )
+                if debug:
+                    output_logs.append(
+                        f&#34;handle_recv_of_dst_expert_location {dst_expert_location=} case=free-rider {src_expert_location=}&#34;
+                    )
+                return
+
+        same_node_mapping, cross_node_mapping, need_comm_self_node_dst_ranks = (
+            _compute_comm_info(logical_expert_id=logical_expert_id)
+        )
+
+        # case 4: same-node
+        if rank in need_comm_self_node_dst_ranks:
+            chosen_src_rank = same_node_mapping.chunk_value_from_element_value(
+                element_value=rank
+            )
+            _create_p2p_recv_and_buffer2weight_copy(
+                buffer2weight_copy_infos,
+                p2p_op_infos,
+                src_rank=chosen_src_rank,
+                logical_expert_id=logical_expert_id,
+                dst_expert_location=dst_expert_location,
+            )
+            if debug:
+                output_logs.append(
+                    f&#34;handle_recv_of_dst_expert_location {dst_expert_location=} case=same-node {chosen_src_rank=}&#34;
+                )
+            return
+
+        # case 5: cross-node
+        # Future work: can optimize when there are multiple ranks in the same dst node that uses the same logical expert
+        chosen_src_rank = cross_node_mapping.chunk_value_from_element_value(
+            element_value=rank
+        )
+        _create_p2p_recv_and_buffer2weight_copy(
+            buffer2weight_copy_infos,
+            p2p_op_infos,
+            src_rank=chosen_src_rank,
+            logical_expert_id=logical_expert_id,
+            dst_expert_location=dst_expert_location,
+        )
+        if debug:
+            output_logs.append(
+                f&#34;handle_recv_of_dst_expert_location {dst_expert_location=} case=cross-node {chosen_src_rank=}&#34;
+            )
+        return
+
+    def _create_p2p_recv_and_buffer2weight_copy(
+        buffer2weight_copy_infos,
+        p2p_op_infos,
+        *,
+        logical_expert_id: int,
+        src_rank: int,
+        dst_expert_location: int,
+    ):
+        p2p_op_infos.append(
+            (
+                logical_expert_id,
+                [
+                    P2POp(
+                        op=torch.distributed.irecv,
+                        tensor=_get_tensor(temp_buffers, i, dst_expert_location),
+                        peer=src_rank,
+                    )
+                    for i in range(num_tensors)
+                ],
+            )
+        )
+        buffer2weight_copy_infos.append((dst_expert_location, dst_expert_location))
+
+    def _create_isend_ops(p2p_op_infos):
+        handled_logical_expert_ids = set()
+        for src_expert_location in range(*local_expert_location_range):
+            logical_expert_id = old_physical_to_logical_map[src_expert_location]
+
+            if logical_expert_id in handled_logical_expert_ids:
+                continue
+            handled_logical_expert_ids.add(logical_expert_id)
+
+            _create_isend_ops_of_logical_expert_id(
+                logical_expert_id, src_expert_location, p2p_op_infos
+            )
+
+    def _create_isend_ops_of_logical_expert_id(
+        logical_expert_id, src_expert_location, p2p_op_infos
+    ):
+        same_node_mapping, cross_node_mapping, need_comm_self_node_dst_ranks = (
+            _compute_comm_info(logical_expert_id=logical_expert_id)
+        )
+
+        same_node_dst_ranks = same_node_mapping.element_values_from_chunk_value(
+            chunk_value=rank
+        )
+        cross_node_dst_ranks = cross_node_mapping.element_values_from_chunk_value(
+            chunk_value=rank
+        )
+        all_dst_ranks = same_node_dst_ranks + cross_node_dst_ranks
+
+        if debug:
+            output_logs.append(
+                f&#34;create_isend_ops_of_logical_expert_id {logical_expert_id=} {src_expert_location=} {same_node_dst_ranks=} {cross_node_dst_ranks=}&#34;
+            )
+
+        p2p_op_infos.append(
+            (
+                logical_expert_id,
+                [
+                    P2POp(
+                        op=torch.distributed.isend,
+                        tensor=_get_tensor(
+                            routed_experts_weights, i, src_expert_location
+                        ),
+                        peer=dst_rank,
+                    )
+                    for dst_rank in all_dst_ranks
+                    for i in range(num_tensors)
+                ],
+            )
+        )
+
+    def _compute_comm_info(logical_expert_id: int):
+        all_src_ranks = _deduplicate_ordered(
+            [
+                x // num_local_physical_experts
+                for x in range(num_physical_experts)
+                if old_physical_to_logical_map[x] == logical_expert_id
+            ]
+        )
+        all_src_nodes = [x // num_gpu_per_node for x in all_src_ranks]
+        self_node_src_ranks = [
+            x for x in all_src_ranks if x // num_gpu_per_node == self_node_id
+        ]
+
+        need_comm_dst_ranks = _deduplicate_ordered(
+            [
+                x // num_local_physical_experts
+                for x in range(num_physical_experts)
+                if new_physical_to_logical_map[x] == logical_expert_id
+                and x // num_local_physical_experts not in all_src_ranks
+            ]
+        )
+        need_comm_self_node_dst_ranks = (
+            [x for x in need_comm_dst_ranks if x // num_gpu_per_node == self_node_id]
+            if len(self_node_src_ranks) &gt; 0
+            else []
+        )
+        need_comm_cross_node_dst_ranks = [
+            x
+            for x in need_comm_dst_ranks
+            if (x // num_gpu_per_node) not in all_src_nodes
+        ]
+
+        same_node_mapping = _ChunkUtils(
+            chunk_values=self_node_src_ranks,
+            element_values=need_comm_self_node_dst_ranks,
+        )
+
+        cross_node_mapping = _ChunkUtils(
+            chunk_values=all_src_ranks,
+            element_values=need_comm_cross_node_dst_ranks,
+        )
+
+        return same_node_mapping, cross_node_mapping, need_comm_self_node_dst_ranks
+
+    def _execute_p2p_ops(p2p_op_infos):
+        sorted_infos = sorted(p2p_op_infos, key=lambda info: info[0])
+        p2p_ops = [op for _, ops in sorted_infos for op in ops]
+        if len(p2p_ops) == 0:
+            return
+
+        reqs = torch.distributed.batch_isend_irecv(p2p_ops)
+        for req in reqs:
+            req.wait()
+
+    def _execute_buffer2weight_copies(buffer2weight_copy_infos):
+        for (
+            temp_buffers_expert_location,
+            routed_experts_weights_expert_location,
+        ) in buffer2weight_copy_infos:
+            for i in range(num_tensors):
+                _get_tensor(
+                    routed_experts_weights, i, routed_experts_weights_expert_location
+                ).copy_(_get_tensor(temp_buffers, i, temp_buffers_expert_location))
+
+    def _get_tensor(tensors, tensor_index: int, expert_location: int) -&gt; torch.Tensor:
+        return tensors[tensor_index][_get_local_expert_location(expert_location)]
+
+    def _get_local_expert_location(expert_location: int) -&gt; int:
+        assert (
+            local_expert_location_range[0]
+            &lt;= expert_location
+            &lt; local_expert_location_range[1]
+        )
+        return expert_location % num_local_physical_experts
+
+    _entrypoint()
+
+    return output_logs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.eplb.expert_location_updater.ExpertLocationUpdater"><code class="flex name class">
+<span>class <span class="ident">ExpertLocationUpdater</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ExpertLocationUpdater:
+    def __init__(self):
+        self._first_execution = True
+
+    def update(
+        self,
+        routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]],
+        new_expert_location_metadata: ExpertLocationMetadata,
+        update_layer_ids: List[int],
+        nnodes: int,
+        rank: int,
+    ):
+        if self._first_execution:
+            self._first_execution = False
+            torch.cuda.empty_cache()
+
+        old_expert_location_metadata = get_global_expert_location_metadata()
+        assert old_expert_location_metadata is not None
+
+        _update_expert_weights(
+            routed_experts_weights_of_layer=routed_experts_weights_of_layer,
+            old_expert_location_metadata=old_expert_location_metadata,
+            new_expert_location_metadata=new_expert_location_metadata,
+            update_layer_ids=update_layer_ids,
+            nnodes=nnodes,
+            rank=rank,
+        )
+        old_expert_location_metadata.update(
+            new_expert_location_metadata,
+            update_layer_ids=update_layer_ids,
+        )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.eplb.expert_location_updater.ExpertLocationUpdater.update"><code class="name flex">
+<span>def <span class="ident">update</span></span>(<span>self,<br>routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]],<br>new_expert_location_metadata: <a title="sglang.srt.eplb.expert_location.ExpertLocationMetadata" href="expert_location.html#sglang.srt.eplb.expert_location.ExpertLocationMetadata">ExpertLocationMetadata</a>,<br>update_layer_ids: List[int],<br>nnodes: int,<br>rank: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def update(
+    self,
+    routed_experts_weights_of_layer: Dict[int, List[torch.Tensor]],
+    new_expert_location_metadata: ExpertLocationMetadata,
+    update_layer_ids: List[int],
+    nnodes: int,
+    rank: int,
+):
+    if self._first_execution:
+        self._first_execution = False
+        torch.cuda.empty_cache()
+
+    old_expert_location_metadata = get_global_expert_location_metadata()
+    assert old_expert_location_metadata is not None
+
+    _update_expert_weights(
+        routed_experts_weights_of_layer=routed_experts_weights_of_layer,
+        old_expert_location_metadata=old_expert_location_metadata,
+        new_expert_location_metadata=new_expert_location_metadata,
+        update_layer_ids=update_layer_ids,
+        nnodes=nnodes,
+        rank=rank,
+    )
+    old_expert_location_metadata.update(
+        new_expert_location_metadata,
+        update_layer_ids=update_layer_ids,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.eplb" href="index.html">sglang.srt.eplb</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.eplb.expert_location_updater.create_temp_buffers" href="#sglang.srt.eplb.expert_location_updater.create_temp_buffers">create_temp_buffers</a></code></li>
+<li><code><a title="sglang.srt.eplb.expert_location_updater.update_expert_weights_single_layer" href="#sglang.srt.eplb.expert_location_updater.update_expert_weights_single_layer">update_expert_weights_single_layer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.eplb.expert_location_updater.ExpertLocationUpdater" href="#sglang.srt.eplb.expert_location_updater.ExpertLocationUpdater">ExpertLocationUpdater</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.eplb.expert_location_updater.ExpertLocationUpdater.update" href="#sglang.srt.eplb.expert_location_updater.ExpertLocationUpdater.update">update</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

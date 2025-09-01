@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.parameter API documentation</title>
+<meta name="description" content="Adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/model_executor/parameter.py">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.parameter</code></h1>
+</header>
+<section id="section-intro">
+<p>Adapted from <a href="https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/model_executor/parameter.py">https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/model_executor/parameter.py</a></p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.parameter.BasevLLMParameter"><code class="flex name class">
+<span>class <span class="ident">BasevLLMParameter</span></span>
+<span>(</span><span>data: torch.Tensor, weight_loader: Callable)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BasevLLMParameter(Parameter):
+    &#34;&#34;&#34;
+    Base parameter for vLLM linear layers. Extends the torch.nn.parameter
+    by taking in a linear weight loader. Will copy the loaded weight
+    into the parameter when the provided weight loader is called.
+    &#34;&#34;&#34;
+
+    def __new__(cls, data: torch.Tensor, **kwargs):
+
+        return super().__new__(cls, data=data, requires_grad=False)
+
+    def __init__(self, data: torch.Tensor, weight_loader: Callable):
+        &#34;&#34;&#34;
+        Initialize the BasevLLMParameter
+
+        :param data: torch tensor with the parameter data
+        :param weight_loader: weight loader callable
+
+        :returns: a torch.nn.parameter
+        &#34;&#34;&#34;
+
+        self._weight_loader = weight_loader
+
+    @property
+    def weight_loader(self):
+        return self._weight_loader
+
+    def _assert_and_load(self, loaded_weight: torch.Tensor):
+        assert self.data.shape == loaded_weight.shape
+        self.data.copy_(loaded_weight)
+
+    def load_column_parallel_weight(self, loaded_weight: torch.Tensor):
+        self._assert_and_load(loaded_weight)
+
+    def load_row_parallel_weight(self, loaded_weight: torch.Tensor):
+        self._assert_and_load(loaded_weight)
+
+    def load_merged_column_weight(self, loaded_weight: torch.Tensor, **kwargs):
+        self._assert_and_load(loaded_weight)
+
+    def load_qkv_weight(self, loaded_weight: torch.Tensor, **kwargs):
+        self._assert_and_load(loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Base parameter for vLLM linear layers. Extends the torch.nn.parameter
+by taking in a linear weight loader. Will copy the loaded weight
+into the parameter when the provided weight loader is called.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.parameter.PerTensorScaleParameter" href="#sglang.srt.layers.parameter.PerTensorScaleParameter">PerTensorScaleParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.RowvLLMParameter" href="#sglang.srt.layers.parameter.RowvLLMParameter">RowvLLMParameter</a></li>
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.BasevLLMParameter.weight_loader"><code class="name">prop <span class="ident">weight_loader</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def weight_loader(self):
+    return self._weight_loader</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.BasevLLMParameter.load_column_parallel_weight"><code class="name flex">
+<span>def <span class="ident">load_column_parallel_weight</span></span>(<span>self, loaded_weight: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_column_parallel_weight(self, loaded_weight: torch.Tensor):
+    self._assert_and_load(loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.BasevLLMParameter.load_merged_column_weight"><code class="name flex">
+<span>def <span class="ident">load_merged_column_weight</span></span>(<span>self, loaded_weight: torch.Tensor, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_merged_column_weight(self, loaded_weight: torch.Tensor, **kwargs):
+    self._assert_and_load(loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.BasevLLMParameter.load_qkv_weight"><code class="name flex">
+<span>def <span class="ident">load_qkv_weight</span></span>(<span>self, loaded_weight: torch.Tensor, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_qkv_weight(self, loaded_weight: torch.Tensor, **kwargs):
+    self._assert_and_load(loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.BasevLLMParameter.load_row_parallel_weight"><code class="name flex">
+<span>def <span class="ident">load_row_parallel_weight</span></span>(<span>self, loaded_weight: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_row_parallel_weight(self, loaded_weight: torch.Tensor):
+    self._assert_and_load(loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.parameter.BlockQuantScaleParameter"><code class="flex name class">
+<span>class <span class="ident">BlockQuantScaleParameter</span></span>
+<span>(</span><span>output_dim: int, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BlockQuantScaleParameter(_ColumnvLLMParameter, RowvLLMParameter):
+    &#34;&#34;&#34;
+    Parameter class for weight scales loaded for weights with
+    block-wise quantization. Uses both column and row parallelism.
+    &#34;&#34;&#34;
+
+    pass</code></pre>
+</details>
+<div class="desc"><p>Parameter class for weight scales loaded for weights with
+block-wise quantization. Uses both column and row parallelism.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+<li><a title="sglang.srt.layers.parameter.RowvLLMParameter" href="#sglang.srt.layers.parameter.RowvLLMParameter">RowvLLMParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.parameter.ChannelQuantScaleParameter"><code class="flex name class">
+<span>class <span class="ident">ChannelQuantScaleParameter</span></span>
+<span>(</span><span>output_dim: int, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ChannelQuantScaleParameter(_ColumnvLLMParameter):
+    &#34;&#34;&#34;
+    Parameter class for weight scales loaded for weights with
+    channel-wise quantization. Equivalent to _ColumnvLLMParameter.
+    &#34;&#34;&#34;
+
+    pass</code></pre>
+</details>
+<div class="desc"><p>Parameter class for weight scales loaded for weights with
+channel-wise quantization. Equivalent to _ColumnvLLMParameter.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.parameter.GroupQuantScaleParameter"><code class="flex name class">
+<span>class <span class="ident">GroupQuantScaleParameter</span></span>
+<span>(</span><span>output_dim: int, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class GroupQuantScaleParameter(_ColumnvLLMParameter, RowvLLMParameter):
+    &#34;&#34;&#34;
+    Parameter class for weight scales loaded for weights with
+    grouped quantization. Uses both column and row parallelism.
+    &#34;&#34;&#34;
+
+    pass</code></pre>
+</details>
+<div class="desc"><p>Parameter class for weight scales loaded for weights with
+grouped quantization. Uses both column and row parallelism.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+<li><a title="sglang.srt.layers.parameter.RowvLLMParameter" href="#sglang.srt.layers.parameter.RowvLLMParameter">RowvLLMParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.parameter.ModelWeightParameter"><code class="flex name class">
+<span>class <span class="ident">ModelWeightParameter</span></span>
+<span>(</span><span>output_dim: int, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ModelWeightParameter(_ColumnvLLMParameter, RowvLLMParameter):
+    &#34;&#34;&#34;
+    Parameter class for linear layer weights. Uses both column and
+    row parallelism.
+    &#34;&#34;&#34;
+
+    pass</code></pre>
+</details>
+<div class="desc"><p>Parameter class for linear layer weights. Uses both column and
+row parallelism.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+<li><a title="sglang.srt.layers.parameter.RowvLLMParameter" href="#sglang.srt.layers.parameter.RowvLLMParameter">RowvLLMParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.parameter.PackedvLLMParameter" href="#sglang.srt.layers.parameter.PackedvLLMParameter">PackedvLLMParameter</a></li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.parameter.PackedColumnParameter"><code class="flex name class">
+<span>class <span class="ident">PackedColumnParameter</span></span>
+<span>(</span><span>packed_factor: int | fractions.Fraction,<br>packed_dim: int,<br>marlin_tile_size: int | None = None,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PackedColumnParameter(_ColumnvLLMParameter):
+    &#34;&#34;&#34;
+    Parameter for model parameters which are packed on disk
+    and support column parallelism only. See PackedvLLMParameter
+    for more details on the packed properties.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        packed_factor: Union[int, Fraction],
+        packed_dim: int,
+        marlin_tile_size: Optional[int] = None,
+        **kwargs,
+    ):
+        self._packed_factor = packed_factor
+        self._packed_dim = packed_dim
+        self._marlin_tile_size = marlin_tile_size
+        super().__init__(**kwargs)
+
+    @property
+    def packed_dim(self):
+        return self._packed_dim
+
+    @property
+    def packed_factor(self):
+        return self._packed_factor
+
+    @property
+    def marlin_tile_size(self):
+        return self._marlin_tile_size
+
+    def adjust_shard_indexes_for_packing(self, shard_size, shard_offset):
+        return _adjust_shard_indexes_for_packing(
+            shard_size=shard_size,
+            shard_offset=shard_offset,
+            packed_factor=self.packed_factor,
+            marlin_tile_size=self.marlin_tile_size,
+        )</code></pre>
+</details>
+<div class="desc"><p>Parameter for model parameters which are packed on disk
+and support column parallelism only. See PackedvLLMParameter
+for more details on the packed properties.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.PackedColumnParameter.marlin_tile_size"><code class="name">prop <span class="ident">marlin_tile_size</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def marlin_tile_size(self):
+    return self._marlin_tile_size</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PackedColumnParameter.packed_dim"><code class="name">prop <span class="ident">packed_dim</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def packed_dim(self):
+    return self._packed_dim</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PackedColumnParameter.packed_factor"><code class="name">prop <span class="ident">packed_factor</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def packed_factor(self):
+    return self._packed_factor</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.PackedColumnParameter.adjust_shard_indexes_for_packing"><code class="name flex">
+<span>def <span class="ident">adjust_shard_indexes_for_packing</span></span>(<span>self, shard_size, shard_offset)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust_shard_indexes_for_packing(self, shard_size, shard_offset):
+    return _adjust_shard_indexes_for_packing(
+        shard_size=shard_size,
+        shard_offset=shard_offset,
+        packed_factor=self.packed_factor,
+        marlin_tile_size=self.marlin_tile_size,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.parameter.PackedvLLMParameter"><code class="flex name class">
+<span>class <span class="ident">PackedvLLMParameter</span></span>
+<span>(</span><span>packed_factor: int | fractions.Fraction,<br>packed_dim: int,<br>marlin_tile_size: int | None = None,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PackedvLLMParameter(ModelWeightParameter):
+    &#34;&#34;&#34;
+    Parameter for model weights which are packed on disk.
+    Example: GPTQ Marlin weights are int4 or int8, packed into int32.
+    Extends the ModelWeightParameter to take in the
+    packed factor, the packed dimension, and optionally, marlin
+    tile size for marlin kernels. Adjusts the shard_size and
+    shard_offset for fused linear layers model weight loading
+    by accounting for packing and optionally, marlin tile size.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        packed_factor: Union[int, Fraction],
+        packed_dim: int,
+        marlin_tile_size: Optional[int] = None,
+        **kwargs,
+    ):
+        self._packed_factor = packed_factor
+        self._packed_dim = packed_dim
+        self._marlin_tile_size = marlin_tile_size
+        super().__init__(**kwargs)
+
+    @property
+    def packed_dim(self):
+        return self._packed_dim
+
+    @property
+    def packed_factor(self):
+        return self._packed_factor
+
+    @property
+    def marlin_tile_size(self):
+        return self._marlin_tile_size
+
+    def adjust_shard_indexes_for_packing(self, shard_size, shard_offset):
+        return _adjust_shard_indexes_for_packing(
+            shard_size=shard_size,
+            shard_offset=shard_offset,
+            packed_factor=self.packed_factor,
+            marlin_tile_size=self.marlin_tile_size,
+        )</code></pre>
+</details>
+<div class="desc"><p>Parameter for model weights which are packed on disk.
+Example: GPTQ Marlin weights are int4 or int8, packed into int32.
+Extends the ModelWeightParameter to take in the
+packed factor, the packed dimension, and optionally, marlin
+tile size for marlin kernels. Adjusts the shard_size and
+shard_offset for fused linear layers model weight loading
+by accounting for packing and optionally, marlin tile size.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.parameter.ModelWeightParameter" href="#sglang.srt.layers.parameter.ModelWeightParameter">ModelWeightParameter</a></li>
+<li>sglang.srt.layers.parameter._ColumnvLLMParameter</li>
+<li><a title="sglang.srt.layers.parameter.RowvLLMParameter" href="#sglang.srt.layers.parameter.RowvLLMParameter">RowvLLMParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.PackedvLLMParameter.marlin_tile_size"><code class="name">prop <span class="ident">marlin_tile_size</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def marlin_tile_size(self):
+    return self._marlin_tile_size</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PackedvLLMParameter.packed_dim"><code class="name">prop <span class="ident">packed_dim</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def packed_dim(self):
+    return self._packed_dim</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PackedvLLMParameter.packed_factor"><code class="name">prop <span class="ident">packed_factor</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def packed_factor(self):
+    return self._packed_factor</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.PackedvLLMParameter.adjust_shard_indexes_for_packing"><code class="name flex">
+<span>def <span class="ident">adjust_shard_indexes_for_packing</span></span>(<span>self, shard_size, shard_offset)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def adjust_shard_indexes_for_packing(self, shard_size, shard_offset):
+    return _adjust_shard_indexes_for_packing(
+        shard_size=shard_size,
+        shard_offset=shard_offset,
+        packed_factor=self.packed_factor,
+        marlin_tile_size=self.marlin_tile_size,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.parameter.PerTensorScaleParameter"><code class="flex name class">
+<span>class <span class="ident">PerTensorScaleParameter</span></span>
+<span>(</span><span>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PerTensorScaleParameter(BasevLLMParameter):
+    &#34;&#34;&#34;
+    Parameter class for scales where the number of scales is
+    equivalent to the number of logical matrices in fused linear
+    layers (e.g. for QKV, there are 3 scales loaded from disk).
+    This is relevant to weights with per-tensor quantization.
+    Adds functionality to map the scalers to a shard during
+    weight loading.
+
+    Note: additional parameter manipulation may be handled
+    for each quantization config specifically, within
+    process_weights_after_loading
+    &#34;&#34;&#34;
+
+    def __init__(self, **kwargs):
+        self.qkv_idxs = {&#34;q&#34;: 0, &#34;k&#34;: 1, &#34;v&#34;: 2}
+        super().__init__(**kwargs)
+
+    def _shard_id_as_int(self, shard_id: Union[str, int]) -&gt; int:
+        if isinstance(shard_id, int):
+            return shard_id
+
+        # if not int, assume shard_id for qkv
+        # map to int and return
+        assert isinstance(shard_id, str)
+        assert shard_id in self.qkv_idxs
+        return self.qkv_idxs[shard_id]
+
+    # For row parallel layers, no sharding needed
+    # load weight into parameter as is
+    def load_row_parallel_weight(self, *args, **kwargs):
+        kwargs.pop(&#34;tp_rank&#34;, None)
+        kwargs.pop(&#34;use_presharded_weights&#34;, None)
+        super().load_row_parallel_weight(*args, **kwargs)
+
+    def load_merged_column_weight(self, *args, **kwargs):
+        self._load_into_shard_id(*args, **kwargs)
+
+    def load_qkv_weight(self, *args, **kwargs):
+        self._load_into_shard_id(*args, **kwargs)
+
+    def load_column_parallel_weight(self, *args, **kwargs):
+        kwargs.pop(&#34;tp_rank&#34;, None)
+        kwargs.pop(&#34;use_presharded_weights&#34;, None)
+        super().load_row_parallel_weight(*args, **kwargs)
+
+    def _load_into_shard_id(
+        self, loaded_weight: torch.Tensor, shard_id: Union[str, int], **kwargs
+    ):
+        &#34;&#34;&#34;
+        Slice the parameter data based on the shard id for
+        loading.
+        &#34;&#34;&#34;
+
+        param_data = self.data
+        shard_id = self._shard_id_as_int(shard_id)
+
+        # AutoFP8 scales do not have a shape
+        # compressed-tensors scales do have a shape
+        if len(loaded_weight.shape) != 0:
+            assert loaded_weight.shape[0] == 1
+            loaded_weight = loaded_weight[0]
+
+        param_data = param_data[shard_id]
+        assert param_data.shape == loaded_weight.shape
+        param_data.copy_(loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Parameter class for scales where the number of scales is
+equivalent to the number of logical matrices in fused linear
+layers (e.g. for QKV, there are 3 scales loaded from disk).
+This is relevant to weights with per-tensor quantization.
+Adds functionality to map the scalers to a shard during
+weight loading.</p>
+<p>Note: additional parameter manipulation may be handled
+for each quantization config specifically, within
+process_weights_after_loading</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.PerTensorScaleParameter.load_column_parallel_weight"><code class="name flex">
+<span>def <span class="ident">load_column_parallel_weight</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_column_parallel_weight(self, *args, **kwargs):
+    kwargs.pop(&#34;tp_rank&#34;, None)
+    kwargs.pop(&#34;use_presharded_weights&#34;, None)
+    super().load_row_parallel_weight(*args, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PerTensorScaleParameter.load_merged_column_weight"><code class="name flex">
+<span>def <span class="ident">load_merged_column_weight</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_merged_column_weight(self, *args, **kwargs):
+    self._load_into_shard_id(*args, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PerTensorScaleParameter.load_qkv_weight"><code class="name flex">
+<span>def <span class="ident">load_qkv_weight</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_qkv_weight(self, *args, **kwargs):
+    self._load_into_shard_id(*args, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.parameter.PerTensorScaleParameter.load_row_parallel_weight"><code class="name flex">
+<span>def <span class="ident">load_row_parallel_weight</span></span>(<span>self, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_row_parallel_weight(self, *args, **kwargs):
+    kwargs.pop(&#34;tp_rank&#34;, None)
+    kwargs.pop(&#34;use_presharded_weights&#34;, None)
+    super().load_row_parallel_weight(*args, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.parameter.RowvLLMParameter"><code class="flex name class">
+<span>class <span class="ident">RowvLLMParameter</span></span>
+<span>(</span><span>input_dim: int, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RowvLLMParameter(BasevLLMParameter):
+    &#34;&#34;&#34;
+    Parameter class defining weight_loading functionality
+    (load_row_parallel_weight) for parameters being loaded
+    into linear layers with row parallel functionality.
+    Requires an input_dim to be defined.
+    &#34;&#34;&#34;
+
+    def __init__(self, input_dim: int, **kwargs):
+        self._input_dim = input_dim
+        super().__init__(**kwargs)
+
+    @property
+    def input_dim(self):
+        return self._input_dim
+
+    def load_row_parallel_weight(
+        self,
+        loaded_weight: torch.Tensor,
+        tp_rank: int,
+        use_presharded_weights: bool = False,
+    ):
+        if not use_presharded_weights:
+            shard_size = self.data.shape[self.input_dim]
+
+            from sglang.srt.model_loader.weight_utils import (
+                narrow_padded_param_and_loaded_weight,
+            )
+
+            if _is_cpu:
+                param_data, loaded_weight = narrow_padded_param_and_loaded_weight(
+                    self.data,
+                    loaded_weight,
+                    0,  # param_data_start
+                    tp_rank * shard_size,
+                    self.input_dim,
+                    shard_size,
+                )
+
+                assert param_data.shape == loaded_weight.shape
+                param_data.copy_(loaded_weight)
+
+                return
+            else:
+                loaded_weight = loaded_weight.narrow(
+                    self.input_dim, tp_rank * shard_size, shard_size
+                )
+
+        if len(loaded_weight.shape) == 0:
+            loaded_weight = loaded_weight.reshape(1)
+
+        assert self.data.shape == loaded_weight.shape
+        self.data.copy_(loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Parameter class defining weight_loading functionality
+(load_row_parallel_weight) for parameters being loaded
+into linear layers with row parallel functionality.
+Requires an input_dim to be defined.</p>
+<p>Initialize the BasevLLMParameter</p>
+<p>:param data: torch tensor with the parameter data
+:param weight_loader: weight loader callable</p>
+<p>:returns: a torch.nn.parameter</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></li>
+<li>torch.nn.parameter.Parameter</li>
+<li>torch.Tensor</li>
+<li>torch._C.TensorBase</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.parameter.BlockQuantScaleParameter" href="#sglang.srt.layers.parameter.BlockQuantScaleParameter">BlockQuantScaleParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.GroupQuantScaleParameter" href="#sglang.srt.layers.parameter.GroupQuantScaleParameter">GroupQuantScaleParameter</a></li>
+<li><a title="sglang.srt.layers.parameter.ModelWeightParameter" href="#sglang.srt.layers.parameter.ModelWeightParameter">ModelWeightParameter</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.RowvLLMParameter.input_dim"><code class="name">prop <span class="ident">input_dim</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def input_dim(self):
+    return self._input_dim</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.parameter.RowvLLMParameter.load_row_parallel_weight"><code class="name flex">
+<span>def <span class="ident">load_row_parallel_weight</span></span>(<span>self,<br>loaded_weight: torch.Tensor,<br>tp_rank: int,<br>use_presharded_weights: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_row_parallel_weight(
+    self,
+    loaded_weight: torch.Tensor,
+    tp_rank: int,
+    use_presharded_weights: bool = False,
+):
+    if not use_presharded_weights:
+        shard_size = self.data.shape[self.input_dim]
+
+        from sglang.srt.model_loader.weight_utils import (
+            narrow_padded_param_and_loaded_weight,
+        )
+
+        if _is_cpu:
+            param_data, loaded_weight = narrow_padded_param_and_loaded_weight(
+                self.data,
+                loaded_weight,
+                0,  # param_data_start
+                tp_rank * shard_size,
+                self.input_dim,
+                shard_size,
+            )
+
+            assert param_data.shape == loaded_weight.shape
+            param_data.copy_(loaded_weight)
+
+            return
+        else:
+            loaded_weight = loaded_weight.narrow(
+                self.input_dim, tp_rank * shard_size, shard_size
+            )
+
+    if len(loaded_weight.shape) == 0:
+        loaded_weight = loaded_weight.reshape(1)
+
+    assert self.data.shape == loaded_weight.shape
+    self.data.copy_(loaded_weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers" href="index.html">sglang.srt.layers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.BasevLLMParameter" href="#sglang.srt.layers.parameter.BasevLLMParameter">BasevLLMParameter</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.parameter.BasevLLMParameter.load_column_parallel_weight" href="#sglang.srt.layers.parameter.BasevLLMParameter.load_column_parallel_weight">load_column_parallel_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.BasevLLMParameter.load_merged_column_weight" href="#sglang.srt.layers.parameter.BasevLLMParameter.load_merged_column_weight">load_merged_column_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.BasevLLMParameter.load_qkv_weight" href="#sglang.srt.layers.parameter.BasevLLMParameter.load_qkv_weight">load_qkv_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.BasevLLMParameter.load_row_parallel_weight" href="#sglang.srt.layers.parameter.BasevLLMParameter.load_row_parallel_weight">load_row_parallel_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.BasevLLMParameter.weight_loader" href="#sglang.srt.layers.parameter.BasevLLMParameter.weight_loader">weight_loader</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.BlockQuantScaleParameter" href="#sglang.srt.layers.parameter.BlockQuantScaleParameter">BlockQuantScaleParameter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.ChannelQuantScaleParameter" href="#sglang.srt.layers.parameter.ChannelQuantScaleParameter">ChannelQuantScaleParameter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.GroupQuantScaleParameter" href="#sglang.srt.layers.parameter.GroupQuantScaleParameter">GroupQuantScaleParameter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.ModelWeightParameter" href="#sglang.srt.layers.parameter.ModelWeightParameter">ModelWeightParameter</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.PackedColumnParameter" href="#sglang.srt.layers.parameter.PackedColumnParameter">PackedColumnParameter</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.parameter.PackedColumnParameter.adjust_shard_indexes_for_packing" href="#sglang.srt.layers.parameter.PackedColumnParameter.adjust_shard_indexes_for_packing">adjust_shard_indexes_for_packing</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PackedColumnParameter.marlin_tile_size" href="#sglang.srt.layers.parameter.PackedColumnParameter.marlin_tile_size">marlin_tile_size</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PackedColumnParameter.packed_dim" href="#sglang.srt.layers.parameter.PackedColumnParameter.packed_dim">packed_dim</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PackedColumnParameter.packed_factor" href="#sglang.srt.layers.parameter.PackedColumnParameter.packed_factor">packed_factor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.PackedvLLMParameter" href="#sglang.srt.layers.parameter.PackedvLLMParameter">PackedvLLMParameter</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.parameter.PackedvLLMParameter.adjust_shard_indexes_for_packing" href="#sglang.srt.layers.parameter.PackedvLLMParameter.adjust_shard_indexes_for_packing">adjust_shard_indexes_for_packing</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PackedvLLMParameter.marlin_tile_size" href="#sglang.srt.layers.parameter.PackedvLLMParameter.marlin_tile_size">marlin_tile_size</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PackedvLLMParameter.packed_dim" href="#sglang.srt.layers.parameter.PackedvLLMParameter.packed_dim">packed_dim</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PackedvLLMParameter.packed_factor" href="#sglang.srt.layers.parameter.PackedvLLMParameter.packed_factor">packed_factor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.PerTensorScaleParameter" href="#sglang.srt.layers.parameter.PerTensorScaleParameter">PerTensorScaleParameter</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.parameter.PerTensorScaleParameter.load_column_parallel_weight" href="#sglang.srt.layers.parameter.PerTensorScaleParameter.load_column_parallel_weight">load_column_parallel_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PerTensorScaleParameter.load_merged_column_weight" href="#sglang.srt.layers.parameter.PerTensorScaleParameter.load_merged_column_weight">load_merged_column_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PerTensorScaleParameter.load_qkv_weight" href="#sglang.srt.layers.parameter.PerTensorScaleParameter.load_qkv_weight">load_qkv_weight</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.PerTensorScaleParameter.load_row_parallel_weight" href="#sglang.srt.layers.parameter.PerTensorScaleParameter.load_row_parallel_weight">load_row_parallel_weight</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.parameter.RowvLLMParameter" href="#sglang.srt.layers.parameter.RowvLLMParameter">RowvLLMParameter</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.parameter.RowvLLMParameter.input_dim" href="#sglang.srt.layers.parameter.RowvLLMParameter.input_dim">input_dim</a></code></li>
+<li><code><a title="sglang.srt.layers.parameter.RowvLLMParameter.load_row_parallel_weight" href="#sglang.srt.layers.parameter.RowvLLMParameter.load_row_parallel_weight">load_row_parallel_weight</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

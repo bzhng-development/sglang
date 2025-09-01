@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.lang.backend.openai API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.lang.backend.openai</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.lang.backend.openai.create_logit_bias_int"><code class="name flex">
+<span>def <span class="ident">create_logit_bias_int</span></span>(<span>tokenizer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_logit_bias_int(tokenizer):
+    &#34;&#34;&#34;Get logit bias for integer numbers.&#34;&#34;&#34;
+    int_token_ids = []
+
+    tokens = tokenizer._mergeable_ranks
+    for token, token_id in tokens.items():
+        s = tokenizer.decode([token_id])
+        if all([c.isdigit() for c in s]) or s in [&#34; &#34;]:
+            int_token_ids.append(token_id)
+            if len(int_token_ids) &gt;= 300:  # OpenAI API limit
+                break
+    special_tokens = tokenizer._special_tokens
+    mask = {t: 100 for t in int_token_ids[:299]}
+    mask[special_tokens[&#34;&lt;|endoftext|&gt;&#34;]] = 100
+    return mask</code></pre>
+</details>
+<div class="desc"><p>Get logit bias for integer numbers.</p></div>
+</dd>
+<dt id="sglang.lang.backend.openai.openai_completion"><code class="name flex">
+<span>def <span class="ident">openai_completion</span></span>(<span>client, token_usage, is_chat=None, retries=3, prompt=None, **kwargs) ‑> str | List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def openai_completion(
+    client, token_usage, is_chat=None, retries=3, prompt=None, **kwargs
+) -&gt; Union[str, List[str]]:
+    # if &#34;ebnf&#34; is in kwargs, warn and remove
+    if &#34;ebnf&#34; in kwargs:
+        warnings.warn(&#34;EBNF is not officially supported by OpenAI endpoints. Ignoring.&#34;)
+        del kwargs[&#34;ebnf&#34;]
+
+    for attempt in range(retries):
+        try:
+            if is_chat:
+                if &#34;stop&#34; in kwargs and kwargs[&#34;stop&#34;] is None:
+                    kwargs.pop(&#34;stop&#34;)
+                ret = client.chat.completions.create(messages=prompt, **kwargs)
+                if len(ret.choices) == 1:
+                    comp = ret.choices[0].message.content
+                else:
+                    comp = [c.message.content for c in ret.choices]
+            else:
+                ret = client.completions.create(prompt=prompt, **kwargs)
+                if isinstance(prompt, (list, tuple)):
+                    comp = [c.text for c in ret.choices]
+                else:
+                    comp = ret.choices[0].text
+                    if len(ret.choices) &gt; 1:
+                        comp = [c.text for c in ret.choices]
+
+            token_usage.prompt_tokens += ret.usage.prompt_tokens
+            token_usage.completion_tokens += ret.usage.completion_tokens
+            break
+        except (openai.APIError, openai.APIConnectionError, openai.RateLimitError) as e:
+            logger.error(f&#34;OpenAI Error: {e}. Waiting 5 seconds...&#34;)
+            time.sleep(5)
+            if attempt == retries - 1:
+                raise e
+        except Exception as e:
+            logger.error(f&#34;RuntimeError {e}.&#34;)
+            raise e
+
+    return comp</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.openai_completion_stream"><code class="name flex">
+<span>def <span class="ident">openai_completion_stream</span></span>(<span>client, token_usage, is_chat=None, retries=3, prompt=None, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def openai_completion_stream(
+    client, token_usage, is_chat=None, retries=3, prompt=None, **kwargs
+):
+    # if &#34;ebnf&#34; is in kwargs, warn and remove
+    if &#34;ebnf&#34; in kwargs:
+        warnings.warn(&#34;EBNF is not officially supported by OpenAI endpoints. Ignoring.&#34;)
+        del kwargs[&#34;ebnf&#34;]
+
+    for attempt in range(retries):
+        try:
+            if is_chat:
+                if &#34;stop&#34; in kwargs and kwargs[&#34;stop&#34;] is None:
+                    kwargs.pop(&#34;stop&#34;)
+                generator = client.chat.completions.create(
+                    messages=prompt,
+                    stream=True,
+                    stream_options={&#34;include_usage&#34;: True},
+                    **kwargs,
+                )
+                for ret in generator:
+                    if len(ret.choices) == 0:
+                        continue
+                    try:
+                        content = ret.choices[0].delta.content
+                    except IndexError:
+                        content = None
+                    yield content or &#34;&#34;, {}
+            else:
+                generator = client.completions.create(
+                    prompt=prompt,
+                    stream=True,
+                    stream_options={&#34;include_usage&#34;: True},
+                    **kwargs,
+                )
+                for ret in generator:
+                    if len(ret.choices) == 0:
+                        continue
+                    content = ret.choices[0].text
+                    yield content or &#34;&#34;, {}
+
+            token_usage.prompt_tokens += ret.usage.prompt_tokens
+            token_usage.completion_tokens += ret.usage.completion_tokens
+            break
+        except (openai.APIError, openai.APIConnectionError, openai.RateLimitError) as e:
+            logger.error(f&#34;OpenAI Error: {e}. Waiting 5 seconds...&#34;)
+            time.sleep(5)
+            if attempt == retries - 1:
+                raise e
+        except Exception as e:
+            logger.error(f&#34;RuntimeError {e}.&#34;)
+            raise e</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.lang.backend.openai.OpenAI"><code class="flex name class">
+<span>class <span class="ident">OpenAI</span></span>
+<span>(</span><span>model_name: str,<br>is_chat_model: bool | None = None,<br>chat_template: <a title="sglang.lang.chat_template.ChatTemplate" href="../chat_template.html#sglang.lang.chat_template.ChatTemplate">ChatTemplate</a> | None = None,<br>is_azure: bool = False,<br>*args,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class OpenAI(BaseBackend):
+    def __init__(
+        self,
+        model_name: str,
+        is_chat_model: Optional[bool] = None,
+        chat_template: Optional[ChatTemplate] = None,
+        is_azure: bool = False,
+        *args,
+        **kwargs,
+    ):
+        super().__init__()
+
+        if isinstance(openai, Exception):
+            raise openai
+
+        if is_azure:
+            self.client = openai.AzureOpenAI(*args, **kwargs)
+        else:
+            self.client = openai.OpenAI(*args, **kwargs)
+
+        self.model_name = model_name
+        try:
+            self.tokenizer = tiktoken.encoding_for_model(model_name)
+        except KeyError:
+            self.tokenizer = tiktoken.get_encoding(&#34;cl100k_base&#34;)
+        self.logit_bias_int = create_logit_bias_int(self.tokenizer)
+
+        self.chat_template = chat_template or get_chat_template_by_model_path(
+            model_name
+        )
+
+        if is_chat_model is not None:
+            self.is_chat_model = is_chat_model
+        else:
+            if model_name in INSTRUCT_MODEL_NAMES:
+                self.is_chat_model = False
+            else:
+                self.is_chat_model = True
+
+        self.chat_prefix = self.chat_template.role_prefix_and_suffix[&#34;assistant&#34;][0]
+
+        # Usage
+        self.token_usage = TokenUsage(0, 0)
+
+        # API speculative execution
+        # TODO(ying): This does not support multi-threading (run_batch)
+        self.spec_kwargs = {}
+        self.spec_format = []
+        self.spec_max_num_tries = 3
+
+    def get_chat_template(self):
+        return self.chat_template
+
+    def _prepare_spec_execution(
+        self,
+        sampling_params: SglSamplingParams,
+        num_api_spec_tokens: int,
+        spec_var_name: str,
+    ):
+        if &#34;max_tokens&#34; not in self.spec_kwargs:
+            self.spec_kwargs[&#34;max_tokens&#34;] = num_api_spec_tokens
+        else:
+            assert self.spec_kwargs[&#34;max_tokens&#34;] == num_api_spec_tokens
+
+        params = sampling_params.to_openai_kwargs()
+        for key, value in params.items():
+            if key in [&#34;stop&#34;]:
+                continue
+            if key in [&#34;max_tokens&#34;]:
+                warnings.warn(
+                    &#34;The parameter max_tokens will be overwritten by speculated number of tokens.&#34;
+                )
+                continue
+            if key not in self.spec_kwargs:
+                self.spec_kwargs[key] = value
+            else:
+                assert (
+                    value == self.spec_kwargs[key]
+                ), &#34;sampling parameters should be consistent if turn on api speculative execution.&#34;
+        self.spec_format.append(
+            {&#34;text&#34;: &#34;&#34;, &#34;stop&#34;: params[&#34;stop&#34;], &#34;name&#34;: spec_var_name}
+        )
+        return &#34;&#34;, {}
+
+    def generate(
+        self,
+        s: StreamExecutor,
+        sampling_params: SglSamplingParams,
+        spec_var_name: str = None,
+    ):
+        if sampling_params.dtype is None:
+            if self.is_chat_model:
+                if s.num_api_spec_tokens is None:
+                    if not s.text_.endswith(self.chat_prefix):
+                        raise RuntimeError(
+                            &#34;This use case is not supported if api speculative execution is off. &#34;
+                            &#34;For OpenAI chat models, sgl.gen must be right after sgl.assistant. &#34;
+                            &#34;Example of adding api speculative execution: @function(num_api_spec_tokens=128).&#34;
+                        )
+                    prompt = s.messages_
+                else:
+                    return self._prepare_spec_execution(
+                        sampling_params, s.num_api_spec_tokens, spec_var_name
+                    )
+            else:
+                prompt = s.text_
+
+            kwargs = sampling_params.to_openai_kwargs()
+            if (
+                self.model_name.startswith(&#34;o1&#34;)
+                or self.model_name.startswith(&#34;o3&#34;)
+                or &#34;o1&#34; in self.model_name
+            ):
+                kwargs.pop(&#34;max_tokens&#34;, None)
+            else:
+                kwargs.pop(&#34;max_completion_tokens&#34;, None)
+
+            comp = openai_completion(
+                client=self.client,
+                token_usage=self.token_usage,
+                is_chat=self.is_chat_model,
+                model=self.model_name,
+                prompt=prompt,
+                **kwargs,
+            )
+            # Keep the returned list (or string) as is.
+        elif sampling_params.dtype in [str, &#34;str&#34;, &#34;string&#34;]:
+            assert (
+                not self.is_chat_model
+            ), &#34;constrained type not supported on chat model&#34;
+            kwargs = sampling_params.to_openai_kwargs()
+            kwargs.pop(&#34;stop&#34;)
+            comp = openai_completion(
+                client=self.client,
+                token_usage=self.token_usage,
+                is_chat=self.is_chat_model,
+                model=self.model_name,
+                prompt=s.text_ + &#39;&#34;&#39;,
+                stop=&#39;&#34;&#39;,
+                **kwargs,
+            )
+            # Wrap each element in quotes if we have a list.
+            if isinstance(comp, list):
+                comp = [&#39;&#34;&#39; + x + &#39;&#34;&#39; for x in comp]
+            else:
+                comp = &#39;&#34;&#39; + comp + &#39;&#34;&#39;
+        elif sampling_params.dtype in [int, &#34;int&#34;]:
+            assert (
+                not self.is_chat_model
+            ), &#34;constrained type not supported on chat model&#34;
+            kwargs = sampling_params.to_openai_kwargs()
+            kwargs.pop(&#34;stop&#34;)
+            comp = openai_completion(
+                client=self.client,
+                token_usage=self.token_usage,
+                is_chat=self.is_chat_model,
+                model=self.model_name,
+                prompt=s.text_,
+                logit_bias=self.logit_bias_int,
+                stop=[&#34; &#34;],
+                **kwargs,
+            )
+            # Leave as a list if that&#39;s what is returned.
+        else:
+            raise ValueError(f&#34;Unknown dtype: {sampling_params.dtype}&#34;)
+
+        return comp, {}
+
+    def spec_fill(self, value: str):
+        assert self.is_chat_model
+        self.spec_format.append({&#34;text&#34;: value, &#34;stop&#34;: None, &#34;name&#34;: None})
+
+    def spec_pattern_match(self, comp):
+        for i, term in enumerate(self.spec_format):
+            text = term[&#34;text&#34;]
+            if text != &#34;&#34;:
+                if comp.startswith(text):
+                    comp = comp[len(text) :]
+                else:
+                    return False
+            else:
+                pos = comp.find(term[&#34;stop&#34;])
+                if pos != -1:
+                    term[&#34;text&#34;] = comp[:pos]
+                    comp = comp[pos:]
+                else:
+                    if i == len(self.spec_format) - 1:
+                        term[&#34;text&#34;] = comp
+                    else:
+                        return False
+        return True
+
+    def role_end_generate(
+        self,
+        s: StreamExecutor,
+    ):
+        if s.num_api_spec_tokens is None or not s.text_.endswith(self.chat_prefix):
+            return
+
+        comp = &#34;&#34;
+        if not all(x[&#34;name&#34;] is None for x in self.spec_format):
+            # TODO(ying): throw errors or warnings
+            for i in range(self.spec_max_num_tries):
+                comp = openai_completion(
+                    client=self.client,
+                    token_usage=self.token_usage,
+                    is_chat=self.is_chat_model,
+                    model=self.model_name,
+                    prompt=s.messages_,
+                    **self.spec_kwargs,
+                )
+                # Use a string for pattern matching.
+                comp_for_match = comp[0] if isinstance(comp, list) else comp
+                if self.spec_pattern_match(comp_for_match):
+                    break
+
+        for term in self.spec_format:
+            s.text_ += term[&#34;text&#34;]
+            name = term[&#34;name&#34;]
+            if name is not None:
+                s.variables[name] = term[&#34;text&#34;]
+                s.meta_info[name] = {}
+                s.variable_event[name].set()
+
+        self.spec_kwargs = {}
+        self.spec_format = []
+
+    def generate_stream(
+        self,
+        s: StreamExecutor,
+        sampling_params: SglSamplingParams,
+    ):
+        if sampling_params.dtype is None:
+            if self.is_chat_model:
+                if not s.text_.endswith(self.chat_prefix):
+                    raise RuntimeError(
+                        &#34;This use case is not supported. &#34;
+                        &#34;For OpenAI chat models, sgl.gen must be right after sgl.assistant&#34;
+                    )
+                prompt = s.messages_
+            else:
+                prompt = s.text_
+
+            kwargs = sampling_params.to_openai_kwargs()
+            generator = openai_completion_stream(
+                client=self.client,
+                token_usage=self.token_usage,
+                is_chat=self.is_chat_model,
+                model=self.model_name,
+                prompt=prompt,
+                **kwargs,
+            )
+            return generator
+        else:
+            raise ValueError(f&#34;Unknown dtype: {sampling_params.dtype}&#34;)
+
+    def select(
+        self,
+        s: StreamExecutor,
+        choices: List[str],
+        temperature: float,
+        choices_method: ChoicesSamplingMethod,
+    ) -&gt; ChoicesDecision:
+        &#34;&#34;&#34;Note: `choices_method` is not used by the OpenAI backend.&#34;&#34;&#34;
+        if self.is_chat_model:
+            raise NotImplementedError(
+                &#34;select/choices is not supported for chat models. &#34;
+                &#34;Please try to use a non-chat model such as gpt-3.5-turbo-instruct&#34;
+            )
+
+        n_choices = len(choices)
+        token_ids = [self.tokenizer.encode(x) for x in choices]
+        scores = [0] * n_choices
+        valid = [len(x) &gt; 0 for x in token_ids]
+        prompt_tokens = self.tokenizer.encode(s.text_)
+
+        max_len = max([len(x) for x in token_ids])
+        for step in range(max_len):
+            # Build logit bias
+            logit_bias = {}
+            for i in range(n_choices):
+                if valid[i]:
+                    logit_bias[token_ids[i][step]] = 100
+
+            # Call API
+            ret = self.client.completions.create(
+                model=self.model_name,
+                prompt=prompt_tokens,
+                logit_bias=logit_bias,
+                max_tokens=1,
+                temperature=temperature,
+            )
+            ret_str = ret.choices[0].text
+            ret_token = self.tokenizer.encode(ret_str)[0]
+            self.token_usage.prompt_tokens += ret.usage.prompt_tokens
+            self.token_usage.completion_tokens = ret.usage.completion_tokens
+
+            # TODO:
+            # 1. return logits as the scores
+            # 2. compute logits of the full choice
+            # 3. consider chunk-based decoding
+
+            # Update valid
+            hit = False
+            for i in range(n_choices):
+                if valid[i]:
+                    if step == len(token_ids[i]) - 1:
+                        valid[i] = False
+
+                    if ret_token == token_ids[i][step]:
+                        scores[i] += 1
+                        hit = True
+                    else:
+                        valid[i] = False
+            assert hit
+
+            if np.sum(valid) &lt;= 1:
+                break
+
+            prompt_tokens.append(ret_token)
+
+        return ChoicesDecision(
+            decision=choices[np.argmax(scores)],
+            meta_info={&#34;scores&#34;: scores},
+        )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.backend.base_backend.BaseBackend" href="base_backend.html#sglang.lang.backend.base_backend.BaseBackend">BaseBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.backend.openai.OpenAI.generate"><code class="name flex">
+<span>def <span class="ident">generate</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="../interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>,<br>sampling_params: <a title="sglang.lang.ir.SglSamplingParams" href="../ir.html#sglang.lang.ir.SglSamplingParams">SglSamplingParams</a>,<br>spec_var_name: str = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate(
+    self,
+    s: StreamExecutor,
+    sampling_params: SglSamplingParams,
+    spec_var_name: str = None,
+):
+    if sampling_params.dtype is None:
+        if self.is_chat_model:
+            if s.num_api_spec_tokens is None:
+                if not s.text_.endswith(self.chat_prefix):
+                    raise RuntimeError(
+                        &#34;This use case is not supported if api speculative execution is off. &#34;
+                        &#34;For OpenAI chat models, sgl.gen must be right after sgl.assistant. &#34;
+                        &#34;Example of adding api speculative execution: @function(num_api_spec_tokens=128).&#34;
+                    )
+                prompt = s.messages_
+            else:
+                return self._prepare_spec_execution(
+                    sampling_params, s.num_api_spec_tokens, spec_var_name
+                )
+        else:
+            prompt = s.text_
+
+        kwargs = sampling_params.to_openai_kwargs()
+        if (
+            self.model_name.startswith(&#34;o1&#34;)
+            or self.model_name.startswith(&#34;o3&#34;)
+            or &#34;o1&#34; in self.model_name
+        ):
+            kwargs.pop(&#34;max_tokens&#34;, None)
+        else:
+            kwargs.pop(&#34;max_completion_tokens&#34;, None)
+
+        comp = openai_completion(
+            client=self.client,
+            token_usage=self.token_usage,
+            is_chat=self.is_chat_model,
+            model=self.model_name,
+            prompt=prompt,
+            **kwargs,
+        )
+        # Keep the returned list (or string) as is.
+    elif sampling_params.dtype in [str, &#34;str&#34;, &#34;string&#34;]:
+        assert (
+            not self.is_chat_model
+        ), &#34;constrained type not supported on chat model&#34;
+        kwargs = sampling_params.to_openai_kwargs()
+        kwargs.pop(&#34;stop&#34;)
+        comp = openai_completion(
+            client=self.client,
+            token_usage=self.token_usage,
+            is_chat=self.is_chat_model,
+            model=self.model_name,
+            prompt=s.text_ + &#39;&#34;&#39;,
+            stop=&#39;&#34;&#39;,
+            **kwargs,
+        )
+        # Wrap each element in quotes if we have a list.
+        if isinstance(comp, list):
+            comp = [&#39;&#34;&#39; + x + &#39;&#34;&#39; for x in comp]
+        else:
+            comp = &#39;&#34;&#39; + comp + &#39;&#34;&#39;
+    elif sampling_params.dtype in [int, &#34;int&#34;]:
+        assert (
+            not self.is_chat_model
+        ), &#34;constrained type not supported on chat model&#34;
+        kwargs = sampling_params.to_openai_kwargs()
+        kwargs.pop(&#34;stop&#34;)
+        comp = openai_completion(
+            client=self.client,
+            token_usage=self.token_usage,
+            is_chat=self.is_chat_model,
+            model=self.model_name,
+            prompt=s.text_,
+            logit_bias=self.logit_bias_int,
+            stop=[&#34; &#34;],
+            **kwargs,
+        )
+        # Leave as a list if that&#39;s what is returned.
+    else:
+        raise ValueError(f&#34;Unknown dtype: {sampling_params.dtype}&#34;)
+
+    return comp, {}</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.OpenAI.generate_stream"><code class="name flex">
+<span>def <span class="ident">generate_stream</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="../interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>,<br>sampling_params: <a title="sglang.lang.ir.SglSamplingParams" href="../ir.html#sglang.lang.ir.SglSamplingParams">SglSamplingParams</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_stream(
+    self,
+    s: StreamExecutor,
+    sampling_params: SglSamplingParams,
+):
+    if sampling_params.dtype is None:
+        if self.is_chat_model:
+            if not s.text_.endswith(self.chat_prefix):
+                raise RuntimeError(
+                    &#34;This use case is not supported. &#34;
+                    &#34;For OpenAI chat models, sgl.gen must be right after sgl.assistant&#34;
+                )
+            prompt = s.messages_
+        else:
+            prompt = s.text_
+
+        kwargs = sampling_params.to_openai_kwargs()
+        generator = openai_completion_stream(
+            client=self.client,
+            token_usage=self.token_usage,
+            is_chat=self.is_chat_model,
+            model=self.model_name,
+            prompt=prompt,
+            **kwargs,
+        )
+        return generator
+    else:
+        raise ValueError(f&#34;Unknown dtype: {sampling_params.dtype}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.OpenAI.get_chat_template"><code class="name flex">
+<span>def <span class="ident">get_chat_template</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_chat_template(self):
+    return self.chat_template</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.OpenAI.role_end_generate"><code class="name flex">
+<span>def <span class="ident">role_end_generate</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="../interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def role_end_generate(
+    self,
+    s: StreamExecutor,
+):
+    if s.num_api_spec_tokens is None or not s.text_.endswith(self.chat_prefix):
+        return
+
+    comp = &#34;&#34;
+    if not all(x[&#34;name&#34;] is None for x in self.spec_format):
+        # TODO(ying): throw errors or warnings
+        for i in range(self.spec_max_num_tries):
+            comp = openai_completion(
+                client=self.client,
+                token_usage=self.token_usage,
+                is_chat=self.is_chat_model,
+                model=self.model_name,
+                prompt=s.messages_,
+                **self.spec_kwargs,
+            )
+            # Use a string for pattern matching.
+            comp_for_match = comp[0] if isinstance(comp, list) else comp
+            if self.spec_pattern_match(comp_for_match):
+                break
+
+    for term in self.spec_format:
+        s.text_ += term[&#34;text&#34;]
+        name = term[&#34;name&#34;]
+        if name is not None:
+            s.variables[name] = term[&#34;text&#34;]
+            s.meta_info[name] = {}
+            s.variable_event[name].set()
+
+    self.spec_kwargs = {}
+    self.spec_format = []</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.OpenAI.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="../interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>,<br>choices: List[str],<br>temperature: float,<br>choices_method: <a title="sglang.lang.choices.ChoicesSamplingMethod" href="../choices.html#sglang.lang.choices.ChoicesSamplingMethod">ChoicesSamplingMethod</a>) ‑> <a title="sglang.lang.choices.ChoicesDecision" href="../choices.html#sglang.lang.choices.ChoicesDecision">ChoicesDecision</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(
+    self,
+    s: StreamExecutor,
+    choices: List[str],
+    temperature: float,
+    choices_method: ChoicesSamplingMethod,
+) -&gt; ChoicesDecision:
+    &#34;&#34;&#34;Note: `choices_method` is not used by the OpenAI backend.&#34;&#34;&#34;
+    if self.is_chat_model:
+        raise NotImplementedError(
+            &#34;select/choices is not supported for chat models. &#34;
+            &#34;Please try to use a non-chat model such as gpt-3.5-turbo-instruct&#34;
+        )
+
+    n_choices = len(choices)
+    token_ids = [self.tokenizer.encode(x) for x in choices]
+    scores = [0] * n_choices
+    valid = [len(x) &gt; 0 for x in token_ids]
+    prompt_tokens = self.tokenizer.encode(s.text_)
+
+    max_len = max([len(x) for x in token_ids])
+    for step in range(max_len):
+        # Build logit bias
+        logit_bias = {}
+        for i in range(n_choices):
+            if valid[i]:
+                logit_bias[token_ids[i][step]] = 100
+
+        # Call API
+        ret = self.client.completions.create(
+            model=self.model_name,
+            prompt=prompt_tokens,
+            logit_bias=logit_bias,
+            max_tokens=1,
+            temperature=temperature,
+        )
+        ret_str = ret.choices[0].text
+        ret_token = self.tokenizer.encode(ret_str)[0]
+        self.token_usage.prompt_tokens += ret.usage.prompt_tokens
+        self.token_usage.completion_tokens = ret.usage.completion_tokens
+
+        # TODO:
+        # 1. return logits as the scores
+        # 2. compute logits of the full choice
+        # 3. consider chunk-based decoding
+
+        # Update valid
+        hit = False
+        for i in range(n_choices):
+            if valid[i]:
+                if step == len(token_ids[i]) - 1:
+                    valid[i] = False
+
+                if ret_token == token_ids[i][step]:
+                    scores[i] += 1
+                    hit = True
+                else:
+                    valid[i] = False
+        assert hit
+
+        if np.sum(valid) &lt;= 1:
+            break
+
+        prompt_tokens.append(ret_token)
+
+    return ChoicesDecision(
+        decision=choices[np.argmax(scores)],
+        meta_info={&#34;scores&#34;: scores},
+    )</code></pre>
+</details>
+<div class="desc"><p>Note: <code>choices_method</code> is not used by the OpenAI backend.</p></div>
+</dd>
+<dt id="sglang.lang.backend.openai.OpenAI.spec_fill"><code class="name flex">
+<span>def <span class="ident">spec_fill</span></span>(<span>self, value: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spec_fill(self, value: str):
+    assert self.is_chat_model
+    self.spec_format.append({&#34;text&#34;: value, &#34;stop&#34;: None, &#34;name&#34;: None})</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.OpenAI.spec_pattern_match"><code class="name flex">
+<span>def <span class="ident">spec_pattern_match</span></span>(<span>self, comp)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def spec_pattern_match(self, comp):
+    for i, term in enumerate(self.spec_format):
+        text = term[&#34;text&#34;]
+        if text != &#34;&#34;:
+            if comp.startswith(text):
+                comp = comp[len(text) :]
+            else:
+                return False
+        else:
+            pos = comp.find(term[&#34;stop&#34;])
+            if pos != -1:
+                term[&#34;text&#34;] = comp[:pos]
+                comp = comp[pos:]
+            else:
+                if i == len(self.spec_format) - 1:
+                    term[&#34;text&#34;] = comp
+                else:
+                    return False
+    return True</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.lang.backend.openai.TokenUsage"><code class="flex name class">
+<span>class <span class="ident">TokenUsage</span></span>
+<span>(</span><span>prompt_tokens: int, completion_tokens: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class TokenUsage:
+    prompt_tokens: int
+    completion_tokens: int
+
+    def reset(self):
+        self.prompt_tokens = self.completion_tokens = 0</code></pre>
+</details>
+<div class="desc"><p>TokenUsage(prompt_tokens: int, completion_tokens: int)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.lang.backend.openai.TokenUsage.completion_tokens"><code class="name">var <span class="ident">completion_tokens</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.backend.openai.TokenUsage.prompt_tokens"><code class="name">var <span class="ident">prompt_tokens</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.backend.openai.TokenUsage.reset"><code class="name flex">
+<span>def <span class="ident">reset</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset(self):
+    self.prompt_tokens = self.completion_tokens = 0</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.lang.backend" href="index.html">sglang.lang.backend</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.lang.backend.openai.create_logit_bias_int" href="#sglang.lang.backend.openai.create_logit_bias_int">create_logit_bias_int</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.openai_completion" href="#sglang.lang.backend.openai.openai_completion">openai_completion</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.openai_completion_stream" href="#sglang.lang.backend.openai.openai_completion_stream">openai_completion_stream</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.lang.backend.openai.OpenAI" href="#sglang.lang.backend.openai.OpenAI">OpenAI</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.lang.backend.openai.OpenAI.generate" href="#sglang.lang.backend.openai.OpenAI.generate">generate</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.OpenAI.generate_stream" href="#sglang.lang.backend.openai.OpenAI.generate_stream">generate_stream</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.OpenAI.get_chat_template" href="#sglang.lang.backend.openai.OpenAI.get_chat_template">get_chat_template</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.OpenAI.role_end_generate" href="#sglang.lang.backend.openai.OpenAI.role_end_generate">role_end_generate</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.OpenAI.select" href="#sglang.lang.backend.openai.OpenAI.select">select</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.OpenAI.spec_fill" href="#sglang.lang.backend.openai.OpenAI.spec_fill">spec_fill</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.OpenAI.spec_pattern_match" href="#sglang.lang.backend.openai.OpenAI.spec_pattern_match">spec_pattern_match</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.lang.backend.openai.TokenUsage" href="#sglang.lang.backend.openai.TokenUsage">TokenUsage</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.lang.backend.openai.TokenUsage.completion_tokens" href="#sglang.lang.backend.openai.TokenUsage.completion_tokens">completion_tokens</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.TokenUsage.prompt_tokens" href="#sglang.lang.backend.openai.TokenUsage.prompt_tokens">prompt_tokens</a></code></li>
+<li><code><a title="sglang.lang.backend.openai.TokenUsage.reset" href="#sglang.lang.backend.openai.TokenUsage.reset">reset</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

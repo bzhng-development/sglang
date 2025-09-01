@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.moe.token_dispatcher API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.moe.token_dispatcher</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="sglang.srt.layers.moe.token_dispatcher.base_dispatcher" href="base_dispatcher.html">sglang.srt.layers.moe.token_dispatcher.base_dispatcher</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.layers.moe.token_dispatcher.deepep" href="deepep.html">sglang.srt.layers.moe.token_dispatcher.deepep</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt.layers.moe.token_dispatcher.standard" href="standard.html">sglang.srt.layers.moe.token_dispatcher.standard</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput"><code class="flex name class">
+<span>class <span class="ident">AscendDeepEPLLOutput</span></span>
+<span>(</span><span>hidden_states_fp8: ForwardRef('Tuple[torch.Tensor, torch.Tensor]'),<br>topk_idx: ForwardRef('torch.Tensor'),<br>topk_weights: ForwardRef('torch.Tensor'),<br>masked_m: ForwardRef('torch.Tensor'),<br>seg_indptr: ForwardRef('torch.Tensor'),<br>expected_m: ForwardRef('int'))</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>AscendDeepEP low latency dispatch output.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.expected_m"><code class="name">var <span class="ident">expected_m</span> : int</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 5</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.format"><code class="name">prop <span class="ident">format</span> : <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat">DispatchOutputFormat</a></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def format(self) -&gt; DispatchOutputFormat:
+    return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.hidden_states_fp8"><code class="name">var <span class="ident">hidden_states_fp8</span> : Tuple[torch.Tensor, torch.Tensor]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.masked_m"><code class="name">var <span class="ident">masked_m</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.seg_indptr"><code class="name">var <span class="ident">seg_indptr</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.topk_idx"><code class="name">var <span class="ident">topk_idx</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.topk_weights"><code class="name">var <span class="ident">topk_weights</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class AscendDeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;AscendDeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    seg_indptr: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.BaseDispatcher"><code class="flex name class">
+<span>class <span class="ident">BaseDispatcher</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseDispatcher(ABC):
+    &#34;&#34;&#34;Base class for dispatchers.&#34;&#34;&#34;
+
+    @abstractmethod
+    def dispatch(self, *args, **kwargs) -&gt; DispatchOutput:
+        pass
+
+    @abstractmethod
+    def combine(self, *args, **kwargs) -&gt; torch.Tensor:
+        pass</code></pre>
+</details>
+<div class="desc"><p>Base class for dispatchers.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.moe.token_dispatcher.deepep.DeepEPDispatcher" href="deepep.html#sglang.srt.layers.moe.token_dispatcher.deepep.DeepEPDispatcher">DeepEPDispatcher</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.BaseDispatcher.combine"><code class="name flex">
+<span>def <span class="ident">combine</span></span>(<span>self, *args, **kwargs) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def combine(self, *args, **kwargs) -&gt; torch.Tensor:
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.BaseDispatcher.dispatch"><code class="name flex">
+<span>def <span class="ident">dispatch</span></span>(<span>self, *args, **kwargs) ‑> <a title="sglang.srt.layers.moe.token_dispatcher.base_dispatcher.DispatchOutput" href="base_dispatcher.html#sglang.srt.layers.moe.token_dispatcher.base_dispatcher.DispatchOutput">DispatchOutput</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@abstractmethod
+def dispatch(self, *args, **kwargs) -&gt; DispatchOutput:
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.BaseDispatcherConfig"><code class="flex name class">
+<span>class <span class="ident">BaseDispatcherConfig</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class BaseDispatcherConfig(ABC):
+    &#34;&#34;&#34;Base class for dispatcher configs.&#34;&#34;&#34;
+
+    pass</code></pre>
+</details>
+<div class="desc"><p>Base class for dispatcher configs.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.moe.token_dispatcher.deepep.DeepEPConfig" href="deepep.html#sglang.srt.layers.moe.token_dispatcher.deepep.DeepEPConfig">DeepEPConfig</a></li>
+</ul>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPConfig"><code class="flex name class">
+<span>class <span class="ident">DeepEPConfig</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPConfig(BaseDispatcherConfig):
+    _instance = None
+
+    def __init__(self):
+        config_str = get_deepep_config()
+        if config_str:
+            config_parsed = load_json_config(config_str)
+            if torch.distributed.get_rank() == 0:
+                logger.info(f&#34;Use DeepEP Config: {config_parsed}&#34;)
+            config_dispatch = config_parsed[&#34;normal_dispatch&#34;]
+            config_combine = config_parsed[&#34;normal_combine&#34;]
+
+            self.normal_dispatch_config = Config(**config_dispatch)
+            self.normal_combine_config = Config(**config_combine)
+
+            assert config_dispatch[&#34;num_sms&#34;] == config_combine[&#34;num_sms&#34;]
+            self.num_sms = config_dispatch[&#34;num_sms&#34;]
+        else:
+            self.normal_dispatch_config = None
+            self.normal_combine_config = None
+            self.num_sms = Buffer.num_sms
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = DeepEPConfig()
+        return cls._instance</code></pre>
+</details>
+<div class="desc"><p>Base class for dispatcher configs.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.moe.token_dispatcher.base_dispatcher.BaseDispatcherConfig" href="base_dispatcher.html#sglang.srt.layers.moe.token_dispatcher.base_dispatcher.BaseDispatcherConfig">BaseDispatcherConfig</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPConfig.get_instance"><code class="name flex">
+<span>def <span class="ident">get_instance</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher"><code class="flex name class">
+<span>class <span class="ident">DeepEPDispatcher</span></span>
+<span>(</span><span>group: torch.distributed.ProcessGroup,<br>router_topk: int,<br>permute_fusion: bool = False,<br>num_experts: int = None,<br>num_local_experts: int = None,<br>hidden_size: int = None,<br>params_dtype: torch.dtype = None,<br>deepep_mode: DeepEPMode = DeepEPMode.AUTO,<br>async_finish: bool = False,<br>return_recv_hook: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPDispatcher(BaseDispatcher):
+    def __init__(
+        self,
+        group: torch.distributed.ProcessGroup,
+        router_topk: int,
+        permute_fusion: bool = False,
+        num_experts: int = None,
+        num_local_experts: int = None,
+        hidden_size: int = None,
+        params_dtype: torch.dtype = None,
+        deepep_mode: DeepEPMode = DeepEPMode.AUTO,
+        async_finish: bool = False,
+        return_recv_hook: bool = False,
+    ):
+        self.deepep_mode = deepep_mode
+
+        common_kwargs = dict(
+            group=group,
+            router_topk=router_topk,
+            permute_fusion=permute_fusion,
+            num_experts=num_experts,
+            num_local_experts=num_local_experts,
+            hidden_size=hidden_size,
+            params_dtype=params_dtype,
+            deepep_mode=deepep_mode,
+        )
+
+        if self.deepep_mode.enable_low_latency():
+            self._low_latency_dispatcher = _DeepEPDispatcherImplLowLatency(
+                return_recv_hook=return_recv_hook,
+                **common_kwargs,
+            )
+        if self.deepep_mode.enable_normal():
+            self._normal_dispatcher = _DeepEPDispatcherImplNormal(
+                async_finish=async_finish,
+                **common_kwargs,
+            )
+
+        self._stage = _Stage.INITIAL
+
+    def dispatch(self, *args, **kwargs) -&gt; DispatchOutput:
+        self.dispatch_a(*args, **kwargs)
+        ret = self.dispatch_b()
+        return ret
+
+    def dispatch_a(
+        self,
+        hidden_states: torch.Tensor,
+        topk_idx: torch.Tensor,
+        topk_weights: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ):
+        self._update_stage(_Stage.INITIAL, _Stage.AFTER_DISPATCH_A)
+        inner_state = self._get_impl(forward_batch).dispatch_a(
+            hidden_states=hidden_states,
+            topk_idx=topk_idx,
+            topk_weights=topk_weights,
+        )
+        self._dispatch_intermediate_state = forward_batch, inner_state
+
+    def dispatch_b(self):
+        self._update_stage(_Stage.AFTER_DISPATCH_A, _Stage.AFTER_DISPATCH_B)
+        forward_batch, inner_state = self._dispatch_intermediate_state
+        del self._dispatch_intermediate_state
+        return self._get_impl(forward_batch).dispatch_b(*inner_state)
+
+    def combine(self, *args, **kwargs) -&gt; Tuple:
+        self.combine_a(*args, **kwargs)
+        ret = self.combine_b()
+        return ret
+
+    def combine_a(
+        self,
+        hidden_states: torch.Tensor,
+        topk_idx: torch.Tensor,
+        topk_weights: torch.Tensor,
+        forward_batch: ForwardBatch,
+    ):
+        self._update_stage(_Stage.AFTER_DISPATCH_B, _Stage.AFTER_COMBINE_A)
+        inner_state = self._get_impl(forward_batch).combine_a(
+            hidden_states=hidden_states,
+            topk_idx=topk_idx,
+            topk_weights=topk_weights,
+        )
+        self._combine_intermediate_state = forward_batch, inner_state
+
+    def combine_b(self):
+        self._update_stage(_Stage.AFTER_COMBINE_A, _Stage.INITIAL)
+        forward_batch, inner_state = self._combine_intermediate_state
+        del self._combine_intermediate_state
+        return self._get_impl(forward_batch).combine_b(*inner_state)
+
+    def _get_impl(self, forward_batch: ForwardBatch) -&gt; _DeepEPDispatcherImplBase:
+        resolved_deepep_mode = self.deepep_mode.resolve(
+            forward_batch.is_extend_in_batch
+        )
+        if resolved_deepep_mode == DeepEPMode.NORMAL:
+            return self._normal_dispatcher
+        elif resolved_deepep_mode == DeepEPMode.LOW_LATENCY:
+            return self._low_latency_dispatcher
+        else:
+            raise ValueError(f&#34;Invalid deepep_mode: {self.deepep_mode}&#34;)
+
+    def _update_stage(self, old_stage, new_stage):
+        assert self._stage == old_stage
+        self._stage = new_stage</code></pre>
+</details>
+<div class="desc"><p>Base class for dispatchers.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.layers.moe.token_dispatcher.base_dispatcher.BaseDispatcher" href="base_dispatcher.html#sglang.srt.layers.moe.token_dispatcher.base_dispatcher.BaseDispatcher">BaseDispatcher</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine"><code class="name flex">
+<span>def <span class="ident">combine</span></span>(<span>self, *args, **kwargs) ‑> Tuple</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine(self, *args, **kwargs) -&gt; Tuple:
+    self.combine_a(*args, **kwargs)
+    ret = self.combine_b()
+    return ret</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine_a"><code class="name flex">
+<span>def <span class="ident">combine_a</span></span>(<span>self,<br>hidden_states: torch.Tensor,<br>topk_idx: torch.Tensor,<br>topk_weights: torch.Tensor,<br>forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine_a(
+    self,
+    hidden_states: torch.Tensor,
+    topk_idx: torch.Tensor,
+    topk_weights: torch.Tensor,
+    forward_batch: ForwardBatch,
+):
+    self._update_stage(_Stage.AFTER_DISPATCH_B, _Stage.AFTER_COMBINE_A)
+    inner_state = self._get_impl(forward_batch).combine_a(
+        hidden_states=hidden_states,
+        topk_idx=topk_idx,
+        topk_weights=topk_weights,
+    )
+    self._combine_intermediate_state = forward_batch, inner_state</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine_b"><code class="name flex">
+<span>def <span class="ident">combine_b</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def combine_b(self):
+    self._update_stage(_Stage.AFTER_COMBINE_A, _Stage.INITIAL)
+    forward_batch, inner_state = self._combine_intermediate_state
+    del self._combine_intermediate_state
+    return self._get_impl(forward_batch).combine_b(*inner_state)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch"><code class="name flex">
+<span>def <span class="ident">dispatch</span></span>(<span>self, *args, **kwargs) ‑> <a title="sglang.srt.layers.moe.token_dispatcher.base_dispatcher.DispatchOutput" href="base_dispatcher.html#sglang.srt.layers.moe.token_dispatcher.base_dispatcher.DispatchOutput">DispatchOutput</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch(self, *args, **kwargs) -&gt; DispatchOutput:
+    self.dispatch_a(*args, **kwargs)
+    ret = self.dispatch_b()
+    return ret</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch_a"><code class="name flex">
+<span>def <span class="ident">dispatch_a</span></span>(<span>self,<br>hidden_states: torch.Tensor,<br>topk_idx: torch.Tensor,<br>topk_weights: torch.Tensor,<br>forward_batch: ForwardBatch)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_a(
+    self,
+    hidden_states: torch.Tensor,
+    topk_idx: torch.Tensor,
+    topk_weights: torch.Tensor,
+    forward_batch: ForwardBatch,
+):
+    self._update_stage(_Stage.INITIAL, _Stage.AFTER_DISPATCH_A)
+    inner_state = self._get_impl(forward_batch).dispatch_a(
+        hidden_states=hidden_states,
+        topk_idx=topk_idx,
+        topk_weights=topk_weights,
+    )
+    self._dispatch_intermediate_state = forward_batch, inner_state</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch_b"><code class="name flex">
+<span>def <span class="ident">dispatch_b</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_b(self):
+    self._update_stage(_Stage.AFTER_DISPATCH_A, _Stage.AFTER_DISPATCH_B)
+    forward_batch, inner_state = self._dispatch_intermediate_state
+    del self._dispatch_intermediate_state
+    return self._get_impl(forward_batch).dispatch_b(*inner_state)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput"><code class="flex name class">
+<span>class <span class="ident">DeepEPLLOutput</span></span>
+<span>(</span><span>hidden_states_fp8: ForwardRef('Tuple[torch.Tensor, torch.Tensor]'),<br>topk_idx: ForwardRef('torch.Tensor'),<br>topk_weights: ForwardRef('torch.Tensor'),<br>masked_m: ForwardRef('torch.Tensor'),<br>expected_m: ForwardRef('int'))</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"><p>DeepEP low latency dispatch output.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.expected_m"><code class="name">var <span class="ident">expected_m</span> : int</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 4</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.format"><code class="name">prop <span class="ident">format</span> : <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat">DispatchOutputFormat</a></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def format(self) -&gt; DispatchOutputFormat:
+    return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.hidden_states_fp8"><code class="name">var <span class="ident">hidden_states_fp8</span> : Tuple[torch.Tensor, torch.Tensor]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.masked_m"><code class="name">var <span class="ident">masked_m</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.topk_idx"><code class="name">var <span class="ident">topk_idx</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.topk_weights"><code class="name">var <span class="ident">topk_weights</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPLLOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP low latency dispatch output.&#34;&#34;&#34;
+
+    hidden_states_fp8: Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    masked_m: torch.Tensor
+    expected_m: int
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput"><code class="flex name class">
+<span>class <span class="ident">DeepEPNormalOutput</span></span>
+<span>(</span><span>hidden_states: ForwardRef('torch.Tensor | Tuple[torch.Tensor, torch.Tensor]'),<br>topk_idx: ForwardRef('torch.Tensor'),<br>topk_weights: ForwardRef('torch.Tensor'),<br>num_recv_tokens_per_expert: ForwardRef('List[int]'))</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPNormalOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP normal dispatch output.&#34;&#34;&#34;
+
+    hidden_states: torch.Tensor | Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    num_recv_tokens_per_expert: List[int]
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"><p>DeepEP normal dispatch output.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.format"><code class="name">prop <span class="ident">format</span> : <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat">DispatchOutputFormat</a></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def format(self) -&gt; DispatchOutputFormat:
+    return DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.hidden_states"><code class="name">var <span class="ident">hidden_states</span> : torch.Tensor | Tuple[torch.Tensor, torch.Tensor]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPNormalOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP normal dispatch output.&#34;&#34;&#34;
+
+    hidden_states: torch.Tensor | Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    num_recv_tokens_per_expert: List[int]
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 0</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.num_recv_tokens_per_expert"><code class="name">var <span class="ident">num_recv_tokens_per_expert</span> : List[int]</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPNormalOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP normal dispatch output.&#34;&#34;&#34;
+
+    hidden_states: torch.Tensor | Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    num_recv_tokens_per_expert: List[int]
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 3</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.topk_idx"><code class="name">var <span class="ident">topk_idx</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPNormalOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP normal dispatch output.&#34;&#34;&#34;
+
+    hidden_states: torch.Tensor | Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    num_recv_tokens_per_expert: List[int]
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 1</p></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.topk_weights"><code class="name">var <span class="ident">topk_weights</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DeepEPNormalOutput(NamedTuple):
+    &#34;&#34;&#34;DeepEP normal dispatch output.&#34;&#34;&#34;
+
+    hidden_states: torch.Tensor | Tuple[torch.Tensor, torch.Tensor]
+    topk_idx: torch.Tensor
+    topk_weights: torch.Tensor
+    num_recv_tokens_per_expert: List[int]
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"><p>Alias for field number 2</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutput"><code class="flex name class">
+<span>class <span class="ident">DispatchOutput</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@runtime_checkable
+class DispatchOutput(Protocol):
+    &#34;&#34;&#34;Protocol for dispatch outputs in different formats.&#34;&#34;&#34;
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat: ...</code></pre>
+</details>
+<div class="desc"><p>Protocol for dispatch outputs in different formats.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>typing.Protocol</li>
+<li>typing.Generic</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutput.format"><code class="name">prop <span class="ident">format</span> : <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat">DispatchOutputFormat</a></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def format(self) -&gt; DispatchOutputFormat: ...</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker"><code class="flex name class">
+<span>class <span class="ident">DispatchOutputChecker</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DispatchOutputChecker:
+
+    @staticmethod
+    def format_is_standard(
+        dispatch_output: DispatchOutput,
+    ) -&gt; TypeGuard[StandardDispatchOutput]:
+        return dispatch_output.format.is_standard()
+
+    @staticmethod
+    def format_is_deepep_normal(
+        dispatch_output: DispatchOutput,
+    ) -&gt; TypeGuard[DeepEPNormalOutput]:
+        return dispatch_output.format.is_deepep_normal()
+
+    @staticmethod
+    def format_is_deepep_ll(
+        dispatch_output: DispatchOutput,
+    ) -&gt; TypeGuard[DeepEPLLOutput]:
+        return dispatch_output.format.is_deepep_ll()
+
+    @staticmethod
+    def format_is_deepep(
+        dispatch_output: DispatchOutput,
+    ) -&gt; TypeGuard[Union[DeepEPNormalOutput, DeepEPLLOutput]]:
+        return dispatch_output.format.is_deepep()
+
+    @staticmethod
+    def format_is_ascent_ll(
+        dispatch_output: DispatchOutput,
+    ) -&gt; TypeGuard[AscendDeepEPLLOutput]:
+        return dispatch_output.format.is_ascent_ll()</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_ascent_ll"><code class="name flex">
+<span>def <span class="ident">format_is_ascent_ll</span></span>(<span>dispatch_output: <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput">DispatchOutput</a>) ‑> TypeGuard[<a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput">AscendDeepEPLLOutput</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def format_is_ascent_ll(
+    dispatch_output: DispatchOutput,
+) -&gt; TypeGuard[AscendDeepEPLLOutput]:
+    return dispatch_output.format.is_ascent_ll()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep"><code class="name flex">
+<span>def <span class="ident">format_is_deepep</span></span>(<span>dispatch_output: <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput">DispatchOutput</a>) ‑> TypeGuard[Union[<a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput">DeepEPNormalOutput</a>, <a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput">DeepEPLLOutput</a>]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def format_is_deepep(
+    dispatch_output: DispatchOutput,
+) -&gt; TypeGuard[Union[DeepEPNormalOutput, DeepEPLLOutput]]:
+    return dispatch_output.format.is_deepep()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep_ll"><code class="name flex">
+<span>def <span class="ident">format_is_deepep_ll</span></span>(<span>dispatch_output: <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput">DispatchOutput</a>) ‑> TypeGuard[<a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput">DeepEPLLOutput</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def format_is_deepep_ll(
+    dispatch_output: DispatchOutput,
+) -&gt; TypeGuard[DeepEPLLOutput]:
+    return dispatch_output.format.is_deepep_ll()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep_normal"><code class="name flex">
+<span>def <span class="ident">format_is_deepep_normal</span></span>(<span>dispatch_output: <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput">DispatchOutput</a>) ‑> TypeGuard[<a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput">DeepEPNormalOutput</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def format_is_deepep_normal(
+    dispatch_output: DispatchOutput,
+) -&gt; TypeGuard[DeepEPNormalOutput]:
+    return dispatch_output.format.is_deepep_normal()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_standard"><code class="name flex">
+<span>def <span class="ident">format_is_standard</span></span>(<span>dispatch_output: <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput">DispatchOutput</a>) ‑> TypeGuard[<a title="sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput">StandardDispatchOutput</a>]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def format_is_standard(
+    dispatch_output: DispatchOutput,
+) -&gt; TypeGuard[StandardDispatchOutput]:
+    return dispatch_output.format.is_standard()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat"><code class="flex name class">
+<span>class <span class="ident">DispatchOutputFormat</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DispatchOutputFormat(Enum):
+
+    STANDARD = auto()
+    DEEPEP_NORMAL = auto()
+    DEEPEP_LL = auto()
+    ASCENT_LL = auto()
+
+    def is_standard(self) -&gt; bool:
+        return self == DispatchOutputFormat.STANDARD
+
+    def is_deepep_normal(self) -&gt; bool:
+        return self == DispatchOutputFormat.DEEPEP_NORMAL
+
+    def is_deepep_ll(self) -&gt; bool:
+        return self == DispatchOutputFormat.DEEPEP_LL
+
+    def is_deepep(self) -&gt; bool:
+        return self in [
+            DispatchOutputFormat.DEEPEP_NORMAL,
+            DispatchOutputFormat.DEEPEP_LL,
+        ]
+
+    def is_ascent_ll(self) -&gt; bool:
+        return self == DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color.RED
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>value lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color(1)
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<ul>
+<li>name lookup:</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Color['RED']
+<Color.RED: 1></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.ASCENT_LL"><code class="name">var <span class="ident">ASCENT_LL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.DEEPEP_LL"><code class="name">var <span class="ident">DEEPEP_LL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.DEEPEP_NORMAL"><code class="name">var <span class="ident">DEEPEP_NORMAL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.STANDARD"><code class="name">var <span class="ident">STANDARD</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_ascent_ll"><code class="name flex">
+<span>def <span class="ident">is_ascent_ll</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_ascent_ll(self) -&gt; bool:
+    return self == DispatchOutputFormat.ASCENT_LL</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep"><code class="name flex">
+<span>def <span class="ident">is_deepep</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_deepep(self) -&gt; bool:
+    return self in [
+        DispatchOutputFormat.DEEPEP_NORMAL,
+        DispatchOutputFormat.DEEPEP_LL,
+    ]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep_ll"><code class="name flex">
+<span>def <span class="ident">is_deepep_ll</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_deepep_ll(self) -&gt; bool:
+    return self == DispatchOutputFormat.DEEPEP_LL</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep_normal"><code class="name flex">
+<span>def <span class="ident">is_deepep_normal</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_deepep_normal(self) -&gt; bool:
+    return self == DispatchOutputFormat.DEEPEP_NORMAL</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_standard"><code class="name flex">
+<span>def <span class="ident">is_standard</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_standard(self) -&gt; bool:
+    return self == DispatchOutputFormat.STANDARD</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput"><code class="flex name class">
+<span>class <span class="ident">StandardDispatchOutput</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StandardDispatchOutput(NamedTuple):
+    &#34;&#34;&#34;Standard dispatch output.&#34;&#34;&#34;
+
+    @property
+    def format(self) -&gt; DispatchOutputFormat:
+        return DispatchOutputFormat.STANDARD</code></pre>
+</details>
+<div class="desc"><p>Standard dispatch output.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.tuple</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput.format"><code class="name">prop <span class="ident">format</span> : <a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat">DispatchOutputFormat</a></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def format(self) -&gt; DispatchOutputFormat:
+    return DispatchOutputFormat.STANDARD</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.moe" href="../index.html">sglang.srt.layers.moe</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.base_dispatcher" href="base_dispatcher.html">sglang.srt.layers.moe.token_dispatcher.base_dispatcher</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.deepep" href="deepep.html">sglang.srt.layers.moe.token_dispatcher.deepep</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.standard" href="standard.html">sglang.srt.layers.moe.token_dispatcher.standard</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput">AscendDeepEPLLOutput</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.expected_m" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.expected_m">expected_m</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.format" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.format">format</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.hidden_states_fp8" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.hidden_states_fp8">hidden_states_fp8</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.masked_m" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.masked_m">masked_m</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.seg_indptr" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.seg_indptr">seg_indptr</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.topk_idx" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.topk_idx">topk_idx</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.topk_weights" href="#sglang.srt.layers.moe.token_dispatcher.AscendDeepEPLLOutput.topk_weights">topk_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.BaseDispatcher" href="#sglang.srt.layers.moe.token_dispatcher.BaseDispatcher">BaseDispatcher</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.BaseDispatcher.combine" href="#sglang.srt.layers.moe.token_dispatcher.BaseDispatcher.combine">combine</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.BaseDispatcher.dispatch" href="#sglang.srt.layers.moe.token_dispatcher.BaseDispatcher.dispatch">dispatch</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.BaseDispatcherConfig" href="#sglang.srt.layers.moe.token_dispatcher.BaseDispatcherConfig">BaseDispatcherConfig</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPConfig" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPConfig">DeepEPConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPConfig.get_instance" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPConfig.get_instance">get_instance</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher">DeepEPDispatcher</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine">combine</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine_a" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine_a">combine_a</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine_b" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.combine_b">combine_b</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch">dispatch</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch_a" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch_a">dispatch_a</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch_b" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPDispatcher.dispatch_b">dispatch_b</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput">DeepEPLLOutput</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.expected_m" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.expected_m">expected_m</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.format" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.format">format</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.hidden_states_fp8" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.hidden_states_fp8">hidden_states_fp8</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.masked_m" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.masked_m">masked_m</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.topk_idx" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.topk_idx">topk_idx</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.topk_weights" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPLLOutput.topk_weights">topk_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput">DeepEPNormalOutput</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.format" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.format">format</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.hidden_states" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.hidden_states">hidden_states</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.num_recv_tokens_per_expert" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.num_recv_tokens_per_expert">num_recv_tokens_per_expert</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.topk_idx" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.topk_idx">topk_idx</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.topk_weights" href="#sglang.srt.layers.moe.token_dispatcher.DeepEPNormalOutput.topk_weights">topk_weights</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput">DispatchOutput</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutput.format" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutput.format">format</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker">DispatchOutputChecker</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_ascent_ll" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_ascent_ll">format_is_ascent_ll</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep">format_is_deepep</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep_ll" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep_ll">format_is_deepep_ll</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep_normal" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_deepep_normal">format_is_deepep_normal</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_standard" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputChecker.format_is_standard">format_is_standard</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat">DispatchOutputFormat</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.ASCENT_LL" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.ASCENT_LL">ASCENT_LL</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.DEEPEP_LL" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.DEEPEP_LL">DEEPEP_LL</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.DEEPEP_NORMAL" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.DEEPEP_NORMAL">DEEPEP_NORMAL</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.STANDARD" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.STANDARD">STANDARD</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_ascent_ll" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_ascent_ll">is_ascent_ll</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep">is_deepep</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep_ll" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep_ll">is_deepep_ll</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep_normal" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_deepep_normal">is_deepep_normal</a></code></li>
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_standard" href="#sglang.srt.layers.moe.token_dispatcher.DispatchOutputFormat.is_standard">is_standard</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput" href="#sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput">StandardDispatchOutput</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput.format" href="#sglang.srt.layers.moe.token_dispatcher.StandardDispatchOutput.format">format</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

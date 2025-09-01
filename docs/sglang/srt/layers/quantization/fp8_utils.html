@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.fp8_utils API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.fp8_utils</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.fp8_utils.aiter_w8a8_block_fp8_linear"><code class="name flex">
+<span>def <span class="ident">aiter_w8a8_block_fp8_linear</span></span>(<span>input: torch.Tensor,<br>weight: torch.Tensor,<br>block_size: List[int],<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None,<br>bias: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def aiter_w8a8_block_fp8_linear(
+    input: torch.Tensor,
+    weight: torch.Tensor,
+    block_size: List[int],
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    assert input_scale is None
+    input_2d = input.view(-1, input.shape[-1])
+    output_shape = [*input.shape[:-1], weight.shape[0]]
+
+    q_input, x_scale = aiter_per1x128_quant(input_2d, quant_dtype=aiter.dtypes.fp8)
+    output = gemm_a8w8_blockscale(
+        q_input, weight, x_scale, weight_scale, dtype=input.dtype
+    )
+
+    if bias is not None:
+        output += bias
+
+    return output.to(dtype=input_2d.dtype).view(*output_shape)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear"><code class="name flex">
+<span>def <span class="ident">apply_fp8_linear</span></span>(<span>input: torch.Tensor,<br>weight: torch.Tensor,<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None,<br>input_scale_ub: torch.Tensor | None = None,<br>bias: torch.Tensor | None = None,<br>cutlass_fp8_supported: bool = False,<br>use_per_token_if_dynamic: bool = False,<br>pad_output: bool | None = None,<br>compressed_tensor_quant: bool = False) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_fp8_linear(
+    input: torch.Tensor,
+    weight: torch.Tensor,
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    input_scale_ub: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+    cutlass_fp8_supported: bool = cutlass_fp8_supported(),
+    use_per_token_if_dynamic: bool = False,
+    pad_output: Optional[bool] = None,
+    compressed_tensor_quant: bool = False,
+) -&gt; torch.Tensor:
+    # Note: we pad the input because torch._scaled_mm is more performant
+    # for matrices with batch dimension &gt; 16.
+    # This could change in the future.
+    # We also don&#39;t pad when using torch.compile,
+    # as it breaks with dynamic shapes.
+    if pad_output is None:
+        pad_output = (
+            not get_bool_env_var(&#34;SGLANG_ENABLE_TORCH_COMPILE&#34;)
+            and not cutlass_fp8_supported
+        )
+    output_padding = 17 if pad_output else None
+
+    # View input as 2D matrix for fp8 methods
+    input_2d = input.view(-1, input.shape[-1])
+    output_shape = [*input.shape[:-1], weight.shape[1]]
+
+    if compressed_tensor_quant:
+        # cutlass_scaled_mm supports per tensor/channel W and per tensor/token A
+        # for sgl-kernel fp8_scaled_mm, it support per channel W now
+        if cutlass_fp8_supported and weight_scale.numel() == weight.shape[1]:
+            qinput, x_scale = scaled_fp8_quant(
+                input_2d,
+                input_scale,
+                use_per_token_if_dynamic=use_per_token_if_dynamic,
+            )
+
+            # Fused GEMM_DQ
+            if VLLM_AVAILABLE and use_vllm_cutlass_w8a8_fp8_kernel:
+                # Fall back to vllm cutlass w8a8 fp8 kernel
+                output = ops.cutlass_scaled_mm(
+                    qinput,
+                    weight,
+                    out_dtype=input.dtype,
+                    scale_a=x_scale,
+                    scale_b=weight_scale,
+                    bias=bias,
+                )
+            else:
+                assert (
+                    weight_scale.numel() == weight.shape[1]
+                ), &#34;cutlass w8a8 fp8 sgl-kernel only supports per-channel scale&#34;
+
+                cutlass_compatible_b = (
+                    weight.shape[0] % 16 == 0 and weight.shape[1] % 16 == 0
+                )
+                if not cutlass_compatible_b or use_triton_w8a8_fp8_kernel:
+                    # Massage the input to be 2D
+                    qinput = qinput.view(-1, qinput.shape[-1])
+                    output = triton_scaled_mm(
+                        qinput, weight, x_scale, weight_scale, input.dtype, bias
+                    )
+                else:
+                    output = fp8_scaled_mm(
+                        qinput,
+                        weight,
+                        x_scale,
+                        weight_scale,
+                        out_dtype=input.dtype,
+                        bias=bias,
+                    )
+            return output.view(*output_shape)
+
+        # torch.scaled_mm supports per tensor weights + activations only
+        # so fallback to naive if per channel or per token
+        else:
+            # Maybe apply padding to output, see comment in __init__
+            qinput, x_scale = (
+                scaled_fp8_quant(
+                    input_2d,
+                    input_scale,
+                    num_token_padding=output_padding,
+                    use_per_token_if_dynamic=use_per_token_if_dynamic,
+                )
+                if _is_cuda
+                else ops.scaled_fp8_quant(
+                    input_2d,
+                    input_scale,
+                    num_token_padding=output_padding,
+                    use_per_token_if_dynamic=use_per_token_if_dynamic,
+                )
+            )
+
+            per_tensor_weights = weight_scale.numel() == 1
+            per_tensor_activations = x_scale.numel() == 1
+
+            if per_tensor_weights and per_tensor_activations:
+                # Fused GEMM_DQ
+                output = torch._scaled_mm(
+                    qinput,
+                    weight,
+                    out_dtype=input.dtype,
+                    scale_a=x_scale,
+                    scale_b=weight_scale,
+                    bias=bias,
+                )
+                return _process_scaled_mm_output(output, input_2d.shape, output_shape)
+
+            elif (
+                use_per_token_if_dynamic
+                and not per_tensor_weights
+                and not per_tensor_activations
+                and USE_ROWWISE_TORCH_SCALED_MM
+            ):
+                # For now validated on ROCm platform
+                # fp8 rowwise scaling in torch._scaled_mm is introduced in
+                # https://github.com/pytorch/pytorch/pull/144432 using hipBLASLt
+                # and ROCm 6.3, which only exists in torch 2.7 and above.
+                # For CUDA platform please validate if the
+                # torch._scaled_mm support rowwise scaled GEMM
+                # Fused GEMM_DQ Rowwise GEMM
+                output = torch._scaled_mm(
+                    qinput,
+                    weight,
+                    out_dtype=input.dtype,
+                    scale_a=x_scale,
+                    scale_b=weight_scale.t(),
+                    bias=bias,
+                )
+                return _process_scaled_mm_output(output, input_2d.shape, output_shape)
+
+            else:
+                # Fallback for channelwise case, where we use unfused DQ
+                # due to limitations with scaled_mm
+
+                # Symmetric quantized GEMM by definition computes the following:
+                #   C = (s_x * X) (s_w * W) + bias
+                # This is equivalent to dequantizing the weights and activations
+                # before applying a GEMM.
+                #
+                # In order to compute quantized operands, a quantized kernel
+                # will rewrite the above like so:
+                #   C = s_w * s_x * (X * W) + bias
+                #
+                # For the scaled_mm fallback case, we break this down, since it
+                # does not support s_w being a vector.
+                return _apply_fallback_scaled_mm(
+                    qinput,
+                    weight,
+                    x_scale,
+                    weight_scale,
+                    input_2d.shape,
+                    output_shape,
+                    bias,
+                    input.dtype,
+                )
+    else:
+        # cutlass w8a8 fp8 sgl-kernel only supports per-token scale
+        if input_scale is not None:
+            assert input_scale.numel() == 1
+            # broadcast per-tensor scale to per-token scale when supporting cutlass
+            qinput, x_scale = static_quant_fp8(
+                input_2d, input_scale, repeat_scale=cutlass_fp8_supported
+            )
+        else:
+            # default use per-token quantization if dynamic
+            if _is_cuda:
+                qinput, x_scale = sglang_per_token_quant_fp8(input_2d)
+            else:
+                # TODO(kkhuang): temporarily enforce per-tensor activation scaling if weight is per-tensor scaling
+                # final solution should be: 1. add support to per-tensor activation scaling.
+                # 2. solve the torch.compile error from weight_scale.numel() == 1 and x_scale.numel() &gt; 1 (below line#308)
+                if _is_hip and weight_scale.numel() == 1:
+                    qinput, x_scale = ops.scaled_fp8_quant(
+                        input_2d,
+                        input_scale,
+                        use_per_token_if_dynamic=use_per_token_if_dynamic,
+                    )
+                else:
+                    qinput, x_scale = per_token_group_quant_fp8(
+                        input_2d, group_size=input_2d.shape[1]
+                    )
+
+        if cutlass_fp8_supported:
+            try:
+                if VLLM_AVAILABLE and use_vllm_cutlass_w8a8_fp8_kernel:
+                    # Fall back to vllm cutlass w8a8 fp8 kernel
+                    output = ops.cutlass_scaled_mm(
+                        qinput,
+                        weight,
+                        out_dtype=input.dtype,
+                        scale_a=x_scale,
+                        scale_b=weight_scale,
+                        bias=bias,
+                    )
+                else:
+                    assert (
+                        weight_scale.numel() == weight.shape[1]
+                    ), &#34;cutlass w8a8 fp8 sgl-kernel only supports per-channel scale&#34;
+
+                    cutlass_compatible_b = (
+                        weight.shape[0] % 16 == 0 and weight.shape[1] % 16 == 0
+                    )
+                    if not cutlass_compatible_b or use_triton_w8a8_fp8_kernel:
+                        # Massage the input to be 2D
+                        qinput = qinput.view(-1, qinput.shape[-1])
+                        output = triton_scaled_mm(
+                            qinput, weight, x_scale, weight_scale, input.dtype, bias
+                        )
+                    else:
+                        output = fp8_scaled_mm(
+                            qinput,
+                            weight,
+                            x_scale,
+                            weight_scale,
+                            out_dtype=input.dtype,
+                            bias=bias,
+                        )
+                return output.view(*output_shape)
+            except (ImportError, NameError, AttributeError):
+                pass
+
+        # torch.scaled_mm supports per tensor weights + activations only
+        # so fallback to naive if per channel or per token
+        per_tensor_weights = weight_scale.numel() == 1
+        per_tensor_activations = x_scale.numel() == 1
+
+        if per_tensor_weights and per_tensor_activations:
+            # Fused GEMM_DQ
+            output = torch._scaled_mm(
+                qinput,
+                weight,
+                out_dtype=input.dtype,
+                scale_a=x_scale,
+                scale_b=weight_scale,
+                bias=bias,
+            )
+            return _process_scaled_mm_output(output, input_2d.shape, output_shape)
+
+        else:
+            # Fallback for channelwise case, where we use unfused DQ
+            # due to limitations with scaled_mm
+
+            # Symmetric quantized GEMM by definition computes the following:
+            #   C = (s_x * X) (s_w * W) + bias
+            # This is equivalent to dequantizing the weights and activations
+            # before applying a GEMM.
+            #
+            # In order to compute quantized operands, a quantized kernel
+            # will rewrite the above like so:
+            #   C = s_w * s_x * (X * W) + bias
+            #
+            # For the scaled_mm fallback case, we break this down, since it
+            # does not support s_w being a vector.
+            return _apply_fallback_scaled_mm(
+                qinput,
+                weight,
+                x_scale,
+                weight_scale,
+                input_2d.shape,
+                output_shape,
+                bias,
+                input.dtype,
+            )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.block_quant_dequant"><code class="name flex">
+<span>def <span class="ident">block_quant_dequant</span></span>(<span>x_q_block: torch.Tensor,<br>x_s: torch.Tensor,<br>block_size: List[int],<br>dtype: torch.dtype) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def block_quant_dequant(
+    x_q_block: torch.Tensor,
+    x_s: torch.Tensor,
+    block_size: List[int],
+    dtype: torch.dtype,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;This function converts block-wise quantization to unquantized.
+    The inputs are block-wise quantization tensor `x_q_block`, block-wise quantization scale
+    and the block size.
+    The output is an unquantized tensor with dtype.
+    &#34;&#34;&#34;
+    block_n, block_k = block_size[0], block_size[1]
+    *_, n, k = x_q_block.shape
+
+    # ... n_scale k_scale -&gt; ... (n_scale block_n) (k_scale block_k)
+    x_scale_repeat = x_s.repeat_interleave(block_n, dim=-2).repeat_interleave(
+        block_k, dim=-1
+    )
+    x_scale_repeat = x_scale_repeat[..., :n, :k]
+
+    return (x_q_block.to(torch.float32) * x_scale_repeat).to(dtype)</code></pre>
+</details>
+<div class="desc"><p>This function converts block-wise quantization to unquantized.
+The inputs are block-wise quantization tensor <code>x_q_block</code>, block-wise quantization scale
+and the block size.
+The output is an unquantized tensor with dtype.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.block_quant_to_tensor_quant"><code class="name flex">
+<span>def <span class="ident">block_quant_to_tensor_quant</span></span>(<span>x_q_block: torch.Tensor, x_s: torch.Tensor, block_size: List[int]) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def block_quant_to_tensor_quant(
+    x_q_block: torch.Tensor,
+    x_s: torch.Tensor,
+    block_size: List[int],
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    &#34;&#34;&#34;This function converts block-wise quantization to tensor-wise quantization.
+    The inputs are block-wise quantization tensor `x_q_block`, block-wise quantization scale
+    and the block size.
+    The outputs are tensor-wise quantization tensor and tensor-wise quantization scale.
+    Note only float8 is supported for now.
+    &#34;&#34;&#34;
+    block_n, block_k = block_size[0], block_size[1]
+    n, k = x_q_block.shape
+    n_tiles = (n + block_n - 1) // block_n
+    k_tiles = (k + block_k - 1) // block_k
+    assert n_tiles == x_s.shape[0]
+    assert k_tiles == x_s.shape[1]
+
+    x_dq_block = x_q_block.to(torch.float32)
+
+    x_dq_block_tiles = [
+        [
+            x_dq_block[
+                j * block_n : min((j + 1) * block_n, n),
+                i * block_k : min((i + 1) * block_k, k),
+            ]
+            for i in range(k_tiles)
+        ]
+        for j in range(n_tiles)
+    ]
+
+    for i in range(k_tiles):
+        for j in range(n_tiles):
+            x_dq_block_tiles[j][i][:, :] = x_dq_block_tiles[j][i] * x_s[j][i]
+
+    x_q_tensor, scale = (
+        scaled_fp8_quant(x_dq_block)
+        if _is_cuda
+        else input_to_float8(x_dq_block, dtype=x_q_block.dtype)
+    )
+    return x_q_tensor, scale</code></pre>
+</details>
+<div class="desc"><p>This function converts block-wise quantization to tensor-wise quantization.
+The inputs are block-wise quantization tensor <code>x_q_block</code>, block-wise quantization scale
+and the block size.
+The outputs are tensor-wise quantization tensor and tensor-wise quantization scale.
+Note only float8 is supported for now.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.can_auto_enable_marlin_fp8"><code class="name flex">
+<span>def <span class="ident">can_auto_enable_marlin_fp8</span></span>(<span>) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def can_auto_enable_marlin_fp8() -&gt; bool:
+    try:
+        major, minor = get_device_capability()
+        sm = major * 10 + minor
+        return 80 &lt;= sm &lt; 89
+    except Exception:
+        return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.ceil_to_ue8m0"><code class="name flex">
+<span>def <span class="ident">ceil_to_ue8m0</span></span>(<span>x: torch.Tensor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ceil_to_ue8m0(x: torch.Tensor):
+    return torch.pow(2.0, torch.ceil(torch.log2(x.abs())))</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.channel_quant_to_tensor_quant"><code class="name flex">
+<span>def <span class="ident">channel_quant_to_tensor_quant</span></span>(<span>x_q_channel: torch.Tensor, x_s: torch.Tensor) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def channel_quant_to_tensor_quant(
+    x_q_channel: torch.Tensor,
+    x_s: torch.Tensor,
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    x_dq_channel = x_q_channel.to(torch.float32) * x_s
+    x_q_tensor, scale = (
+        scaled_fp8_quant(x_dq_channel)
+        if _is_cuda
+        else input_to_float8(x_dq_channel, dtype=x_q_channel.dtype)
+    )
+    return x_q_tensor, scale</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.cutlass_block_fp8_supported"><code class="name flex">
+<span>def <span class="ident">cutlass_block_fp8_supported</span></span>(<span>) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutlass_block_fp8_supported() -&gt; bool:
+    if not get_bool_env_var(&#34;SGLANG_SUPPORT_CUTLASS_BLOCK_FP8&#34;):
+        return False
+    if _is_cuda:
+        major, minor = torch.cuda.get_device_capability()
+        sm_version = major * 10 + minor
+        cuda_version = tuple(map(int, torch.version.cuda.split(&#34;.&#34;)))
+        if cuda_version &gt;= (12, 0) and sm_version &gt;= 90:
+            return True
+    return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.cutlass_fp8_supported"><code class="name flex">
+<span>def <span class="ident">cutlass_fp8_supported</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutlass_fp8_supported():
+    if not _is_cuda:
+        return False
+    major, minor = get_device_capability()
+    cuda_version = get_cuda_version()
+    if major &gt;= 9:
+        return cuda_version &gt;= (12, 0)
+    elif major == 8 and minor == 9:
+        return cuda_version &gt;= (12, 4)
+    return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.cutlass_w8a8_block_fp8_linear_with_fallback"><code class="name flex">
+<span>def <span class="ident">cutlass_w8a8_block_fp8_linear_with_fallback</span></span>(<span>input: torch.Tensor,<br>weight: torch.Tensor,<br>block_size: List[int],<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None,<br>bias: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cutlass_w8a8_block_fp8_linear_with_fallback(
+    input: torch.Tensor,
+    weight: torch.Tensor,
+    block_size: List[int],
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    assert input_scale is None
+
+    # TODO: add more robust shape check here
+    shape_supported = weight.shape[0] % 128 == 0 and weight.shape[1] % 128 == 0
+
+    if not shape_supported:
+        # fallback to triton
+        return triton_w8a8_block_fp8_linear(
+            input, weight, block_size, weight_scale, input_scale, bias
+        )
+
+    input_2d = input.view(-1, input.shape[-1])
+    output_shape = [*input.shape[:-1], weight.shape[0]]
+
+    q_input, x_scale = per_token_group_quant_fp8(
+        input_2d, block_size[1], column_major_scales=True
+    )
+    output = fp8_blockwise_scaled_mm(
+        q_input, weight.T, x_scale, weight_scale.T, out_dtype=input_2d.dtype
+    )
+    if bias is not None:
+        output += bias
+    return output.to(dtype=input_2d.dtype).view(*output_shape)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback"><code class="name flex">
+<span>def <span class="ident">deepgemm_w8a8_block_fp8_linear_with_fallback</span></span>(<span>input: torch.Tensor,<br>weight: torch.Tensor,<br>block_size: List[int],<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None,<br>bias: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def deepgemm_w8a8_block_fp8_linear_with_fallback(
+    input: torch.Tensor,
+    weight: torch.Tensor,
+    block_size: List[int],
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    assert input_scale is None
+
+    output_dtype = input.dtype
+    dtype_supported = output_dtype == torch.bfloat16
+
+    # TODO: https://github.com/sgl-project/sglang/pull/6890#issuecomment-2943395737
+    shape_supported = weight.shape[0] % 64 == 0 and weight.shape[1] % 128 == 0
+
+    if not (shape_supported and dtype_supported):
+        # fall back to triton
+        return triton_w8a8_block_fp8_linear(
+            input, weight, block_size, weight_scale, input_scale, bias
+        )
+
+    input_2d = input.view(-1, input.shape[-1])
+    output_shape = [*input.shape[:-1], weight.shape[0]]
+
+    q_input, x_scale = sglang_per_token_group_quant_fp8(
+        input_2d,
+        block_size[1],
+        column_major_scales=True,
+        scale_tma_aligned=True,
+        scale_ue8m0=deep_gemm_wrapper.DEEPGEMM_SCALE_UE8M0,
+    )
+
+    # NOTE(alcanderian): Useless when scale is packed to int32
+    # if get_bool_env_var(&#34;SGLANG_W8A8_DEEPGEMM_SANITY_CHECK_UE8M0&#34;):
+    #     _check_ue8m0(&#34;x_scale&#34;, x_scale)
+    #     _check_ue8m0(&#34;weight_scale&#34;, ws)
+
+    output = w8a8_block_fp8_matmul_deepgemm(
+        q_input, weight, x_scale, weight_scale, block_size, output_dtype=output_dtype
+    )
+    if bias is not None:
+        output += bias
+    return output.to(dtype=output_dtype).view(*output_shape)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.dequant_mxfp4"><code class="name flex">
+<span>def <span class="ident">dequant_mxfp4</span></span>(<span>w_block: torch.Tensor, w_scale: torch.Tensor, out_dtype) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dequant_mxfp4(
+    w_block: torch.Tensor,
+    w_scale: torch.Tensor,
+    out_dtype,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    :param w_block: (batch, n, k, 16), uint8, pack two mxfp4 into one byte
+    :param w_scale: (batch, n, k), uint8
+    :return: (batch, n, k * 32), float32
+    &#34;&#34;&#34;
+
+    assert w_block.dtype == torch.uint8
+    assert w_scale.dtype == torch.uint8
+
+    batch, n, k, pack_dim = w_block.shape
+    batch_, n_, k_ = w_scale.shape
+    assert pack_dim == 16
+    assert batch == batch_
+    assert n == n_
+    assert k == k_
+
+    out_raw = MXFP4QuantizeUtil.dequantize(
+        quantized_data=w_block, scale=w_scale, dtype=out_dtype, block_sizes=[32]
+    )
+    return out_raw.reshape(batch, n, k * 32)</code></pre>
+</details>
+<div class="desc"><p>:param w_block: (batch, n, k, 16), uint8, pack two mxfp4 into one byte
+:param w_scale: (batch, n, k), uint8
+:return: (batch, n, k * 32), float32</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.dispatch_w8a8_block_fp8_linear"><code class="name flex">
+<span>def <span class="ident">dispatch_w8a8_block_fp8_linear</span></span>(<span>) ‑> Callable</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dispatch_w8a8_block_fp8_linear() -&gt; Callable:
+    if ENABLE_FLASHINFER_GEMM:
+        return flashinfer_gemm_w8a8_block_fp8_linear
+    elif CUTLASS_BLOCK_FP8_SUPPORTED:
+        return cutlass_w8a8_block_fp8_linear_with_fallback
+    elif _use_aiter:
+        return aiter_w8a8_block_fp8_linear
+    elif deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM:
+        return deepgemm_w8a8_block_fp8_linear_with_fallback
+    else:
+        return triton_w8a8_block_fp8_linear</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.flashinfer_gemm_w8a8_block_fp8_linear"><code class="name flex">
+<span>def <span class="ident">flashinfer_gemm_w8a8_block_fp8_linear</span></span>(<span>input: torch.Tensor,<br>weight: torch.Tensor,<br>block_size: List[int],<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None,<br>bias: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flashinfer_gemm_w8a8_block_fp8_linear(
+    input: torch.Tensor,
+    weight: torch.Tensor,
+    block_size: List[int],
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    assert input_scale is None
+
+    input_2d = input.view(-1, input.shape[-1])
+    output_shape = [*input.shape[:-1], weight.shape[0]]
+
+    q_input, x_scale = sglang_per_token_group_quant_fp8(
+        input_2d, block_size[1], column_major_scales=True
+    )
+    # TRTLLM requires column-major scaling factors
+    output = gemm_fp8_nt_groupwise(
+        q_input,
+        weight,
+        x_scale,
+        weight_scale,
+        out_dtype=input_2d.dtype,
+        backend=&#34;trtllm&#34;,
+    )
+
+    if bias is not None:
+        output += bias
+
+    return output.to(dtype=input_2d.dtype).view(*output_shape)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.input_to_float8"><code class="name flex">
+<span>def <span class="ident">input_to_float8</span></span>(<span>x: torch.Tensor, dtype: torch.dtype = torch.float8_e4m3fn) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def input_to_float8(
+    x: torch.Tensor, dtype: torch.dtype = fp8_dtype
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    &#34;&#34;&#34;This function quantizes input values to float8 values with tensor-wise quantization.&#34;&#34;&#34;
+    min_val, max_val = x.aminmax()
+    amax = torch.maximum(min_val.abs(), max_val.abs()).float().clamp(min=1e-12)
+
+    if _is_fp8_fnuz:
+        dtype = fp8_dtype
+        fp_max = fp8_max
+    else:
+        finfo = torch.finfo(dtype)
+        fp_max = finfo.max
+
+    scale = fp_max / amax
+    x_scl_sat = (x.float() * scale).clamp(min=-fp_max, max=fp_max)
+    return x_scl_sat.to(dtype).contiguous(), scale.float().reciprocal()</code></pre>
+</details>
+<div class="desc"><p>This function quantizes input values to float8 values with tensor-wise quantization.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.normalize_e4m3fn_to_e4m3fnuz"><code class="name flex">
+<span>def <span class="ident">normalize_e4m3fn_to_e4m3fnuz</span></span>(<span>weight: torch.Tensor,<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None) ‑> Tuple[torch.Tensor, torch.Tensor, torch.Tensor | None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normalize_e4m3fn_to_e4m3fnuz(
+    weight: torch.Tensor,
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+) -&gt; Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor]]:
+    assert weight.dtype == torch.float8_e4m3fn
+    # The bits pattern 10000000(-128) represents zero in e4m3fn
+    # but NaN in e4m3fnuz. So here we set it to 0.
+    # https://onnx.ai/onnx/technical/float8.html
+    weight_as_int8 = weight.view(torch.int8)
+    ROCM_FP8_NAN_AS_INT = -128
+    weight_as_int8[weight_as_int8 == ROCM_FP8_NAN_AS_INT] = 0
+    weight = weight_as_int8.view(torch.float8_e4m3fnuz)
+
+    # For the same bits representation, e4m3fnuz value is half of
+    # the e4m3fn value, so we should double the scaling factor to
+    # get the same dequantized value.
+    # https://onnx.ai/onnx/technical/float8.html
+    weight_scale = weight_scale * 2.0
+    if input_scale is not None:
+        input_scale = input_scale * 2.0
+    return weight, weight_scale, input_scale</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.per_block_cast_to_fp8"><code class="name flex">
+<span>def <span class="ident">per_block_cast_to_fp8</span></span>(<span>x: torch.Tensor) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def per_block_cast_to_fp8(x: torch.Tensor) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    assert x.dim() == 2
+    m, n = x.shape
+    x_padded = torch.zeros(
+        (align(m, 128), align(n, 128)), dtype=x.dtype, device=x.device
+    )
+    x_padded[:m, :n] = x
+    x_view = x_padded.view(-1, 128, x_padded.size(1) // 128, 128)
+    x_amax = x_view.abs().float().amax(dim=(1, 3), keepdim=True).clamp(1e-4)
+    sf = ceil_to_ue8m0(x_amax / 448.0)
+    x_scaled = (x_view * (1.0 / sf)).to(torch.float8_e4m3fn)
+    return x_scaled.view_as(x_padded)[:m, :n].contiguous(), sf.view(
+        x_view.size(0), x_view.size(2)
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.requant_weight_ue8m0_inplace"><code class="name flex">
+<span>def <span class="ident">requant_weight_ue8m0_inplace</span></span>(<span>weight, weight_scale_inv, weight_block_size)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def requant_weight_ue8m0_inplace(weight, weight_scale_inv, weight_block_size):
+    assert isinstance(weight, torch.nn.Parameter)
+    assert isinstance(weight_scale_inv, torch.nn.Parameter)
+    weight.data, weight_scale_inv.data = _requant_weight_ue8m0(
+        weight, weight_scale_inv, weight_block_size
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.triton_w8a8_block_fp8_linear"><code class="name flex">
+<span>def <span class="ident">triton_w8a8_block_fp8_linear</span></span>(<span>input: torch.Tensor,<br>weight: torch.Tensor,<br>block_size: List[int],<br>weight_scale: torch.Tensor,<br>input_scale: torch.Tensor | None = None,<br>bias: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def triton_w8a8_block_fp8_linear(
+    input: torch.Tensor,
+    weight: torch.Tensor,
+    block_size: List[int],
+    weight_scale: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    assert input_scale is None
+    input_2d = input.view(-1, input.shape[-1])
+    output_shape = [*input.shape[:-1], weight.shape[0]]
+
+    q_input, x_scale = per_token_group_quant_fp8(
+        input_2d, block_size[1], column_major_scales=False
+    )
+    output = w8a8_block_fp8_matmul_triton(
+        q_input, weight, x_scale, weight_scale, block_size, output_dtype=input_2d.dtype
+    )
+    if bias is not None:
+        output += bias
+    return output.to(dtype=input_2d.dtype).view(*output_shape)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.fp8_utils.use_rowwise_torch_scaled_mm"><code class="name flex">
+<span>def <span class="ident">use_rowwise_torch_scaled_mm</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def use_rowwise_torch_scaled_mm():
+    _TORCH_VERSION = torch.__version__.split(&#34;+&#34;)[0]
+    try:
+        _TORCH_VERSION_TUPLE = tuple(map(int, _TORCH_VERSION.split(&#34;.&#34;)[:3]))
+    except ValueError:
+        _TORCH_VERSION_TUPLE = (0, 0, 0)
+    if _is_hip:
+        # The condition to determine if it is on a platform that supports
+        # torch._scaled_mm rowwise feature.
+        # The condition is determined once as the operations
+        # are time consuming.
+        return get_device_capability() &gt;= (9, 4) and _TORCH_VERSION_TUPLE &gt;= (2, 7, 0)
+    return False</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.aiter_w8a8_block_fp8_linear" href="#sglang.srt.layers.quantization.fp8_utils.aiter_w8a8_block_fp8_linear">aiter_w8a8_block_fp8_linear</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear" href="#sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear">apply_fp8_linear</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.block_quant_dequant" href="#sglang.srt.layers.quantization.fp8_utils.block_quant_dequant">block_quant_dequant</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.block_quant_to_tensor_quant" href="#sglang.srt.layers.quantization.fp8_utils.block_quant_to_tensor_quant">block_quant_to_tensor_quant</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.can_auto_enable_marlin_fp8" href="#sglang.srt.layers.quantization.fp8_utils.can_auto_enable_marlin_fp8">can_auto_enable_marlin_fp8</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.ceil_to_ue8m0" href="#sglang.srt.layers.quantization.fp8_utils.ceil_to_ue8m0">ceil_to_ue8m0</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.channel_quant_to_tensor_quant" href="#sglang.srt.layers.quantization.fp8_utils.channel_quant_to_tensor_quant">channel_quant_to_tensor_quant</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.cutlass_block_fp8_supported" href="#sglang.srt.layers.quantization.fp8_utils.cutlass_block_fp8_supported">cutlass_block_fp8_supported</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.cutlass_fp8_supported" href="#sglang.srt.layers.quantization.fp8_utils.cutlass_fp8_supported">cutlass_fp8_supported</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.cutlass_w8a8_block_fp8_linear_with_fallback" href="#sglang.srt.layers.quantization.fp8_utils.cutlass_w8a8_block_fp8_linear_with_fallback">cutlass_w8a8_block_fp8_linear_with_fallback</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback" href="#sglang.srt.layers.quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback">deepgemm_w8a8_block_fp8_linear_with_fallback</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.dequant_mxfp4" href="#sglang.srt.layers.quantization.fp8_utils.dequant_mxfp4">dequant_mxfp4</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.dispatch_w8a8_block_fp8_linear" href="#sglang.srt.layers.quantization.fp8_utils.dispatch_w8a8_block_fp8_linear">dispatch_w8a8_block_fp8_linear</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.flashinfer_gemm_w8a8_block_fp8_linear" href="#sglang.srt.layers.quantization.fp8_utils.flashinfer_gemm_w8a8_block_fp8_linear">flashinfer_gemm_w8a8_block_fp8_linear</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.input_to_float8" href="#sglang.srt.layers.quantization.fp8_utils.input_to_float8">input_to_float8</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.normalize_e4m3fn_to_e4m3fnuz" href="#sglang.srt.layers.quantization.fp8_utils.normalize_e4m3fn_to_e4m3fnuz">normalize_e4m3fn_to_e4m3fnuz</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.per_block_cast_to_fp8" href="#sglang.srt.layers.quantization.fp8_utils.per_block_cast_to_fp8">per_block_cast_to_fp8</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.requant_weight_ue8m0_inplace" href="#sglang.srt.layers.quantization.fp8_utils.requant_weight_ue8m0_inplace">requant_weight_ue8m0_inplace</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.triton_w8a8_block_fp8_linear" href="#sglang.srt.layers.quantization.fp8_utils.triton_w8a8_block_fp8_linear">triton_w8a8_block_fp8_linear</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.fp8_utils.use_rowwise_torch_scaled_mm" href="#sglang.srt.layers.quantization.fp8_utils.use_rowwise_torch_scaled_mm">use_rowwise_torch_scaled_mm</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

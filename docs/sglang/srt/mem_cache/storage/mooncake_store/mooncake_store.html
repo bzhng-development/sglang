@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.mem_cache.storage.mooncake_store.mooncake_store API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.mem_cache.storage.mooncake_store.mooncake_store</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore"><code class="flex name class">
+<span>class <span class="ident">MooncakeStore</span></span>
+<span>(</span><span>storage_config: <a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorageConfig" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorageConfig">HiCacheStorageConfig</a> = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MooncakeStore(HiCacheStorage):
+    def __init__(self, storage_config: HiCacheStorageConfig = None):
+        try:
+            from mooncake.store import MooncakeDistributedStore
+        except ImportError as e:
+            raise ImportError(
+                &#34;Please install mooncake by following the instructions at &#34;
+                &#34;https://kvcache-ai.github.io/Mooncake/getting_started/build.html&#34;
+                &#34;to run SGLang with MooncakeConnector.&#34;
+            ) from e
+
+        try:
+            self.store = MooncakeDistributedStore()
+            self.config = MooncakeStoreConfig.load_from_env()
+            logger.info(&#34;Mooncake Configuration loaded from env successfully.&#34;)
+
+            ret_code = self.store.setup(
+                self.config.local_hostname,
+                self.config.metadata_server,
+                self.config.global_segment_size,
+                self.config.local_buffer_size,
+                self.config.protocol,
+                self.config.device_name,
+                self.config.master_server_address,
+            )
+            if ret_code:
+                logger.error(f&#34;failed to setup mooncake store, error code: {ret_code}&#34;)
+
+            logger.info(&#34;Connect to Mooncake store successfully.&#34;)
+            self.warmup()
+            logger.info(&#34;Mooncake store warmup successfully.&#34;)
+
+            if storage_config is not None:
+                self.is_mla_backend = storage_config.is_mla_model
+                self.local_rank = storage_config.tp_rank
+            else:
+                self.is_mla_backend = False
+                self.local_rank = 0
+
+        except ValueError as e:
+            logger.error(&#34;Configuration loading failed: %s&#34;, e)
+            raise
+        except Exception as exc:
+            logger.error(&#34;An error occurred while loading the configuration: %s&#34;, exc)
+            raise
+
+    def warmup(self):
+        warmup_key = &#34;sglang_mooncake_store_warmup_key&#34; + uuid.uuid4().hex
+        warmup_value = bytes(4 * 1024)  # 4 KB
+        assert self.store.put(warmup_key, warmup_value) == 0
+        assert self.store.is_exist(warmup_key) == 1
+        assert self.store.get(warmup_key) == warmup_value
+
+    def register_buffer(self, buffer: torch.Tensor) -&gt; None:
+        try:
+            buffer_ptr = buffer.data_ptr()
+            buffer_size = buffer.numel() * buffer.element_size()
+            ret_code = self.store.register_buffer(buffer_ptr, buffer_size)
+            if ret_code:
+                logger.error(f&#34;failed to register buffer, error code: {ret_code}&#34;)
+        except TypeError as err:
+            logger.error(&#34;Failed to register buffer to Mooncake Store: %s&#34;, err)
+            raise TypeError(&#34;Mooncake Store Register Buffer Error.&#34;) from err
+
+    def set(
+        self,
+        key,
+        value: Optional[Any] = None,
+        target_location: Optional[List[int]] = None,
+        target_sizes: Optional[List[int]] = None,
+    ) -&gt; bool:
+        return self.batch_set([key], [value], [target_location], [target_sizes])
+
+    def batch_set(
+        self,
+        keys: List[str],
+        values: Optional[List[torch.Tensor]] = None,
+        target_location: Optional[List[int]] = None,
+        target_sizes: Optional[List[int]] = None,
+    ) -&gt; bool:
+        assert len(keys) == len(target_location) == len(target_sizes)
+        if len(keys) == 0:
+            return False
+
+        for i in range(len(keys)):
+            if keys[i] is None or target_location[i] is None or target_sizes[i] is None:
+                return False
+
+        exist_result = self._batch_exist(keys)
+        set_keys = []
+        set_target_locations = []
+        set_target_sizes = []
+        set_indices = []
+        for i in range(len(keys)):
+            if exist_result[i] != 1:
+                set_keys.append(keys[i])
+                set_target_locations.append(target_location[i])
+                set_target_sizes.append(target_sizes[i])
+                set_indices.append(i)
+        # Only set non-existing keys to storage
+        put_result = self._put_batch_zero_copy_impl(
+            set_keys, set_target_locations, set_target_sizes
+        )
+        for i in range(len(set_indices)):
+            if put_result[i] == 0:
+                exist_result[set_indices[i]] = 1
+
+        success_count = 0
+        for i in range(len(keys)):
+            if exist_result[i] == 0:
+                break
+            success_count += 1
+        # TODO: return the number of consecutive successful operations from the start.
+        return success_count == len(keys)
+
+    def get(
+        self,
+        key,
+        target_location: Optional[Any] = None,
+        target_sizes: Optional[Any] = None,
+    ) -&gt; bool:
+        return self.batch_get([key], [target_location], [target_sizes]) == 1
+
+    def batch_get(
+        self,
+        keys: List[str],
+        target_location: Optional[Any] = None,
+        target_sizes: Optional[Any] = None,
+    ) -&gt; int:
+        assert len(keys) == len(target_location) == len(target_sizes)
+        if len(keys) == 0:
+            return 0
+        get_result = self._get_batch_zero_copy_impl(keys, target_location, target_sizes)
+        if self.is_mla_backend:
+            key_multiplier = 1
+        else:
+            key_multiplier = 2
+        for i in range(len(keys)):
+            if get_result[i] &lt; 0:
+                return i // key_multiplier
+        return len(keys) // key_multiplier
+
+    def exists(self, key) -&gt; bool:
+        return self.batch_exists([key]) &gt; 0
+
+    def batch_exists(self, keys) -&gt; int:
+        if self.is_mla_backend:
+            query_keys = [f&#34;{key}_k&#34; for key in keys]
+            key_multiplier = 1
+        else:
+            query_keys = []
+            for key in keys:
+                query_keys.append(f&#34;{key}_{self.local_rank}_k&#34;)
+                query_keys.append(f&#34;{key}_{self.local_rank}_v&#34;)
+            key_multiplier = 2
+
+        exist_result = self._batch_exist(query_keys)
+        for i in range(len(query_keys)):
+            if exist_result[i] != 1:
+                return i // key_multiplier
+        return len(query_keys) // key_multiplier
+
+    def delete(self, key) -&gt; None:
+        raise (NotImplementedError)
+
+    def close(self):
+        # MooncakeDistributedStore will automatically call the destructor, so
+        # it is unnecessary to close it manually.
+        pass
+
+    def clear(self) -&gt; None:
+        self.store.remove_all()
+
+    def _put_batch_zero_copy_impl(
+        self, key_strs: List[str], buffer_ptrs: List[int], buffer_sizes: List[int]
+    ) -&gt; List[int]:
+        return self.store.batch_put_from(key_strs, buffer_ptrs, buffer_sizes)
+
+    def _get_batch_zero_copy_impl(
+        self, key_strs: List[str], buffer_ptrs: List[int], buffer_sizes: List[int]
+    ) -&gt; List[int]:
+        return self.store.batch_get_into(key_strs, buffer_ptrs, buffer_sizes)
+
+    def _batch_exist(self, key_strs: List[str]) -&gt; List[int]:
+        return self.store.batch_is_exist(key_strs)</code></pre>
+</details>
+<div class="desc"><p>HiCacheStorage is a class that provides a generic key-value interface for storing and retrieving KV cache.
+It abstracts the underlying storage mechanism, allowing different implementations to be used.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage">HiCacheStorage</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    # MooncakeDistributedStore will automatically call the destructor, so
+    # it is unnecessary to close it manually.
+    pass</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.register_buffer"><code class="name flex">
+<span>def <span class="ident">register_buffer</span></span>(<span>self, buffer: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def register_buffer(self, buffer: torch.Tensor) -&gt; None:
+    try:
+        buffer_ptr = buffer.data_ptr()
+        buffer_size = buffer.numel() * buffer.element_size()
+        ret_code = self.store.register_buffer(buffer_ptr, buffer_size)
+        if ret_code:
+            logger.error(f&#34;failed to register buffer, error code: {ret_code}&#34;)
+    except TypeError as err:
+        logger.error(&#34;Failed to register buffer to Mooncake Store: %s&#34;, err)
+        raise TypeError(&#34;Mooncake Store Register Buffer Error.&#34;) from err</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.warmup"><code class="name flex">
+<span>def <span class="ident">warmup</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def warmup(self):
+    warmup_key = &#34;sglang_mooncake_store_warmup_key&#34; + uuid.uuid4().hex
+    warmup_value = bytes(4 * 1024)  # 4 KB
+    assert self.store.put(warmup_key, warmup_value) == 0
+    assert self.store.is_exist(warmup_key) == 1
+    assert self.store.get(warmup_key) == warmup_value</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage">HiCacheStorage</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.batch_exists" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.batch_exists">batch_exists</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.batch_get" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.batch_get">batch_get</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.batch_set" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.batch_set">batch_set</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.clear" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.clear">clear</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.delete" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.delete">delete</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.exists" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.exists">exists</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.get" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.get">get</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.hicache_storage.HiCacheStorage.set" href="../../hicache_storage.html#sglang.srt.mem_cache.hicache_storage.HiCacheStorage.set">set</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig"><code class="flex name class">
+<span>class <span class="ident">MooncakeStoreConfig</span></span>
+<span>(</span><span>local_hostname: str,<br>metadata_server: str,<br>global_segment_size: int,<br>local_buffer_size: int,<br>protocol: str,<br>device_name: str,<br>master_server_address: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class MooncakeStoreConfig:
+    local_hostname: str
+    metadata_server: str
+    global_segment_size: int
+    local_buffer_size: int
+    protocol: str
+    device_name: str
+    master_server_address: str
+
+    @staticmethod
+    def from_file() -&gt; &#34;MooncakeStoreConfig&#34;:
+        &#34;&#34;&#34;Load the config from a JSON file.&#34;&#34;&#34;
+        file_path = os.getenv(&#34;MOONCAKE_CONFIG_PATH&#34;)
+        if file_path is None:
+            raise ValueError(
+                &#34;The environment variable &#39;MOONCAKE_CONFIG_PATH&#39; is not set.&#34;
+            )
+        with open(file_path) as fin:
+            config = json.load(fin)
+        return MooncakeStoreConfig(
+            local_hostname=config.get(&#34;local_hostname&#34;),
+            metadata_server=config.get(&#34;metadata_server&#34;),
+            global_segment_size=config.get(
+                &#34;global_segment_size&#34;, DEFAULT_GLOBAL_SEGMENT_SIZE
+            ),
+            # Zero copy interface does not need local buffer
+            local_buffer_size=DEFAULT_LOCAL_BUFFER_SIZE,
+            protocol=config.get(&#34;protocol&#34;, &#34;tcp&#34;),
+            device_name=config.get(&#34;device_name&#34;, &#34;auto&#34;),
+            master_server_address=config.get(&#34;master_server_address&#34;),
+        )
+
+    @staticmethod
+    def load_from_env() -&gt; &#34;MooncakeStoreConfig&#34;:
+        &#34;&#34;&#34;Load config from a file specified in the environment variable.
+        export MOONCAKE_MASTER=10.13.3.232:50051
+        export MOONCAKE_PROTOCOL=&#34;rdma&#34;
+        export MOONCAKE_DEVICE=&#34;auto&#34;
+        export MOONCAKE_TE_META_DATA_SERVER=&#34;P2PHANDSHAKE&#34;
+        &#34;&#34;&#34;
+        # other required environment variables...
+        if not os.getenv(&#34;MOONCAKE_MASTER&#34;):
+            raise ValueError(&#34;The environment variable &#39;MOONCAKE_MASTER&#39; is not set.&#34;)
+        return MooncakeStoreConfig(
+            local_hostname=os.getenv(&#34;LOCAL_HOSTNAME&#34;, &#34;localhost&#34;),
+            metadata_server=os.getenv(&#34;MOONCAKE_TE_META_DATA_SERVER&#34;, &#34;P2PHANDSHAKE&#34;),
+            global_segment_size=int(
+                os.getenv(&#34;MOONCAKE_GLOBAL_SEGMENT_SIZE&#34;, DEFAULT_GLOBAL_SEGMENT_SIZE)
+            ),
+            # Zero copy interface does not need local buffer
+            local_buffer_size=DEFAULT_LOCAL_BUFFER_SIZE,
+            protocol=os.getenv(&#34;MOONCAKE_PROTOCOL&#34;, &#34;tcp&#34;),
+            device_name=os.getenv(&#34;MOONCAKE_DEVICE&#34;, &#34;auto&#34;),
+            master_server_address=os.getenv(&#34;MOONCAKE_MASTER&#34;),
+        )
+
+    def __post_init__(self):
+        if self.device_name == &#34;auto&#34;:
+            os.environ[&#34;MC_MS_AUTO_DISC&#34;] = &#34;1&#34;
+            os.environ[&#34;MC_MS_FILTERS&#34;] = (
+                &#34;mlx5_bond_0, mlx5_bond_1, mlx5_bond_2, mlx5_bond_3&#34;
+            )</code></pre>
+</details>
+<div class="desc"><p>MooncakeStoreConfig(local_hostname: str, metadata_server: str, global_segment_size: int, local_buffer_size: int, protocol: str, device_name: str, master_server_address: str)</p></div>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.from_file"><code class="name flex">
+<span>def <span class="ident">from_file</span></span>(<span>) ‑> <a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig">MooncakeStoreConfig</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def from_file() -&gt; &#34;MooncakeStoreConfig&#34;:
+    &#34;&#34;&#34;Load the config from a JSON file.&#34;&#34;&#34;
+    file_path = os.getenv(&#34;MOONCAKE_CONFIG_PATH&#34;)
+    if file_path is None:
+        raise ValueError(
+            &#34;The environment variable &#39;MOONCAKE_CONFIG_PATH&#39; is not set.&#34;
+        )
+    with open(file_path) as fin:
+        config = json.load(fin)
+    return MooncakeStoreConfig(
+        local_hostname=config.get(&#34;local_hostname&#34;),
+        metadata_server=config.get(&#34;metadata_server&#34;),
+        global_segment_size=config.get(
+            &#34;global_segment_size&#34;, DEFAULT_GLOBAL_SEGMENT_SIZE
+        ),
+        # Zero copy interface does not need local buffer
+        local_buffer_size=DEFAULT_LOCAL_BUFFER_SIZE,
+        protocol=config.get(&#34;protocol&#34;, &#34;tcp&#34;),
+        device_name=config.get(&#34;device_name&#34;, &#34;auto&#34;),
+        master_server_address=config.get(&#34;master_server_address&#34;),
+    )</code></pre>
+</details>
+<div class="desc"><p>Load the config from a JSON file.</p></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.load_from_env"><code class="name flex">
+<span>def <span class="ident">load_from_env</span></span>(<span>) ‑> <a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig">MooncakeStoreConfig</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def load_from_env() -&gt; &#34;MooncakeStoreConfig&#34;:
+    &#34;&#34;&#34;Load config from a file specified in the environment variable.
+    export MOONCAKE_MASTER=10.13.3.232:50051
+    export MOONCAKE_PROTOCOL=&#34;rdma&#34;
+    export MOONCAKE_DEVICE=&#34;auto&#34;
+    export MOONCAKE_TE_META_DATA_SERVER=&#34;P2PHANDSHAKE&#34;
+    &#34;&#34;&#34;
+    # other required environment variables...
+    if not os.getenv(&#34;MOONCAKE_MASTER&#34;):
+        raise ValueError(&#34;The environment variable &#39;MOONCAKE_MASTER&#39; is not set.&#34;)
+    return MooncakeStoreConfig(
+        local_hostname=os.getenv(&#34;LOCAL_HOSTNAME&#34;, &#34;localhost&#34;),
+        metadata_server=os.getenv(&#34;MOONCAKE_TE_META_DATA_SERVER&#34;, &#34;P2PHANDSHAKE&#34;),
+        global_segment_size=int(
+            os.getenv(&#34;MOONCAKE_GLOBAL_SEGMENT_SIZE&#34;, DEFAULT_GLOBAL_SEGMENT_SIZE)
+        ),
+        # Zero copy interface does not need local buffer
+        local_buffer_size=DEFAULT_LOCAL_BUFFER_SIZE,
+        protocol=os.getenv(&#34;MOONCAKE_PROTOCOL&#34;, &#34;tcp&#34;),
+        device_name=os.getenv(&#34;MOONCAKE_DEVICE&#34;, &#34;auto&#34;),
+        master_server_address=os.getenv(&#34;MOONCAKE_MASTER&#34;),
+    )</code></pre>
+</details>
+<div class="desc"><p>Load config from a file specified in the environment variable.
+export MOONCAKE_MASTER=10.13.3.232:50051
+export MOONCAKE_PROTOCOL="rdma"
+export MOONCAKE_DEVICE="auto"
+export MOONCAKE_TE_META_DATA_SERVER="P2PHANDSHAKE"</p></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.device_name"><code class="name">var <span class="ident">device_name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.global_segment_size"><code class="name">var <span class="ident">global_segment_size</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.local_buffer_size"><code class="name">var <span class="ident">local_buffer_size</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.local_hostname"><code class="name">var <span class="ident">local_hostname</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.master_server_address"><code class="name">var <span class="ident">master_server_address</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.metadata_server"><code class="name">var <span class="ident">metadata_server</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.protocol"><code class="name">var <span class="ident">protocol</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store" href="index.html">sglang.srt.mem_cache.storage.mooncake_store</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore">MooncakeStore</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.close" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.close">close</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.register_buffer" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.register_buffer">register_buffer</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.warmup" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStore.warmup">warmup</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig">MooncakeStoreConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.device_name" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.device_name">device_name</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.from_file" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.from_file">from_file</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.global_segment_size" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.global_segment_size">global_segment_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.load_from_env" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.load_from_env">load_from_env</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.local_buffer_size" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.local_buffer_size">local_buffer_size</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.local_hostname" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.local_hostname">local_hostname</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.master_server_address" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.master_server_address">master_server_address</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.metadata_server" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.metadata_server">metadata_server</a></code></li>
+<li><code><a title="sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.protocol" href="#sglang.srt.mem_cache.storage.mooncake_store.mooncake_store.MooncakeStoreConfig.protocol">protocol</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

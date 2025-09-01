@@ -1,0 +1,1376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.configs.internvl API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.configs.internvl</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternLM2Config"><code class="flex name class">
+<span>class <span class="ident">InternLM2Config</span></span>
+<span>(</span><span>vocab_size=103168,<br>hidden_size=4096,<br>intermediate_size=11008,<br>num_hidden_layers=32,<br>num_attention_heads=32,<br>num_key_value_heads=None,<br>hidden_act='silu',<br>max_position_embeddings=2048,<br>initializer_range=0.02,<br>rms_norm_eps=1e-06,<br>use_cache=True,<br>pad_token_id=0,<br>bos_token_id=1,<br>eos_token_id=2,<br>tie_word_embeddings=False,<br>bias=True,<br>rope_theta=10000,<br>rope_scaling=None,<br>attn_implementation='eager',<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InternLM2Config(PretrainedConfig):
+    r&#34;&#34;&#34;
+    This is the configuration class to store the configuration of a [`InternLM2Model`]. It is used to instantiate
+    an InternLM2 model according to the specified arguments, defining the model architecture. Instantiating a
+    configuration with the defaults will yield a similar configuration to that of the InternLM2-7B.
+
+    Configuration objects inherit from [`PretrainedConfig`] and can be used to control the model outputs. Read the
+    documentation from [`PretrainedConfig`] for more information.
+
+
+    Args:
+        vocab_size (`int`, *optional*, defaults to 32000):
+            Vocabulary size of the InternLM2 model. Defines the number of different tokens that can be represented by the
+            `inputs_ids` passed when calling [`InternLM2Model`]
+        hidden_size (`int`, *optional*, defaults to 4096):
+            Dimension of the hidden representations.
+        intermediate_size (`int`, *optional*, defaults to 11008):
+            Dimension of the MLP representations.
+        num_hidden_layers (`int`, *optional*, defaults to 32):
+            Number of hidden layers in the Transformer encoder.
+        num_attention_heads (`int`, *optional*, defaults to 32):
+            Number of attention heads for each attention layer in the Transformer encoder.
+        num_key_value_heads (`int`, *optional*):
+            This is the number of key_value heads that should be used to implement Grouped Query Attention. If
+            `num_key_value_heads=num_attention_heads`, the model will use Multi Head Attention (MHA), if
+            `num_key_value_heads=1 the model will use Multi Query Attention (MQA) otherwise GQA is used. When
+            converting a multi-head checkpoint to a GQA checkpoint, each group key and value head should be constructed
+            by meanpooling all the original heads within that group. For more details checkout [this
+            paper](https://arxiv.org/pdf/2305.13245.pdf). If it is not specified, will default to
+            `num_attention_heads`.
+        hidden_act (`str` or `function`, *optional*, defaults to `&#34;silu&#34;`):
+            The non-linear activation function (function or string) in the decoder.
+        max_position_embeddings (`int`, *optional*, defaults to 2048):
+            The maximum sequence length that this model might ever be used with. Typically set this to something large
+            just in case (e.g., 512 or 1024 or 2048).
+        initializer_range (`float`, *optional*, defaults to 0.02):
+            The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+        rms_norm_eps (`float`, *optional*, defaults to 1e-12):
+            The epsilon used by the rms normalization layers.
+        use_cache (`bool`, *optional*, defaults to `True`):
+            Whether or not the model should return the last key/values attentions (not used by all models). Only
+            relevant if `config.is_decoder=True`.
+        tie_word_embeddings(`bool`, *optional*, defaults to `False`):
+            Whether to tie weight embeddings
+        Example:
+
+    &#34;&#34;&#34;
+
+    model_type = &#34;internlm2&#34;
+    _auto_class = &#34;AutoConfig&#34;
+
+    def __init__(  # pylint: disable=W0102
+        self,
+        vocab_size=103168,
+        hidden_size=4096,
+        intermediate_size=11008,
+        num_hidden_layers=32,
+        num_attention_heads=32,
+        num_key_value_heads=None,
+        hidden_act=&#34;silu&#34;,
+        max_position_embeddings=2048,
+        initializer_range=0.02,
+        rms_norm_eps=1e-6,
+        use_cache=True,
+        pad_token_id=0,
+        bos_token_id=1,
+        eos_token_id=2,
+        tie_word_embeddings=False,
+        bias=True,
+        rope_theta=10000,
+        rope_scaling=None,
+        attn_implementation=&#34;eager&#34;,
+        **kwargs,
+    ):
+        self.vocab_size = vocab_size
+        self.max_position_embeddings = max_position_embeddings
+        self.hidden_size = hidden_size
+        self.intermediate_size = intermediate_size
+        self.num_hidden_layers = num_hidden_layers
+        self.num_attention_heads = num_attention_heads
+        self.bias = bias
+
+        if num_key_value_heads is None:
+            num_key_value_heads = num_attention_heads
+        self.num_key_value_heads = num_key_value_heads
+
+        self.hidden_act = hidden_act
+        self.initializer_range = initializer_range
+        self.rms_norm_eps = rms_norm_eps
+        self.use_cache = use_cache
+        self.rope_theta = rope_theta
+        self.rope_scaling = rope_scaling
+        self._rope_scaling_validation()
+
+        self.attn_implementation = attn_implementation
+        if self.attn_implementation is None:
+            self.attn_implementation = &#34;eager&#34;
+        super().__init__(
+            pad_token_id=pad_token_id,
+            bos_token_id=bos_token_id,
+            eos_token_id=eos_token_id,
+            tie_word_embeddings=tie_word_embeddings,
+            **kwargs,
+        )
+
+    def _rope_scaling_validation(self):
+        &#34;&#34;&#34;
+        Validate the `rope_scaling` configuration.
+        &#34;&#34;&#34;
+        if self.rope_scaling is None:
+            return
+
+        if not isinstance(self.rope_scaling, dict) or len(self.rope_scaling) != 2:
+            raise ValueError(
+                &#34;`rope_scaling` must be a dictionary with with two fields, `type` and `factor`, &#34;
+                f&#34;got {self.rope_scaling}&#34;
+            )
+        rope_scaling_type = self.rope_scaling.get(&#34;type&#34;, None)
+        rope_scaling_factor = self.rope_scaling.get(&#34;factor&#34;, None)
+        if rope_scaling_type is None or rope_scaling_type not in [&#34;linear&#34;, &#34;dynamic&#34;]:
+            raise ValueError(
+                f&#34;`rope_scaling`&#39;s type field must be one of [&#39;linear&#39;, &#39;dynamic&#39;], got {rope_scaling_type}&#34;
+            )
+        if (
+            rope_scaling_factor is None
+            or not isinstance(rope_scaling_factor, (float, int))
+            or rope_scaling_factor &lt; 1.0
+        ):
+            raise ValueError(
+                f&#34;`rope_scaling`&#39;s factor field must be a float|int &gt;= 1, got {rope_scaling_factor=}, {type(rope_scaling_factor)=}&#34;
+            )
+        if isinstance(rope_scaling_factor, int):
+            rope_scaling_factor = float(rope_scaling_factor)</code></pre>
+</details>
+<div class="desc"><p>This is the configuration class to store the configuration of a [<code>InternLM2Model</code>]. It is used to instantiate
+an InternLM2 model according to the specified arguments, defining the model architecture. Instantiating a
+configuration with the defaults will yield a similar configuration to that of the InternLM2-7B.</p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<p>vocab_size (<code>int</code>, <em>optional</em>, defaults to 32000):
+Vocabulary size of the InternLM2 model. Defines the number of different tokens that can be represented by the
+<code>inputs_ids</code> passed when calling [<code>InternLM2Model</code>]
+hidden_size (<code>int</code>, <em>optional</em>, defaults to 4096):
+Dimension of the hidden representations.
+intermediate_size (<code>int</code>, <em>optional</em>, defaults to 11008):
+Dimension of the MLP representations.
+num_hidden_layers (<code>int</code>, <em>optional</em>, defaults to 32):
+Number of hidden layers in the Transformer encoder.
+num_attention_heads (<code>int</code>, <em>optional</em>, defaults to 32):
+Number of attention heads for each attention layer in the Transformer encoder.
+num_key_value_heads (<code>int</code>, <em>optional</em>):
+This is the number of key_value heads that should be used to implement Grouped Query Attention. If
+<code>num_key_value_heads=num_attention_heads</code>, the model will use Multi Head Attention (MHA), if
+<code>num_key_value_heads=1 the model will use Multi Query Attention (MQA) otherwise GQA is used. When
+converting a multi-head checkpoint to a GQA checkpoint, each group key and value head should be constructed
+by meanpooling all the original heads within that group. For more details checkout [this
+paper](&lt;https://arxiv.org/pdf/2305.13245.pdf&gt;). If it is not specified, will default to
+&lt;code&gt;num\_attention\_heads&lt;/code&gt;.
+hidden_act (&lt;code&gt;str&lt;/code&gt; or &lt;code&gt;function&lt;/code&gt;, *optional*, defaults to</code>"silu"<code>):
+The non-linear activation function (function or string) in the decoder.
+max_position_embeddings (&lt;code&gt;int&lt;/code&gt;, *optional*, defaults to 2048):
+The maximum sequence length that this model might ever be used with. Typically set this to something large
+just in case (e.g., 512 or 1024 or 2048).
+initializer_range (&lt;code&gt;float&lt;/code&gt;, *optional*, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+rms_norm_eps (&lt;code&gt;float&lt;/code&gt;, *optional*, defaults to 1e-12):
+The epsilon used by the rms normalization layers.
+use_cache (&lt;code&gt;bool&lt;/code&gt;, *optional*, defaults to &lt;code&gt;True&lt;/code&gt;):
+Whether or not the model should return the last key/values attentions (not used by all models). Only
+relevant if</code>config.is_decoder=True`.
+tie_word_embeddings(<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to tie weight embeddings
+Example:</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternLM2Config.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer"><code class="flex name class">
+<span>class <span class="ident">InternLM2Tokenizer</span></span>
+<span>(</span><span>vocab_file,<br>unk_token=&#x27;&lt;unk&gt;&#x27;,<br>bos_token=&#x27;&lt;s&gt;&#x27;,<br>eos_token=&#x27;&lt;/s&gt;&#x27;,<br>pad_token=&#x27;&lt;/s&gt;&#x27;,<br>sp_model_kwargs: Dict[str, Any] | None = None,<br>add_bos_token=True,<br>add_eos_token=False,<br>decode_with_prefix_space=False,<br>clean_up_tokenization_spaces=False,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InternLM2Tokenizer(PreTrainedTokenizer):
+    &#34;&#34;&#34;
+    Construct a InternLM2 tokenizer. Based on byte-level Byte-Pair-Encoding.
+
+    Args:
+        vocab_file (`str`):
+            Path to the vocabulary file.
+    &#34;&#34;&#34;
+
+    vocab_files_names = VOCAB_FILES_NAMES
+    pretrained_vocab_files_map = PRETRAINED_VOCAB_FILES_MAP
+    model_input_names = [&#34;input_ids&#34;, &#34;attention_mask&#34;]
+    _auto_class = &#34;AutoTokenizer&#34;
+
+    def __init__(
+        self,
+        vocab_file,
+        unk_token=&#34;&lt;unk&gt;&#34;,
+        bos_token=&#34;&lt;s&gt;&#34;,
+        eos_token=&#34;&lt;/s&gt;&#34;,
+        pad_token=&#34;&lt;/s&gt;&#34;,
+        sp_model_kwargs: Optional[Dict[str, Any]] = None,
+        add_bos_token=True,
+        add_eos_token=False,
+        decode_with_prefix_space=False,
+        clean_up_tokenization_spaces=False,
+        **kwargs,
+    ):
+        print(&#34;register succeed&#34;)
+        self.sp_model_kwargs = {} if sp_model_kwargs is None else sp_model_kwargs
+        self.vocab_file = vocab_file
+        self.add_bos_token = add_bos_token
+        self.add_eos_token = add_eos_token
+        self.decode_with_prefix_space = decode_with_prefix_space
+        self.sp_model = spm.SentencePieceProcessor(**self.sp_model_kwargs)
+        self.sp_model.Load(vocab_file)
+        self._no_prefix_space_tokens = None
+        super().__init__(
+            bos_token=bos_token,
+            eos_token=eos_token,
+            unk_token=unk_token,
+            pad_token=pad_token,
+            clean_up_tokenization_spaces=clean_up_tokenization_spaces,
+            **kwargs,
+        )
+
+    @property
+    def no_prefix_space_tokens(self):
+        if self._no_prefix_space_tokens is None:
+            vocab = self.convert_ids_to_tokens(list(range(self.vocab_size)))
+            self._no_prefix_space_tokens = {
+                i for i, tok in enumerate(vocab) if not tok.startswith(&#34;▁&#34;)
+            }
+        return self._no_prefix_space_tokens
+
+    @property
+    def vocab_size(self):
+        &#34;&#34;&#34;Returns vocab size&#34;&#34;&#34;
+        return self.sp_model.get_piece_size()
+
+    @property
+    def bos_token_id(self) -&gt; Optional[int]:
+        return self.sp_model.bos_id()
+
+    @property
+    def eos_token_id(self) -&gt; Optional[int]:
+        return self.sp_model.eos_id()
+
+    def get_vocab(self):
+        &#34;&#34;&#34;Returns vocab as a dict&#34;&#34;&#34;
+        vocab = {self.convert_ids_to_tokens(i): i for i in range(self.vocab_size)}
+        vocab.update(self.added_tokens_encoder)
+        return vocab
+
+    def _tokenize(self, text):
+        &#34;&#34;&#34;Returns a tokenized string.&#34;&#34;&#34;
+        return self.sp_model.encode(text, out_type=str)
+
+    def _convert_token_to_id(self, token):
+        &#34;&#34;&#34;Converts a token (str) in an id using the vocab.&#34;&#34;&#34;
+        return self.sp_model.piece_to_id(token)
+
+    def _convert_id_to_token(self, index):
+        &#34;&#34;&#34;Converts an index (integer) in a token (str) using the vocab.&#34;&#34;&#34;
+        token = self.sp_model.IdToPiece(index)
+        return token
+
+    def _maybe_add_prefix_space(self, tokens, decoded):
+        if tokens and tokens[0] not in self.no_prefix_space_tokens:
+            return &#34; &#34; + decoded
+        else:
+            return decoded
+
+    def convert_tokens_to_string(self, tokens):
+        &#34;&#34;&#34;Converts a sequence of tokens (string) in a single string.&#34;&#34;&#34;
+        current_sub_tokens = []
+        out_string = &#34;&#34;
+        prev_is_special = False
+        for token in tokens:
+            # make sure that special tokens are not decoded using sentencepiece model
+            if token in self.all_special_tokens:
+                if not prev_is_special:
+                    out_string += &#34; &#34;
+                out_string += self.sp_model.decode(current_sub_tokens) + token
+                prev_is_special = True
+                current_sub_tokens = []
+            else:
+                current_sub_tokens.append(token)
+                prev_is_special = False
+        out_string += self.sp_model.decode(current_sub_tokens)
+        out_string = self.clean_up_tokenization(out_string)
+        out_string = self._maybe_add_prefix_space(tokens=tokens, decoded=out_string)
+        return out_string[1:]
+
+    def save_vocabulary(
+        self, save_directory, filename_prefix: Optional[str] = None
+    ) -&gt; Tuple[str]:
+        &#34;&#34;&#34;
+        Save the vocabulary and special tokens file to a directory.
+
+        Args:
+            save_directory (`str`):
+                The directory in which to save the vocabulary.
+
+        Returns:
+            `Tuple(str)`: Paths to the files saved.
+        &#34;&#34;&#34;
+        if not os.path.isdir(save_directory):
+            logger.error(f&#34;Vocabulary path ({save_directory}) should be a directory&#34;)
+            return
+        out_vocab_file = os.path.join(
+            save_directory,
+            (filename_prefix + &#34;-&#34; if filename_prefix else &#34;&#34;)
+            + VOCAB_FILES_NAMES[&#34;vocab_file&#34;],
+        )
+
+        if os.path.abspath(self.vocab_file) != os.path.abspath(
+            out_vocab_file
+        ) and os.path.isfile(self.vocab_file):
+            copyfile(self.vocab_file, out_vocab_file)
+        elif not os.path.isfile(self.vocab_file):
+            with open(out_vocab_file, &#34;wb&#34;) as fi:
+                content_spiece_model = self.sp_model.serialized_model_proto()
+                fi.write(content_spiece_model)
+
+        return (out_vocab_file,)
+
+    def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
+        if self.add_bos_token:
+            bos_token_ids = [self.bos_token_id]
+        else:
+            bos_token_ids = []
+
+        output = bos_token_ids + token_ids_0
+
+        if token_ids_1 is not None:
+            output = output + token_ids_1
+
+        if self.add_eos_token:
+            output = output + [self.eos_token_id]
+
+        return output
+
+    def get_special_tokens_mask(
+        self,
+        token_ids_0: List[int],
+        token_ids_1: Optional[List[int]] = None,
+        already_has_special_tokens: bool = False,
+    ) -&gt; List[int]:
+        &#34;&#34;&#34;
+        Retrieve sequence ids from a token list that has no special tokens added. This method is called when adding
+        special tokens using the tokenizer `prepare_for_model` method.
+
+        Args:
+            token_ids_0 (`List[int]`):
+                List of IDs.
+            token_ids_1 (`List[int]`, *optional*):
+                Optional second list of IDs for sequence pairs.
+            already_has_special_tokens (`bool`, *optional*, defaults to `False`):
+                Whether or not the token list is already formatted with special tokens for the model.
+
+        Returns:
+            `List[int]`: A list of integers in the range [0, 1]: 1 for a special token, 0 for a sequence token.
+        &#34;&#34;&#34;
+        if already_has_special_tokens:
+            return super().get_special_tokens_mask(
+                token_ids_0=token_ids_0,
+                token_ids_1=token_ids_1,
+                already_has_special_tokens=True,
+            )
+
+        if token_ids_1 is None:
+            return [1] + ([0] * len(token_ids_0)) + [1]
+        return [1] + ([0] * len(token_ids_0)) + [1, 1] + ([0] * len(token_ids_1)) + [1]
+
+    def create_token_type_ids_from_sequences(
+        self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
+    ) -&gt; List[int]:
+        &#34;&#34;&#34;
+        Create a mask from the two sequences passed to be used in a sequence-pair classification task. T5 does not make
+        use of token type ids, therefore a list of zeros is returned.
+
+        Args:
+            token_ids_0 (`List[int]`):
+                List of IDs.
+            token_ids_1 (`List[int]`, *optional*):
+                Optional second list of IDs for sequence pairs.
+
+        Returns:
+            `List[int]`: List of zeros.
+        &#34;&#34;&#34;
+        eos = [self.eos_token_id]
+
+        if token_ids_1 is None:
+            return len(token_ids_0 + eos) * [0]
+        return len(token_ids_0 + eos + token_ids_1 + eos) * [0]</code></pre>
+</details>
+<div class="desc"><p>Construct a InternLM2 tokenizer. Based on byte-level Byte-Pair-Encoding.</p>
+<h2 id="args">Args</h2>
+<p>vocab_file (<code>str</code>):
+Path to the vocabulary file.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.tokenization_utils.PreTrainedTokenizer</li>
+<li>transformers.tokenization_utils_base.PreTrainedTokenizerBase</li>
+<li>transformers.tokenization_utils_base.SpecialTokensMixin</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.model_input_names"><code class="name">var <span class="ident">model_input_names</span> : list[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.pretrained_vocab_files_map"><code class="name">var <span class="ident">pretrained_vocab_files_map</span> : dict[str, dict[str, str]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.vocab_files_names"><code class="name">var <span class="ident">vocab_files_names</span> : dict[str, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.bos_token_id"><code class="name">prop <span class="ident">bos_token_id</span> : int | None</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def bos_token_id(self) -&gt; Optional[int]:
+    return self.sp_model.bos_id()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.eos_token_id"><code class="name">prop <span class="ident">eos_token_id</span> : int | None</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def eos_token_id(self) -&gt; Optional[int]:
+    return self.sp_model.eos_id()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.no_prefix_space_tokens"><code class="name">prop <span class="ident">no_prefix_space_tokens</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def no_prefix_space_tokens(self):
+    if self._no_prefix_space_tokens is None:
+        vocab = self.convert_ids_to_tokens(list(range(self.vocab_size)))
+        self._no_prefix_space_tokens = {
+            i for i, tok in enumerate(vocab) if not tok.startswith(&#34;▁&#34;)
+        }
+    return self._no_prefix_space_tokens</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.vocab_size"><code class="name">prop <span class="ident">vocab_size</span></code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def vocab_size(self):
+    &#34;&#34;&#34;Returns vocab size&#34;&#34;&#34;
+    return self.sp_model.get_piece_size()</code></pre>
+</details>
+<div class="desc"><p>Returns vocab size</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.build_inputs_with_special_tokens"><code class="name flex">
+<span>def <span class="ident">build_inputs_with_special_tokens</span></span>(<span>self, token_ids_0, token_ids_1=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def build_inputs_with_special_tokens(self, token_ids_0, token_ids_1=None):
+    if self.add_bos_token:
+        bos_token_ids = [self.bos_token_id]
+    else:
+        bos_token_ids = []
+
+    output = bos_token_ids + token_ids_0
+
+    if token_ids_1 is not None:
+        output = output + token_ids_1
+
+    if self.add_eos_token:
+        output = output + [self.eos_token_id]
+
+    return output</code></pre>
+</details>
+<div class="desc"><p>Build model inputs from a sequence or a pair of sequence for sequence classification tasks by concatenating and
+adding special tokens.</p>
+<p>This implementation does not add special tokens and this method should be overridden in a subclass.</p>
+<h2 id="args">Args</h2>
+<p>token_ids_0 (<code>list[int]</code>): The first tokenized sequence.
+token_ids_1 (<code>list[int]</code>, <em>optional</em>): The second tokenized sequence.</p>
+<h2 id="returns">Returns</h2>
+<p><code>list[int]</code>: The model input with special tokens.</p></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.convert_tokens_to_string"><code class="name flex">
+<span>def <span class="ident">convert_tokens_to_string</span></span>(<span>self, tokens)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_tokens_to_string(self, tokens):
+    &#34;&#34;&#34;Converts a sequence of tokens (string) in a single string.&#34;&#34;&#34;
+    current_sub_tokens = []
+    out_string = &#34;&#34;
+    prev_is_special = False
+    for token in tokens:
+        # make sure that special tokens are not decoded using sentencepiece model
+        if token in self.all_special_tokens:
+            if not prev_is_special:
+                out_string += &#34; &#34;
+            out_string += self.sp_model.decode(current_sub_tokens) + token
+            prev_is_special = True
+            current_sub_tokens = []
+        else:
+            current_sub_tokens.append(token)
+            prev_is_special = False
+    out_string += self.sp_model.decode(current_sub_tokens)
+    out_string = self.clean_up_tokenization(out_string)
+    out_string = self._maybe_add_prefix_space(tokens=tokens, decoded=out_string)
+    return out_string[1:]</code></pre>
+</details>
+<div class="desc"><p>Converts a sequence of tokens (string) in a single string.</p></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.create_token_type_ids_from_sequences"><code class="name flex">
+<span>def <span class="ident">create_token_type_ids_from_sequences</span></span>(<span>self, token_ids_0: List[int], token_ids_1: List[int] | None = None) ‑> List[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_token_type_ids_from_sequences(
+    self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
+) -&gt; List[int]:
+    &#34;&#34;&#34;
+    Create a mask from the two sequences passed to be used in a sequence-pair classification task. T5 does not make
+    use of token type ids, therefore a list of zeros is returned.
+
+    Args:
+        token_ids_0 (`List[int]`):
+            List of IDs.
+        token_ids_1 (`List[int]`, *optional*):
+            Optional second list of IDs for sequence pairs.
+
+    Returns:
+        `List[int]`: List of zeros.
+    &#34;&#34;&#34;
+    eos = [self.eos_token_id]
+
+    if token_ids_1 is None:
+        return len(token_ids_0 + eos) * [0]
+    return len(token_ids_0 + eos + token_ids_1 + eos) * [0]</code></pre>
+</details>
+<div class="desc"><p>Create a mask from the two sequences passed to be used in a sequence-pair classification task. T5 does not make
+use of token type ids, therefore a list of zeros is returned.</p>
+<h2 id="args">Args</h2>
+<p>token_ids_0 (<code>List[int]</code>):
+List of IDs.
+token_ids_1 (<code>List[int]</code>, <em>optional</em>):
+Optional second list of IDs for sequence pairs.</p>
+<h2 id="returns">Returns</h2>
+<p><code>List[int]</code>: List of zeros.</p></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.get_special_tokens_mask"><code class="name flex">
+<span>def <span class="ident">get_special_tokens_mask</span></span>(<span>self,<br>token_ids_0: List[int],<br>token_ids_1: List[int] | None = None,<br>already_has_special_tokens: bool = False) ‑> List[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_special_tokens_mask(
+    self,
+    token_ids_0: List[int],
+    token_ids_1: Optional[List[int]] = None,
+    already_has_special_tokens: bool = False,
+) -&gt; List[int]:
+    &#34;&#34;&#34;
+    Retrieve sequence ids from a token list that has no special tokens added. This method is called when adding
+    special tokens using the tokenizer `prepare_for_model` method.
+
+    Args:
+        token_ids_0 (`List[int]`):
+            List of IDs.
+        token_ids_1 (`List[int]`, *optional*):
+            Optional second list of IDs for sequence pairs.
+        already_has_special_tokens (`bool`, *optional*, defaults to `False`):
+            Whether or not the token list is already formatted with special tokens for the model.
+
+    Returns:
+        `List[int]`: A list of integers in the range [0, 1]: 1 for a special token, 0 for a sequence token.
+    &#34;&#34;&#34;
+    if already_has_special_tokens:
+        return super().get_special_tokens_mask(
+            token_ids_0=token_ids_0,
+            token_ids_1=token_ids_1,
+            already_has_special_tokens=True,
+        )
+
+    if token_ids_1 is None:
+        return [1] + ([0] * len(token_ids_0)) + [1]
+    return [1] + ([0] * len(token_ids_0)) + [1, 1] + ([0] * len(token_ids_1)) + [1]</code></pre>
+</details>
+<div class="desc"><p>Retrieve sequence ids from a token list that has no special tokens added. This method is called when adding
+special tokens using the tokenizer <code>prepare_for_model</code> method.</p>
+<h2 id="args">Args</h2>
+<p>token_ids_0 (<code>List[int]</code>):
+List of IDs.
+token_ids_1 (<code>List[int]</code>, <em>optional</em>):
+Optional second list of IDs for sequence pairs.
+already_has_special_tokens (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the token list is already formatted with special tokens for the model.</p>
+<h2 id="returns">Returns</h2>
+<p><code>List[int]</code>: A list of integers in the range [0, 1]: 1 for a special token, 0 for a sequence token.</p></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.get_vocab"><code class="name flex">
+<span>def <span class="ident">get_vocab</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_vocab(self):
+    &#34;&#34;&#34;Returns vocab as a dict&#34;&#34;&#34;
+    vocab = {self.convert_ids_to_tokens(i): i for i in range(self.vocab_size)}
+    vocab.update(self.added_tokens_encoder)
+    return vocab</code></pre>
+</details>
+<div class="desc"><p>Returns vocab as a dict</p></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternLM2Tokenizer.save_vocabulary"><code class="name flex">
+<span>def <span class="ident">save_vocabulary</span></span>(<span>self, save_directory, filename_prefix: str | None = None) ‑> Tuple[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_vocabulary(
+    self, save_directory, filename_prefix: Optional[str] = None
+) -&gt; Tuple[str]:
+    &#34;&#34;&#34;
+    Save the vocabulary and special tokens file to a directory.
+
+    Args:
+        save_directory (`str`):
+            The directory in which to save the vocabulary.
+
+    Returns:
+        `Tuple(str)`: Paths to the files saved.
+    &#34;&#34;&#34;
+    if not os.path.isdir(save_directory):
+        logger.error(f&#34;Vocabulary path ({save_directory}) should be a directory&#34;)
+        return
+    out_vocab_file = os.path.join(
+        save_directory,
+        (filename_prefix + &#34;-&#34; if filename_prefix else &#34;&#34;)
+        + VOCAB_FILES_NAMES[&#34;vocab_file&#34;],
+    )
+
+    if os.path.abspath(self.vocab_file) != os.path.abspath(
+        out_vocab_file
+    ) and os.path.isfile(self.vocab_file):
+        copyfile(self.vocab_file, out_vocab_file)
+    elif not os.path.isfile(self.vocab_file):
+        with open(out_vocab_file, &#34;wb&#34;) as fi:
+            content_spiece_model = self.sp_model.serialized_model_proto()
+            fi.write(content_spiece_model)
+
+    return (out_vocab_file,)</code></pre>
+</details>
+<div class="desc"><p>Save the vocabulary and special tokens file to a directory.</p>
+<h2 id="args">Args</h2>
+<p>save_directory (<code>str</code>):
+The directory in which to save the vocabulary.</p>
+<h2 id="returns">Returns</h2>
+<p><code>Tuple(str)</code>: Paths to the files saved.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternVLChatConfig"><code class="flex name class">
+<span>class <span class="ident">InternVLChatConfig</span></span>
+<span>(</span><span>vision_config=None,<br>llm_config=None,<br>use_backbone_lora=0,<br>use_llm_lora=0,<br>pad2square=False,<br>select_layer=-1,<br>force_image_size=None,<br>downsample_ratio=0.5,<br>template=None,<br>dynamic_image_size=False,<br>use_thumbnail=False,<br>ps_version='v1',<br>min_dynamic_patch=1,<br>max_dynamic_patch=6,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InternVLChatConfig(PretrainedConfig):
+    model_type = &#34;internvl_chat&#34;
+    is_composition = True
+
+    def __init__(
+        self,
+        vision_config=None,
+        llm_config=None,
+        use_backbone_lora=0,
+        use_llm_lora=0,
+        pad2square=False,
+        select_layer=-1,
+        force_image_size=None,
+        downsample_ratio=0.5,
+        template=None,
+        dynamic_image_size=False,
+        use_thumbnail=False,
+        ps_version=&#34;v1&#34;,
+        min_dynamic_patch=1,
+        max_dynamic_patch=6,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        if vision_config is None:
+            vision_config = {&#34;architectures&#34;: [&#34;InternVisionModel&#34;]}
+            logger.info(
+                &#34;vision_config is None. Initializing the InternVisionConfig with default values.&#34;
+            )
+
+        if llm_config is None:
+            llm_config = {&#34;architectures&#34;: [&#34;InternLM2ForCausalLM&#34;]}
+            logger.info(
+                &#34;llm_config is None. Initializing the LlamaConfig config with default values (`LlamaConfig`).&#34;
+            )
+
+        self.vision_config = InternVisionConfig(**vision_config)
+        if llm_config.get(&#34;architectures&#34;)[0] == &#34;LlamaForCausalLM&#34;:
+            self.llm_config = LlamaConfig(**llm_config)
+        elif llm_config.get(&#34;architectures&#34;)[0] == &#34;InternLM2ForCausalLM&#34;:
+            self.llm_config = InternLM2Config(**llm_config)
+        elif llm_config.get(&#34;architectures&#34;)[0] == &#34;Qwen2ForCausalLM&#34;:
+            self.llm_config = Qwen2Config(**llm_config)
+        elif llm_config.get(&#34;architectures&#34;)[0] == &#34;Qwen3MoeForCausalLM&#34;:
+            self.llm_config = Qwen3Config(**llm_config)
+        else:
+            raise ValueError(
+                &#34;Unsupported architecture: {}&#34;.format(
+                    llm_config.get(&#34;architectures&#34;)[0]
+                )
+            )
+
+        self.use_backbone_lora = use_backbone_lora
+        self.use_llm_lora = use_llm_lora
+        self.pad2square = pad2square
+        self.select_layer = select_layer
+        self.force_image_size = force_image_size
+        self.downsample_ratio = downsample_ratio
+        self.template = template
+        self.dynamic_image_size = dynamic_image_size
+        self.use_thumbnail = use_thumbnail
+        self.ps_version = ps_version  # pixel shuffle version
+        self.min_dynamic_patch = min_dynamic_patch
+        self.max_dynamic_patch = max_dynamic_patch
+
+        self.hidden_size = self.llm_config.hidden_size
+        # By default, we use tie_word_embeddings=False for models of all sizes.
+        self.tie_word_embeddings = False
+        self.llm_config.tie_word_embeddings = self.tie_word_embeddings
+
+    def to_dict(self):
+        &#34;&#34;&#34;
+        Serializes this instance to a Python dictionary. Override the default [`~PretrainedConfig.to_dict`].
+
+        Returns:
+            `Dict[str, any]`: Dictionary of all the attributes that make up this configuration instance,
+        &#34;&#34;&#34;
+        output = copy.deepcopy(self.__dict__)
+        output[&#34;vision_config&#34;] = self.vision_config.to_dict()
+        output[&#34;llm_config&#34;] = self.llm_config.to_dict()
+        output[&#34;model_type&#34;] = self.__class__.model_type
+        output[&#34;use_backbone_lora&#34;] = self.use_backbone_lora
+        output[&#34;use_llm_lora&#34;] = self.use_llm_lora
+        output[&#34;select_layer&#34;] = self.select_layer
+        output[&#34;force_image_size&#34;] = self.force_image_size
+        output[&#34;downsample_ratio&#34;] = self.downsample_ratio
+        output[&#34;template&#34;] = self.template
+        output[&#34;dynamic_image_size&#34;] = self.dynamic_image_size
+        output[&#34;use_thumbnail&#34;] = self.use_thumbnail
+        output[&#34;ps_version&#34;] = self.ps_version
+        output[&#34;min_dynamic_patch&#34;] = self.min_dynamic_patch
+        output[&#34;max_dynamic_patch&#34;] = self.max_dynamic_patch
+
+        return output</code></pre>
+</details>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternVLChatConfig.is_composition"><code class="name">var <span class="ident">is_composition</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternVLChatConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternVLChatConfig.to_dict"><code class="name flex">
+<span>def <span class="ident">to_dict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_dict(self):
+    &#34;&#34;&#34;
+    Serializes this instance to a Python dictionary. Override the default [`~PretrainedConfig.to_dict`].
+
+    Returns:
+        `Dict[str, any]`: Dictionary of all the attributes that make up this configuration instance,
+    &#34;&#34;&#34;
+    output = copy.deepcopy(self.__dict__)
+    output[&#34;vision_config&#34;] = self.vision_config.to_dict()
+    output[&#34;llm_config&#34;] = self.llm_config.to_dict()
+    output[&#34;model_type&#34;] = self.__class__.model_type
+    output[&#34;use_backbone_lora&#34;] = self.use_backbone_lora
+    output[&#34;use_llm_lora&#34;] = self.use_llm_lora
+    output[&#34;select_layer&#34;] = self.select_layer
+    output[&#34;force_image_size&#34;] = self.force_image_size
+    output[&#34;downsample_ratio&#34;] = self.downsample_ratio
+    output[&#34;template&#34;] = self.template
+    output[&#34;dynamic_image_size&#34;] = self.dynamic_image_size
+    output[&#34;use_thumbnail&#34;] = self.use_thumbnail
+    output[&#34;ps_version&#34;] = self.ps_version
+    output[&#34;min_dynamic_patch&#34;] = self.min_dynamic_patch
+    output[&#34;max_dynamic_patch&#34;] = self.max_dynamic_patch
+
+    return output</code></pre>
+</details>
+<div class="desc"><p>Serializes this instance to a Python dictionary. Override the default [<code>~PretrainedConfig.to_dict</code>].</p>
+<h2 id="returns">Returns</h2>
+<p><code>Dict[str, any]</code>: Dictionary of all the attributes that make up this configuration instance,</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.configs.internvl.InternVisionConfig"><code class="flex name class">
+<span>class <span class="ident">InternVisionConfig</span></span>
+<span>(</span><span>num_channels=3,<br>patch_size=14,<br>image_size=224,<br>qkv_bias=False,<br>hidden_size=3200,<br>num_attention_heads=25,<br>intermediate_size=12800,<br>qk_normalization=True,<br>num_hidden_layers=48,<br>use_flash_attn=True,<br>hidden_act='gelu',<br>layer_norm_eps=1e-06,<br>dropout=0.0,<br>drop_path_rate=0.0,<br>attention_dropout=0.0,<br>initializer_range=0.02,<br>initializer_factor=0.1,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class InternVisionConfig(PretrainedConfig):
+    r&#34;&#34;&#34;
+    This is the configuration class to store the configuration of a [`InternVisionModel`]. It is used to
+    instantiate a vision encoder according to the specified arguments, defining the model architecture.
+
+    Configuration objects inherit from [`PretrainedConfig`] and can be used to control the model outputs. Read the
+    documentation from [`PretrainedConfig`] for more information.
+
+    Args:
+        num_channels (`int`, *optional*, defaults to 3):
+            Number of color channels in the input images (e.g., 3 for RGB).
+        patch_size (`int`, *optional*, defaults to 14):
+            The size (resolution) of each patch.
+        image_size (`int`, *optional*, defaults to 224):
+            The size (resolution) of each image.
+        qkv_bias (`bool`, *optional*, defaults to `False`):
+            Whether to add a bias to the queries and values in the self-attention layers.
+        hidden_size (`int`, *optional*, defaults to 3200):
+            Dimensionality of the encoder layers and the pooler layer.
+        num_attention_heads (`int`, *optional*, defaults to 25):
+            Number of attention heads for each attention layer in the Transformer encoder.
+        intermediate_size (`int`, *optional*, defaults to 12800):
+            Dimensionality of the &#34;intermediate&#34; (i.e., feed-forward) layer in the Transformer encoder.
+        qk_normalization (`bool`, *optional*, defaults to `True`):
+            Whether to normalize the queries and keys in the self-attention layers.
+        num_hidden_layers (`int`, *optional*, defaults to 48):
+            Number of hidden layers in the Transformer encoder.
+        use_flash_attn (`bool`, *optional*, defaults to `True`):
+            Whether to use flash attention mechanism.
+        hidden_act (`str` or `function`, *optional*, defaults to `&#34;gelu&#34;`):
+            The non-linear activation function (function or string) in the encoder and pooler. If string, `&#34;gelu&#34;`,
+            `&#34;relu&#34;`, `&#34;selu&#34;` and `&#34;gelu_new&#34;` ``&#34;gelu&#34;` are supported.
+        layer_norm_eps (`float`, *optional*, defaults to 1e-6):
+            The epsilon used by the layer normalization layers.
+        dropout (`float`, *optional*, defaults to 0.0):
+            The dropout probability for all fully connected layers in the embeddings, encoder, and pooler.
+        drop_path_rate (`float`, *optional*, defaults to 0.0):
+            Dropout rate for stochastic depth.
+        attention_dropout (`float`, *optional*, defaults to 0.0):
+            The dropout ratio for the attention probabilities.
+        initializer_range (`float`, *optional*, defaults to 0.02):
+            The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+        initializer_factor (`float`, *optional*, defaults to 0.1):
+            A factor for layer scale.
+    &#34;&#34;&#34;
+
+    model_type = &#34;intern_vit_6b&#34;
+
+    def __init__(
+        self,
+        num_channels=3,
+        patch_size=14,
+        image_size=224,
+        qkv_bias=False,
+        hidden_size=3200,
+        num_attention_heads=25,
+        intermediate_size=12800,
+        qk_normalization=True,
+        num_hidden_layers=48,
+        use_flash_attn=True,
+        hidden_act=&#34;gelu&#34;,
+        layer_norm_eps=1e-6,
+        dropout=0.0,
+        drop_path_rate=0.0,
+        attention_dropout=0.0,
+        initializer_range=0.02,
+        initializer_factor=0.1,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        self.hidden_size = hidden_size
+        self.intermediate_size = intermediate_size
+        self.dropout = dropout
+        self.drop_path_rate = drop_path_rate
+        self.num_hidden_layers = num_hidden_layers
+        self.num_attention_heads = num_attention_heads
+        self.num_channels = num_channels
+        self.patch_size = patch_size
+        self.image_size = image_size
+        self.initializer_range = initializer_range
+        self.initializer_factor = initializer_factor
+        self.attention_dropout = attention_dropout
+        self.layer_norm_eps = layer_norm_eps
+        self.hidden_act = hidden_act
+        self.qkv_bias = qkv_bias
+        self.qk_normalization = qk_normalization
+        self.use_flash_attn = use_flash_attn
+
+    @classmethod
+    def from_pretrained(
+        cls, pretrained_model_name_or_path: Union[str, os.PathLike], **kwargs
+    ) -&gt; &#34;PretrainedConfig&#34;:
+        config_dict, kwargs = cls.get_config_dict(
+            pretrained_model_name_or_path, **kwargs
+        )
+
+        if &#34;vision_config&#34; in config_dict:
+            config_dict = config_dict[&#34;vision_config&#34;]
+
+        if (
+            &#34;model_type&#34; in config_dict
+            and hasattr(cls, &#34;model_type&#34;)
+            and config_dict[&#34;model_type&#34;] != cls.model_type
+        ):
+            logger.warning(
+                f&#34;You are using a model of type {config_dict[&#39;model_type&#39;]} to instantiate a model of type &#34;
+                f&#34;{cls.model_type}. This is not supported for all configurations of models and can yield errors.&#34;
+            )
+
+        return cls.from_dict(config_dict, **kwargs)</code></pre>
+</details>
+<div class="desc"><p>This is the configuration class to store the configuration of a [<code>InternVisionModel</code>]. It is used to
+instantiate a vision encoder according to the specified arguments, defining the model architecture.</p>
+<p>Configuration objects inherit from [<code>PretrainedConfig</code>] and can be used to control the model outputs. Read the
+documentation from [<code>PretrainedConfig</code>] for more information.</p>
+<h2 id="args">Args</h2>
+<p>num_channels (<code>int</code>, <em>optional</em>, defaults to 3):
+Number of color channels in the input images (e.g., 3 for RGB).
+patch_size (<code>int</code>, <em>optional</em>, defaults to 14):
+The size (resolution) of each patch.
+image_size (<code>int</code>, <em>optional</em>, defaults to 224):
+The size (resolution) of each image.
+qkv_bias (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to add a bias to the queries and values in the self-attention layers.
+hidden_size (<code>int</code>, <em>optional</em>, defaults to 3200):
+Dimensionality of the encoder layers and the pooler layer.
+num_attention_heads (<code>int</code>, <em>optional</em>, defaults to 25):
+Number of attention heads for each attention layer in the Transformer encoder.
+intermediate_size (<code>int</code>, <em>optional</em>, defaults to 12800):
+Dimensionality of the "intermediate" (i.e., feed-forward) layer in the Transformer encoder.
+qk_normalization (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether to normalize the queries and keys in the self-attention layers.
+num_hidden_layers (<code>int</code>, <em>optional</em>, defaults to 48):
+Number of hidden layers in the Transformer encoder.
+use_flash_attn (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether to use flash attention mechanism.
+hidden_act (<code>str</code> or <code>function</code>, <em>optional</em>, defaults to <code>"gelu"</code>):
+The non-linear activation function (function or string) in the encoder and pooler. If string, <code>"gelu"</code>,
+<code>"relu"</code>, <code>"selu"</code> and <code>"gelu_new"</code> <code>`"gelu"</code> are supported.
+layer_norm_eps (<code>float</code>, <em>optional</em>, defaults to 1e-6):
+The epsilon used by the layer normalization layers.
+dropout (<code>float</code>, <em>optional</em>, defaults to 0.0):
+The dropout probability for all fully connected layers in the embeddings, encoder, and pooler.
+drop_path_rate (<code>float</code>, <em>optional</em>, defaults to 0.0):
+Dropout rate for stochastic depth.
+attention_dropout (<code>float</code>, <em>optional</em>, defaults to 0.0):
+The dropout ratio for the attention probabilities.
+initializer_range (<code>float</code>, <em>optional</em>, defaults to 0.02):
+The standard deviation of the truncated_normal_initializer for initializing all weight matrices.
+initializer_factor (<code>float</code>, <em>optional</em>, defaults to 0.1):
+A factor for layer scale.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.configuration_utils.PretrainedConfig</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternVisionConfig.model_type"><code class="name">var <span class="ident">model_type</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.configs.internvl.InternVisionConfig.from_pretrained"><code class="name flex">
+<span>def <span class="ident">from_pretrained</span></span>(<span>pretrained_model_name_or_path: str | os.PathLike, **kwargs) ‑> transformers.configuration_utils.PretrainedConfig</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Instantiate a [<code>PretrainedConfig</code>] (or a derived class) from a pretrained model configuration.</p>
+<h2 id="args">Args</h2>
+<p>pretrained_model_name_or_path (<code>str</code> or <code>os.PathLike</code>):
+This can be either:</p>
+<pre><code>- a string, the *model id* of a pretrained model configuration hosted inside a model repo on
+  huggingface.co.
+- a path to a *directory* containing a configuration file saved using the
+  [`~PretrainedConfig.save_pretrained`] method, e.g., `./my_model_directory/`.
+- a path or url to a saved configuration JSON *file*, e.g., `./my_model_directory/configuration.json`.
+</code></pre>
+<p>cache_dir (<code>str</code> or <code>os.PathLike</code>, <em>optional</em>):
+Path to a directory in which a downloaded pretrained model configuration should be cached if the
+standard cache should not be used.
+force_download (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not to force to (re-)download the configuration files and override the cached versions if
+they exist.
+resume_download:
+Deprecated and ignored. All downloads are now resumed by default when possible.
+Will be removed in v5 of Transformers.
+proxies (<code>dict[str, str]</code>, <em>optional</em>):
+A dictionary of proxy servers to use by protocol or endpoint, e.g., <code>{'http': 'foo.bar:3128',
+'http://hostname': 'foo.bar:4012'}.</code> The proxies are used on each request.
+token (<code>str</code> or <code>bool</code>, <em>optional</em>):
+The token to use as HTTP bearer authorization for remote files. If <code>True</code>, or not specified, will use
+the token generated when running <code>hf auth login</code> (stored in <code>~/.huggingface</code>).
+revision (<code>str</code>, <em>optional</em>, defaults to <code>"main"</code>):
+The specific model version to use. It can be a branch name, a tag name, or a commit id, since we use a
+git-based system for storing models and other artifacts on huggingface.co, so <code>revision</code> can be any
+identifier allowed by git.</p>
+<pre><code>&lt;Tip&gt;
+
+To test a pull request you made on the Hub, you can pass `revision="refs/pr/&lt;pr_number&gt;"`.
+
+&lt;/Tip&gt;
+</code></pre>
+<p>return_unused_kwargs (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+If <code>False</code>, then this function returns just the final configuration object.</p>
+<pre><code>If &lt;code&gt;True&lt;/code&gt;, then this functions returns a &lt;code&gt;Tuple(config, unused\_kwargs)&lt;/code&gt; where *unused_kwargs* is a
+dictionary consisting of the key/value pairs whose keys are not configuration attributes: i.e., the
+part of &lt;code&gt;kwargs&lt;/code&gt; which has not been used to update &lt;code&gt;config&lt;/code&gt; and is otherwise ignored.
+</code></pre>
+<p>subfolder (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+In case the relevant files are located inside a subfolder of the model repo on huggingface.co, you can
+specify the folder name here.
+kwargs (<code>dict[str, Any]</code>, <em>optional</em>):
+The values in kwargs of any keys which are configuration attributes will be used to override the loaded
+values. Behavior concerning key/value pairs whose keys are <em>not</em> configuration attributes is controlled
+by the <code>return_unused_kwargs</code> keyword parameter.</p>
+<h2 id="returns">Returns</h2>
+<p>[<code>PretrainedConfig</code>]: The configuration object instantiated from this pretrained model.
+Examples:</p>
+<pre><code class="language-python"># We can't instantiate directly the base class *PretrainedConfig* so let's show the examples on a
+# derived class: BertConfig
+config = BertConfig.from_pretrained(
+    &quot;google-bert/bert-base-uncased&quot;
+)  # Download configuration from huggingface.co and cache.
+config = BertConfig.from_pretrained(
+    &quot;./test/saved_model/&quot;
+)  # E.g. config (or model) was saved using *save_pretrained('./test/saved_model/')*
+config = BertConfig.from_pretrained(&quot;./test/saved_model/my_configuration.json&quot;)
+config = BertConfig.from_pretrained(&quot;google-bert/bert-base-uncased&quot;, output_attentions=True, foo=False)
+assert config.output_attentions == True
+config, unused_kwargs = BertConfig.from_pretrained(
+    &quot;google-bert/bert-base-uncased&quot;, output_attentions=True, foo=False, return_unused_kwargs=True
+)
+assert config.output_attentions == True
+assert unused_kwargs == {&quot;foo&quot;: False}
+</code></pre></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.configs" href="index.html">sglang.srt.configs</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.configs.internvl.InternLM2Config" href="#sglang.srt.configs.internvl.InternLM2Config">InternLM2Config</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Config.model_type" href="#sglang.srt.configs.internvl.InternLM2Config.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer" href="#sglang.srt.configs.internvl.InternLM2Tokenizer">InternLM2Tokenizer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.bos_token_id" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.bos_token_id">bos_token_id</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.build_inputs_with_special_tokens" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.build_inputs_with_special_tokens">build_inputs_with_special_tokens</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.convert_tokens_to_string" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.convert_tokens_to_string">convert_tokens_to_string</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.create_token_type_ids_from_sequences" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.create_token_type_ids_from_sequences">create_token_type_ids_from_sequences</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.eos_token_id" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.eos_token_id">eos_token_id</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.get_special_tokens_mask" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.get_special_tokens_mask">get_special_tokens_mask</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.get_vocab" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.get_vocab">get_vocab</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.model_input_names" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.model_input_names">model_input_names</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.no_prefix_space_tokens" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.no_prefix_space_tokens">no_prefix_space_tokens</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.pretrained_vocab_files_map" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.pretrained_vocab_files_map">pretrained_vocab_files_map</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.save_vocabulary" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.save_vocabulary">save_vocabulary</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.vocab_files_names" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.vocab_files_names">vocab_files_names</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternLM2Tokenizer.vocab_size" href="#sglang.srt.configs.internvl.InternLM2Tokenizer.vocab_size">vocab_size</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.internvl.InternVLChatConfig" href="#sglang.srt.configs.internvl.InternVLChatConfig">InternVLChatConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.internvl.InternVLChatConfig.is_composition" href="#sglang.srt.configs.internvl.InternVLChatConfig.is_composition">is_composition</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternVLChatConfig.model_type" href="#sglang.srt.configs.internvl.InternVLChatConfig.model_type">model_type</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternVLChatConfig.to_dict" href="#sglang.srt.configs.internvl.InternVLChatConfig.to_dict">to_dict</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.configs.internvl.InternVisionConfig" href="#sglang.srt.configs.internvl.InternVisionConfig">InternVisionConfig</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.configs.internvl.InternVisionConfig.from_pretrained" href="#sglang.srt.configs.internvl.InternVisionConfig.from_pretrained">from_pretrained</a></code></li>
+<li><code><a title="sglang.srt.configs.internvl.InternVisionConfig.model_type" href="#sglang.srt.configs.internvl.InternVisionConfig.model_type">model_type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

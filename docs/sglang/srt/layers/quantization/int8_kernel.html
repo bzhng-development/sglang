@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.layers.quantization.int8_kernel API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.layers.quantization.int8_kernel</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.layers.quantization.int8_kernel.get_w8a8_block_int8_configs"><code class="name flex">
+<span>def <span class="ident">get_w8a8_block_int8_configs</span></span>(<span>N: int, K: int, block_n: int, block_k: int) ‑> Dict[int, Any] | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@functools.lru_cache
+def get_w8a8_block_int8_configs(
+    N: int, K: int, block_n: int, block_k: int
+) -&gt; Optional[Dict[int, Any]]:
+    &#34;&#34;&#34;
+    Return optimized configurations for the w8a8 block fp8 kernel.
+
+    The return value will be a dictionary that maps an irregular grid of
+    batch sizes to configurations of the w8a8 block fp8 kernel. To evaluate the
+    kernel on a given batch size bs, the closest batch size in the grid should
+    be picked and the associated configuration chosen to invoke the kernel.
+    &#34;&#34;&#34;
+
+    # First look up if an optimized configuration is available in the configs
+    # directory
+    device_name = get_device_name().replace(&#34; &#34;, &#34;_&#34;)
+    json_file_name = f&#34;N={N},K={K},device_name={device_name},dtype=int8_w8a8,block_shape=[{block_n}, {block_k}].json&#34;
+
+    config_file_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)), &#34;configs&#34;, json_file_name
+    )
+    if os.path.exists(config_file_path):
+        with open(config_file_path) as f:
+            logger.info(
+                &#34;Using configuration from %s for W8A8 Block INT8 kernel.&#34;,
+                config_file_path,
+            )
+            # If a configuration has been found, return it
+            return {int(key): val for key, val in json.load(f).items()}
+
+    # If no optimized configuration is available, we will use the default
+    # configuration
+    logger.warning(
+        (
+            &#34;Using default W8A8 Block INT8 kernel config. Performance might be sub-optimal! &#34;
+            &#34;Config file not found at %s&#34;
+        ),
+        config_file_path,
+    )
+    return None</code></pre>
+</details>
+<div class="desc"><p>Return optimized configurations for the w8a8 block fp8 kernel.</p>
+<p>The return value will be a dictionary that maps an irregular grid of
+batch sizes to configurations of the w8a8 block fp8 kernel. To evaluate the
+kernel on a given batch size bs, the closest batch size in the grid should
+be picked and the associated configuration chosen to invoke the kernel.</p></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.int8_kernel.per_token_group_quant_int8"><code class="name flex">
+<span>def <span class="ident">per_token_group_quant_int8</span></span>(<span>x: torch.Tensor,<br>group_size: int,<br>eps: float = 1e-10,<br>dtype: torch.dtype = torch.int8) ‑> Tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def per_token_group_quant_int8(
+    x: torch.Tensor,
+    group_size: int,
+    eps: float = 1e-10,
+    dtype: torch.dtype = torch.int8,
+) -&gt; Tuple[torch.Tensor, torch.Tensor]:
+    &#34;&#34;&#34;Function to perform per-token-group quantization on an input tensor `x`.
+
+    It converts the tensor values into signed int8 values and returns the
+    quantized tensor along with the scaling factor used for quantization.
+
+    Args:
+        x: The input tenosr with ndim &gt;= 2.
+        group_size: The group size used for quantization.
+        eps: The minimum to avoid dividing zero.
+        dtype: The dype of output tensor. Note that only `torch.int8` is supported for now.
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: The quantized tensor and the scaling factor for quantization.
+    &#34;&#34;&#34;
+    assert (
+        x.shape[-1] % group_size == 0
+    ), &#34;the last dimension of `x` cannot be divisible by `group_size`&#34;
+    assert x.is_contiguous(), &#34;`x` is not contiguous&#34;
+
+    iinfo = torch.iinfo(dtype)
+    int8_max = iinfo.max
+    int8_min = iinfo.min
+
+    x_q = torch.empty_like(x, device=x.device, dtype=dtype)
+    M = x.numel() // group_size
+    N = group_size
+    x_s = torch.empty(
+        x.shape[:-1] + (x.shape[-1] // group_size,),
+        device=x.device,
+        dtype=torch.float32,
+    )
+
+    BLOCK = triton.next_power_of_2(N)
+    # heuristics for number of warps
+    num_warps = min(max(BLOCK // 256, 1), 8)
+    num_stages = 1
+    _per_token_group_quant_int8[(M,)](
+        x,
+        x_q,
+        x_s,
+        group_size,
+        N,
+        eps,
+        int8_min=int8_min,
+        int8_max=int8_max,
+        BLOCK=BLOCK,
+        num_warps=num_warps,
+        num_stages=num_stages,
+    )
+
+    return x_q, x_s</code></pre>
+</details>
+<div class="desc"><p>Function to perform per-token-group quantization on an input tensor <code>x</code>.</p>
+<p>It converts the tensor values into signed int8 values and returns the
+quantized tensor along with the scaling factor used for quantization.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong></dt>
+<dd>The input tenosr with ndim &gt;= 2.</dd>
+<dt><strong><code>group_size</code></strong></dt>
+<dd>The group size used for quantization.</dd>
+<dt><strong><code>eps</code></strong></dt>
+<dd>The minimum to avoid dividing zero.</dd>
+<dt><strong><code>dtype</code></strong></dt>
+<dd>The dype of output tensor. Note that only <code>torch.int8</code> is supported for now.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[torch.Tensor, torch.Tensor]</code></dt>
+<dd>The quantized tensor and the scaling factor for quantization.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.int8_kernel.per_token_quant_int8"><code class="name flex">
+<span>def <span class="ident">per_token_quant_int8</span></span>(<span>x, scale_dtype=torch.float32, cal_sum=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def per_token_quant_int8(x, scale_dtype=torch.float32, cal_sum=False):
+    M = x.numel() // x.shape[-1]
+    N = x.shape[-1]
+    x_q = torch.empty_like(x, device=x.device, dtype=torch.int8)
+    scales = torch.empty(x.shape[:-1] + (1,), device=x.device, dtype=scale_dtype)
+    if cal_sum:
+        x_sum = torch.empty(x.shape[:-1], device=x.device, dtype=x.dtype)
+    else:
+        x_sum = None
+    BLOCK = triton.next_power_of_2(N)
+    # heuristics for number of warps
+    num_warps = min(max(BLOCK // 256, 1), 8)
+
+    assert x.is_contiguous()
+    _per_token_quant_int8[(M,)](
+        x,
+        x_q,
+        scales,
+        x_sum,
+        stride_x=x.stride(-2),
+        stride_xq=x_q.stride(-2),
+        N=N,
+        CAL_SUM=cal_sum,
+        BLOCK=BLOCK,
+        num_warps=num_warps,
+        num_stages=1,
+    )
+    if cal_sum:
+        return x_q, scales, x_sum
+    else:
+        return x_q, scales</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.int8_kernel.sglang_per_token_group_quant_int8"><code class="name flex">
+<span>def <span class="ident">sglang_per_token_group_quant_int8</span></span>(<span>x: torch.Tensor,<br>group_size: int,<br>eps: float = 1e-10,<br>dtype: torch.dtype = torch.int8)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sglang_per_token_group_quant_int8(
+    x: torch.Tensor,
+    group_size: int,
+    eps: float = 1e-10,
+    dtype: torch.dtype = torch.int8,
+):
+    assert (
+        x.shape[-1] % group_size == 0
+    ), &#34;the last dimension of `x` cannot be divisible by `group_size`&#34;
+    assert x.is_contiguous(), &#34;`x` is not contiguous&#34;
+
+    iinfo = torch.iinfo(dtype)
+    int8_max = iinfo.max
+    int8_min = iinfo.min
+
+    x_q = torch.empty_like(x, device=x.device, dtype=dtype)
+    x_s = torch.empty(
+        x.shape[:-1] + (x.shape[-1] // group_size,),
+        device=x.device,
+        dtype=torch.float32,
+    )
+
+    sgl_per_token_group_quant_int8(x, x_q, x_s, group_size, eps, int8_min, int8_max)
+
+    return x_q, x_s</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.layers.quantization.int8_kernel.w8a8_block_int8_matmul"><code class="name flex">
+<span>def <span class="ident">w8a8_block_int8_matmul</span></span>(<span>A: torch.Tensor,<br>B: torch.Tensor,<br>As: torch.Tensor,<br>Bs: torch.Tensor,<br>block_size: List[int],<br>output_dtype: torch.dtype = torch.float16) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def w8a8_block_int8_matmul(
+    A: torch.Tensor,
+    B: torch.Tensor,
+    As: torch.Tensor,
+    Bs: torch.Tensor,
+    block_size: List[int],
+    output_dtype: torch.dtype = torch.float16,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;This function performs matrix multiplication with block-wise quantization.
+
+    It takes two input tensors `A` and `B` with scales `As` and `Bs`.
+    The output is returned in the specified `output_dtype`.
+
+    Args:
+        A: The input tensor, e.g., activation.
+        B: The input tensor, e.g., weight.
+        As: The per-token-group quantization scale for `A`.
+        Bs: The per-block quantization scale for `B`.
+        block_size: The block size for per-block quantization. It should be 2-dim, e.g., [128, 128].
+        output_dytpe: The dtype of the returned tensor.
+
+    Returns:
+        torch.Tensor: The result of matmul.
+    &#34;&#34;&#34;
+    assert len(block_size) == 2
+    block_n, block_k = block_size[0], block_size[1]
+
+    assert A.shape[-1] == B.shape[-1]
+    assert A.shape[:-1] == As.shape[:-1] and A.is_contiguous()
+    assert triton.cdiv(A.shape[-1], block_k) == As.shape[-1]
+    M = A.numel() // A.shape[-1]
+
+    assert B.ndim == 2 and B.is_contiguous() and Bs.ndim == 2
+    N, K = B.shape
+    assert triton.cdiv(N, block_n) == Bs.shape[0]
+    assert triton.cdiv(K, block_k) == Bs.shape[1]
+
+    C_shape = A.shape[:-1] + (N,)
+    C = A.new_empty(C_shape, dtype=output_dtype)
+
+    configs = get_w8a8_block_int8_configs(N, K, block_size[0], block_size[1])
+    if configs:
+        # If an optimal configuration map has been found, look up the
+        # optimal config
+        config = configs[min(configs.keys(), key=lambda x: abs(x - M))]
+    else:
+        # Default config
+        # Block-wise quant: BLOCK_SIZE_K must be divisible by block_size[1]
+        config = {
+            &#34;BLOCK_SIZE_M&#34;: 64,
+            &#34;BLOCK_SIZE_N&#34;: block_size[0],
+            &#34;BLOCK_SIZE_K&#34;: block_size[1],
+            &#34;GROUP_SIZE_M&#34;: 32,
+            &#34;num_warps&#34;: 4,
+            &#34;num_stages&#34;: 3,
+        }
+
+    def grid(META):
+        return (
+            triton.cdiv(M, META[&#34;BLOCK_SIZE_M&#34;]) * triton.cdiv(N, META[&#34;BLOCK_SIZE_N&#34;]),
+        )
+
+    _w8a8_block_int8_matmul[grid](
+        A,
+        B,
+        C,
+        As,
+        Bs,
+        M,
+        N,
+        K,
+        block_n,
+        block_k,
+        A.stride(-2),
+        A.stride(-1),
+        B.stride(1),
+        B.stride(0),
+        C.stride(-2),
+        C.stride(-1),
+        As.stride(-2),
+        As.stride(-1),
+        Bs.stride(1),
+        Bs.stride(0),
+        **config,
+    )
+
+    return C</code></pre>
+</details>
+<div class="desc"><p>This function performs matrix multiplication with block-wise quantization.</p>
+<p>It takes two input tensors <code>A</code> and <code>B</code> with scales <code>As</code> and <code>Bs</code>.
+The output is returned in the specified <code>output_dtype</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>A</code></strong></dt>
+<dd>The input tensor, e.g., activation.</dd>
+<dt><strong><code>B</code></strong></dt>
+<dd>The input tensor, e.g., weight.</dd>
+<dt><strong><code>As</code></strong></dt>
+<dd>The per-token-group quantization scale for <code>A</code>.</dd>
+<dt><strong><code>Bs</code></strong></dt>
+<dd>The per-block quantization scale for <code>B</code>.</dd>
+<dt><strong><code>block_size</code></strong></dt>
+<dd>The block size for per-block quantization. It should be 2-dim, e.g., [128, 128].</dd>
+<dt><strong><code>output_dytpe</code></strong></dt>
+<dd>The dtype of the returned tensor.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>torch.Tensor</code></dt>
+<dd>The result of matmul.</dd>
+</dl></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.layers.quantization" href="index.html">sglang.srt.layers.quantization</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.layers.quantization.int8_kernel.get_w8a8_block_int8_configs" href="#sglang.srt.layers.quantization.int8_kernel.get_w8a8_block_int8_configs">get_w8a8_block_int8_configs</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.int8_kernel.per_token_group_quant_int8" href="#sglang.srt.layers.quantization.int8_kernel.per_token_group_quant_int8">per_token_group_quant_int8</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.int8_kernel.per_token_quant_int8" href="#sglang.srt.layers.quantization.int8_kernel.per_token_quant_int8">per_token_quant_int8</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.int8_kernel.sglang_per_token_group_quant_int8" href="#sglang.srt.layers.quantization.int8_kernel.sglang_per_token_group_quant_int8">sglang_per_token_group_quant_int8</a></code></li>
+<li><code><a title="sglang.srt.layers.quantization.int8_kernel.w8a8_block_int8_matmul" href="#sglang.srt.layers.quantization.int8_kernel.w8a8_block_int8_matmul">w8a8_block_int8_matmul</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

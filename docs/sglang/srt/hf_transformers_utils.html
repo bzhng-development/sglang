@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.hf_transformers_utils API documentation</title>
+<meta name="description" content="Utilities for Huggingface Transformers.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.hf_transformers_utils</code></h1>
+</header>
+<section id="section-intro">
+<p>Utilities for Huggingface Transformers.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.hf_transformers_utils.attach_additional_stop_token_ids"><code class="name flex">
+<span>def <span class="ident">attach_additional_stop_token_ids</span></span>(<span>tokenizer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def attach_additional_stop_token_ids(tokenizer):
+    # Special handling for stop token &lt;|eom_id|&gt; generated by llama 3 tool use.
+    if &#34;&lt;|eom_id|&gt;&#34; in tokenizer.get_added_vocab():
+        tokenizer.additional_stop_token_ids = set(
+            [tokenizer.get_added_vocab()[&#34;&lt;|eom_id|&gt;&#34;]]
+        )
+    else:
+        tokenizer.additional_stop_token_ids = None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.check_gguf_file"><code class="name flex">
+<span>def <span class="ident">check_gguf_file</span></span>(<span>model: str | os.PathLike) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_gguf_file(model: Union[str, os.PathLike]) -&gt; bool:
+    &#34;&#34;&#34;Check if the file is a GGUF model.&#34;&#34;&#34;
+    model = Path(model)
+    if not model.is_file():
+        return False
+    elif model.suffix == &#34;.gguf&#34;:
+        return True
+
+    with open(model, &#34;rb&#34;) as f:
+        header = f.read(4)
+    return header == b&#34;GGUF&#34;</code></pre>
+</details>
+<div class="desc"><p>Check if the file is a GGUF model.</p></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.download_from_hf"><code class="name flex">
+<span>def <span class="ident">download_from_hf</span></span>(<span>model_path: str, allow_patterns: str | list | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_from_hf(
+    model_path: str,
+    allow_patterns: Optional[Union[str, list]] = None,
+):
+    if os.path.exists(model_path):
+        return model_path
+
+    if not allow_patterns:
+        allow_patterns = [&#34;*.json&#34;, &#34;*.bin&#34;, &#34;*.model&#34;]
+
+    return snapshot_download(model_path, allow_patterns=allow_patterns)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_config"><code class="name flex">
+<span>def <span class="ident">get_config</span></span>(<span>model: str,<br>trust_remote_code: bool,<br>revision: str | None = None,<br>model_override_args: dict | None = None,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@lru_cache_frozenset(maxsize=32)
+def get_config(
+    model: str,
+    trust_remote_code: bool,
+    revision: Optional[str] = None,
+    model_override_args: Optional[dict] = None,
+    **kwargs,
+):
+    is_gguf = check_gguf_file(model)
+    if is_gguf:
+        kwargs[&#34;gguf_file&#34;] = model
+        model = Path(model).parent
+
+    if is_remote_url(model):
+        # BaseConnector implements __del__() to clean up the local dir.
+        # Since config files need to exist all the time, so we DO NOT use
+        # with statement to avoid closing the client.
+        client = create_remote_connector(model)
+        client.pull_files(ignore_pattern=[&#34;*.pt&#34;, &#34;*.safetensors&#34;, &#34;*.bin&#34;])
+        model = client.get_local_dir()
+
+    config = AutoConfig.from_pretrained(
+        model, trust_remote_code=trust_remote_code, revision=revision, **kwargs
+    )
+    if (
+        config.architectures is not None
+        and config.architectures[0] == &#34;Phi4MMForCausalLM&#34;
+    ):
+        # Phi4MMForCausalLM uses a hard-coded vision_config. See:
+        # https://github.com/vllm-project/vllm/blob/6071e989df1531b59ef35568f83f7351afb0b51e/vllm/model_executor/models/phi4mm.py#L71
+        # We set it here to support cases where num_attention_heads is not divisible by the TP size.
+        from transformers import SiglipVisionConfig
+
+        vision_config = {
+            &#34;hidden_size&#34;: 1152,
+            &#34;image_size&#34;: 448,
+            &#34;intermediate_size&#34;: 4304,
+            &#34;model_type&#34;: &#34;siglip_vision_model&#34;,
+            &#34;num_attention_heads&#34;: 16,
+            &#34;num_hidden_layers&#34;: 26,  # Model is originally 27-layer, we only need the first 26 layers for feature extraction.
+            &#34;patch_size&#34;: 14,
+        }
+        config.vision_config = SiglipVisionConfig(**vision_config)
+    text_config = get_hf_text_config(config=config)
+
+    if isinstance(model, str) and text_config is not None:
+        for key, val in text_config.__dict__.items():
+            if not hasattr(config, key) and getattr(text_config, key, None) is not None:
+                setattr(config, key, val)
+
+    if config.model_type in _CONFIG_REGISTRY:
+        config_class = _CONFIG_REGISTRY[config.model_type]
+        config = config_class.from_pretrained(model, revision=revision)
+        # NOTE(HandH1998): Qwen2VL requires `_name_or_path` attribute in `config`.
+        setattr(config, &#34;_name_or_path&#34;, model)
+
+    if isinstance(model, str) and config.model_type == &#34;internvl_chat&#34;:
+        for key, val in config.llm_config.__dict__.items():
+            if not hasattr(config, key):
+                setattr(config, key, val)
+
+    if config.model_type == &#34;multi_modality&#34;:
+        config.update({&#34;architectures&#34;: [&#34;MultiModalityCausalLM&#34;]})
+
+    if model_override_args:
+        config.update(model_override_args)
+
+    # Special architecture mapping check for GGUF models
+    if is_gguf:
+        if config.model_type not in MODEL_FOR_CAUSAL_LM_MAPPING_NAMES:
+            raise RuntimeError(f&#34;Can&#39;t get gguf config for {config.model_type}.&#34;)
+        model_type = MODEL_FOR_CAUSAL_LM_MAPPING_NAMES[config.model_type]
+        config.update({&#34;architectures&#34;: [model_type]})
+
+    return config</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_context_length"><code class="name flex">
+<span>def <span class="ident">get_context_length</span></span>(<span>config)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_context_length(config):
+    &#34;&#34;&#34;Get the context length of a model from a huggingface model configs.&#34;&#34;&#34;
+    text_config = config
+    rope_scaling = getattr(text_config, &#34;rope_scaling&#34;, None)
+    if rope_scaling:
+        rope_scaling_factor = rope_scaling.get(&#34;factor&#34;, 1)
+        if &#34;original_max_position_embeddings&#34; in rope_scaling:
+            rope_scaling_factor = 1
+        if rope_scaling.get(&#34;rope_type&#34;, None) == &#34;llama3&#34;:
+            rope_scaling_factor = 1
+    else:
+        rope_scaling_factor = 1
+
+    for key in CONTEXT_LENGTH_KEYS:
+        val = getattr(text_config, key, None)
+        if val is not None:
+            return int(rope_scaling_factor * val)
+    return 2048</code></pre>
+</details>
+<div class="desc"><p>Get the context length of a model from a huggingface model configs.</p></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_generation_config"><code class="name flex">
+<span>def <span class="ident">get_generation_config</span></span>(<span>model: str, trust_remote_code: bool, revision: str | None = None, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@lru_cache_frozenset(maxsize=32)
+def get_generation_config(
+    model: str,
+    trust_remote_code: bool,
+    revision: Optional[str] = None,
+    **kwargs,
+):
+    try:
+        return GenerationConfig.from_pretrained(
+            model, trust_remote_code=trust_remote_code, revision=revision, **kwargs
+        )
+    except OSError as e:
+        return None</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_hf_text_config"><code class="name flex">
+<span>def <span class="ident">get_hf_text_config</span></span>(<span>config: transformers.configuration_utils.PretrainedConfig)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_hf_text_config(config: PretrainedConfig):
+    &#34;&#34;&#34;Get the &#34;sub&#34; config relevant to llm for multi modal models.
+    No op for pure text models.
+    &#34;&#34;&#34;
+    if config.architectures is not None:
+        class_name = config.architectures[0]
+        if class_name.startswith(&#34;Llava&#34;) and class_name.endswith(&#34;ForCausalLM&#34;):
+            # We support non-hf version of llava models, so we do not want to
+            # read the wrong values from the unused default text_config.
+            # NOTE(HandH1998): We set `torch_dtype` of config to `torch.float16` for the weights, as
+            # `torch.float16` is default used for image features in `python/sglang/srt/models/llava.py`.
+            setattr(config, &#34;torch_dtype&#34;, torch.float16)
+            return config
+
+    if hasattr(config, &#34;text_config&#34;):
+        # The code operates under the assumption that text_config should have
+        # `num_attention_heads` (among others). Assert here to fail early
+        # if transformers config doesn&#39;t align with this assumption.
+        assert hasattr(config.text_config, &#34;num_attention_heads&#34;)
+        return config.text_config
+    if hasattr(config, &#34;language_config&#34;):
+        return config.language_config
+    if hasattr(config, &#34;thinker_config&#34;):
+        # qwen2.5 omni
+        thinker_config = config.thinker_config
+        if hasattr(thinker_config, &#34;text_config&#34;):
+            setattr(
+                thinker_config.text_config,
+                &#34;torch_dtype&#34;,
+                getattr(thinker_config, &#34;torch_dtype&#34;, None),
+            )
+            return thinker_config.text_config
+        return thinker_config
+    else:
+        return config</code></pre>
+</details>
+<div class="desc"><p>Get the "sub" config relevant to llm for multi modal models.
+No op for pure text models.</p></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_processor"><code class="name flex">
+<span>def <span class="ident">get_processor</span></span>(<span>tokenizer_name: str,<br>*args,<br>tokenizer_mode: str = 'auto',<br>trust_remote_code: bool = False,<br>tokenizer_revision: str | None = None,<br>use_fast: bool | None = True,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_processor(
+    tokenizer_name: str,
+    *args,
+    tokenizer_mode: str = &#34;auto&#34;,
+    trust_remote_code: bool = False,
+    tokenizer_revision: Optional[str] = None,
+    use_fast: Optional[bool] = True,
+    **kwargs,
+):
+    # pop &#39;revision&#39; from kwargs if present.
+    revision = kwargs.pop(&#34;revision&#34;, tokenizer_revision)
+
+    config = AutoConfig.from_pretrained(
+        tokenizer_name,
+        trust_remote_code=trust_remote_code,
+        revision=revision,
+        **kwargs,
+    )
+
+    # fix: for Qwen2-VL model, inject default &#39;size&#39; if not provided.
+    if config.model_type in {&#34;qwen2_vl&#34;}:
+        if &#34;size&#34; not in kwargs:
+            kwargs[&#34;size&#34;] = {&#34;shortest_edge&#34;: 3136, &#34;longest_edge&#34;: 1003520}
+
+    if config.model_type not in {&#34;llava&#34;, &#34;clip&#34;}:
+        kwargs[&#34;use_fast&#34;] = use_fast
+    try:
+        if &#34;InternVL3_5&#34; in tokenizer_name:
+            processor = AutoTokenizer.from_pretrained(
+                tokenizer_name,
+                *args,
+                trust_remote_code=trust_remote_code,
+                revision=revision,
+                **kwargs,
+            )
+        else:
+            processor = AutoProcessor.from_pretrained(
+                tokenizer_name,
+                *args,
+                trust_remote_code=trust_remote_code,
+                revision=revision,
+                **kwargs,
+            )
+
+    except ValueError as e:
+        error_message = str(e)
+        if &#34;does not have a slow version&#34; in error_message:
+            logger.info(
+                f&#34;Processor {tokenizer_name} does not have a slow version. Automatically use fast version&#34;
+            )
+            kwargs[&#34;use_fast&#34;] = True
+            processor = AutoProcessor.from_pretrained(
+                tokenizer_name,
+                *args,
+                trust_remote_code=trust_remote_code,
+                revision=revision,
+                **kwargs,
+            )
+        else:
+            raise e
+    tokenizer = get_tokenizer_from_processor(processor)
+
+    attach_additional_stop_token_ids(tokenizer)
+    return processor</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_sparse_attention_config"><code class="name flex">
+<span>def <span class="ident">get_sparse_attention_config</span></span>(<span>model: str,<br>sparse_attention_config_filename: str = 'sparse_attention_config.json') ‑> Dict[str, Any]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_sparse_attention_config(
+    model: str,
+    sparse_attention_config_filename: str = &#34;sparse_attention_config.json&#34;,
+) -&gt; Dict[str, Any]:
+    is_local = os.path.isdir(model)
+    if not is_local:
+        # Download the config files.
+        model = download_from_hf(model, allow_patterns=[&#34;*.json&#34;])
+
+    config_file = os.path.join(model, sparse_attention_config_filename)
+    if not os.path.exists(config_file):
+        return {}
+
+    # Load the sparse attention config.
+    with open(config_file) as f:
+        config = json.load(f)
+    return config</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_tokenizer"><code class="name flex">
+<span>def <span class="ident">get_tokenizer</span></span>(<span>tokenizer_name: str,<br>*args,<br>tokenizer_mode: str = 'auto',<br>trust_remote_code: bool = False,<br>tokenizer_revision: str | None = None,<br>**kwargs) ‑> transformers.tokenization_utils.PreTrainedTokenizer | transformers.tokenization_utils_fast.PreTrainedTokenizerFast</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tokenizer(
+    tokenizer_name: str,
+    *args,
+    tokenizer_mode: str = &#34;auto&#34;,
+    trust_remote_code: bool = False,
+    tokenizer_revision: Optional[str] = None,
+    **kwargs,
+) -&gt; Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:
+    &#34;&#34;&#34;Gets a tokenizer for the given model name via Huggingface.&#34;&#34;&#34;
+    if tokenizer_name.endswith(&#34;.json&#34;):
+        from sglang.srt.tokenizer.tiktoken_tokenizer import TiktokenTokenizer
+
+        return TiktokenTokenizer(tokenizer_name)
+
+    if tokenizer_mode == &#34;slow&#34;:
+        if kwargs.get(&#34;use_fast&#34;, False):
+            raise ValueError(&#34;Cannot use the fast tokenizer in slow tokenizer mode.&#34;)
+        kwargs[&#34;use_fast&#34;] = False
+
+    # TODO(Xinyuan): Remove this once we have a proper tokenizer for Devstral
+    if tokenizer_name == &#34;mistralai/Devstral-Small-2505&#34;:
+        tokenizer_name = &#34;mistralai/Mistral-Small-3.1-24B-Instruct-2503&#34;
+
+    is_gguf = check_gguf_file(tokenizer_name)
+    if is_gguf:
+        kwargs[&#34;gguf_file&#34;] = tokenizer_name
+        tokenizer_name = Path(tokenizer_name).parent
+
+    if is_remote_url(tokenizer_name):
+        # BaseConnector implements __del__() to clean up the local dir.
+        # Since config files need to exist all the time, so we DO NOT use
+        # with statement to avoid closing the client.
+        client = create_remote_connector(tokenizer_name)
+        client.pull_files(ignore_pattern=[&#34;*.pt&#34;, &#34;*.safetensors&#34;, &#34;*.bin&#34;])
+        tokenizer_name = client.get_local_dir()
+
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(
+            tokenizer_name,
+            *args,
+            trust_remote_code=trust_remote_code,
+            tokenizer_revision=tokenizer_revision,
+            clean_up_tokenization_spaces=False,
+            **kwargs,
+        )
+    except TypeError as e:
+        # The LLaMA tokenizer causes a protobuf error in some environments.
+        err_msg = (
+            &#34;Failed to load the tokenizer. If you are using a LLaMA V1 model &#34;
+            f&#34;consider using &#39;{_FAST_LLAMA_TOKENIZER}&#39; instead of the &#34;
+            &#34;original tokenizer.&#34;
+        )
+        raise RuntimeError(err_msg) from e
+    except ValueError as e:
+        # If the error pertains to the tokenizer class not existing or not
+        # currently being imported, suggest using the --trust-remote-code flag.
+        if not trust_remote_code and (
+            &#34;does not exist or is not currently imported.&#34; in str(e)
+            or &#34;requires you to execute the tokenizer file&#34; in str(e)
+        ):
+            err_msg = (
+                &#34;Failed to load the tokenizer. If the tokenizer is a custom &#34;
+                &#34;tokenizer not yet available in the HuggingFace transformers &#34;
+                &#34;library, consider setting `trust_remote_code=True` in LLM &#34;
+                &#34;or using the `--trust-remote-code` flag in the CLI.&#34;
+            )
+            raise RuntimeError(err_msg) from e
+        else:
+            raise e
+
+    if not isinstance(tokenizer, PreTrainedTokenizerFast):
+        warnings.warn(
+            &#34;Using a slow tokenizer. This might cause a significant &#34;
+            &#34;slowdown. Consider using a fast tokenizer instead.&#34;
+        )
+
+    attach_additional_stop_token_ids(tokenizer)
+    return tokenizer</code></pre>
+</details>
+<div class="desc"><p>Gets a tokenizer for the given model name via Huggingface.</p></div>
+</dd>
+<dt id="sglang.srt.hf_transformers_utils.get_tokenizer_from_processor"><code class="name flex">
+<span>def <span class="ident">get_tokenizer_from_processor</span></span>(<span>processor)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tokenizer_from_processor(processor):
+    if isinstance(processor, PreTrainedTokenizerBase):
+        return processor
+    return processor.tokenizer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt" href="index.html">sglang.srt</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.hf_transformers_utils.attach_additional_stop_token_ids" href="#sglang.srt.hf_transformers_utils.attach_additional_stop_token_ids">attach_additional_stop_token_ids</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.check_gguf_file" href="#sglang.srt.hf_transformers_utils.check_gguf_file">check_gguf_file</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.download_from_hf" href="#sglang.srt.hf_transformers_utils.download_from_hf">download_from_hf</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_config" href="#sglang.srt.hf_transformers_utils.get_config">get_config</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_context_length" href="#sglang.srt.hf_transformers_utils.get_context_length">get_context_length</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_generation_config" href="#sglang.srt.hf_transformers_utils.get_generation_config">get_generation_config</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_hf_text_config" href="#sglang.srt.hf_transformers_utils.get_hf_text_config">get_hf_text_config</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_processor" href="#sglang.srt.hf_transformers_utils.get_processor">get_processor</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_sparse_attention_config" href="#sglang.srt.hf_transformers_utils.get_sparse_attention_config">get_sparse_attention_config</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_tokenizer" href="#sglang.srt.hf_transformers_utils.get_tokenizer">get_tokenizer</a></code></li>
+<li><code><a title="sglang.srt.hf_transformers_utils.get_tokenizer_from_processor" href="#sglang.srt.hf_transformers_utils.get_tokenizer_from_processor">get_tokenizer_from_processor</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.lang.tracer API documentation</title>
+<meta name="description" content="Tracing a program.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.lang.tracer</code></h1>
+</header>
+<section id="section-intro">
+<p>Tracing a program.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.lang.tracer.extract_prefix_by_tracing"><code class="name flex">
+<span>def <span class="ident">extract_prefix_by_tracing</span></span>(<span>program, backend)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_prefix_by_tracing(program, backend):
+    # Create dummy arguments
+    dummy_arguments = {name: SglArgument(name, None) for name in program.arg_names}
+    arguments = dummy_arguments
+    arguments.update(program.bind_arguments)
+
+    # Trace
+    tracer = TracerProgramState(backend, arguments, only_trace_prefix=True)
+    try:
+        with TracingScope(tracer):
+            tracer.ret_value = program.func(tracer, **arguments)
+    except (StopTracing, TypeError, AttributeError):
+        # Some exceptions may not be caught
+        pass
+
+    # Run and cache prefix
+    prefix = &#34;&#34;
+    for expr in tracer.flatten_nodes():
+        if isinstance(expr, SglConstantText):
+            prefix += expr.value
+        else:
+            break
+    return prefix</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.tracer.trace_program"><code class="name flex">
+<span>def <span class="ident">trace_program</span></span>(<span>program, arguments, backend)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trace_program(program, arguments, backend):
+    # Create dummy backend
+    if backend is None:
+        backend = BaseBackend()
+
+    # Create dummy arguments
+    dummy_arguments = {
+        name: SglArgument(name, None)
+        for name in program.arg_names
+        if name not in arguments
+    }
+    arguments.update(dummy_arguments)
+    arguments.update(program.bind_arguments)
+
+    # Trace
+    tracer = TracerProgramState(backend, arguments, only_trace_prefix=False)
+    with TracingScope(tracer):
+        tracer.ret_value = program.func(tracer, **arguments)
+    return tracer</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.lang.tracer.StopTracing"><code class="flex name class">
+<span>class <span class="ident">StopTracing</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class StopTracing(Exception):
+    pass</code></pre>
+</details>
+<div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>builtins.Exception</li>
+<li>builtins.BaseException</li>
+</ul>
+</dd>
+<dt id="sglang.lang.tracer.TracerProgramState"><code class="flex name class">
+<span>class <span class="ident">TracerProgramState</span></span>
+<span>(</span><span>backend, arguments, only_trace_prefix)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TracerProgramState(ProgramState):
+    def __init__(self, backend, arguments, only_trace_prefix):
+        self.pid = uuid.uuid4().hex
+        self.backend = backend
+        self.arguments: Dict[str, Any] = arguments
+        self.only_trace_prefix = only_trace_prefix
+
+        if hasattr(backend, &#34;endpoint&#34;):
+            self.backend = backend.endpoint
+
+        self.nodes = []
+        self.last_node = None
+        self.variables = {}
+        self.ret_value = None
+
+        # For completion
+
+        # For chat
+        self.messages_ = []
+        self.cur_role = None
+        self.chat_template = self.backend.get_chat_template()
+
+        # For multi states
+        self.child_states = []
+
+        cur_scope = TracingScope.get_current_scope()
+        if cur_scope is not None:
+            cur_scope.add_child_state(self)
+
+    ##################################
+    ########### Public API ###########
+    ##################################
+
+    def fork(self, size: int = 1, position_ids_offset: Optional[List[int]] = None):
+        assert size &gt;= 1
+
+        if self.only_trace_prefix:
+            raise StopTracing()
+
+        fork_node = SglFork(size)
+        fork_node.prev_node = self.last_node
+
+        states = [
+            TracerProgramState(self.backend, self.arguments, self.only_trace_prefix)
+            for _ in range(size)
+        ]
+
+        for i in range(size):
+            node = SglGetForkItem(i)
+            node.prev_node = fork_node
+            states[i].last_node = node
+            states[i].variables = dict(self.variables)
+            states[i].messages_ = list(self.messages_)
+            states[i].cur_role = self.cur_role
+            states[i].chat_template = self.chat_template
+
+        state_group = ProgramStateGroup(states, self)
+
+        return state_group
+
+    ##################################
+    ########## Internal API ##########
+    ##################################
+
+    def _append_node(self, other: SglExpr):
+        self.nodes.append(other)
+        other.prev_node = self.last_node
+        self.last_node = other
+
+    def _execute(self, other: SglExpr):
+        if isinstance(other, str):
+            other = SglConstantText(other)
+
+        other.pid = self.pid
+
+        if isinstance(other, SglConstantText):
+            self._execute_fill(other)
+        elif isinstance(other, SglGen):
+            self._execute_gen(other)
+        elif isinstance(other, SglSelect):
+            self._execute_select(other)
+        elif isinstance(other, SglExprList):
+            for x in other.expr_list:
+                self._execute(x)
+        elif isinstance(other, SglRoleBegin):
+            self._execute_role_begin(other)
+        elif isinstance(other, SglRoleEnd):
+            self._execute_role_end(other)
+        elif isinstance(other, SglVarScopeBegin):
+            self._execute_var_scope_begin(other)
+        elif isinstance(other, SglVarScopeEnd):
+            self._execute_var_scope_end(other)
+        else:
+            if self.only_trace_prefix:
+                raise StopTracing()
+            else:
+                self._append_node(other)
+
+        return self
+
+    def __iadd__(self, other):
+        self._execute(other)
+        return self
+
+    def _execute_fill(self, expr: SglConstantText):
+        if isinstance(expr, str):
+            expr = SglConstantText(expr)
+        self._append_node(expr)
+
+    def _execute_gen(self, expr: SglGen):
+        name = expr.name if expr.name is not None else &#34;gen_&#34; + str(len(self.variables))
+        new_node = SglVariable(name, source=expr)
+        self.variables[name] = new_node
+        self._append_node(expr)
+
+    def _execute_select(self, expr: SglSelect):
+        name = (
+            expr.name if expr.name is not None else &#34;select_&#34; + str(len(self.variables))
+        )
+        new_node = SglVariable(name, source=expr)
+        self.variables[name] = new_node
+        self._append_node(expr)
+
+    def _execute_role_begin(self, expr: SglRoleBegin):
+        assert self.cur_role is None, &#34;Nested roles are not allowed.&#34;
+
+        if len(self.messages_) == 0 and expr.role != &#34;system&#34;:
+            # Insert default system message
+            default_system = self.chat_template.default_system_prompt
+            if default_system:
+                self._execute_role_begin(SglRoleBegin(&#34;system&#34;))
+                self._execute_fill(default_system)
+                self._execute_role_end(SglRoleEnd(&#34;system&#34;))
+
+        self.cur_role = expr.role
+
+        prefix, suffix = self.chat_template.get_prefix_and_suffix(
+            expr.role, self.messages_
+        )
+
+        self._execute_fill(prefix)
+
+    def _execute_role_end(self, expr: SglRoleEnd):
+        prefix, suffix = self.chat_template.get_prefix_and_suffix(
+            expr.role, self.messages_
+        )
+
+        self._execute_fill(suffix)
+
+        self.messages_.append({&#34;role&#34;: expr.role, &#34;content&#34;: &#34;&#34;})
+
+        self.cur_role = None
+
+    def _execute_var_scope_end(self, expr: SglVarScopeEnd):
+        new_node = SglVariable(expr.name, source=self.last_node)
+        self.variables[expr.name] = new_node
+
+    def get_var(self, name):
+        ret = self.arguments.get(name, None)
+        if ret is not None:
+            return ret
+
+        v = self.variables[name]
+        return SglVariable(v.name, v.source)
+
+    def flatten_nodes(self):
+        def traverse(cur):
+            if isinstance(cur, SglExprList):
+                for child in cur.expr_list:
+                    traverse(child)
+            else:
+                ret.append(cur)
+
+        ret = []
+        for x in self.nodes:
+            traverse(x)
+        return ret
+
+    def __del__(self):
+        pass</code></pre>
+</details>
+<div class="desc"><p>The state of an SGL program.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.interpreter.ProgramState" href="interpreter.html#sglang.lang.interpreter.ProgramState">ProgramState</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.tracer.TracerProgramState.flatten_nodes"><code class="name flex">
+<span>def <span class="ident">flatten_nodes</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flatten_nodes(self):
+    def traverse(cur):
+        if isinstance(cur, SglExprList):
+            for child in cur.expr_list:
+                traverse(child)
+        else:
+            ret.append(cur)
+
+    ret = []
+    for x in self.nodes:
+        traverse(x)
+    return ret</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.tracer.TracerProgramState.fork"><code class="name flex">
+<span>def <span class="ident">fork</span></span>(<span>self, size: int = 1, position_ids_offset: List[int] | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fork(self, size: int = 1, position_ids_offset: Optional[List[int]] = None):
+    assert size &gt;= 1
+
+    if self.only_trace_prefix:
+        raise StopTracing()
+
+    fork_node = SglFork(size)
+    fork_node.prev_node = self.last_node
+
+    states = [
+        TracerProgramState(self.backend, self.arguments, self.only_trace_prefix)
+        for _ in range(size)
+    ]
+
+    for i in range(size):
+        node = SglGetForkItem(i)
+        node.prev_node = fork_node
+        states[i].last_node = node
+        states[i].variables = dict(self.variables)
+        states[i].messages_ = list(self.messages_)
+        states[i].cur_role = self.cur_role
+        states[i].chat_template = self.chat_template
+
+    state_group = ProgramStateGroup(states, self)
+
+    return state_group</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.tracer.TracerProgramState.get_var"><code class="name flex">
+<span>def <span class="ident">get_var</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_var(self, name):
+    ret = self.arguments.get(name, None)
+    if ret is not None:
+        return ret
+
+    v = self.variables[name]
+    return SglVariable(v.name, v.source)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.lang.tracer.TracingScope"><code class="flex name class">
+<span>class <span class="ident">TracingScope</span></span>
+<span>(</span><span>tracer_state: <a title="sglang.lang.tracer.TracerProgramState" href="#sglang.lang.tracer.TracerProgramState">TracerProgramState</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TracingScope:
+    cur_scope = None
+
+    def __init__(self, tracer_state: TracerProgramState):
+        self.tracer_state = tracer_state
+        self.last_scope = TracingScope.cur_scope
+
+    def __enter__(self):
+        TracingScope.cur_scope = self
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        TracingScope.cur_scope = self.last_scope
+
+    @staticmethod
+    def get_current_scope():
+        return TracingScope.cur_scope
+
+    def add_child_state(self, state: TracerProgramState):
+        cur_scope = self
+        while cur_scope is not None:
+            cur_scope.tracer_state.child_states.append(state)
+            cur_scope = cur_scope.last_scope</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.lang.tracer.TracingScope.cur_scope"><code class="name">var <span class="ident">cur_scope</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.lang.tracer.TracingScope.get_current_scope"><code class="name flex">
+<span>def <span class="ident">get_current_scope</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def get_current_scope():
+    return TracingScope.cur_scope</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.tracer.TracingScope.add_child_state"><code class="name flex">
+<span>def <span class="ident">add_child_state</span></span>(<span>self,<br>state: <a title="sglang.lang.tracer.TracerProgramState" href="#sglang.lang.tracer.TracerProgramState">TracerProgramState</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_child_state(self, state: TracerProgramState):
+    cur_scope = self
+    while cur_scope is not None:
+        cur_scope.tracer_state.child_states.append(state)
+        cur_scope = cur_scope.last_scope</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.lang" href="index.html">sglang.lang</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.lang.tracer.extract_prefix_by_tracing" href="#sglang.lang.tracer.extract_prefix_by_tracing">extract_prefix_by_tracing</a></code></li>
+<li><code><a title="sglang.lang.tracer.trace_program" href="#sglang.lang.tracer.trace_program">trace_program</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.lang.tracer.StopTracing" href="#sglang.lang.tracer.StopTracing">StopTracing</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.tracer.TracerProgramState" href="#sglang.lang.tracer.TracerProgramState">TracerProgramState</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.lang.tracer.TracerProgramState.flatten_nodes" href="#sglang.lang.tracer.TracerProgramState.flatten_nodes">flatten_nodes</a></code></li>
+<li><code><a title="sglang.lang.tracer.TracerProgramState.fork" href="#sglang.lang.tracer.TracerProgramState.fork">fork</a></code></li>
+<li><code><a title="sglang.lang.tracer.TracerProgramState.get_var" href="#sglang.lang.tracer.TracerProgramState.get_var">get_var</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.lang.tracer.TracingScope" href="#sglang.lang.tracer.TracingScope">TracingScope</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.lang.tracer.TracingScope.add_child_state" href="#sglang.lang.tracer.TracingScope.add_child_state">add_child_state</a></code></li>
+<li><code><a title="sglang.lang.tracer.TracingScope.cur_scope" href="#sglang.lang.tracer.TracingScope.cur_scope">cur_scope</a></code></li>
+<li><code><a title="sglang.lang.tracer.TracingScope.get_current_scope" href="#sglang.lang.tracer.TracingScope.get_current_scope">get_current_scope</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

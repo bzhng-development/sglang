@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.function_call.pythonic_detector API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.function_call.pythonic_detector</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.function_call.pythonic_detector.PythonicDetector"><code class="flex name class">
+<span>class <span class="ident">PythonicDetector</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PythonicDetector(BaseFormatDetector):
+    &#34;&#34;&#34;
+    Detector for Llama-4 models with Pythonic tool call format.
+
+    The Pythonic format uses Python function call syntax within square brackets,
+    with arguments as Python literals rather than JSON.
+
+    Format Structure:
+    ```
+    [tool1(arg1=val1, arg2=val2), tool2(arg1=val3)]
+    ```
+
+    Reference: https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E-Instruct?chat_template=default
+    &#34;&#34;&#34;
+
+    def __init__(self):
+        super().__init__()
+        self.tool_call_regex = re.compile(
+            r&#34;\[([a-zA-Z]+\w*\(([a-zA-Z]+\w*=.*,\s*)*([a-zA-Z]+\w*=.*\s)?\),\s*)*([a-zA-Z]+\w*\(([a-zA-Z]+\w*=.*,\s*)*([a-zA-Z]+\w*=.*\s*)?\)\s*)+\]&#34;,
+            re.DOTALL,
+        )
+
+    @staticmethod
+    def _text_strip(text: str) -&gt; str:
+        # Llama 4 model sometime will output &lt;|python_start|&gt; and &lt;|python_end|&gt; tokens
+        # remove those tokens
+        text = text.replace(&#34;&lt;|python_start|&gt;&#34;, &#34;&#34;)
+        text = text.replace(&#34;&lt;|python_end|&gt;&#34;, &#34;&#34;)
+        return text
+
+    def has_tool_call(self, text: str) -&gt; bool:
+        return bool(self.tool_call_regex.search(self._text_strip(text.strip())))
+
+    def detect_and_parse(self, text: str, tools: List[Tool]) -&gt; StreamingParseResult:
+        # Try parsing the text as a Python list of function calls
+        text = text.strip()
+
+        # Remove unexpected &lt;|python_start|&gt; and &lt;|python_end|&gt; for llama4
+        text = self._text_strip(text)
+
+        match = self.tool_call_regex.search(text)
+        if match is None:
+            return StreamingParseResult(normal_text=text, calls=[])
+
+        # Extract the tool call part and any text before/after it
+        tool_call_start = match.start()
+        tool_call_end = match.end()
+
+        normal_text_before = text[:tool_call_start] if tool_call_start &gt; 0 else &#34;&#34;
+        tool_call_text = text[tool_call_start:tool_call_end]
+        normal_text_after = text[tool_call_end:] if tool_call_end &lt; len(text) else &#34;&#34;
+
+        # Combine normal text
+        normal_text = normal_text_before + normal_text_after
+
+        try:
+            module = ast.parse(tool_call_text)
+            parsed = getattr(module.body[0], &#34;value&#34;, None)
+            if not (
+                isinstance(parsed, ast.List)
+                and all(isinstance(e, ast.Call) for e in parsed.elts)
+            ):
+                return StreamingParseResult(normal_text=normal_text, calls=[])
+
+            calls = []
+            tool_indices = self._get_tool_indices(tools)
+            for call_index, call in enumerate(parsed.elts):
+                if not isinstance(call.func, ast.Name):
+                    continue
+                function_name = call.func.id
+                # Validate that the function exists in the tools
+                if function_name not in tool_indices:
+                    logger.warning(
+                        f&#34;Model attempted to call undefined function: {function_name}&#34;
+                    )
+                    continue
+                arguments = {}
+                for keyword in call.keywords:
+                    arguments[keyword.arg] = self._get_parameter_value(keyword.value)
+                calls.append(
+                    ToolCallItem(
+                        tool_index=call_index,  # Use the call index in the response, not tool position
+                        name=function_name,
+                        parameters=json.dumps(arguments, ensure_ascii=False),
+                    )
+                )
+
+            return StreamingParseResult(normal_text=normal_text, calls=calls)
+        except Exception:
+            logger.exception(&#34;Error in pythonic tool call parsing.&#34;)
+            return StreamingParseResult(normal_text=normal_text, calls=[])
+
+    def _find_matching_bracket(self, buffer: str, start: int) -&gt; int:
+        &#34;&#34;&#34;
+        Find the matching closing bracket for the opening bracket at start position.
+        Properly handles nested brackets.
+
+        Args:
+            buffer: The text buffer to search in
+            start: Position of the opening bracket &#39;[&#39;
+
+        Returns:
+            Position of the matching closing bracket &#39;]&#39;, or -1 if not found
+        &#34;&#34;&#34;
+        bracket_count = 0
+        for i in range(start, len(buffer)):
+            if buffer[i] == &#34;[&#34;:
+                bracket_count += 1
+            elif buffer[i] == &#34;]&#34;:
+                bracket_count -= 1
+                if bracket_count == 0:
+                    return i
+        return -1  # No matching bracket found
+
+    def _strip_and_split_buffer(self, buffer: str) -&gt; tuple[str, str]:
+        &#34;&#34;&#34;
+        Strip special tokens from buffer and split into safe_text and held_back_text.
+
+        Returns:
+            tuple of (safe_text_to_output, text_to_hold_in_buffer)
+        &#34;&#34;&#34;
+        # Check if original buffer ends with a partial token at the end
+        special_tokens = [&#34;&lt;|python_start|&gt;&#34;, &#34;&lt;|python_end|&gt;&#34;]
+
+        for token in special_tokens:
+            partial_length = self._ends_with_partial_token(buffer, token)
+            if partial_length &gt; 0:
+                # Split buffer: safe part + held back partial token
+                safe_text = buffer[:-partial_length]
+                held_back = buffer[-partial_length:]
+                # Strip complete special tokens from safe part only
+                safe_text = self._text_strip(safe_text)
+                return safe_text, held_back
+
+        # No partial tokens found, strip complete tokens from entire buffer
+        safe_text = self._text_strip(buffer)
+        return safe_text, &#34;&#34;
+
+    def parse_streaming_increment(
+        self, new_text: str, tools: List[Tool]
+    ) -&gt; StreamingParseResult:
+        &#34;&#34;&#34;
+        Streaming incremental parsing for pythonic tool calls.
+        Buffers input until a complete pythonic tool call (from [ to ]) is found,
+        then parses and emits any detected calls.
+        &#34;&#34;&#34;
+        self._buffer += new_text
+
+        # Strip special tokens from entire buffer and handle partial tokens
+        stripped_buffer, held_back = self._strip_and_split_buffer(self._buffer)
+
+        start = stripped_buffer.find(&#34;[&#34;)
+
+        if start == -1:
+            # No tool call bracket found
+            self._buffer = held_back
+            return StreamingParseResult(normal_text=stripped_buffer)
+
+        normal_text = stripped_buffer[:start] if start &gt; 0 else &#34;&#34;
+
+        end = self._find_matching_bracket(stripped_buffer, start)
+        if end != -1:
+            # Found complete tool call
+            call_text = stripped_buffer[start : end + 1]
+            result = self.detect_and_parse(call_text, tools)
+
+            # Update buffer with remaining text after tool call plus any held back text
+            remaining_text = stripped_buffer[end + 1 :] + held_back
+            self._buffer = remaining_text
+
+            # If we had normal text before the tool call, add it to the result
+            if normal_text:
+                result.normal_text = normal_text + (result.normal_text or &#34;&#34;)
+
+            return result
+
+        # We have an opening bracket but no closing bracket yet
+        # Put back everything from the bracket onwards plus held back text
+        self._buffer = stripped_buffer[start:] + held_back
+
+        if normal_text:
+            return StreamingParseResult(normal_text=normal_text)
+
+        # Otherwise, we&#39;re still accumulating a potential tool call
+        return StreamingParseResult(normal_text=&#34;&#34;)
+
+    def _get_parameter_value(self, val):
+        if isinstance(val, ast.Constant):
+            return val.value
+        elif isinstance(val, ast.Dict):
+            return {
+                k.value: self._get_parameter_value(v)
+                for k, v in zip(val.keys, val.values)
+            }
+        elif isinstance(val, ast.List):
+            return [self._get_parameter_value(v) for v in val.elts]
+        else:
+            raise ValueError(&#34;Tool call arguments must be literals&#34;)
+
+    def supports_structural_tag(self) -&gt; bool:
+        return False
+
+    def structure_info(self) -&gt; _GetInfoFunc:
+        raise NotImplementedError
+
+    def build_ebnf(self, tools: List[Tool]) -&gt; Optional[str]:
+        return EBNFComposer.build_ebnf(
+            tools,
+            sequence_start_token=&#34;[&#34;,
+            sequence_end_token=&#34;]&#34;,
+            tool_call_separator=&#34;,&#34;,
+            function_format=&#34;pythonic&#34;,
+        )</code></pre>
+</details>
+<div class="desc"><p>Detector for Llama-4 models with Pythonic tool call format.</p>
+<p>The Pythonic format uses Python function call syntax within square brackets,
+with arguments as Python literals rather than JSON.</p>
+<p>Format Structure:</p>
+<pre><code>[tool1(arg1=val1, arg2=val2), tool2(arg1=val3)]
+</code></pre>
+<p>Reference: <a href="https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E-Instruct?chat_template=default">https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E-Instruct?chat_template=default</a></p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector">BaseFormatDetector</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.function_call.pythonic_detector.PythonicDetector.parse_streaming_increment"><code class="name flex">
+<span>def <span class="ident">parse_streaming_increment</span></span>(<span>self,<br>new_text: str,<br>tools: List[<a title="sglang.srt.entrypoints.openai.protocol.Tool" href="../entrypoints/openai/protocol.html#sglang.srt.entrypoints.openai.protocol.Tool">Tool</a>]) ‑> <a title="sglang.srt.function_call.core_types.StreamingParseResult" href="core_types.html#sglang.srt.function_call.core_types.StreamingParseResult">StreamingParseResult</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_streaming_increment(
+    self, new_text: str, tools: List[Tool]
+) -&gt; StreamingParseResult:
+    &#34;&#34;&#34;
+    Streaming incremental parsing for pythonic tool calls.
+    Buffers input until a complete pythonic tool call (from [ to ]) is found,
+    then parses and emits any detected calls.
+    &#34;&#34;&#34;
+    self._buffer += new_text
+
+    # Strip special tokens from entire buffer and handle partial tokens
+    stripped_buffer, held_back = self._strip_and_split_buffer(self._buffer)
+
+    start = stripped_buffer.find(&#34;[&#34;)
+
+    if start == -1:
+        # No tool call bracket found
+        self._buffer = held_back
+        return StreamingParseResult(normal_text=stripped_buffer)
+
+    normal_text = stripped_buffer[:start] if start &gt; 0 else &#34;&#34;
+
+    end = self._find_matching_bracket(stripped_buffer, start)
+    if end != -1:
+        # Found complete tool call
+        call_text = stripped_buffer[start : end + 1]
+        result = self.detect_and_parse(call_text, tools)
+
+        # Update buffer with remaining text after tool call plus any held back text
+        remaining_text = stripped_buffer[end + 1 :] + held_back
+        self._buffer = remaining_text
+
+        # If we had normal text before the tool call, add it to the result
+        if normal_text:
+            result.normal_text = normal_text + (result.normal_text or &#34;&#34;)
+
+        return result
+
+    # We have an opening bracket but no closing bracket yet
+    # Put back everything from the bracket onwards plus held back text
+    self._buffer = stripped_buffer[start:] + held_back
+
+    if normal_text:
+        return StreamingParseResult(normal_text=normal_text)
+
+    # Otherwise, we&#39;re still accumulating a potential tool call
+    return StreamingParseResult(normal_text=&#34;&#34;)</code></pre>
+</details>
+<div class="desc"><p>Streaming incremental parsing for pythonic tool calls.
+Buffers input until a complete pythonic tool call (from [ to ]) is found,
+then parses and emits any detected calls.</p></div>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector">BaseFormatDetector</a></b></code>:
+<ul class="hlist">
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.build_ebnf" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.build_ebnf">build_ebnf</a></code></li>
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.detect_and_parse" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.detect_and_parse">detect_and_parse</a></code></li>
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.has_tool_call" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.has_tool_call">has_tool_call</a></code></li>
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.structure_info" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.structure_info">structure_info</a></code></li>
+<li><code><a title="sglang.srt.function_call.base_format_detector.BaseFormatDetector.supports_structural_tag" href="base_format_detector.html#sglang.srt.function_call.base_format_detector.BaseFormatDetector.supports_structural_tag">supports_structural_tag</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.function_call" href="index.html">sglang.srt.function_call</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.function_call.pythonic_detector.PythonicDetector" href="#sglang.srt.function_call.pythonic_detector.PythonicDetector">PythonicDetector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.function_call.pythonic_detector.PythonicDetector.parse_streaming_increment" href="#sglang.srt.function_call.pythonic_detector.PythonicDetector.parse_streaming_increment">parse_streaming_increment</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

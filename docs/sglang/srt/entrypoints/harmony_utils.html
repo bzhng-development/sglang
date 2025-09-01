@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.entrypoints.harmony_utils API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.entrypoints.harmony_utils</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.entrypoints.harmony_utils.get_developer_message"><code class="name flex">
+<span>def <span class="ident">get_developer_message</span></span>(<span>instructions: str | None = None,<br>tools: list[typing.Annotated[openai.types.responses.function_tool.FunctionTool | openai.types.responses.file_search_tool.FileSearchTool | openai.types.responses.web_search_tool.WebSearchTool | openai.types.responses.computer_tool.ComputerTool | openai.types.responses.tool.Mcp | openai.types.responses.tool.CodeInterpreter | openai.types.responses.tool.ImageGeneration | openai.types.responses.tool.LocalShell, PropertyInfo(alias='None', format=None, format_template='None', discriminator='type')]] | None = None) ‑> openai_harmony.Message</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_developer_message(
+    instructions: Optional[str] = None, tools: Optional[list[Tool]] = None
+) -&gt; Message:
+    dev_msg_content = DeveloperContent.new()
+    if instructions is not None:
+        dev_msg_content = dev_msg_content.with_instructions(instructions)
+    if tools is not None:
+        function_tools = []
+        for tool in tools:
+            if tool.type in (&#34;web_search_preview&#34;, &#34;code_interpreter&#34;):
+                # These are built-in tools that are added to the system message.
+                pass
+            elif tool.type == &#34;function&#34;:
+                function_tools.append(tool)
+            else:
+                raise ValueError(f&#34;tool type {tool.type} not supported&#34;)
+        if function_tools:
+            function_tool_descriptions = [
+                ToolDescription.new(
+                    name=tool.name,
+                    description=tool.description,
+                    parameters=tool.parameters,
+                )
+                for tool in function_tools
+            ]
+            dev_msg_content = dev_msg_content.with_function_tools(
+                function_tool_descriptions
+            )
+    dev_msg = Message.from_role_and_content(Role.DEVELOPER, dev_msg_content)
+    return dev_msg</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.get_encoding"><code class="name flex">
+<span>def <span class="ident">get_encoding</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_encoding():
+    global _harmony_encoding
+    if _harmony_encoding is None:
+        _harmony_encoding = load_harmony_encoding(HarmonyEncodingName.HARMONY_GPT_OSS)
+    return _harmony_encoding</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.get_stop_tokens_for_assistant_actions"><code class="name flex">
+<span>def <span class="ident">get_stop_tokens_for_assistant_actions</span></span>(<span>) ‑> list[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_stop_tokens_for_assistant_actions() -&gt; list[int]:
+    return get_encoding().stop_tokens_for_assistant_actions()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.get_streamable_parser_for_assistant"><code class="name flex">
+<span>def <span class="ident">get_streamable_parser_for_assistant</span></span>(<span>) ‑> openai_harmony.StreamableParser</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_streamable_parser_for_assistant() -&gt; StreamableParser:
+    return StreamableParser(get_encoding(), role=Role.ASSISTANT)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.get_system_message"><code class="name flex">
+<span>def <span class="ident">get_system_message</span></span>(<span>model_identity: str | None = None,<br>reasoning_effort: Literal['high', 'medium', 'low'] | None = None,<br>start_date: str | None = None,<br>browser_description: str | None = None,<br>python_description: str | None = None) ‑> openai_harmony.Message</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_system_message(
+    model_identity: Optional[str] = None,
+    reasoning_effort: Optional[Literal[&#34;high&#34;, &#34;medium&#34;, &#34;low&#34;]] = None,
+    start_date: Optional[str] = None,
+    browser_description: Optional[str] = None,
+    python_description: Optional[str] = None,
+) -&gt; Message:
+    sys_msg_content = SystemContent.new()
+    if model_identity is not None:
+        sys_msg_content = sys_msg_content.with_model_identity(model_identity)
+    if reasoning_effort is not None:
+        sys_msg_content = sys_msg_content.with_reasoning_effort(
+            REASONING_EFFORT[reasoning_effort]
+        )
+    if start_date is None:
+        start_date = datetime.datetime.now().strftime(&#34;%Y-%m-%d&#34;)
+    sys_msg_content = sys_msg_content.with_conversation_start_date(start_date)
+    if browser_description is not None:
+        sys_msg_content = sys_msg_content.with_tools(browser_description)
+    if python_description is not None:
+        sys_msg_content = sys_msg_content.with_tools(python_description)
+    sys_msg = Message.from_role_and_content(Role.SYSTEM, sys_msg_content)
+    return sys_msg</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.get_user_message"><code class="name flex">
+<span>def <span class="ident">get_user_message</span></span>(<span>content: str) ‑> openai_harmony.Message</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_user_message(content: str) -&gt; Message:
+    return Message.from_role_and_content(Role.USER, content)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.parse_chat_input"><code class="name flex">
+<span>def <span class="ident">parse_chat_input</span></span>(<span>chat_msg) ‑> openai_harmony.Message</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_chat_input(chat_msg) -&gt; Message:
+    role = chat_msg.role
+    content = chat_msg.content
+    if isinstance(content, str):
+        contents = [TextContent(text=content)]
+    else:
+        # TODO: Support refusal.
+        contents = [TextContent(text=c.text) for c in content]
+    msg = Message.from_role_and_contents(role, contents)
+    return msg</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.parse_output_into_messages"><code class="name flex">
+<span>def <span class="ident">parse_output_into_messages</span></span>(<span>token_ids: Iterable[int])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_output_into_messages(token_ids: Iterable[int]):
+    parser = get_streamable_parser_for_assistant()
+    for token_id in token_ids:
+        parser.process(token_id)
+    return parser</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.parse_output_message"><code class="name flex">
+<span>def <span class="ident">parse_output_message</span></span>(<span>message: openai_harmony.Message)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_output_message(message: Message):
+    if message.author.role != &#34;assistant&#34;:
+        # This is a message from a tool to the assistant (e.g., search result).
+        # Don&#39;t include it in the final output for now. This aligns with
+        # OpenAI&#39;s behavior on models like o4-mini.
+        return []
+
+    output_items = []
+    recipient = message.recipient
+    if recipient is not None and recipient.startswith(&#34;browser.&#34;):
+        if len(message.content) != 1:
+            raise ValueError(&#34;Invalid number of contents in browser message&#34;)
+        content = message.content[0]
+        browser_call = json.loads(content.text)
+        # TODO: translate to url properly!
+        if recipient == &#34;browser.search&#34;:
+            action = ActionSearch(
+                query=f&#34;cursor:{browser_call.get(&#39;query&#39;, &#39;&#39;)}&#34;, type=&#34;search&#34;
+            )
+        elif recipient == &#34;browser.open&#34;:
+            action = ActionOpenPage(
+                url=f&#34;cursor:{browser_call.get(&#39;url&#39;, &#39;&#39;)}&#34;, type=&#34;open_page&#34;
+            )
+        elif recipient == &#34;browser.find&#34;:
+            action = ActionFind(
+                pattern=browser_call[&#34;pattern&#34;],
+                url=f&#34;cursor:{browser_call.get(&#39;url&#39;, &#39;&#39;)}&#34;,
+                type=&#34;find&#34;,
+            )
+        else:
+            raise ValueError(f&#34;Unknown browser action: {recipient}&#34;)
+        web_search_item = ResponseFunctionWebSearch(
+            id=f&#34;ws_{random_uuid()}&#34;,
+            action=action,
+            status=&#34;completed&#34;,
+            type=&#34;web_search_call&#34;,
+        )
+        output_items.append(web_search_item)
+    elif message.channel == &#34;analysis&#34;:
+        for content in message.content:
+            reasoning_item = ResponseReasoningItem(
+                id=f&#34;rs_{random_uuid()}&#34;,
+                type=&#34;reasoning&#34;,
+                summary=[],
+                content=[
+                    ResponseReasoningTextContent(
+                        text=content.text, type=&#34;reasoning_text&#34;
+                    )
+                ],
+                status=None,
+            )
+            output_items.append(reasoning_item)
+    elif message.channel == &#34;commentary&#34;:
+        if message.recipient.startswith(&#34;functions.&#34;):
+            function_name = message.recipient.split(&#34;.&#34;)[-1]
+            for content in message.content:
+                random_id = random_uuid()
+                response_item = ResponseFunctionToolCall(
+                    arguments=content.text,
+                    call_id=f&#34;call_{random_id}&#34;,
+                    type=&#34;function_call&#34;,
+                    name=function_name,
+                    id=f&#34;ft_{random_id}&#34;,
+                )
+                output_items.append(response_item)
+        elif message.recipient.startswith(&#34;python&#34;) or message.recipient.startswith(
+            &#34;browser&#34;
+        ):
+            for content in message.content:
+                reasoning_item = ResponseReasoningItem(
+                    id=f&#34;rs_{random_uuid()}&#34;,
+                    type=&#34;reasoning&#34;,
+                    summary=[],
+                    content=[
+                        ResponseReasoningTextContent(
+                            text=content.text, type=&#34;reasoning_text&#34;
+                        )
+                    ],
+                    status=None,
+                )
+                output_items.append(reasoning_item)
+        else:
+            raise ValueError(f&#34;Unknown recipient: {message.recipient}&#34;)
+    elif message.channel == &#34;final&#34;:
+        contents = []
+        for content in message.content:
+            output_text = ResponseOutputText(
+                text=content.text,
+                annotations=[],  # TODO
+                type=&#34;output_text&#34;,
+                logprobs=None,  # TODO
+            )
+            contents.append(output_text)
+        text_item = ResponseOutputMessage(
+            id=f&#34;msg_{random_uuid()}&#34;,
+            content=contents,
+            role=message.author.role,
+            status=&#34;completed&#34;,
+            type=&#34;message&#34;,
+        )
+        output_items.append(text_item)
+    else:
+        raise ValueError(f&#34;Unknown channel: {message.channel}&#34;)
+    return output_items</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.parse_remaining_state"><code class="name flex">
+<span>def <span class="ident">parse_remaining_state</span></span>(<span>parser: openai_harmony.StreamableParser)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_remaining_state(parser: StreamableParser):
+    if not parser.current_content:
+        return []
+    if parser.current_role != Role.ASSISTANT:
+        return []
+    current_recipient = parser.current_recipient
+    if current_recipient is not None and current_recipient.startswith(&#34;browser.&#34;):
+        return []
+
+    if parser.current_channel == &#34;analysis&#34;:
+        reasoning_item = ResponseReasoningItem(
+            id=f&#34;rs_{random_uuid()}&#34;,
+            type=&#34;reasoning&#34;,
+            summary=[],
+            content=[
+                ResponseReasoningTextContent(
+                    text=parser.current_content, type=&#34;reasoning_text&#34;
+                )
+            ],
+            status=None,
+        )
+        return [reasoning_item]
+    elif parser.current_channel == &#34;final&#34;:
+        output_text = ResponseOutputText(
+            content=[
+                ResponseReasoningTextContent(
+                    text=parser.current_content, type=&#34;reasoning_text&#34;
+                )
+            ],
+            annotations=[],  # TODO
+            type=&#34;output_text&#34;,
+            logprobs=None,  # TODO
+        )
+        text_item = ResponseOutputMessage(
+            id=f&#34;msg_{random_uuid()}&#34;,
+            content=[output_text],
+            role=&#34;assistant&#34;,
+            status=&#34;completed&#34;,
+            type=&#34;message&#34;,
+        )
+        return [text_item]
+    return []</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.parse_response_input"><code class="name flex">
+<span>def <span class="ident">parse_response_input</span></span>(<span>response_msg: openai.types.responses.easy_input_message_param.EasyInputMessageParam | openai.types.responses.response_input_item_param.Message | openai.types.responses.response_output_message_param.ResponseOutputMessageParam | openai.types.responses.response_file_search_tool_call_param.ResponseFileSearchToolCallParam | openai.types.responses.response_computer_tool_call_param.ResponseComputerToolCallParam | openai.types.responses.response_input_item_param.ComputerCallOutput | openai.types.responses.response_function_web_search_param.ResponseFunctionWebSearchParam | openai.types.responses.response_function_tool_call_param.ResponseFunctionToolCallParam | openai.types.responses.response_input_item_param.FunctionCallOutput | openai.types.responses.response_reasoning_item_param.ResponseReasoningItemParam | openai.types.responses.response_input_item_param.ImageGenerationCall | openai.types.responses.response_code_interpreter_tool_call_param.ResponseCodeInterpreterToolCallParam | openai.types.responses.response_input_item_param.LocalShellCall | openai.types.responses.response_input_item_param.LocalShellCallOutput | openai.types.responses.response_input_item_param.McpListTools | openai.types.responses.response_input_item_param.McpApprovalRequest | openai.types.responses.response_input_item_param.McpApprovalResponse | openai.types.responses.response_input_item_param.McpCall | openai.types.responses.response_input_item_param.ItemReference | ForwardRef('ResponseReasoningItem') | openai.types.responses.response_function_tool_call.ResponseFunctionToolCall,<br>prev_responses: list[Annotated[openai.types.responses.response_output_message.ResponseOutputMessage | openai.types.responses.response_file_search_tool_call.ResponseFileSearchToolCall | openai.types.responses.response_function_tool_call.ResponseFunctionToolCall | openai.types.responses.response_function_web_search.ResponseFunctionWebSearch | openai.types.responses.response_computer_tool_call.ResponseComputerToolCall | openai.types.responses.response_reasoning_item.ResponseReasoningItem | openai.types.responses.response_output_item.ImageGenerationCall | openai.types.responses.response_code_interpreter_tool_call.ResponseCodeInterpreterToolCall | openai.types.responses.response_output_item.LocalShellCall | openai.types.responses.response_output_item.McpCall | openai.types.responses.response_output_item.McpListTools | openai.types.responses.response_output_item.McpApprovalRequest, PropertyInfo(alias='None', format=None, format_template='None', discriminator='type')] | openai.types.responses.response_reasoning_item.ResponseReasoningItem]) ‑> openai_harmony.Message</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_response_input(
+    response_msg: ResponseInputOutputItem,
+    prev_responses: list[Union[ResponseOutputItem, ResponseReasoningItem]],
+) -&gt; Message:
+    if not isinstance(response_msg, dict):
+        response_msg = response_msg.model_dump()
+    if &#34;type&#34; not in response_msg or response_msg[&#34;type&#34;] == &#34;message&#34;:
+        role = response_msg[&#34;role&#34;]
+        content = response_msg[&#34;content&#34;]
+        if role == &#34;system&#34;:
+            # User is trying to set a system message. Change it to:
+            # &lt;|start|&gt;developer&lt;|message|&gt;# Instructions
+            # {instructions}&lt;|end|&gt;
+            role = &#34;developer&#34;
+            text_prefix = &#34;Instructions:\n&#34;
+        else:
+            text_prefix = &#34;&#34;
+        if isinstance(content, str):
+            msg = Message.from_role_and_content(role, text_prefix + content)
+        else:
+            contents = [TextContent(text=text_prefix + c[&#34;text&#34;]) for c in content]
+            msg = Message.from_role_and_contents(role, contents)
+    elif response_msg[&#34;type&#34;] == &#34;function_call_output&#34;:
+        call_id = response_msg[&#34;call_id&#34;]
+        call_response: Optional[ResponseFunctionToolCall] = None
+        for prev_response in reversed(prev_responses):
+            if (
+                isinstance(prev_response, ResponseFunctionToolCall)
+                and prev_response.call_id == call_id
+            ):
+                call_response = prev_response
+                break
+        if call_response is None:
+            raise ValueError(f&#34;No call message found for {call_id}&#34;)
+        msg = Message.from_author_and_content(
+            Author.new(Role.TOOL, f&#34;functions.{call_response.name}&#34;),
+            response_msg[&#34;output&#34;],
+        )
+    elif response_msg[&#34;type&#34;] == &#34;reasoning&#34;:
+        content = response_msg[&#34;content&#34;]
+        assert len(content) == 1
+        msg = Message.from_role_and_content(Role.ASSISTANT, content[0][&#34;text&#34;])
+    elif response_msg[&#34;type&#34;] == &#34;function_call&#34;:
+        msg = Message.from_role_and_content(Role.ASSISTANT, response_msg[&#34;arguments&#34;])
+        msg = msg.with_channel(&#34;commentary&#34;)
+        msg = msg.with_recipient(f&#34;functions.{response_msg[&#39;name&#39;]}&#34;)
+        msg = msg.with_content_type(&#34;json&#34;)
+    else:
+        raise ValueError(f&#34;Unknown input type: {response_msg[&#39;type&#39;]}&#34;)
+    return msg</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.parse_response_output"><code class="name flex">
+<span>def <span class="ident">parse_response_output</span></span>(<span>output: Annotated[openai.types.responses.response_output_message.ResponseOutputMessage | openai.types.responses.response_file_search_tool_call.ResponseFileSearchToolCall | openai.types.responses.response_function_tool_call.ResponseFunctionToolCall | openai.types.responses.response_function_web_search.ResponseFunctionWebSearch | openai.types.responses.response_computer_tool_call.ResponseComputerToolCall | openai.types.responses.response_reasoning_item.ResponseReasoningItem | openai.types.responses.response_output_item.ImageGenerationCall | openai.types.responses.response_code_interpreter_tool_call.ResponseCodeInterpreterToolCall | openai.types.responses.response_output_item.LocalShellCall | openai.types.responses.response_output_item.McpCall | openai.types.responses.response_output_item.McpListTools | openai.types.responses.response_output_item.McpApprovalRequest, PropertyInfo(alias='None', format=None, format_template='None', discriminator='type')]) ‑> openai_harmony.Message</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_response_output(output: ResponseOutputItem) -&gt; Message:
+    if isinstance(output, ResponseOutputMessage):
+        role = output.role
+        contents = [TextContent(text=c.text) for c in output.content]
+        msg = Message.from_role_and_contents(role, contents)
+        return msg
+    elif isinstance(output, ResponseFunctionToolCall):
+        msg = Message.from_role_and_content(Role.ASSISTANT, output.arguments)
+        msg = msg.with_channel(&#34;commentary&#34;)
+        msg = msg.with_recipient(output.name)
+        msg = msg.with_content_type(&#34;json&#34;)
+        return msg
+    else:
+        raise ValueError(f&#34;Unknown output type: {type(output)}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.entrypoints.harmony_utils.render_for_completion"><code class="name flex">
+<span>def <span class="ident">render_for_completion</span></span>(<span>messages: list[openai_harmony.Message]) ‑> list[int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def render_for_completion(messages: list[Message]) -&gt; list[int]:
+    conversation = Conversation.from_messages(messages)
+    token_ids = get_encoding().render_conversation_for_completion(
+        conversation, Role.ASSISTANT
+    )
+    return token_ids</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.entrypoints" href="index.html">sglang.srt.entrypoints</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.get_developer_message" href="#sglang.srt.entrypoints.harmony_utils.get_developer_message">get_developer_message</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.get_encoding" href="#sglang.srt.entrypoints.harmony_utils.get_encoding">get_encoding</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.get_stop_tokens_for_assistant_actions" href="#sglang.srt.entrypoints.harmony_utils.get_stop_tokens_for_assistant_actions">get_stop_tokens_for_assistant_actions</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.get_streamable_parser_for_assistant" href="#sglang.srt.entrypoints.harmony_utils.get_streamable_parser_for_assistant">get_streamable_parser_for_assistant</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.get_system_message" href="#sglang.srt.entrypoints.harmony_utils.get_system_message">get_system_message</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.get_user_message" href="#sglang.srt.entrypoints.harmony_utils.get_user_message">get_user_message</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.parse_chat_input" href="#sglang.srt.entrypoints.harmony_utils.parse_chat_input">parse_chat_input</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.parse_output_into_messages" href="#sglang.srt.entrypoints.harmony_utils.parse_output_into_messages">parse_output_into_messages</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.parse_output_message" href="#sglang.srt.entrypoints.harmony_utils.parse_output_message">parse_output_message</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.parse_remaining_state" href="#sglang.srt.entrypoints.harmony_utils.parse_remaining_state">parse_remaining_state</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.parse_response_input" href="#sglang.srt.entrypoints.harmony_utils.parse_response_input">parse_response_input</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.parse_response_output" href="#sglang.srt.entrypoints.harmony_utils.parse_response_output">parse_response_output</a></code></li>
+<li><code><a title="sglang.srt.entrypoints.harmony_utils.render_for_completion" href="#sglang.srt.entrypoints.harmony_utils.render_for_completion">render_for_completion</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

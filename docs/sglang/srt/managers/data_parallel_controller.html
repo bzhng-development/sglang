@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.managers.data_parallel_controller API documentation</title>
+<meta name="description" content="A controller that dispatches requests to multiple data parallel workers.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.managers.data_parallel_controller</code></h1>
+</header>
+<section id="section-intro">
+<p>A controller that dispatches requests to multiple data parallel workers.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.managers.data_parallel_controller.run_data_parallel_controller_process"><code class="name flex">
+<span>def <span class="ident">run_data_parallel_controller_process</span></span>(<span>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>port_args: <a title="sglang.srt.server_args.PortArgs" href="../server_args.html#sglang.srt.server_args.PortArgs">PortArgs</a>,<br>pipe_writer)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_data_parallel_controller_process(
+    server_args: ServerArgs,
+    port_args: PortArgs,
+    pipe_writer,
+):
+    setproctitle.setproctitle(&#34;sglang::data_parallel_controller&#34;)
+    configure_logger(server_args)
+    parent_process = psutil.Process().parent()
+    balance_meta = DPBalanceMeta(server_args.dp_size)
+
+    try:
+        controller = DataParallelController(
+            server_args, port_args, dp_balance_meta=balance_meta
+        )
+        pipe_writer.send(
+            {
+                &#34;status&#34;: &#34;ready&#34;,
+                &#34;max_total_num_tokens&#34;: controller.max_total_num_tokens,
+                &#34;max_req_input_len&#34;: controller.max_req_input_len,
+            }
+        )
+        if server_args.node_rank == 0:
+            controller.event_loop()
+        for proc in controller.scheduler_procs:
+            proc.join()
+            logger.error(
+                f&#34;Scheduler or DataParallelController {proc.pid} terminated with {proc.exitcode}&#34;
+            )
+    except Exception:
+        traceback = get_exception_traceback()
+        logger.error(f&#34;DataParallelController hit an exception: {traceback}&#34;)
+        parent_process.send_signal(signal.SIGQUIT)
+    finally:
+        # we need to destruct mp.Manager() in balance_meta
+        balance_meta.destructor()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController"><code class="flex name class">
+<span>class <span class="ident">DataParallelController</span></span>
+<span>(</span><span>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>port_args: <a title="sglang.srt.server_args.PortArgs" href="../server_args.html#sglang.srt.server_args.PortArgs">PortArgs</a>,<br>dp_balance_meta: <a title="sglang.srt.managers.utils.DPBalanceMeta" href="utils.html#sglang.srt.managers.utils.DPBalanceMeta">DPBalanceMeta</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DataParallelController:
+    &#34;&#34;&#34;A controller that dispatches requests to multiple data parallel workers.&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        server_args: ServerArgs,
+        port_args: PortArgs,
+        dp_balance_meta: DPBalanceMeta,
+    ) -&gt; None:
+        # for dp balance
+        self.global_balance_id = 0
+        self.balance_meta = dp_balance_meta
+
+        # Parse args
+        self.max_total_num_tokens = None
+        self.server_args = server_args
+        self.port_args = port_args
+        self.load_balance_method = LoadBalanceMethod.from_str(
+            server_args.load_balance_method
+        )
+
+        # Init inter-process communication
+        self.context = zmq.Context(1 + server_args.dp_size)
+        if server_args.node_rank == 0:
+            self.recv_from_tokenizer = get_zmq_socket(
+                self.context, zmq.PULL, port_args.scheduler_input_ipc_name, False
+            )
+
+        # Dispatch method
+        self.round_robin_counter = 0
+        dispatch_lookup = {
+            LoadBalanceMethod.ROUND_ROBIN: self.round_robin_scheduler,
+            LoadBalanceMethod.SHORTEST_QUEUE: self.shortest_queue_scheduler,
+            LoadBalanceMethod.MINIMUM_TOKENS: self.minimum_tokens_scheduler,
+        }
+        self.dispatching = dispatch_lookup[self.load_balance_method]
+
+        # Launch data parallel workers
+        self.scheduler_procs = []
+        self.workers = [None] * server_args.dp_size
+
+        if server_args.enable_dp_attention:
+            dp_port_args = self.launch_dp_attention_schedulers(server_args, port_args)
+            self.control_message_step = server_args.tp_size
+        else:
+            dp_port_args = self.launch_dp_schedulers(server_args, port_args)
+            self.control_message_step = 1
+
+        # Only node rank 0 runs the real data parallel controller that dispatches the requests.
+        if server_args.node_rank == 0:
+            for dp_rank in range(server_args.dp_size):
+                self.workers[dp_rank] = get_zmq_socket(
+                    self.context,
+                    zmq.PUSH,
+                    dp_port_args[dp_rank].scheduler_input_ipc_name,
+                    True,
+                )
+
+        self.max_req_input_len = None
+
+    def launch_dp_schedulers(self, server_args, port_args):
+        base_gpu_id = 0
+
+        threads = []
+        sockets = []
+        dp_port_args = []
+        ready_events = []
+        for dp_rank in range(server_args.dp_size):
+            tmp_port_args = PortArgs.init_new(server_args)
+            tmp_port_args.tokenizer_ipc_name = port_args.tokenizer_ipc_name
+            tmp_port_args.detokenizer_ipc_name = port_args.detokenizer_ipc_name
+            dp_port_args.append(tmp_port_args)
+
+            # This port is checked free in PortArgs.init_new.
+            # We hold it first so that the next dp worker gets a different port
+            sockets.append(bind_port(tmp_port_args.nccl_port))
+
+            ready_event = threading.Event()
+            ready_events.append(ready_event)
+
+            # Create a thread for each worker
+            thread = threading.Thread(
+                target=self.launch_tensor_parallel_group_thread,
+                args=(server_args, tmp_port_args, base_gpu_id, dp_rank, ready_event),
+            )
+            threads.append(thread)
+            base_gpu_id += server_args.tp_size * server_args.gpu_id_step
+
+        # Free all sockets before starting the threads to launch TP workers
+        for sock in sockets:
+            sock.close()
+
+        # Start all threads
+        for thread in threads:
+            thread.start()
+        for event in ready_events:
+            event.wait()
+
+        return dp_port_args
+
+    def launch_tensor_parallel_group_thread(
+        self,
+        server_args: ServerArgs,
+        port_args: PortArgs,
+        base_gpu_id: int,
+        dp_rank: int,
+        ready_event: threading.Event,
+    ):
+        self.launch_tensor_parallel_group(server_args, port_args, base_gpu_id, dp_rank)
+        ready_event.set()
+
+        # This thread cannot be closed because otherwise the `kill_itself_when_parent_died`
+        # function in scheduler.py will kill the scheduler.
+        while True:
+            time.sleep(30 * 24 * 3600)
+
+    def launch_dp_attention_schedulers(self, server_args, port_args):
+        self.launch_tensor_parallel_group(server_args, port_args, 0, None)
+        dp_port_args = []
+        for dp_rank in range(server_args.dp_size):
+            dp_port_args.append(PortArgs.init_new(server_args, dp_rank))
+        return dp_port_args
+
+    def launch_tensor_parallel_group(
+        self,
+        server_args: ServerArgs,
+        port_args: PortArgs,
+        base_gpu_id: int,
+        dp_rank: int,
+    ):
+        if not server_args.enable_dp_attention:
+            logger.info(f&#34;Launch DP{dp_rank} starting at GPU #{base_gpu_id}.&#34;)
+
+        memory_saver_adapter = TorchMemorySaverAdapter.create(
+            enable=server_args.enable_memory_saver
+        )
+
+        scheduler_pipe_readers = []
+
+        nnodes_per_tp_group = max(server_args.nnodes // server_args.pp_size, 1)
+        tp_size_per_node = server_args.tp_size // nnodes_per_tp_group
+        tp_rank_range = range(
+            tp_size_per_node * (server_args.node_rank % nnodes_per_tp_group),
+            tp_size_per_node * (server_args.node_rank % nnodes_per_tp_group + 1),
+        )
+
+        pp_size_per_node = max(server_args.pp_size // server_args.nnodes, 1)
+        pp_rank_range = range(
+            pp_size_per_node * (server_args.node_rank // nnodes_per_tp_group),
+            pp_size_per_node * (server_args.node_rank // nnodes_per_tp_group + 1),
+        )
+
+        for pp_rank in pp_rank_range:
+            for tp_rank in tp_rank_range:
+                rank_port_args = port_args
+
+                if server_args.enable_dp_attention:
+                    # dp attention has different sharding logic
+                    _, _, dp_rank = compute_dp_attention_world_info(
+                        server_args.enable_dp_attention,
+                        tp_rank,
+                        server_args.tp_size,
+                        server_args.dp_size,
+                    )
+                    # compute zmq ports for this dp rank
+                    rank_port_args = PortArgs.init_new(server_args, dp_rank)
+                    # Data parallelism reuses the tensor parallelism group,
+                    # so all dp ranks should use the same nccl port.
+                    rank_port_args.nccl_port = port_args.nccl_port
+
+                reader, writer = mp.Pipe(duplex=False)
+                gpu_id = (
+                    server_args.base_gpu_id
+                    + base_gpu_id
+                    + ((pp_rank % pp_size_per_node) * tp_size_per_node)
+                    + (tp_rank % tp_size_per_node) * server_args.gpu_id_step
+                )
+                moe_ep_rank = tp_rank // (server_args.tp_size // server_args.ep_size)
+                proc = mp.Process(
+                    target=run_scheduler_process,
+                    args=(
+                        server_args,
+                        rank_port_args,
+                        gpu_id,
+                        tp_rank,
+                        moe_ep_rank,
+                        pp_rank,
+                        dp_rank,
+                        writer,
+                        self.balance_meta,
+                    ),
+                )
+                with memory_saver_adapter.configure_subprocess():
+                    proc.start()
+                self.scheduler_procs.append(proc)
+                scheduler_pipe_readers.append(reader)
+
+        # Wait for model to finish loading
+        scheduler_info = []
+        for i in range(len(scheduler_pipe_readers)):
+            scheduler_info.append(scheduler_pipe_readers[i].recv())
+
+        self.max_total_num_tokens = scheduler_info[0][&#34;max_total_num_tokens&#34;]
+        self.max_req_input_len = scheduler_info[0][&#34;max_req_input_len&#34;]
+
+    def round_robin_scheduler(self, req: Req):
+        if self.server_args.disaggregation_mode == &#34;null&#34;:
+            if req.data_parallel_rank is not None:
+                logger.debug(f&#34;Direct routing to DP rank {req.data_parallel_rank}&#34;)
+                self.workers[req.data_parallel_rank].send_pyobj(req)
+            else:
+                self.workers[self.round_robin_counter].send_pyobj(req)
+                self.round_robin_counter = (self.round_robin_counter + 1) % len(
+                    self.workers
+                )
+        else:
+            if req.data_parallel_rank is not None:
+                logger.debug(f&#34;Direct routing to DP rank {req.data_parallel_rank}&#34;)
+                self.workers[req.data_parallel_rank].send_pyobj(req)
+            else:
+                self.workers[req.bootstrap_room % len(self.workers)].send_pyobj(req)
+
+    def shortest_queue_scheduler(self, input_requests):
+        raise NotImplementedError()
+
+    def minimum_tokens_scheduler(self, req):
+        # This variable corresponds to the balance_id in TokenizedGenerateReqInput.
+        # We use it to to control the number of onfly tokens (requests dispatched to workers but not yet received).
+        def get_next_global_balance_id() -&gt; int:
+            INT32_MAX = 2147483647
+            current_id = self.global_balance_id
+            self.global_balance_id = (self.global_balance_id + 1) % INT32_MAX
+            return current_id
+
+        req.dp_balance_id = get_next_global_balance_id()
+        with self.balance_meta.mutex:
+            # 1. local_tokens represents the tokens currently inferring on the worker,
+            #  while onfly refers to the requests dispatched by the dispatcher but not yet received by the scheduler.
+            onfly_info = self.balance_meta.get_shared_onfly()
+            local_tokens = self.balance_meta.get_shared_local_tokens()
+            total_tokens = [
+                local_token + sum(onfly_dict.values())
+                for local_token, onfly_dict in zip(local_tokens, onfly_info)
+            ]
+            target_worker = total_tokens.index(min(total_tokens))
+            onfly_info[target_worker][req.dp_balance_id] = len(req.input_ids)
+            # 2. write the new onfly info to the shm
+            self.balance_meta.set_shared_onfly_info(onfly_info)
+
+        # logger.info(f&#34;dp workers {local_tokens=}, {onfly_info=}, {target_worker=}&#34;)
+        self.workers[target_worker].send_pyobj(req)
+
+    def event_loop(self):
+        while True:
+            while True:
+                try:
+                    recv_req = self.recv_from_tokenizer.recv_pyobj(zmq.NOBLOCK)
+                except zmq.ZMQError:
+                    break
+
+                if isinstance(
+                    recv_req,
+                    (
+                        TokenizedGenerateReqInput,
+                        TokenizedEmbeddingReqInput,
+                    ),
+                ):
+                    self.dispatching(recv_req)
+                elif isinstance(recv_req, BlockReqInput):
+                    for worker in self.workers:
+                        worker.send_pyobj(recv_req)
+                else:
+                    # Send other control messages to first worker of tp group
+                    for worker in self.workers[:: self.control_message_step]:
+                        worker.send_pyobj(recv_req)</code></pre>
+</details>
+<div class="desc"><p>A controller that dispatches requests to multiple data parallel workers.</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.event_loop"><code class="name flex">
+<span>def <span class="ident">event_loop</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def event_loop(self):
+    while True:
+        while True:
+            try:
+                recv_req = self.recv_from_tokenizer.recv_pyobj(zmq.NOBLOCK)
+            except zmq.ZMQError:
+                break
+
+            if isinstance(
+                recv_req,
+                (
+                    TokenizedGenerateReqInput,
+                    TokenizedEmbeddingReqInput,
+                ),
+            ):
+                self.dispatching(recv_req)
+            elif isinstance(recv_req, BlockReqInput):
+                for worker in self.workers:
+                    worker.send_pyobj(recv_req)
+            else:
+                # Send other control messages to first worker of tp group
+                for worker in self.workers[:: self.control_message_step]:
+                    worker.send_pyobj(recv_req)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_dp_attention_schedulers"><code class="name flex">
+<span>def <span class="ident">launch_dp_attention_schedulers</span></span>(<span>self, server_args, port_args)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launch_dp_attention_schedulers(self, server_args, port_args):
+    self.launch_tensor_parallel_group(server_args, port_args, 0, None)
+    dp_port_args = []
+    for dp_rank in range(server_args.dp_size):
+        dp_port_args.append(PortArgs.init_new(server_args, dp_rank))
+    return dp_port_args</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_dp_schedulers"><code class="name flex">
+<span>def <span class="ident">launch_dp_schedulers</span></span>(<span>self, server_args, port_args)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launch_dp_schedulers(self, server_args, port_args):
+    base_gpu_id = 0
+
+    threads = []
+    sockets = []
+    dp_port_args = []
+    ready_events = []
+    for dp_rank in range(server_args.dp_size):
+        tmp_port_args = PortArgs.init_new(server_args)
+        tmp_port_args.tokenizer_ipc_name = port_args.tokenizer_ipc_name
+        tmp_port_args.detokenizer_ipc_name = port_args.detokenizer_ipc_name
+        dp_port_args.append(tmp_port_args)
+
+        # This port is checked free in PortArgs.init_new.
+        # We hold it first so that the next dp worker gets a different port
+        sockets.append(bind_port(tmp_port_args.nccl_port))
+
+        ready_event = threading.Event()
+        ready_events.append(ready_event)
+
+        # Create a thread for each worker
+        thread = threading.Thread(
+            target=self.launch_tensor_parallel_group_thread,
+            args=(server_args, tmp_port_args, base_gpu_id, dp_rank, ready_event),
+        )
+        threads.append(thread)
+        base_gpu_id += server_args.tp_size * server_args.gpu_id_step
+
+    # Free all sockets before starting the threads to launch TP workers
+    for sock in sockets:
+        sock.close()
+
+    # Start all threads
+    for thread in threads:
+        thread.start()
+    for event in ready_events:
+        event.wait()
+
+    return dp_port_args</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_tensor_parallel_group"><code class="name flex">
+<span>def <span class="ident">launch_tensor_parallel_group</span></span>(<span>self,<br>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>port_args: <a title="sglang.srt.server_args.PortArgs" href="../server_args.html#sglang.srt.server_args.PortArgs">PortArgs</a>,<br>base_gpu_id: int,<br>dp_rank: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launch_tensor_parallel_group(
+    self,
+    server_args: ServerArgs,
+    port_args: PortArgs,
+    base_gpu_id: int,
+    dp_rank: int,
+):
+    if not server_args.enable_dp_attention:
+        logger.info(f&#34;Launch DP{dp_rank} starting at GPU #{base_gpu_id}.&#34;)
+
+    memory_saver_adapter = TorchMemorySaverAdapter.create(
+        enable=server_args.enable_memory_saver
+    )
+
+    scheduler_pipe_readers = []
+
+    nnodes_per_tp_group = max(server_args.nnodes // server_args.pp_size, 1)
+    tp_size_per_node = server_args.tp_size // nnodes_per_tp_group
+    tp_rank_range = range(
+        tp_size_per_node * (server_args.node_rank % nnodes_per_tp_group),
+        tp_size_per_node * (server_args.node_rank % nnodes_per_tp_group + 1),
+    )
+
+    pp_size_per_node = max(server_args.pp_size // server_args.nnodes, 1)
+    pp_rank_range = range(
+        pp_size_per_node * (server_args.node_rank // nnodes_per_tp_group),
+        pp_size_per_node * (server_args.node_rank // nnodes_per_tp_group + 1),
+    )
+
+    for pp_rank in pp_rank_range:
+        for tp_rank in tp_rank_range:
+            rank_port_args = port_args
+
+            if server_args.enable_dp_attention:
+                # dp attention has different sharding logic
+                _, _, dp_rank = compute_dp_attention_world_info(
+                    server_args.enable_dp_attention,
+                    tp_rank,
+                    server_args.tp_size,
+                    server_args.dp_size,
+                )
+                # compute zmq ports for this dp rank
+                rank_port_args = PortArgs.init_new(server_args, dp_rank)
+                # Data parallelism reuses the tensor parallelism group,
+                # so all dp ranks should use the same nccl port.
+                rank_port_args.nccl_port = port_args.nccl_port
+
+            reader, writer = mp.Pipe(duplex=False)
+            gpu_id = (
+                server_args.base_gpu_id
+                + base_gpu_id
+                + ((pp_rank % pp_size_per_node) * tp_size_per_node)
+                + (tp_rank % tp_size_per_node) * server_args.gpu_id_step
+            )
+            moe_ep_rank = tp_rank // (server_args.tp_size // server_args.ep_size)
+            proc = mp.Process(
+                target=run_scheduler_process,
+                args=(
+                    server_args,
+                    rank_port_args,
+                    gpu_id,
+                    tp_rank,
+                    moe_ep_rank,
+                    pp_rank,
+                    dp_rank,
+                    writer,
+                    self.balance_meta,
+                ),
+            )
+            with memory_saver_adapter.configure_subprocess():
+                proc.start()
+            self.scheduler_procs.append(proc)
+            scheduler_pipe_readers.append(reader)
+
+    # Wait for model to finish loading
+    scheduler_info = []
+    for i in range(len(scheduler_pipe_readers)):
+        scheduler_info.append(scheduler_pipe_readers[i].recv())
+
+    self.max_total_num_tokens = scheduler_info[0][&#34;max_total_num_tokens&#34;]
+    self.max_req_input_len = scheduler_info[0][&#34;max_req_input_len&#34;]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_tensor_parallel_group_thread"><code class="name flex">
+<span>def <span class="ident">launch_tensor_parallel_group_thread</span></span>(<span>self,<br>server_args: <a title="sglang.srt.server_args.ServerArgs" href="../server_args.html#sglang.srt.server_args.ServerArgs">ServerArgs</a>,<br>port_args: <a title="sglang.srt.server_args.PortArgs" href="../server_args.html#sglang.srt.server_args.PortArgs">PortArgs</a>,<br>base_gpu_id: int,<br>dp_rank: int,<br>ready_event: threading.Event)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launch_tensor_parallel_group_thread(
+    self,
+    server_args: ServerArgs,
+    port_args: PortArgs,
+    base_gpu_id: int,
+    dp_rank: int,
+    ready_event: threading.Event,
+):
+    self.launch_tensor_parallel_group(server_args, port_args, base_gpu_id, dp_rank)
+    ready_event.set()
+
+    # This thread cannot be closed because otherwise the `kill_itself_when_parent_died`
+    # function in scheduler.py will kill the scheduler.
+    while True:
+        time.sleep(30 * 24 * 3600)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.minimum_tokens_scheduler"><code class="name flex">
+<span>def <span class="ident">minimum_tokens_scheduler</span></span>(<span>self, req)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def minimum_tokens_scheduler(self, req):
+    # This variable corresponds to the balance_id in TokenizedGenerateReqInput.
+    # We use it to to control the number of onfly tokens (requests dispatched to workers but not yet received).
+    def get_next_global_balance_id() -&gt; int:
+        INT32_MAX = 2147483647
+        current_id = self.global_balance_id
+        self.global_balance_id = (self.global_balance_id + 1) % INT32_MAX
+        return current_id
+
+    req.dp_balance_id = get_next_global_balance_id()
+    with self.balance_meta.mutex:
+        # 1. local_tokens represents the tokens currently inferring on the worker,
+        #  while onfly refers to the requests dispatched by the dispatcher but not yet received by the scheduler.
+        onfly_info = self.balance_meta.get_shared_onfly()
+        local_tokens = self.balance_meta.get_shared_local_tokens()
+        total_tokens = [
+            local_token + sum(onfly_dict.values())
+            for local_token, onfly_dict in zip(local_tokens, onfly_info)
+        ]
+        target_worker = total_tokens.index(min(total_tokens))
+        onfly_info[target_worker][req.dp_balance_id] = len(req.input_ids)
+        # 2. write the new onfly info to the shm
+        self.balance_meta.set_shared_onfly_info(onfly_info)
+
+    # logger.info(f&#34;dp workers {local_tokens=}, {onfly_info=}, {target_worker=}&#34;)
+    self.workers[target_worker].send_pyobj(req)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.round_robin_scheduler"><code class="name flex">
+<span>def <span class="ident">round_robin_scheduler</span></span>(<span>self,<br>req: <a title="sglang.srt.managers.schedule_batch.Req" href="schedule_batch.html#sglang.srt.managers.schedule_batch.Req">Req</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def round_robin_scheduler(self, req: Req):
+    if self.server_args.disaggregation_mode == &#34;null&#34;:
+        if req.data_parallel_rank is not None:
+            logger.debug(f&#34;Direct routing to DP rank {req.data_parallel_rank}&#34;)
+            self.workers[req.data_parallel_rank].send_pyobj(req)
+        else:
+            self.workers[self.round_robin_counter].send_pyobj(req)
+            self.round_robin_counter = (self.round_robin_counter + 1) % len(
+                self.workers
+            )
+    else:
+        if req.data_parallel_rank is not None:
+            logger.debug(f&#34;Direct routing to DP rank {req.data_parallel_rank}&#34;)
+            self.workers[req.data_parallel_rank].send_pyobj(req)
+        else:
+            self.workers[req.bootstrap_room % len(self.workers)].send_pyobj(req)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.DataParallelController.shortest_queue_scheduler"><code class="name flex">
+<span>def <span class="ident">shortest_queue_scheduler</span></span>(<span>self, input_requests)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def shortest_queue_scheduler(self, input_requests):
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod"><code class="flex name class">
+<span>class <span class="ident">LoadBalanceMethod</span></span>
+<span>(</span><span>*args, **kwds)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class LoadBalanceMethod(Enum):
+    &#34;&#34;&#34;Load balance method.&#34;&#34;&#34;
+
+    ROUND_ROBIN = auto()
+    SHORTEST_QUEUE = auto()
+    MINIMUM_TOKENS = auto()
+
+    @classmethod
+    def from_str(cls, method: str):
+        method = method.upper()
+        try:
+            return cls[method]
+        except KeyError as exc:
+            raise ValueError(f&#34;Invalid load balance method: {method}&#34;) from exc</code></pre>
+</details>
+<div class="desc"><p>Load balance method.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.MINIMUM_TOKENS"><code class="name">var <span class="ident">MINIMUM_TOKENS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.ROUND_ROBIN"><code class="name">var <span class="ident">ROUND_ROBIN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.SHORTEST_QUEUE"><code class="name">var <span class="ident">SHORTEST_QUEUE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.from_str"><code class="name flex">
+<span>def <span class="ident">from_str</span></span>(<span>method: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.managers" href="index.html">sglang.srt.managers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.managers.data_parallel_controller.run_data_parallel_controller_process" href="#sglang.srt.managers.data_parallel_controller.run_data_parallel_controller_process">run_data_parallel_controller_process</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController" href="#sglang.srt.managers.data_parallel_controller.DataParallelController">DataParallelController</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.event_loop" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.event_loop">event_loop</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_dp_attention_schedulers" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.launch_dp_attention_schedulers">launch_dp_attention_schedulers</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_dp_schedulers" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.launch_dp_schedulers">launch_dp_schedulers</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_tensor_parallel_group" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.launch_tensor_parallel_group">launch_tensor_parallel_group</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.launch_tensor_parallel_group_thread" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.launch_tensor_parallel_group_thread">launch_tensor_parallel_group_thread</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.minimum_tokens_scheduler" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.minimum_tokens_scheduler">minimum_tokens_scheduler</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.round_robin_scheduler" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.round_robin_scheduler">round_robin_scheduler</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.DataParallelController.shortest_queue_scheduler" href="#sglang.srt.managers.data_parallel_controller.DataParallelController.shortest_queue_scheduler">shortest_queue_scheduler</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod" href="#sglang.srt.managers.data_parallel_controller.LoadBalanceMethod">LoadBalanceMethod</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.MINIMUM_TOKENS" href="#sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.MINIMUM_TOKENS">MINIMUM_TOKENS</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.ROUND_ROBIN" href="#sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.ROUND_ROBIN">ROUND_ROBIN</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.SHORTEST_QUEUE" href="#sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.SHORTEST_QUEUE">SHORTEST_QUEUE</a></code></li>
+<li><code><a title="sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.from_str" href="#sglang.srt.managers.data_parallel_controller.LoadBalanceMethod.from_str">from_str</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

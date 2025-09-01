@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.lang.ir API documentation</title>
+<meta name="description" content="The intermediate representation.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.lang.ir</code></h1>
+</header>
+<section id="section-intro">
+<p>The intermediate representation.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.lang.ir.SglArgument"><code class="flex name class">
+<span>class <span class="ident">SglArgument</span></span>
+<span>(</span><span>name: str, value: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglArgument(SglExpr):
+    def __init__(self, name: str, value: str):
+        super().__init__()
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return f&#34;Argument(name={self.name}, value={repr(self.value)})&#34;
+
+    def __len__(self):
+        return len(self.value)
+
+    def __getitem__(self, i):
+        return self.value[i]
+
+    def __int__(self):
+        return self.value
+
+    def __bool__(self):
+        return self.value
+
+    def __format__(self, *args):
+        raise TypeError(
+            &#34;Cannot put argument inside a f-string. &#34;
+            &#34;This is not compatible with the tracer. &#34;
+        )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglCommitLazy"><code class="flex name class">
+<span>class <span class="ident">SglCommitLazy</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglCommitLazy(SglExpr):
+    def __init__(self):
+        super().__init__()
+
+    def __repr__(self):
+        return &#34;CommitLazy()&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglConcateAndAppend"><code class="flex name class">
+<span>class <span class="ident">SglConcateAndAppend</span></span>
+<span>(</span><span>states)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglConcateAndAppend(SglExpr):
+    def __init__(self, states):
+        super().__init__()
+        self.states = states
+
+    def __repr__(self):
+        return f&#34;ConcatenateAndAppend(&#39;{self.states}&#39;)&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglConstantText"><code class="flex name class">
+<span>class <span class="ident">SglConstantText</span></span>
+<span>(</span><span>value: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglConstantText(SglExpr):
+    def __init__(self, value: str):
+        super().__init__()
+        self.value = value
+
+    def __repr__(self):
+        return f&#34;Constant({repr(self.value)})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglExpr"><code class="flex name class">
+<span>class <span class="ident">SglExpr</span></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglExpr:
+    node_ct = 0
+
+    def __init__(self):
+        self.node_id = SglExpr.node_ct
+        self.prev_node = None
+        self.pid = None
+        SglExpr.node_ct += 1
+
+    def __add__(self, other):
+        if isinstance(other, str):
+            other = SglConstantText(other)
+        assert isinstance(other, SglExpr)
+
+        return self.concatenate_ir(self, other)
+
+    def __radd__(self, other):
+        if isinstance(other, str):
+            other = SglConstantText(other)
+        assert isinstance(other, SglExpr), f&#34;{other}&#34;
+
+        return self.concatenate_ir(other, self)
+
+    def concatenate_ir(self, a, b):
+        if isinstance(a, SglExprList):
+            if isinstance(b, SglExprList):
+                return SglExprList(a.expr_list + b.expr_list)
+            else:
+                return SglExprList(a.expr_list + [b])
+        elif isinstance(b, SglExprList):
+            return SglExprList([a] + b.expr_list)
+
+        return SglExprList([a, b])
+
+    def print_graph_dfs(self):
+        ret = [&#34;&#34;]
+        visited = set()
+
+        def dfs_print(x):
+            if x is None or x in visited:
+                return
+            visited.add(x)
+
+            # Print dependency
+            if x.prev_node is not None:
+                dfs_print(x.prev_node)
+
+            if isinstance(x, SglExprList):
+                for y in x.expr_list:
+                    dfs_print(y)
+            # elif isinstance(x, SglRole):
+            #    dfs_print(x.expr)
+            elif isinstance(x, SglVariable):
+                dfs_print(x.source)
+
+            # Print the node itself
+            if isinstance(x, (SglFork, SglGetForkItem)):
+                ret[0] += f&#34;%{x.node_id} = {x}\n&#34;
+            else:
+                if x.prev_node is not None:
+                    ret[0] += (
+                        f&#34;%{x.node_id} = %{x.prev_node.node_id} + &#34; + str(x) + &#34;\n&#34;
+                    )
+                else:
+                    ret[0] += f&#34;%{x.node_id} = &#34; + str(x) + &#34;\n&#34;
+
+        dfs_print(self)
+        return ret[0]</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglArgument" href="#sglang.lang.ir.SglArgument">SglArgument</a></li>
+<li><a title="sglang.lang.ir.SglCommitLazy" href="#sglang.lang.ir.SglCommitLazy">SglCommitLazy</a></li>
+<li><a title="sglang.lang.ir.SglConcateAndAppend" href="#sglang.lang.ir.SglConcateAndAppend">SglConcateAndAppend</a></li>
+<li><a title="sglang.lang.ir.SglConstantText" href="#sglang.lang.ir.SglConstantText">SglConstantText</a></li>
+<li><a title="sglang.lang.ir.SglExprList" href="#sglang.lang.ir.SglExprList">SglExprList</a></li>
+<li><a title="sglang.lang.ir.SglFork" href="#sglang.lang.ir.SglFork">SglFork</a></li>
+<li><a title="sglang.lang.ir.SglGen" href="#sglang.lang.ir.SglGen">SglGen</a></li>
+<li><a title="sglang.lang.ir.SglGetForkItem" href="#sglang.lang.ir.SglGetForkItem">SglGetForkItem</a></li>
+<li><a title="sglang.lang.ir.SglImage" href="#sglang.lang.ir.SglImage">SglImage</a></li>
+<li><a title="sglang.lang.ir.SglRoleBegin" href="#sglang.lang.ir.SglRoleBegin">SglRoleBegin</a></li>
+<li><a title="sglang.lang.ir.SglRoleEnd" href="#sglang.lang.ir.SglRoleEnd">SglRoleEnd</a></li>
+<li><a title="sglang.lang.ir.SglSelect" href="#sglang.lang.ir.SglSelect">SglSelect</a></li>
+<li><a title="sglang.lang.ir.SglSeparateReasoning" href="#sglang.lang.ir.SglSeparateReasoning">SglSeparateReasoning</a></li>
+<li><a title="sglang.lang.ir.SglVarScopeBegin" href="#sglang.lang.ir.SglVarScopeBegin">SglVarScopeBegin</a></li>
+<li><a title="sglang.lang.ir.SglVarScopeEnd" href="#sglang.lang.ir.SglVarScopeEnd">SglVarScopeEnd</a></li>
+<li><a title="sglang.lang.ir.SglVariable" href="#sglang.lang.ir.SglVariable">SglVariable</a></li>
+<li><a title="sglang.lang.ir.SglVideo" href="#sglang.lang.ir.SglVideo">SglVideo</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.lang.ir.SglExpr.node_ct"><code class="name">var <span class="ident">node_ct</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.ir.SglExpr.concatenate_ir"><code class="name flex">
+<span>def <span class="ident">concatenate_ir</span></span>(<span>self, a, b)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate_ir(self, a, b):
+    if isinstance(a, SglExprList):
+        if isinstance(b, SglExprList):
+            return SglExprList(a.expr_list + b.expr_list)
+        else:
+            return SglExprList(a.expr_list + [b])
+    elif isinstance(b, SglExprList):
+        return SglExprList([a] + b.expr_list)
+
+    return SglExprList([a, b])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglExpr.print_graph_dfs"><code class="name flex">
+<span>def <span class="ident">print_graph_dfs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print_graph_dfs(self):
+    ret = [&#34;&#34;]
+    visited = set()
+
+    def dfs_print(x):
+        if x is None or x in visited:
+            return
+        visited.add(x)
+
+        # Print dependency
+        if x.prev_node is not None:
+            dfs_print(x.prev_node)
+
+        if isinstance(x, SglExprList):
+            for y in x.expr_list:
+                dfs_print(y)
+        # elif isinstance(x, SglRole):
+        #    dfs_print(x.expr)
+        elif isinstance(x, SglVariable):
+            dfs_print(x.source)
+
+        # Print the node itself
+        if isinstance(x, (SglFork, SglGetForkItem)):
+            ret[0] += f&#34;%{x.node_id} = {x}\n&#34;
+        else:
+            if x.prev_node is not None:
+                ret[0] += (
+                    f&#34;%{x.node_id} = %{x.prev_node.node_id} + &#34; + str(x) + &#34;\n&#34;
+                )
+            else:
+                ret[0] += f&#34;%{x.node_id} = &#34; + str(x) + &#34;\n&#34;
+
+    dfs_print(self)
+    return ret[0]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.lang.ir.SglExprList"><code class="flex name class">
+<span>class <span class="ident">SglExprList</span></span>
+<span>(</span><span>expr_list: List[<a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a>])</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglExprList(SglExpr):
+    def __init__(self, expr_list: List[SglExpr]):
+        super().__init__()
+        self.expr_list = expr_list
+
+    def __repr__(self):
+        return f&#34;ExprList({self.expr_list})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglFork"><code class="flex name class">
+<span>class <span class="ident">SglFork</span></span>
+<span>(</span><span>number: int, position_ids_offset=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglFork(SglExpr):
+    def __init__(self, number: int, position_ids_offset=None):
+        super().__init__()
+        self.number = number
+        self.position_ids_offset = position_ids_offset
+
+    def __repr__(self):
+        return (
+            f&#34;Fork(%{self.prev_node.node_id}, number={self.number}, &#34;
+            f&#34;position_ids_offset={self.position_ids_offset})&#34;
+        )</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglFunction"><code class="flex name class">
+<span>class <span class="ident">SglFunction</span></span>
+<span>(</span><span>func, num_api_spec_tokens=None, bind_arguments=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglFunction:
+    def __init__(self, func, num_api_spec_tokens=None, bind_arguments=None):
+        self.func = func
+        self.num_api_spec_tokens = num_api_spec_tokens
+        self.bind_arguments = bind_arguments or {}
+        self.pin_prefix_rid = None
+
+        # Parse arguments
+        argspec = inspect.getfullargspec(func)
+        assert argspec.args[0] == &#34;s&#34;, &#39;The first argument must be &#34;s&#34;&#39;
+        self.arg_names = argspec.args[1:]
+        self.arg_defaults = argspec.defaults if argspec.defaults is not None else []
+
+    def bind(self, **kwargs):
+        assert all(key in self.arg_names for key in kwargs)
+
+        new_bind_dict = {**self.bind_arguments, **kwargs}
+        return SglFunction(self.func, bind_arguments=new_bind_dict)
+
+    def run(
+        self,
+        *args,
+        max_new_tokens: int = 128,
+        n: int = 1,
+        stop: Optional[Union[str, List[str]]] = None,
+        stop_token_ids: Optional[List[int]] = None,
+        temperature: float = 1.0,
+        top_p: float = 1.0,
+        top_k: int = -1,
+        min_p: float = 0.0,
+        frequency_penalty: float = 0.0,
+        presence_penalty: float = 0.0,
+        ignore_eos: bool = False,
+        return_logprob: Optional[bool] = None,
+        logprob_start_len: Optional[int] = None,
+        top_logprobs_num: Optional[int] = None,
+        return_text_in_logprobs: Optional[bool] = None,
+        stream: bool = False,
+        backend=None,
+        use_thread: bool = True,
+        **kwargs,
+    ):
+        from sglang.lang.interpreter import run_program
+
+        # avoid using [] as the default arg: https://nikos7am.com/posts/mutable-default-arguments/
+        if stop is None:
+            stop = []
+        if stop_token_ids is None:
+            stop_token_ids = []
+
+        default_sampling_para = SglSamplingParams(
+            max_new_tokens=max_new_tokens,
+            n=n,
+            stop=stop,
+            stop_token_ids=stop_token_ids,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            min_p=min_p,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            ignore_eos=ignore_eos,
+            return_logprob=return_logprob,
+            logprob_start_len=logprob_start_len,
+            top_logprobs_num=top_logprobs_num,
+            return_text_in_logprobs=return_text_in_logprobs,
+        )
+        backend = backend or global_config.default_backend
+        return run_program(
+            self,
+            backend,
+            args,
+            kwargs,
+            default_sampling_para,
+            stream,
+            use_thread=use_thread,
+        )
+
+    def run_batch(
+        self,
+        batch_kwargs,
+        *,
+        max_new_tokens: int = 128,
+        n: int = 1,
+        stop: Optional[Union[str, List[str]]] = None,
+        stop_token_ids: Optional[List[int]] = None,
+        temperature: float = 1.0,
+        top_p: float = 1.0,
+        top_k: int = -1,
+        min_p: float = 0.0,
+        frequency_penalty: float = 0.0,
+        presence_penalty: float = 0.0,
+        ignore_eos: bool = False,
+        return_logprob: Optional[bool] = None,
+        logprob_start_len: Optional[int] = None,
+        top_logprobs_num: Optional[int] = None,
+        return_text_in_logprobs: Optional[bool] = None,
+        backend=None,
+        num_threads: Union[str, int] = &#34;auto&#34;,
+        progress_bar: bool = False,
+        generator_style: bool = False,
+    ):
+        from sglang.lang.interpreter import run_program_batch
+
+        if stop is None:
+            stop = []
+        if stop_token_ids is None:
+            stop_token_ids = []
+
+        assert isinstance(batch_kwargs, (list, tuple))
+        if len(batch_kwargs) == 0:
+            return []
+        if not isinstance(batch_kwargs[0], dict):
+            num_programs = len(batch_kwargs)
+            # change the list of argument values to dict of arg_name -&gt; arg_value
+            batch_kwargs = [
+                {self.arg_names[i]: v for i, v in enumerate(arg_values)}
+                for arg_values in batch_kwargs
+                if isinstance(arg_values, (list, tuple))
+                and len(self.arg_names) - len(self.arg_defaults)
+                &lt;= len(arg_values)
+                &lt;= len(self.arg_names)
+            ]
+            # Ensure to raise an exception if the number of arguments mismatch
+            if len(batch_kwargs) != num_programs:
+                raise Exception(&#34;Given arguments mismatch the SGL function signature&#34;)
+
+        default_sampling_para = SglSamplingParams(
+            max_new_tokens=max_new_tokens,
+            n=n,
+            stop=stop,
+            stop_token_ids=stop_token_ids,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            min_p=min_p,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            ignore_eos=ignore_eos,
+            return_logprob=return_logprob,
+            logprob_start_len=logprob_start_len,
+            top_logprobs_num=top_logprobs_num,
+            return_text_in_logprobs=return_text_in_logprobs,
+        )
+        backend = backend or global_config.default_backend
+        return run_program_batch(
+            self,
+            backend,
+            batch_kwargs,
+            default_sampling_para,
+            num_threads,
+            progress_bar,
+            generator_style=generator_style,
+        )
+
+    def trace(self, *, backend=None, **kwargs):
+        from sglang.lang.tracer import trace_program
+
+        backend = backend or global_config.default_backend
+        return trace_program(self, kwargs, backend)
+
+    def cache(self, backend=None):
+        from sglang.lang.interpreter import cache_program
+
+        backend = backend or global_config.default_backend
+        return cache_program(self, backend)
+
+    def compile(self, *, backend=None):
+        from sglang.lang.compiler import compile_func
+
+        return compile_func(self, backend)
+
+    def __call__(self, *args, **kwargs):
+        from sglang.lang.tracer import TracingScope
+
+        tracing_scope = TracingScope.get_current_scope()
+        if tracing_scope is None:
+            return self.run(*args, **kwargs)
+        else:
+            kwargs[&#34;backend&#34;] = tracing_scope.tracer_state.backend
+            return self.trace(*args, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.ir.SglFunction.bind"><code class="name flex">
+<span>def <span class="ident">bind</span></span>(<span>self, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bind(self, **kwargs):
+    assert all(key in self.arg_names for key in kwargs)
+
+    new_bind_dict = {**self.bind_arguments, **kwargs}
+    return SglFunction(self.func, bind_arguments=new_bind_dict)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglFunction.cache"><code class="name flex">
+<span>def <span class="ident">cache</span></span>(<span>self, backend=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache(self, backend=None):
+    from sglang.lang.interpreter import cache_program
+
+    backend = backend or global_config.default_backend
+    return cache_program(self, backend)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglFunction.compile"><code class="name flex">
+<span>def <span class="ident">compile</span></span>(<span>self, *, backend=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compile(self, *, backend=None):
+    from sglang.lang.compiler import compile_func
+
+    return compile_func(self, backend)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglFunction.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self,<br>*args,<br>max_new_tokens: int = 128,<br>n: int = 1,<br>stop: str | List[str] | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float = 1.0,<br>top_p: float = 1.0,<br>top_k: int = -1,<br>min_p: float = 0.0,<br>frequency_penalty: float = 0.0,<br>presence_penalty: float = 0.0,<br>ignore_eos: bool = False,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = None,<br>top_logprobs_num: int | None = None,<br>return_text_in_logprobs: bool | None = None,<br>stream: bool = False,<br>backend=None,<br>use_thread: bool = True,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(
+    self,
+    *args,
+    max_new_tokens: int = 128,
+    n: int = 1,
+    stop: Optional[Union[str, List[str]]] = None,
+    stop_token_ids: Optional[List[int]] = None,
+    temperature: float = 1.0,
+    top_p: float = 1.0,
+    top_k: int = -1,
+    min_p: float = 0.0,
+    frequency_penalty: float = 0.0,
+    presence_penalty: float = 0.0,
+    ignore_eos: bool = False,
+    return_logprob: Optional[bool] = None,
+    logprob_start_len: Optional[int] = None,
+    top_logprobs_num: Optional[int] = None,
+    return_text_in_logprobs: Optional[bool] = None,
+    stream: bool = False,
+    backend=None,
+    use_thread: bool = True,
+    **kwargs,
+):
+    from sglang.lang.interpreter import run_program
+
+    # avoid using [] as the default arg: https://nikos7am.com/posts/mutable-default-arguments/
+    if stop is None:
+        stop = []
+    if stop_token_ids is None:
+        stop_token_ids = []
+
+    default_sampling_para = SglSamplingParams(
+        max_new_tokens=max_new_tokens,
+        n=n,
+        stop=stop,
+        stop_token_ids=stop_token_ids,
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
+        min_p=min_p,
+        frequency_penalty=frequency_penalty,
+        presence_penalty=presence_penalty,
+        ignore_eos=ignore_eos,
+        return_logprob=return_logprob,
+        logprob_start_len=logprob_start_len,
+        top_logprobs_num=top_logprobs_num,
+        return_text_in_logprobs=return_text_in_logprobs,
+    )
+    backend = backend or global_config.default_backend
+    return run_program(
+        self,
+        backend,
+        args,
+        kwargs,
+        default_sampling_para,
+        stream,
+        use_thread=use_thread,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglFunction.run_batch"><code class="name flex">
+<span>def <span class="ident">run_batch</span></span>(<span>self,<br>batch_kwargs,<br>*,<br>max_new_tokens: int = 128,<br>n: int = 1,<br>stop: str | List[str] | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float = 1.0,<br>top_p: float = 1.0,<br>top_k: int = -1,<br>min_p: float = 0.0,<br>frequency_penalty: float = 0.0,<br>presence_penalty: float = 0.0,<br>ignore_eos: bool = False,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = None,<br>top_logprobs_num: int | None = None,<br>return_text_in_logprobs: bool | None = None,<br>backend=None,<br>num_threads: str | int = 'auto',<br>progress_bar: bool = False,<br>generator_style: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_batch(
+    self,
+    batch_kwargs,
+    *,
+    max_new_tokens: int = 128,
+    n: int = 1,
+    stop: Optional[Union[str, List[str]]] = None,
+    stop_token_ids: Optional[List[int]] = None,
+    temperature: float = 1.0,
+    top_p: float = 1.0,
+    top_k: int = -1,
+    min_p: float = 0.0,
+    frequency_penalty: float = 0.0,
+    presence_penalty: float = 0.0,
+    ignore_eos: bool = False,
+    return_logprob: Optional[bool] = None,
+    logprob_start_len: Optional[int] = None,
+    top_logprobs_num: Optional[int] = None,
+    return_text_in_logprobs: Optional[bool] = None,
+    backend=None,
+    num_threads: Union[str, int] = &#34;auto&#34;,
+    progress_bar: bool = False,
+    generator_style: bool = False,
+):
+    from sglang.lang.interpreter import run_program_batch
+
+    if stop is None:
+        stop = []
+    if stop_token_ids is None:
+        stop_token_ids = []
+
+    assert isinstance(batch_kwargs, (list, tuple))
+    if len(batch_kwargs) == 0:
+        return []
+    if not isinstance(batch_kwargs[0], dict):
+        num_programs = len(batch_kwargs)
+        # change the list of argument values to dict of arg_name -&gt; arg_value
+        batch_kwargs = [
+            {self.arg_names[i]: v for i, v in enumerate(arg_values)}
+            for arg_values in batch_kwargs
+            if isinstance(arg_values, (list, tuple))
+            and len(self.arg_names) - len(self.arg_defaults)
+            &lt;= len(arg_values)
+            &lt;= len(self.arg_names)
+        ]
+        # Ensure to raise an exception if the number of arguments mismatch
+        if len(batch_kwargs) != num_programs:
+            raise Exception(&#34;Given arguments mismatch the SGL function signature&#34;)
+
+    default_sampling_para = SglSamplingParams(
+        max_new_tokens=max_new_tokens,
+        n=n,
+        stop=stop,
+        stop_token_ids=stop_token_ids,
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
+        min_p=min_p,
+        frequency_penalty=frequency_penalty,
+        presence_penalty=presence_penalty,
+        ignore_eos=ignore_eos,
+        return_logprob=return_logprob,
+        logprob_start_len=logprob_start_len,
+        top_logprobs_num=top_logprobs_num,
+        return_text_in_logprobs=return_text_in_logprobs,
+    )
+    backend = backend or global_config.default_backend
+    return run_program_batch(
+        self,
+        backend,
+        batch_kwargs,
+        default_sampling_para,
+        num_threads,
+        progress_bar,
+        generator_style=generator_style,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglFunction.trace"><code class="name flex">
+<span>def <span class="ident">trace</span></span>(<span>self, *, backend=None, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trace(self, *, backend=None, **kwargs):
+    from sglang.lang.tracer import trace_program
+
+    backend = backend or global_config.default_backend
+    return trace_program(self, kwargs, backend)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.lang.ir.SglGen"><code class="flex name class">
+<span>class <span class="ident">SglGen</span></span>
+<span>(</span><span>name: str | None = None,<br>max_new_tokens: int | None = None,<br>min_new_tokens: int | None = None,<br>n: int | None = None,<br>stop: str | List[str] | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float | None = None,<br>top_p: float | None = None,<br>top_k: int | None = None,<br>min_p: float | None = None,<br>frequency_penalty: float | None = None,<br>presence_penalty: float | None = None,<br>ignore_eos: bool | None = None,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = None,<br>top_logprobs_num: int | None = None,<br>return_text_in_logprobs: bool | None = None,<br>dtype: type | None = None,<br>regex: str | None = None,<br>json_schema: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglGen(SglExpr):
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        max_new_tokens: Optional[int] = None,
+        min_new_tokens: Optional[int] = None,
+        n: Optional[int] = None,
+        stop: Optional[Union[str, List[str]]] = None,
+        stop_token_ids: Optional[List[int]] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        top_k: Optional[int] = None,
+        min_p: Optional[float] = None,
+        frequency_penalty: Optional[float] = None,
+        presence_penalty: Optional[float] = None,
+        ignore_eos: Optional[bool] = None,
+        return_logprob: Optional[bool] = None,
+        logprob_start_len: Optional[int] = None,
+        top_logprobs_num: Optional[int] = None,
+        return_text_in_logprobs: Optional[bool] = None,
+        dtype: Optional[type] = None,
+        regex: Optional[str] = None,
+        json_schema: Optional[str] = None,
+    ):
+        &#34;&#34;&#34;Call the model to generate. See the meaning of the arguments in docs/backend/sampling_params.md&#34;&#34;&#34;
+        super().__init__()
+        self.name = name
+        self.sampling_params = SglSamplingParams(
+            max_new_tokens=max_new_tokens,
+            min_new_tokens=min_new_tokens,
+            n=n,
+            stop=stop,
+            stop_token_ids=stop_token_ids,
+            temperature=temperature,
+            top_p=top_p,
+            top_k=top_k,
+            min_p=min_p,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            ignore_eos=ignore_eos,
+            return_logprob=return_logprob,
+            logprob_start_len=logprob_start_len,
+            top_logprobs_num=top_logprobs_num,
+            return_text_in_logprobs=return_text_in_logprobs,
+            dtype=dtype,
+            regex=regex,
+            json_schema=json_schema,
+        )
+
+    def __repr__(self):
+        return f&#34;Gen(&#39;{self.name}&#39;)&#34;</code></pre>
+</details>
+<div class="desc"><p>Call the model to generate. See the meaning of the arguments in docs/backend/sampling_params.md</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglGetForkItem"><code class="flex name class">
+<span>class <span class="ident">SglGetForkItem</span></span>
+<span>(</span><span>index: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglGetForkItem(SglExpr):
+    def __init__(self, index: int):
+        super().__init__()
+        self.index = index
+
+    def __repr__(self):
+        return f&#34;GetForkItem(%{self.prev_node.node_id}, index={self.index})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglImage"><code class="flex name class">
+<span>class <span class="ident">SglImage</span></span>
+<span>(</span><span>path: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglImage(SglExpr):
+    def __init__(self, path: str):
+        self.path = path
+
+    def __repr__(self) -&gt; str:
+        return f&#34;SglImage({self.path})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglRoleBegin"><code class="flex name class">
+<span>class <span class="ident">SglRoleBegin</span></span>
+<span>(</span><span>role: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglRoleBegin(SglExpr):
+    def __init__(self, role: str):
+        super().__init__()
+        self.role = role
+
+    def __repr__(self):
+        return f&#34;RoleBegin({self.role})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglRoleEnd"><code class="flex name class">
+<span>class <span class="ident">SglRoleEnd</span></span>
+<span>(</span><span>role: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglRoleEnd(SglExpr):
+    def __init__(self, role: str):
+        super().__init__()
+        self.role = role
+
+    def __repr__(self):
+        return f&#34;RoleEnd({self.role})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams"><code class="flex name class">
+<span>class <span class="ident">SglSamplingParams</span></span>
+<span>(</span><span>max_new_tokens: int = 128,<br>min_new_tokens: int = 0,<br>n: int = 1,<br>stop: str | List[str] = (),<br>stop_token_ids: List[int] | None = (),<br>temperature: float = 1.0,<br>top_p: float = 1.0,<br>top_k: int = -1,<br>min_p: float = 0.0,<br>frequency_penalty: float = 0.0,<br>presence_penalty: float = 0.0,<br>ignore_eos: bool = False,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = (None,),<br>top_logprobs_num: int | None = (None,),<br>return_text_in_logprobs: bool | None = (None,),<br>json_schema: str | None = None,<br>dtype: str | None = None,<br>regex: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclasses.dataclass
+class SglSamplingParams:
+    max_new_tokens: int = 128
+    min_new_tokens: int = 0
+    n: int = 1
+    stop: Union[str, List[str]] = ()
+    stop_token_ids: Optional[List[int]] = ()
+    temperature: float = 1.0
+    top_p: float = 1.0
+    top_k: int = -1  # -1 means disable
+    min_p: float = 0.0
+    frequency_penalty: float = 0.0
+    presence_penalty: float = 0.0
+    ignore_eos: bool = False
+    return_logprob: Optional[bool] = None
+    logprob_start_len: Optional[int] = (None,)
+    top_logprobs_num: Optional[int] = (None,)
+    return_text_in_logprobs: Optional[bool] = (None,)
+    json_schema: Optional[str] = None
+
+    # for constrained generation, not included in to_xxx_kwargs
+    dtype: Optional[str] = None
+    regex: Optional[str] = None
+
+    def clone(self):
+        return SglSamplingParams(
+            self.max_new_tokens,
+            self.min_new_tokens,
+            self.n,
+            self.stop,
+            self.stop_token_ids,
+            self.temperature,
+            self.top_p,
+            self.top_k,
+            self.min_p,
+            self.frequency_penalty,
+            self.presence_penalty,
+            self.ignore_eos,
+            self.return_logprob,
+            self.logprob_start_len,
+            self.top_logprobs_num,
+            self.return_text_in_logprobs,
+            self.json_schema,
+        )
+
+    def to_openai_kwargs(self):
+        # OpenAI does not support top_k, so we drop it here
+        if self.regex is not None:
+            warnings.warn(&#34;Regular expression is not supported in the OpenAI backend.&#34;)
+        return {
+            &#34;max_tokens&#34;: self.max_new_tokens,
+            &#34;max_completion_tokens&#34;: self.max_new_tokens,
+            &#34;n&#34;: self.n,
+            &#34;stop&#34;: self.stop or None,
+            &#34;temperature&#34;: self.temperature,
+            &#34;top_p&#34;: self.top_p,
+            &#34;frequency_penalty&#34;: self.frequency_penalty,
+            &#34;presence_penalty&#34;: self.presence_penalty,
+        }
+
+    def to_vertexai_kwargs(self):
+        if self.regex is not None:
+            warnings.warn(
+                &#34;Regular expression is not supported in the VertexAI backend.&#34;
+            )
+        return {
+            &#34;candidate_count&#34;: 1,
+            &#34;max_output_tokens&#34;: self.max_new_tokens,
+            &#34;stop_sequences&#34;: self.stop,
+            &#34;temperature&#34;: self.temperature,
+            &#34;top_p&#34;: self.top_p,
+            &#34;top_k&#34;: self.top_k if self.top_k &gt; 0 else None,
+        }
+
+    def to_anthropic_kwargs(self):
+        # Anthropic does not support frequency_penalty or presence_penalty, so we drop it here
+        if self.regex is not None:
+            warnings.warn(
+                &#34;Regular expression is not supported in the Anthropic backend.&#34;
+            )
+        return {
+            &#34;max_tokens&#34;: self.max_new_tokens,
+            &#34;stop_sequences&#34;: (
+                self.stop if isinstance(self.stop, (list, tuple)) else [self.stop]
+            ),
+            &#34;temperature&#34;: self.temperature,
+            &#34;top_p&#34;: self.top_p,
+            &#34;top_k&#34;: self.top_k,
+        }
+
+    def to_litellm_kwargs(self):
+        if self.regex is not None:
+            warnings.warn(&#34;Regular expression is not supported in the LiteLLM backend.&#34;)
+        return {
+            &#34;max_tokens&#34;: self.max_new_tokens,
+            &#34;stop&#34;: self.stop or None,
+            &#34;temperature&#34;: self.temperature,
+            &#34;top_p&#34;: self.top_p,
+            &#34;frequency_penalty&#34;: self.frequency_penalty,
+            &#34;presence_penalty&#34;: self.presence_penalty,
+        }
+
+    def to_srt_kwargs(self):
+        return {
+            &#34;max_new_tokens&#34;: self.max_new_tokens,
+            &#34;min_new_tokens&#34;: self.min_new_tokens,
+            &#34;n&#34;: self.n,
+            &#34;stop&#34;: self.stop,
+            &#34;stop_token_ids&#34;: self.stop_token_ids,
+            &#34;temperature&#34;: self.temperature,
+            &#34;top_p&#34;: self.top_p,
+            &#34;top_k&#34;: self.top_k,
+            &#34;min_p&#34;: self.min_p,
+            &#34;frequency_penalty&#34;: self.frequency_penalty,
+            &#34;presence_penalty&#34;: self.presence_penalty,
+            &#34;ignore_eos&#34;: self.ignore_eos,
+            &#34;regex&#34;: self.regex,
+            &#34;json_schema&#34;: self.json_schema,
+        }</code></pre>
+</details>
+<div class="desc"><p>SglSamplingParams(max_new_tokens: int = 128, min_new_tokens: int = 0, n: int = 1, stop: Union[str, List[str]] = (), stop_token_ids: Optional[List[int]] = (), temperature: float = 1.0, top_p: float = 1.0, top_k: int = -1, min_p: float = 0.0, frequency_penalty: float = 0.0, presence_penalty: float = 0.0, ignore_eos: bool = False, return_logprob: Optional[bool] = None, logprob_start_len: Optional[int] = (None,), top_logprobs_num: Optional[int] = (None,), return_text_in_logprobs: Optional[bool] = (None,), json_schema: Optional[str] = None, dtype: Optional[str] = None, regex: Optional[str] = None)</p></div>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.lang.ir.SglSamplingParams.dtype"><code class="name">var <span class="ident">dtype</span> : str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.frequency_penalty"><code class="name">var <span class="ident">frequency_penalty</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.ignore_eos"><code class="name">var <span class="ident">ignore_eos</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.json_schema"><code class="name">var <span class="ident">json_schema</span> : str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.logprob_start_len"><code class="name">var <span class="ident">logprob_start_len</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.max_new_tokens"><code class="name">var <span class="ident">max_new_tokens</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.min_new_tokens"><code class="name">var <span class="ident">min_new_tokens</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.min_p"><code class="name">var <span class="ident">min_p</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.n"><code class="name">var <span class="ident">n</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.presence_penalty"><code class="name">var <span class="ident">presence_penalty</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.regex"><code class="name">var <span class="ident">regex</span> : str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.return_logprob"><code class="name">var <span class="ident">return_logprob</span> : bool | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.return_text_in_logprobs"><code class="name">var <span class="ident">return_text_in_logprobs</span> : bool | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.stop"><code class="name">var <span class="ident">stop</span> : str | List[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.stop_token_ids"><code class="name">var <span class="ident">stop_token_ids</span> : List[int] | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.temperature"><code class="name">var <span class="ident">temperature</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.top_k"><code class="name">var <span class="ident">top_k</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.top_logprobs_num"><code class="name">var <span class="ident">top_logprobs_num</span> : int | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.top_p"><code class="name">var <span class="ident">top_p</span> : float</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.ir.SglSamplingParams.clone"><code class="name flex">
+<span>def <span class="ident">clone</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def clone(self):
+    return SglSamplingParams(
+        self.max_new_tokens,
+        self.min_new_tokens,
+        self.n,
+        self.stop,
+        self.stop_token_ids,
+        self.temperature,
+        self.top_p,
+        self.top_k,
+        self.min_p,
+        self.frequency_penalty,
+        self.presence_penalty,
+        self.ignore_eos,
+        self.return_logprob,
+        self.logprob_start_len,
+        self.top_logprobs_num,
+        self.return_text_in_logprobs,
+        self.json_schema,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.to_anthropic_kwargs"><code class="name flex">
+<span>def <span class="ident">to_anthropic_kwargs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_anthropic_kwargs(self):
+    # Anthropic does not support frequency_penalty or presence_penalty, so we drop it here
+    if self.regex is not None:
+        warnings.warn(
+            &#34;Regular expression is not supported in the Anthropic backend.&#34;
+        )
+    return {
+        &#34;max_tokens&#34;: self.max_new_tokens,
+        &#34;stop_sequences&#34;: (
+            self.stop if isinstance(self.stop, (list, tuple)) else [self.stop]
+        ),
+        &#34;temperature&#34;: self.temperature,
+        &#34;top_p&#34;: self.top_p,
+        &#34;top_k&#34;: self.top_k,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.to_litellm_kwargs"><code class="name flex">
+<span>def <span class="ident">to_litellm_kwargs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_litellm_kwargs(self):
+    if self.regex is not None:
+        warnings.warn(&#34;Regular expression is not supported in the LiteLLM backend.&#34;)
+    return {
+        &#34;max_tokens&#34;: self.max_new_tokens,
+        &#34;stop&#34;: self.stop or None,
+        &#34;temperature&#34;: self.temperature,
+        &#34;top_p&#34;: self.top_p,
+        &#34;frequency_penalty&#34;: self.frequency_penalty,
+        &#34;presence_penalty&#34;: self.presence_penalty,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.to_openai_kwargs"><code class="name flex">
+<span>def <span class="ident">to_openai_kwargs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_openai_kwargs(self):
+    # OpenAI does not support top_k, so we drop it here
+    if self.regex is not None:
+        warnings.warn(&#34;Regular expression is not supported in the OpenAI backend.&#34;)
+    return {
+        &#34;max_tokens&#34;: self.max_new_tokens,
+        &#34;max_completion_tokens&#34;: self.max_new_tokens,
+        &#34;n&#34;: self.n,
+        &#34;stop&#34;: self.stop or None,
+        &#34;temperature&#34;: self.temperature,
+        &#34;top_p&#34;: self.top_p,
+        &#34;frequency_penalty&#34;: self.frequency_penalty,
+        &#34;presence_penalty&#34;: self.presence_penalty,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.to_srt_kwargs"><code class="name flex">
+<span>def <span class="ident">to_srt_kwargs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_srt_kwargs(self):
+    return {
+        &#34;max_new_tokens&#34;: self.max_new_tokens,
+        &#34;min_new_tokens&#34;: self.min_new_tokens,
+        &#34;n&#34;: self.n,
+        &#34;stop&#34;: self.stop,
+        &#34;stop_token_ids&#34;: self.stop_token_ids,
+        &#34;temperature&#34;: self.temperature,
+        &#34;top_p&#34;: self.top_p,
+        &#34;top_k&#34;: self.top_k,
+        &#34;min_p&#34;: self.min_p,
+        &#34;frequency_penalty&#34;: self.frequency_penalty,
+        &#34;presence_penalty&#34;: self.presence_penalty,
+        &#34;ignore_eos&#34;: self.ignore_eos,
+        &#34;regex&#34;: self.regex,
+        &#34;json_schema&#34;: self.json_schema,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.lang.ir.SglSamplingParams.to_vertexai_kwargs"><code class="name flex">
+<span>def <span class="ident">to_vertexai_kwargs</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_vertexai_kwargs(self):
+    if self.regex is not None:
+        warnings.warn(
+            &#34;Regular expression is not supported in the VertexAI backend.&#34;
+        )
+    return {
+        &#34;candidate_count&#34;: 1,
+        &#34;max_output_tokens&#34;: self.max_new_tokens,
+        &#34;stop_sequences&#34;: self.stop,
+        &#34;temperature&#34;: self.temperature,
+        &#34;top_p&#34;: self.top_p,
+        &#34;top_k&#34;: self.top_k if self.top_k &gt; 0 else None,
+    }</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.lang.ir.SglSelect"><code class="flex name class">
+<span>class <span class="ident">SglSelect</span></span>
+<span>(</span><span>name: str,<br>choices: List[str],<br>temperature: float,<br>choices_method: <a title="sglang.lang.choices.ChoicesSamplingMethod" href="choices.html#sglang.lang.choices.ChoicesSamplingMethod">ChoicesSamplingMethod</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglSelect(SglExpr):
+
+    def __init__(
+        self,
+        name: str,
+        choices: List[str],
+        temperature: float,
+        choices_method: ChoicesSamplingMethod,
+    ):
+        super().__init__()
+        self.name = name
+        self.choices = choices
+        self.temperature = temperature
+        self.choices_method = choices_method
+
+    def __repr__(self):
+        return f&#34;Select({self.name}, choices={self.choices}, choices_method={self.choices_method})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglSeparateReasoning"><code class="flex name class">
+<span>class <span class="ident">SglSeparateReasoning</span></span>
+<span>(</span><span>model_type: str,<br>expr: <a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglSeparateReasoning(SglExpr):
+    def __init__(self, model_type: str, expr: SglExpr):
+        super().__init__()
+        self.model_type = model_type
+
+        self.expr = expr
+        self.name = None
+        self._process_expr(expr)
+
+    def process_name_for_reasoning(self, name):
+        if not name:
+            raise ValueError(&#34;name must be provided&#34;)
+        return f&#34;{name}_reasoning_content&#34;
+
+    def _process_expr(self, expr):
+        if isinstance(expr, SglGen):
+            self.name = self.process_name_for_reasoning(expr.name)
+        elif isinstance(expr, SglSelect):
+            self.name = self.process_name_for_reasoning(expr.name)
+        elif isinstance(expr, SglExprList):
+            for x in expr.expr_list:
+                self._process_expr(x)
+
+    def __repr__(self):
+        return f&#34;SeparateReasoning(model_type={self.model_type}, name={self.name})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.lang.ir.SglSeparateReasoning.process_name_for_reasoning"><code class="name flex">
+<span>def <span class="ident">process_name_for_reasoning</span></span>(<span>self, name)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_name_for_reasoning(self, name):
+    if not name:
+        raise ValueError(&#34;name must be provided&#34;)
+    return f&#34;{name}_reasoning_content&#34;</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.lang.ir.SglVarScopeBegin"><code class="flex name class">
+<span>class <span class="ident">SglVarScopeBegin</span></span>
+<span>(</span><span>name: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglVarScopeBegin(SglExpr):
+    def __init__(self, name: str):
+        super().__init__()
+        self.name = name
+
+    def __repr__(self):
+        return f&#34;VarScopeBegin(&#39;{self.name}&#39;)&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglVarScopeEnd"><code class="flex name class">
+<span>class <span class="ident">SglVarScopeEnd</span></span>
+<span>(</span><span>name: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglVarScopeEnd(SglExpr):
+    def __init__(self, name: str):
+        super().__init__()
+        self.name = name
+
+    def __repr__(self):
+        return f&#34;VarScopeEnd(&#39;{self.name}&#39;)&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglVariable"><code class="flex name class">
+<span>class <span class="ident">SglVariable</span></span>
+<span>(</span><span>name: str, source)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglVariable(SglExpr):
+    def __init__(self, name: str, source):
+        super().__init__()
+        self.name = name
+        self.source = source
+
+    def __repr__(self):
+        return f&#34;Variable(&#39;{self.name}&#39;, source=%{self.source.node_id})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+<dt id="sglang.lang.ir.SglVideo"><code class="flex name class">
+<span>class <span class="ident">SglVideo</span></span>
+<span>(</span><span>path: str, num_frames: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SglVideo(SglExpr):
+    def __init__(self, path: str, num_frames: int):
+        self.path = path
+        self.num_frames = num_frames
+
+    def __repr__(self) -&gt; str:
+        return f&#34;SglVideo({self.path}, {self.num_frames})&#34;</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.lang" href="index.html">sglang.lang</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.lang.ir.SglArgument" href="#sglang.lang.ir.SglArgument">SglArgument</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglCommitLazy" href="#sglang.lang.ir.SglCommitLazy">SglCommitLazy</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglConcateAndAppend" href="#sglang.lang.ir.SglConcateAndAppend">SglConcateAndAppend</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglConstantText" href="#sglang.lang.ir.SglConstantText">SglConstantText</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglExpr" href="#sglang.lang.ir.SglExpr">SglExpr</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.lang.ir.SglExpr.concatenate_ir" href="#sglang.lang.ir.SglExpr.concatenate_ir">concatenate_ir</a></code></li>
+<li><code><a title="sglang.lang.ir.SglExpr.node_ct" href="#sglang.lang.ir.SglExpr.node_ct">node_ct</a></code></li>
+<li><code><a title="sglang.lang.ir.SglExpr.print_graph_dfs" href="#sglang.lang.ir.SglExpr.print_graph_dfs">print_graph_dfs</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglExprList" href="#sglang.lang.ir.SglExprList">SglExprList</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglFork" href="#sglang.lang.ir.SglFork">SglFork</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglFunction" href="#sglang.lang.ir.SglFunction">SglFunction</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.lang.ir.SglFunction.bind" href="#sglang.lang.ir.SglFunction.bind">bind</a></code></li>
+<li><code><a title="sglang.lang.ir.SglFunction.cache" href="#sglang.lang.ir.SglFunction.cache">cache</a></code></li>
+<li><code><a title="sglang.lang.ir.SglFunction.compile" href="#sglang.lang.ir.SglFunction.compile">compile</a></code></li>
+<li><code><a title="sglang.lang.ir.SglFunction.run" href="#sglang.lang.ir.SglFunction.run">run</a></code></li>
+<li><code><a title="sglang.lang.ir.SglFunction.run_batch" href="#sglang.lang.ir.SglFunction.run_batch">run_batch</a></code></li>
+<li><code><a title="sglang.lang.ir.SglFunction.trace" href="#sglang.lang.ir.SglFunction.trace">trace</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglGen" href="#sglang.lang.ir.SglGen">SglGen</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglGetForkItem" href="#sglang.lang.ir.SglGetForkItem">SglGetForkItem</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglImage" href="#sglang.lang.ir.SglImage">SglImage</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglRoleBegin" href="#sglang.lang.ir.SglRoleBegin">SglRoleBegin</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglRoleEnd" href="#sglang.lang.ir.SglRoleEnd">SglRoleEnd</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglSamplingParams" href="#sglang.lang.ir.SglSamplingParams">SglSamplingParams</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.lang.ir.SglSamplingParams.clone" href="#sglang.lang.ir.SglSamplingParams.clone">clone</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.dtype" href="#sglang.lang.ir.SglSamplingParams.dtype">dtype</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.frequency_penalty" href="#sglang.lang.ir.SglSamplingParams.frequency_penalty">frequency_penalty</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.ignore_eos" href="#sglang.lang.ir.SglSamplingParams.ignore_eos">ignore_eos</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.json_schema" href="#sglang.lang.ir.SglSamplingParams.json_schema">json_schema</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.logprob_start_len" href="#sglang.lang.ir.SglSamplingParams.logprob_start_len">logprob_start_len</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.max_new_tokens" href="#sglang.lang.ir.SglSamplingParams.max_new_tokens">max_new_tokens</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.min_new_tokens" href="#sglang.lang.ir.SglSamplingParams.min_new_tokens">min_new_tokens</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.min_p" href="#sglang.lang.ir.SglSamplingParams.min_p">min_p</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.n" href="#sglang.lang.ir.SglSamplingParams.n">n</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.presence_penalty" href="#sglang.lang.ir.SglSamplingParams.presence_penalty">presence_penalty</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.regex" href="#sglang.lang.ir.SglSamplingParams.regex">regex</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.return_logprob" href="#sglang.lang.ir.SglSamplingParams.return_logprob">return_logprob</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.return_text_in_logprobs" href="#sglang.lang.ir.SglSamplingParams.return_text_in_logprobs">return_text_in_logprobs</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.stop" href="#sglang.lang.ir.SglSamplingParams.stop">stop</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.stop_token_ids" href="#sglang.lang.ir.SglSamplingParams.stop_token_ids">stop_token_ids</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.temperature" href="#sglang.lang.ir.SglSamplingParams.temperature">temperature</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.to_anthropic_kwargs" href="#sglang.lang.ir.SglSamplingParams.to_anthropic_kwargs">to_anthropic_kwargs</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.to_litellm_kwargs" href="#sglang.lang.ir.SglSamplingParams.to_litellm_kwargs">to_litellm_kwargs</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.to_openai_kwargs" href="#sglang.lang.ir.SglSamplingParams.to_openai_kwargs">to_openai_kwargs</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.to_srt_kwargs" href="#sglang.lang.ir.SglSamplingParams.to_srt_kwargs">to_srt_kwargs</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.to_vertexai_kwargs" href="#sglang.lang.ir.SglSamplingParams.to_vertexai_kwargs">to_vertexai_kwargs</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.top_k" href="#sglang.lang.ir.SglSamplingParams.top_k">top_k</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.top_logprobs_num" href="#sglang.lang.ir.SglSamplingParams.top_logprobs_num">top_logprobs_num</a></code></li>
+<li><code><a title="sglang.lang.ir.SglSamplingParams.top_p" href="#sglang.lang.ir.SglSamplingParams.top_p">top_p</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglSelect" href="#sglang.lang.ir.SglSelect">SglSelect</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglSeparateReasoning" href="#sglang.lang.ir.SglSeparateReasoning">SglSeparateReasoning</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.lang.ir.SglSeparateReasoning.process_name_for_reasoning" href="#sglang.lang.ir.SglSeparateReasoning.process_name_for_reasoning">process_name_for_reasoning</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglVarScopeBegin" href="#sglang.lang.ir.SglVarScopeBegin">SglVarScopeBegin</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglVarScopeEnd" href="#sglang.lang.ir.SglVarScopeEnd">SglVarScopeEnd</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglVariable" href="#sglang.lang.ir.SglVariable">SglVariable</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.lang.ir.SglVideo" href="#sglang.lang.ir.SglVideo">SglVideo</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

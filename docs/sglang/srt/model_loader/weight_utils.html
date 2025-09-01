@@ -1,0 +1,1708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.model_loader.weight_utils API documentation</title>
+<meta name="description" content="Utilities for downloading and initializing model weights.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.model_loader.weight_utils</code></h1>
+</header>
+<section id="section-intro">
+<p>Utilities for downloading and initializing model weights.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.model_loader.weight_utils.composed_weight_loader"><code class="name flex">
+<span>def <span class="ident">composed_weight_loader</span></span>(<span>loader: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],<br>fn: Callable[[torch.Tensor], torch.Tensor]) ‑> Callable[[torch.Tensor, torch.Tensor], torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def composed_weight_loader(
+    loader: LoaderFunction, fn: Callable[[torch.Tensor], torch.Tensor]
+) -&gt; LoaderFunction:
+    &#34;&#34;&#34;Create a weight loader that post-processes the weights after loading&#34;&#34;&#34;
+
+    def composed_loader(param: torch.Tensor, loaded_weight: torch.Tensor) -&gt; None:
+        loader(param, loaded_weight)
+        param.data.copy_(fn(param))
+        return
+
+    return composed_loader</code></pre>
+</details>
+<div class="desc"><p>Create a weight loader that post-processes the weights after loading</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.convert_bin_to_safetensor_file"><code class="name flex">
+<span>def <span class="ident">convert_bin_to_safetensor_file</span></span>(<span>pt_filename: str, sf_filename: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_bin_to_safetensor_file(
+    pt_filename: str,
+    sf_filename: str,
+) -&gt; None:
+    loaded = torch.load(pt_filename, map_location=&#34;cpu&#34;, weights_only=True)
+    if &#34;state_dict&#34; in loaded:
+        loaded = loaded[&#34;state_dict&#34;]
+    shared = _shared_pointers(loaded)
+    for shared_weights in shared:
+        for name in shared_weights[1:]:
+            loaded.pop(name)
+
+    # For tensors to be contiguous
+    loaded = {k: v.contiguous() for k, v in loaded.items()}
+
+    dirname = os.path.dirname(sf_filename)
+    os.makedirs(dirname, exist_ok=True)
+    save_file(loaded, sf_filename, metadata={&#34;format&#34;: &#34;pt&#34;})
+
+    # check file size
+    sf_size = os.stat(sf_filename).st_size
+    pt_size = os.stat(pt_filename).st_size
+    if (sf_size - pt_size) / pt_size &gt; 0.01:
+        raise RuntimeError(
+            f&#34;&#34;&#34;The file size different is more than 1%:
+         - {sf_filename}: {sf_size}
+         - {pt_filename}: {pt_size}
+         &#34;&#34;&#34;
+        )
+
+    # check if the tensors are the same
+    reloaded = safetensors.torch.load_file(sf_filename)
+    for k in loaded:
+        pt_tensor = loaded[k]
+        sf_tensor = reloaded[k]
+        if not torch.equal(pt_tensor, sf_tensor):
+            raise RuntimeError(f&#34;The output tensors do not match for key {k}&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.convert_pyslice_to_tensor"><code class="name flex">
+<span>def <span class="ident">convert_pyslice_to_tensor</span></span>(<span>x: Any) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_pyslice_to_tensor(x: Any) -&gt; torch.Tensor:
+    &#34;&#34;&#34;convert PySafeSlice object from safetensors to torch.Tensor
+
+    PySafeSlice object supports indexing, which is done before loading the
+    actual tensor and can reduce the amount of memory being read into the
+    memory. However, it does not support more advanced functionalities
+    like `.view()` or `.t()`. Therefore, if we need to modify the loaded
+    tensor with these more complicated operators, we need to convert to
+    tensor first.
+    &#34;&#34;&#34;
+    if not isinstance(x, torch.Tensor):
+        x = x[:]
+    return x</code></pre>
+</details>
+<div class="desc"><p>convert PySafeSlice object from safetensors to torch.Tensor</p>
+<p>PySafeSlice object supports indexing, which is done before loading the
+actual tensor and can reduce the amount of memory being read into the
+memory. However, it does not support more advanced functionalities
+like <code>.view()</code> or <code>.t()</code>. Therefore, if we need to modify the loaded
+tensor with these more complicated operators, we need to convert to
+tensor first.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.decrypt"><code class="name flex">
+<span>def <span class="ident">decrypt</span></span>(<span>fn, key)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def decrypt(fn, key):
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.default_weight_loader"><code class="name flex">
+<span>def <span class="ident">default_weight_loader</span></span>(<span>param: torch.Tensor, loaded_weight: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def default_weight_loader(param: torch.Tensor, loaded_weight: torch.Tensor) -&gt; None:
+    &#34;&#34;&#34;Default weight loader.&#34;&#34;&#34;
+    try:
+        if param.numel() == 1 and loaded_weight.numel() == 1:
+            # Sometimes scalar values aren&#39;t considered tensors with shapes
+            # so if both param and loaded_weight are a scalar,
+            # &#34;broadcast&#34; instead of copy
+            param.data.fill_(loaded_weight.item())
+        else:
+            assert param.size() == loaded_weight.size(), (
+                f&#34;Attempted to load weight ({loaded_weight.size()}) &#34;
+                f&#34;into parameter ({param.size()})&#34;
+            )
+
+            param.data.copy_(loaded_weight)
+    except Exception:
+        # NOTE: This exception is added for the purpose of setting breakpoint to
+        # debug weight loading issues.
+        raise</code></pre>
+</details>
+<div class="desc"><p>Default weight loader.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.download_safetensors_index_file_from_hf"><code class="name flex">
+<span>def <span class="ident">download_safetensors_index_file_from_hf</span></span>(<span>model_name_or_path: str,<br>index_file: str,<br>cache_dir: str | None,<br>revision: str | None = None) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_safetensors_index_file_from_hf(
+    model_name_or_path: str,
+    index_file: str,
+    cache_dir: Optional[str],
+    revision: Optional[str] = None,
+) -&gt; None:
+    &#34;&#34;&#34;Download hf safetensors index file from Hugging Face Hub.
+
+    Args:
+        model_name_or_path (str): The model name or path.
+        cache_dir (Optional[str]): The cache directory to store the model
+            weights. If None, will use HF defaults.
+        revision (Optional[str]): The revision of the model.
+    &#34;&#34;&#34;
+    # Use file lock to prevent multiple processes from
+    # downloading the same model weights at the same time.
+    with get_lock(model_name_or_path, cache_dir):
+        try:
+            # Download the safetensors index file.
+            hf_hub_download(
+                repo_id=model_name_or_path,
+                filename=index_file,
+                cache_dir=cache_dir,
+                revision=revision,
+                local_files_only=huggingface_hub.constants.HF_HUB_OFFLINE,
+            )
+        # If file not found on remote or locally, we should not fail since
+        # only some models will have index_file.
+        except huggingface_hub.utils.EntryNotFoundError:
+            logger.info(&#34;No %s found in remote.&#34;, index_file)
+        except huggingface_hub.utils.LocalEntryNotFoundError:
+            logger.info(&#34;No %s found in local cache.&#34;, index_file)</code></pre>
+</details>
+<div class="desc"><p>Download hf safetensors index file from Hugging Face Hub.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model_name_or_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The model name or path.</dd>
+<dt><strong><code>cache_dir</code></strong> :&ensp;<code>Optional[str]</code></dt>
+<dd>The cache directory to store the model
+weights. If None, will use HF defaults.</dd>
+<dt><strong><code>revision</code></strong> :&ensp;<code>Optional[str]</code></dt>
+<dd>The revision of the model.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.download_weights_from_hf"><code class="name flex">
+<span>def <span class="ident">download_weights_from_hf</span></span>(<span>model_name_or_path: str,<br>cache_dir: str | None,<br>allow_patterns: List[str],<br>revision: str | None = None,<br>ignore_patterns: str | List[str] | None = None) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def download_weights_from_hf(
+    model_name_or_path: str,
+    cache_dir: Optional[str],
+    allow_patterns: List[str],
+    revision: Optional[str] = None,
+    ignore_patterns: Optional[Union[str, List[str]]] = None,
+) -&gt; str:
+    &#34;&#34;&#34;Download model weights from Hugging Face Hub.
+
+    Args:
+        model_name_or_path (str): The model name or path.
+        cache_dir (Optional[str]): The cache directory to store the model
+            weights. If None, will use HF defaults.
+        allow_patterns (List[str]): The allowed patterns for the
+            weight files. Files matched by any of the patterns will be
+            downloaded.
+        revision (Optional[str]): The revision of the model.
+        ignore_patterns (Optional[Union[str, List[str]]]): The patterns to
+            filter out the weight files. Files matched by any of the patterns
+            will be ignored.
+
+    Returns:
+        str: The path to the downloaded model weights.
+    &#34;&#34;&#34;
+    if not huggingface_hub.constants.HF_HUB_OFFLINE:
+        # Before we download we look at that is available:
+        fs = HfFileSystem()
+        file_list = fs.ls(model_name_or_path, detail=False, revision=revision)
+
+        # depending on what is available we download different things
+        for pattern in allow_patterns:
+            matching = fnmatch.filter(file_list, pattern)
+            if len(matching) &gt; 0:
+                allow_patterns = [pattern]
+                break
+
+    logger.info(&#34;Using model weights format %s&#34;, allow_patterns)
+    # Use file lock to prevent multiple processes from
+    # downloading the same model weights at the same time.
+    with get_lock(model_name_or_path, cache_dir):
+        hf_folder = snapshot_download(
+            model_name_or_path,
+            allow_patterns=allow_patterns,
+            ignore_patterns=ignore_patterns,
+            cache_dir=cache_dir,
+            tqdm_class=DisabledTqdm,
+            revision=revision,
+            local_files_only=huggingface_hub.constants.HF_HUB_OFFLINE,
+        )
+    return hf_folder</code></pre>
+</details>
+<div class="desc"><p>Download model weights from Hugging Face Hub.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>model_name_or_path</code></strong> :&ensp;<code>str</code></dt>
+<dd>The model name or path.</dd>
+<dt><strong><code>cache_dir</code></strong> :&ensp;<code>Optional[str]</code></dt>
+<dd>The cache directory to store the model
+weights. If None, will use HF defaults.</dd>
+<dt><strong><code>allow_patterns</code></strong> :&ensp;<code>List[str]</code></dt>
+<dd>The allowed patterns for the
+weight files. Files matched by any of the patterns will be
+downloaded.</dd>
+<dt><strong><code>revision</code></strong> :&ensp;<code>Optional[str]</code></dt>
+<dd>The revision of the model.</dd>
+<dt><strong><code>ignore_patterns</code></strong> :&ensp;<code>Optional[Union[str, List[str]]]</code></dt>
+<dd>The patterns to
+filter out the weight files. Files matched by any of the patterns
+will be ignored.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The path to the downloaded model weights.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.enable_hf_transfer"><code class="name flex">
+<span>def <span class="ident">enable_hf_transfer</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable_hf_transfer():
+    &#34;&#34;&#34;automatically activates hf_transfer&#34;&#34;&#34;
+    if &#34;HF_HUB_ENABLE_HF_TRANSFER&#34; not in os.environ:
+        try:
+            # enable hf hub transfer if available
+            import hf_transfer  # type: ignore # noqa
+
+            huggingface_hub.constants.HF_HUB_ENABLE_HF_TRANSFER = True
+        except ImportError:
+            pass</code></pre>
+</details>
+<div class="desc"><p>automatically activates hf_transfer</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.filter_duplicate_safetensors_files"><code class="name flex">
+<span>def <span class="ident">filter_duplicate_safetensors_files</span></span>(<span>hf_weights_files: List[str], hf_folder: str, index_file: str) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_duplicate_safetensors_files(
+    hf_weights_files: List[str], hf_folder: str, index_file: str
+) -&gt; List[str]:
+    # model.safetensors.index.json is a mapping from keys in the
+    # torch state_dict to safetensors file holding that weight.
+    index_file_name = os.path.join(hf_folder, index_file)
+    if not os.path.isfile(index_file_name):
+        return hf_weights_files
+
+    # Iterate through the weight_map (weight_name: safetensors files)
+    # to identify weights that we should use.
+    with open(index_file_name) as f:
+        weight_map = json.load(f)[&#34;weight_map&#34;]
+    weight_files_in_index = set()
+    for weight_name in weight_map:
+        weight_files_in_index.add(os.path.join(hf_folder, weight_map[weight_name]))
+    # Filter out any fields that are not found in the index file.
+    hf_weights_files = [f for f in hf_weights_files if f in weight_files_in_index]
+    return hf_weights_files</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.filter_files_not_needed_for_inference"><code class="name flex">
+<span>def <span class="ident">filter_files_not_needed_for_inference</span></span>(<span>hf_weights_files: List[str]) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_files_not_needed_for_inference(hf_weights_files: List[str]) -&gt; List[str]:
+    &#34;&#34;&#34;
+    Exclude files that are not needed for inference.
+
+    See https://github.com/huggingface/transformers/blob/v4.34.0/src/transformers/trainer.py#L227-L233
+    &#34;&#34;&#34;
+    blacklist = [
+        &#34;training_args.bin&#34;,
+        &#34;optimizer.bin&#34;,
+        &#34;optimizer.pt&#34;,
+        &#34;scheduler.pt&#34;,
+        &#34;scaler.pt&#34;,
+    ]
+    hf_weights_files = [
+        f for f in hf_weights_files if not any(f.endswith(x) for x in blacklist)
+    ]
+    return hf_weights_files</code></pre>
+</details>
+<div class="desc"><p>Exclude files that are not needed for inference.</p>
+<p>See <a href="https://github.com/huggingface/transformers/blob/v4.34.0/src/transformers/trainer.py#L227-L233">https://github.com/huggingface/transformers/blob/v4.34.0/src/transformers/trainer.py#L227-L233</a></p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.get_actual_shard_size"><code class="name flex">
+<span>def <span class="ident">get_actual_shard_size</span></span>(<span>shard_size, weight_start, weight_end)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_actual_shard_size(shard_size, weight_start, weight_end):
+    if weight_end &lt; weight_start:
+        return 0
+
+    return min(shard_size, weight_end - weight_start)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.get_gguf_extra_tensor_names"><code class="name flex">
+<span>def <span class="ident">get_gguf_extra_tensor_names</span></span>(<span>gguf_file: str, gguf_to_hf_name_map: Dict[str, str]) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_gguf_extra_tensor_names(
+    gguf_file: str, gguf_to_hf_name_map: Dict[str, str]
+) -&gt; List[str]:
+    import gguf
+
+    reader = gguf.GGUFReader(gguf_file)
+    expected_gguf_keys = set(gguf_to_hf_name_map.keys())
+    exact_gguf_keys = set([tensor.name for tensor in reader.tensors])
+    extra_keys = expected_gguf_keys - exact_gguf_keys
+    return [gguf_to_hf_name_map[key] for key in extra_keys]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.get_lock"><code class="name flex">
+<span>def <span class="ident">get_lock</span></span>(<span>model_name_or_path: str, cache_dir: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_lock(model_name_or_path: str, cache_dir: Optional[str] = None):
+    lock_dir = cache_dir or temp_dir
+    os.makedirs(os.path.dirname(lock_dir), exist_ok=True)
+    model_name = model_name_or_path.replace(&#34;/&#34;, &#34;-&#34;)
+    hash_name = hashlib.sha256(model_name.encode()).hexdigest()
+    # add hash to avoid conflict with old users&#39; lock files
+    lock_file_name = hash_name + model_name + &#34;.lock&#34;
+    # mode 0o666 is required for the filelock to be shared across users
+    lock = filelock.FileLock(os.path.join(lock_dir, lock_file_name), mode=0o666)
+    return lock</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.get_quant_config"><code class="name flex">
+<span>def <span class="ident">get_quant_config</span></span>(<span>model_config: <a title="sglang.srt.configs.model_config.ModelConfig" href="../configs/model_config.html#sglang.srt.configs.model_config.ModelConfig">ModelConfig</a>,<br>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>,<br>packed_modules_mapping: Dict[str, List[str]]) ‑> <a title="sglang.srt.layers.quantization.base_config.QuantizationConfig" href="../layers/quantization/base_config.html#sglang.srt.layers.quantization.base_config.QuantizationConfig">QuantizationConfig</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_quant_config(
+    model_config: ModelConfig,
+    load_config: LoadConfig,
+    packed_modules_mapping: Dict[str, List[str]],
+) -&gt; QuantizationConfig:
+    quant_cls = get_quantization_config(model_config.quantization)
+
+    # GGUF doesn&#39;t have config file
+    if model_config.quantization == &#34;gguf&#34;:
+        return quant_cls.from_config({})
+
+    # Read the quantization config from the HF model config, if available.
+    hf_quant_config = getattr(model_config.hf_config, &#34;quantization_config&#34;, None)
+    # some vision model may keep quantization_config in their text_config
+    hf_text_config = getattr(model_config.hf_config, &#34;text_config&#34;, None)
+    if hf_quant_config is None and hf_text_config is not None:
+        hf_quant_config = getattr(hf_text_config, &#34;quantization_config&#34;, None)
+    if hf_quant_config is None:
+        # compressed-tensors uses a compressions_config
+        hf_quant_config = getattr(model_config.hf_config, &#34;compression_config&#34;, None)
+    if hf_quant_config is not None:
+        hf_quant_config[&#34;packed_modules_mapping&#34;] = packed_modules_mapping
+        return quant_cls.from_config(hf_quant_config)
+    # In case of bitsandbytes/QLoRA, get quant config from the adapter model.
+    if model_config.quantization == &#34;bitsandbytes&#34;:
+        if (
+            not load_config.model_loader_extra_config
+            or &#34;qlora_adapter_name_or_path&#34; not in load_config.model_loader_extra_config
+        ):
+            return quant_cls.from_config({&#34;adapter_name_or_path&#34;: &#34;&#34;})
+        model_name_or_path = load_config.model_loader_extra_config[
+            &#34;qlora_adapter_name_or_path&#34;
+        ]
+
+    else:
+        model_name_or_path = model_config.model_path
+    is_local = os.path.isdir(model_name_or_path)
+    if not is_local:
+        # Download the config files.
+        with get_lock(model_name_or_path, load_config.download_dir):
+            hf_folder = snapshot_download(
+                model_name_or_path,
+                revision=model_config.revision,
+                allow_patterns=&#34;*.json&#34;,
+                cache_dir=load_config.download_dir,
+                local_files_only=huggingface_hub.constants.HF_HUB_OFFLINE,
+                tqdm_class=DisabledTqdm,
+            )
+    else:
+        hf_folder = model_name_or_path
+
+    possible_config_filenames = quant_cls.get_config_filenames()
+
+    # If the quantization config is not found, use the default config.
+    if not possible_config_filenames:
+        return quant_cls()
+
+    config_files = glob.glob(os.path.join(hf_folder, &#34;*.json&#34;))
+
+    quant_config_files = [
+        f for f in config_files if any(f.endswith(x) for x in possible_config_filenames)
+    ]
+    if len(quant_config_files) == 0:
+        raise ValueError(f&#34;Cannot find the config file for {model_config.quantization}&#34;)
+    if len(quant_config_files) &gt; 1:
+        raise ValueError(
+            f&#34;Found multiple config files for {model_config.quantization}: &#34;
+            f&#34;{quant_config_files}&#34;
+        )
+
+    quant_config_file = quant_config_files[0]
+    with open(quant_config_file) as f:
+        config = json.load(f)
+
+        if model_config.quantization == &#34;bitsandbytes&#34;:
+            config[&#34;adapter_name_or_path&#34;] = model_name_or_path
+        elif model_config.quantization == &#34;modelopt&#34;:
+            if config[&#34;producer&#34;][&#34;name&#34;] == &#34;modelopt&#34;:
+                # (yizhang2077) workaround for nvidia/Llama-4-Maverick-17B-128E-Eagle3
+                if config[&#34;quantization&#34;][&#34;quant_algo&#34;] is None:
+                    if (
+                        model_config.hf_config.architectures[0]
+                        != &#34;LlamaForCausalLMEagle3&#34;
+                    ):
+                        raise ValueError(
+                            f&#34;Invalid quant_config, quantization method: {model_config.quantization},&#34;
+                            f&#34;hf architectures: {model_config.hf_config.architectures[0]}. &#34;
+                        )
+                    return None
+                if &#34;FP4&#34; in config[&#34;quantization&#34;][&#34;quant_algo&#34;]:
+                    return ModelOptFp4Config.from_config(config)
+                else:
+                    return quant_cls.from_config(config)
+            else:
+                raise ValueError(
+                    f&#34;Unsupported quantization config&#34;
+                    f&#34; found for {model_config.quantization} in {f}.&#34;
+                )
+        elif model_config.quantization == &#34;w8a8_int8&#34;:
+            config[&#34;packed_modules_mapping&#34;] = packed_modules_mapping
+
+    return quant_cls.from_config(config)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.gguf_quant_weights_iterator"><code class="name flex">
+<span>def <span class="ident">gguf_quant_weights_iterator</span></span>(<span>gguf_file: str, gguf_to_hf_name_map: Dict[str, str]) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gguf_quant_weights_iterator(
+    gguf_file: str, gguf_to_hf_name_map: Dict[str, str]
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;
+    Iterate over the quant weights in the model gguf files and convert
+    them to torch tensors
+    &#34;&#34;&#34;
+
+    import gguf
+
+    reader = gguf.GGUFReader(gguf_file)
+
+    for tensor in reader.tensors:
+        if tensor.name in gguf_to_hf_name_map:
+            weight_type = tensor.tensor_type
+            name = gguf_to_hf_name_map[tensor.name]
+
+            if weight_type.name != &#34;F32&#34;:
+                weight_type_name = name.replace(&#34;weight&#34;, &#34;qweight_type&#34;)
+                weight_type = torch.tensor(weight_type)
+                yield weight_type_name, weight_type
+
+    for tensor in reader.tensors:
+        if tensor.name in gguf_to_hf_name_map:
+            weight = tensor.data
+            weight_type = tensor.tensor_type
+            name = gguf_to_hf_name_map[tensor.name]
+
+            if weight_type.name != &#34;F32&#34;:
+                name = name.replace(&#34;weight&#34;, &#34;qweight&#34;)
+            param = torch.tensor(weight)
+            yield name, param</code></pre>
+</details>
+<div class="desc"><p>Iterate over the quant weights in the model gguf files and convert
+them to torch tensors</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.initialize_dummy_weights"><code class="name flex">
+<span>def <span class="ident">initialize_dummy_weights</span></span>(<span>model: torch.nn.modules.module.Module,<br>low: float = -0.001,<br>high: float = 0.001,<br>seed: int = 1234) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def initialize_dummy_weights(
+    model: torch.nn.Module,
+    low: float = -1e-3,
+    high: float = 1e-3,
+    seed: int = 1234,
+) -&gt; None:
+    &#34;&#34;&#34;Initialize model weights with random values.
+
+    The model weights must be randomly initialized for accurate performance
+    measurements. Additionally, the model weights should not cause NaNs in the
+    forward pass. We empirically found that initializing the weights with
+    values between -1e-3 and 1e-3 works well for most models.
+
+    We use per-parameter random seed, so that dummy weights are consistent,
+    even if the model is partitioned across multiple devices. When the seed
+    is fixed, the random values generated by this function only depends on
+    the parameter&#39;s number of elements and its data type.
+    &#34;&#34;&#34;
+    for param in model.state_dict().values():
+        if torch.is_floating_point(param):
+            generator = torch.Generator(device=param.data.device)
+            generator.manual_seed(seed)
+            if torch.finfo(param.data.dtype).bits &lt; 16:
+                # uniform_ doesn&#39;t support &lt; 16-bit datatypes (FP8)
+                dtype = param.data.dtype
+                tmp_param = param.data.to(torch.float16)
+                tmp_param = tmp_param.uniform_(low, high, generator=generator).to(dtype)
+                param.data.copy_(tmp_param)
+            else:
+                param.uniform_(low, high, generator=generator)</code></pre>
+</details>
+<div class="desc"><p>Initialize model weights with random values.</p>
+<p>The model weights must be randomly initialized for accurate performance
+measurements. Additionally, the model weights should not cause NaNs in the
+forward pass. We empirically found that initializing the weights with
+values between -1e-3 and 1e-3 works well for most models.</p>
+<p>We use per-parameter random seed, so that dummy weights are consistent,
+even if the model is partitioned across multiple devices. When the seed
+is fixed, the random values generated by this function only depends on
+the parameter's number of elements and its data type.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.kv_cache_scales_loader"><code class="name flex">
+<span>def <span class="ident">kv_cache_scales_loader</span></span>(<span>filename: str,<br>tp_rank: int,<br>tp_size: int,<br>num_hidden_layers: int,<br>model_type: str | None) ‑> Iterable[Tuple[int, float]]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def kv_cache_scales_loader(
+    filename: str,
+    tp_rank: int,
+    tp_size: int,
+    num_hidden_layers: int,
+    model_type: Optional[str],
+) -&gt; Iterable[Tuple[int, float]]:
+    &#34;&#34;&#34;
+    A simple utility to read in KV cache scaling factors that have been
+    previously serialized to disk. Used by the model to populate the appropriate
+    KV cache scaling factors. The serialization should represent a dictionary
+    whose keys are the TP ranks and values are another dictionary mapping layers
+    to their KV cache scaling factors.
+    &#34;&#34;&#34;
+    try:
+        with open(filename) as f:
+            context = {
+                &#34;model_type&#34;: model_type,
+                &#34;num_hidden_layers&#34;: num_hidden_layers,
+                &#34;tp_rank&#34;: tp_rank,
+                &#34;tp_size&#34;: tp_size,
+            }
+            schema_dct = json.load(f)
+            schema = QuantParamSchema.model_validate(schema_dct, context=context)
+            layer_scales_map = schema.kv_cache.scaling_factor[tp_rank]
+            return layer_scales_map.items()
+    except FileNotFoundError:
+        logger.error(&#34;File or directory &#39;%s&#39; not found.&#34;, filename)
+    except json.JSONDecodeError:
+        logger.error(&#34;Error decoding JSON in file &#39;%s&#39;.&#34;, filename)
+    except Exception:
+        logger.error(&#34;An error occurred while reading &#39;%s&#39;.&#34;, filename)
+    # This section is reached if and only if any of the excepts are hit
+    # Return an empty iterable (list) =&gt; no KV cache scales are loaded
+    # which ultimately defaults to 1.0 scales
+    logger.warning(
+        &#34;Defaulting to KV cache scaling factors = 1.0 for all &#34;
+        &#34;layers in TP rank %d as an error occurred during loading.&#34;,
+        tp_rank,
+    )
+    return []</code></pre>
+</details>
+<div class="desc"><p>A simple utility to read in KV cache scaling factors that have been
+previously serialized to disk. Used by the model to populate the appropriate
+KV cache scaling factors. The serialization should represent a dictionary
+whose keys are the TP ranks and values are another dictionary mapping layers
+to their KV cache scaling factors.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.maybe_remap_kv_scale_name"><code class="name flex">
+<span>def <span class="ident">maybe_remap_kv_scale_name</span></span>(<span>name: str, params_dict: dict) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def maybe_remap_kv_scale_name(name: str, params_dict: dict) -&gt; Optional[str]:
+    &#34;&#34;&#34;Remap the name of FP8 k/v_scale parameters.
+
+    This function handles the remapping of FP8 k/v_scale parameter names.
+    It detects if the given name ends with a suffix and attempts to remap
+    it to the expected name format in the model. If the remapped name is not
+    found in the params_dict, a warning is printed and None is returned.
+
+    Args:
+        name (str): The original loaded checkpoint parameter name.
+        params_dict (dict): Dictionary containing the model&#39;s named parameters.
+
+    Returns:
+        str: The remapped parameter name if successful, or the original name
+             if no remapping is needed.
+        None: If the remapped name is not found in params_dict.
+    &#34;&#34;&#34;
+    if name.endswith(&#34;.kv_scale&#34;):
+        print_warning_once(
+            &#34;DEPRECATED. Found kv_scale in the checkpoint. &#34;
+            &#34;This format is deprecated in favor of separate k_scale and &#34;
+            &#34;v_scale tensors and will be removed in a future release. &#34;
+            &#34;Functionally, we will remap kv_scale to k_scale and duplicate &#34;
+            &#34;k_scale to v_scale&#34;
+        )
+        # NOTE: we remap the deprecated kv_scale to k_scale
+        remapped_name = name.replace(&#34;.kv_scale&#34;, &#34;.attn.k_scale&#34;)
+        if remapped_name not in params_dict:
+            print_warning_once(
+                f&#34;Found kv_scale in the checkpoint (e.g. {name}), &#34;
+                &#34;but not found the expected name in the model &#34;
+                f&#34;(e.g. {remapped_name}). kv_scale is &#34;
+                &#34;not loaded.&#34;
+            )
+            return None
+        return remapped_name
+
+    possible_scale_names = [&#34;.k_scale&#34;, &#34;.v_scale&#34;]
+    modelopt_scale_names = [&#34;.self_attn.k_proj.k_scale&#34;, &#34;.self_attn.v_proj.v_scale&#34;]
+    for scale_name in possible_scale_names:
+        if name.endswith(scale_name):
+            # Check and remap the name based on modelopt scale names
+            if any(
+                modelopt_scale_name in name
+                for modelopt_scale_name in modelopt_scale_names
+            ):
+                remapped_name = name.replace(
+                    f&#34;.self_attn.{scale_name[1]}_proj{scale_name}&#34;,
+                    f&#34;.self_attn.attn{scale_name}&#34;,
+                )
+            else:
+                remapped_name = name.replace(scale_name, f&#34;.attn{scale_name}&#34;)
+            if remapped_name not in params_dict:
+                print_warning_once(
+                    f&#34;Found {scale_name} in the checkpoint (e.g. {name}), &#34;
+                    &#34;but not found the expected name in the model &#34;
+                    f&#34;(e.g. {remapped_name}). {scale_name} is &#34;
+                    &#34;not loaded.&#34;
+                )
+                return None
+            return remapped_name
+
+    quark_scale_names = {
+        &#34;.q_proj.output_scale&#34;: &#34;.attn.q_scale&#34;,
+        &#34;.k_proj.output_scale&#34;: &#34;.attn.k_scale&#34;,
+        &#34;.v_proj.output_scale&#34;: &#34;.attn.v_scale&#34;,
+        &#34;self_attn.prob_output_scale&#34;: &#34;.attn.prob_scale&#34;,
+    }
+    for quark_scale_name, sglang_scale_name in quark_scale_names.items():
+        if name.endswith(quark_scale_name):
+            return name.replace(quark_scale_name, sglang_scale_name)
+
+    # If there were no matches, return the untouched param name
+    return name</code></pre>
+</details>
+<div class="desc"><p>Remap the name of FP8 k/v_scale parameters.</p>
+<p>This function handles the remapping of FP8 k/v_scale parameter names.
+It detects if the given name ends with a suffix and attempts to remap
+it to the expected name format in the model. If the remapped name is not
+found in the params_dict, a warning is printed and None is returned.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>The original loaded checkpoint parameter name.</dd>
+<dt><strong><code>params_dict</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary containing the model's named parameters.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>The remapped parameter name if successful, or the original name
+if no remapping is needed.</dd>
+<dt><code>None</code></dt>
+<dd>If the remapped name is not found in params_dict.</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.multi_thread_pt_weights_iterator"><code class="name flex">
+<span>def <span class="ident">multi_thread_pt_weights_iterator</span></span>(<span>hf_weights_files: List[str], max_workers: int = 4) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def multi_thread_pt_weights_iterator(
+    hf_weights_files: List[str],
+    max_workers: int = 4,
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;Multi-Thread iterate over the weights in the model bin/pt files.&#34;&#34;&#34;
+    enable_tqdm = (
+        not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0
+    )
+
+    def _load_file(bin_file: str):
+        return torch.load(bin_file, map_location=&#34;cpu&#34;, weights_only=True)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [
+            executor.submit(_load_file, bin_file) for bin_file in hf_weights_files
+        ]
+
+        if enable_tqdm:
+            futures_iter = tqdm(
+                concurrent.futures.as_completed(futures),
+                total=len(hf_weights_files),
+                desc=&#34;Multi-thread loading pt checkpoint shards&#34;,
+                disable=not enable_tqdm,
+                bar_format=_BAR_FORMAT,
+            )
+        else:
+            futures_iter = concurrent.futures.as_completed(futures)
+
+        for future in futures_iter:
+            state = future.result()
+            yield from state.items()</code></pre>
+</details>
+<div class="desc"><p>Multi-Thread iterate over the weights in the model bin/pt files.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.multi_thread_safetensors_weights_iterator"><code class="name flex">
+<span>def <span class="ident">multi_thread_safetensors_weights_iterator</span></span>(<span>hf_weights_files: List[str],<br>is_all_weights_sharded: bool = False,<br>decryption_key: str | None = None,<br>max_workers: int = 4,<br>disable_mmap: bool = False) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def multi_thread_safetensors_weights_iterator(
+    hf_weights_files: List[str],
+    is_all_weights_sharded: bool = False,
+    decryption_key: Optional[str] = None,
+    max_workers: int = 4,
+    disable_mmap: bool = False,
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;Multi-Thread iterate over the weights in the model safetensor files.
+
+    If is_all_weights_sharded is True, it uses more optimize read by reading an
+    entire file instead of reading each tensor one by one.
+    &#34;&#34;&#34;
+    if decryption_key:
+        logger.warning(
+            &#34;Multi-Thread loading is not working for encrypted safetensor weights.&#34;
+        )
+        yield from safetensors_encrypted_weights_iterator(
+            hf_weights_files, is_all_weights_sharded, decryption_key
+        )
+        return
+
+    enable_tqdm = (
+        not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0
+    )
+
+    def _load_file(st_file: str):
+        if disable_mmap:
+            with open(st_file, &#34;rb&#34;) as f:
+                result = safetensors.torch.load(f.read())
+        else:
+            with safetensors.safe_open(st_file, framework=&#34;pt&#34;, device=&#34;cpu&#34;) as f:
+                result = {k: f.get_tensor(k) for k in f.keys()}
+
+        return result
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [executor.submit(_load_file, st_file) for st_file in hf_weights_files]
+
+        if enable_tqdm:
+            futures_iter = tqdm(
+                concurrent.futures.as_completed(futures),
+                total=len(hf_weights_files),
+                desc=&#34;Multi-thread loading shards&#34;,
+                disable=not enable_tqdm,
+                bar_format=_BAR_FORMAT,
+            )
+        else:
+            futures_iter = concurrent.futures.as_completed(futures)
+
+        for future in futures_iter:
+            state_dict = future.result()
+            for name, param in state_dict.items():
+                yield name, param</code></pre>
+</details>
+<div class="desc"><p>Multi-Thread iterate over the weights in the model safetensor files.</p>
+<p>If is_all_weights_sharded is True, it uses more optimize read by reading an
+entire file instead of reading each tensor one by one.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.narrow_padded_param_and_loaded_weight"><code class="name flex">
+<span>def <span class="ident">narrow_padded_param_and_loaded_weight</span></span>(<span>param_data,<br>loaded_weight,<br>param_data_start,<br>weight_start,<br>dim,<br>shard_size,<br>narrow_weight=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def narrow_padded_param_and_loaded_weight(
+    param_data,
+    loaded_weight,
+    param_data_start,
+    weight_start,
+    dim,
+    shard_size,
+    narrow_weight=True,
+):
+    actual_shard_size = get_actual_shard_size(
+        shard_size, weight_start, loaded_weight.size(dim)
+    )
+
+    if narrow_weight:
+        if actual_shard_size &gt; 0:
+            loaded_weight = loaded_weight.narrow(dim, weight_start, actual_shard_size)
+        else:
+            # No real data to load; create a dummy tensor filled with zeros
+            loaded_weight = torch.zeros_like(
+                param_data.narrow(dim, param_data_start, actual_shard_size)
+            )
+
+    # [Note] Reset padded weights to zero.
+    # If the actual shard size is less than the shard size, we need to reset
+    # the padded param_data to zero and then copy the loaded_weight into it.
+    reset_param_data_if_needed(
+        param_data,
+        dim,
+        param_data_start + actual_shard_size,
+        shard_size - actual_shard_size,
+    )
+
+    param_data = param_data.narrow(dim, param_data_start, actual_shard_size)
+
+    return param_data, loaded_weight</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.np_cache_weights_iterator"><code class="name flex">
+<span>def <span class="ident">np_cache_weights_iterator</span></span>(<span>model_name_or_path: str,<br>cache_dir: str | None,<br>hf_folder: str,<br>hf_weights_files: List[str]) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def np_cache_weights_iterator(
+    model_name_or_path: str,
+    cache_dir: Optional[str],
+    hf_folder: str,
+    hf_weights_files: List[str],
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;Iterate over the weights in the model np files.
+
+    Will dump the model weights to numpy files if they are not already dumped.
+    &#34;&#34;&#34;
+    enable_tqdm = (
+        not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0
+    )
+    # Convert the model weights from torch tensors to numpy arrays for
+    # faster loading.
+    np_folder = os.path.join(hf_folder, &#34;np&#34;)
+    os.makedirs(np_folder, exist_ok=True)
+    weight_names_file = os.path.join(np_folder, &#34;weight_names.json&#34;)
+    # Use file lock to prevent multiple processes from
+    # dumping the same model weights to numpy at the same time.
+    with get_lock(model_name_or_path, cache_dir):
+        if not os.path.exists(weight_names_file):
+            weight_names: List[str] = []
+            for bin_file in tqdm(
+                hf_weights_files,
+                desc=&#34;Loading np_cache checkpoint shards&#34;,
+                disable=not enable_tqdm,
+                bar_format=_BAR_FORMAT,
+            ):
+                state = torch.load(bin_file, map_location=&#34;cpu&#34;, weights_only=True)
+                for name, param in state.items():
+                    param_path = os.path.join(np_folder, name)
+                    with open(param_path, &#34;wb&#34;) as f:
+                        np.save(f, param.cpu().detach().numpy())
+                    weight_names.append(name)
+            with open(weight_names_file, &#34;w&#34;) as f:
+                json.dump(weight_names, f)
+
+    with open(weight_names_file) as f:
+        weight_names = json.load(f)
+
+    for name in weight_names:
+        param_path = os.path.join(np_folder, name)
+        with open(param_path, &#34;rb&#34;) as f:
+            param = np.load(f)
+        yield name, torch.from_numpy(param)</code></pre>
+</details>
+<div class="desc"><p>Iterate over the weights in the model np files.</p>
+<p>Will dump the model weights to numpy files if they are not already dumped.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.pt_weights_iterator"><code class="name flex">
+<span>def <span class="ident">pt_weights_iterator</span></span>(<span>hf_weights_files: List[str]) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pt_weights_iterator(
+    hf_weights_files: List[str],
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;Iterate over the weights in the model bin/pt files.&#34;&#34;&#34;
+    enable_tqdm = (
+        not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0
+    )
+    for bin_file in tqdm(
+        hf_weights_files,
+        desc=&#34;Loading pt checkpoint shards&#34;,
+        disable=not enable_tqdm,
+        bar_format=_BAR_FORMAT,
+    ):
+        state = torch.load(bin_file, map_location=&#34;cpu&#34;, weights_only=True)
+        yield from state.items()
+        del state</code></pre>
+</details>
+<div class="desc"><p>Iterate over the weights in the model bin/pt files.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.reset_param_data_if_needed"><code class="name flex">
+<span>def <span class="ident">reset_param_data_if_needed</span></span>(<span>param_data, dim, start, length)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_param_data_if_needed(param_data, dim, start, length):
+    if length == 0:
+        return
+
+    assert length &gt; 0, f&#34;Length should be positive, but got {length}&#34;
+
+    param_data.narrow(dim, start, length).zero_()
+    return</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.row_parallel_weight_loader"><code class="name flex">
+<span>def <span class="ident">row_parallel_weight_loader</span></span>(<span>param: torch.Tensor, loaded_weight: torch.Tensor) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def row_parallel_weight_loader(
+    param: torch.Tensor, loaded_weight: torch.Tensor
+) -&gt; None:
+    &#34;&#34;&#34;Load weights that are row-parallelized.&#34;&#34;&#34;
+    tp_rank = get_tensor_model_parallel_rank()
+    shard_dim = 0 if param.dim() != 1 else None
+
+    if shard_dim is not None:
+        shard_size = param.data.shape[shard_dim]
+        start_idx = tp_rank * shard_size
+        loaded_weight = loaded_weight.narrow(shard_dim, start_idx, shard_size)
+
+    return default_weight_loader(param, loaded_weight)</code></pre>
+</details>
+<div class="desc"><p>Load weights that are row-parallelized.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.runai_safetensors_weights_iterator"><code class="name flex">
+<span>def <span class="ident">runai_safetensors_weights_iterator</span></span>(<span>hf_weights_files: List[str]) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def runai_safetensors_weights_iterator(
+    hf_weights_files: List[str],
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;Iterate over the weights in the model safetensor files.&#34;&#34;&#34;
+    from runai_model_streamer import SafetensorsStreamer
+
+    enable_tqdm = (
+        not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0
+    )
+
+    with SafetensorsStreamer() as streamer:
+        for st_file in tqdm(
+            hf_weights_files,
+            desc=&#34;Loading safetensors using Runai Model Streamer&#34;,
+            disable=not enable_tqdm,
+            bar_format=_BAR_FORMAT,
+        ):
+            streamer.stream_file(st_file)
+            yield from streamer.get_tensors()</code></pre>
+</details>
+<div class="desc"><p>Iterate over the weights in the model safetensor files.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.safetensors_encrypted_weights_iterator"><code class="name flex">
+<span>def <span class="ident">safetensors_encrypted_weights_iterator</span></span>(<span>hf_weights_files: List[str],<br>is_all_weights_sharded: bool = False,<br>decryption_key: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def safetensors_encrypted_weights_iterator(
+    hf_weights_files: List[str],
+    is_all_weights_sharded: bool = False,
+    decryption_key: Optional[str] = None,
+):
+    raise NotImplementedError()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.safetensors_weights_iterator"><code class="name flex">
+<span>def <span class="ident">safetensors_weights_iterator</span></span>(<span>hf_weights_files: List[str],<br>is_all_weights_sharded: bool = False,<br>decryption_key: str | None = None,<br>disable_mmap: bool = False) ‑> Generator[Tuple[str, torch.Tensor], None, None]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def safetensors_weights_iterator(
+    hf_weights_files: List[str],
+    is_all_weights_sharded: bool = False,
+    decryption_key: Optional[str] = None,
+    disable_mmap: bool = False,
+) -&gt; Generator[Tuple[str, torch.Tensor], None, None]:
+    &#34;&#34;&#34;Iterate over the weights in the model safetensor files.
+
+    If is_all_weights_sharded is True, it uses more optimize read by reading an
+    entire file instead of reading each tensor one by one.
+    &#34;&#34;&#34;
+    if decryption_key:
+        yield from safetensors_encrypted_weights_iterator(
+            hf_weights_files, is_all_weights_sharded, decryption_key
+        )
+        return
+
+    enable_tqdm = (
+        not torch.distributed.is_initialized() or torch.distributed.get_rank() == 0
+    )
+    for st_file in tqdm(
+        hf_weights_files,
+        desc=&#34;Loading safetensors checkpoint shards&#34;,
+        disable=not enable_tqdm,
+        bar_format=_BAR_FORMAT,
+    ):
+        if disable_mmap:
+            with open(st_file, &#34;rb&#34;) as f:
+                result = safetensors.torch.load(f.read())
+                for name, param in result.items():
+                    yield name, param
+        else:
+            with safetensors.safe_open(st_file, framework=&#34;pt&#34;, device=&#34;cpu&#34;) as f:
+                for name in f.keys():
+                    yield name, f.get_tensor(name)</code></pre>
+</details>
+<div class="desc"><p>Iterate over the weights in the model safetensor files.</p>
+<p>If is_all_weights_sharded is True, it uses more optimize read by reading an
+entire file instead of reading each tensor one by one.</p></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.set_runai_streamer_env"><code class="name flex">
+<span>def <span class="ident">set_runai_streamer_env</span></span>(<span>load_config: <a title="sglang.srt.configs.load_config.LoadConfig" href="../configs/load_config.html#sglang.srt.configs.load_config.LoadConfig">LoadConfig</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_runai_streamer_env(load_config: LoadConfig):
+    if load_config.model_loader_extra_config:
+        extra_config = load_config.model_loader_extra_config
+
+        if &#34;concurrency&#34; in extra_config and isinstance(
+            extra_config.get(&#34;concurrency&#34;), int
+        ):
+            os.environ[&#34;RUNAI_STREAMER_CONCURRENCY&#34;] = str(
+                extra_config.get(&#34;concurrency&#34;)
+            )
+
+        if &#34;memory_limit&#34; in extra_config and isinstance(
+            extra_config.get(&#34;memory_limit&#34;), int
+        ):
+            os.environ[&#34;RUNAI_STREAMER_MEMORY_LIMIT&#34;] = str(
+                extra_config.get(&#34;memory_limit&#34;)
+            )
+
+    runai_streamer_s3_endpoint = os.getenv(&#34;RUNAI_STREAMER_S3_ENDPOINT&#34;)
+    aws_endpoint_url = os.getenv(&#34;AWS_ENDPOINT_URL&#34;)
+    if runai_streamer_s3_endpoint is None and aws_endpoint_url is not None:
+        os.environ[&#34;RUNAI_STREAMER_S3_ENDPOINT&#34;] = aws_endpoint_url</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.sharded_weight_loader"><code class="name flex">
+<span>def <span class="ident">sharded_weight_loader</span></span>(<span>shard_axis: int) ‑> Callable[[torch.Tensor, torch.Tensor], torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sharded_weight_loader(shard_axis: int) -&gt; LoaderFunction:
+    &#34;&#34;&#34;Create a weight loader that shards the weights along the given axis&#34;&#34;&#34;
+
+    def loader(param: torch.Tensor, loaded_weight: torch.Tensor) -&gt; None:
+        tp_rank = get_tensor_model_parallel_rank()
+
+        shard_size = param.data.shape[shard_axis]
+        start_idx = tp_rank * shard_size
+        loaded_weight = loaded_weight.narrow(shard_axis, start_idx, shard_size)
+
+        return default_weight_loader(param, loaded_weight)
+
+    return loader</code></pre>
+</details>
+<div class="desc"><p>Create a weight loader that shards the weights along the given axis</p></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.model_loader.weight_utils.DisabledTqdm"><code class="flex name class">
+<span>class <span class="ident">DisabledTqdm</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class DisabledTqdm(tqdm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, disable=True)</code></pre>
+</details>
+<div class="desc"><p>Asynchronous-friendly version of tqdm.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>tqdm.asyncio.tqdm_asyncio</li>
+<li>tqdm.std.tqdm</li>
+<li>tqdm.utils.Comparable</li>
+</ul>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema"><code class="flex name class">
+<span>class <span class="ident">KVCacheQuantSchema</span></span>
+<span>(</span><span>**data: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class KVCacheQuantSchema(BaseModel):
+    dtype: str
+    # Each key is a TP rank. Each value is a dictionary mapping a TP rank&#39;s
+    # layer indices to their per-tensor KV cache scaling factor.
+    # TODO: Consider pulling this and its validation methods out into its
+    # own schema class (tricky as its members are variable)
+    scaling_factor: Dict[int, Dict[int, float]]
+
+    @model_validator(mode=&#34;after&#34;)
+    def check_is_fp8(self) -&gt; &#34;KVCacheQuantSchema&#34;:
+        assert self.dtype == &#34;float8_e4m3fn&#34;, (
+            &#34;Loaded scaling factors intended for KV cache dtype = &#34;
+            f&#34;{self.dtype} rather than float8_e4m3fn!&#34;
+        )
+        return self
+
+    @model_validator(mode=&#34;after&#34;)
+    def check_tp_ranks(self, info: ValidationInfo) -&gt; &#34;KVCacheQuantSchema&#34;:
+        context = info.context
+        if context:
+            tp_size = context[&#34;tp_size&#34;]
+            num_hidden_layers = context[&#34;num_hidden_layers&#34;]
+            assert len(self.scaling_factor) == tp_size, (
+                f&#34;Loaded dictionary has TP size {len(self.scaling_factor)} &#34;
+                f&#34;but LLM engine is currently running with TP size {tp_size}.&#34;
+            )
+            for tp_rank, layer_maps in self.scaling_factor.items():
+                assert len(layer_maps) == num_hidden_layers, (
+                    f&#34;KV cache scales map for TP rank {tp_rank} is malformed. &#34;
+                    f&#34;Expected {num_hidden_layers} layers, got &#34;
+                    f&#34;{len(layer_maps)}.&#34;
+                )
+            for i in range(tp_size):
+                assert (
+                    i in self.scaling_factor
+                ), f&#34;KV cache scales map for TP rank {i} not found.&#34;
+        return self
+
+    @model_validator(mode=&#34;after&#34;)
+    def check_current_rank(self, info: ValidationInfo) -&gt; &#34;KVCacheQuantSchema&#34;:
+        context = info.context
+        if context:
+            tp_rank = context[&#34;tp_rank&#34;]
+            num_hidden_layers = context[&#34;num_hidden_layers&#34;]
+            layer_scales_map = self.scaling_factor[tp_rank]
+            for i in range(num_hidden_layers):
+                assert i in layer_scales_map, (
+                    f&#34;Could not find KV cache scales for layer {i} in &#34;
+                    f&#34;TP rank {tp_rank}.&#34;
+                )
+        return self</code></pre>
+</details>
+<div class="desc"><div class="admonition abstract">
+<p class="admonition-title">Usage Documentation</p>
+<p><a href="../concepts/models.md">Models</a></p>
+</div>
+<p>A base class for creating Pydantic models.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>__class_vars__</code></strong></dt>
+<dd>The names of the class variables defined on the model.</dd>
+<dt><strong><code>__private_attributes__</code></strong></dt>
+<dd>Metadata about the private attributes of the model.</dd>
+<dt><strong><code>__signature__</code></strong></dt>
+<dd>The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</dd>
+<dt><strong><code>__pydantic_complete__</code></strong></dt>
+<dd>Whether model building is completed, or if there are still undefined fields.</dd>
+<dt><strong><code>__pydantic_core_schema__</code></strong></dt>
+<dd>The core schema of the model.</dd>
+<dt><strong><code>__pydantic_custom_init__</code></strong></dt>
+<dd>Whether the model has a custom <code>__init__</code> function.</dd>
+<dt><strong><code>__pydantic_decorators__</code></strong></dt>
+<dd>Metadata containing the decorators defined on the model.
+This replaces <code>Model.__validators__</code> and <code>Model.__root_validators__</code> from Pydantic V1.</dd>
+<dt><strong><code>__pydantic_generic_metadata__</code></strong></dt>
+<dd>Metadata for generic models; contains data used for a similar purpose to
+<strong>args</strong>, <strong>origin</strong>, <strong>parameters</strong> in typing-module generics. May eventually be replaced by these.</dd>
+<dt><strong><code>__pydantic_parent_namespace__</code></strong></dt>
+<dd>Parent namespace of the model, used for automatic rebuilding of models.</dd>
+<dt><strong><code>__pydantic_post_init__</code></strong></dt>
+<dd>The name of the post-init method for the model, if defined.</dd>
+<dt><strong><code>__pydantic_root_model__</code></strong></dt>
+<dd>Whether the model is a [<code>RootModel</code>][pydantic.root_model.RootModel].</dd>
+<dt><strong><code>__pydantic_serializer__</code></strong></dt>
+<dd>The <code>pydantic-core</code> <code>SchemaSerializer</code> used to dump instances of the model.</dd>
+<dt><strong><code>__pydantic_validator__</code></strong></dt>
+<dd>The <code>pydantic-core</code> <code>SchemaValidator</code> used to validate instances of the model.</dd>
+<dt><strong><code>__pydantic_fields__</code></strong></dt>
+<dd>A dictionary of field names and their corresponding [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</dd>
+<dt><strong><code>__pydantic_computed_fields__</code></strong></dt>
+<dd>A dictionary of computed field names and their corresponding [<code>ComputedFieldInfo</code>][pydantic.fields.ComputedFieldInfo] objects.</dd>
+<dt><strong><code>__pydantic_extra__</code></strong></dt>
+<dd>A dictionary containing extra values, if [<code>extra</code>][pydantic.config.ConfigDict.extra]
+is set to <code>'allow'</code>.</dd>
+<dt><strong><code>__pydantic_fields_set__</code></strong></dt>
+<dd>The names of fields explicitly set during instantiation.</dd>
+<dt><strong><code>__pydantic_private__</code></strong></dt>
+<dd>Values of private attributes set on the model instance.</dd>
+</dl>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code>self</code> is explicitly positional-only to allow <code>self</code> as a field name.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>pydantic.main.BaseModel</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.dtype"><code class="name">var <span class="ident">dtype</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.model_config"><code class="name">var <span class="ident">model_config</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.scaling_factor"><code class="name">var <span class="ident">scaling_factor</span> : Dict[int, Dict[int, float]]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_current_rank"><code class="name flex">
+<span>def <span class="ident">check_current_rank</span></span>(<span>self, info: pydantic_core.core_schema.ValidationInfo) ‑> <a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema">KVCacheQuantSchema</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@model_validator(mode=&#34;after&#34;)
+def check_current_rank(self, info: ValidationInfo) -&gt; &#34;KVCacheQuantSchema&#34;:
+    context = info.context
+    if context:
+        tp_rank = context[&#34;tp_rank&#34;]
+        num_hidden_layers = context[&#34;num_hidden_layers&#34;]
+        layer_scales_map = self.scaling_factor[tp_rank]
+        for i in range(num_hidden_layers):
+            assert i in layer_scales_map, (
+                f&#34;Could not find KV cache scales for layer {i} in &#34;
+                f&#34;TP rank {tp_rank}.&#34;
+            )
+    return self</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_is_fp8"><code class="name flex">
+<span>def <span class="ident">check_is_fp8</span></span>(<span>self) ‑> <a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema">KVCacheQuantSchema</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@model_validator(mode=&#34;after&#34;)
+def check_is_fp8(self) -&gt; &#34;KVCacheQuantSchema&#34;:
+    assert self.dtype == &#34;float8_e4m3fn&#34;, (
+        &#34;Loaded scaling factors intended for KV cache dtype = &#34;
+        f&#34;{self.dtype} rather than float8_e4m3fn!&#34;
+    )
+    return self</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_tp_ranks"><code class="name flex">
+<span>def <span class="ident">check_tp_ranks</span></span>(<span>self, info: pydantic_core.core_schema.ValidationInfo) ‑> <a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema">KVCacheQuantSchema</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@model_validator(mode=&#34;after&#34;)
+def check_tp_ranks(self, info: ValidationInfo) -&gt; &#34;KVCacheQuantSchema&#34;:
+    context = info.context
+    if context:
+        tp_size = context[&#34;tp_size&#34;]
+        num_hidden_layers = context[&#34;num_hidden_layers&#34;]
+        assert len(self.scaling_factor) == tp_size, (
+            f&#34;Loaded dictionary has TP size {len(self.scaling_factor)} &#34;
+            f&#34;but LLM engine is currently running with TP size {tp_size}.&#34;
+        )
+        for tp_rank, layer_maps in self.scaling_factor.items():
+            assert len(layer_maps) == num_hidden_layers, (
+                f&#34;KV cache scales map for TP rank {tp_rank} is malformed. &#34;
+                f&#34;Expected {num_hidden_layers} layers, got &#34;
+                f&#34;{len(layer_maps)}.&#34;
+            )
+        for i in range(tp_size):
+            assert (
+                i in self.scaling_factor
+            ), f&#34;KV cache scales map for TP rank {i} not found.&#34;
+    return self</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.QuantParamSchema"><code class="flex name class">
+<span>class <span class="ident">QuantParamSchema</span></span>
+<span>(</span><span>**data: Any)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class QuantParamSchema(BaseModel):
+    # TODO: Generalize and extend with more fields
+    # (e.g. weights/activations params) once functionality is enabled
+    model_config = ConfigDict(protected_namespaces=())
+    model_type: Optional[str]
+    kv_cache: KVCacheQuantSchema
+
+    @model_validator(mode=&#34;after&#34;)
+    def check_model_type(self, info: ValidationInfo) -&gt; &#34;QuantParamSchema&#34;:
+        context = info.context
+        if context:
+            model_type = context.get(&#34;model_type&#34;, None)
+            if model_type is not None:
+                assert model_type == self.model_type, (
+                    f&#34;Model type is {model_type} but loaded &#34;
+                    f&#34;scaling factors belonging to different &#34;
+                    f&#34;model type {self.model_type}!&#34;
+                )
+        return self</code></pre>
+</details>
+<div class="desc"><div class="admonition abstract">
+<p class="admonition-title">Usage Documentation</p>
+<p><a href="../concepts/models.md">Models</a></p>
+</div>
+<p>A base class for creating Pydantic models.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>__class_vars__</code></strong></dt>
+<dd>The names of the class variables defined on the model.</dd>
+<dt><strong><code>__private_attributes__</code></strong></dt>
+<dd>Metadata about the private attributes of the model.</dd>
+<dt><strong><code>__signature__</code></strong></dt>
+<dd>The synthesized <code>__init__</code> [<code>Signature</code>][inspect.Signature] of the model.</dd>
+<dt><strong><code>__pydantic_complete__</code></strong></dt>
+<dd>Whether model building is completed, or if there are still undefined fields.</dd>
+<dt><strong><code>__pydantic_core_schema__</code></strong></dt>
+<dd>The core schema of the model.</dd>
+<dt><strong><code>__pydantic_custom_init__</code></strong></dt>
+<dd>Whether the model has a custom <code>__init__</code> function.</dd>
+<dt><strong><code>__pydantic_decorators__</code></strong></dt>
+<dd>Metadata containing the decorators defined on the model.
+This replaces <code>Model.__validators__</code> and <code>Model.__root_validators__</code> from Pydantic V1.</dd>
+<dt><strong><code>__pydantic_generic_metadata__</code></strong></dt>
+<dd>Metadata for generic models; contains data used for a similar purpose to
+<strong>args</strong>, <strong>origin</strong>, <strong>parameters</strong> in typing-module generics. May eventually be replaced by these.</dd>
+<dt><strong><code>__pydantic_parent_namespace__</code></strong></dt>
+<dd>Parent namespace of the model, used for automatic rebuilding of models.</dd>
+<dt><strong><code>__pydantic_post_init__</code></strong></dt>
+<dd>The name of the post-init method for the model, if defined.</dd>
+<dt><strong><code>__pydantic_root_model__</code></strong></dt>
+<dd>Whether the model is a [<code>RootModel</code>][pydantic.root_model.RootModel].</dd>
+<dt><strong><code>__pydantic_serializer__</code></strong></dt>
+<dd>The <code>pydantic-core</code> <code>SchemaSerializer</code> used to dump instances of the model.</dd>
+<dt><strong><code>__pydantic_validator__</code></strong></dt>
+<dd>The <code>pydantic-core</code> <code>SchemaValidator</code> used to validate instances of the model.</dd>
+<dt><strong><code>__pydantic_fields__</code></strong></dt>
+<dd>A dictionary of field names and their corresponding [<code>FieldInfo</code>][pydantic.fields.FieldInfo] objects.</dd>
+<dt><strong><code>__pydantic_computed_fields__</code></strong></dt>
+<dd>A dictionary of computed field names and their corresponding [<code>ComputedFieldInfo</code>][pydantic.fields.ComputedFieldInfo] objects.</dd>
+<dt><strong><code>__pydantic_extra__</code></strong></dt>
+<dd>A dictionary containing extra values, if [<code>extra</code>][pydantic.config.ConfigDict.extra]
+is set to <code>'allow'</code>.</dd>
+<dt><strong><code>__pydantic_fields_set__</code></strong></dt>
+<dd>The names of fields explicitly set during instantiation.</dd>
+<dt><strong><code>__pydantic_private__</code></strong></dt>
+<dd>Values of private attributes set on the model instance.</dd>
+</dl>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code>self</code> is explicitly positional-only to allow <code>self</code> as a field name.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>pydantic.main.BaseModel</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.model_loader.weight_utils.QuantParamSchema.kv_cache"><code class="name">var <span class="ident">kv_cache</span> : <a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema">KVCacheQuantSchema</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.QuantParamSchema.model_config"><code class="name">var <span class="ident">model_config</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.model_loader.weight_utils.QuantParamSchema.model_type"><code class="name">var <span class="ident">model_type</span> : str | None</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.model_loader.weight_utils.QuantParamSchema.check_model_type"><code class="name flex">
+<span>def <span class="ident">check_model_type</span></span>(<span>self, info: pydantic_core.core_schema.ValidationInfo) ‑> <a title="sglang.srt.model_loader.weight_utils.QuantParamSchema" href="#sglang.srt.model_loader.weight_utils.QuantParamSchema">QuantParamSchema</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@model_validator(mode=&#34;after&#34;)
+def check_model_type(self, info: ValidationInfo) -&gt; &#34;QuantParamSchema&#34;:
+    context = info.context
+    if context:
+        model_type = context.get(&#34;model_type&#34;, None)
+        if model_type is not None:
+            assert model_type == self.model_type, (
+                f&#34;Model type is {model_type} but loaded &#34;
+                f&#34;scaling factors belonging to different &#34;
+                f&#34;model type {self.model_type}!&#34;
+            )
+    return self</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.model_loader" href="index.html">sglang.srt.model_loader</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.weight_utils.composed_weight_loader" href="#sglang.srt.model_loader.weight_utils.composed_weight_loader">composed_weight_loader</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.convert_bin_to_safetensor_file" href="#sglang.srt.model_loader.weight_utils.convert_bin_to_safetensor_file">convert_bin_to_safetensor_file</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.convert_pyslice_to_tensor" href="#sglang.srt.model_loader.weight_utils.convert_pyslice_to_tensor">convert_pyslice_to_tensor</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.decrypt" href="#sglang.srt.model_loader.weight_utils.decrypt">decrypt</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.default_weight_loader" href="#sglang.srt.model_loader.weight_utils.default_weight_loader">default_weight_loader</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.download_safetensors_index_file_from_hf" href="#sglang.srt.model_loader.weight_utils.download_safetensors_index_file_from_hf">download_safetensors_index_file_from_hf</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.download_weights_from_hf" href="#sglang.srt.model_loader.weight_utils.download_weights_from_hf">download_weights_from_hf</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.enable_hf_transfer" href="#sglang.srt.model_loader.weight_utils.enable_hf_transfer">enable_hf_transfer</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.filter_duplicate_safetensors_files" href="#sglang.srt.model_loader.weight_utils.filter_duplicate_safetensors_files">filter_duplicate_safetensors_files</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.filter_files_not_needed_for_inference" href="#sglang.srt.model_loader.weight_utils.filter_files_not_needed_for_inference">filter_files_not_needed_for_inference</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.get_actual_shard_size" href="#sglang.srt.model_loader.weight_utils.get_actual_shard_size">get_actual_shard_size</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.get_gguf_extra_tensor_names" href="#sglang.srt.model_loader.weight_utils.get_gguf_extra_tensor_names">get_gguf_extra_tensor_names</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.get_lock" href="#sglang.srt.model_loader.weight_utils.get_lock">get_lock</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.get_quant_config" href="#sglang.srt.model_loader.weight_utils.get_quant_config">get_quant_config</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.gguf_quant_weights_iterator" href="#sglang.srt.model_loader.weight_utils.gguf_quant_weights_iterator">gguf_quant_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.initialize_dummy_weights" href="#sglang.srt.model_loader.weight_utils.initialize_dummy_weights">initialize_dummy_weights</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.kv_cache_scales_loader" href="#sglang.srt.model_loader.weight_utils.kv_cache_scales_loader">kv_cache_scales_loader</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.maybe_remap_kv_scale_name" href="#sglang.srt.model_loader.weight_utils.maybe_remap_kv_scale_name">maybe_remap_kv_scale_name</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.multi_thread_pt_weights_iterator" href="#sglang.srt.model_loader.weight_utils.multi_thread_pt_weights_iterator">multi_thread_pt_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.multi_thread_safetensors_weights_iterator" href="#sglang.srt.model_loader.weight_utils.multi_thread_safetensors_weights_iterator">multi_thread_safetensors_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.narrow_padded_param_and_loaded_weight" href="#sglang.srt.model_loader.weight_utils.narrow_padded_param_and_loaded_weight">narrow_padded_param_and_loaded_weight</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.np_cache_weights_iterator" href="#sglang.srt.model_loader.weight_utils.np_cache_weights_iterator">np_cache_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.pt_weights_iterator" href="#sglang.srt.model_loader.weight_utils.pt_weights_iterator">pt_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.reset_param_data_if_needed" href="#sglang.srt.model_loader.weight_utils.reset_param_data_if_needed">reset_param_data_if_needed</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.row_parallel_weight_loader" href="#sglang.srt.model_loader.weight_utils.row_parallel_weight_loader">row_parallel_weight_loader</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.runai_safetensors_weights_iterator" href="#sglang.srt.model_loader.weight_utils.runai_safetensors_weights_iterator">runai_safetensors_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.safetensors_encrypted_weights_iterator" href="#sglang.srt.model_loader.weight_utils.safetensors_encrypted_weights_iterator">safetensors_encrypted_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.safetensors_weights_iterator" href="#sglang.srt.model_loader.weight_utils.safetensors_weights_iterator">safetensors_weights_iterator</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.set_runai_streamer_env" href="#sglang.srt.model_loader.weight_utils.set_runai_streamer_env">set_runai_streamer_env</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.sharded_weight_loader" href="#sglang.srt.model_loader.weight_utils.sharded_weight_loader">sharded_weight_loader</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.model_loader.weight_utils.DisabledTqdm" href="#sglang.srt.model_loader.weight_utils.DisabledTqdm">DisabledTqdm</a></code></h4>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema">KVCacheQuantSchema</a></code></h4>
+<ul class="two-column">
+<li><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_current_rank" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_current_rank">check_current_rank</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_is_fp8" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_is_fp8">check_is_fp8</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_tp_ranks" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.check_tp_ranks">check_tp_ranks</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.dtype" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.dtype">dtype</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.model_config" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.model_config">model_config</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.scaling_factor" href="#sglang.srt.model_loader.weight_utils.KVCacheQuantSchema.scaling_factor">scaling_factor</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.model_loader.weight_utils.QuantParamSchema" href="#sglang.srt.model_loader.weight_utils.QuantParamSchema">QuantParamSchema</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.model_loader.weight_utils.QuantParamSchema.check_model_type" href="#sglang.srt.model_loader.weight_utils.QuantParamSchema.check_model_type">check_model_type</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.QuantParamSchema.kv_cache" href="#sglang.srt.model_loader.weight_utils.QuantParamSchema.kv_cache">kv_cache</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.QuantParamSchema.model_config" href="#sglang.srt.model_loader.weight_utils.QuantParamSchema.model_config">model_config</a></code></li>
+<li><code><a title="sglang.srt.model_loader.weight_utils.QuantParamSchema.model_type" href="#sglang.srt.model_loader.weight_utils.QuantParamSchema.model_type">model_type</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

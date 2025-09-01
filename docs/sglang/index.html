@@ -1,0 +1,1348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Package <code>sglang</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="sglang.bench_offline_throughput" href="bench_offline_throughput.html">sglang.bench_offline_throughput</a></code></dt>
+<dd>
+<div class="desc"><p>Benchmark the throughput in the offline mode.
+It accepts server arguments (the same as launch_server.py) and benchmark arguments (the same as …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.bench_one_batch" href="bench_one_batch.html">sglang.bench_one_batch</a></code></dt>
+<dd>
+<div class="desc"><p>Benchmark the latency of running a single static batch without a server …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.bench_one_batch_server" href="bench_one_batch_server.html">sglang.bench_one_batch_server</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.bench_serving" href="bench_serving.html">sglang.bench_serving</a></code></dt>
+<dd>
+<div class="desc"><p>Benchmark online serving with dynamic requests …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.check_env" href="check_env.html">sglang.check_env</a></code></dt>
+<dd>
+<div class="desc"><p>Check environment configurations and dependency versions.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.compile_deep_gemm" href="compile_deep_gemm.html">sglang.compile_deep_gemm</a></code></dt>
+<dd>
+<div class="desc"><p>Compile DeepGEMM Kernels for a model with specify server arguments …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.eval" href="eval/index.html">sglang.eval</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.global_config" href="global_config.html">sglang.global_config</a></code></dt>
+<dd>
+<div class="desc"><p>Global configurations</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.lang" href="lang/index.html">sglang.lang</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.launch_server" href="launch_server.html">sglang.launch_server</a></code></dt>
+<dd>
+<div class="desc"><p>Launch the inference server.</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.profiler" href="profiler.html">sglang.profiler</a></code></dt>
+<dd>
+<div class="desc"><p>Run live profiling …</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.srt" href="srt/index.html">sglang.srt</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.test" href="test/index.html">sglang.test</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt><code class="name"><a title="sglang.utils" href="utils.html">sglang.utils</a></code></dt>
+<dd>
+<div class="desc"><p>Common utilities</p></div>
+</dd>
+<dt><code class="name"><a title="sglang.version" href="version.html">sglang.version</a></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.Runtime"><code class="name flex">
+<span>def <span class="ident">Runtime</span></span>(<span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def Runtime(*args, **kwargs):
+    # Avoid importing unnecessary dependency
+    from sglang.lang.backend.runtime_endpoint import Runtime
+
+    return Runtime(*args, **kwargs)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.assistant"><code class="name flex">
+<span>def <span class="ident">assistant</span></span>(<span>expr: <a title="sglang.lang.ir.SglExpr" href="lang/ir.html#sglang.lang.ir.SglExpr">SglExpr</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def assistant(expr: Optional[SglExpr] = None):
+    return _role_common(&#34;assistant&#34;, expr)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.assistant_begin"><code class="name flex">
+<span>def <span class="ident">assistant_begin</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def assistant_begin():
+    return SglRoleBegin(&#34;assistant&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.assistant_end"><code class="name flex">
+<span>def <span class="ident">assistant_end</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def assistant_end():
+    return SglRoleEnd(&#34;assistant&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.flush_cache"><code class="name flex">
+<span>def <span class="ident">flush_cache</span></span>(<span>backend: <a title="sglang.lang.backend.base_backend.BaseBackend" href="lang/backend/base_backend.html#sglang.lang.backend.base_backend.BaseBackend">BaseBackend</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flush_cache(backend: Optional[BaseBackend] = None):
+    backend = backend or global_config.default_backend
+    if backend is None:
+        return False
+
+    # If backend is Runtime
+    if hasattr(backend, &#34;endpoint&#34;):
+        backend = backend.endpoint
+    return backend.flush_cache()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.function"><code class="name flex">
+<span>def <span class="ident">function</span></span>(<span>func: Callable | None = None, num_api_spec_tokens: int | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def function(
+    func: Optional[Callable] = None, num_api_spec_tokens: Optional[int] = None
+):
+    if func:
+        return SglFunction(func, num_api_spec_tokens=num_api_spec_tokens)
+
+    def decorator(func):
+        return SglFunction(func, num_api_spec_tokens=num_api_spec_tokens)
+
+    return decorator</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.gen"><code class="name flex">
+<span>def <span class="ident">gen</span></span>(<span>name: str | None = None,<br>max_tokens: int | None = None,<br>min_tokens: int | None = None,<br>n: int | None = None,<br>stop: str | List[str] | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float | None = None,<br>top_p: float | None = None,<br>top_k: int | None = None,<br>min_p: float | None = None,<br>frequency_penalty: float | None = None,<br>presence_penalty: float | None = None,<br>ignore_eos: bool | None = None,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = None,<br>top_logprobs_num: int | None = None,<br>return_text_in_logprobs: bool | None = None,<br>dtype: type | str | None = None,<br>choices: List[str] | None = None,<br>choices_method: <a title="sglang.lang.choices.ChoicesSamplingMethod" href="lang/choices.html#sglang.lang.choices.ChoicesSamplingMethod">ChoicesSamplingMethod</a> | None = None,<br>regex: str | None = None,<br>json_schema: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gen(
+    name: Optional[str] = None,
+    max_tokens: Optional[int] = None,
+    min_tokens: Optional[int] = None,
+    n: Optional[int] = None,
+    stop: Optional[Union[str, List[str]]] = None,
+    stop_token_ids: Optional[List[int]] = None,
+    temperature: Optional[float] = None,
+    top_p: Optional[float] = None,
+    top_k: Optional[int] = None,
+    min_p: Optional[float] = None,
+    frequency_penalty: Optional[float] = None,
+    presence_penalty: Optional[float] = None,
+    ignore_eos: Optional[bool] = None,
+    return_logprob: Optional[bool] = None,
+    logprob_start_len: Optional[int] = None,
+    top_logprobs_num: Optional[int] = None,
+    return_text_in_logprobs: Optional[bool] = None,
+    dtype: Optional[Union[type, str]] = None,
+    choices: Optional[List[str]] = None,
+    choices_method: Optional[ChoicesSamplingMethod] = None,
+    regex: Optional[str] = None,
+    json_schema: Optional[str] = None,
+):
+    &#34;&#34;&#34;Call the model to generate. See the meaning of the arguments in docs/backend/sampling_params.md&#34;&#34;&#34;
+
+    if choices:
+        return SglSelect(
+            name,
+            choices,
+            0.0 if temperature is None else temperature,
+            token_length_normalized if choices_method is None else choices_method,
+        )
+
+    # check regex is valid
+    if regex is not None:
+        try:
+            re.compile(regex)
+        except re.error as e:
+            raise e
+
+    return SglGen(
+        name,
+        max_tokens,
+        min_tokens,
+        n,
+        stop,
+        stop_token_ids,
+        temperature,
+        top_p,
+        top_k,
+        min_p,
+        frequency_penalty,
+        presence_penalty,
+        ignore_eos,
+        return_logprob,
+        logprob_start_len,
+        top_logprobs_num,
+        return_text_in_logprobs,
+        dtype,
+        regex,
+        json_schema,
+    )</code></pre>
+</details>
+<div class="desc"><p>Call the model to generate. See the meaning of the arguments in docs/backend/sampling_params.md</p></div>
+</dd>
+<dt id="sglang.gen_int"><code class="name flex">
+<span>def <span class="ident">gen_int</span></span>(<span>name: str | None = None,<br>max_tokens: int | None = None,<br>n: int | None = None,<br>stop: str | List[str] | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float | None = None,<br>top_p: float | None = None,<br>top_k: int | None = None,<br>min_p: float | None = None,<br>frequency_penalty: float | None = None,<br>presence_penalty: float | None = None,<br>ignore_eos: bool | None = None,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = None,<br>top_logprobs_num: int | None = None,<br>return_text_in_logprobs: bool | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gen_int(
+    name: Optional[str] = None,
+    max_tokens: Optional[int] = None,
+    n: Optional[int] = None,
+    stop: Optional[Union[str, List[str]]] = None,
+    stop_token_ids: Optional[List[int]] = None,
+    temperature: Optional[float] = None,
+    top_p: Optional[float] = None,
+    top_k: Optional[int] = None,
+    min_p: Optional[float] = None,
+    frequency_penalty: Optional[float] = None,
+    presence_penalty: Optional[float] = None,
+    ignore_eos: Optional[bool] = None,
+    return_logprob: Optional[bool] = None,
+    logprob_start_len: Optional[int] = None,
+    top_logprobs_num: Optional[int] = None,
+    return_text_in_logprobs: Optional[bool] = None,
+):
+    return SglGen(
+        name,
+        max_tokens,
+        None,
+        n,
+        stop,
+        stop_token_ids,
+        temperature,
+        top_p,
+        top_k,
+        min_p,
+        frequency_penalty,
+        presence_penalty,
+        ignore_eos,
+        return_logprob,
+        logprob_start_len,
+        top_logprobs_num,
+        return_text_in_logprobs,
+        int,
+        None,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.gen_string"><code class="name flex">
+<span>def <span class="ident">gen_string</span></span>(<span>name: str | None = None,<br>max_tokens: int | None = None,<br>n: int | None = None,<br>stop: str | List[str] | None = None,<br>stop_token_ids: List[int] | None = None,<br>temperature: float | None = None,<br>top_p: float | None = None,<br>top_k: int | None = None,<br>min_p: float | None = None,<br>frequency_penalty: float | None = None,<br>presence_penalty: float | None = None,<br>ignore_eos: bool | None = None,<br>return_logprob: bool | None = None,<br>logprob_start_len: int | None = None,<br>top_logprobs_num: int | None = None,<br>return_text_in_logprobs: bool | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gen_string(
+    name: Optional[str] = None,
+    max_tokens: Optional[int] = None,
+    n: Optional[int] = None,
+    stop: Optional[Union[str, List[str]]] = None,
+    stop_token_ids: Optional[List[int]] = None,
+    temperature: Optional[float] = None,
+    top_p: Optional[float] = None,
+    top_k: Optional[int] = None,
+    min_p: Optional[float] = None,
+    frequency_penalty: Optional[float] = None,
+    presence_penalty: Optional[float] = None,
+    ignore_eos: Optional[bool] = None,
+    return_logprob: Optional[bool] = None,
+    logprob_start_len: Optional[int] = None,
+    top_logprobs_num: Optional[int] = None,
+    return_text_in_logprobs: Optional[bool] = None,
+):
+    return SglGen(
+        name,
+        max_tokens,
+        None,
+        n,
+        stop,
+        stop_token_ids,
+        temperature,
+        top_p,
+        top_k,
+        min_p,
+        frequency_penalty,
+        presence_penalty,
+        ignore_eos,
+        return_logprob,
+        logprob_start_len,
+        top_logprobs_num,
+        return_text_in_logprobs,
+        str,
+        None,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.get_server_info"><code class="name flex">
+<span>def <span class="ident">get_server_info</span></span>(<span>backend: <a title="sglang.lang.backend.base_backend.BaseBackend" href="lang/backend/base_backend.html#sglang.lang.backend.base_backend.BaseBackend">BaseBackend</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_server_info(backend: Optional[BaseBackend] = None):
+    backend = backend or global_config.default_backend
+    if backend is None:
+        return None
+
+    # If backend is Runtime
+    if hasattr(backend, &#34;endpoint&#34;):
+        backend = backend.endpoint
+    return backend.get_server_info()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.image"><code class="name flex">
+<span>def <span class="ident">image</span></span>(<span>expr: <a title="sglang.lang.ir.SglExpr" href="lang/ir.html#sglang.lang.ir.SglExpr">SglExpr</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def image(expr: SglExpr):
+    return SglImage(expr)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>name: str | None = None,<br>choices: List[str] | None = None,<br>temperature: float = 0.0,<br>choices_method: <a title="sglang.lang.choices.ChoicesSamplingMethod" href="lang/choices.html#sglang.lang.choices.ChoicesSamplingMethod">ChoicesSamplingMethod</a> = &lt;sglang.lang.choices.TokenLengthNormalized object&gt;)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(
+    name: Optional[str] = None,
+    choices: Optional[List[str]] = None,
+    temperature: float = 0.0,
+    choices_method: ChoicesSamplingMethod = token_length_normalized,
+):
+    assert choices is not None
+    return SglSelect(name, choices, temperature, choices_method)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.separate_reasoning"><code class="name flex">
+<span>def <span class="ident">separate_reasoning</span></span>(<span>expr: <a title="sglang.lang.ir.SglExpr" href="lang/ir.html#sglang.lang.ir.SglExpr">SglExpr</a> | None = None,<br>model_type: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def separate_reasoning(
+    expr: Optional[SglExpr] = None, model_type: Optional[str] = None
+):
+    return SglExprList([expr, SglSeparateReasoning(model_type, expr=expr)])</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.set_default_backend"><code class="name flex">
+<span>def <span class="ident">set_default_backend</span></span>(<span>backend: <a title="sglang.lang.backend.base_backend.BaseBackend" href="lang/backend/base_backend.html#sglang.lang.backend.base_backend.BaseBackend">BaseBackend</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_default_backend(backend: BaseBackend):
+    global_config.default_backend = backend</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.system"><code class="name flex">
+<span>def <span class="ident">system</span></span>(<span>expr: <a title="sglang.lang.ir.SglExpr" href="lang/ir.html#sglang.lang.ir.SglExpr">SglExpr</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def system(expr: Optional[SglExpr] = None):
+    return _role_common(&#34;system&#34;, expr)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.system_begin"><code class="name flex">
+<span>def <span class="ident">system_begin</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def system_begin():
+    return SglRoleBegin(&#34;system&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.system_end"><code class="name flex">
+<span>def <span class="ident">system_end</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def system_end():
+    return SglRoleEnd(&#34;system&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.user"><code class="name flex">
+<span>def <span class="ident">user</span></span>(<span>expr: <a title="sglang.lang.ir.SglExpr" href="lang/ir.html#sglang.lang.ir.SglExpr">SglExpr</a> | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def user(expr: Optional[SglExpr] = None):
+    return _role_common(&#34;user&#34;, expr)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.user_begin"><code class="name flex">
+<span>def <span class="ident">user_begin</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def user_begin():
+    return SglRoleBegin(&#34;user&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.user_end"><code class="name flex">
+<span>def <span class="ident">user_end</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def user_end():
+    return SglRoleEnd(&#34;user&#34;)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.video"><code class="name flex">
+<span>def <span class="ident">video</span></span>(<span>path: str, num_frames: int)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def video(path: str, num_frames: int):
+    return SglVideo(path, num_frames)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.RuntimeEndpoint"><code class="flex name class">
+<span>class <span class="ident">RuntimeEndpoint</span></span>
+<span>(</span><span>base_url: str,<br>api_key: str | None = None,<br>verify: str | None = None,<br>chat_template_name: str | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class RuntimeEndpoint(BaseBackend):
+    def __init__(
+        self,
+        base_url: str,
+        api_key: Optional[str] = None,
+        verify: Optional[str] = None,
+        chat_template_name: Optional[str] = None,
+    ):
+        super().__init__()
+        self.support_concate_and_append = True
+
+        self.base_url = base_url
+        self.api_key = api_key
+        self.verify = verify
+
+        res = http_request(
+            self.base_url + &#34;/get_model_info&#34;,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+        self.model_info = res.json()
+
+        if chat_template_name:
+            self.chat_template = get_chat_template(chat_template_name)
+        else:
+            self.chat_template = get_chat_template_by_model_path(
+                self.model_info[&#34;model_path&#34;]
+            )
+
+    def get_model_name(self):
+        return self.model_info[&#34;model_path&#34;]
+
+    def flush_cache(self):
+        res = http_request(
+            self.base_url + &#34;/flush_cache&#34;,
+            api_key=self.api_key,
+            verify=self.verify,
+            method=&#34;POST&#34;,
+        )
+        self._assert_success(res)
+
+    def get_server_info(self):
+        res = http_request(
+            self.base_url + &#34;/get_server_info&#34;,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+        return res.json()
+
+    def get_chat_template(self):
+        return self.chat_template
+
+    def cache_prefix(self, prefix_str: str):
+        res = http_request(
+            self.base_url + &#34;/generate&#34;,
+            json={&#34;text&#34;: prefix_str, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}},
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+    def start_profile(self):
+        res = http_request(
+            self.base_url + &#34;/start_profile&#34;,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+    def stop_profile(self):
+        res = http_request(
+            self.base_url + &#34;/stop_profile&#34;,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+    def commit_lazy_operations(self, s: StreamExecutor):
+        data = {&#34;text&#34;: s.text_, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}}
+        self._add_images(s, data)
+        res = http_request(
+            self.base_url + &#34;/generate&#34;,
+            json=data,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+    def fill_image(self, s: StreamExecutor):
+        data = {&#34;text&#34;: s.text_, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}}
+        self._add_images(s, data)
+        res = http_request(
+            self.base_url + &#34;/generate&#34;,
+            json=data,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+    def _handle_dtype_to_regex(self, sampling_params: SglSamplingParams):
+        if sampling_params.dtype is None:
+            return
+
+        if sampling_params.stop == ():
+            sampling_params.stop = []
+
+        dtype_regex = None
+        if sampling_params.dtype in [&#34;int&#34;, int]:
+
+            dtype_regex = REGEX_INT
+            sampling_params.stop.extend([&#34; &#34;, &#34;\n&#34;])
+        elif sampling_params.dtype in [&#34;float&#34;, float]:
+
+            dtype_regex = REGEX_FLOAT
+            sampling_params.stop.extend([&#34; &#34;, &#34;\n&#34;])
+        elif sampling_params.dtype in [&#34;str&#34;, str]:
+
+            dtype_regex = REGEX_STR
+        elif sampling_params.dtype in [&#34;bool&#34;, bool]:
+
+            dtype_regex = REGEX_BOOL
+        else:
+            raise RuntimeError(f&#34;Invalid dtype: {sampling_params.dtype}&#34;)
+
+        if dtype_regex is not None and sampling_params.regex is not None:
+            warnings.warn(
+                f&#34;Both dtype and regex are set. Only dtype will be used. dtype: {sampling_params.dtype}, regex: {sampling_params.regex}&#34;
+            )
+
+        sampling_params.regex = dtype_regex
+
+    def generate(
+        self,
+        s: StreamExecutor,
+        sampling_params: SglSamplingParams,
+    ):
+        self._handle_dtype_to_regex(sampling_params)
+        data = {
+            &#34;text&#34;: s.text_,
+            &#34;sampling_params&#34;: {
+                &#34;skip_special_tokens&#34;: global_config.skip_special_tokens_in_output,
+                &#34;spaces_between_special_tokens&#34;: global_config.spaces_between_special_tokens_in_out,
+                **sampling_params.to_srt_kwargs(),
+            },
+        }
+
+        for item in [
+            &#34;return_logprob&#34;,
+            &#34;logprob_start_len&#34;,
+            &#34;top_logprobs_num&#34;,
+            &#34;return_text_in_logprobs&#34;,
+        ]:
+            value = getattr(sampling_params, item, None)
+            if value is not None:
+                data[item] = value
+
+        self._add_images(s, data)
+
+        res = http_request(
+            self.base_url + &#34;/generate&#34;,
+            json=data,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+        obj = res.json()
+        comp = obj[&#34;text&#34;]
+        return comp, obj[&#34;meta_info&#34;]
+
+    def generate_stream(
+        self,
+        s: StreamExecutor,
+        sampling_params: SglSamplingParams,
+    ):
+        self._handle_dtype_to_regex(sampling_params)
+
+        data = {
+            &#34;text&#34;: s.text_,
+            &#34;sampling_params&#34;: {
+                &#34;skip_special_tokens&#34;: global_config.skip_special_tokens_in_output,
+                &#34;spaces_between_special_tokens&#34;: global_config.spaces_between_special_tokens_in_out,
+                **sampling_params.to_srt_kwargs(),
+            },
+        }
+
+        for item in [
+            &#34;return_logprob&#34;,
+            &#34;logprob_start_len&#34;,
+            &#34;top_logprobs_num&#34;,
+            &#34;return_text_in_logprobs&#34;,
+        ]:
+            value = getattr(sampling_params, item, None)
+            if value is not None:
+                data[item] = value
+
+        data[&#34;stream&#34;] = True
+        self._add_images(s, data)
+
+        res = http_request(
+            self.base_url + &#34;/generate&#34;,
+            json=data,
+            stream=True,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+        pos = 0
+
+        for chunk in res.iter_lines(decode_unicode=False):
+            chunk = chunk.decode(&#34;utf-8&#34;)
+            if chunk and chunk.startswith(&#34;data:&#34;):
+                if chunk == &#34;data: [DONE]&#34;:
+                    break
+                data = json.loads(chunk[5:].strip(&#34;\n&#34;))
+                chunk_text = data[&#34;text&#34;][pos:]
+                meta_info = data[&#34;meta_info&#34;]
+                pos += len(chunk_text)
+                yield chunk_text, meta_info
+
+    def select(
+        self,
+        s: StreamExecutor,
+        choices: List[str],
+        temperature: float,
+        choices_method: ChoicesSamplingMethod,
+    ) -&gt; ChoicesDecision:
+        assert temperature &lt;= 1e-5
+
+        # Cache common prefix
+        data = {&#34;text&#34;: s.text_, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}}
+        obj = self._generate_http_request(s, data)
+        prompt_len = obj[&#34;meta_info&#34;][&#34;prompt_tokens&#34;]
+        logprob_start_len = max(prompt_len - 2, 0)  # For token healing
+
+        # Compute logprob
+        data = {
+            &#34;text&#34;: [s.text_ + c for c in choices],
+            &#34;sampling_params&#34;: {
+                &#34;max_new_tokens&#34;: 0,
+                &#34;temperature&#34;: 0,
+            },
+            &#34;return_logprob&#34;: True,
+            &#34;return_text_in_logprobs&#34;: True,
+            &#34;logprob_start_len&#34;: logprob_start_len,
+        }
+        obj = self._generate_http_request(s, data)
+
+        input_token_logprobs = [r[&#34;meta_info&#34;][&#34;input_token_logprobs&#34;] for r in obj]
+        output_token_logprobs = [r[&#34;meta_info&#34;][&#34;output_token_logprobs&#34;] for r in obj]
+        normalized_prompt_logprobs = [
+            compute_normalized_prompt_logprobs(r[&#34;meta_info&#34;][&#34;input_token_logprobs&#34;])
+            for r in obj
+        ]
+
+        # Remove extra token if no token healing occurred
+        for i in range(len(input_token_logprobs)):
+            healed_token_str = input_token_logprobs[i][0][-1]
+            if s.text_.endswith(healed_token_str):
+                healed_token_logprob = input_token_logprobs[i][0][0]
+                normalized_prompt_logprobs[i] = (
+                    normalized_prompt_logprobs[i] * len(input_token_logprobs[i])
+                    - healed_token_logprob
+                ) / (len(input_token_logprobs[i]) - 1)
+                input_token_logprobs[i] = input_token_logprobs[i][1:]
+
+        # Compute unconditional logprobs if required
+        if choices_method.requires_unconditional_logprobs:
+            input_ids = [[el[1] for el in subl] for subl in input_token_logprobs]
+            data = {
+                &#34;input_ids&#34;: input_ids,
+                &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0},
+                &#34;return_logprob&#34;: True,
+            }
+            obj = self._generate_http_request(s, data)
+            unconditional_token_logprobs = [
+                r[&#34;meta_info&#34;][&#34;input_token_logprobs&#34;] for r in obj
+            ]
+        else:
+            unconditional_token_logprobs = None
+
+        return choices_method(
+            choices=choices,
+            normalized_prompt_logprobs=normalized_prompt_logprobs,
+            input_token_logprobs=input_token_logprobs,
+            output_token_logprobs=output_token_logprobs,
+            unconditional_token_logprobs=unconditional_token_logprobs,
+        )
+
+    def concatenate_and_append(self, src_rids: List[str], dst_rid: str):
+        res = http_request(
+            self.base_url + &#34;/concate_and_append_request&#34;,
+            json={&#34;src_rids&#34;: src_rids, &#34;dst_rid&#34;: dst_rid},
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+
+    def _generate_http_request(self, s: StreamExecutor, data):
+        self._add_images(s, data)
+        res = http_request(
+            self.base_url + &#34;/generate&#34;,
+            json=data,
+            api_key=self.api_key,
+            verify=self.verify,
+        )
+        self._assert_success(res)
+        return res.json()
+
+    def _add_images(self, s: StreamExecutor, data):
+        if s.images_:
+            assert len(s.images_) == 1, &#34;Only support one image.&#34;
+            data[&#34;image_data&#34;] = s.images_[0][1]
+
+    def _assert_success(self, res):
+        if res.status_code != 200:
+            try:
+                content = res.json()
+            except json.JSONDecodeError:
+                content = res.text
+            raise RuntimeError(content)</code></pre>
+</details>
+<div class="desc"></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="sglang.lang.backend.base_backend.BaseBackend" href="lang/backend/base_backend.html#sglang.lang.backend.base_backend.BaseBackend">BaseBackend</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.RuntimeEndpoint.cache_prefix"><code class="name flex">
+<span>def <span class="ident">cache_prefix</span></span>(<span>self, prefix_str: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cache_prefix(self, prefix_str: str):
+    res = http_request(
+        self.base_url + &#34;/generate&#34;,
+        json={&#34;text&#34;: prefix_str, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}},
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.commit_lazy_operations"><code class="name flex">
+<span>def <span class="ident">commit_lazy_operations</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="lang/interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def commit_lazy_operations(self, s: StreamExecutor):
+    data = {&#34;text&#34;: s.text_, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}}
+    self._add_images(s, data)
+    res = http_request(
+        self.base_url + &#34;/generate&#34;,
+        json=data,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.concatenate_and_append"><code class="name flex">
+<span>def <span class="ident">concatenate_and_append</span></span>(<span>self, src_rids: List[str], dst_rid: str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def concatenate_and_append(self, src_rids: List[str], dst_rid: str):
+    res = http_request(
+        self.base_url + &#34;/concate_and_append_request&#34;,
+        json={&#34;src_rids&#34;: src_rids, &#34;dst_rid&#34;: dst_rid},
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.fill_image"><code class="name flex">
+<span>def <span class="ident">fill_image</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="lang/interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fill_image(self, s: StreamExecutor):
+    data = {&#34;text&#34;: s.text_, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}}
+    self._add_images(s, data)
+    res = http_request(
+        self.base_url + &#34;/generate&#34;,
+        json=data,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.flush_cache"><code class="name flex">
+<span>def <span class="ident">flush_cache</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flush_cache(self):
+    res = http_request(
+        self.base_url + &#34;/flush_cache&#34;,
+        api_key=self.api_key,
+        verify=self.verify,
+        method=&#34;POST&#34;,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.generate"><code class="name flex">
+<span>def <span class="ident">generate</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="lang/interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>,<br>sampling_params: <a title="sglang.lang.ir.SglSamplingParams" href="lang/ir.html#sglang.lang.ir.SglSamplingParams">SglSamplingParams</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate(
+    self,
+    s: StreamExecutor,
+    sampling_params: SglSamplingParams,
+):
+    self._handle_dtype_to_regex(sampling_params)
+    data = {
+        &#34;text&#34;: s.text_,
+        &#34;sampling_params&#34;: {
+            &#34;skip_special_tokens&#34;: global_config.skip_special_tokens_in_output,
+            &#34;spaces_between_special_tokens&#34;: global_config.spaces_between_special_tokens_in_out,
+            **sampling_params.to_srt_kwargs(),
+        },
+    }
+
+    for item in [
+        &#34;return_logprob&#34;,
+        &#34;logprob_start_len&#34;,
+        &#34;top_logprobs_num&#34;,
+        &#34;return_text_in_logprobs&#34;,
+    ]:
+        value = getattr(sampling_params, item, None)
+        if value is not None:
+            data[item] = value
+
+    self._add_images(s, data)
+
+    res = http_request(
+        self.base_url + &#34;/generate&#34;,
+        json=data,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)
+
+    obj = res.json()
+    comp = obj[&#34;text&#34;]
+    return comp, obj[&#34;meta_info&#34;]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.generate_stream"><code class="name flex">
+<span>def <span class="ident">generate_stream</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="lang/interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>,<br>sampling_params: <a title="sglang.lang.ir.SglSamplingParams" href="lang/ir.html#sglang.lang.ir.SglSamplingParams">SglSamplingParams</a>)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_stream(
+    self,
+    s: StreamExecutor,
+    sampling_params: SglSamplingParams,
+):
+    self._handle_dtype_to_regex(sampling_params)
+
+    data = {
+        &#34;text&#34;: s.text_,
+        &#34;sampling_params&#34;: {
+            &#34;skip_special_tokens&#34;: global_config.skip_special_tokens_in_output,
+            &#34;spaces_between_special_tokens&#34;: global_config.spaces_between_special_tokens_in_out,
+            **sampling_params.to_srt_kwargs(),
+        },
+    }
+
+    for item in [
+        &#34;return_logprob&#34;,
+        &#34;logprob_start_len&#34;,
+        &#34;top_logprobs_num&#34;,
+        &#34;return_text_in_logprobs&#34;,
+    ]:
+        value = getattr(sampling_params, item, None)
+        if value is not None:
+            data[item] = value
+
+    data[&#34;stream&#34;] = True
+    self._add_images(s, data)
+
+    res = http_request(
+        self.base_url + &#34;/generate&#34;,
+        json=data,
+        stream=True,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)
+    pos = 0
+
+    for chunk in res.iter_lines(decode_unicode=False):
+        chunk = chunk.decode(&#34;utf-8&#34;)
+        if chunk and chunk.startswith(&#34;data:&#34;):
+            if chunk == &#34;data: [DONE]&#34;:
+                break
+            data = json.loads(chunk[5:].strip(&#34;\n&#34;))
+            chunk_text = data[&#34;text&#34;][pos:]
+            meta_info = data[&#34;meta_info&#34;]
+            pos += len(chunk_text)
+            yield chunk_text, meta_info</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.get_chat_template"><code class="name flex">
+<span>def <span class="ident">get_chat_template</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_chat_template(self):
+    return self.chat_template</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.get_model_name"><code class="name flex">
+<span>def <span class="ident">get_model_name</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_model_name(self):
+    return self.model_info[&#34;model_path&#34;]</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.get_server_info"><code class="name flex">
+<span>def <span class="ident">get_server_info</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_server_info(self):
+    res = http_request(
+        self.base_url + &#34;/get_server_info&#34;,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)
+    return res.json()</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.select"><code class="name flex">
+<span>def <span class="ident">select</span></span>(<span>self,<br>s: <a title="sglang.lang.interpreter.StreamExecutor" href="lang/interpreter.html#sglang.lang.interpreter.StreamExecutor">StreamExecutor</a>,<br>choices: List[str],<br>temperature: float,<br>choices_method: <a title="sglang.lang.choices.ChoicesSamplingMethod" href="lang/choices.html#sglang.lang.choices.ChoicesSamplingMethod">ChoicesSamplingMethod</a>) ‑> <a title="sglang.lang.choices.ChoicesDecision" href="lang/choices.html#sglang.lang.choices.ChoicesDecision">ChoicesDecision</a></span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def select(
+    self,
+    s: StreamExecutor,
+    choices: List[str],
+    temperature: float,
+    choices_method: ChoicesSamplingMethod,
+) -&gt; ChoicesDecision:
+    assert temperature &lt;= 1e-5
+
+    # Cache common prefix
+    data = {&#34;text&#34;: s.text_, &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0}}
+    obj = self._generate_http_request(s, data)
+    prompt_len = obj[&#34;meta_info&#34;][&#34;prompt_tokens&#34;]
+    logprob_start_len = max(prompt_len - 2, 0)  # For token healing
+
+    # Compute logprob
+    data = {
+        &#34;text&#34;: [s.text_ + c for c in choices],
+        &#34;sampling_params&#34;: {
+            &#34;max_new_tokens&#34;: 0,
+            &#34;temperature&#34;: 0,
+        },
+        &#34;return_logprob&#34;: True,
+        &#34;return_text_in_logprobs&#34;: True,
+        &#34;logprob_start_len&#34;: logprob_start_len,
+    }
+    obj = self._generate_http_request(s, data)
+
+    input_token_logprobs = [r[&#34;meta_info&#34;][&#34;input_token_logprobs&#34;] for r in obj]
+    output_token_logprobs = [r[&#34;meta_info&#34;][&#34;output_token_logprobs&#34;] for r in obj]
+    normalized_prompt_logprobs = [
+        compute_normalized_prompt_logprobs(r[&#34;meta_info&#34;][&#34;input_token_logprobs&#34;])
+        for r in obj
+    ]
+
+    # Remove extra token if no token healing occurred
+    for i in range(len(input_token_logprobs)):
+        healed_token_str = input_token_logprobs[i][0][-1]
+        if s.text_.endswith(healed_token_str):
+            healed_token_logprob = input_token_logprobs[i][0][0]
+            normalized_prompt_logprobs[i] = (
+                normalized_prompt_logprobs[i] * len(input_token_logprobs[i])
+                - healed_token_logprob
+            ) / (len(input_token_logprobs[i]) - 1)
+            input_token_logprobs[i] = input_token_logprobs[i][1:]
+
+    # Compute unconditional logprobs if required
+    if choices_method.requires_unconditional_logprobs:
+        input_ids = [[el[1] for el in subl] for subl in input_token_logprobs]
+        data = {
+            &#34;input_ids&#34;: input_ids,
+            &#34;sampling_params&#34;: {&#34;max_new_tokens&#34;: 0},
+            &#34;return_logprob&#34;: True,
+        }
+        obj = self._generate_http_request(s, data)
+        unconditional_token_logprobs = [
+            r[&#34;meta_info&#34;][&#34;input_token_logprobs&#34;] for r in obj
+        ]
+    else:
+        unconditional_token_logprobs = None
+
+    return choices_method(
+        choices=choices,
+        normalized_prompt_logprobs=normalized_prompt_logprobs,
+        input_token_logprobs=input_token_logprobs,
+        output_token_logprobs=output_token_logprobs,
+        unconditional_token_logprobs=unconditional_token_logprobs,
+    )</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.start_profile"><code class="name flex">
+<span>def <span class="ident">start_profile</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def start_profile(self):
+    res = http_request(
+        self.base_url + &#34;/start_profile&#34;,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.RuntimeEndpoint.stop_profile"><code class="name flex">
+<span>def <span class="ident">stop_profile</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def stop_profile(self):
+    res = http_request(
+        self.base_url + &#34;/stop_profile&#34;,
+        api_key=self.api_key,
+        verify=self.verify,
+    )
+    self._assert_success(res)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="sglang.bench_offline_throughput" href="bench_offline_throughput.html">sglang.bench_offline_throughput</a></code></li>
+<li><code><a title="sglang.bench_one_batch" href="bench_one_batch.html">sglang.bench_one_batch</a></code></li>
+<li><code><a title="sglang.bench_one_batch_server" href="bench_one_batch_server.html">sglang.bench_one_batch_server</a></code></li>
+<li><code><a title="sglang.bench_serving" href="bench_serving.html">sglang.bench_serving</a></code></li>
+<li><code><a title="sglang.check_env" href="check_env.html">sglang.check_env</a></code></li>
+<li><code><a title="sglang.compile_deep_gemm" href="compile_deep_gemm.html">sglang.compile_deep_gemm</a></code></li>
+<li><code><a title="sglang.eval" href="eval/index.html">sglang.eval</a></code></li>
+<li><code><a title="sglang.global_config" href="global_config.html">sglang.global_config</a></code></li>
+<li><code><a title="sglang.lang" href="lang/index.html">sglang.lang</a></code></li>
+<li><code><a title="sglang.launch_server" href="launch_server.html">sglang.launch_server</a></code></li>
+<li><code><a title="sglang.profiler" href="profiler.html">sglang.profiler</a></code></li>
+<li><code><a title="sglang.srt" href="srt/index.html">sglang.srt</a></code></li>
+<li><code><a title="sglang.test" href="test/index.html">sglang.test</a></code></li>
+<li><code><a title="sglang.utils" href="utils.html">sglang.utils</a></code></li>
+<li><code><a title="sglang.version" href="version.html">sglang.version</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="sglang.Runtime" href="#sglang.Runtime">Runtime</a></code></li>
+<li><code><a title="sglang.assistant" href="#sglang.assistant">assistant</a></code></li>
+<li><code><a title="sglang.assistant_begin" href="#sglang.assistant_begin">assistant_begin</a></code></li>
+<li><code><a title="sglang.assistant_end" href="#sglang.assistant_end">assistant_end</a></code></li>
+<li><code><a title="sglang.flush_cache" href="#sglang.flush_cache">flush_cache</a></code></li>
+<li><code><a title="sglang.function" href="#sglang.function">function</a></code></li>
+<li><code><a title="sglang.gen" href="#sglang.gen">gen</a></code></li>
+<li><code><a title="sglang.gen_int" href="#sglang.gen_int">gen_int</a></code></li>
+<li><code><a title="sglang.gen_string" href="#sglang.gen_string">gen_string</a></code></li>
+<li><code><a title="sglang.get_server_info" href="#sglang.get_server_info">get_server_info</a></code></li>
+<li><code><a title="sglang.image" href="#sglang.image">image</a></code></li>
+<li><code><a title="sglang.select" href="#sglang.select">select</a></code></li>
+<li><code><a title="sglang.separate_reasoning" href="#sglang.separate_reasoning">separate_reasoning</a></code></li>
+<li><code><a title="sglang.set_default_backend" href="#sglang.set_default_backend">set_default_backend</a></code></li>
+<li><code><a title="sglang.system" href="#sglang.system">system</a></code></li>
+<li><code><a title="sglang.system_begin" href="#sglang.system_begin">system_begin</a></code></li>
+<li><code><a title="sglang.system_end" href="#sglang.system_end">system_end</a></code></li>
+<li><code><a title="sglang.user" href="#sglang.user">user</a></code></li>
+<li><code><a title="sglang.user_begin" href="#sglang.user_begin">user_begin</a></code></li>
+<li><code><a title="sglang.user_end" href="#sglang.user_end">user_end</a></code></li>
+<li><code><a title="sglang.video" href="#sglang.video">video</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.RuntimeEndpoint" href="#sglang.RuntimeEndpoint">RuntimeEndpoint</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.RuntimeEndpoint.cache_prefix" href="#sglang.RuntimeEndpoint.cache_prefix">cache_prefix</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.commit_lazy_operations" href="#sglang.RuntimeEndpoint.commit_lazy_operations">commit_lazy_operations</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.concatenate_and_append" href="#sglang.RuntimeEndpoint.concatenate_and_append">concatenate_and_append</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.fill_image" href="#sglang.RuntimeEndpoint.fill_image">fill_image</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.flush_cache" href="#sglang.RuntimeEndpoint.flush_cache">flush_cache</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.generate" href="#sglang.RuntimeEndpoint.generate">generate</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.generate_stream" href="#sglang.RuntimeEndpoint.generate_stream">generate_stream</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.get_chat_template" href="#sglang.RuntimeEndpoint.get_chat_template">get_chat_template</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.get_model_name" href="#sglang.RuntimeEndpoint.get_model_name">get_model_name</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.get_server_info" href="#sglang.RuntimeEndpoint.get_server_info">get_server_info</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.select" href="#sglang.RuntimeEndpoint.select">select</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.start_profile" href="#sglang.RuntimeEndpoint.start_profile">start_profile</a></code></li>
+<li><code><a title="sglang.RuntimeEndpoint.stop_profile" href="#sglang.RuntimeEndpoint.stop_profile">stop_profile</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

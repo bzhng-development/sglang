@@ -1,0 +1,1701 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>sglang.srt.models.kimi_vl_moonvit API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>sglang.srt.models.kimi_vl_moonvit</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.apply_rope"><code class="name flex">
+<span>def <span class="ident">apply_rope</span></span>(<span>xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor) ‑> tuple[torch.Tensor, torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_rope(
+    xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor
+) -&gt; tuple[torch.Tensor, torch.Tensor]:
+    &#34;&#34;&#34;
+    Args: (The leading dimensions of all inputs should be the same)
+        xq: query, tensor of shape (..., num_heads, head_dim)
+        xk: key, tensor of shape (..., num_heads, head_dim)
+        freqs_cis: tensor of shape (..., head_dim/2), dtype=torch.complex64. It contains the precomputed cis(freqs) for each position in the 2D grid.
+    Returns:
+        xq_out, xk_out: tensors of shape (..., num_heads, head_dim)
+    &#34;&#34;&#34;
+    _apply_rope_input_validation(xq, freqs_cis)
+    _apply_rope_input_validation(xk, freqs_cis)
+
+    freqs_cis = freqs_cis.unsqueeze(-2)  # ..., 1, head_dim/2
+    # ..., num_heads, head_dim/2
+    xq_ = torch.view_as_complex(xq.float().view(*xq.shape[:-1], -1, 2))
+    xk_ = torch.view_as_complex(xk.float().view(*xq.shape[:-1], -1, 2))
+    xq_out = torch.view_as_real(xq_ * freqs_cis).flatten(-2)  # ..., num_heads, head_dim
+    xk_out = torch.view_as_real(xk_ * freqs_cis).flatten(-2)  # ..., num_heads, head_dim
+    return xq_out.type_as(xq), xk_out.type_as(xk)</code></pre>
+</details>
+<div class="desc"><p>Args: (The leading dimensions of all inputs should be the same)
+xq: query, tensor of shape (&hellip;, num_heads, head_dim)
+xk: key, tensor of shape (&hellip;, num_heads, head_dim)
+freqs_cis: tensor of shape (&hellip;, head_dim/2), dtype=torch.complex64. It contains the precomputed cis(freqs) for each position in the 2D grid.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>xq_out, xk_out</code></dt>
+<dd>tensors of shape (&hellip;, num_heads, head_dim)</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.multihead_attention"><code class="name flex">
+<span>def <span class="ident">multihead_attention</span></span>(<span>q: torch.Tensor,<br>k: torch.Tensor,<br>v: torch.Tensor,<br>q_cu_seqlens: torch.Tensor | None = None,<br>k_cu_seqlens: torch.Tensor | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def multihead_attention(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    q_cu_seqlens: Optional[torch.Tensor] = None,
+    k_cu_seqlens: Optional[torch.Tensor] = None,
+):
+    &#34;&#34;&#34;Multi-head attention using flash attention 2.
+    This function is used to handle the case where the query, key, and value are packed.
+    Args:
+        q, k, v: tensor of shape (tot_seqlens, num_heads, head_dim).
+        q_cu_seqlens (torch.Tensor): cumulative sequence lengths of q.
+            The first element should be 0 and the last element should be q.shape[0].
+        k_cu_seqlens (torch.Tensor): cumulative sequence lengths of k.
+            The first element should be 0 and the last element should be k.shape[0].
+
+    Returns:
+        output: shape (batch_size, seqlen, dim) or (tot_seqlens, dim) if packing,
+            where dim = num_heads * head_dim
+    &#34;&#34;&#34;
+    if flash_attn_varlen_func is None:
+        raise ImportError(
+            &#34;flash_attn is not installed, this function needs flash_attn_varlen_func from flash_attn&#34;
+        )
+    # Unified format legal check
+    assert q.dim() == k.dim() == v.dim() == 3, &#34;q, k, v must have 3 dims&#34;
+    assert q_cu_seqlens[-1] == q.shape[0], &#34;q_cu_seqlens must sum to q.shape[0]&#34;
+    assert (
+        k_cu_seqlens[-1] == k.shape[0] == v.shape[0]
+    ), &#34;k_cu_seqlens must sum to k.shape[0]&#34;
+    assert q.dtype in [
+        torch.bfloat16,
+        torch.float16,
+    ], f&#34;unsupported dtype {q.dtype} for multihead attn&#34;
+
+    max_seqlen_q = (q_cu_seqlens[1:] - q_cu_seqlens[:-1]).max().item()
+    max_seqlen_k = (k_cu_seqlens[1:] - k_cu_seqlens[:-1]).max().item()
+    attn_out = flash_attn_varlen_func(
+        q,
+        k,
+        v,
+        q_cu_seqlens,
+        k_cu_seqlens,
+        max_seqlen_q,
+        max_seqlen_k,
+        causal=False,
+    )
+    attn_out = attn_out.flatten(start_dim=-2)
+
+    return attn_out</code></pre>
+</details>
+<div class="desc"><p>Multi-head attention using flash attention 2.
+This function is used to handle the case where the query, key, and value are packed.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt>q, k, v: tensor of shape (tot_seqlens, num_heads, head_dim).</dt>
+<dt><strong><code>q_cu_seqlens</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>cumulative sequence lengths of q.
+The first element should be 0 and the last element should be q.shape[0].</dd>
+<dt><strong><code>k_cu_seqlens</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>cumulative sequence lengths of k.
+The first element should be 0 and the last element should be k.shape[0].</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>output</code></dt>
+<dd>shape (batch_size, seqlen, dim) or (tot_seqlens, dim) if packing,
+where dim = num_heads * head_dim</dd>
+</dl></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.patch_merger"><code class="name flex">
+<span>def <span class="ident">patch_merger</span></span>(<span>x: torch.Tensor,<br>grid_hw: torch.Tensor,<br>merge_kernel_size: list[int, int] = (2, 2)) ‑> List[torch.Tensor]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def patch_merger(
+    x: torch.Tensor,
+    grid_hw: torch.Tensor,
+    merge_kernel_size: list[int, int] = (2, 2),
+) -&gt; List[torch.Tensor]:
+    d_model = x.size(-1)
+
+    outputs = []
+    pre_sum = 0
+    for x_shape in grid_hw.tolist():
+        height, width = x_shape[0], x_shape[1]
+        # Get the current sequence
+        seq = x[pre_sum : pre_sum + height * width]
+        # Reshape along self.merge_kernel_size and concat to the last dimension
+        kernel_height, kernel_width = merge_kernel_size
+        new_height, new_width = height // kernel_height, width // kernel_width
+        reshaped_seq = seq.view(
+            new_height, kernel_height, new_width, kernel_width, d_model
+        )
+        reshaped_seq = reshaped_seq.permute(0, 2, 1, 3, 4).contiguous()
+        padded_seq = reshaped_seq.view(
+            new_height * new_width, kernel_height * kernel_width, -1
+        )
+        outputs.append(padded_seq)
+        pre_sum += height * width
+
+    return outputs</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.sdpa_attention"><code class="name flex">
+<span>def <span class="ident">sdpa_attention</span></span>(<span>q: torch.Tensor,<br>k: torch.Tensor,<br>v: torch.Tensor,<br>q_cu_seqlens: torch.Tensor | None = None,<br>k_cu_seqlens: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sdpa_attention(
+    q: torch.Tensor,
+    k: torch.Tensor,
+    v: torch.Tensor,
+    q_cu_seqlens: Optional[torch.Tensor] = None,
+    k_cu_seqlens: Optional[torch.Tensor] = None,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Multi-head attention using torch scaled dot product attention.
+    This function is used to handle the case where the query, key, and value are packed.
+    Args:
+        q, k, v: tensor of shape (tot_seqlens, num_heads, head_dim).
+        q_cu_seqlens (torch.Tensor): cumulative sequence lengths of q.
+            The first element should be 0 and the last element should be q.shape[0].
+        k_cu_seqlens (torch.Tensor): cumulative sequence lengths of k.
+            The first element should be 0 and the last element should be k.shape[0].
+
+    Returns:
+        output: shape (batch_size, seqlen, dim) or (tot_seqlens, dim) if packing,
+            where dim = num_heads * head_dim
+    &#34;&#34;&#34;
+    # Unified format legal check
+    assert q.dim() == k.dim() == v.dim() == 3, &#34;q, k, v must have 3 dims&#34;
+    assert q_cu_seqlens[-1] == q.shape[0], &#34;q_cu_seqlens must sum to q.shape[0]&#34;
+    seq_length = q.shape[0]
+    attention_mask = torch.zeros(
+        [1, seq_length, seq_length], device=q.device, dtype=torch.bool
+    )
+    for i in range(1, len(q_cu_seqlens)):
+        attention_mask[
+            ...,
+            q_cu_seqlens[i - 1] : q_cu_seqlens[i],
+            q_cu_seqlens[i - 1] : q_cu_seqlens[i],
+        ] = True
+    q = q.transpose(0, 1)
+    k = k.transpose(0, 1)
+    v = v.transpose(0, 1)
+    attn_output = F.scaled_dot_product_attention(q, k, v, attention_mask, dropout_p=0.0)
+    attn_output = attn_output.transpose(0, 1)
+    attn_output = attn_output.reshape(seq_length, -1)
+    return attn_output</code></pre>
+</details>
+<div class="desc"><p>Multi-head attention using torch scaled dot product attention.
+This function is used to handle the case where the query, key, and value are packed.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt>q, k, v: tensor of shape (tot_seqlens, num_heads, head_dim).</dt>
+<dt><strong><code>q_cu_seqlens</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>cumulative sequence lengths of q.
+The first element should be 0 and the last element should be q.shape[0].</dd>
+<dt><strong><code>k_cu_seqlens</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>cumulative sequence lengths of k.
+The first element should be 0 and the last element should be k.shape[0].</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>output</code></dt>
+<dd>shape (batch_size, seqlen, dim) or (tot_seqlens, dim) if packing,
+where dim = num_heads * head_dim</dd>
+</dl></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb"><code class="flex name class">
+<span>class <span class="ident">Learnable2DInterpPosEmb</span></span>
+<span>(</span><span>height: int, width: int, dim: int, interpolation_mode: str = 'bicubic')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Learnable2DInterpPosEmb(nn.Module):
+
+    def __init__(
+        self, height: int, width: int, dim: int, interpolation_mode: str = &#34;bicubic&#34;
+    ) -&gt; None:
+        super().__init__()
+        self.height = height
+        self.width = width
+        self.interpolation_mode = interpolation_mode
+        self.weight = nn.Parameter(torch.empty(height, width, dim))
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        nn.init.normal_(self.weight)
+
+    def forward(self, x: torch.Tensor, grid_hws: torch.Tensor) -&gt; torch.Tensor:
+        pos_embs = []
+        for shape in grid_hws.tolist():
+            if shape == self.weight.shape[:-1]:
+                pos_embs.append(self.weight.flatten(end_dim=1))
+            else:
+                pos_embs.append(
+                    F.interpolate(
+                        self.weight.permute((2, 0, 1)).unsqueeze(0),
+                        size=shape,
+                        mode=self.interpolation_mode,
+                    )
+                    .squeeze(0)
+                    .permute((1, 2, 0))
+                    .flatten(end_dim=1)
+                )
+        out = x + torch.cat(pos_embs)
+        return out</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor, grid_hws: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor, grid_hws: torch.Tensor) -&gt; torch.Tensor:
+    pos_embs = []
+    for shape in grid_hws.tolist():
+        if shape == self.weight.shape[:-1]:
+            pos_embs.append(self.weight.flatten(end_dim=1))
+        else:
+            pos_embs.append(
+                F.interpolate(
+                    self.weight.permute((2, 0, 1)).unsqueeze(0),
+                    size=shape,
+                    mode=self.interpolation_mode,
+                )
+                .squeeze(0)
+                .permute((1, 2, 0))
+                .flatten(end_dim=1)
+            )
+    out = x + torch.cat(pos_embs)
+    return out</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb.reset_parameters"><code class="name flex">
+<span>def <span class="ident">reset_parameters</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def reset_parameters(self):
+    nn.init.normal_(self.weight)</code></pre>
+</details>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MLP2"><code class="flex name class">
+<span>class <span class="ident">MLP2</span></span>
+<span>(</span><span>dims: list[int], activation, bias=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MLP2(nn.Module):
+    &#34;&#34;&#34;
+    Args:
+        dims: [in_dim, hidden_dim, out_dim]
+        bias: whether to use bias in linear layer.
+    &#34;&#34;&#34;
+
+    def __init__(self, dims: list[int], activation, bias=True):
+        super().__init__()
+        assert len(dims) == 3
+        self.fc0 = nn.Linear(dims[0], dims[1], bias=bias)
+        self.fc1 = nn.Linear(dims[1], dims[2], bias=bias)
+        self.activation = activation
+        for m in [self.fc0, self.fc1]:
+            nn.init.trunc_normal_(m.weight, std=math.sqrt(2 / m.in_features))
+            if m.bias is not None:
+                nn.init.zeros_(m.bias)
+
+    def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+        x = self.fc0(x)
+        x = self.activation(x)
+        return self.fc1(x)</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dims</code></strong></dt>
+<dd>[in_dim, hidden_dim, out_dim]</dd>
+<dt><strong><code>bias</code></strong></dt>
+<dd>whether to use bias in linear layer.</dd>
+</dl>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MLP2.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+    x = self.fc0(x)
+    x = self.activation(x)
+    return self.fc1(x)</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVisionPatchEmbed"><code class="flex name class">
+<span>class <span class="ident">MoonVisionPatchEmbed</span></span>
+<span>(</span><span>out_dim: int,<br>in_dim: int = 3,<br>patch_size: int | Tuple[int, int] = (14, 14),<br>pos_emb_height: int = 14,<br>pos_emb_width: int = 14)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoonVisionPatchEmbed(nn.Module):
+
+    def __init__(
+        self,
+        out_dim: int,
+        in_dim: int = 3,
+        patch_size: Union[int, Tuple[int, int]] = (14, 14),
+        pos_emb_height: int = 14,
+        pos_emb_width: int = 14,
+    ):
+        super().__init__()
+        assert isinstance(
+            patch_size, (int, Sequence)
+        ), f&#34;Invalid patch_size type: {type(patch_size)}&#34;
+        if isinstance(patch_size, int):
+            patch_size = (patch_size, patch_size)
+        assert (
+            len(patch_size) == 2
+        ), f&#34;Expected patch_size to be a tuple of 2, got {patch_size}&#34;
+        self.patch_size = patch_size
+
+        self.proj = nn.Conv2d(
+            in_dim, out_dim, kernel_size=patch_size, stride=patch_size
+        )
+
+        self.pos_emb = Learnable2DInterpPosEmb(
+            height=pos_emb_height, width=pos_emb_width, dim=out_dim
+        )
+
+    def forward(self, x: torch.Tensor, grid_hw: torch.Tensor) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Args:
+            x (L, Channels): input tensor
+            grid_hw (N, 2): grid height and width
+
+        Returns:
+            (L, Cout) tensor
+        &#34;&#34;&#34;
+        x = self.proj(x).view(x.size(0), -1)
+        # apply positional embedding
+        x = self.pos_emb(x, grid_hw)
+        return x</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVisionPatchEmbed.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, x: torch.Tensor, grid_hw: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, x: torch.Tensor, grid_hw: torch.Tensor) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Args:
+        x (L, Channels): input tensor
+        grid_hw (N, 2): grid height and width
+
+    Returns:
+        (L, Cout) tensor
+    &#34;&#34;&#34;
+    x = self.proj(x).view(x.size(0), -1)
+    # apply positional embedding
+    x = self.pos_emb(x, grid_hw)
+    return x</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>L, Channels</code></dt>
+<dd>input tensor</dd>
+<dt><strong><code>grid_hw</code></strong> :&ensp;<code>N, 2</code></dt>
+<dd>grid height and width</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>(L, Cout) tensor</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoder"><code class="flex name class">
+<span>class <span class="ident">MoonVitEncoder</span></span>
+<span>(</span><span>hidden_dim: int, num_layers: int, block_cfg: dict)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoonVitEncoder(nn.Module):
+
+    def __init__(
+        self,
+        hidden_dim: int,
+        num_layers: int,
+        block_cfg: dict,
+    ) -&gt; None:
+        super().__init__()
+
+        self.rope_2d = Rope2DPosEmb(
+            block_cfg[&#34;hidden_dim&#34;] // block_cfg[&#34;num_heads&#34;], 512, 512
+        )
+        self.blocks = nn.ModuleList(
+            [MoonVitEncoderLayer(**block_cfg) for _ in range(num_layers)]
+        )
+        self.final_layernorm = nn.LayerNorm(hidden_dim)
+
+    def forward(
+        self, hidden_states: torch.Tensor, grid_hw: torch.Tensor
+    ) -&gt; torch.Tensor:
+        rope_freqs_cis = self.rope_2d.get_freqs_cis_by_seqlens(grid_hws=grid_hw)
+
+        lengths = torch.cat(
+            (
+                torch.zeros(1, device=hidden_states.device, dtype=grid_hw.dtype),
+                grid_hw[:, 0] * grid_hw[:, 1],
+            )
+        )
+        cu_seqlens = lengths.cumsum(dim=0, dtype=torch.int32)
+
+        for _, block in enumerate(self.blocks):
+            hidden_states = block(
+                hidden_states, cu_seqlens, rope_freqs_cis=rope_freqs_cis
+            )
+
+        hidden_states = self.final_layernorm(hidden_states)
+
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoder.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states: torch.Tensor, grid_hw: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self, hidden_states: torch.Tensor, grid_hw: torch.Tensor
+) -&gt; torch.Tensor:
+    rope_freqs_cis = self.rope_2d.get_freqs_cis_by_seqlens(grid_hws=grid_hw)
+
+    lengths = torch.cat(
+        (
+            torch.zeros(1, device=hidden_states.device, dtype=grid_hw.dtype),
+            grid_hw[:, 0] * grid_hw[:, 1],
+        )
+    )
+    cu_seqlens = lengths.cumsum(dim=0, dtype=torch.int32)
+
+    for _, block in enumerate(self.blocks):
+        hidden_states = block(
+            hidden_states, cu_seqlens, rope_freqs_cis=rope_freqs_cis
+        )
+
+    hidden_states = self.final_layernorm(hidden_states)
+
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer"><code class="flex name class">
+<span>class <span class="ident">MoonVitEncoderLayer</span></span>
+<span>(</span><span>num_heads: int,<br>hidden_dim: int,<br>mlp_dim: int,<br>*,<br>attn_implementation: str = 'flash_attention_2',<br>activation=&lt;built-in function gelu&gt;,<br>attn_bias: bool = False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoonVitEncoderLayer(nn.Module):
+
+    def __init__(
+        self,
+        num_heads: int,
+        hidden_dim: int,
+        mlp_dim: int,
+        *,
+        attn_implementation: str = &#34;flash_attention_2&#34;,  # use fa2 in sglang by default
+        activation=F.gelu,
+        attn_bias: bool = False,
+    ):
+        super().__init__()
+        self.num_heads = num_heads
+        self.hidden_dim = hidden_dim
+        self.hidden_size_per_attention_head = self.hidden_dim // self.num_heads
+        self.attn_implementation = attn_implementation
+
+        self.norm0 = nn.LayerNorm(hidden_dim)
+        self.norm1 = nn.LayerNorm(hidden_dim)
+        self.mlp = MLP2([hidden_dim, mlp_dim, hidden_dim], activation)
+        self.wqkv = nn.Linear(hidden_dim, hidden_dim * 3, bias=attn_bias)
+        self.wo = nn.Linear(hidden_dim, hidden_dim, bias=attn_bias)
+
+    def attention_qkvpacked(
+        self,
+        x: torch.Tensor,
+        cu_seqlens: torch.Tensor,
+        rope_freqs_cis: Optional[torch.Tensor] = None,
+    ):
+        &#34;&#34;&#34;
+        Args:
+            x (torch.Tensor): (batch_size, seqlen, hidden_dim)
+            cu_seqlens (torch.Tensor):
+        &#34;&#34;&#34;
+        xqkv = self.wqkv(x)
+
+        qkv_shape = xqkv.size()[:-1] + (
+            3,
+            self.num_heads,
+            self.hidden_size_per_attention_head,
+        )
+        # xqkv: (batch_size, seqlen, 3, nheads, headdim)
+        xqkv = xqkv.view(*qkv_shape)
+        xq, xk, xv = torch.unbind(xqkv, dim=-3)
+
+        xq, xk = apply_rope(xq, xk, rope_freqs_cis)
+
+        attn_func = VL_VISION_ATTENTION_FUNCTIONS[self.attn_implementation]
+        attn_out = attn_func(
+            xq, xk, xv, q_cu_seqlens=cu_seqlens, k_cu_seqlens=cu_seqlens
+        )
+
+        attn_out = self.wo(attn_out)
+        return attn_out
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        cu_seqlens: torch.Tensor,
+        rope_freqs_cis: Union[torch.Tensor, None] = None,
+    ) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Args:
+            hidden_states: non-packed (B, N, D) or packed (L, D). if non-packed, seqlens should be None, if packed, seqlens should be set
+
+        Returns:
+            output: same shape of input, non-packed (B, N, D) for non-packed input, (L, D) for packed input
+        &#34;&#34;&#34;
+        residual = hidden_states
+        hidden_states = self.norm0(hidden_states)
+        attn_out = self.attention_qkvpacked(
+            hidden_states, cu_seqlens, rope_freqs_cis=rope_freqs_cis
+        )
+        hidden_states = residual + attn_out
+
+        residual = hidden_states
+        hidden_states = self.mlp(self.norm1(hidden_states))
+        hidden_states = residual + hidden_states
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer.attention_qkvpacked"><code class="name flex">
+<span>def <span class="ident">attention_qkvpacked</span></span>(<span>self,<br>x: torch.Tensor,<br>cu_seqlens: torch.Tensor,<br>rope_freqs_cis: torch.Tensor | None = None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def attention_qkvpacked(
+    self,
+    x: torch.Tensor,
+    cu_seqlens: torch.Tensor,
+    rope_freqs_cis: Optional[torch.Tensor] = None,
+):
+    &#34;&#34;&#34;
+    Args:
+        x (torch.Tensor): (batch_size, seqlen, hidden_dim)
+        cu_seqlens (torch.Tensor):
+    &#34;&#34;&#34;
+    xqkv = self.wqkv(x)
+
+    qkv_shape = xqkv.size()[:-1] + (
+        3,
+        self.num_heads,
+        self.hidden_size_per_attention_head,
+    )
+    # xqkv: (batch_size, seqlen, 3, nheads, headdim)
+    xqkv = xqkv.view(*qkv_shape)
+    xq, xk, xv = torch.unbind(xqkv, dim=-3)
+
+    xq, xk = apply_rope(xq, xk, rope_freqs_cis)
+
+    attn_func = VL_VISION_ATTENTION_FUNCTIONS[self.attn_implementation]
+    attn_out = attn_func(
+        xq, xk, xv, q_cu_seqlens=cu_seqlens, k_cu_seqlens=cu_seqlens
+    )
+
+    attn_out = self.wo(attn_out)
+    return attn_out</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>x</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>(batch_size, seqlen, hidden_dim)</dd>
+</dl>
+<p>cu_seqlens (torch.Tensor):</p></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self,<br>hidden_states: torch.Tensor,<br>cu_seqlens: torch.Tensor,<br>rope_freqs_cis: torch.Tensor | None = None) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self,
+    hidden_states: torch.Tensor,
+    cu_seqlens: torch.Tensor,
+    rope_freqs_cis: Union[torch.Tensor, None] = None,
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Args:
+        hidden_states: non-packed (B, N, D) or packed (L, D). if non-packed, seqlens should be None, if packed, seqlens should be set
+
+    Returns:
+        output: same shape of input, non-packed (B, N, D) for non-packed input, (L, D) for packed input
+    &#34;&#34;&#34;
+    residual = hidden_states
+    hidden_states = self.norm0(hidden_states)
+    attn_out = self.attention_qkvpacked(
+        hidden_states, cu_seqlens, rope_freqs_cis=rope_freqs_cis
+    )
+    hidden_states = residual + attn_out
+
+    residual = hidden_states
+    hidden_states = self.mlp(self.norm1(hidden_states))
+    hidden_states = residual + hidden_states
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>hidden_states</code></strong></dt>
+<dd>non-packed (B, N, D) or packed (L, D). if non-packed, seqlens should be None, if packed, seqlens should be set</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>output</code></dt>
+<dd>same shape of input, non-packed (B, N, D) for non-packed input, (L, D) for packed input</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel"><code class="flex name class">
+<span>class <span class="ident">MoonVitPretrainedModel</span></span>
+<span>(</span><span>config: <a title="sglang.srt.configs.kimi_vl_moonvit.MoonViTConfig" href="../configs/kimi_vl_moonvit.html#sglang.srt.configs.kimi_vl_moonvit.MoonViTConfig">MoonViTConfig</a>,<br>*inputs,<br>**kwargs)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoonVitPretrainedModel(PreTrainedModel):
+    config_class = MoonViTConfig
+    model_type = &#34;moonvit&#34;
+    _no_split_modules = [&#34;PackingTransformer&#34;]
+    _supports_flash_attn_2 = True
+    _supports_sdpa = True
+
+    def __init__(self, config: MoonViTConfig, *inputs, **kwargs):
+        super().__init__(config, *inputs, **kwargs)
+        config = deepcopy(config)
+        self.merge_kernel_size = config.merge_kernel_size
+        self.patch_size = config.patch_size
+        self.patch_embed = MoonVisionPatchEmbed(
+            out_dim=config.hidden_size,
+            patch_size=config.patch_size,
+            pos_emb_height=config.init_pos_emb_height,
+            pos_emb_width=config.init_pos_emb_width,
+        )
+
+        self.encoder = MoonVitEncoder(
+            hidden_dim=config.hidden_size,
+            num_layers=config.num_hidden_layers,
+            block_cfg={
+                &#34;num_heads&#34;: config.num_attention_heads,
+                &#34;hidden_dim&#34;: config.hidden_size,
+                &#34;mlp_dim&#34;: config.intermediate_size,
+                &#34;activation&#34;: PytorchGELUTanh(),
+                &#34;attn_bias&#34;: True,
+                &#34;attn_implementation&#34;: config._attn_implementation,
+            },
+        )
+
+    def forward(
+        self, pixel_values: torch.Tensor, grid_hw: torch.Tensor
+    ) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Args:
+            pixel_values (torch.Tensor): The input pixel values.
+            grid_hw (torch.Tensor): The grid height and width.
+
+        Returns:
+            torch.Tensor: The output tokens.
+        &#34;&#34;&#34;
+        hidden_states = self.patch_embed(pixel_values, grid_hw)
+        hidden_states = self.encoder(hidden_states, grid_hw)
+        hidden_states = patch_merger(
+            hidden_states, grid_hw, merge_kernel_size=self.merge_kernel_size
+        )
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all models.</p>
+<p>[<code>PreTrainedModel</code>] takes care of storing the configuration of the models and handles methods for loading,
+downloading and saving models as well as a few methods common to all models to:</p>
+<pre><code>- resize the input embeddings,
+- prune heads in the self-attention heads.
+</code></pre>
+<p>Class attributes (overridden by derived classes):</p>
+<pre><code>- **config_class** ([`PretrainedConfig`]) -- A subclass of [`PretrainedConfig`] to use as configuration class
+  for this model architecture.
+- **load_tf_weights** (&lt;code&gt;Callable&lt;/code&gt;) -- A python *method* for loading a TensorFlow checkpoint in a PyTorch model,
+  taking as arguments:
+
+    - **model** ([`PreTrainedModel`]) -- An instance of the model on which to load the TensorFlow checkpoint.
+    - **config** ([`PreTrainedConfig`]) -- An instance of the configuration associated to the model.
+    - **path** (&lt;code&gt;str&lt;/code&gt;) -- A path to the TensorFlow checkpoint.
+
+- **base_model_prefix** (&lt;code&gt;str&lt;/code&gt;) -- A string indicating the attribute associated to the base model in derived
+  classes of the same architecture adding modules on top of the base model.
+- **is_parallelizable** (&lt;code&gt;bool&lt;/code&gt;) -- A flag indicating whether this model supports model parallelization.
+- **main_input_name** (&lt;code&gt;str&lt;/code&gt;) -- The name of the principal input to the model (often &lt;code&gt;input\_ids&lt;/code&gt; for NLP
+  models, &lt;code&gt;pixel\_values&lt;/code&gt; for vision models and &lt;code&gt;input\_values&lt;/code&gt; for speech models).
+- **can_record_outputs** (dict):
+</code></pre>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>transformers.modeling_utils.PreTrainedModel</li>
+<li>torch.nn.modules.module.Module</li>
+<li>transformers.modeling_utils.EmbeddingAccessMixin</li>
+<li>transformers.modeling_utils.ModuleUtilsMixin</li>
+<li>transformers.utils.hub.PushToHubMixin</li>
+<li>transformers.integrations.peft.PeftAdapterMixin</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.config_class"><code class="name">var <span class="ident">config_class</span></code></dt>
+<dd>
+<div class="desc"><p>Base class for all configuration classes. Handles a few parameters common to all models' configurations as well as
+methods for loading/downloading/saving configurations.</p>
+<p><Tip></p>
+<p>A configuration file can be loaded and saved to disk. Loading the configuration file and using this file to
+initialize a model does <strong>not</strong> load the model weights. It only affects the model's configuration.</p>
+<p></Tip></p>
+<p>Class attributes (overridden by derived classes):</p>
+<ul>
+<li><strong>model_type</strong> (<code>str</code>) &ndash; An identifier for the model type, serialized into the JSON file, and used to recreate
+the correct object in [<code>~transformers.AutoConfig</code>].</li>
+<li><strong>has_no_defaults_at_init</strong> (<code>bool</code>) &ndash; Whether the config class can be initialized without providing input arguments.
+Some configurations requires inputs to be defined at init and have no default values, usually these are composite configs,
+(but not necessarily) such as [<code>~transformers.EncoderDecoderConfig</code>] or [<code>~RagConfig</code>]. They have to be initialized from
+two or more configs of type [<code>~transformers.PretrainedConfig</code>].</li>
+<li><strong>keys_to_ignore_at_inference</strong> (<code>list[str]</code>) &ndash; A list of keys to ignore by default when looking at dictionary
+outputs of the model during inference.</li>
+<li><strong>attribute_map</strong> (<code>dict[str, str]</code>) &ndash; A dict that maps model specific attribute names to the standardized
+naming of attributes.</li>
+<li><strong>base_model_tp_plan</strong> (<code>dict[str, Any]</code>) &ndash; A dict that maps sub-modules FQNs of a base model to a tensor
+parallel plan applied to the sub-module when <code>model.tensor_parallel</code> is called.</li>
+<li><strong>base_model_pp_plan</strong> (<code>dict[str, tuple[list[str]]]</code>) &ndash; A dict that maps child-modules of a base model to a
+pipeline parallel plan that enables users to place the child-module on the appropriate device.</li>
+</ul>
+<p>Common attributes (present in all subclasses):</p>
+<ul>
+<li><strong>vocab_size</strong> (<code>int</code>) &ndash; The number of tokens in the vocabulary, which is also the first dimension of the
+embeddings matrix (this attribute may be missing for models that don't have a text modality like ViT).</li>
+<li><strong>hidden_size</strong> (<code>int</code>) &ndash; The hidden size of the model.</li>
+<li><strong>num_attention_heads</strong> (<code>int</code>) &ndash; The number of attention heads used in the multi-head attention layers of the
+model.</li>
+<li><strong>num_hidden_layers</strong> (<code>int</code>) &ndash; The number of blocks in the model.</li>
+</ul>
+<p><Tip warning={true}></p>
+<p>Setting parameters for sequence generation in the model config is deprecated. For backward compatibility, loading
+some of them will still be possible, but attempting to overwrite them will throw an exception &ndash; you should set
+them in a [~transformers.GenerationConfig]. Check the documentation of [~transformers.GenerationConfig] for more
+information about the individual parameters.</p>
+<p></Tip></p>
+<h2 id="arg">Arg</h2>
+<p>name_or_path (<code>str</code>, <em>optional</em>, defaults to <code>""</code>):
+Store the string that was passed to [<code>PreTrainedModel.from_pretrained</code>] or
+[<code>TFPreTrainedModel.from_pretrained</code>] as <code>pretrained_model_name_or_path</code> if the configuration was created
+with such a method.
+output_hidden_states (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should return all hidden-states.
+output_attentions (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should returns all attentions.
+return_dict (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether or not the model should return a [<code>~transformers.utils.ModelOutput</code>] instead of a plain tuple.
+is_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether the model is used as an encoder/decoder or not.
+is_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether to only use the decoder in an encoder-decoder architecture, otherwise it has no effect on
+decoder-only or encoder-only architectures.
+cross_attention_hidden_size (<code>bool</code>, <em>optional</em>):
+The hidden size of the cross-attention layer in case the model is used as a decoder in an encoder-decoder
+setting and the cross-attention hidden dimension differs from <code>self.config.hidden_size</code>.
+add_cross_attention (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether cross-attention layers should be added to the model. Note, this option is only relevant for models
+that can be used as decoder models within the [<code>EncoderDecoderModel</code>] class, which consists of all models
+in <code>AUTO_MODELS_FOR_CAUSAL_LM</code>.
+tie_encoder_decoder (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether all encoder weights should be tied to their equivalent decoder weights. This requires the encoder
+and decoder model to have the exact same parameter names.
+prune_heads (<code>dict[int, list[int]]</code>, <em>optional</em>, defaults to <code>{}</code>):
+Pruned heads of the model. The keys are the selected layer indices and the associated values, the list of
+heads to prune in said layer.</p>
+<pre><code>For instance `{1: [0, 2], 2: [2, 3]}` will prune heads 0 and 2 on layer 1 and heads 2 and 3 on layer 2.
+</code></pre>
+<p>chunk_size_feed_forward (<code>int</code>, <em>optional</em>, defaults to <code>0</code>):
+The chunk size of all feed forward layers in the residual attention blocks. A chunk size of <code>0</code> means that
+the feed forward layer is not chunked. A chunk size of n means that the feed forward layer processes <code>n</code> &lt;
+sequence_length embeddings at a time. For more information on feed forward chunking, see <a href="../glossary.html#feed-forward-chunking">How does Feed
+Forward Chunking work?</a>.</p>
+<blockquote>
+<p>Parameters for fine-tuning tasks</p>
+</blockquote>
+<p>architectures (<code>list[str]</code>, <em>optional</em>):
+Model architectures that can be used with the model pretrained weights.
+finetuning_task (<code>str</code>, <em>optional</em>):
+Name of the task used to fine-tune the model. This can be used when converting from an original (TensorFlow
+or PyTorch) checkpoint.
+id2label (<code>dict[int, str]</code>, <em>optional</em>):
+A map from index (for instance prediction index, or target index) to label.
+label2id (<code>dict[str, int]</code>, <em>optional</em>):
+A map from label to index for the model.
+num_labels (<code>int</code>, <em>optional</em>):
+Number of labels to use in the last layer added to the model, typically for a classification task.
+task_specific_params (<code>dict[str, Any]</code>, <em>optional</em>):
+Additional keyword arguments to store for the current task.
+problem_type (<code>str</code>, <em>optional</em>):
+Problem type for <code>XxxForSequenceClassification</code> models. Can be one of <code>"regression"</code>,
+<code>"single_label_classification"</code> or <code>"multi_label_classification"</code>.</p>
+<blockquote>
+<p>Parameters linked to the tokenizer</p>
+</blockquote>
+<p>tokenizer_class (<code>str</code>, <em>optional</em>):
+The name of the associated tokenizer class to use (if none is set, will use the tokenizer associated to the
+model by default).
+prefix (<code>str</code>, <em>optional</em>):
+A specific prompt that should be added at the beginning of each text before calling the model.
+bos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>beginning-of-stream</em> token.
+pad_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>padding</em> token.
+eos_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>end-of-stream</em> token.
+decoder_start_token_id (<code>int</code>, <em>optional</em>):
+If an encoder-decoder model starts decoding with a different token than <em>bos</em>, the id of that token.
+sep_token_id (<code>int</code>, <em>optional</em>):
+The id of the <em>separation</em> token.</p>
+<blockquote>
+<p>PyTorch specific parameters</p>
+</blockquote>
+<p>torchscript (<code>bool</code>, <em>optional</em>, defaults to <code>False</code>):
+Whether or not the model should be used with Torchscript.
+tie_word_embeddings (<code>bool</code>, <em>optional</em>, defaults to <code>True</code>):
+Whether the model's input and output word embeddings should be tied. Note that this is only relevant if the
+model has a output word embedding layer.
+dtype (<code>str</code>, <em>optional</em>):
+The <code>dtype</code> of the weights. This attribute can be used to initialize the model to a non-default <code>dtype</code>
+(which is normally <code>float32</code>) and thus allow for optimal storage allocation. For example, if the saved
+model is <code>float16</code>, ideally we want to load it back using the minimal amount of memory needed to load
+<code>float16</code> weights.</p></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.model_type"><code class="name">var <span class="ident">model_type</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, pixel_values: torch.Tensor, grid_hw: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(
+    self, pixel_values: torch.Tensor, grid_hw: torch.Tensor
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Args:
+        pixel_values (torch.Tensor): The input pixel values.
+        grid_hw (torch.Tensor): The grid height and width.
+
+    Returns:
+        torch.Tensor: The output tokens.
+    &#34;&#34;&#34;
+    hidden_states = self.patch_embed(pixel_values, grid_hw)
+    hidden_states = self.encoder(hidden_states, grid_hw)
+    hidden_states = patch_merger(
+        hidden_states, grid_hw, merge_kernel_size=self.merge_kernel_size
+    )
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pixel_values</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>The input pixel values.</dd>
+<dt><strong><code>grid_hw</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>The grid height and width.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>torch.Tensor</code></dt>
+<dd>The output tokens.</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitVLProjector"><code class="flex name class">
+<span>class <span class="ident">MoonVitVLProjector</span></span>
+<span>(</span><span>in_channels: int,<br>merge_kernel_size: list[int, int],<br>hidden_act: str = 'gelu',<br>ln_eps: float = 1e-05,<br>out_dim: int = 4096)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MoonVitVLProjector(nn.Module):
+
+    def __init__(
+        self,
+        in_channels: int,
+        merge_kernel_size: list[int, int],
+        hidden_act: str = &#34;gelu&#34;,
+        ln_eps: float = 1e-5,
+        out_dim: int = 4096,
+    ):
+        super().__init__()
+        self.hidden_size = in_channels * merge_kernel_size[0] * merge_kernel_size[1]
+
+        self.pre_norm = nn.nn.LayerNorm(in_channels, eps=ln_eps)
+        self.linear_1 = nn.Linear(self.hidden_size, self.hidden_size, bias=True)
+        self.act = ACT2FN[hidden_act]
+        self.linear_2 = nn.Linear(self.hidden_size, out_dim, bias=True)
+
+    def forward(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+        hidden_states = self.pre_norm(hidden_states).view(-1, self.hidden_size)
+        hidden_states = self.linear_1(hidden_states)
+        hidden_states = self.act(hidden_states)
+        hidden_states = self.linear_2(hidden_states)
+        return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing them to be nested in
+a tree structure. You can assign the submodules as regular attributes::</p>
+<pre><code>import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Model(nn.Module):
+    def __init__(self) -&gt; None:
+        super().__init__()
+        self.conv1 = nn.Conv2d(1, 20, 5)
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        return F.relu(self.conv2(x))
+</code></pre>
+<p>Submodules assigned in this way will be registered, and will also have their
+parameters converted when you call :meth:<code>to</code>, etc.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As per the example above, an <code>__init__()</code> call to the parent class
+must be made before assignment on the child.</p>
+</div>
+<p>:ivar training: Boolean represents whether this module is in training or
+evaluation mode.
+:vartype training: bool</p>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.MoonVitVLProjector.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, hidden_states: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def forward(self, hidden_states: torch.Tensor) -&gt; torch.Tensor:
+    hidden_states = self.pre_norm(hidden_states).view(-1, self.hidden_size)
+    hidden_states = self.linear_1(hidden_states)
+    hidden_states = self.act(hidden_states)
+    hidden_states = self.linear_2(hidden_states)
+    return hidden_states</code></pre>
+</details>
+<div class="desc"><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+</dd>
+</dl>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb"><code class="flex name class">
+<span>class <span class="ident">Rope2DPosEmb</span></span>
+<span>(</span><span>dim: int, max_height: int, max_width: int, theta_base=10000, device='cuda')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Rope2DPosEmb(nn.Module):
+    &#34;&#34;&#34;2D rotary position embedding with multi-resolution support.
+
+    This class is intended to be used in the following way:
+    1. Before training, create an instance of Rope2DPosEmb. This instance will hold the precomputed cis.
+    2. Before each forward pass, call `get_freqs_cis_by_*` to get the `freqs_cis` tensor for this iteration.
+    3. During the forward pass, pass the `freqs_cis` tensor to each attention layer, and call `apply` just before each attention operation.
+        The rope is shared across all attention layers and all heads.
+
+    Refs:
+    - RoFormer: https://arxiv.org/abs/2104.09864
+    - VisionLLaMA: https://arxiv.org/abs/2403.00522
+    - https://github.com/Meituan-AutoML/VisionLLaMA/blob/main/dit/models.py
+
+    Args:
+        dim (int): usually the multi-head attention dimension, should be divisible by 4 (TODO: relax this constraint if needed)
+        max_height (int): the maximum height of the 2D grid
+        max_width (int): the maximum width of the 2D grid
+        theta_base (float): the base of the theta
+        device (str): the device to store the precomputed cis
+    &#34;&#34;&#34;
+
+    def __init__(
+        self, dim: int, max_height: int, max_width: int, theta_base=10000, device=&#34;cuda&#34;
+    ):
+        super().__init__()
+        self.dim = dim
+        assert self.dim % 4 == 0, &#34;dim must be divisible by 4&#34;
+        self.max_height = max_height
+        self.max_width = max_width
+        self.theta_base = theta_base
+        self.device = device
+
+    def extra_repr(self):
+        return f&#34;dim={self.dim}, max_height={self.max_height}, max_width={self.max_width}, theta_base={self.theta_base}&#34;
+
+    @cached_property
+    def precomputed_freqs_cis(self) -&gt; torch.Tensor:
+        &#34;&#34;&#34;Calculate the cis(freqs) for each position in the 2D grid.
+
+        Return: complex tensor of shape (max_height, max_width, dim//2) and value:
+            height axis: ret[h, w, 2*i] = cis(h * theta_base**(-4*i/dim))
+            weight axis: ret[h, w, 2*i+1] = cis(w * theta_base**(-4*i/dim))   with (i in [0, dim//4))
+            note: `cis` is a mathematical notation defined by cis x = cos x + i sin x,
+        &#34;&#34;&#34;
+        N = self.max_height * self.max_width
+        flat_pos = torch.arange(0, N).float().to(self.device)
+        x_pos = flat_pos % self.max_width
+        y_pos = flat_pos // self.max_width
+        dim_range = (
+            torch.arange(0, self.dim, 4)[: (self.dim // 4)].float().to(self.device)
+        )  # C/4
+        freqs = 1.0 / (self.theta_base ** (dim_range / self.dim))
+        x_freqs = torch.outer(x_pos, freqs).float()  # N, C/4
+        y_freqs = torch.outer(y_pos, freqs).float()  # N, C/4
+        x_cis = torch.polar(torch.ones_like(x_freqs), x_freqs)  # N, C/4
+        y_cis = torch.polar(torch.ones_like(y_freqs), y_freqs)  # N, C/4
+        # N, C/4, 2
+        freqs_cis = torch.cat(
+            [x_cis.unsqueeze(dim=-1), y_cis.unsqueeze(dim=-1)], dim=-1
+        )
+        # max_height, max_width, C/2
+        freqs_cis = freqs_cis.reshape(self.max_height, self.max_width, -1)
+        return freqs_cis
+
+    def get_freqs_cis_by_seqlens(self, grid_hws: torch.Tensor) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Args:
+            grid_hws (torch.Tensor): containing list of (height, width) or (t, height, width) tuples.
+        Returns:
+            freqs_cis: tensor of shape (sum(t * height * width), dim//2)
+        &#34;&#34;&#34;
+        shapes = grid_hws.tolist()
+        assert all(
+            1 &lt;= h &lt;= self.max_height and 1 &lt;= w &lt;= self.max_width for h, w in shapes
+        ), (
+            shapes,
+            self.max_height,
+            self.max_width,
+        )
+        freqs_cis = torch.cat(
+            [
+                self.precomputed_freqs_cis[:h, :w].reshape(-1, self.dim // 2)
+                for h, w in shapes
+            ],
+            dim=0,
+        )
+        return freqs_cis
+
+    def get_freqs_cis_by_idx(
+        self, pos_idx: torch.Tensor, pos_idx_mask: torch.Tensor
+    ) -&gt; torch.Tensor:
+        &#34;&#34;&#34;
+        Args:
+            pos_idx: tensor of shape (..., 2), It contains the (h, w) position indices of each 2D token.
+            pos_idx_mask: a mask of shape (...), the leading dimensions should be the same as pos_idx.
+                Rope will only be applied to the tokens with True mask. `freqs_cis` for the tokens with False mask with be ones.
+        Return:
+            freqs_cis: tensor of shape (..., dim//2)
+        &#34;&#34;&#34;
+        assert (
+            pos_idx.shape[:-1] == pos_idx_mask.shape
+            and pos_idx.shape[-1] == 2
+            and pos_idx.ndim == pos_idx_mask.ndim + 1
+        ), (pos_idx.shape, pos_idx_mask.shape)
+        assert pos_idx_mask.dtype == torch.bool, pos_idx_mask.dtype
+
+        shp = pos_idx_mask.shape + (self.dim // 2,)  # ..., head_dim/2
+        freqs_cis = torch.ones(
+            shp, dtype=torch.complex64, device=self.device
+        )  # ..., head_dim/2
+        freqs_cis[pos_idx_mask] = self.precomputed_freqs_cis[
+            pos_idx[..., 0][pos_idx_mask], pos_idx[..., 1][pos_idx_mask]
+        ]
+        return freqs_cis</code></pre>
+</details>
+<div class="desc"><p>2D rotary position embedding with multi-resolution support.</p>
+<p>This class is intended to be used in the following way:
+1. Before training, create an instance of Rope2DPosEmb. This instance will hold the precomputed cis.
+2. Before each forward pass, call <code>get_freqs_cis_by_*</code> to get the <code>freqs_cis</code> tensor for this iteration.
+3. During the forward pass, pass the <code>freqs_cis</code> tensor to each attention layer, and call <code>apply</code> just before each attention operation.
+The rope is shared across all attention layers and all heads.</p>
+<p>Refs:
+- RoFormer: <a href="https://arxiv.org/abs/2104.09864">https://arxiv.org/abs/2104.09864</a>
+- VisionLLaMA: <a href="https://arxiv.org/abs/2403.00522">https://arxiv.org/abs/2403.00522</a>
+- <a href="https://github.com/Meituan-AutoML/VisionLLaMA/blob/main/dit/models.py">https://github.com/Meituan-AutoML/VisionLLaMA/blob/main/dit/models.py</a></p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dim</code></strong> :&ensp;<code>int</code></dt>
+<dd>usually the multi-head attention dimension, should be divisible by 4 (TODO: relax this constraint if needed)</dd>
+<dt><strong><code>max_height</code></strong> :&ensp;<code>int</code></dt>
+<dd>the maximum height of the 2D grid</dd>
+<dt><strong><code>max_width</code></strong> :&ensp;<code>int</code></dt>
+<dd>the maximum width of the 2D grid</dd>
+<dt><strong><code>theta_base</code></strong> :&ensp;<code>float</code></dt>
+<dd>the base of the theta</dd>
+<dt><strong><code>device</code></strong> :&ensp;<code>str</code></dt>
+<dd>the device to store the precomputed cis</dd>
+</dl>
+<p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>torch.nn.modules.module.Module</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.precomputed_freqs_cis"><code class="name">var <span class="ident">precomputed_freqs_cis</span> : torch.Tensor</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@cached_property
+def precomputed_freqs_cis(self) -&gt; torch.Tensor:
+    &#34;&#34;&#34;Calculate the cis(freqs) for each position in the 2D grid.
+
+    Return: complex tensor of shape (max_height, max_width, dim//2) and value:
+        height axis: ret[h, w, 2*i] = cis(h * theta_base**(-4*i/dim))
+        weight axis: ret[h, w, 2*i+1] = cis(w * theta_base**(-4*i/dim))   with (i in [0, dim//4))
+        note: `cis` is a mathematical notation defined by cis x = cos x + i sin x,
+    &#34;&#34;&#34;
+    N = self.max_height * self.max_width
+    flat_pos = torch.arange(0, N).float().to(self.device)
+    x_pos = flat_pos % self.max_width
+    y_pos = flat_pos // self.max_width
+    dim_range = (
+        torch.arange(0, self.dim, 4)[: (self.dim // 4)].float().to(self.device)
+    )  # C/4
+    freqs = 1.0 / (self.theta_base ** (dim_range / self.dim))
+    x_freqs = torch.outer(x_pos, freqs).float()  # N, C/4
+    y_freqs = torch.outer(y_pos, freqs).float()  # N, C/4
+    x_cis = torch.polar(torch.ones_like(x_freqs), x_freqs)  # N, C/4
+    y_cis = torch.polar(torch.ones_like(y_freqs), y_freqs)  # N, C/4
+    # N, C/4, 2
+    freqs_cis = torch.cat(
+        [x_cis.unsqueeze(dim=-1), y_cis.unsqueeze(dim=-1)], dim=-1
+    )
+    # max_height, max_width, C/2
+    freqs_cis = freqs_cis.reshape(self.max_height, self.max_width, -1)
+    return freqs_cis</code></pre>
+</details>
+<div class="desc"><p>Calculate the cis(freqs) for each position in the 2D grid.</p>
+<p>Return: complex tensor of shape (max_height, max_width, dim//2) and value:
+height axis: ret[h, w, 2<em>i] = cis(h * theta_base</em><em>(-4</em>i/dim))
+weight axis: ret[h, w, 2<em>i+1] = cis(w * theta_base</em><em>(-4</em>i/dim))
+with (i in [0, dim//4))
+note: <code>cis</code> is a mathematical notation defined by cis x = cos x + i sin x,</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.extra_repr"><code class="name flex">
+<span>def <span class="ident">extra_repr</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extra_repr(self):
+    return f&#34;dim={self.dim}, max_height={self.max_height}, max_width={self.max_width}, theta_base={self.theta_base}&#34;</code></pre>
+</details>
+<div class="desc"><p>Return the extra representation of the module.</p>
+<p>To print customized extra information, you should re-implement
+this method in your own modules. Both single-line and multi-line
+strings are acceptable.</p></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.get_freqs_cis_by_idx"><code class="name flex">
+<span>def <span class="ident">get_freqs_cis_by_idx</span></span>(<span>self, pos_idx: torch.Tensor, pos_idx_mask: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_freqs_cis_by_idx(
+    self, pos_idx: torch.Tensor, pos_idx_mask: torch.Tensor
+) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Args:
+        pos_idx: tensor of shape (..., 2), It contains the (h, w) position indices of each 2D token.
+        pos_idx_mask: a mask of shape (...), the leading dimensions should be the same as pos_idx.
+            Rope will only be applied to the tokens with True mask. `freqs_cis` for the tokens with False mask with be ones.
+    Return:
+        freqs_cis: tensor of shape (..., dim//2)
+    &#34;&#34;&#34;
+    assert (
+        pos_idx.shape[:-1] == pos_idx_mask.shape
+        and pos_idx.shape[-1] == 2
+        and pos_idx.ndim == pos_idx_mask.ndim + 1
+    ), (pos_idx.shape, pos_idx_mask.shape)
+    assert pos_idx_mask.dtype == torch.bool, pos_idx_mask.dtype
+
+    shp = pos_idx_mask.shape + (self.dim // 2,)  # ..., head_dim/2
+    freqs_cis = torch.ones(
+        shp, dtype=torch.complex64, device=self.device
+    )  # ..., head_dim/2
+    freqs_cis[pos_idx_mask] = self.precomputed_freqs_cis[
+        pos_idx[..., 0][pos_idx_mask], pos_idx[..., 1][pos_idx_mask]
+    ]
+    return freqs_cis</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pos_idx</code></strong></dt>
+<dd>tensor of shape (&hellip;, 2), It contains the (h, w) position indices of each 2D token.</dd>
+<dt><strong><code>pos_idx_mask</code></strong></dt>
+<dd>a mask of shape (&hellip;), the leading dimensions should be the same as pos_idx.
+Rope will only be applied to the tokens with True mask. <code>freqs_cis</code> for the tokens with False mask with be ones.</dd>
+</dl>
+<h2 id="return">Return</h2>
+<p>freqs_cis: tensor of shape (&hellip;, dim//2)</p></div>
+</dd>
+<dt id="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.get_freqs_cis_by_seqlens"><code class="name flex">
+<span>def <span class="ident">get_freqs_cis_by_seqlens</span></span>(<span>self, grid_hws: torch.Tensor) ‑> torch.Tensor</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_freqs_cis_by_seqlens(self, grid_hws: torch.Tensor) -&gt; torch.Tensor:
+    &#34;&#34;&#34;
+    Args:
+        grid_hws (torch.Tensor): containing list of (height, width) or (t, height, width) tuples.
+    Returns:
+        freqs_cis: tensor of shape (sum(t * height * width), dim//2)
+    &#34;&#34;&#34;
+    shapes = grid_hws.tolist()
+    assert all(
+        1 &lt;= h &lt;= self.max_height and 1 &lt;= w &lt;= self.max_width for h, w in shapes
+    ), (
+        shapes,
+        self.max_height,
+        self.max_width,
+    )
+    freqs_cis = torch.cat(
+        [
+            self.precomputed_freqs_cis[:h, :w].reshape(-1, self.dim // 2)
+            for h, w in shapes
+        ],
+        dim=0,
+    )
+    return freqs_cis</code></pre>
+</details>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>grid_hws</code></strong> :&ensp;<code>torch.Tensor</code></dt>
+<dd>containing list of (height, width) or (t, height, width) tuples.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>freqs_cis</code></dt>
+<dd>tensor of shape (sum(t * height * width), dim//2)</dd>
+</dl></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="sglang.srt.models" href="index.html">sglang.srt.models</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.apply_rope" href="#sglang.srt.models.kimi_vl_moonvit.apply_rope">apply_rope</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.multihead_attention" href="#sglang.srt.models.kimi_vl_moonvit.multihead_attention">multihead_attention</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.patch_merger" href="#sglang.srt.models.kimi_vl_moonvit.patch_merger">patch_merger</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.sdpa_attention" href="#sglang.srt.models.kimi_vl_moonvit.sdpa_attention">sdpa_attention</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb" href="#sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb">Learnable2DInterpPosEmb</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb.forward" href="#sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb.reset_parameters" href="#sglang.srt.models.kimi_vl_moonvit.Learnable2DInterpPosEmb.reset_parameters">reset_parameters</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.MLP2" href="#sglang.srt.models.kimi_vl_moonvit.MLP2">MLP2</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MLP2.forward" href="#sglang.srt.models.kimi_vl_moonvit.MLP2.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVisionPatchEmbed" href="#sglang.srt.models.kimi_vl_moonvit.MoonVisionPatchEmbed">MoonVisionPatchEmbed</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVisionPatchEmbed.forward" href="#sglang.srt.models.kimi_vl_moonvit.MoonVisionPatchEmbed.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoder" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitEncoder">MoonVitEncoder</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoder.forward" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitEncoder.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer">MoonVitEncoderLayer</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer.attention_qkvpacked" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer.attention_qkvpacked">attention_qkvpacked</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer.forward" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitEncoderLayer.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel">MoonVitPretrainedModel</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.config_class" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.config_class">config_class</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.forward" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.forward">forward</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.model_type" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitPretrainedModel.model_type">model_type</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitVLProjector" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitVLProjector">MoonVitVLProjector</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.MoonVitVLProjector.forward" href="#sglang.srt.models.kimi_vl_moonvit.MoonVitVLProjector.forward">forward</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb" href="#sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb">Rope2DPosEmb</a></code></h4>
+<ul class="">
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.extra_repr" href="#sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.extra_repr">extra_repr</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.get_freqs_cis_by_idx" href="#sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.get_freqs_cis_by_idx">get_freqs_cis_by_idx</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.get_freqs_cis_by_seqlens" href="#sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.get_freqs_cis_by_seqlens">get_freqs_cis_by_seqlens</a></code></li>
+<li><code><a title="sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.precomputed_freqs_cis" href="#sglang.srt.models.kimi_vl_moonvit.Rope2DPosEmb.precomputed_freqs_cis">precomputed_freqs_cis</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
