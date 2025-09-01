@@ -41,6 +41,7 @@ from transformers.models.qwen2_5_vl.modeling_qwen2_5_vl import (
 )
 
 from sglang.srt.hf_transformers_utils import get_processor
+from sglang.srt.layers.activation import SiluAndMul
 from sglang.srt.layers.attention.vision import VisionAttention
 from sglang.srt.layers.layernorm import RMSNorm
 from sglang.srt.layers.linear import (
@@ -70,8 +71,8 @@ class Qwen2_5_VLMLP(nn.Module):
         self,
         in_features: int,
         hidden_features: int = None,
+        hidden_act: str = "silu",
         bias: bool = True,
-        hidden_act="silu",
         quant_config: Optional[QuantizationConfig] = None,
         prefix: str = "",
     ):
@@ -90,14 +91,21 @@ class Qwen2_5_VLMLP(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("down_proj", prefix),
         )
-        self.act = ACT2FN[hidden_act]
+        self.act_fn = SiluAndMul()
+        self.orig_act = ACT2FN[hidden_act]
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
-        gate, up = gate_up.chunk(2, dim=-1)
-        x = self.act(gate) * up
-        x_down, _ = self.down_proj(x)
-        return x_down
+        y = self.act_fn(gate_up)
+        hidden = gate_up.size(-1) // 2
+        if (hidden % 8) != 0:
+            gate, up = gate_up.chunk(2, dim=-1)
+            y = self.orig_act(gate) * up
+        else:
+            y = self.act_fn(gate_up)
+        y = y.contiguous()
+        y, _ = self.down_proj(y)
+        return y
 
 
 class Qwen2_5_VisionBlock(nn.Module):
@@ -171,7 +179,7 @@ class Qwen2_5_VisionBlock(nn.Module):
     ) -> torch.Tensor:
         S, B, H = x.shape
         # norm1: flatten to 2D -> [S*B, H], then reshape back
-        x2d = x.reshape(-1, H)
+        x2d = x.reshape(-1, H).contiguous()
         hidden_states = self.norm1(x2d).reshape(S, B, H)
 
         # Attention expects [B, S, H]
@@ -184,7 +192,7 @@ class Qwen2_5_VisionBlock(nn.Module):
         attn = rearrange(attn, "b s h -> s b h")
 
         # norm2 with fused residual-add: also 2D
-        attn2d = attn.reshape(-1, H)
+        attn2d = attn.reshape(-1, H).contiguous()
         x_norm_2d, x_after_add_2d = self.norm2(x2d, residual=attn2d)
         x_norm = x_norm_2d.reshape(S, B, H)
         x_after_add = x_after_add_2d.reshape(S, B, H)
@@ -411,13 +419,13 @@ class Qwen2_5_VisionTransformer(nn.Module):
         seq_len, _ = x.size()
 
         x = x.reshape(seq_len // self.spatial_merge_unit, self.spatial_merge_unit, -1)
-        x = x[window_index, :, :]
-        x = x.reshape(seq_len, -1)
+        x = x[window_index, :, :].contiguous()
+        x = x.reshape(seq_len, -1).contiguous()
         rotary_pos_emb = rotary_pos_emb.reshape(
             seq_len // self.spatial_merge_unit, self.spatial_merge_unit, -1
-        )
-        rotary_pos_emb = rotary_pos_emb[window_index, :, :]
-        rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1)
+        ).contiguous()
+        rotary_pos_emb = rotary_pos_emb[window_index, :, :].contiguous()
+        rotary_pos_emb = rotary_pos_emb.reshape(seq_len, -1).contiguous()
         emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
         position_embeddings = (emb.cos(), emb.sin())
         # After building position_embeddings, make sure both cos and sin are on the same device/dtype as the attention input
