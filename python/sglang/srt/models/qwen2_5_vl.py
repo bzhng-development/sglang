@@ -50,6 +50,7 @@ from sglang.srt.layers.linear import (
     RowParallelLinear,
 )
 from sglang.srt.layers.logits_processor import LogitsProcessor
+from sglang.srt.layers.moe.ep_moe.kernels import silu_and_mul_triton_kernel
 from sglang.srt.layers.pooler import Pooler, PoolingType
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
 from sglang.srt.layers.vocab_parallel_embedding import ParallelLMHead
@@ -92,7 +93,8 @@ class Qwen2_5_VLMLP(nn.Module):
             prefix=add_prefix("down_proj", prefix),
         )
         self.act_fn = SiluAndMul()
-        self.orig_act = ACT2FN[hidden_act]
+        self.tl_act_fn = silu_and_mul_triton_kernel
+        # self.orig_act = ACT2FN[hidden_act]
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         gate_up, _ = self.gate_up_proj(x)
@@ -100,7 +102,7 @@ class Qwen2_5_VLMLP(nn.Module):
         hidden = gate_up.size(-1) // 2
         if (hidden % 8) != 0:
             gate, up = gate_up.chunk(2, dim=-1)
-            y = self.orig_act(gate) * up
+            y = self.tl_act_fn() * up
         else:
             y = self.act_fn(gate_up)
         y = y.contiguous()
