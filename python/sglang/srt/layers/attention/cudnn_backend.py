@@ -120,6 +120,9 @@ class CuDNNBackend(AttentionBackend):
         self._torch_stream = torch.cuda.current_stream()
         cudnn.set_stream(self._cudnn_handle, self._torch_stream.cuda_stream)
         self._debug = os.environ.get("SGLANG_CUDNN_DEBUG", "0") == "1"
+        # Heuristic/plan mode: default to A + FALLBACK. Allow forcing FALLBACK via env to avoid runtime compilation.
+        self._force_fallback = os.environ.get("SGLANG_CUDNN_FORCE_FALLBACK", "0") == "1"
+        self._plan_mode = os.environ.get("SGLANG_CUDNN_PLAN_MODE", "A").upper()
         # For CUDA-graph capture/replay support
         self._decode_buffers_by_bs = {}
 
@@ -248,7 +251,16 @@ class CuDNNBackend(AttentionBackend):
         )
         graph.validate()
         graph.build_operation_graph()
-        graph.create_execution_plans([cudnn.heur_mode.A, cudnn.heur_mode.FALLBACK])
+        # Choose plan modes. Some environments are unstable with runtime JIT engines during CUDA graph capture.
+        plan_modes = []
+        if self._force_fallback or self._plan_mode == "FALLBACK":
+            plan_modes = [cudnn.heur_mode.FALLBACK]
+        else:
+            # Default: try A first then FALLBACK
+            plan_modes = [cudnn.heur_mode.A, cudnn.heur_mode.FALLBACK]
+        if self._debug:
+            print(f"[CuDNN] create_execution_plans modes={plan_modes}")
+        graph.create_execution_plans(plan_modes)
         graph.check_support()
         graph.build_plans()
 
@@ -721,6 +733,8 @@ class CuDNNBackend(AttentionBackend):
             workspace = torch.empty(
                 graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8
             )
+            # Bind cuDNN handle to the current stream to ensure capture/replay correctness
+            cudnn.set_stream(self._cudnn_handle, torch.cuda.current_stream().cuda_stream)
             graph_i.execute(variant_pack, workspace,self._cudnn_handle)
             # move the true value out from the padded output
             result_i = output_i[:, front_padding : front_padding + length_i, :, :]
@@ -842,6 +856,8 @@ class CuDNNBackend(AttentionBackend):
                 )
             except Exception:
                 pass
+        # Bind cuDNN handle to the current stream to ensure capture/replay correctness
+        cudnn.set_stream(self._cudnn_handle, torch.cuda.current_stream().cuda_stream)
         if use_cuda_graph_buffers:
             graph_i.execute(variant_pack, workspace, self._cudnn_handle)
         else:
