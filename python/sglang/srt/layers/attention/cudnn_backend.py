@@ -117,6 +117,8 @@ class CuDNNBackend(AttentionBackend):
         self._cudnn_handle = cudnn.create_handle()
         self._torch_stream = torch.cuda.current_stream()
         cudnn.set_stream(self._cudnn_handle, self._torch_stream.cuda_stream)
+        # For CUDA-graph capture/replay support
+        self._decode_buffers_by_bs = {}
 
     def _create_cudnn_graph(
         self,
@@ -277,6 +279,23 @@ class CuDNNBackend(AttentionBackend):
         self.cuda_graph_max_num_tokens = max_num_tokens
         self.cuda_graph_kv_indices_buf = kv_indices_buf
         # No-op otherwise; page tables and tensors are prepared per-capture.
+    
+    def _ensure_decode_cuda_graph_buffers(self, bs: int):
+        if bs in self._decode_buffers_by_bs:
+            return
+        max_tokens = self.input_size_params.max_total_num_tokens + 1
+        device = torch.device("cuda")
+        k_table = torch.zeros((bs, 1, max_tokens, 1), dtype=torch.int32, device=device)
+        v_table = torch.zeros((bs, 1, max_tokens, 1), dtype=torch.int32, device=device)
+        seq_lens_kv = torch.full((bs, 1, 1, 1), self.get_cuda_graph_seq_len_fill_value(), dtype=torch.int32, device=device)
+        seq_lens_q = torch.ones((bs, 1, 1, 1), dtype=torch.int32, device=device)
+        self._decode_buffers_by_bs[bs] = {
+            "k_table": k_table,
+            "v_table": v_table,
+            "seq_lens_kv": seq_lens_kv,
+            "seq_lens_q": seq_lens_q,
+            "workspace": None,
+        }
         
     def get_cuda_graph_seq_len_fill_value(self):
         return 0
@@ -293,8 +312,20 @@ class CuDNNBackend(AttentionBackend):
     ):
         if forward_mode.is_decode_or_idle():
             batch_size = bs
-            args_and_graph_decode = self._decode_graphs[batch_size - 1]
-            self.forward_metadata = args_and_graph_decode
+            args_i, graph_i = self._decode_graphs[batch_size - 1]
+            self._ensure_decode_cuda_graph_buffers(batch_size)
+            bufs = self._decode_buffers_by_bs[batch_size]
+            if bufs["workspace"] is None:
+                bufs["workspace"] = torch.empty(graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8)
+            self.forward_metadata = (
+                args_i,
+                graph_i,
+                bufs["k_table"],
+                bufs["v_table"],
+                bufs["seq_lens_q"],
+                bufs["seq_lens_kv"],
+                bufs["workspace"],
+            )
             
 
        
@@ -314,8 +345,29 @@ class CuDNNBackend(AttentionBackend):
     ):
         if forward_mode.is_decode_or_idle():
             batch_size = bs
-            args_and_graph_decode = self._decode_graphs[batch_size - 1]
-            self.forward_metadata = args_and_graph_decode
+            self._ensure_decode_cuda_graph_buffers(batch_size)
+            args_i, graph_i = self._decode_graphs[batch_size - 1]
+            bufs = self._decode_buffers_by_bs[batch_size]
+            # Update page tables and seq lens in-place
+            req_to_token = self._model_runner.req_to_token_pool.req_to_token
+            per_req_tokens = req_to_token[req_pool_indices, :]
+            bufs["k_table"].zero_()
+            bufs["v_table"].zero_()
+            bufs["k_table"][:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1)
+            bufs["v_table"][:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1)
+            bufs["seq_lens_kv"].copy_(seq_lens.to(dtype=torch.int32).view(batch_size, 1, 1, 1))
+            bufs["seq_lens_q"].fill_(1)
+            if bufs["workspace"] is None:
+                bufs["workspace"] = torch.empty(graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8)
+            self.forward_metadata = (
+                args_i,
+                graph_i,
+                bufs["k_table"],
+                bufs["v_table"],
+                bufs["seq_lens_q"],
+                bufs["seq_lens_kv"],
+                bufs["workspace"],
+            )
             
         
 
@@ -695,12 +747,17 @@ class CuDNNBackend(AttentionBackend):
                 layer, forward_batch.out_cache_loc, k, v
             )
 
-        # Get the decode graph and pre-computed page tables from forward_metadata
-        # forward_metadata contains (cudnn_args, cudnn_graph)
-        args_i, graph_i = self.forward_metadata
-        padded_k_table, padded_v_table = self._init_decode_page_table(
+        # Get the decode graph and buffers from forward_metadata
+        fm = self.forward_metadata
+        use_cuda_graph_buffers = isinstance(fm, tuple) and len(fm) >= 7
+        if use_cuda_graph_buffers:
+            args_i, graph_i, padded_k_table, padded_v_table, seq_lens_q_buf, seq_lens_kv_buf, workspace = fm
+        else:
+            args_i, graph_i = fm
+            padded_k_table, padded_v_table = self._init_decode_page_table(
                 forward_batch.req_to_token_pool.req_to_token,
-                forward_batch.req_pool_indices)
+                forward_batch.req_pool_indices,
+            )
         # Reshape query to [num_tokens, num_heads, head_size]
         # q: [num_tokens, num_heads * head_size] -> [num_tokens, num_heads, head_size]
         q_reshaped = q.view(q.shape[0], layer.tp_q_head_num, layer.qk_head_dim)
@@ -740,8 +797,13 @@ class CuDNNBackend(AttentionBackend):
         # Sequence length tensors for CuDNN
         # seq_lens: [batch_size] -> [batch_size, 1, 1, 1]
         batch_size = forward_batch.batch_size
-        seq_lens_kv = seq_lens.to(dtype=torch.int32).view(batch_size, 1, 1, 1)  # [batch_size, 1, 1, 1]
-        seq_lens_q = torch.ones_like(seq_lens_kv)  # [batch_size, 1, 1, 1] - always 1 for decode
+        if use_cuda_graph_buffers:
+            # Reuse pre-allocated tensors. Values were updated in replay_prepare
+            seq_lens_q = seq_lens_q_buf
+            seq_lens_kv = seq_lens_kv_buf
+        else:
+            seq_lens_kv = seq_lens.to(dtype=torch.int32).view(batch_size, 1, 1, 1)
+            seq_lens_q = torch.ones_like(seq_lens_kv)
         
         
         # Create variant pack for CuDNN graph execution
@@ -759,10 +821,11 @@ class CuDNNBackend(AttentionBackend):
         _validate_param(args_i,variant_pack)
        
         # Execute CuDNN graph
-        workspace = torch.empty(
-            graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8
-        )
-        graph_i.execute(variant_pack, workspace,self._cudnn_handle)
+        if use_cuda_graph_buffers:
+            graph_i.execute(variant_pack, workspace, self._cudnn_handle)
+        else:
+            workspace = torch.empty(graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8)
+            graph_i.execute(variant_pack, workspace, self._cudnn_handle)
         # Return the output in the expected format
         return output
 

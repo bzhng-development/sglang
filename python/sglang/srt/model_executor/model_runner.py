@@ -1563,7 +1563,6 @@ class ModelRunner:
             from sglang.srt.layers.attention.cudnn_backend import (
                 CuDNNBackend,
             )
-            
             return CuDNNBackend(self)
         elif backend_str == "trtllm_mla":
             if not self.use_mla_backend:
