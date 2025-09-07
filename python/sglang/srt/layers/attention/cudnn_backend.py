@@ -358,8 +358,11 @@ class CuDNNBackend(AttentionBackend):
             per_req_tokens = req_to_token[req_pool_indices, :]
             bufs["k_table"].zero_()
             bufs["v_table"].zero_()
-            bufs["k_table"][:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1)
-            bufs["v_table"][:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1)
+            for i in range(batch_size):
+                L = int(seq_lens[i].item())
+                if L > 0:
+                    bufs["k_table"][i, 0, :L, 0] = per_req_tokens[i, :L]
+                    bufs["v_table"][i, 0, :L, 0] = per_req_tokens[i, :L]
             bufs["seq_lens_kv"].copy_(seq_lens.to(dtype=torch.int32).view(batch_size, 1, 1, 1))
             bufs["seq_lens_q"].fill_(1)
             if bufs["workspace"] is None:
@@ -549,7 +552,7 @@ class CuDNNBackend(AttentionBackend):
         return prefill_graphs
 
 
-    def _init_decode_page_table(self, req_to_token, req_pool_indices):
+    def _init_decode_page_table(self, req_to_token, req_pool_indices, seq_lens: Optional[torch.Tensor] = None):
         # Build the page table
         # only want prefix + the newly added tokens for each sequence
         # Then pad it to the maximum across the batch
@@ -567,12 +570,22 @@ class CuDNNBackend(AttentionBackend):
             dtype=torch.int32,
             device=req_to_token.device,
         )
-        padded_k_page_table[:, :, : per_req_tokens.shape[1], :] = (
-            per_req_tokens.view(per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1)
-        )
-        padded_v_page_table[:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(
-            per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1
-        )
+        if seq_lens is not None:
+            padded_k_page_table.zero_()
+            padded_v_page_table.zero_()
+            bs = per_req_tokens.shape[0]
+            for i in range(bs):
+                L = int(seq_lens[i].item())
+                if L > 0:
+                    padded_k_page_table[i, 0, :L, 0] = per_req_tokens[i, :L]
+                    padded_v_page_table[i, 0, :L, 0] = per_req_tokens[i, :L]
+        else:
+            padded_k_page_table[:, :, : per_req_tokens.shape[1], :] = (
+                per_req_tokens.view(per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1)
+            )
+            padded_v_page_table[:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(
+                per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1
+            )
 
         return padded_k_page_table, padded_v_page_table
 
@@ -765,6 +778,7 @@ class CuDNNBackend(AttentionBackend):
             padded_k_table, padded_v_table = self._init_decode_page_table(
                 forward_batch.req_to_token_pool.req_to_token,
                 forward_batch.req_pool_indices,
+                seq_lens,
             )
         # Reshape query to [num_tokens, num_heads, head_size]
         # q: [num_tokens, num_heads * head_size] -> [num_tokens, num_heads, head_size]
