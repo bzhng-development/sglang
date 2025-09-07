@@ -117,6 +117,7 @@ class CuDNNBackend(AttentionBackend):
         self._cudnn_handle = cudnn.create_handle()
         self._torch_stream = torch.cuda.current_stream()
         cudnn.set_stream(self._cudnn_handle, self._torch_stream.cuda_stream)
+        self._debug = os.environ.get("SGLANG_CUDNN_DEBUG", "0") == "1"
         # For CUDA-graph capture/replay support
         self._decode_buffers_by_bs = {}
 
@@ -326,6 +327,8 @@ class CuDNNBackend(AttentionBackend):
                 bufs["seq_lens_kv"],
                 bufs["workspace"],
             )
+            if self._debug:
+                print(f"[CuDNN][capture] bs={batch_size} k_table={bufs['k_table'].shape} v_table={bufs['v_table'].shape}")
             
 
        
@@ -368,6 +371,9 @@ class CuDNNBackend(AttentionBackend):
                 bufs["seq_lens_kv"],
                 bufs["workspace"],
             )
+            if self._debug:
+                pr = per_req_tokens[0, : min(8, per_req_tokens.shape[1])].tolist() if per_req_tokens.numel() > 0 else []
+                print(f"[CuDNN][replay_prep] bs={batch_size} seq_lens[0:4]={seq_lens[:4].tolist()} per_req_tokens[0,:8]={pr}")
             
         
 
@@ -821,6 +827,8 @@ class CuDNNBackend(AttentionBackend):
         _validate_param(args_i,variant_pack)
        
         # Execute CuDNN graph
+        if self._debug:
+            print(f"[CuDNN][decode] bs={batch_size} H={layer.tp_q_head_num} Dq={layer.qk_head_dim} Dv={layer.v_head_dim} seq_lens[0:4]={seq_lens[:4].tolist()}")
         if use_cuda_graph_buffers:
             graph_i.execute(variant_pack, workspace, self._cudnn_handle)
         else:
