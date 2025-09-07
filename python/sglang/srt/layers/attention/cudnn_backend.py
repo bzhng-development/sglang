@@ -389,12 +389,8 @@ class CuDNNBackend(AttentionBackend):
         kv_cache_num_tokens = self.input_size_params.max_total_num_tokens + 1
         # see model_runner.py
         # paged_table_size = self._model_runner.model_config.context_len + 4
-        q_shape = [
-            batch_size,
-            self.input_size_params.num_heads_q,
-            seq_len,
-            self.input_size_params.head_size,
-        ]
+        # Q expected as [B, S, H, D] for extend prefill
+        q_shape = [batch_size, seq_len, self.input_size_params.num_heads_q, self.input_size_params.head_size]
         query_strides = self._make_compact_strides(q_shape)
         kv_container_shape = [
             kv_cache_num_tokens,
@@ -482,13 +478,8 @@ class CuDNNBackend(AttentionBackend):
         print("Create decode graphs for batch sizes: ", max_batch_size)
         for batch_size in range(1, max_batch_size + 1):
             # Radix Attention use KVCache of Block Size 1
-
-            q_shape = [
-                batch_size,
-                self.input_size_params.num_heads_q,
-                1,
-                self.input_size_params.head_size,
-            ]
+            # Q expected by cuDNN SDPA as [B, S, H, D] with S=1 for decode
+            q_shape = [batch_size, 1, self.input_size_params.num_heads_q, self.input_size_params.head_size]
             q_strides = self._make_compact_strides(q_shape)
             # see memory_pool.py: kv cache size has max_total_num_tokens+1 tokens (with 1 dummy token)
             kv_cache_num_tokens = self.input_size_params.max_total_num_tokens + 1
@@ -663,18 +654,18 @@ class CuDNNBackend(AttentionBackend):
             padding_total_size = front_padding + back_padding + length_i
 
             if not (front_padding == 0 and back_padding == 0):
-                # pad the query with front and back padding
+                # pad the query with front and back padding; layout [1, S, H, D]
                 query_i = torch.empty(
-                    (1, H, padding_total_size, D),
+                    (1, padding_total_size, H, D),
                     dtype=query.dtype,
                     device=query.device,
                 )
-                query_i[0, :, front_padding : front_padding + length_i, :] = query[
+                query_i[0, front_padding : front_padding + length_i, :, :] = query[
                     offset : offset + length_i, :, :
-                ].movedim(0, 1)
+                ]
             else:
-                query_i = query[offset : offset + length_i, :, :]
-                query_i = query_i.unsqueeze(0).movedim(1,2).contiguous()
+                # [S, H, D] -> [1, S, H, D]
+                query_i = query[offset : offset + length_i, :, :].unsqueeze(0).contiguous()
 
             # heads, tokens, head size
             # The tokens of queries are indexed by req_to_token
@@ -707,8 +698,7 @@ class CuDNNBackend(AttentionBackend):
             # 7) Set output tensor
             # CuDNN output will also be [B, H, max_new_tokens, D]
             # eventually flatten it back to [sum_of_new_tokens_across_batch, H, D]
-            B_out, H_out, S_out, D_out = query_i.shape
-            output_i = output.new_zeros((B_out, H_out, S_out, D_out))
+            output_i = output.new_zeros(query_i.shape)
 
             variant_pack = {
                 args_i[self._ArgMapKeys.q]: query_i,
@@ -728,13 +718,8 @@ class CuDNNBackend(AttentionBackend):
             )
             graph_i.execute(variant_pack, workspace,self._cudnn_handle)
             # move the true value out from the padded output
-            result_i = output_i[:, :, front_padding : front_padding + length_i, :]
-            output[
-                offset : offset + length_i,
-                :,
-            ] = result_i.squeeze(
-                0
-            ).movedim(1, 0)
+            result_i = output_i[:, front_padding : front_padding + length_i, :, :]
+            output[offset : offset + length_i, :, :] = result_i.squeeze(0)
             offset += length_i
 
         output_head_concat = output.view(output.shape[0], output.shape[1]*output.shape[2]).contiguous()
@@ -800,10 +785,9 @@ class CuDNNBackend(AttentionBackend):
         # Get sequence information
         seq_lens = forward_batch.seq_lens  # [batch_size]
         
-        # Convert query to CuDNN format: [B, H, S, D] where S=1 for decode
-        # q_reshaped: [num_tokens, num_heads, head_size] -> [batch_size, num_heads, 1, head_size]
-        # Ensure the tensor has the correct memory layout by making it contiguous
-        query_cudnn = q_reshaped.unsqueeze(2).contiguous()  # [batch_size, num_heads, 1, head_size]
+        # Convert query to CuDNN format: [B, S, H, D] where S=1 for decode
+        # q_reshaped: [B, H, D] -> [B, 1, H, D]
+        query_cudnn = q_reshaped.unsqueeze(1).contiguous()
         
         # Reshape KV cache to container format for paged attention
         # k_cache: [max_total_num_tokens, num_heads, head_size] -> [max_total_num_tokens, num_heads, 1, head_size]
