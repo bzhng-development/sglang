@@ -765,6 +765,8 @@ class CuDNNBackend(AttentionBackend):
             args_i, graph_i, padded_k_table, padded_v_table, seq_lens_q_buf, seq_lens_kv_buf, workspace = fm
         else:
             args_i, graph_i = fm
+            # When not using pre-allocated CUDA graph buffers, build page tables on-the-fly
+            seq_lens = forward_batch.seq_lens  # [batch_size]
             padded_k_table, padded_v_table = self._init_decode_page_table(
                 forward_batch.req_to_token_pool.req_to_token,
                 forward_batch.req_pool_indices,

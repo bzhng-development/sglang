@@ -516,6 +516,18 @@ class ServerArgs:
             self.disable_cuda_graph = True
             self.disable_radix_cache = True
 
+        # Optional: allow disabling CUDA graph specifically for the cuDNN backend via env.
+        # This can be useful to work around cuDNN runtime/compile version mismatches
+        # or kernel JIT behaviors that are not graph-capture safe in some environments.
+        if (
+            os.environ.get("SGLANG_CUDNN_DISABLE_CUDAGRAPH", "0") == "1"
+            and self.attention_backend == "cudnn"
+        ):
+            logger.warning(
+                "Disabling CUDA graph because SGLANG_CUDNN_DISABLE_CUDAGRAPH=1 with cuDNN backend"
+            )
+            self.disable_cuda_graph = True
+
         # Set page size
         if self.page_size is None:
             self.page_size = 1
