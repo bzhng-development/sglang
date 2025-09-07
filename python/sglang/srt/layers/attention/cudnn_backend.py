@@ -499,7 +499,7 @@ class CuDNNBackend(AttentionBackend):
                 kv_container_shape,
                 kv_page_table_shape,
                 seq_len_shape,
-                causal=False,
+                causal=True,
             )
             decode_graphs.append((tensor_args, graph))
             assert batch_size == len(
