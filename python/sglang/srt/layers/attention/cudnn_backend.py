@@ -259,9 +259,25 @@ class CuDNNBackend(AttentionBackend):
         }
         return args_map, graph
 
-    def init_cuda_graph_state(self, max_bs):
-        pass
+    def init_cuda_graph_state(
+        self,
+        max_bs: int,
+        max_num_tokens: int,
+        kv_indices_buf: Optional[torch.Tensor] = None,
+    ):
+        """
+        Initialize any state needed for CUDA graph capture/replay.
 
+        CuDNN backend does not require preallocated auxiliary buffers for
+        capture, but the runner expects this method to accept the same
+        signature as other backends (e.g., Triton/Flash*). Record the
+        limits for potential future use to keep interface parity.
+        """
+        self.cuda_graph_max_bs = max_bs
+        self.cuda_graph_max_num_tokens = max_num_tokens
+        self.cuda_graph_kv_indices_buf = kv_indices_buf
+        # No-op otherwise; page tables and tensors are prepared per-capture.
+        
     def get_cuda_graph_seq_len_fill_value(self):
         return 0
 
