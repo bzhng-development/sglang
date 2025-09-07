@@ -478,8 +478,13 @@ class CuDNNBackend(AttentionBackend):
         print("Create decode graphs for batch sizes: ", max_batch_size)
         for batch_size in range(1, max_batch_size + 1):
             # Radix Attention use KVCache of Block Size 1
-            # Q expected by cuDNN SDPA as [B, S, H, D] with S=1 for decode
-            q_shape = [batch_size, 1, self.input_size_params.num_heads_q, self.input_size_params.head_size]
+            # Q layout [B, H, S, D] with S=1 for decode (matches earlier validated plan)
+            q_shape = [
+                batch_size,
+                self.input_size_params.num_heads_q,
+                1,
+                self.input_size_params.head_size,
+            ]
             q_strides = self._make_compact_strides(q_shape)
             # see memory_pool.py: kv cache size has max_total_num_tokens+1 tokens (with 1 dummy token)
             kv_cache_num_tokens = self.input_size_params.max_total_num_tokens + 1
@@ -787,7 +792,7 @@ class CuDNNBackend(AttentionBackend):
         
         # Convert query to CuDNN format: [B, S, H, D] where S=1 for decode
         # q_reshaped: [B, H, D] -> [B, 1, H, D]
-        query_cudnn = q_reshaped.unsqueeze(1).contiguous()
+        query_cudnn = q_reshaped.unsqueeze(2).contiguous()
         
         # Reshape KV cache to container format for paged attention
         # k_cache: [max_total_num_tokens, num_heads, head_size] -> [max_total_num_tokens, num_heads, 1, head_size]
