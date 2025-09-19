@@ -22,7 +22,6 @@ from transformers import Lfm2Config
 
 # TODO for each of these step by step, turn it to the relevant one in sglang
 from vllm import envs
-from vllm.attention import Attention
 from vllm.compilation.decorators import support_torch_compile
 from vllm.config import CacheConfig, ModelConfig, VllmConfig
 from vllm.distributed import get_pp_group, get_tensor_model_parallel_world_size
@@ -33,7 +32,6 @@ from vllm.model_executor.layers.linear import (
     QKVParallelLinear,
     RowParallelLinear,
 )
-from vllm.model_executor.layers.logits_processor import LogitsProcessor
 from vllm.model_executor.layers.mamba.mamba_utils import (
     MambaStateDtypeCalculator,
     MambaStateShapeCalculator,
@@ -49,6 +47,9 @@ from vllm.model_executor.layers.vocab_parallel_embedding import (
 from vllm.model_executor.model_loader.weight_utils import default_weight_loader
 from vllm.model_executor.sampling_metadata import SamplingMetadata
 from vllm.sequence import IntermediateTensors
+
+from sglang.srt.layers.logits_processor import LogitsProcessor
+from sglang.srt.layers.radix_attention import RadixAttention
 
 from .interfaces import HasInnerState, IsHybrid, SupportsLoRA, SupportsPP, SupportsQuant
 from .utils import (
@@ -171,13 +172,14 @@ class Lfm2Attention(nn.Module):
             rope_scaling=rope_scaling,
             is_neox_style=True,
         )
-        self.attn = Attention(
+        self.attn = RadixAttention(
             self.num_heads,
             self.head_dim,
             self.scaling,
             num_kv_heads=self.num_kv_heads,
             cache_config=cache_config,
             prefix=f"{prefix}.attn",
+            layer_id=layer_idx,
         )
         self.q_layernorm = RMSNorm(self.head_dim, eps=config.norm_eps)
         self.k_layernorm = RMSNorm(self.head_dim, eps=config.norm_eps)
