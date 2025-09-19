@@ -269,7 +269,59 @@ class CuDNNBackend(AttentionBackend):
         return args_map, graph
 
     def init_cuda_graph_state(self, max_bs: int, max_num_tokens: int):
-        pass
+        pool_device = getattr(self._model_runner.req_to_token_pool, "device", None)
+        device = torch.device(pool_device or self._model_runner.device)
+
+        # Record the maximum batch size supported by the CUDA graph runner.
+        self._cuda_graph_decode_max_bs = max_bs
+
+        # Preallocate paged-attention page tables that will be reused across
+        # capture and replay for each batch size. The extra token accounts for
+        # the dummy token in the KV cache allocator.
+        max_cache_tokens = self.input_size_params.max_total_num_tokens + 1
+        page_table_shape = (max_bs, 1, max_cache_tokens, 1)
+        self._cuda_graph_decode_k_page_table = torch.zeros(
+            page_table_shape, dtype=torch.int32, device=device
+        )
+        self._cuda_graph_decode_v_page_table = torch.zeros(
+            page_table_shape, dtype=torch.int32, device=device
+        )
+
+        # Allocate sequence-length buffers reused by the CuDNN graph.
+        self._cuda_graph_decode_seq_lens_flat = torch.zeros(
+            (max_bs,), dtype=torch.int32, device=device
+        )
+        self._cuda_graph_decode_seq_lens_views = [
+            self._cuda_graph_decode_seq_lens_flat[:bs].view(bs, 1, 1, 1)
+            for bs in range(1, max_bs + 1)
+        ]
+
+        # Query sequence lengths are always 1 token for decode graphs.
+        self._cuda_graph_decode_q_seq_lens_flat = torch.ones(
+            (max_bs,), dtype=torch.int32, device=device
+        )
+        self._cuda_graph_decode_q_seq_lens_views = [
+            self._cuda_graph_decode_q_seq_lens_flat[:bs].view(bs, 1, 1, 1)
+            for bs in range(1, max_bs + 1)
+        ]
+
+        # Cache reusable views per batch size to avoid recreating tensors on the
+        # hot path.
+        self._cuda_graph_decode_k_page_table_views = [
+            self._cuda_graph_decode_k_page_table[:bs] for bs in range(1, max_bs + 1)
+        ]
+        self._cuda_graph_decode_v_page_table_views = [
+            self._cuda_graph_decode_v_page_table[:bs] for bs in range(1, max_bs + 1)
+        ]
+
+        # Preallocate CuDNN workspace buffers for each decode graph.
+        decode_graph_count = min(max_bs, len(self._decode_graphs))
+        self._cuda_graph_decode_workspaces = []
+        for idx in range(decode_graph_count):
+            _, graph = self._decode_graphs[idx]
+            workspace_size = graph.get_workspace_size()
+            workspace = torch.empty(workspace_size, dtype=torch.uint8, device=device)
+            self._cuda_graph_decode_workspaces.append(workspace)
 
     def get_cuda_graph_seq_len_fill_value(self):
         return 0
@@ -477,35 +529,38 @@ class CuDNNBackend(AttentionBackend):
         # only want prefix + the newly added tokens for each sequence
         # Then pad it to the maximum across the batch
         per_req_tokens = req_to_token[req_pool_indices, :]
+        batch_size = per_req_tokens.shape[0]
+        ctx_len = per_req_tokens.shape[1]
+        use_cuda_graph_buffer = (
+            hasattr(self, "_cuda_graph_decode_max_bs")
+            and batch_size > 0
+            and batch_size <= self._cuda_graph_decode_max_bs
+        )
 
-        # reshape to [bs, 1, max_ctx_len, 1] because cudnn require num_blocks equals
-        # kv cache token num when block size is 1.
-        padded_k_page_table = torch.empty(
-            (
-                per_req_tokens.shape[0],
-                1,
-                self.input_size_params.max_total_num_tokens + 1,
-                1,
-            ),
-            dtype=torch.int32,
-            device=req_to_token.device,
-        )
-        padded_v_page_table = torch.empty(
-            (
-                per_req_tokens.shape[0],
-                1,
-                self.input_size_params.max_total_num_tokens + 1,
-                1,
-            ),
-            dtype=torch.int32,
-            device=req_to_token.device,
-        )
-        padded_k_page_table[:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(
-            per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1
-        )
-        padded_v_page_table[:, :, : per_req_tokens.shape[1], :] = per_req_tokens.view(
-            per_req_tokens.shape[0], 1, per_req_tokens.shape[1], 1
-        )
+        if use_cuda_graph_buffer:
+            padded_k_page_table = self._cuda_graph_decode_k_page_table_views[
+                batch_size - 1
+            ]
+            padded_v_page_table = self._cuda_graph_decode_v_page_table_views[
+                batch_size - 1
+            ]
+        else:
+            # reshape to [bs, 1, max_ctx_len, 1] because cudnn requires the number
+            # of blocks to match the KV cache token count when block size is 1.
+            padded_k_page_table = torch.empty(
+                (batch_size, 1, ctx_len, 1),
+                dtype=torch.int32,
+                device=req_to_token.device,
+            )
+            padded_v_page_table = torch.empty(
+                (batch_size, 1, ctx_len, 1),
+                dtype=torch.int32,
+                device=req_to_token.device,
+            )
+
+        view = per_req_tokens.view(batch_size, 1, ctx_len, 1)
+        padded_k_page_table[:, :, :ctx_len, :].copy_(view)
+        padded_v_page_table[:, :, :ctx_len, :].copy_(view)
 
         return padded_k_page_table, padded_v_page_table
 
@@ -751,12 +806,26 @@ class CuDNNBackend(AttentionBackend):
         # Sequence length tensors for CuDNN
         # seq_lens: [batch_size] -> [batch_size, 1, 1, 1]
         batch_size = forward_batch.batch_size
-        seq_lens_kv = seq_lens.to(dtype=torch.int32).view(
-            batch_size, 1, 1, 1
-        )  # [batch_size, 1, 1, 1]
-        seq_lens_q = torch.ones_like(
-            seq_lens_kv
-        )  # [batch_size, 1, 1, 1] - always 1 for decode
+        use_cuda_graph_buffer = (
+            hasattr(self, "_cuda_graph_decode_max_bs")
+            and batch_size > 0
+            and batch_size <= self._cuda_graph_decode_max_bs
+        )
+        if use_cuda_graph_buffer:
+            seq_lens_int32 = self._cuda_graph_decode_seq_lens_flat[:batch_size]
+            seq_lens_slice = seq_lens[:batch_size]
+            if seq_lens_slice.dtype != torch.int32:
+                seq_lens_slice = seq_lens_slice.to(torch.int32)
+            seq_lens_int32.copy_(seq_lens_slice)
+            seq_lens_kv = self._cuda_graph_decode_seq_lens_views[batch_size - 1]
+            seq_lens_q = self._cuda_graph_decode_q_seq_lens_views[batch_size - 1]
+        else:
+            seq_lens_kv = seq_lens.to(dtype=torch.int32).view(
+                batch_size, 1, 1, 1
+            )  # [batch_size, 1, 1, 1]
+            seq_lens_q = torch.ones_like(
+                seq_lens_kv
+            )  # [batch_size, 1, 1, 1] - always 1 for decode
 
         # Create variant pack for CuDNN graph execution
         variant_pack = {
@@ -789,9 +858,16 @@ class CuDNNBackend(AttentionBackend):
         _validate_param(args_i, variant_pack)
 
         # Execute CuDNN graph
-        workspace = torch.empty(
-            graph_i.get_workspace_size(), device="cuda", dtype=torch.uint8
-        )
+        if use_cuda_graph_buffer and batch_size <= len(
+            self._cuda_graph_decode_workspaces
+        ):
+            workspace = self._cuda_graph_decode_workspaces[batch_size - 1]
+        else:
+            workspace = torch.empty(
+                graph_i.get_workspace_size(),
+                device=query_cudnn.device,
+                dtype=torch.uint8,
+            )
         graph_i.execute(variant_pack, workspace, self._cudnn_handle)
         # Return the output in the expected format
         return output
