@@ -13,32 +13,66 @@
 # ==============================================================================
 """Utilities for Huggingface Transformers."""
 
+from __future__ import annotations
+
 import contextlib
 import importlib
 import json
 import os
 import warnings
 from pathlib import Path
-from typing import Any, Dict, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Type, Union
 
 import torch
 from huggingface_hub import snapshot_download
-from transformers import (
-    AutoConfig,
-    AutoProcessor,
-    AutoTokenizer,
-    GenerationConfig,
-    PretrainedConfig,
-    PreTrainedTokenizer,
-    PreTrainedTokenizerBase,
-    PreTrainedTokenizerFast,
-)
-from transformers.models.auto.modeling_auto import MODEL_FOR_CAUSAL_LM_MAPPING_NAMES
 
 # Only import InternVL config since it's needed by the processor registration
 from sglang.srt.configs.internvl import InternVLChatConfig
 from sglang.srt.connector import create_remote_connector
 from sglang.srt.utils import is_remote_url, logger, lru_cache_frozenset
+
+if TYPE_CHECKING:  # pragma: no cover - typing only
+    from transformers import (
+        AutoConfig as _AutoConfig,
+        AutoProcessor as _AutoProcessor,
+        AutoTokenizer as _AutoTokenizer,
+        GenerationConfig as _GenerationConfig,
+        PretrainedConfig as _PretrainedConfig,
+        PreTrainedTokenizer as _PreTrainedTokenizer,
+        PreTrainedTokenizerBase as _PreTrainedTokenizerBase,
+        PreTrainedTokenizerFast as _PreTrainedTokenizerFast,
+    )
+    from transformers.models.auto.modeling_auto import (
+        MODEL_FOR_CAUSAL_LM_MAPPING_NAMES as _MODEL_FOR_CAUSAL_LM_MAPPING_NAMES,
+    )
+
+
+_TRANSFORMERS_MODULE = None
+_MODEL_FOR_CAUSAL_LM_MAPPING_NAMES = None
+
+
+def _ensure_transformers():
+    global _TRANSFORMERS_MODULE
+    if _TRANSFORMERS_MODULE is None:
+        import transformers
+
+        _TRANSFORMERS_MODULE = transformers
+    return _TRANSFORMERS_MODULE
+
+
+def _get_transformers_attr(name: str):
+    return getattr(_ensure_transformers(), name)
+
+
+def _get_model_for_causal_lm_mapping_names():
+    global _MODEL_FOR_CAUSAL_LM_MAPPING_NAMES
+    if _MODEL_FOR_CAUSAL_LM_MAPPING_NAMES is None:
+        from transformers.models.auto.modeling_auto import (
+            MODEL_FOR_CAUSAL_LM_MAPPING_NAMES as mapping,
+        )
+
+        _MODEL_FOR_CAUSAL_LM_MAPPING_NAMES = mapping
+    return _MODEL_FOR_CAUSAL_LM_MAPPING_NAMES
 
 # Lazy config registry - maps model_type to (module, class_name)
 _CONFIG_REGISTRY: Dict[str, tuple[str, str]] = {
@@ -56,7 +90,35 @@ _CONFIG_REGISTRY: Dict[str, tuple[str, str]] = {
 }
 
 
-def _get_config_class(model_type: str) -> Optional[Type[PretrainedConfig]]:
+def _get_auto_config_cls():
+    return _get_transformers_attr("AutoConfig")
+
+
+def _get_auto_tokenizer_cls():
+    return _get_transformers_attr("AutoTokenizer")
+
+
+def _get_auto_processor_cls():
+    return _get_transformers_attr("AutoProcessor")
+
+
+def _get_generation_config_cls():
+    return _get_transformers_attr("GenerationConfig")
+
+
+def _get_pretrained_tokenizer_base_cls():
+    return _get_transformers_attr("PreTrainedTokenizerBase")
+
+
+def _get_pretrained_tokenizer_fast_cls():
+    return _get_transformers_attr("PreTrainedTokenizerFast")
+
+
+def _get_siglip_vision_config_cls():
+    return _get_transformers_attr("SiglipVisionConfig")
+
+
+def _get_config_class(model_type: str) -> Optional[Type["PretrainedConfig"]]:
     """Lazily load and return a config class for the given model type."""
     if model_type == "internvl_chat":
         # Already imported
@@ -88,7 +150,7 @@ def download_from_hf(
     return snapshot_download(model_path, allow_patterns=allow_patterns)
 
 
-def get_hf_text_config(config: PretrainedConfig):
+def get_hf_text_config(config: "PretrainedConfig"):
     """Get the "sub" config relevant to llm for multi modal models.
     No op for pure text models.
     """
@@ -146,7 +208,8 @@ def get_config(
         client.pull_files(ignore_pattern=["*.pt", "*.safetensors", "*.bin"])
         model = client.get_local_dir()
 
-    config = AutoConfig.from_pretrained(
+    auto_config_cls = _get_auto_config_cls()
+    config = auto_config_cls.from_pretrained(
         model, trust_remote_code=trust_remote_code, revision=revision, **kwargs
     )
     if (
@@ -156,7 +219,7 @@ def get_config(
         # Phi4MMForCausalLM uses a hard-coded vision_config. See:
         # https://github.com/vllm-project/vllm/blob/6071e989df1531b59ef35568f83f7351afb0b51e/vllm/model_executor/models/phi4mm.py#L71
         # We set it here to support cases where num_attention_heads is not divisible by the TP size.
-        from transformers import SiglipVisionConfig
+        siglip_vision_config_cls = _get_siglip_vision_config_cls()
 
         vision_config = {
             "hidden_size": 1152,
@@ -167,7 +230,7 @@ def get_config(
             "num_hidden_layers": 26,  # Model is originally 27-layer, we only need the first 26 layers for feature extraction.
             "patch_size": 14,
         }
-        config.vision_config = SiglipVisionConfig(**vision_config)
+        config.vision_config = siglip_vision_config_cls(**vision_config)
     text_config = get_hf_text_config(config=config)
 
     if isinstance(model, str) and text_config is not None:
@@ -195,9 +258,10 @@ def get_config(
 
     # Special architecture mapping check for GGUF models
     if is_gguf:
-        if config.model_type not in MODEL_FOR_CAUSAL_LM_MAPPING_NAMES:
+        mapping = _get_model_for_causal_lm_mapping_names()
+        if config.model_type not in mapping:
             raise RuntimeError(f"Can't get gguf config for {config.model_type}.")
-        model_type = MODEL_FOR_CAUSAL_LM_MAPPING_NAMES[config.model_type]
+        model_type = mapping[config.model_type]
         config.update({"architectures": [model_type]})
 
     return config
@@ -211,7 +275,8 @@ def get_generation_config(
     **kwargs,
 ):
     try:
-        return GenerationConfig.from_pretrained(
+        generation_config_cls = _get_generation_config_cls()
+        return generation_config_cls.from_pretrained(
             model, trust_remote_code=trust_remote_code, revision=revision, **kwargs
         )
     except OSError as e:
@@ -282,7 +347,7 @@ def get_tokenizer(
     trust_remote_code: bool = False,
     tokenizer_revision: Optional[str] = None,
     **kwargs,
-) -> Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:
+) -> Union["_PreTrainedTokenizer", "_PreTrainedTokenizerFast"]:
     """Gets a tokenizer for the given model name via Huggingface."""
     if tokenizer_name.endswith(".json"):
         from sglang.srt.tokenizer.tiktoken_tokenizer import TiktokenTokenizer
@@ -312,7 +377,8 @@ def get_tokenizer(
         tokenizer_name = client.get_local_dir()
 
     try:
-        tokenizer = AutoTokenizer.from_pretrained(
+        auto_tokenizer_cls = _get_auto_tokenizer_cls()
+        tokenizer = auto_tokenizer_cls.from_pretrained(
             tokenizer_name,
             *args,
             trust_remote_code=trust_remote_code,
@@ -345,7 +411,8 @@ def get_tokenizer(
         else:
             raise e
 
-    if not isinstance(tokenizer, PreTrainedTokenizerFast):
+    pretrained_tokenizer_fast_cls = _get_pretrained_tokenizer_fast_cls()
+    if not isinstance(tokenizer, pretrained_tokenizer_fast_cls):
         warnings.warn(
             "Using a slow tokenizer. This might cause a significant "
             "slowdown. Consider using a fast tokenizer instead."
@@ -357,7 +424,8 @@ def get_tokenizer(
 
 # Some models doesn't have an available processor, e.g.: InternVL
 def get_tokenizer_from_processor(processor):
-    if isinstance(processor, PreTrainedTokenizerBase):
+    pretrained_tokenizer_base_cls = _get_pretrained_tokenizer_base_cls()
+    if isinstance(processor, pretrained_tokenizer_base_cls):
         return processor
     return processor.tokenizer
 
@@ -374,7 +442,8 @@ def get_processor(
     # pop 'revision' from kwargs if present.
     revision = kwargs.pop("revision", tokenizer_revision)
 
-    config = AutoConfig.from_pretrained(
+    auto_config_cls = _get_auto_config_cls()
+    config = auto_config_cls.from_pretrained(
         tokenizer_name,
         trust_remote_code=trust_remote_code,
         revision=revision,
@@ -390,7 +459,8 @@ def get_processor(
         kwargs["use_fast"] = use_fast
     try:
         if "InternVL3_5" in tokenizer_name:
-            processor = AutoTokenizer.from_pretrained(
+            auto_tokenizer_cls = _get_auto_tokenizer_cls()
+            processor = auto_tokenizer_cls.from_pretrained(
                 tokenizer_name,
                 *args,
                 trust_remote_code=trust_remote_code,
@@ -398,7 +468,8 @@ def get_processor(
                 **kwargs,
             )
         else:
-            processor = AutoProcessor.from_pretrained(
+            auto_processor_cls = _get_auto_processor_cls()
+            processor = auto_processor_cls.from_pretrained(
                 tokenizer_name,
                 *args,
                 trust_remote_code=trust_remote_code,
@@ -413,7 +484,8 @@ def get_processor(
                 f"Processor {tokenizer_name} does not have a slow version. Automatically use fast version"
             )
             kwargs["use_fast"] = True
-            processor = AutoProcessor.from_pretrained(
+            auto_processor_cls = _get_auto_processor_cls()
+            processor = auto_processor_cls.from_pretrained(
                 tokenizer_name,
                 *args,
                 trust_remote_code=trust_remote_code,
