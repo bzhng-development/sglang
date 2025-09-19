@@ -117,6 +117,8 @@ class CuDNNBackend(AttentionBackend):
             dtype=torch.int32,
             device="cuda",
         )
+        self._cuda_graph_decode_cached_tables = None
+        self._cuda_graph_decode_cached_bs = 0
 
         assert (
             model_runner.page_size == 1
@@ -337,9 +339,13 @@ class CuDNNBackend(AttentionBackend):
         spec_info: Optional[Union[EagleDraftInput, EagleVerifyInput]],
     ):
         if forward_mode.is_decode_or_idle():
+            self._prepare_cuda_graph_decode_metadata(bs, seq_lens, req_pool_indices)
             batch_size = bs
             args_and_graph_decode = self._decode_graphs[batch_size - 1]
             self.forward_metadata = args_and_graph_decode
+        else:
+            self._cuda_graph_decode_cached_tables = None
+            self._cuda_graph_decode_cached_bs = 0
 
     def init_forward_metadata_replay_cuda_graph(
         self,
@@ -353,9 +359,61 @@ class CuDNNBackend(AttentionBackend):
         seq_lens_cpu: Optional[torch.Tensor],
     ):
         if forward_mode.is_decode_or_idle():
+            self._prepare_cuda_graph_decode_metadata(bs, seq_lens, req_pool_indices)
             batch_size = bs
             args_and_graph_decode = self._decode_graphs[batch_size - 1]
             self.forward_metadata = args_and_graph_decode
+        else:
+            self._cuda_graph_decode_cached_tables = None
+            self._cuda_graph_decode_cached_bs = 0
+
+    def _prepare_cuda_graph_decode_metadata(
+        self,
+        batch_size: int,
+        seq_lens: torch.Tensor,
+        req_pool_indices: torch.Tensor,
+    ):
+        if batch_size <= 0 or not hasattr(self, "_cuda_graph_decode_max_bs"):
+            self._cuda_graph_decode_cached_tables = None
+            self._cuda_graph_decode_cached_bs = 0
+            return
+
+        if batch_size > self._cuda_graph_decode_max_bs:
+            self._cuda_graph_decode_cached_tables = None
+            self._cuda_graph_decode_cached_bs = 0
+            return
+
+        req_to_token = self._model_runner.req_to_token_pool.req_to_token
+        ctx_len = req_to_token.shape[1]
+        padded_k = self._cuda_graph_decode_k_page_table_views[batch_size - 1]
+        padded_v = self._cuda_graph_decode_v_page_table_views[batch_size - 1]
+
+        # Reset and populate page tables for current batch.
+        padded_k.zero_()
+        padded_v.zero_()
+        if ctx_len > 0:
+            per_req_tokens = req_to_token[req_pool_indices[:batch_size], :]
+            per_req_tokens = per_req_tokens.contiguous()
+            view = per_req_tokens.view(batch_size, 1, ctx_len, 1)
+            padded_k[:, :, :ctx_len, :].copy_(view)
+            padded_v[:, :, :ctx_len, :].copy_(view)
+
+        seq_lens_slice = seq_lens[:batch_size]
+        if seq_lens_slice.dtype != torch.int32:
+            seq_lens_slice = seq_lens_slice.to(torch.int32)
+        seq_lens_buffer = self._cuda_graph_decode_seq_lens_flat[:batch_size]
+        seq_lens_buffer.copy_(seq_lens_slice)
+        seq_lens_kv = self._cuda_graph_decode_seq_lens_views[batch_size - 1]
+        seq_lens_q = self._cuda_graph_decode_q_seq_lens_views[batch_size - 1]
+        seq_lens_q.fill_(1)
+
+        self._cuda_graph_decode_cached_tables = (
+            padded_k,
+            padded_v,
+            seq_lens_q,
+            seq_lens_kv,
+        )
+        self._cuda_graph_decode_cached_bs = batch_size
 
     def _create_cudnn_graph_extend(self, seq_len: int, diagonal_band_right_bound: int):
         batch_size = 1
@@ -760,9 +818,6 @@ class CuDNNBackend(AttentionBackend):
         # Get the decode graph and pre-computed page tables from forward_metadata
         # forward_metadata contains (cudnn_args, cudnn_graph)
         args_i, graph_i = self.forward_metadata
-        padded_k_table, padded_v_table = self._init_decode_page_table(
-            forward_batch.req_to_token_pool.req_to_token, forward_batch.req_pool_indices
-        )
         # Reshape query to [num_tokens, num_heads, head_size]
         # q: [num_tokens, num_heads * head_size] -> [num_tokens, num_heads, head_size]
         q_reshaped = q.view(q.shape[0], layer.tp_q_head_num, layer.qk_head_dim)
@@ -808,26 +863,30 @@ class CuDNNBackend(AttentionBackend):
 
         # Use pre-computed page tables from forward_metadata
         # These are already in the correct format for CuDNN
-        page_table_k = padded_k_table  # [batch_size, 1, max_context_len, 1]
-        page_table_v = padded_v_table  # [batch_size, 1, max_context_len, 1]
-
-        # Sequence length tensors for CuDNN
-        # seq_lens: [batch_size] -> [batch_size, 1, 1, 1]
         batch_size = forward_batch.batch_size
         use_cuda_graph_buffer = (
             hasattr(self, "_cuda_graph_decode_max_bs")
             and batch_size > 0
             and batch_size <= self._cuda_graph_decode_max_bs
         )
-        if use_cuda_graph_buffer:
-            seq_lens_int32 = self._cuda_graph_decode_seq_lens_flat[:batch_size]
-            seq_lens_slice = seq_lens[:batch_size]
-            if seq_lens_slice.dtype != torch.int32:
-                seq_lens_slice = seq_lens_slice.to(torch.int32)
-            seq_lens_int32.copy_(seq_lens_slice)
-            seq_lens_kv = self._cuda_graph_decode_seq_lens_views[batch_size - 1]
-            seq_lens_q = self._cuda_graph_decode_q_seq_lens_views[batch_size - 1]
+        if (
+            use_cuda_graph_buffer
+            and self._cuda_graph_decode_cached_tables is not None
+            and self._cuda_graph_decode_cached_bs == batch_size
+        ):
+            (
+                page_table_k,
+                page_table_v,
+                seq_lens_q,
+                seq_lens_kv,
+            ) = self._cuda_graph_decode_cached_tables
         else:
+            padded_k_table, padded_v_table = self._init_decode_page_table(
+                forward_batch.req_to_token_pool.req_to_token,
+                forward_batch.req_pool_indices,
+            )
+            page_table_k = padded_k_table  # [batch_size, 1, max_context_len, 1]
+            page_table_v = padded_v_table  # [batch_size, 1, max_context_len, 1]
             seq_lens_kv = seq_lens.to(dtype=torch.int32).view(
                 batch_size, 1, 1, 1
             )  # [batch_size, 1, 1, 1]
