@@ -26,7 +26,6 @@ from vllm.compilation.decorators import support_torch_compile
 from vllm.config import CacheConfig, ModelConfig, VllmConfig
 from vllm.distributed import get_pp_group, get_tensor_model_parallel_world_size
 from vllm.model_executor.layers.activation import SiluAndMul
-from vllm.model_executor.layers.layernorm import RMSNorm
 from vllm.model_executor.layers.linear import (
     MergedColumnParallelLinear,
     QKVParallelLinear,
@@ -48,6 +47,7 @@ from vllm.model_executor.model_loader.weight_utils import default_weight_loader
 from vllm.model_executor.sampling_metadata import SamplingMetadata
 from vllm.sequence import IntermediateTensors
 
+from sglang.srt.layers.layernorm import GemmaRMSNorm, RMSNorm
 from sglang.srt.layers.logits_processor import LogitsProcessor
 from sglang.srt.layers.radix_attention import RadixAttention
 
@@ -181,8 +181,8 @@ class Lfm2Attention(nn.Module):
             prefix=f"{prefix}.attn",
             layer_id=layer_idx,
         )
-        self.q_layernorm = RMSNorm(self.head_dim, eps=config.norm_eps)
-        self.k_layernorm = RMSNorm(self.head_dim, eps=config.norm_eps)
+        self.q_layernorm = RMSNorm(hidden_size=self.head_dim, eps=config.norm_eps)
+        self.k_layernorm = RMSNorm(hidden_size=self.head_dim, eps=config.norm_eps)
 
     def forward(
         self,
