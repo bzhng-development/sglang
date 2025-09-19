@@ -531,6 +531,7 @@ class CuDNNBackend(AttentionBackend):
         per_req_tokens = req_to_token[req_pool_indices, :]
         batch_size = per_req_tokens.shape[0]
         ctx_len = per_req_tokens.shape[1]
+        max_cache_tokens = self.input_size_params.max_total_num_tokens + 1
         use_cuda_graph_buffer = (
             hasattr(self, "_cuda_graph_decode_max_bs")
             and batch_size > 0
@@ -548,19 +549,26 @@ class CuDNNBackend(AttentionBackend):
             # reshape to [bs, 1, max_ctx_len, 1] because cudnn requires the number
             # of blocks to match the KV cache token count when block size is 1.
             padded_k_page_table = torch.empty(
-                (batch_size, 1, ctx_len, 1),
+                (batch_size, 1, max_cache_tokens, 1),
                 dtype=torch.int32,
                 device=req_to_token.device,
             )
             padded_v_page_table = torch.empty(
-                (batch_size, 1, ctx_len, 1),
+                (batch_size, 1, max_cache_tokens, 1),
                 dtype=torch.int32,
                 device=req_to_token.device,
             )
+            padded_k_page_table.zero_()
+            padded_v_page_table.zero_()
 
-        view = per_req_tokens.view(batch_size, 1, ctx_len, 1)
-        padded_k_page_table[:, :, :ctx_len, :].copy_(view)
-        padded_v_page_table[:, :, :ctx_len, :].copy_(view)
+        if ctx_len > 0:
+            view = per_req_tokens.view(batch_size, 1, ctx_len, 1)
+            padded_k_page_table[:, :, :ctx_len, :].copy_(view)
+            padded_v_page_table[:, :, :ctx_len, :].copy_(view)
+
+        if ctx_len < max_cache_tokens:
+            padded_k_page_table[:, :, ctx_len:, :].zero_()
+            padded_v_page_table[:, :, ctx_len:, :].zero_()
 
         return padded_k_page_table, padded_v_page_table
 
