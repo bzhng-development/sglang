@@ -14,6 +14,7 @@
 """Utilities for Huggingface Transformers."""
 
 import contextlib
+import importlib
 import json
 import os
 import warnings
@@ -34,36 +35,61 @@ from transformers import (
 )
 from transformers.models.auto.modeling_auto import MODEL_FOR_CAUSAL_LM_MAPPING_NAMES
 
-from sglang.srt.configs import (
-    ChatGLMConfig,
-    DbrxConfig,
-    DeepseekVL2Config,
-    DotsVLMConfig,
-    ExaoneConfig,
-    KimiVLConfig,
-    LongcatFlashConfig,
-    MultiModalityConfig,
-    Qwen3NextConfig,
-    Step3VLConfig,
-)
-from sglang.srt.configs.internvl import InternVLChatConfig
 from sglang.srt.connector import create_remote_connector
 from sglang.srt.utils import is_remote_url, logger, lru_cache_frozenset
 
-_CONFIG_REGISTRY: Dict[str, Type[PretrainedConfig]] = {
-    ChatGLMConfig.model_type: ChatGLMConfig,
-    DbrxConfig.model_type: DbrxConfig,
-    ExaoneConfig.model_type: ExaoneConfig,
-    DeepseekVL2Config.model_type: DeepseekVL2Config,
-    MultiModalityConfig.model_type: MultiModalityConfig,
-    KimiVLConfig.model_type: KimiVLConfig,
-    InternVLChatConfig.model_type: InternVLChatConfig,
-    Step3VLConfig.model_type: Step3VLConfig,
-    LongcatFlashConfig.model_type: LongcatFlashConfig,
-    Qwen3NextConfig.model_type: Qwen3NextConfig,
-    DotsVLMConfig.model_type: DotsVLMConfig,
-}
 
+class LazyConfigProxy:
+    """Proxy that looks like a class but delays import until needed"""
+
+    def __init__(self, module_path, class_name):
+        self.module_path = module_path
+        self.class_name = class_name
+        self._real_class = None
+
+    def _load(self):
+        if self._real_class is None:
+            module = importlib.import_module(self.module_path)
+            self._real_class = getattr(module, self.class_name)
+        return self._real_class
+
+    def __getattr__(self, name):
+        # Forward attribute access to the real class
+        return getattr(self._load(), name)
+
+    def __call__(self, *args, **kwargs):
+        # Allow instantiation
+        return self._load()(*args, **kwargs)
+
+
+class LazyConfigDict(dict):
+    def __getitem__(self, key):
+        # Only import when actually accessing a config class
+        import sglang.srt.configs as configs
+
+        return getattr(configs, super().__getitem__(key))
+
+    def items(self):
+        # For registration, yield proxies that delay import
+        for key, class_name in super().items():
+            yield key, LazyConfigProxy("sglang.srt.configs", class_name)
+
+
+_CONFIG_REGISTRY: Dict[str, Type[PretrainedConfig]] = LazyConfigDict(
+    chatglm="ChatGLMConfig",
+    dbrx="DbrxConfig",
+    exaone="ExaoneConfig",
+    deepseek_vl_v2="DeepseekVL2Config",
+    multi_modality="MultiModalityConfig",
+    kimi_vl="KimiVLConfig",
+    internvl_chat="InternVLChatConfig",
+    step3_vl="Step3VLConfig",
+    longcat_flash="LongcatFlashConfig",
+    qwen3_next="Qwen3NextConfig",
+    dots_vlm="DotsVLMConfig",
+)
+
+# Register with AutoConfig using the lazy proxies
 for name, cls in _CONFIG_REGISTRY.items():
     with contextlib.suppress(ValueError):
         AutoConfig.register(name, cls)
