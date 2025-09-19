@@ -288,24 +288,30 @@ class CuDNNBackend(AttentionBackend):
         self._cuda_graph_decode_v_page_table = torch.zeros(
             page_table_shape, dtype=torch.int32, device=device
         )
+        assert self._cuda_graph_decode_k_page_table.shape == page_table_shape
+        assert self._cuda_graph_decode_v_page_table.shape == page_table_shape
 
         # Allocate sequence-length buffers reused by the CuDNN graph.
         self._cuda_graph_decode_seq_lens_flat = torch.zeros(
             (max_bs,), dtype=torch.int32, device=device
         )
+        assert self._cuda_graph_decode_seq_lens_flat.shape == (max_bs,)
         self._cuda_graph_decode_seq_lens_views = [
             self._cuda_graph_decode_seq_lens_flat[:bs].view(bs, 1, 1, 1)
             for bs in range(1, max_bs + 1)
         ]
+        assert len(self._cuda_graph_decode_seq_lens_views) == max_bs
 
         # Query sequence lengths are always 1 token for decode graphs.
         self._cuda_graph_decode_q_seq_lens_flat = torch.ones(
             (max_bs,), dtype=torch.int32, device=device
         )
+        assert self._cuda_graph_decode_q_seq_lens_flat.shape == (max_bs,)
         self._cuda_graph_decode_q_seq_lens_views = [
             self._cuda_graph_decode_q_seq_lens_flat[:bs].view(bs, 1, 1, 1)
             for bs in range(1, max_bs + 1)
         ]
+        assert len(self._cuda_graph_decode_q_seq_lens_views) == max_bs
 
         # Cache reusable views per batch size to avoid recreating tensors on the
         # hot path.
@@ -385,8 +391,13 @@ class CuDNNBackend(AttentionBackend):
 
         req_to_token = self._model_runner.req_to_token_pool.req_to_token
         ctx_len = req_to_token.shape[1]
+        expected_tokens = self.input_size_params.max_total_num_tokens + 1
+        assert ctx_len <= expected_tokens
+        assert req_to_token.shape[0] >= batch_size
         padded_k = self._cuda_graph_decode_k_page_table_views[batch_size - 1]
         padded_v = self._cuda_graph_decode_v_page_table_views[batch_size - 1]
+        assert padded_k.shape == (batch_size, 1, expected_tokens, 1)
+        assert padded_v.shape == (batch_size, 1, expected_tokens, 1)
 
         # Reset and populate page tables for current batch.
         padded_k.zero_()
@@ -394,6 +405,8 @@ class CuDNNBackend(AttentionBackend):
         if ctx_len > 0:
             per_req_tokens = req_to_token[req_pool_indices[:batch_size], :]
             per_req_tokens = per_req_tokens.contiguous()
+            assert per_req_tokens.shape[0] == batch_size
+            assert per_req_tokens.shape[1] == ctx_len
             view = per_req_tokens.view(batch_size, 1, ctx_len, 1)
             padded_k[:, :, :ctx_len, :].copy_(view)
             padded_v[:, :, :ctx_len, :].copy_(view)
@@ -401,11 +414,15 @@ class CuDNNBackend(AttentionBackend):
         seq_lens_slice = seq_lens[:batch_size]
         if seq_lens_slice.dtype != torch.int32:
             seq_lens_slice = seq_lens_slice.to(torch.int32)
+        assert seq_lens_slice.shape[0] == batch_size
         seq_lens_buffer = self._cuda_graph_decode_seq_lens_flat[:batch_size]
         seq_lens_buffer.copy_(seq_lens_slice)
+        assert seq_lens_buffer.shape == (batch_size,)
         seq_lens_kv = self._cuda_graph_decode_seq_lens_views[batch_size - 1]
         seq_lens_q = self._cuda_graph_decode_q_seq_lens_views[batch_size - 1]
         seq_lens_q.fill_(1)
+        assert seq_lens_kv.shape == (batch_size, 1, 1, 1)
+        assert seq_lens_q.shape == (batch_size, 1, 1, 1)
 
         self._cuda_graph_decode_cached_tables = (
             padded_k,
@@ -603,6 +620,8 @@ class CuDNNBackend(AttentionBackend):
             padded_v_page_table = self._cuda_graph_decode_v_page_table_views[
                 batch_size - 1
             ]
+            assert padded_k_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
+            assert padded_v_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
         else:
             # reshape to [bs, 1, max_ctx_len, 1] because cudnn requires the number
             # of blocks to match the KV cache token count when block size is 1.
@@ -618,8 +637,12 @@ class CuDNNBackend(AttentionBackend):
             )
             padded_k_page_table.zero_()
             padded_v_page_table.zero_()
+            assert padded_k_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
+            assert padded_v_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
 
         if ctx_len > 0:
+            assert per_req_tokens.shape[0] == batch_size
+            assert per_req_tokens.shape[1] == ctx_len
             view = per_req_tokens.view(batch_size, 1, ctx_len, 1)
             padded_k_page_table[:, :, :ctx_len, :].copy_(view)
             padded_v_page_table[:, :, :ctx_len, :].copy_(view)
@@ -627,6 +650,9 @@ class CuDNNBackend(AttentionBackend):
         if ctx_len < max_cache_tokens:
             padded_k_page_table[:, :, ctx_len:, :].zero_()
             padded_v_page_table[:, :, ctx_len:, :].zero_()
+
+        assert padded_k_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
+        assert padded_v_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
 
         return padded_k_page_table, padded_v_page_table
 
@@ -880,7 +906,13 @@ class CuDNNBackend(AttentionBackend):
                 seq_lens_q,
                 seq_lens_kv,
             ) = self._cuda_graph_decode_cached_tables
+            expected_tokens = self.input_size_params.max_total_num_tokens + 1
+            assert page_table_k.shape == (batch_size, 1, expected_tokens, 1)
+            assert page_table_v.shape == (batch_size, 1, expected_tokens, 1)
+            assert seq_lens_kv.shape == (batch_size, 1, 1, 1)
+            assert seq_lens_q.shape == (batch_size, 1, 1, 1)
         else:
+            expected_tokens = self.input_size_params.max_total_num_tokens + 1
             padded_k_table, padded_v_table = self._init_decode_page_table(
                 forward_batch.req_to_token_pool.req_to_token,
                 forward_batch.req_pool_indices,
@@ -893,6 +925,10 @@ class CuDNNBackend(AttentionBackend):
             seq_lens_q = torch.ones_like(
                 seq_lens_kv
             )  # [batch_size, 1, 1, 1] - always 1 for decode
+            assert page_table_k.shape == (batch_size, 1, expected_tokens, 1)
+            assert page_table_v.shape == (batch_size, 1, expected_tokens, 1)
+            assert seq_lens_kv.shape == (batch_size, 1, 1, 1)
+            assert seq_lens_q.shape == (batch_size, 1, 1, 1)
 
         # Create variant pack for CuDNN graph execution
         variant_pack = {
