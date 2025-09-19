@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import math
 import os
+import pickle
 import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional, Union
@@ -968,6 +969,20 @@ class CuDNNBackend(AttentionBackend):
                 },
                 flush=True,
             )
+
+        if os.getenv("SGLANG_DEBUG_CUDNN_DECODE_CAPTURE", "0") == "1":
+            payload = (
+                page_table_k.detach().cpu().clone(),
+                page_table_v.detach().cpu().clone(),
+                seq_lens_q.detach().cpu().clone(),
+                seq_lens_kv.detach().cpu().clone(),
+            )
+            dump_path = os.getenv(
+                "SGLANG_DEBUG_CUDNN_DECODE_CAPTURE_PATH",
+                "cuda_graph_decode_inputs.pkl",
+            )
+            with open(dump_path, "ab") as f:
+                pickle.dump(payload, f)
 
         variant_pack = {
             args_i[

@@ -20,6 +20,7 @@ import gc
 import inspect
 import logging
 import os
+import pickle
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
@@ -618,6 +619,28 @@ class CudaGraphRunner:
             global_forward_mode=self.capture_forward_mode,
             lora_ids=lora_ids,
         )
+        if os.getenv("SGLANG_DEBUG_CUDA_GRAPH_CAPTURE", "0") == "1":
+            dump_payload = {
+                "bs": bs,
+                "forward_mode": int(forward_batch.forward_mode),
+                "seq_lens": forward_batch.seq_lens[:bs].cpu().clone(),
+                "req_pool_indices": forward_batch.req_pool_indices[:bs]
+                .cpu()
+                .clone(),
+                "req_to_token_sample": (
+                    forward_batch.req_to_token_pool.req_to_token[
+                        forward_batch.req_pool_indices[:bs], :16
+                    ]
+                    .cpu()
+                    .clone()
+                ),
+            }
+            dump_path = os.getenv(
+                "SGLANG_DEBUG_CUDA_GRAPH_CAPTURE_PATH",
+                "cuda_graph_capture_batch_dump.pkl",
+            )
+            with open(dump_path, "ab") as f:
+                pickle.dump(dump_payload, f)
         self.tbo_plugin.capture_one_batch_size(forward_batch, num_tokens=num_tokens)
 
         if lora_ids is not None:
