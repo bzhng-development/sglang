@@ -35,64 +35,44 @@ from transformers import (
 )
 from transformers.models.auto.modeling_auto import MODEL_FOR_CAUSAL_LM_MAPPING_NAMES
 
+# Only import InternVL config since it's needed by the processor registration
+from sglang.srt.configs.internvl import InternVLChatConfig
 from sglang.srt.connector import create_remote_connector
 from sglang.srt.utils import is_remote_url, logger, lru_cache_frozenset
 
-
-class LazyConfigProxy:
-    """Proxy that looks like a class but delays import until needed"""
-
-    def __init__(self, module_path, class_name):
-        self.module_path = module_path
-        self.class_name = class_name
-        self._real_class = None
-
-    def _load(self):
-        if self._real_class is None:
-            module = importlib.import_module(self.module_path)
-            self._real_class = getattr(module, self.class_name)
-        return self._real_class
-
-    def __getattr__(self, name):
-        # Forward attribute access to the real class
-        return getattr(self._load(), name)
-
-    def __call__(self, *args, **kwargs):
-        # Allow instantiation
-        return self._load()(*args, **kwargs)
+# Lazy config registry - maps model_type to (module, class_name)
+_CONFIG_REGISTRY: Dict[str, tuple[str, str]] = {
+    "chatglm": ("sglang.srt.configs.chatglm", "ChatGLMConfig"),
+    "dbrx": ("sglang.srt.configs.dbrx", "DbrxConfig"),
+    "exaone": ("sglang.srt.configs.exaone", "ExaoneConfig"),
+    "deepseek_vl_v2": ("sglang.srt.configs.deepseekvl2", "DeepseekVL2Config"),
+    "multi_modality": ("sglang.srt.configs.janus_pro", "MultiModalityConfig"),
+    "kimi_vl": ("sglang.srt.configs.kimi_vl", "KimiVLConfig"),
+    "internvl_chat": ("sglang.srt.configs.internvl", "InternVLChatConfig"),
+    "step3_vl": ("sglang.srt.configs.step3_vl", "Step3VLConfig"),
+    "longcat_flash": ("sglang.srt.configs.longcat_flash", "LongcatFlashConfig"),
+    "qwen3_next": ("sglang.srt.configs.qwen3_next", "Qwen3NextConfig"),
+    "dots_vlm": ("sglang.srt.configs.dots_vlm", "DotsVLMConfig"),
+}
 
 
-class LazyConfigDict(dict):
-    def __getitem__(self, key):
-        # Only import when actually accessing a config class
-        import sglang.srt.configs as configs
-
-        return getattr(configs, super().__getitem__(key))
-
-    def items(self):
-        # For registration, yield proxies that delay import
-        for key, class_name in super().items():
-            yield key, LazyConfigProxy("sglang.srt.configs", class_name)
-
-
-_CONFIG_REGISTRY: Dict[str, Type[PretrainedConfig]] = LazyConfigDict(
-    chatglm="ChatGLMConfig",
-    dbrx="DbrxConfig",
-    exaone="ExaoneConfig",
-    deepseek_vl_v2="DeepseekVL2Config",
-    multi_modality="MultiModalityConfig",
-    kimi_vl="KimiVLConfig",
-    internvl_chat="InternVLChatConfig",
-    step3_vl="Step3VLConfig",
-    longcat_flash="LongcatFlashConfig",
-    qwen3_next="Qwen3NextConfig",
-    dots_vlm="DotsVLMConfig",
-)
-
-# Register with AutoConfig using the lazy proxies
-for name, cls in _CONFIG_REGISTRY.items():
-    with contextlib.suppress(ValueError):
-        AutoConfig.register(name, cls)
+def _get_config_class(model_type: str) -> Optional[Type[PretrainedConfig]]:
+    """Lazily load and return a config class for the given model type."""
+    if model_type == "internvl_chat":
+        # Already imported
+        return InternVLChatConfig
+    
+    if model_type not in _CONFIG_REGISTRY:
+        return None
+    
+    module_path, class_name = _CONFIG_REGISTRY[model_type]
+    try:
+        module = importlib.import_module(module_path)
+        config_class = getattr(module, class_name)
+        return config_class
+    except (ImportError, AttributeError):
+        logger.warning(f"Failed to import {class_name} from {module_path}")
+        return None
 
 
 def download_from_hf(
@@ -195,8 +175,9 @@ def get_config(
             if not hasattr(config, key) and getattr(text_config, key, None) is not None:
                 setattr(config, key, val)
 
-    if config.model_type in _CONFIG_REGISTRY:
-        config_class = _CONFIG_REGISTRY[config.model_type]
+    # Use lazy loading for custom configs
+    config_class = _get_config_class(config.model_type)
+    if config_class is not None:
         config = config_class.from_pretrained(model, revision=revision)
         # NOTE(HandH1998): Qwen2VL requires `_name_or_path` attribute in `config`.
         setattr(config, "_name_or_path", model)
