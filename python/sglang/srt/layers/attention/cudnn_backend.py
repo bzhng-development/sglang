@@ -121,6 +121,7 @@ class CuDNNBackend(AttentionBackend):
         )
         self._cuda_graph_decode_cached_tables = None
         self._cuda_graph_decode_cached_bs = 0
+        self._cuda_graph_decode_debug_pending = []
 
         assert (
             model_runner.page_size == 1
@@ -429,20 +430,20 @@ class CuDNNBackend(AttentionBackend):
         assert max_seq_len <= expected_tokens
 
         if os.getenv("SGLANG_DEBUG_CUDNN_DECODE", "0") == "1":
-            torch.cuda.synchronize()
-            debug_rows = min(batch_size, 2)
-            debug_tokens = min(max_seq_len, 8)
-            print(
-                "[CuDNNBackend] prepare_cuda_graph_decode_metadata",
-                {
-                    "batch_size": batch_size,
-                    "seq_lens": seq_lens_slice[:debug_rows].cpu(),
-                    "page_table_sample": padded_k[
-                        :debug_rows, 0, :debug_tokens, 0
-                    ].cpu(),
-                },
-                flush=True,
-            )
+            if not torch.cuda.is_current_stream_capturing():
+                debug_rows = min(batch_size, 2)
+                debug_tokens = min(max_seq_len, 8)
+                print(
+                    "[CuDNNBackend] prepare_cuda_graph_decode_metadata",
+                    {
+                        "batch_size": batch_size,
+                        "seq_lens": seq_lens_slice[:debug_rows].cpu(),
+                        "page_table_sample": padded_k[
+                            :debug_rows, 0, :debug_tokens, 0
+                        ].cpu(),
+                    },
+                    flush=True,
+                )
 
         self._cuda_graph_decode_cached_tables = (
             padded_k,
@@ -675,6 +676,20 @@ class CuDNNBackend(AttentionBackend):
         assert padded_v_page_table.shape == (batch_size, 1, max_cache_tokens, 1)
 
         return padded_k_page_table, padded_v_page_table
+
+    def _dump_cuda_graph_debug_payload(self, payload):
+        dump_path = os.getenv(
+            "SGLANG_DEBUG_CUDNN_DECODE_CAPTURE_PATH",
+            "cuda_graph_decode_inputs.pkl",
+        )
+        tensors_cpu = []
+        for tensor in payload:
+            if tensor.is_cuda:
+                tensors_cpu.append(tensor.detach().cpu())
+            else:
+                tensors_cpu.append(tensor.detach().clone())
+        with open(dump_path, "ab") as f:
+            pickle.dump(tuple(tensors_cpu), f)
 
     def forward_extend(
         self,
@@ -952,37 +967,40 @@ class CuDNNBackend(AttentionBackend):
 
         # Create variant pack for CuDNN graph execution
         if os.getenv("SGLANG_DEBUG_CUDNN_DECODE", "0") == "1":
-            torch.cuda.synchronize()
-            debug_rows = min(batch_size, 2)
-            debug_tokens = min(
-                page_table_k.shape[2] if page_table_k.dim() > 2 else 0, 8
-            )
-            print(
-                "[CuDNNBackend] forward_decode inputs",
-                {
-                    "batch_size": batch_size,
-                    "seq_lens": seq_lens[:debug_rows].cpu(),
-                    "seq_lens_kv": seq_lens_kv[:debug_rows].view(-1).cpu(),
-                    "page_table_sample": page_table_k[
-                        :debug_rows, 0, :debug_tokens, 0
-                    ].cpu(),
-                },
-                flush=True,
-            )
+            if not torch.cuda.is_current_stream_capturing():
+                debug_rows = min(batch_size, 2)
+                debug_tokens = min(
+                    page_table_k.shape[2] if page_table_k.dim() > 2 else 0, 8
+                )
+                print(
+                    "[CuDNNBackend] forward_decode inputs",
+                    {
+                        "batch_size": batch_size,
+                        "seq_lens": seq_lens[:debug_rows].cpu(),
+                        "seq_lens_kv": seq_lens_kv[:debug_rows].view(-1).cpu(),
+                        "page_table_sample": page_table_k[
+                            :debug_rows, 0, :debug_tokens, 0
+                        ].cpu(),
+                    },
+                    flush=True,
+                )
 
         if os.getenv("SGLANG_DEBUG_CUDNN_DECODE_CAPTURE", "0") == "1":
             payload = (
-                page_table_k.detach().cpu().clone(),
-                page_table_v.detach().cpu().clone(),
-                seq_lens_q.detach().cpu().clone(),
-                seq_lens_kv.detach().cpu().clone(),
+                page_table_k.detach().clone(),
+                page_table_v.detach().clone(),
+                seq_lens_q.detach().clone(),
+                seq_lens_kv.detach().clone(),
             )
-            dump_path = os.getenv(
-                "SGLANG_DEBUG_CUDNN_DECODE_CAPTURE_PATH",
-                "cuda_graph_decode_inputs.pkl",
-            )
-            with open(dump_path, "ab") as f:
-                pickle.dump(payload, f)
+            if torch.cuda.is_current_stream_capturing():
+                self._cuda_graph_decode_debug_pending.append(payload)
+            else:
+                self._dump_cuda_graph_debug_payload(payload)
+                if self._cuda_graph_decode_debug_pending:
+                    pending = self._cuda_graph_decode_debug_pending
+                    self._cuda_graph_decode_debug_pending = []
+                    for item in pending:
+                        self._dump_cuda_graph_debug_payload(item)
 
         variant_pack = {
             args_i[
