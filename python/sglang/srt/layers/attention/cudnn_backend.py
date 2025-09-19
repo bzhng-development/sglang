@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import math
+import os
 import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional, Union
@@ -423,6 +424,24 @@ class CuDNNBackend(AttentionBackend):
         seq_lens_q.fill_(1)
         assert seq_lens_kv.shape == (batch_size, 1, 1, 1)
         assert seq_lens_q.shape == (batch_size, 1, 1, 1)
+        max_seq_len = seq_lens_slice.max().item() if batch_size > 0 else 0
+        assert max_seq_len <= expected_tokens
+
+        if os.getenv("SGLANG_DEBUG_CUDNN_DECODE", "0") == "1":
+            torch.cuda.synchronize()
+            debug_rows = min(batch_size, 2)
+            debug_tokens = min(max_seq_len, 8)
+            print(
+                "[CuDNNBackend] prepare_cuda_graph_decode_metadata",
+                {
+                    "batch_size": batch_size,
+                    "seq_lens": seq_lens_slice[:debug_rows].cpu(),
+                    "page_table_sample": padded_k[
+                        :debug_rows, 0, :debug_tokens, 0
+                    ].cpu(),
+                },
+                flush=True,
+            )
 
         self._cuda_graph_decode_cached_tables = (
             padded_k,
@@ -931,6 +950,25 @@ class CuDNNBackend(AttentionBackend):
             assert seq_lens_q.shape == (batch_size, 1, 1, 1)
 
         # Create variant pack for CuDNN graph execution
+        if os.getenv("SGLANG_DEBUG_CUDNN_DECODE", "0") == "1":
+            torch.cuda.synchronize()
+            debug_rows = min(batch_size, 2)
+            debug_tokens = min(
+                page_table_k.shape[2] if page_table_k.dim() > 2 else 0, 8
+            )
+            print(
+                "[CuDNNBackend] forward_decode inputs",
+                {
+                    "batch_size": batch_size,
+                    "seq_lens": seq_lens[:debug_rows].cpu(),
+                    "seq_lens_kv": seq_lens_kv[:debug_rows].view(-1).cpu(),
+                    "page_table_sample": page_table_k[
+                        :debug_rows, 0, :debug_tokens, 0
+                    ].cpu(),
+                },
+                flush=True,
+            )
+
         variant_pack = {
             args_i[
                 self._ArgMapKeys.q
