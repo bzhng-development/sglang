@@ -22,7 +22,8 @@ from transformers import Lfm2Config
 
 # TODO for each of these step by step, turn it to the relevant one in sglang
 from vllm import envs
-from vllm.compilation.decorators import support_torch_compile
+
+# from vllm.compilation.decorators import support_torch_compile
 from vllm.config import CacheConfig, ModelConfig, VllmConfig
 from vllm.distributed import get_pp_group, get_tensor_model_parallel_world_size
 from vllm.model_executor.layers.mamba.mamba_utils import (
@@ -327,7 +328,7 @@ class Lfm2ShortConvDecoderLayer(nn.Module):
         return hidden_states, residual
 
 
-@support_torch_compile
+# @support_torch_compile for now ignore torch compile fn
 class Lfm2Model(nn.Module):
 
     def __init__(self, *, vllm_config: VllmConfig, prefix: str = ""):
