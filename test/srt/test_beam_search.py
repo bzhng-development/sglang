@@ -1,9 +1,10 @@
 import copy
 import os
-import time
 import random
 import threading
+import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 from typing import List
 
@@ -19,25 +20,11 @@ from sglang.test.test_utils import (
     DEFAULT_MODEL_NAME_FOR_TEST,
     DEFAULT_SMALL_MODEL_NAME_FOR_TEST_QWEN,
     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-    STDOUT_FILENAME,
     STDERR_FILENAME,
+    STDOUT_FILENAME,
     popen_launch_server,
     read_output,
 )
-
-import sglang as sgl
-from sglang.srt.hf_transformers_utils import get_tokenizer
-import copy
-import os
-import time
-import random
-import pandas
-from typing import List
-
-import threading
-from concurrent.futures import ThreadPoolExecutor
-
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
 MODEL_PATH = DEFAULT_SMALL_MODEL_NAME_FOR_TEST_QWEN
 CHAT_PROMPTS = [
@@ -51,63 +38,90 @@ class TestBeamSearch(unittest.TestCase):
     def _longest_common_subset(self, arr1: List[List[int]], arr2: List[List[int]]):
         def match(subarr1: List[int], subarr2: List[int]):
             for a, b in zip(subarr1, subarr2):
-                if a!=b:
+                if a != b:
                     return False
             return True
-        
+
         N = len(arr1)
         L = [[0] * (N + 1) for _ in range(N + 1)]
-        for i in range(1, N+1):
-            for j in range(1, N+1):
-                if match(arr1[i-1], arr2[j-1]):
-                    L[i][j] = L[i-1][j-1] + 1
+        for i in range(1, N + 1):
+            for j in range(1, N + 1):
+                if match(arr1[i - 1], arr2[j - 1]):
+                    L[i][j] = L[i - 1][j - 1] + 1
                 else:
-                    L[i][j] = max(L[i-1][j], L[i][j-1])
+                    L[i][j] = max(L[i - 1][j], L[i][j - 1])
 
-        return L[N][N]/N
+        return L[N][N] / N
 
     def _replace_content(new_content):
         new_chat_prompts = copy.deepcopy(CHAT_PROMPTS)
-        new_chat_prompts[1]['content'] = new_content
+        new_chat_prompts[1]["content"] = new_content
         return new_chat_prompts
 
-    def _run_one_test(self, cur_prompt, tokenizer, beam_width, max_tokens=5, caching=True, top_logprobs_num=-1):
-        if(top_logprobs_num!=-1 or beam_width>0):
+    def _run_one_test(
+        self,
+        cur_prompt,
+        tokenizer,
+        beam_width,
+        max_tokens=5,
+        caching=True,
+        top_logprobs_num=-1,
+    ):
+        if top_logprobs_num != -1 or beam_width > 0:
             is_logprob = True
         else:
             is_logprob = False
 
-        llm = sgl.Engine(model_path=MODEL_PATH,
-                        disable_radix_cache=not caching,
-                        disable_jump_forward=True,
-                        disable_overlap_schedule=True,
-                        beam_width=beam_width)
+        llm = sgl.Engine(
+            model_path=MODEL_PATH,
+            disable_radix_cache=not caching,
+            disable_overlap_schedule=True,
+            beam_width=beam_width,
+        )
 
         sampling_params = {"temperature": 0.0, "max_new_tokens": max_tokens}
         t1 = time.time()
-        outputs = llm.generate(cur_prompt, sampling_params=sampling_params, 
-                               return_logprob=is_logprob, top_logprobs_num=top_logprobs_num)
-        print(f"######time consumption with max_tokens={max_tokens}: {time.time()-t1}######")
+        outputs = llm.generate(
+            cur_prompt,
+            sampling_params=sampling_params,
+            return_logprob=is_logprob,
+            top_logprobs_num=top_logprobs_num,
+        )
+        print(
+            f"######time consumption with max_tokens={max_tokens}: {time.time()-t1}######"
+        )
         llm.shutdown()
 
-        return [(beam.tokens, tokenizer.decode(beam.tokens)) 
-                for output in outputs for beam in output["meta_info"]["beam_search_outputs"].sequences]
-    
-    def _run_one_bench(self, cur_prompt, tokenizer, beam_width, max_tokens=[5], caching=True, top_logprobs_num=-1):
-        if(top_logprobs_num!=-1 or beam_width>0):
+        return [
+            (beam.tokens, tokenizer.decode(beam.tokens))
+            for output in outputs
+            for beam in output["meta_info"]["beam_search_outputs"].sequences
+        ]
+
+    def _run_one_bench(
+        self,
+        cur_prompt,
+        tokenizer,
+        beam_width,
+        max_tokens=[5],
+        caching=True,
+        top_logprobs_num=-1,
+    ):
+        if top_logprobs_num != -1 or beam_width > 0:
             is_logprob = True
         else:
             is_logprob = False
 
-        llm = sgl.Engine(model_path=MODEL_PATH,
-                        disable_jump_forward=True,
-                        disable_overlap_schedule=True,
-                        beam_width=beam_width)
-        
+        llm = sgl.Engine(
+            model_path=MODEL_PATH, disable_overlap_schedule=True, beam_width=beam_width
+        )
+
         # warmup
         sampling_params = {"temperature": 0.0, "max_new_tokens": 5}
         warmup_prompt = CHAT_PROMPTS
-        warmup_prompt = tokenizer.apply_chat_template(warmup_prompt, tokenize=False, add_generation_prompt=True)
+        warmup_prompt = tokenizer.apply_chat_template(
+            warmup_prompt, tokenize=False, add_generation_prompt=True
+        )
         sampling_params = {"temperature": 0.0, "max_new_tokens": 5}
         output = llm.generate([warmup_prompt], sampling_params)
 
@@ -115,89 +129,127 @@ class TestBeamSearch(unittest.TestCase):
         for max_token in max_tokens:
             sampling_params = {"temperature": 0.0, "max_new_tokens": max_token}
             t1 = time.time()
-            outputs = llm.generate(cur_prompt, sampling_params=sampling_params, 
-                                return_logprob=is_logprob, top_logprobs_num=top_logprobs_num)
+            outputs = llm.generate(
+                cur_prompt,
+                sampling_params=sampling_params,
+                return_logprob=is_logprob,
+                top_logprobs_num=top_logprobs_num,
+            )
             t2 = time.time()
             print(f"######time consumption with max_tokens={max_token}: {t2-t1}######")
-            time_consume.append(t2-t1)
+            time_consume.append(t2 - t1)
         llm.shutdown()
 
         return time_consume
 
-    def _bench_vllm_fork(self, cur_prompt, tokenizer, max_tokens=[5], caching=True, top_logprobs_num=-1):
-        from sglang.srt.beam_search import BeamSearchSequence, BeamSearchList, sort_by_beam_search_score
+    def _bench_vllm_fork(
+        self, cur_prompt, tokenizer, max_tokens=[5], caching=True, top_logprobs_num=-1
+    ):
         import itertools
         from typing import List, Tuple
 
-        if(top_logprobs_num!=-1):
+        from sglang.srt.beam_search import (
+            BeamSearchList,
+            BeamSearchSequence,
+            sort_by_beam_search_score,
+        )
+
+        if top_logprobs_num != -1:
             is_logprob = True
         else:
             is_logprob = False
 
-        llm = sgl.Engine(model_path=MODEL_PATH,
-                        disable_jump_forward=True,
-                        disable_overlap_schedule=True)
-        
+        llm = sgl.Engine(model_path=MODEL_PATH, disable_overlap_schedule=True)
+
         # warmup
         sampling_params = {"temperature": 0.0, "max_new_tokens": 5}
         warmup_prompt = CHAT_PROMPTS
-        warmup_prompt = tokenizer.apply_chat_template(warmup_prompt, tokenize=False, add_generation_prompt=True)
+        warmup_prompt = tokenizer.apply_chat_template(
+            warmup_prompt, tokenize=False, add_generation_prompt=True
+        )
         sampling_params = {"temperature": 0.0, "max_new_tokens": 5}
         output = llm.generate([warmup_prompt], sampling_params)
 
         time_consume = []
         for max_token in max_tokens:
             sampling_params = {"temperature": 0.0, "max_new_tokens": 1}
-            '''
-            fork from: https://github.com/vllm-project/vllm/blob/5f0ec3935a0118fee8cf2764728f765c8cc53d2a/vllm/entrypoints/llm.py#L507'''
+            """
+            fork from: https://github.com/vllm-project/vllm/blob/5f0ec3935a0118fee8cf2764728f765c8cc53d2a/vllm/entrypoints/llm.py#L507"""
             prompt_token_indices = [tokenizer.encode(prompt) for prompt in cur_prompt]
             requests = [
                 BeamSearchList(
-                    incompleted=[BeamSearchSequence(last_token=prompt_token_ids[-1], 
-                                                    tokens=prompt_token_ids,
-                                                    text=cur_prompt[i])]
-                ) for i, prompt_token_ids in enumerate(prompt_token_indices)
+                    incompleted=[
+                        BeamSearchSequence(
+                            last_token=prompt_token_ids[-1],
+                            tokens=prompt_token_ids,
+                            text=cur_prompt[i],
+                        )
+                    ]
+                )
+                for i, prompt_token_ids in enumerate(prompt_token_indices)
             ]
             beam_width = 5
             t1 = time.time()
             for i in range(max_token):
                 pos = [0] + list(
-                    itertools.accumulate(
-                        len(req.incompleted) for req in requests))
+                    itertools.accumulate(len(req.incompleted) for req in requests)
+                )
                 instance_start_and_end: List[Tuple[int, int]] = list(
-                    zip(pos[:-1], pos[1:]))
-                
-                outputs = llm.generate(input_ids=[beam.tokens for req in requests for beam in req.incompleted], 
-                                    sampling_params=sampling_params, return_logprob=is_logprob, 
-                                    top_logprobs_num=top_logprobs_num)
-                
+                    zip(pos[:-1], pos[1:])
+                )
+
+                outputs = llm.generate(
+                    input_ids=[
+                        beam.tokens for req in requests for beam in req.incompleted
+                    ],
+                    sampling_params=sampling_params,
+                    return_logprob=is_logprob,
+                    top_logprobs_num=top_logprobs_num,
+                )
+
                 for (start, end), req in zip(instance_start_and_end, requests):
                     incompleted = []
-                    for i, (cur_beam, cur_output) in enumerate(zip(req.incompleted, outputs[start:end])):
-                        beam_tokens = [token_ids for logprob, token_ids, _ in cur_output['meta_info']['output_top_logprobs'][0]]
-                        beam_logprobs = [logprob for logprob, token_ids, _ in cur_output['meta_info']['output_top_logprobs'][0]]
-                        
+                    for i, (cur_beam, cur_output) in enumerate(
+                        zip(req.incompleted, outputs[start:end])
+                    ):
+                        beam_tokens = [
+                            token_ids
+                            for logprob, token_ids, _ in cur_output["meta_info"][
+                                "output_top_logprobs"
+                            ][0]
+                        ]
+                        beam_logprobs = [
+                            logprob
+                            for logprob, token_ids, _ in cur_output["meta_info"][
+                                "output_top_logprobs"
+                            ][0]
+                        ]
+
                         for token, logprob in zip(beam_tokens, beam_logprobs):
                             new_beam = BeamSearchSequence(
-                                last_token=token, tokens=cur_beam.tokens+[token],
+                                last_token=token,
+                                tokens=cur_beam.tokens + [token],
                                 # text=cur_beam.text+text,
-                                cum_logprob=cur_beam.cum_logprob+logprob
+                                cum_logprob=cur_beam.cum_logprob + logprob,
                             )
-                            if token!=tokenizer.eos_token_id:
+                            if token != tokenizer.eos_token_id:
                                 incompleted.append(new_beam)
                             else:
                                 req.completed.append(new_beam)
-                    incompleted = sorted(incompleted, key=sort_by_beam_search_score, reverse=True)
+                    incompleted = sorted(
+                        incompleted, key=sort_by_beam_search_score, reverse=True
+                    )
                     req.incompleted = incompleted[:beam_width]
             t2 = time.time()
             print(f"######time consumption with max_tokens={max_token}: {t2-t1}######")
-            time_consume.append(t2-t1)
+            time_consume.append(t2 - t1)
         llm.shutdown()
 
         return time_consume
 
-
-    def _run_transformer(self, cur_prompt, tokenizer, max_tokens=5, caching=True, top_logprobs_num=-1):
+    def _run_transformer(
+        self, cur_prompt, tokenizer, max_tokens=5, caching=True, top_logprobs_num=-1
+    ):
         llm = AutoModelForCausalLM.from_pretrained(MODEL_PATH).to("cuda")
         llm.eval()
 
@@ -205,60 +257,72 @@ class TestBeamSearch(unittest.TestCase):
         tokenizer.padding_side = "left"
         input_ids = tokenizer(cur_prompt, return_tensors="pt", padding=True).to("cuda")
         outputs = llm.generate(
-                    temperature=0.00001,
-                    max_new_tokens=max_tokens,
-                    num_beams=top_logprobs_num,
-                    num_return_sequences=int(top_logprobs_num/2),
-                    early_stopping=True,
-                    return_dict_in_generate=True,
-                    output_scores=True,
-                    do_sample=False, # -inf score if True
-                    **input_ids
-                )
+            temperature=0.00001,
+            max_new_tokens=max_tokens,
+            num_beams=top_logprobs_num,
+            num_return_sequences=int(top_logprobs_num / 2),
+            early_stopping=True,
+            return_dict_in_generate=True,
+            output_scores=True,
+            do_sample=False,  # -inf score if True
+            **input_ids,
+        )
         prompt_len = len(input_ids[0])
-        ret = [(output[prompt_len:].tolist(), tokenizer.decode(output[prompt_len:])) for output in outputs.sequences]
+        ret = [
+            (output[prompt_len:].tolist(), tokenizer.decode(output[prompt_len:]))
+            for output in outputs.sequences
+        ]
         return ret
-    
-    def _bench_transformer(self, cur_prompt, tokenizer, max_tokens=[5], caching=True, top_logprobs_num=-1):
+
+    def _bench_transformer(
+        self, cur_prompt, tokenizer, max_tokens=[5], caching=True, top_logprobs_num=-1
+    ):
         llm = AutoModelForCausalLM.from_pretrained(MODEL_PATH).to("cuda")
         llm.eval()
         tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
         tokenizer.padding_side = "left"
 
-        #warm up
+        # warm up
         warmup_prompt = CHAT_PROMPTS
-        warmup_prompt = [tokenizer.apply_chat_template([prompt], tokenize=False, add_generation_prompt=True) for prompt in warmup_prompt]
-        warmup_prompt = tokenizer(warmup_prompt, return_tensors="pt", padding=True).to("cuda")
+        warmup_prompt = [
+            tokenizer.apply_chat_template(
+                [prompt], tokenize=False, add_generation_prompt=True
+            )
+            for prompt in warmup_prompt
+        ]
+        warmup_prompt = tokenizer(warmup_prompt, return_tensors="pt", padding=True).to(
+            "cuda"
+        )
         outputs = llm.generate(
-                    temperature=0.00001,
-                    max_new_tokens=5,
-                    num_beams=top_logprobs_num,
-                    num_return_sequences=int(top_logprobs_num/2),
-                    early_stopping=True,
-                    return_dict_in_generate=True,
-                    output_scores=True,
-                    do_sample=False, # -inf score if True
-                    **warmup_prompt
-                )
+            temperature=0.00001,
+            max_new_tokens=5,
+            num_beams=top_logprobs_num,
+            num_return_sequences=int(top_logprobs_num / 2),
+            early_stopping=True,
+            return_dict_in_generate=True,
+            output_scores=True,
+            do_sample=False,  # -inf score if True
+            **warmup_prompt,
+        )
 
         input_ids = tokenizer(cur_prompt, return_tensors="pt", padding=True).to("cuda")
         time_consume = []
         for max_token in max_tokens:
             t1 = time.time()
             outputs = llm.generate(
-                        temperature=0.00001,
-                        max_new_tokens=max_token,
-                        num_beams=top_logprobs_num,
-                        num_return_sequences=int(top_logprobs_num/2),
-                        early_stopping=True,
-                        return_dict_in_generate=True,
-                        output_scores=True,
-                        do_sample=False, # -inf score if True
-                        **input_ids
-                    )
+                temperature=0.00001,
+                max_new_tokens=max_token,
+                num_beams=top_logprobs_num,
+                num_return_sequences=int(top_logprobs_num / 2),
+                early_stopping=True,
+                return_dict_in_generate=True,
+                output_scores=True,
+                do_sample=False,  # -inf score if True
+                **input_ids,
+            )
             t2 = time.time()
             print(f"######time consumption with max_tokens={max_token}: {t2-t1}######")
-            time_consume.append(t2-t1)
+            time_consume.append(t2 - t1)
         return time_consume
 
     def test_beam_search_accuracy_by_offline_mmlu(self):
@@ -268,16 +332,21 @@ class TestBeamSearch(unittest.TestCase):
         examples = random.Random(0).sample(examples, 32)
 
         prompt_messages = [
-                {"role": "user", "content": format_multichoice_question(row)}
-                    for row in examples
-            ]
+            {"role": "user", "content": format_multichoice_question(row)}
+            for row in examples
+        ]
         MODEL_PATH = DEFAULT_MODEL_NAME_FOR_TEST
         tokenizer = get_tokenizer(MODEL_PATH)
 
-        cur_prompt = [tokenizer.apply_chat_template([prompt], tokenize=False, add_generation_prompt=True) for prompt in prompt_messages]
+        cur_prompt = [
+            tokenizer.apply_chat_template(
+                [prompt], tokenize=False, add_generation_prompt=True
+            )
+            for prompt in prompt_messages
+        ]
 
         beam_width = 5
-        params = {"max_tokens": 5, "caching": True, "top_logprobs_num": beam_width*2}
+        params = {"max_tokens": 5, "caching": True, "top_logprobs_num": beam_width * 2}
 
         # our beam search
         output_text = self._run_one_test(cur_prompt, tokenizer, beam_width, **params)
@@ -300,7 +369,7 @@ class TestBeamSearch(unittest.TestCase):
             )
             match_rates.append(match_rate)
         # print(f"Average Match Rate: {sum(match_rates)/len(match_rates)*100}%")
-        assert sum(match_rates)/len(match_rates)>=0.8
+        assert sum(match_rates) / len(match_rates) >= 0.8
 
     def bench_beam_search_overhead_by_offline_mmlu(self):
         filename = "https://openaipublic.blob.core.windows.net/simple-evals/mmlu.csv"
@@ -309,36 +378,53 @@ class TestBeamSearch(unittest.TestCase):
         examples = random.Random(0).sample(examples, 32)
 
         prompt_messages = [
-                {"role": "user", "content": format_multichoice_question(row)}
-                    for row in examples
-            ]
+            {"role": "user", "content": format_multichoice_question(row)}
+            for row in examples
+        ]
         MODEL_PATH = DEFAULT_MODEL_NAME_FOR_TEST
         tokenizer = get_tokenizer(MODEL_PATH)
 
-        cur_prompt = [tokenizer.apply_chat_template([prompt], tokenize=False, add_generation_prompt=True) for prompt in prompt_messages]
+        cur_prompt = [
+            tokenizer.apply_chat_template(
+                [prompt], tokenize=False, add_generation_prompt=True
+            )
+            for prompt in prompt_messages
+        ]
 
         beam_width = 5
-        
+
         os.environ["SGLANG_TEST_BEAM_FIXED_MAX_TOKEN"] = "1"
-        time_consume = self._run_one_bench(cur_prompt, tokenizer, beam_width,
-                                          max_tokens=[8, 16, 32, 64, 128, 512, 1024],
-                                          caching=False,
-                                          top_logprobs_num=beam_width*2)
+        time_consume = self._run_one_bench(
+            cur_prompt,
+            tokenizer,
+            beam_width,
+            max_tokens=[8, 16, 32, 64, 128, 512, 1024],
+            caching=False,
+            top_logprobs_num=beam_width * 2,
+        )
 
         try:
             # likely to OOM
-            time_consume = self._bench_transformer(cur_prompt, tokenizer, 
-                                            max_tokens=[8, 16, 32, 64, 128, 512, 1024],
-                                            caching=False,
-                                            top_logprobs_num=beam_width*2)
+            time_consume = self._bench_transformer(
+                cur_prompt,
+                tokenizer,
+                max_tokens=[8, 16, 32, 64, 128, 512, 1024],
+                caching=False,
+                top_logprobs_num=beam_width * 2,
+            )
         except Exception:
             import torch
+
             torch.cuda.empty_cache()
 
-        time_consume = self._bench_vllm_fork(cur_prompt, tokenizer, 0,
-                                          max_tokens=[8, 16, 32, 64, 128, 512], # 1024 wouble super slow
-                                          caching=False,
-                                          top_logprobs_num=beam_width*2)
+        time_consume = self._bench_vllm_fork(
+            cur_prompt,
+            tokenizer,
+            0,
+            max_tokens=[8, 16, 32, 64, 128, 512],  # 1024 wouble super slow
+            caching=False,
+            top_logprobs_num=beam_width * 2,
+        )
 
     def test_beam_search_memory_leak_via_mmlu(self):
         def workload_func(base_url, model):
@@ -363,7 +449,8 @@ class TestBeamSearch(unittest.TestCase):
             "--trust-remote-code",
             "--disable-overlap-schedule",
             "--disable-jump-forward",
-            "--beam-width", "5",
+            "--beam-width",
+            "5",
         ]
 
         model = DEFAULT_MODEL_NAME_FOR_TEST
@@ -381,7 +468,7 @@ class TestBeamSearch(unittest.TestCase):
             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
             other_args=other_args,
             return_stdout_stderr=(stdout, stderr),
-            env=env
+            env=env,
         )
 
         # Launch a thread to stream the output
@@ -415,6 +502,7 @@ class TestBeamSearch(unittest.TestCase):
                 has_abort = True
         assert has_new_server
         assert not has_leak
+
 
 if __name__ == "__main__":
     unittest.main()
