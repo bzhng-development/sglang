@@ -38,7 +38,7 @@ from sglang.srt.mem_cache.evict_policy import EvictionStrategy, LFUStrategy, LRU
 from sglang.srt.mem_cache.memory_pool import ReqToTokenPool
 
 if TYPE_CHECKING:
-    from sglang.srt.managers.schedule_batch import Req
+    from sglang.srt.managers.schedule_batch import Req, ScheduleBatch
 
 
 class TreeNode:
@@ -247,6 +247,39 @@ class RadixCache(BasePrefixCache):
         # Remove req slot release the cache lock
         self.req_to_token_pool.free(req.req_pool_idx)
         self.dec_lock_ref(req.last_node)
+
+    def cache_finished_beam_search(self, batch: ScheduleBatch):
+        """Release KV slots for beam search sequences once a request finishes."""
+        if (
+            self.disable
+            or not getattr(batch, "beam_width", 0)
+            or not getattr(batch, "req_pool_indices", None)
+        ):
+            return
+
+        beam_width = batch.beam_width
+        req_pool_indices = batch.req_pool_indices.cpu().tolist()
+        seq_lens = batch.seq_lens.cpu().tolist()
+
+        for req in batch.reqs:
+            start_idx = getattr(
+                getattr(req, "beam_list", None), "req_pool_start_idx", -1
+            )
+            if start_idx == -1 or not req.finished():
+                continue
+
+            for offset in range(1, beam_width + 1):
+                pos = start_idx + offset
+                if pos >= len(req_pool_indices):
+                    break
+                pool_idx = req_pool_indices[pos]
+                seq_len = seq_lens[pos]
+                if pool_idx < 0 or seq_len <= 0:
+                    continue
+                kv_indices = self.req_to_token_pool.req_to_token[pool_idx, :seq_len]
+                if self.token_to_kv_pool_allocator is not None:
+                    self.token_to_kv_pool_allocator.free(kv_indices.to(torch.int64))
+                self.req_to_token_pool.free(pool_idx)
 
     def cache_unfinished_req(self, req: Req, chunked=False):
         """Cache request when it is unfinished."""

@@ -20,6 +20,7 @@ import signal
 import sys
 import threading
 import time
+import warnings
 from collections import deque
 from concurrent import futures
 from dataclasses import dataclass
@@ -115,6 +116,11 @@ from sglang.srt.managers.io_struct import (
 from sglang.srt.managers.mm_utils import init_embedding_cache
 from sglang.srt.managers.schedule_batch import (
     FINISH_ABORT,
+    FINISH_LENGTH,
+    FINISH_MATCHED_STR,
+    FINISH_MATCHED_TOKEN,
+    BaseFinishReason,
+    ImageInputs,
     MultimodalInputs,
     Req,
     RequestStage,
@@ -194,6 +200,14 @@ TEST_RETRACT = get_bool_env_var("SGLANG_TEST_RETRACT")
 GRAMMAR_TIMEOUT = float(os.environ.get("SGLANG_GRAMMAR_TIMEOUT", 300))
 
 _is_cpu = is_cpu()
+
+from sglang.srt.beam_search import (
+    BeamSearchOutput,
+    BeamSearchSequence,
+    sort_by_beam_search_score,
+)
+
+xlx_test_beam_width = int(os.getenv("SGLANG_TEST_BEAM_WIDTH", 0))
 
 
 @dataclass
@@ -1332,6 +1346,13 @@ class Scheduler(
             self._add_request_to_queue(req)
             return
 
+        if xlx_test_beam_width > 0:
+            req.return_logprob = True
+            req.top_logprobs_num = max(
+                req.top_logprobs_num or 0, xlx_test_beam_width * 2
+            )
+            req.beam_list.beam_width = xlx_test_beam_width
+
         # Copy more attributes
         if recv_req.logprob_start_len == -1 or not recv_req.return_logprob:
             # By default, only return the logprobs for output tokens
@@ -1610,7 +1631,19 @@ class Scheduler(
         else:
             req_total_size = self.req_to_token_pool.size
 
-        if len(self.req_to_token_pool.free_slots) != req_total_size:
+        free_slots = self.req_to_token_pool.free_slots
+        if len(set(free_slots)) != len(free_slots):
+            msg = (
+                "Memory pool leak detected!"
+                f"available_set_size={len(set(free_slots))}, "
+                f"available_size={len(free_slots)}\n"
+                f"total_size={req_total_size}\n"
+            )
+            warnings.warn(msg)
+            if crash_on_warnings():
+                raise ValueError(msg)
+
+        if len(free_slots) != req_total_size:
             msg = (
                 "req_to_token_pool memory leak detected!"
                 f"available_size={len(self.req_to_token_pool.free_slots)}, "
@@ -1946,7 +1979,10 @@ class Scheduler(
         """Update the current running decoding batch."""
         initial_bs = batch.batch_size()
 
-        batch.filter_batch()
+        if batch.beam_width > 0:
+            batch.filter_beam_search_batch()
+        else:
+            batch.filter_batch()
         if batch.is_empty():
             batch.batch_is_full = False
             return batch
@@ -2066,7 +2102,11 @@ class Scheduler(
         launch_done: Optional[threading.Event] = None,
     ):
         if batch.forward_mode.is_decode():
-            self.process_batch_result_decode(batch, result, launch_done)
+            if batch.beam_width > 0:
+                self.process_batch_result_beam_search(batch, result, launch_done)
+            else:
+                self.process_batch_result_decode(batch, result, launch_done)
+                self._maybe_initialize_beam_search(batch)
             for req in batch.reqs:
                 trace_slice(
                     "decode loop",
@@ -2074,7 +2114,6 @@ class Scheduler(
                     auto_next_anon=not req.finished(),
                     thread_finish_flag=req.finished(),
                 )
-
         elif batch.forward_mode.is_extend():
             self.process_batch_result_prefill(batch, result, launch_done)
             for req in batch.reqs:
@@ -2115,19 +2154,594 @@ class Scheduler(
             disable_overlap_schedule=self.server_args.disable_overlap_schedule,
         )
 
-    @staticmethod
-    def prepare_mlp_sync_batch_raw(
-        local_batch: ScheduleBatch,
-        dp_size,
-        attn_tp_size: int,
-        tp_group,
-        get_idle_batch,
-        disable_cuda_graph: bool,
-        spec_algorithm,
-        speculative_num_draft_tokens,
-        require_mlp_tp_gather: bool,
-        disable_overlap_schedule: bool,
+    def process_batch_result_beam_search(
+        self,
+        batch: ScheduleBatch,
+        result: GenerationBatchResult,
+        launch_done: Optional[threading.Event] = None,
     ):
+        logits_output, next_token_ids, bid = (
+            result.logits_output,
+            result.next_token_ids,
+            result.bid,
+        )
+
+        beam_stride = batch.beam_width + 1
+        self.num_generated_tokens += len(batch.reqs) * beam_stride
+
+        if self.enable_overlap:
+            logits_output, next_token_ids, _ = self.tp_worker.resolve_last_batch_result(
+                launch_done
+            )
+        else:
+            next_token_ids = next_token_ids.tolist()
+
+        next_token_logprobs = logits_output.next_token_logprobs
+        if isinstance(next_token_logprobs, torch.Tensor):
+            next_token_logprobs = next_token_logprobs.tolist()
+
+        # Keep only the base sequence entries (skip beam replicas)
+        next_token_ids = next_token_ids[0::beam_stride]
+        next_token_logprobs = next_token_logprobs[0::beam_stride]
+
+        if isinstance(batch.output_ids, torch.Tensor):
+            batch.output_ids = batch.output_ids[0::beam_stride]
+        else:
+            batch.output_ids = batch.output_ids[0::beam_stride]
+
+        max_k = max(batch.top_logprobs_nums) if batch.top_logprobs_nums else 0
+        if max_k == 0:
+            raise ValueError("Beam search requires positive top_logprobs_num")
+
+        top_logprobs_tensor = logits_output.next_token_top_logprobs
+        if not isinstance(top_logprobs_tensor, torch.Tensor):
+            raise ValueError("next_token_top_logprobs tensor required for beam search")
+
+        beam_top = top_logprobs_tensor.topk(max_k, dim=1)
+        beam_output_top_token = beam_top.indices.tolist()
+        beam_output_top_logprob = beam_top.values.tolist()
+
+        self.token_to_kv_pool_allocator.free_group_begin()
+
+        for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
+            if req.is_retracted:
+                continue
+
+            if req.beam_list.beam_width == 0:
+                req.beam_list.beam_width = batch.beam_width
+
+            req.output_ids.append(next_token_id)
+            req.check_finished()
+            if isinstance(
+                req.finished_reason, (FINISH_MATCHED_TOKEN, FINISH_MATCHED_STR)
+            ):
+                req.finished_reason = None
+
+            if req.return_logprob:
+                req.output_token_logprobs_val.append(next_token_logprobs[i])
+                req.output_token_logprobs_idx.append(next_token_id)
+                if req.top_logprobs_num > 0:
+                    req.output_top_logprobs_val.append(
+                        logits_output.next_token_top_logprobs_val[i]
+                    )
+                    req.output_top_logprobs_idx.append(
+                        logits_output.next_token_top_logprobs_idx[i]
+                    )
+
+            assert not req.beam_list.empty(), "Beam search requires initial sequences"
+
+            start = i * beam_stride + 1
+            end = (i + 1) * beam_stride
+            req_top_tokens = beam_output_top_token[start:end]
+            req_top_logprobs = beam_output_top_logprob[start:end]
+
+            assert len(req_top_tokens) == len(req.beam_list.incompleted)
+
+            all_beams: List[BeamSearchSequence] = []
+            for beam_seq, seq_top_logprob, seq_top_token in zip(
+                req.beam_list.incompleted, req_top_logprobs, req_top_tokens
+            ):
+                expanded = [
+                    BeamSearchSequence(
+                        last_token=top_token,
+                        tokens=beam_seq.tokens + [top_token],
+                        cum_logprob=beam_seq.cum_logprob + top_logprob,
+                        finish=None,
+                        last_req_pool_idx=beam_seq.last_req_pool_idx,
+                        prefix=beam_seq.prefix,
+                        prefix_len=beam_seq.prefix_len,
+                    )
+                    for top_logprob, top_token in zip(seq_top_logprob, seq_top_token)
+                ]
+                all_beams.extend(expanded)
+
+            for beam in all_beams:
+                self.check_beam_finished(req, beam)
+
+            incompleted = [beam for beam in all_beams if not beam.finished()]
+            completed = [beam for beam in all_beams if beam.finished()]
+            incompleted.sort(key=sort_by_beam_search_score, reverse=True)
+            req.beam_list.incompleted = incompleted[: req.beam_list.beam_width]
+            req.beam_list.completed.extend(completed)
+
+            if (
+                (len(req.beam_list.incompleted) < batch.beam_width)
+                or (len(req.beam_list.completed) > 10 * batch.beam_width)
+            ) and not req.finished():
+                if req.beam_list.completed:
+                    req.finished_reason = req.beam_list.completed[0].finish
+
+            if req.finished():
+                self.tree_cache.cache_finished_req(req)
+                combined = req.beam_list.completed + req.beam_list.incompleted
+                combined.sort(key=sort_by_beam_search_score, reverse=True)
+                req.beam_list.completed = combined[: batch.beam_width]
+                req.beam_list.incompleted = []
+
+            if req.grammar is not None:
+                req.grammar.accept_token(next_token_id)
+                req.grammar.finished = req.finished()
+
+        if any(req.finished() for req in batch.reqs):
+            self.tree_cache.cache_finished_beam_search(batch)
+
+        if batch.next_batch_sampling_info:
+            batch.next_batch_sampling_info.update_regex_vocab_mask()
+            self.current_stream.synchronize()
+            batch.next_batch_sampling_info.sampling_info_done.set()
+
+        self.stream_output(batch.reqs, batch.return_logprob)
+
+        self.token_to_kv_pool_allocator.free_group_end()
+
+        self.forward_ct_decode = (self.forward_ct_decode + 1) % (1 << 30)
+        if (
+            self.attn_tp_rank == 0
+            and self.forward_ct_decode % self.server_args.decode_log_interval == 0
+        ):
+            self.log_decode_stats()
+
+    def _maybe_initialize_beam_search(self, batch: ScheduleBatch) -> None:
+        """Initialize beam search state after the first decode step."""
+        target_width = max((req.beam_list.beam_width for req in batch.reqs), default=0)
+        if target_width <= 0:
+            batch.beam_width = 0
+            return
+
+        initialized_any = False
+        all_initialized = True
+        for req in batch.reqs:
+            if req.beam_list.beam_width <= 0:
+                continue
+            if req.beam_list.incompleted:
+                continue
+            if not req.output_top_logprobs_val:
+                all_initialized = False
+                continue
+
+            top_vals = req.output_top_logprobs_val[-1]
+            top_indices = req.output_top_logprobs_idx[-1]
+            beams: List[BeamSearchSequence] = []
+            prefix_tokens = req.output_ids.copy()
+            prefix_len = len(req.origin_input_ids) + len(prefix_tokens) - 1
+            for top_logprob, top_token in zip(top_vals, top_indices):
+                beam = BeamSearchSequence(
+                    last_token=top_token,
+                    tokens=[top_token],
+                    cum_logprob=top_logprob,
+                    finish=self._check_token_finish(req, top_token),
+                    text=None,
+                    last_req_pool_idx=-1,
+                    prefix=prefix_tokens,
+                    prefix_len=prefix_len,
+                )
+                beams.append(beam)
+
+            beams.sort(key=sort_by_beam_search_score, reverse=True)
+            req.beam_list.completed = [b for b in beams if b.finished()]
+            req.beam_list.incompleted = [b for b in beams if not b.finished()][
+                : req.beam_list.beam_width
+            ]
+
+            initialized_any = True
+            if not req.beam_list.incompleted:
+                all_initialized = False
+
+        if initialized_any and all_initialized:
+            batch.beam_width = target_width
+        else:
+            batch.beam_width = 0
+
+    def _check_token_finish(self, req: Req, last_token_id: int):
+        matched_eos = False
+
+        # Check stop token ids
+        if req.sampling_params.stop_token_ids:
+            matched_eos = last_token_id in req.sampling_params.stop_token_ids
+        if req.tokenizer is not None:
+            matched_eos |= last_token_id == self.tokenizer.eos_token_id
+            if req.tokenizer.additional_stop_token_ids:
+                matched_eos |= last_token_id in self.tokenizer.additional_stop_token_ids
+        if matched_eos and not req.sampling_params.ignore_eos:
+            return FINISH_MATCHED_TOKEN(matched=last_token_id)
+
+    def check_beam_finished(self, req: Req, beam: BeamSearchSequence):
+        if beam.finished():
+            return
+
+        if req.to_abort:
+            beam.finish = FINISH_ABORT()
+            return
+
+        if len(beam.tokens) >= req.sampling_params.max_new_tokens:
+            beam.finish = FINISH_LENGTH(length=req.sampling_params.max_new_tokens)
+            return
+
+        last_token_id = beam.last_token
+
+        matched_eos = False
+
+        # Check stop token ids
+        if req.sampling_params.stop_token_ids:
+            matched_eos = last_token_id in req.sampling_params.stop_token_ids
+        if req.tokenizer is not None:
+            matched_eos |= last_token_id == req.tokenizer.eos_token_id
+            if req.tokenizer.additional_stop_token_ids:
+                matched_eos |= last_token_id in req.tokenizer.additional_stop_token_ids
+        if matched_eos and not req.sampling_params.ignore_eos:
+            beam.finish = FINISH_MATCHED_TOKEN(matched=last_token_id)
+            return
+
+        # Check stop strings
+        if len(req.sampling_params.stop_strs) > 0:
+            tail_str = req.tokenizer.decode(
+                beam.tokens[-(req.sampling_params.stop_str_max_len + 1) :]
+            )
+
+            for stop_str in req.sampling_params.stop_strs:
+                if stop_str in tail_str or stop_str in req.decoded_text:
+                    beam.finish = FINISH_MATCHED_STR(matched=stop_str)
+                    return
+
+    def process_batch_result_beam_search(self, batch: ScheduleBatch, result):
+        logits_output, next_token_ids, bid = (
+            result.logits_output,
+            result.next_token_ids,
+            result.bid,
+        )
+        self.num_generated_tokens += len(batch.reqs) * (batch.beam_width + 1)
+
+        # Move next_token_ids and logprobs to cpu
+        next_token_ids = next_token_ids.tolist()
+        next_token_logprobs = logits_output.next_token_logprobs.tolist()
+
+        next_token_logprobs = next_token_logprobs[:: batch.beam_width + 1]
+        next_token_ids = next_token_ids[:: batch.beam_width + 1]
+        batch.output_ids = batch.output_ids[:: batch.beam_width + 1]
+
+        # [bs*(1+beam_width), vocab_size] -> [bs*(1+beam_width), top_logprobs_nums]
+        max_k = max(batch.top_logprobs_nums)
+        beam_top_token_logprobs = logits_output.next_token_top_logprobs.topk(
+            max_k, dim=1
+        )
+        beam_output_top_token = beam_top_token_logprobs.indices.tolist()
+        beam_output_top_logprob = beam_top_token_logprobs.values.tolist()
+
+        self.token_to_kv_pool.free_group_begin()
+
+        for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
+            if req.is_retracted:
+                continue
+
+            req.output_ids.append(next_token_id)
+            req.check_finished()
+            if isinstance(req.finished_reason, FINISH_MATCHED_TOKEN) or isinstance(
+                req.finished_reason, FINISH_MATCHED_STR
+            ):
+                req.finished_reason = None
+
+            if req.return_logprob:
+                req.output_token_logprobs_val.append(next_token_logprobs[i])
+                req.output_token_logprobs_idx.append(next_token_id)
+                if req.top_logprobs_num > 0:
+                    req.output_top_logprobs_val.append(
+                        logits_output.next_token_top_logprobs_val[i]
+                    )
+                    req.output_top_logprobs_idx.append(
+                        logits_output.next_token_top_logprobs_idx[i]
+                    )
+
+            assert not req.beam_list.empty()
+
+            req_top_tokens = beam_output_top_token[
+                i * (batch.beam_width + 1) + 1 : (i + 1) * (batch.beam_width + 1)
+            ]
+            req_top_logprobs = beam_output_top_logprob[
+                i * (batch.beam_width + 1) + 1 : (i + 1) * (batch.beam_width + 1)
+            ]
+
+            assert len(req_top_tokens) == len(req.beam_list.incompleted)
+
+            all_beams = []
+            for beam_seq, seq_top_logprob, seq_top_token in zip(
+                req.beam_list.incompleted, req_top_logprobs, req_top_tokens
+            ):
+                one_beams = [
+                    BeamSearchSequence(
+                        last_token=top_token,
+                        tokens=beam_seq.tokens + [top_token],
+                        cum_logprob=beam_seq.cum_logprob + top_logprob,
+                        # for new prepare_for_beam_search
+                        last_req_pool_idx=beam_seq.last_req_pool_idx,
+                        prefix_len=beam_seq.prefix_len,
+                    )
+                    for top_logprob, top_token in zip(seq_top_logprob, seq_top_token)
+                ]
+                all_beams += one_beams
+
+            for beam in all_beams:
+                # modify beam's finish
+                self.check_beam_finished(req, beam)
+
+            incompleted = [beam for beam in all_beams if not beam.finished()]
+            completed = [beam for beam in all_beams if beam.finished()]
+            incompleted = sorted(
+                incompleted, key=sort_by_beam_search_score, reverse=True
+            )
+            req.beam_list.incompleted = incompleted[: req.beam_list.beam_width]
+            req.beam_list.completed += completed
+
+            if (
+                len(req.beam_list.incompleted) < batch.beam_width
+                or len(req.beam_list.completed) > 10 * batch.beam_width
+            ) and not req.finished():
+                req.finished_reason = req.beam_list.completed[0].finish
+
+            if req.finished():
+                self.tree_cache.cache_finished_req(req)
+
+                completed = req.beam_list.completed + req.beam_list.incompleted
+                completed = sorted(
+                    completed, key=sort_by_beam_search_score, reverse=True
+                )
+                req.beam_list.completed = completed[: batch.beam_width]
+                req.beam_list.incompleted = []
+
+            if req.grammar is not None:
+                req.grammar.accept_token(next_token_id)
+                req.grammar.finished = req.finished()
+
+        if any([req.finished() for req in batch.reqs]):
+            self.tree_cache.cache_finished_beam_search(batch)
+
+        if batch.next_batch_sampling_info:
+            batch.next_batch_sampling_info.update_regex_vocab_mask()
+            self.current_stream.synchronize()
+            batch.next_batch_sampling_info.sampling_info_done.set()
+
+        self.stream_output(batch.reqs, batch.return_logprob)
+
+        self.token_to_kv_pool.free_group_end()
+
+        self.forward_ct_decode = (self.forward_ct_decode + 1) % (1 << 30)
+        if (
+            self.tp_rank == 0
+            and self.forward_ct_decode % self.server_args.decode_log_interval == 0
+        ):
+            self.log_decode_stats()
+
+    def add_logprob_return_values(
+        self,
+        i: int,
+        req: Req,
+        pt: int,
+        next_token_ids: List[int],
+        output: LogitsProcessorOutput,
+    ):
+        """Attach logprobs to the return values."""
+        req.output_token_logprobs_val.append(output.next_token_logprobs[i])
+        req.output_token_logprobs_idx.append(next_token_ids[i])
+
+        # If logprob_start_len > 0, then first logprob_start_len prompt tokens will be ignored.
+        num_input_logprobs = req.extend_input_len - req.extend_logprob_start_len
+
+        if req.input_token_logprobs_val is None:
+            input_token_logprobs_val = output.input_token_logprobs[
+                pt : pt + num_input_logprobs - 1 - req.last_update_decode_tokens
+            ]
+
+            input_token_logprobs_idx = req.fill_ids[
+                len(req.fill_ids)
+                - num_input_logprobs
+                + 1 : len(req.fill_ids)
+                - req.last_update_decode_tokens
+            ]
+            # Clip the padded hash values from image tokens.
+            # Otherwise, it will lead to detokenization errors.
+            input_token_logprobs_idx = [
+                x if x < self.model_config.vocab_size - 1 else 0
+                for x in input_token_logprobs_idx
+            ]
+
+            if (
+                req.logprob_start_len == 0
+            ):  # The first token does not have logprob, pad it.
+                input_token_logprobs_val = [None] + input_token_logprobs_val
+                input_token_logprobs_idx = [req.fill_ids[0]] + input_token_logprobs_idx
+
+            req.input_token_logprobs_val = input_token_logprobs_val
+            req.input_token_logprobs_idx = input_token_logprobs_idx
+
+        if req.last_update_decode_tokens != 0:
+            # Some decode tokens are re-computed in an extend batch
+            req.output_token_logprobs_val.extend(
+                output.input_token_logprobs[
+                    pt
+                    + num_input_logprobs
+                    - 1
+                    - req.last_update_decode_tokens : pt
+                    + num_input_logprobs
+                    - 1
+                ],
+            )
+            req.output_token_logprobs_idx.extend(
+                req.fill_ids[
+                    len(req.fill_ids)
+                    - req.last_update_decode_tokens : len(req.fill_ids)
+                ]
+            )
+
+        if req.top_logprobs_num > 0:
+            if req.input_top_logprobs_val is None:
+                req.input_top_logprobs_val = output.input_top_logprobs_val[i]
+                req.input_top_logprobs_idx = output.input_top_logprobs_idx[i]
+                if req.logprob_start_len == 0:
+                    req.input_top_logprobs_val = [None] + req.input_top_logprobs_val
+                    req.input_top_logprobs_idx = [None] + req.input_top_logprobs_idx
+
+            if req.last_update_decode_tokens != 0:
+                req.output_top_logprobs_val.extend(
+                    output.input_top_logprobs_val[i][-req.last_update_decode_tokens :]
+                )
+                req.output_top_logprobs_idx.extend(
+                    output.input_top_logprobs_idx[i][-req.last_update_decode_tokens :]
+                )
+
+            req.output_top_logprobs_val.append(output.next_token_top_logprobs_val[i])
+            req.output_top_logprobs_idx.append(output.next_token_top_logprobs_idx[i])
+
+        return num_input_logprobs
+
+    def stream_output(
+        self, reqs: List[Req], return_logprob: bool, skip_req: Optional[Req] = None
+    ):
+        """Stream the output to detokenizer."""
+        rids = []
+        finished_reasons: List[BaseFinishReason] = []
+
+        if self.is_generation:
+            vids = []
+            decoded_texts = []
+            decode_ids_list = []
+            read_offsets = []
+            output_ids = []
+
+            skip_special_tokens = []
+            spaces_between_special_tokens = []
+            no_stop_trim = []
+            prompt_tokens = []
+            completion_tokens = []
+            cached_tokens = []
+            beam_search_output = []
+
+            if return_logprob:
+                input_token_logprobs_val = []
+                input_token_logprobs_idx = []
+                output_token_logprobs_val = []
+                output_token_logprobs_idx = []
+                input_top_logprobs_val = []
+                input_top_logprobs_idx = []
+                output_top_logprobs_val = []
+                output_top_logprobs_idx = []
+            else:
+                input_token_logprobs_val = input_token_logprobs_idx = (
+                    output_token_logprobs_val
+                ) = output_token_logprobs_idx = input_top_logprobs_val = (
+                    input_top_logprobs_idx
+                ) = output_top_logprobs_val = output_top_logprobs_idx = None
+
+            for req in reqs:
+                if req is skip_req:
+                    continue
+
+                # TODO(lianmin): revisit this for overlap + retract + stream
+                if (
+                    req.finished()
+                    # If stream, follow the given stream_interval
+                    or (req.stream and len(req.output_ids) % self.stream_interval == 0)
+                    # If not stream, we still want to output some tokens to get the benefit of incremental decoding.
+                    or (not req.stream and len(req.output_ids) % 50 == 0)
+                ):
+                    if self.draft_worker and req.finished():
+                        self.draft_worker.finish_request(req)
+
+                    rids.append(req.rid)
+                    finished_reasons.append(
+                        req.finished_reason.to_json() if req.finished_reason else None
+                    )
+                    vids.append(req.vid)
+                    decoded_texts.append(req.decoded_text)
+                    decode_ids, read_offset = req.init_incremental_detokenize()
+                    decode_ids_list.append(decode_ids)
+                    read_offsets.append(read_offset)
+                    if self.skip_tokenizer_init:
+                        output_ids.append(req.output_ids)
+                    skip_special_tokens.append(req.sampling_params.skip_special_tokens)
+                    spaces_between_special_tokens.append(
+                        req.sampling_params.spaces_between_special_tokens
+                    )
+                    no_stop_trim.append(req.sampling_params.no_stop_trim)
+
+                    prompt_tokens.append(len(req.origin_input_ids))
+                    completion_tokens.append(len(req.output_ids))
+                    cached_tokens.append(req.cached_tokens)
+
+                    if return_logprob:
+                        input_token_logprobs_val.append(req.input_token_logprobs_val)
+                        input_token_logprobs_idx.append(req.input_token_logprobs_idx)
+                        output_token_logprobs_val.append(req.output_token_logprobs_val)
+                        output_token_logprobs_idx.append(req.output_token_logprobs_idx)
+                        input_top_logprobs_val.append(req.input_top_logprobs_val)
+                        input_top_logprobs_idx.append(req.input_top_logprobs_idx)
+                        output_top_logprobs_val.append(req.output_top_logprobs_val)
+                        output_top_logprobs_idx.append(req.output_top_logprobs_idx)
+
+                        beam_search_output.append(
+                            BeamSearchOutput(sequences=req.beam_list.completed)
+                        )
+
+            # Send to detokenizer
+            if rids:
+                self.send_to_detokenizer.send_pyobj(
+                    BatchTokenIDOut(
+                        rids,
+                        finished_reasons,
+                        vids,
+                        decoded_texts,
+                        decode_ids_list,
+                        read_offsets,
+                        output_ids,
+                        skip_special_tokens,
+                        spaces_between_special_tokens,
+                        no_stop_trim,
+                        prompt_tokens,
+                        completion_tokens,
+                        cached_tokens,
+                        input_token_logprobs_val,
+                        input_token_logprobs_idx,
+                        output_token_logprobs_val,
+                        output_token_logprobs_idx,
+                        input_top_logprobs_val,
+                        input_top_logprobs_idx,
+                        output_top_logprobs_val,
+                        output_top_logprobs_idx,
+                        beam_search_output=beam_search_output,
+                    )
+                )
+        else:  # embedding or reward model
+            embeddings = []
+            prompt_tokens = []
+            for req in reqs:
+                if req.finished():
+                    rids.append(req.rid)
+                    finished_reasons.append(req.finished_reason.to_json())
+                    embeddings.append(req.embedding)
+                    prompt_tokens.append(len(req.origin_input_ids))
+            self.send_to_detokenizer.send_pyobj(
+                BatchEmbeddingOut(rids, finished_reasons, embeddings, prompt_tokens)
+            )
+
+    def prepare_dp_attn_batch(self, local_batch: ScheduleBatch):
         # Check if other DP workers have running batches
         if local_batch is None:
             num_tokens = 0

@@ -22,6 +22,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from sglang.srt.beam_search import BeamSearchOutput
 from sglang.srt.lora.lora_registry import LoRARef
 from sglang.srt.managers.schedule_batch import BaseFinishReason
 from sglang.srt.multimodal.mm_utils import has_valid_data
@@ -830,35 +831,8 @@ class BatchTokenIDOut:
     # val is the length of padded tokens after expansion.
     placeholder_tokens_idx: List[Optional[List[int]]]
     placeholder_tokens_val: List[Optional[List[int]]]
-
-
-@dataclass
-class BatchMultimodalDecodeReq:
-    decoded_ids: List[int]
-    input_token_logprobs_val: List[float]
-    input_token_logprobs_idx: List[int]
-    output_token_logprobs_val: List[float]
-    output_token_logprobs_idx: List[int]
-    read_offsets: List[int]
-    skip_special_tokens: List[bool]
-    spaces_between_special_tokens: List[bool]
-    image_resolutions: List[List[int]]
-    resize_image_resolutions: List[List[int]]
-
-    # The request id
-    rids: List[str]
-    finished_reasons: List[BaseFinishReason]
-
-    # Token counts
-    prompt_tokens: List[int]
-    completion_tokens: List[int]
-    cached_tokens: List[int]
-
-    # Placeholder token info
-    placeholder_tokens_idx: List[Optional[List[int]]]
-    placeholder_tokens_val: List[Optional[List[int]]]
-
-    return_bytes: bool = False
+    # Beam search outputs for each request (if any)
+    beam_search_output: Optional[List[BeamSearchOutput]] = None
 
 
 @dataclass
@@ -897,6 +871,7 @@ class BatchStrOut:
 
     placeholder_tokens_idx: List[Optional[List[int]]]
     placeholder_tokens_val: List[Optional[List[int]]]
+    beam_search_output: Optional[List[BeamSearchOutput]] = None
 
 
 @dataclass
@@ -924,6 +899,9 @@ class BatchMultimodalOut:
     placeholder_tokens_val: List[Optional[List[int]]]
 
     return_bytes: List[bool]
+
+    # beam search
+    beam_search_output: Optional[List[BeamSearchOutput]] = None
 
 
 @dataclass

@@ -224,6 +224,46 @@ class DetokenizerManager(MultiHttpWorkerDetokenizerMixin):
             s.sent_offset = len(output_str)
             output_strs.append(incremental_output)
 
+        beam_search_output = recv_obj.beam_search_output
+        if (
+            beam_search_output
+            and self.tokenizer is not None
+            and any(
+                beam_output and beam_output.sequences
+                for beam_output in beam_search_output
+            )
+        ):
+            beam_ids = []
+            beam_output_ids = 0
+            for i, beam_output in enumerate(beam_search_output):
+                if beam_output is None:
+                    continue
+                for beam in beam_output.sequences:
+                    beam.vid = beam_output_ids
+                    beam_output_ids += 1
+                    beam_ids.append(
+                        self.trim_matched_stop(
+                            beam.tokens,
+                            recv_obj.finished_reasons[i],
+                            recv_obj.no_stop_trim[i],
+                        )
+                    )
+
+            if beam_ids:
+                beam_texts = self.tokenizer.batch_decode(
+                    beam_ids,
+                    skip_special_tokens=recv_obj.skip_special_tokens[0],
+                    spaces_between_special_tokens=recv_obj.spaces_between_special_tokens[
+                        0
+                    ],
+                )
+
+                for beam_output in beam_search_output:
+                    if beam_output is None:
+                        continue
+                    for beam in beam_output.sequences:
+                        beam.text = beam_texts[beam.vid]
+
         return BatchStrOut(
             rids=recv_obj.rids,
             finished_reasons=recv_obj.finished_reasons,
@@ -248,6 +288,7 @@ class DetokenizerManager(MultiHttpWorkerDetokenizerMixin):
             output_hidden_states=recv_obj.output_hidden_states,
             placeholder_tokens_idx=None,
             placeholder_tokens_val=None,
+            beam_search_output=beam_search_output,
         )
 
     def handle_multimodal_decode_req(self, recv_obj: BatchMultimodalDecodeReq):

@@ -1414,6 +1414,9 @@ class TokenizerManager(TokenizerCommunicatorMixin):
                 "weight_version": self.server_args.weight_version,
             }
 
+            if getattr(recv_obj, "beam_search_output", None) is not None:
+                meta_info["beam_search_outputs"] = recv_obj.beam_search_output[i]
+
             if getattr(state.obj, "return_logprob", False):
                 self.convert_logprob_style(
                     meta_info,
