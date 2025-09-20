@@ -2363,10 +2363,11 @@ class Scheduler(
         next_token_logprobs = logits_output.next_token_logprobs
         if isinstance(next_token_logprobs, torch.Tensor):
             next_token_logprobs = next_token_logprobs.tolist()
+        if next_token_logprobs is not None:
+            next_token_logprobs = next_token_logprobs[0::beam_stride]
 
         # Keep only the base sequence entries (skip beam replicas)
         next_token_ids = next_token_ids[0::beam_stride]
-        next_token_logprobs = next_token_logprobs[0::beam_stride]
 
         if isinstance(batch.output_ids, torch.Tensor):
             batch.output_ids = batch.output_ids[0::beam_stride]
@@ -2374,8 +2375,6 @@ class Scheduler(
             batch.output_ids = batch.output_ids[0::beam_stride]
 
         max_k = max(batch.top_logprobs_nums) if batch.top_logprobs_nums else 0
-        if max_k == 0:
-            raise ValueError("Beam search requires positive top_logprobs_num")
 
         top_logprobs_tensor = logits_output.next_token_top_logprobs
         if not isinstance(top_logprobs_tensor, torch.Tensor):
@@ -2401,7 +2400,7 @@ class Scheduler(
             ):
                 req.finished_reason = None
 
-            if req.return_logprob:
+            if req.return_logprob and next_token_logprobs is not None:
                 req.output_token_logprobs_val.append(next_token_logprobs[i])
                 req.output_token_logprobs_idx.append(next_token_id)
                 if req.top_logprobs_num > 0:
@@ -2620,13 +2619,9 @@ class Scheduler(
             batch.output_ids = batch.output_ids.tolist()
         batch.output_ids = batch.output_ids[::beam_stride]
 
-        # [bs*(1+beam_width), vocab_size] -> [bs*(1+beam_width), top_logprobs_nums]
-        max_k = max(batch.top_logprobs_nums)
-        beam_top_token_logprobs = logits_output.next_token_top_logprobs.topk(
-            max_k, dim=1
-        )
-        beam_output_top_token = beam_top_token_logprobs.indices.tolist()
-        beam_output_top_logprob = beam_top_token_logprobs.values.tolist()
+        # Use precomputed top-k lists instead of computing topk again
+        beam_output_top_token = logits_output.next_token_top_logprobs_idx
+        beam_output_top_logprob = logits_output.next_token_top_logprobs_val
 
         self.token_to_kv_pool_allocator.free_group_begin()
 
