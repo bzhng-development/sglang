@@ -481,7 +481,6 @@ class TestBeamSearch(unittest.TestCase):
 
         # Clean up everything
         kill_process_tree(process.pid)
-        kill_process_tree(process.pid)
         stdout.close()
         stderr.close()
         if os.path.exists(STDOUT_FILENAME):
