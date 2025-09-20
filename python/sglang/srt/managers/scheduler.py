@@ -2344,45 +2344,32 @@ class Scheduler(
         result: GenerationBatchResult,
         launch_done: Optional[threading.Event] = None,
     ):
-        logits_output, next_token_ids, bid = (
+        # Unpack result
+        logits_output, next_token_ids, _ = (
             result.logits_output,
             result.next_token_ids,
             result.bid,
         )
 
-        beam_stride = batch.beam_width + 1
-        self.num_generated_tokens += len(batch.reqs) * beam_stride
+        # Non-beam path: count one token per req
+        self.num_generated_tokens += len(batch.reqs)
 
+        # Resolve overlap
         if self.enable_overlap:
             logits_output, next_token_ids, _ = self.tp_worker.resolve_last_batch_result(
                 launch_done
             )
-        else:
+
+        # Ensure python lists
+        if isinstance(next_token_ids, torch.Tensor):
             next_token_ids = next_token_ids.tolist()
 
         next_token_logprobs = logits_output.next_token_logprobs
         if isinstance(next_token_logprobs, torch.Tensor):
             next_token_logprobs = next_token_logprobs.tolist()
-        if next_token_logprobs is not None:
-            next_token_logprobs = next_token_logprobs[0::beam_stride]
 
-        # Keep only the base sequence entries (skip beam replicas)
-        next_token_ids = next_token_ids[0::beam_stride]
-
-        if isinstance(batch.output_ids, torch.Tensor):
-            batch.output_ids = batch.output_ids[0::beam_stride]
-        else:
-            batch.output_ids = batch.output_ids[0::beam_stride]
-
-        max_k = max(batch.top_logprobs_nums) if batch.top_logprobs_nums else 0
-
-        top_logprobs_tensor = logits_output.next_token_top_logprobs
-        if not isinstance(top_logprobs_tensor, torch.Tensor):
-            raise ValueError("next_token_top_logprobs tensor required for beam search")
-
-        beam_top = top_logprobs_tensor.topk(max_k, dim=1)
-        beam_output_top_token = beam_top.indices.tolist()
-        beam_output_top_logprob = beam_top.values.tolist()
+        # Never assume batch.output_ids exists here; we don't need to slice it in non-beam mode.
+        # All per-request output_ids live on req.output_ids and we update them below.
 
         self.token_to_kv_pool_allocator.free_group_begin()
 
@@ -2390,20 +2377,17 @@ class Scheduler(
             if req.is_retracted:
                 continue
 
-            if req.beam_list.beam_width == 0:
-                req.beam_list.beam_width = batch.beam_width
-
+            # Append the token and check finish
             req.output_ids.append(next_token_id)
             req.check_finished()
-            if isinstance(
-                req.finished_reason, (FINISH_MATCHED_TOKEN, FINISH_MATCHED_STR)
-            ):
-                req.finished_reason = None
 
+            # Attach logprobs only if available/asked
             if req.return_logprob and next_token_logprobs is not None:
+                # Next-token logprob (scalar)
                 req.output_token_logprobs_val.append(next_token_logprobs[i])
                 req.output_token_logprobs_idx.append(next_token_id)
-                if req.top_logprobs_num > 0:
+                # Top-k for the next token (precomputed, compact lists)
+                if req.top_logprobs_num and req.top_logprobs_num > 0:
                     req.output_top_logprobs_val.append(
                         logits_output.next_token_top_logprobs_val[i]
                     )
@@ -2411,72 +2395,27 @@ class Scheduler(
                         logits_output.next_token_top_logprobs_idx[i]
                     )
 
-            assert not req.beam_list.empty(), "Beam search requires initial sequences"
-
-            start = i * beam_stride + 1
-            end = (i + 1) * beam_stride
-            req_top_tokens = beam_output_top_token[start:end]
-            req_top_logprobs = beam_output_top_logprob[start:end]
-
-            assert len(req_top_tokens) == len(req.beam_list.incompleted)
-
-            all_beams: List[BeamSearchSequence] = []
-            for beam_seq, seq_top_logprob, seq_top_token in zip(
-                req.beam_list.incompleted, req_top_logprobs, req_top_tokens
-            ):
-                expanded = [
-                    BeamSearchSequence(
-                        last_token=top_token,
-                        tokens=beam_seq.tokens + [top_token],
-                        cum_logprob=beam_seq.cum_logprob + top_logprob,
-                        finish=None,
-                        last_req_pool_idx=beam_seq.last_req_pool_idx,
-                        prefix=beam_seq.prefix,
-                        prefix_len=beam_seq.prefix_len,
-                    )
-                    for top_logprob, top_token in zip(seq_top_logprob, seq_top_token)
-                ]
-                all_beams.extend(expanded)
-
-            for beam in all_beams:
-                self.check_beam_finished(req, beam)
-
-            incompleted = [beam for beam in all_beams if not beam.finished()]
-            completed = [beam for beam in all_beams if beam.finished()]
-            incompleted.sort(key=sort_by_beam_search_score, reverse=True)
-            req.beam_list.incompleted = incompleted[: req.beam_list.beam_width]
-            req.beam_list.completed.extend(completed)
-
-            if (
-                (len(req.beam_list.incompleted) < batch.beam_width)
-                or (len(req.beam_list.completed) > 10 * batch.beam_width)
-            ) and not req.finished():
-                if req.beam_list.completed:
-                    req.finished_reason = req.beam_list.completed[0].finish
-
-            if req.finished():
-                self.tree_cache.cache_finished_req(req)
-                combined = req.beam_list.completed + req.beam_list.incompleted
-                combined.sort(key=sort_by_beam_search_score, reverse=True)
-                req.beam_list.completed = combined[: batch.beam_width]
-                req.beam_list.incompleted = []
-
+            # Grammar update if any
             if req.grammar is not None:
                 req.grammar.accept_token(next_token_id)
                 req.grammar.finished = req.finished()
 
-        if any(req.finished() for req in batch.reqs):
-            self.tree_cache.cache_finished_beam_search(batch)
+            # Tree cache bookkeeping per finished req (non-beam)
+            if req.finished():
+                self.tree_cache.cache_finished_req(req)
 
+        # Any regex vocab masks for next batch
         if batch.next_batch_sampling_info:
             batch.next_batch_sampling_info.update_regex_vocab_mask()
             self.current_stream.synchronize()
             batch.next_batch_sampling_info.sampling_info_done.set()
 
+        # Stream tokens to detokenizer
         self.stream_output(batch.reqs, batch.return_logprob)
 
         self.token_to_kv_pool_allocator.free_group_end()
 
+        # Stats
         self.forward_ct_decode = (self.forward_ct_decode + 1) % (1 << 30)
         if (
             self.attn_tp_rank == 0
