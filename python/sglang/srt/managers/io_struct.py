@@ -837,6 +837,35 @@ class BatchTokenIDOut:
 
 
 @dataclass
+class BatchMultimodalDecodeReq:
+    decoded_ids: List[int]
+    input_token_logprobs_val: List[float]
+    input_token_logprobs_idx: List[int]
+    output_token_logprobs_val: List[float]
+    output_token_logprobs_idx: List[int]
+    read_offsets: List[int]
+    skip_special_tokens: List[bool]
+    spaces_between_special_tokens: List[bool]
+    image_resolutions: List[List[int]]
+    resize_image_resolutions: List[List[int]]
+
+    # The request id
+    rids: List[str]
+    finished_reasons: List[BaseFinishReason]
+
+    # Token counts
+    prompt_tokens: List[int]
+    completion_tokens: List[int]
+    cached_tokens: List[int]
+
+    # Placeholder token info
+    placeholder_tokens_idx: List[Optional[List[int]]]
+    placeholder_tokens_val: List[Optional[List[int]]]
+
+    return_bytes: bool = False
+
+
+@dataclass
 class BatchStrOut:
     # The request id
     rids: List[str]
