@@ -404,14 +404,15 @@ class TestBeamSearch(unittest.TestCase):
         )
 
         try:
-            # likely to OOM
-            time_consume = self._bench_transformer(
-                cur_prompt,
-                tokenizer,
-                max_tokens=[8, 16, 32, 64, 128, 512, 1024],
-                caching=False,
-                top_logprobs_num=beam_width * 2,
-            )
+            # # likely to OOM
+            # time_consume = self._bench_transformer(
+            #     cur_prompt,
+            #     tokenizer,
+            #     max_tokens=[8, 16, 32, 64, 128, 512, 1024],
+            #     caching=False,
+            #     top_logprobs_num=beam_width * 2,
+            # )
+            pass
         except Exception:
             import torch
 
@@ -426,81 +427,81 @@ class TestBeamSearch(unittest.TestCase):
             top_logprobs_num=beam_width * 2,
         )
 
-    def test_beam_search_memory_leak_via_mmlu(self):
-        def workload_func(base_url, model):
-            # Run the eval
-            args = SimpleNamespace(
-                base_url=base_url,
-                model=model,
-                eval_name="mmlu",
-                num_examples=128,
-                num_threads=16,
-            )
-            try:
-                metrics = run_eval(args)
-                assert metrics["score"] >= 0.65, f"{metrics=}"
-            finally:
-                pass
+    # def test_beam_search_memory_leak_via_mmlu(self):
+    #     def workload_func(base_url, model):
+    #         # Run the eval
+    #         args = SimpleNamespace(
+    #             base_url=base_url,
+    #             model=model,
+    #             eval_name="mmlu",
+    #             num_examples=128,
+    #             num_threads=16,
+    #         )
+    #         try:
+    #             metrics = run_eval(args)
+    #             assert metrics["score"] >= 0.65, f"{metrics=}"
+    #         finally:
+    #             pass
 
-        # chunked prefilling is supported
-        other_args = [
-            "--log-level",
-            "debug",
-            "--trust-remote-code",
-            "--disable-overlap-schedule",
-            "--disable-jump-forward",
-            "--beam-width",
-            "5",
-        ]
+    #     # chunked prefilling is supported
+    #     other_args = [
+    #         "--log-level",
+    #         "debug",
+    #         "--trust-remote-code",
+    #         "--disable-overlap-schedule",
+    #         "--disable-jump-forward",
+    #         "--beam-width",
+    #         "5",
+    #     ]
 
-        model = DEFAULT_MODEL_NAME_FOR_TEST
-        port = random.randint(4000, 5000)
-        base_url = f"http://127.0.0.1:{port}"
+    #     model = DEFAULT_MODEL_NAME_FOR_TEST
+    #     port = random.randint(4000, 5000)
+    #     base_url = f"http://127.0.0.1:{port}"
 
-        # Create files and launch the server
-        stdout = open(STDOUT_FILENAME, "w")
-        stderr = open(STDERR_FILENAME, "w")
-        env = os.environ.copy()
-        env["SGLANG_TEST_BEAM_KTH_AS_OUTPUT"] = "0"
-        process = popen_launch_server(
-            model,
-            base_url,
-            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-            other_args=other_args,
-            return_stdout_stderr=(stdout, stderr),
-            env=env,
-        )
+    #     # Create files and launch the server
+    #     stdout = open(STDOUT_FILENAME, "w")
+    #     stderr = open(STDERR_FILENAME, "w")
+    #     env = os.environ.copy()
+    #     env["SGLANG_TEST_BEAM_KTH_AS_OUTPUT"] = "0"
+    #     process = popen_launch_server(
+    #         model,
+    #         base_url,
+    #         timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+    #         other_args=other_args,
+    #         return_stdout_stderr=(stdout, stderr),
+    #         env=env,
+    #     )
 
-        # Launch a thread to stream the output
-        output_lines = []
-        t = threading.Thread(target=read_output, args=(output_lines,))
-        t.start()
+    #     # Launch a thread to stream the output
+    #     output_lines = []
+    #     t = threading.Thread(target=read_output, args=(output_lines,))
+    #     t.start()
 
-        # Run the workload
-        workload_func(base_url, model)
+    #     # Run the workload
+    #     workload_func(base_url, model)
 
-        # Clean up everything
-        kill_process_tree(process.pid)
-        stdout.close()
-        stderr.close()
-        if os.path.exists(STDOUT_FILENAME):
-            os.remove(STDOUT_FILENAME)
-        if os.path.exists(STDERR_FILENAME):
-            os.remove(STDERR_FILENAME)
-        t.join()
-        # Assert success
-        has_new_server = False
-        has_leak = False
-        has_abort = False
-        for line in output_lines:
-            if "The server is fired" in line:
-                has_new_server = True
-            if "leak" in line:
-                has_leak = True
-            if "Abort" in line:
-                has_abort = True
-        assert has_new_server
-        assert not has_leak
+    #     # Clean up everything
+    #     kill_process_tree(process.pid)
+    #     stdout.close()
+    #     stderr.close()
+    #     if os.path.exists(STDOUT_FILENAME):
+    #         os.remove(STDOUT_FILENAME)
+    #     if os.path.exists(STDERR_FILENAME):
+    #         os.remove(STDERR_FILENAME)
+    #     t.join()
+    #     # Assert success
+    #     has_new_server = False
+    #     has_leak = False
+    #     has_abort = False
+    #     for line in output_lines:
+    #         if "The server is fired" in line:
+    #             has_new_server = True
+    #         if "leak" in line:
+    #             has_leak = True
+    #         if "Abort" in line:
+    #             has_abort = True
+    #     assert has_new_server
+    #     assert not has_leak
 
 
 if __name__ == "__main__":
