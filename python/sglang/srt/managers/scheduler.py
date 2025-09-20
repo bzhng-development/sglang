@@ -2203,6 +2203,105 @@ class Scheduler(
             disable_overlap_schedule=self.server_args.disable_overlap_schedule,
         )
 
+    @staticmethod
+    def prepare_mlp_sync_batch_raw(
+        local_batch: ScheduleBatch,
+        dp_size,
+        attn_tp_size: int,
+        tp_group,
+        get_idle_batch,
+        disable_cuda_graph: bool,
+        spec_algorithm,
+        speculative_num_draft_tokens,
+        require_mlp_tp_gather: bool,
+        disable_overlap_schedule: bool,
+    ):
+        # Check if other DP workers have running batches
+        if local_batch is None:
+            num_tokens = 0
+            num_tokens_for_logprob = 0
+        elif local_batch.forward_mode.is_decode():
+            num_tokens = local_batch.batch_size()
+            num_tokens_for_logprob = num_tokens
+        else:
+            num_tokens = local_batch.extend_num_tokens
+            num_tokens_for_logprob = sum(
+                [
+                    max(extend_len - logprob_start_len, 1)
+                    for logprob_start_len, extend_len in zip(
+                        local_batch.extend_logprob_start_lens, local_batch.extend_lens
+                    )
+                ]
+            )
+
+        if local_batch is None or local_batch.forward_mode.is_decode_or_idle():
+            can_cuda_graph = 1
+        else:
+            can_cuda_graph = 0
+
+        is_extend_in_batch = (
+            local_batch.forward_mode.is_extend() if local_batch else False
+        )
+
+        tbo_preparer = TboDPAttentionPreparer()
+        if disable_overlap_schedule:
+            group = tp_group.device_group
+            device = tp_group.device
+        else:
+            group = tp_group.cpu_group
+            device = "cpu"
+
+        local_info = torch.tensor(
+            [
+                num_tokens,
+                can_cuda_graph,
+                num_tokens_for_logprob,
+                is_extend_in_batch,
+                *tbo_preparer.prepare_all_gather(local_batch),
+            ],
+            dtype=torch.int64,
+            device=device,
+        )
+        global_info = torch.empty(
+            (dp_size, attn_tp_size, 6),
+            dtype=torch.int64,
+            device=device,
+        )
+        torch.distributed.all_gather_into_tensor(
+            global_info.flatten(),
+            local_info,
+            group=group,
+        )
+        global_num_tokens = global_info[:, 0, 0].tolist()
+        can_cuda_graph = min(global_info[:, 0, 1].tolist())
+        global_num_tokens_for_logprob = global_info[:, 0, 2].tolist()
+        is_extend_in_batch = global_info[:, 0, 3].tolist()
+
+        tbo_split_seq_index, global_forward_mode = tbo_preparer.compute_output(
+            global_info[:, :, 4:6]
+        )
+
+        if local_batch is None and max(global_num_tokens) > 0:
+            local_batch = get_idle_batch()
+
+        if local_batch is not None:
+            if not require_mlp_tp_gather:
+                local_batch.global_num_tokens = [num_tokens]
+                local_batch.global_num_tokens_for_logprob = [num_tokens_for_logprob]
+            else:
+                local_batch.global_num_tokens = global_num_tokens
+                local_batch.global_num_tokens_for_logprob = (
+                    global_num_tokens_for_logprob
+                )
+            local_batch.is_extend_in_batch = any(is_extend_in_batch)
+            local_batch.tbo_split_seq_index = tbo_split_seq_index
+            local_batch.global_forward_mode = global_forward_mode
+
+            if not disable_cuda_graph:
+                local_batch.can_run_dp_cuda_graph = can_cuda_graph
+
+        return local_batch
+
     def process_batch_result_decode(
         self,
         batch: ScheduleBatch,
