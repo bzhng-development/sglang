@@ -1693,6 +1693,14 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
     def prepare_for_beam_search(self):
         self.forward_mode = ForwardMode.DECODE
 
+        # Compute beam_ids from the incompleted beams
+        beam_ids = []
+        for req in self.reqs:
+            if not req.beam_list.incompleted:
+                continue
+            for beam in req.beam_list.incompleted:
+                beam_ids.append(beam.last_token)
+
         # self.input_ids = self.output_ids
         beam_ids_tensor = torch.tensor(beam_ids, dtype=torch.int64).to(
             self.device, non_blocking=True
