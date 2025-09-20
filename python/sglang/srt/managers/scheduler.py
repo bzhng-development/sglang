@@ -120,7 +120,6 @@ from sglang.srt.managers.schedule_batch import (
     FINISH_MATCHED_STR,
     FINISH_MATCHED_TOKEN,
     BaseFinishReason,
-    ImageInputs,
     MultimodalInputs,
     Req,
     RequestStage,
@@ -208,6 +207,7 @@ from sglang.srt.beam_search import (
 test_beam_fixed_max_token = bool(
     os.getenv("SGLANG_TEST_BEAM_FIXED_MAX_TOKEN", 0)
 )  # for beam search unit test
+
 
 @dataclass
 class GenerationBatchResult:
@@ -2501,9 +2501,10 @@ class Scheduler(
 
             req.output_ids.append(next_token_id)
             req.check_finished()
-            if (isinstance(req.finished_reason, FINISH_MATCHED_TOKEN) or isinstance(
-                req.finished_reason, FINISH_MATCHED_STR
-            )) and not test_beam_fixed_max_token:
+            if (
+                isinstance(req.finished_reason, FINISH_MATCHED_TOKEN)
+                or isinstance(req.finished_reason, FINISH_MATCHED_STR)
+            ) and not test_beam_fixed_max_token:
                 req.finished_reason = None
 
             if req.return_logprob:
@@ -2558,9 +2559,13 @@ class Scheduler(
             req.beam_list.completed += completed
 
             if (
-                len(req.beam_list.incompleted) < batch.beam_width
-                or len(req.beam_list.completed) > 10 * batch.beam_width
-            ) and not req.finished() and not test_beam_fixed_max_token:
+                (
+                    len(req.beam_list.incompleted) < batch.beam_width
+                    or len(req.beam_list.completed) > 10 * batch.beam_width
+                )
+                and not req.finished()
+                and not test_beam_fixed_max_token
+            ):
                 req.finished_reason = req.beam_list.completed[0].finish
 
             if req.finished():
