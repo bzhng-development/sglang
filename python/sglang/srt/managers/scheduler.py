@@ -20,7 +20,7 @@ import signal
 import sys
 import threading
 import time
-from collections import deque
+from collections import OrderedDict, deque
 from concurrent import futures
 from dataclasses import dataclass
 from http import HTTPStatus
@@ -34,6 +34,11 @@ import zmq
 from torch.distributed import barrier
 
 from sglang.global_config import global_config
+from sglang.srt.beam_search import (
+    BeamSearchList,
+    BeamSearchSequence,
+    sort_by_beam_search_score,
+)
 from sglang.srt.configs.model_config import ModelConfig
 from sglang.srt.constrained.base_grammar_backend import (
     INVALID_GRAMMAR_OBJ,
@@ -115,6 +120,9 @@ from sglang.srt.managers.io_struct import (
 from sglang.srt.managers.mm_utils import init_embedding_cache
 from sglang.srt.managers.schedule_batch import (
     FINISH_ABORT,
+    FINISH_LENGTH,
+    FINISH_MATCHED_TOKEN,
+    BaseFinishReason,
     MultimodalInputs,
     Req,
     RequestStage,
@@ -2080,6 +2088,8 @@ class Scheduler(
     ):
         if batch.forward_mode.is_decode():
             self.process_batch_result_decode(batch, result, launch_done)
+            if self.beam_width > 0 and batch.beam_width == 0:
+                self._maybe_initialize_beam_search(batch)
             for req in batch.reqs:
                 trace_slice(
                     "decode loop",
@@ -2105,6 +2115,162 @@ class Scheduler(
             self.set_next_batch_sampling_info_done(batch)
 
         self.maybe_send_health_check_signal()
+
+    def _maybe_initialize_beam_search(self, batch: ScheduleBatch) -> None:
+        """Seed per-request beam lists once top-k data is available."""
+
+        if self.beam_width <= 0 or batch is None or batch.is_empty():
+            return
+
+        if batch.beam_width > 0:
+            # Beam rows are already being scheduled for this batch.
+            return
+
+        total_targets = 0
+        ready_targets = 0
+        all_targets_ready = True
+
+        for req in batch.reqs:
+            if req.finished() or not req.output_ids:
+                continue
+
+            req_beam_width = self.beam_width
+            if req_beam_width <= 0 or req.sampling_params.max_new_tokens == 0:
+                continue
+
+            total_targets += 1
+
+            beam_list = getattr(req, "beam_list", None)
+            if beam_list is None:
+                req_pool_idx = req.req_pool_idx if req.req_pool_idx is not None else -1
+                beam_list = BeamSearchList(req_beam_width, req_pool_idx)
+                req.beam_list = beam_list
+            else:
+                beam_list.beam_width = req_beam_width
+
+            if beam_list.incompleted:
+                ready_targets += 1
+                continue
+
+            if not req.output_top_logprobs_val or not req.output_top_logprobs_idx:
+                all_targets_ready = False
+                continue
+
+            top_vals = req.output_top_logprobs_val[-1]
+            top_idxs = req.output_top_logprobs_idx[-1]
+            if top_vals is None or top_idxs is None:
+                all_targets_ready = False
+                continue
+
+            if isinstance(top_vals, torch.Tensor):
+                top_vals = top_vals.tolist()
+            else:
+                top_vals = list(top_vals)
+
+            if isinstance(top_idxs, torch.Tensor):
+                top_idxs = top_idxs.tolist()
+            else:
+                top_idxs = list(top_idxs)
+
+            if not top_vals or not top_idxs:
+                all_targets_ready = False
+                continue
+
+            candidate_map: "OrderedDict[int, float]" = OrderedDict()
+            for token_id, logprob in zip(top_idxs, top_vals):
+                if logprob is None:
+                    continue
+                token_int = int(token_id)
+                candidate_map.setdefault(token_int, float(logprob))
+
+            if req.output_token_logprobs_idx and req.output_token_logprobs_val:
+                actual_token = req.output_token_logprobs_idx[-1]
+                actual_logprob = req.output_token_logprobs_val[-1]
+                if isinstance(actual_logprob, torch.Tensor):
+                    actual_logprob = actual_logprob.item()
+                if actual_token is not None and actual_logprob is not None:
+                    candidate_map[int(actual_token)] = float(actual_logprob)
+
+            if not candidate_map:
+                all_targets_ready = False
+                continue
+
+            shared_prefix = list(req.origin_input_ids) + list(req.output_ids[:-1])
+            prefix_len = len(shared_prefix)
+            prior_generated = len(req.output_ids[:-1])
+            candidate_generated_len = prior_generated + 1
+            max_new_tokens = req.sampling_params.max_new_tokens
+
+            incompleted: List[BeamSearchSequence] = []
+            completed: List[BeamSearchSequence] = []
+
+            for token_id, logprob in candidate_map.items():
+                tokens = shared_prefix + [int(token_id)]
+                seq = BeamSearchSequence(
+                    tokens=tokens,
+                    last_token=int(token_id),
+                    cum_logprob=float(logprob),
+                    prefix_len=prefix_len,
+                )
+
+                finish_reason: Optional[BaseFinishReason] = None
+                reached_length = (
+                    max_new_tokens is not None
+                    and max_new_tokens > 0
+                    and candidate_generated_len >= max_new_tokens
+                )
+                if reached_length:
+                    finish_reason = FINISH_LENGTH(length=max_new_tokens)
+                elif not req.sampling_params.ignore_eos:
+                    stop_hit = False
+                    if req.sampling_params.stop_token_ids and (
+                        int(token_id) in req.sampling_params.stop_token_ids
+                    ):
+                        stop_hit = True
+                    elif req.eos_token_ids and int(token_id) in req.eos_token_ids:
+                        stop_hit = True
+                    else:
+                        tokenizer = getattr(req, "tokenizer", None)
+                        if tokenizer is not None:
+                            eos_id = getattr(tokenizer, "eos_token_id", None)
+                            if eos_id is not None and int(token_id) == eos_id:
+                                stop_hit = True
+                            additional = getattr(
+                                tokenizer, "additional_stop_token_ids", None
+                            )
+                            if additional and int(token_id) in additional:
+                                stop_hit = True
+                    if stop_hit:
+                        finish_reason = FINISH_MATCHED_TOKEN(matched=int(token_id))
+
+                if finish_reason is not None:
+                    seq.finish = finish_reason
+                    completed.append(seq)
+                else:
+                    incompleted.append(seq)
+
+            completed_sorted = sorted(
+                completed,
+                key=sort_by_beam_search_score,
+                reverse=True,
+            )
+            if incompleted:
+                incompleted_sorted = sorted(
+                    incompleted,
+                    key=sort_by_beam_search_score,
+                    reverse=True,
+                )
+                beam_list.incompleted = incompleted_sorted[:req_beam_width]
+                ready_targets += 1
+            else:
+                beam_list.incompleted = []
+                if completed_sorted and total_targets > 0:
+                    total_targets -= 1
+
+            beam_list.completed = completed_sorted
+
+        if total_targets > 0 and all_targets_ready and ready_targets == total_targets:
+            batch.beam_width = self.beam_width
 
     def maybe_send_health_check_signal(self):
         if self.return_health_check_ct:
