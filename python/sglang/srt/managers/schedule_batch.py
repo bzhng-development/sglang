@@ -72,6 +72,7 @@ from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import flatten_nested_list, support_triton
 
 if TYPE_CHECKING:
+    from sglang.srt.beam_search import BeamSearchList, BeamSearchSequence
     from sglang.srt.configs.model_config import ModelConfig
     from sglang.srt.speculative.eagle_utils import EagleDraftInput, EagleVerifyInput
     from sglang.srt.speculative.lookahead_utils import LookaheadVerifyInput
@@ -644,6 +645,9 @@ class Req:
         self.tmp_end_idx: int = -1
         self.metadata_buffer_index: int = -1
 
+        # Beam search runtime info
+        self.beam_list = None
+
     @property
     def seqlen(self):
         return len(self.origin_input_ids) + len(self.output_ids)
@@ -880,6 +884,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
     # the check of whether to prefill new requests.
     # This is an optimization to reduce the overhead of the prefill check.
     batch_is_full: bool = False
+    beam_width: int = 0
 
     # Events
     launch_done: Optional[threading.Event] = None
@@ -976,6 +981,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         enable_overlap: bool,
         spec_algorithm: SpeculativeAlgorithm,
         chunked_req: Optional[Req] = None,
+        beam_width: int = 0,
     ):
         return_logprob = any(req.return_logprob for req in reqs)
 
@@ -1004,6 +1010,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
             return_hidden_states=any(req.return_hidden_states for req in reqs),
             is_prefill_only=all(req.is_prefill_only for req in reqs),
             chunked_req=chunked_req,
+            beam_width=beam_width,
         )
 
     def batch_size(self):
@@ -1636,6 +1643,14 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
                     self.output_ids.to(torch.int64)
                 )
 
+        if self._can_prepare_for_beam_search():
+            self.prepare_for_beam_search()
+            return
+
+        self._prepare_regular_decode(bs)
+
+    def _prepare_regular_decode(self, bs: int) -> None:
+        """Prepare decode inputs for non-beam execution."""
         # Update fields
         self.input_ids = self.output_ids
         self.output_ids = None
@@ -1676,6 +1691,313 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
 
         self.req_to_token_pool.write(
             (self.req_pool_indices, locs), self.out_cache_loc.to(torch.int32)
+        )
+
+    def _can_prepare_for_beam_search(self) -> bool:
+        if self.beam_width <= 0 or not self.reqs:
+            return False
+
+        any_ready = False
+        for req in self.reqs:
+            beam_list = getattr(req, "beam_list", None)
+            if not beam_list:
+                continue
+
+            beam_width = getattr(beam_list, "beam_width", 0)
+            if beam_width <= 0:
+                continue
+
+            incompleted = getattr(beam_list, "incompleted", None)
+            if not incompleted:
+                return False
+
+            any_ready = True
+
+        return any_ready
+
+    def prepare_for_beam_search(self) -> None:
+        if not self.reqs:
+            self._prepare_regular_decode(0)
+            return
+
+        if self.output_ids is not None:
+            base_input_ids = self.output_ids.tolist()
+        else:
+            base_input_ids = [
+                req.output_ids[-1] if req.output_ids else req.origin_input_ids[-1]
+                for req in self.reqs
+            ]
+        self.output_ids = None
+
+        base_seq_lens = self.seq_lens.tolist()
+        base_orig_seq_lens = self.orig_seq_lens.tolist()
+        base_req_pool_indices = self.req_pool_indices.tolist()
+
+        if self.model_config.is_encoder_decoder:
+            base_encoder_lens = self.encoder_lens.tolist()
+            self.prepare_encoder_info_decode()
+        else:
+            base_encoder_lens = None
+
+        beam_active_beams: List[List["BeamSearchSequence"]] = []
+        beam_row_indices: List[List[int]] = []
+        first_mask: List[bool] = []
+
+        for idx, req in enumerate(self.reqs):
+            beam_list = getattr(req, "beam_list", None)
+            if not beam_list:
+                beam_active_beams.append([])
+                beam_row_indices.append([])
+                first_mask.append(False)
+                continue
+
+            beam_width = getattr(beam_list, "beam_width", self.beam_width)
+            incompleted = list(getattr(beam_list, "incompleted", []))
+            if beam_width <= 0 or not incompleted:
+                beam_active_beams.append([])
+                beam_row_indices.append([])
+                first_mask.append(False)
+                continue
+
+            active_beams = incompleted[:beam_width]
+            beam_active_beams.append(active_beams)
+            beam_row_indices.append(
+                [int(getattr(beam, "last_req_pool_idx", -1)) for beam in active_beams]
+            )
+
+            if (
+                not hasattr(beam_list, "req_pool_start_idx")
+                or beam_list.req_pool_start_idx is None
+            ):
+                beam_list.req_pool_start_idx = -1
+
+            first_mask.append(beam_list.req_pool_start_idx == -1)
+
+        if not any(len(beams) for beams in beam_active_beams):
+            self._prepare_regular_decode(len(self.reqs))
+            return
+
+        self._prepare_for_first_beam_search(
+            first_mask,
+            beam_active_beams,
+            beam_row_indices,
+            base_req_pool_indices,
+            base_seq_lens,
+        )
+        self._prepare_for_second_beam_search(
+            first_mask, beam_active_beams, beam_row_indices
+        )
+
+        if isinstance(self.tree_cache, SWAChunkCache):
+            for req in self.reqs:
+                self.tree_cache.evict_swa(
+                    req, req.seqlen - 1, self.model_config.attention_chunk_size
+                )
+
+        self._update_common_beam_search(
+            base_input_ids,
+            base_seq_lens,
+            base_orig_seq_lens,
+            base_req_pool_indices,
+            beam_active_beams,
+            beam_row_indices,
+            base_encoder_lens,
+        )
+
+    def _prepare_for_first_beam_search(
+        self,
+        _first_mask: List[bool],
+        active_beams: List[List["BeamSearchSequence"]],
+        beam_row_indices: List[List[int]],
+        base_req_pool_indices: List[int],
+        base_seq_lens: List[int],
+    ) -> None:
+        allocation_plan: List[Tuple[int, int]] = []
+        alloc_reqs: List[Req] = []
+
+        for req_idx, beams in enumerate(active_beams):
+            if not beams:
+                continue
+
+            beam_list = getattr(self.reqs[req_idx], "beam_list", None)
+            if (
+                beam_list is not None
+                and getattr(beam_list, "req_pool_start_idx", -1) == -1
+            ):
+                beam_list.req_pool_start_idx = base_req_pool_indices[req_idx]
+
+            for beam_idx, beam in enumerate(beams):
+                if (
+                    beam_row_indices[req_idx][beam_idx] is None
+                    or beam_row_indices[req_idx][beam_idx] < 0
+                ):
+                    allocation_plan.append((req_idx, beam_idx))
+                    if isinstance(self.req_to_token_pool, HybridReqToTokenPool):
+                        alloc_reqs.append(self.reqs[req_idx])
+
+        if not allocation_plan:
+            return
+
+        if isinstance(self.req_to_token_pool, HybridReqToTokenPool):
+            new_rows = self.req_to_token_pool.alloc(len(allocation_plan), alloc_reqs)
+        else:
+            new_rows = self.req_to_token_pool.alloc(len(allocation_plan))
+
+        if new_rows is None:
+            raise RuntimeError(
+                "Beam search failed to allocate request slots for beams."
+            )
+
+        for slot, (req_idx, beam_idx) in enumerate(allocation_plan):
+            row_idx = new_rows[slot]
+            if isinstance(row_idx, torch.Tensor):
+                row_idx = int(row_idx.item())
+            beam_row_indices[req_idx][beam_idx] = row_idx
+
+            beam = active_beams[req_idx][beam_idx]
+            beam.last_req_pool_idx = row_idx
+
+            prefix_len = min(getattr(beam, "prefix_len", 0), base_seq_lens[req_idx])
+            if prefix_len > 0:
+                prefix_tokens = self.req_to_token_pool.req_to_token[
+                    base_req_pool_indices[req_idx], :prefix_len
+                ]
+                self.req_to_token_pool.write(
+                    (row_idx, slice(0, prefix_len)), prefix_tokens
+                )
+
+    def _prepare_for_second_beam_search(
+        self,
+        _: List[bool],
+        active_beams: List[List["BeamSearchSequence"]],
+        beam_row_indices: List[List[int]],
+    ) -> None:
+        for req_idx, beams in enumerate(active_beams):
+            beam_list = getattr(self.reqs[req_idx], "beam_list", None)
+            if not beams or beam_list is None:
+                continue
+
+            current_rows: List[int] = []
+            for beam_idx, beam in enumerate(beams):
+                row_idx = beam_row_indices[req_idx][beam_idx]
+                if row_idx is None or row_idx < 0:
+                    raise RuntimeError(
+                        f"Beam row index not initialized for request {req_idx}, beam {beam_idx}."
+                    )
+                beam.last_req_pool_idx = row_idx
+                current_rows.append(row_idx)
+
+            beam_list.active_row_indices = current_rows
+
+    def _update_common_beam_search(
+        self,
+        base_input_ids: List[int],
+        base_seq_lens: List[int],
+        base_orig_seq_lens: List[int],
+        base_req_pool_indices: List[int],
+        beam_active_beams: List[List["BeamSearchSequence"]],
+        beam_row_indices: List[List[int]],
+        base_encoder_lens: Optional[List[int]],
+    ) -> None:
+        row_input_ids: List[int] = []
+        row_req_pool_indices: List[int] = []
+        row_prev_seq_lens: List[int] = []
+        row_prev_orig_seq_lens: List[int] = []
+        row_encoder_lens: Optional[List[int]] = (
+            [] if base_encoder_lens is not None else None
+        )
+
+        for idx, req in enumerate(self.reqs):
+            base_input = (
+                base_input_ids[idx]
+                if idx < len(base_input_ids)
+                else (
+                    req.output_ids[-1] if req.output_ids else req.origin_input_ids[-1]
+                )
+            )
+            row_input_ids.append(base_input)
+            row_req_pool_indices.append(int(base_req_pool_indices[idx]))
+            row_prev_seq_lens.append(int(base_seq_lens[idx]))
+            row_prev_orig_seq_lens.append(int(base_orig_seq_lens[idx]))
+
+            if row_encoder_lens is not None and base_encoder_lens is not None:
+                row_encoder_lens.append(int(base_encoder_lens[idx]))
+
+            beams = beam_active_beams[idx]
+            rows = beam_row_indices[idx]
+            for beam_idx, beam in enumerate(beams):
+                row_idx = rows[beam_idx]
+                if row_idx is None or row_idx < 0:
+                    raise RuntimeError(
+                        f"Invalid beam row index for request {idx}, beam {beam_idx}."
+                    )
+                row_req_pool_indices.append(int(row_idx))
+                row_input_ids.append(int(beam.last_token))
+
+                beam_token_len = len(getattr(beam, "tokens", []))
+                prefix_len = getattr(beam, "prefix_len", 0)
+                beam_prev_seq = max(prefix_len, beam_token_len - 1, 0)
+
+                row_prev_seq_lens.append(int(beam_prev_seq))
+                row_prev_orig_seq_lens.append(
+                    int(max(base_orig_seq_lens[idx], beam_prev_seq))
+                )
+
+                if row_encoder_lens is not None and base_encoder_lens is not None:
+                    row_encoder_lens.append(int(base_encoder_lens[idx]))
+
+        seq_lens_after = [val + 1 for val in row_prev_seq_lens]
+        orig_seq_lens_after = [val + 1 for val in row_prev_orig_seq_lens]
+
+        prev_seq_tensor = torch.tensor(row_prev_seq_lens, dtype=torch.int64)
+        seq_lens_tensor = torch.tensor(seq_lens_after, dtype=torch.int64)
+        orig_seq_tensor = torch.tensor(orig_seq_lens_after, dtype=torch.int32)
+        req_pool_indices_tensor = torch.tensor(row_req_pool_indices, dtype=torch.int64)
+        input_ids_tensor = torch.tensor(row_input_ids, dtype=torch.int64)
+
+        if self.device != "cpu":
+            prev_seq_tensor = prev_seq_tensor.to(self.device, non_blocking=True)
+            seq_lens_tensor = seq_lens_tensor.to(self.device, non_blocking=True)
+            orig_seq_tensor = orig_seq_tensor.to(self.device, non_blocking=True)
+            req_pool_indices_tensor = req_pool_indices_tensor.to(
+                self.device, non_blocking=True
+            )
+            input_ids_tensor = input_ids_tensor.to(self.device, non_blocking=True)
+
+        if row_encoder_lens is not None and base_encoder_lens is not None:
+            encoder_tensor = torch.tensor(row_encoder_lens, dtype=torch.int64)
+            if self.device != "cpu":
+                encoder_tensor = encoder_tensor.to(self.device, non_blocking=True)
+            locs_tensor = prev_seq_tensor + encoder_tensor
+            self.encoder_lens = encoder_tensor
+            self.encoder_lens_cpu = [int(x) for x in row_encoder_lens]
+        else:
+            locs_tensor = prev_seq_tensor.clone()
+
+        self.input_ids = input_ids_tensor
+        self.req_pool_indices = req_pool_indices_tensor
+        self.seq_lens = seq_lens_tensor
+        self.orig_seq_lens = orig_seq_tensor
+        self.seq_lens_sum = int(sum(seq_lens_after))
+
+        if self.token_to_kv_pool_allocator.page_size == 1:
+            self.out_cache_loc = self.alloc_token_slots(len(row_input_ids))
+        else:
+            # When seq_len == 0, the previous cache location is not defined.
+            adjusted_indices = torch.clamp(seq_lens_tensor - 2, min=0)
+            last_loc = self.req_to_token_pool.req_to_token[
+                req_pool_indices_tensor, adjusted_indices
+            ]
+            if torch.any(prev_seq_tensor == 0):
+                last_loc = last_loc.clone()
+                last_loc[prev_seq_tensor == 0] = -1
+            self.out_cache_loc = self.alloc_paged_token_slots_decode(
+                seq_lens_tensor, last_loc
+            )
+
+        self.req_to_token_pool.write(
+            (req_pool_indices_tensor, locs_tensor),
+            self.out_cache_loc.to(torch.int32),
         )
 
     def filter_batch(

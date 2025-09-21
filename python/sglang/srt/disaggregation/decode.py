@@ -874,6 +874,7 @@ class SchedulerDisaggregationDecodeMixin:
             self.model_config,
             self.enable_overlap,
             self.spec_algorithm,
+            beam_width=self.beam_width,
         )
 
         # construct fake completed prefill

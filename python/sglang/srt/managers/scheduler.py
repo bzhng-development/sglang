@@ -1925,6 +1925,7 @@ class Scheduler(
             self.enable_overlap,
             self.spec_algorithm,
             chunked_req=self.chunked_req,
+            beam_width=self.beam_width,
         )
         if self.enable_hierarchical_cache:
             # todo (zhiqiang): disable cuda graph execution if hicache loading triggered
@@ -2240,6 +2241,7 @@ class Scheduler(
             self.model_config,
             self.enable_overlap,
             self.spec_algorithm,
+            beam_width=self.beam_width,
         )
         idle_batch.prepare_for_idle()
         return idle_batch
