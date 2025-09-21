@@ -11,12 +11,20 @@ from typing import List
 import torch
 
 from sglang.srt.beam_search import BeamSearchList, BeamSearchOutput, BeamSearchSequence
+from sglang.srt.layers.logits_processor import LogitsProcessorOutput
 from sglang.srt.managers.detokenizer_manager import DetokenizerManager  # type: ignore
 from sglang.srt.managers.io_struct import BatchStrOut, BatchTokenIDOut
 from sglang.srt.managers.multi_tokenizer_mixin import _handle_output_by_index
-from sglang.srt.managers.schedule_batch import FINISH_LENGTH, ScheduleBatch
+from sglang.srt.managers.schedule_batch import (
+    FINISH_LENGTH,
+    FINISH_MATCHED_TOKEN,
+    Req,
+    ScheduleBatch,
+)
+from sglang.srt.managers.scheduler import Scheduler
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
 from sglang.srt.model_executor.forward_batch_info import ForwardMode
+from sglang.srt.sampling.sampling_params import SamplingParams
 
 
 class _DummyTokenizer:
@@ -256,6 +264,36 @@ class _DummySpecAlgorithm:
         return True
 
 
+class _StubTreeCache:
+    def __init__(self):
+        self.finished = []
+        self.unfinished = []
+        self.beam_batches = []
+
+    def cache_finished_req(self, req):
+        self.finished.append(req)
+
+    def cache_unfinished_req(self, req, *_, **__):
+        self.unfinished.append(req)
+
+    def cache_finished_beam_search(self, batch):
+        self.beam_batches.append(batch)
+
+
+def _make_scheduler_stub():
+    sched = Scheduler.__new__(Scheduler)
+    sched.tree_cache = _StubTreeCache()
+    sched.enable_overlap = False
+    sched.page_size = 1
+    sched.abort_requests = []
+
+    def _abort(abort_req):
+        sched.abort_requests.append(abort_req)
+
+    sched.abort_request = _abort  # type: ignore[attr-defined]
+    return sched
+
+
 class _DummyReqToTokenPool:
     def __init__(self, rows: int, cols: int):
         self.req_to_token = torch.zeros((rows, cols), dtype=torch.int32)
@@ -487,3 +525,116 @@ def test_filter_beam_search_batch_remaps_rows():
     ]
     expected_pool_rows = [kept_req.req_pool_idx] + kept_req.beam_list.active_row_indices
     assert actual_pool_rows == expected_pool_rows
+
+
+def test_process_batch_result_beam_search_updates_incompleted():
+    sched = _make_scheduler_stub()
+    sampling_params = SamplingParams(max_new_tokens=4)
+    sampling_params.normalize(None)
+    req = Req(
+        "req-1",
+        "",
+        [1, 2],
+        sampling_params,
+        return_logprob=True,
+        top_logprobs_num=4,
+        vocab_size=1000,
+    )
+    req.output_ids = [3]
+
+    beam_list = BeamSearchList(beam_width=2, req_pool_start_idx=0)
+    beam_list.incompleted = [
+        BeamSearchSequence(
+            tokens=[1, 2, 5],
+            last_token=5,
+            cum_logprob=-0.5,
+            prefix_len=2,
+        ),
+        BeamSearchSequence(
+            tokens=[1, 2, 6],
+            last_token=6,
+            cum_logprob=-0.3,
+            prefix_len=2,
+        ),
+    ]
+    req.beam_list = beam_list
+
+    next_token_ids = [7, 8, 9]
+    next_token_logprobs = [-0.2, -0.1, -0.05]
+    logits_output = LogitsProcessorOutput(
+        next_token_logits=torch.zeros((3, 1)),
+        next_token_logprobs=torch.tensor(next_token_logprobs),
+        next_token_top_logprobs_val=[
+            [-0.2, -0.4],
+            [-0.1, -0.5],
+            [-0.05, -0.45],
+        ],
+        next_token_top_logprobs_idx=[[7, 11], [8, 12], [9, 13]],
+    )
+
+    batch = SimpleNamespace(return_logprob=True, reqs=[req], decoding_reqs=None)
+
+    Scheduler.process_batch_result_beam_search(
+        sched, batch, logits_output, next_token_ids, next_token_logprobs
+    )
+
+    assert req.output_ids[-1] == 7
+    assert req.output_token_logprobs_val[-1] == -0.2
+    assert len(req.beam_list.incompleted) == 2
+    assert {beam.last_token for beam in req.beam_list.incompleted} == {8, 9}
+    assert not req.beam_list.completed
+    assert sched.tree_cache.unfinished[-1] is req
+    assert req.beam_search_output is None
+
+
+def test_process_batch_result_beam_search_finalizes_request():
+    sched = _make_scheduler_stub()
+    sampling_params = SamplingParams(max_new_tokens=3, stop_token_ids=[0])
+    sampling_params.normalize(None)
+    req = Req(
+        "req-2",
+        "",
+        [4, 5],
+        sampling_params,
+        return_logprob=True,
+        top_logprobs_num=2,
+        vocab_size=100,
+    )
+    req.output_ids = [6]
+
+    beam_list = BeamSearchList(beam_width=1, req_pool_start_idx=0)
+    beam_list.incompleted = [
+        BeamSearchSequence(
+            tokens=[4, 5, 6],
+            last_token=6,
+            cum_logprob=-0.3,
+            prefix_len=2,
+        )
+    ]
+    req.beam_list = beam_list
+
+    next_token_ids = [7, 0]
+    next_token_logprobs = [-0.4, -0.05]
+    logits_output = LogitsProcessorOutput(
+        next_token_logits=torch.zeros((2, 1)),
+        next_token_logprobs=torch.tensor(next_token_logprobs),
+        next_token_top_logprobs_val=[[-0.4], [-0.05]],
+        next_token_top_logprobs_idx=[[7], [0]],
+    )
+
+    batch = SimpleNamespace(return_logprob=True, reqs=[req], decoding_reqs=None)
+
+    Scheduler.process_batch_result_beam_search(
+        sched, batch, logits_output, next_token_ids, next_token_logprobs
+    )
+
+    assert req.finished()
+    assert isinstance(req.finished_reason, FINISH_MATCHED_TOKEN)
+    assert req.beam_list.incompleted == []
+    assert req.beam_list.completed
+    assert req.beam_list.completed[0].last_token == 0
+    assert req.beam_search_output is not None
+    assert req.beam_search_output.sequences[0].last_token == 0
+    assert sched.tree_cache.finished[-1] is req
+    assert batch in sched.tree_cache.beam_batches
+    assert req.time_stats.completion_time > 0

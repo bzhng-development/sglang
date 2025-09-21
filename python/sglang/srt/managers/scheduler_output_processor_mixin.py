@@ -13,6 +13,7 @@ from sglang.srt.managers.io_struct import AbortReq, BatchEmbeddingOut, BatchToke
 from sglang.srt.managers.schedule_batch import BaseFinishReason, Req, ScheduleBatch
 
 if TYPE_CHECKING:
+    from sglang.srt.beam_search import BeamSearchOutput
     from sglang.srt.managers.scheduler import (
         EmbeddingBatchResult,
         GenerationBatchResult,
@@ -210,6 +211,7 @@ class SchedulerOutputProcessorMixin:
         )
         self.num_generated_tokens += len(batch.reqs)
 
+        next_token_logprobs = None
         if self.enable_overlap:
             logits_output, next_token_ids, can_run_cuda_graph = (
                 self.tp_worker.resolve_last_batch_result(launch_done)
@@ -219,76 +221,100 @@ class SchedulerOutputProcessorMixin:
             # spec decoding handles output logprobs inside verify process.
             next_token_ids = next_token_ids.tolist()
             if batch.return_logprob:
-                next_token_logprobs = logits_output.next_token_logprobs.tolist()
+                if logits_output.next_token_logprobs is not None:
+                    next_token_logprobs = logits_output.next_token_logprobs.tolist()
+                else:
+                    next_token_logprobs = None
 
         self.token_to_kv_pool_allocator.free_group_begin()
 
-        # Check finish condition
-        # NOTE: the length of reqs and next_token_ids don't match if it is spec decoding.
-        # We should ignore using next_token_ids for spec decoding cases.
-        for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
-            if req.is_retracted:
-                continue
+        use_beam_decode = (
+            self.beam_width > 0
+            and batch.beam_width > 0
+            and batch.spec_algorithm.is_none()
+        )
 
-            if self.enable_overlap and req.finished():
-                # Free the one extra delayed token
-                if self.page_size == 1:
-                    self.token_to_kv_pool_allocator.free(batch.out_cache_loc[i : i + 1])
-                else:
-                    # Only free when the extra token is in a new page
-                    if (
-                        len(req.origin_input_ids) + len(req.output_ids) - 1
-                    ) % self.page_size == 0:
+        if use_beam_decode:
+            if isinstance(next_token_ids, torch.Tensor):
+                next_token_ids = next_token_ids.tolist()
+            if isinstance(next_token_logprobs, torch.Tensor):
+                next_token_logprobs = next_token_logprobs.tolist()
+            self.process_batch_result_beam_search(
+                batch,
+                logits_output,
+                next_token_ids,
+                next_token_logprobs,
+            )
+        else:
+            # Check finish condition
+            # NOTE: the length of reqs and next_token_ids don't match if it is spec decoding.
+            # We should ignore using next_token_ids for spec decoding cases.
+            for i, (req, next_token_id) in enumerate(zip(batch.reqs, next_token_ids)):
+                if req.is_retracted:
+                    continue
+
+                if self.enable_overlap and req.finished():
+                    # Free the one extra delayed token
+                    if self.page_size == 1:
                         self.token_to_kv_pool_allocator.free(
                             batch.out_cache_loc[i : i + 1]
                         )
-                continue
+                    else:
+                        # Only free when the extra token is in a new page
+                        if (
+                            len(req.origin_input_ids) + len(req.output_ids) - 1
+                        ) % self.page_size == 0:
+                            self.token_to_kv_pool_allocator.free(
+                                batch.out_cache_loc[i : i + 1]
+                            )
+                    continue
 
-            if batch.spec_algorithm.is_none():
-                # speculative worker will solve the output_ids in speculative decoding
-                req.output_ids.append(next_token_id)
+                if batch.spec_algorithm.is_none():
+                    # speculative worker will solve the output_ids in speculative decoding
+                    req.output_ids.append(next_token_id)
 
-            req.check_finished()
-            if req.finished():
-                self.tree_cache.cache_finished_req(req)
-                req.time_stats.completion_time = time.time()
+                req.check_finished()
+                if req.finished():
+                    self.tree_cache.cache_finished_req(req)
+                    req.time_stats.completion_time = time.time()
 
-            if req.return_logprob and batch.spec_algorithm.is_none():
-                # speculative worker handles logprob in speculative decoding
-                req.output_token_logprobs_val.append(next_token_logprobs[i])
-                req.output_token_logprobs_idx.append(next_token_id)
-                if req.top_logprobs_num > 0:
-                    req.output_top_logprobs_val.append(
-                        logits_output.next_token_top_logprobs_val[i]
-                    )
-                    req.output_top_logprobs_idx.append(
-                        logits_output.next_token_top_logprobs_idx[i]
-                    )
-                if req.token_ids_logprob is not None:
-                    req.output_token_ids_logprobs_val.append(
-                        logits_output.next_token_token_ids_logprobs_val[i]
-                    )
-                    req.output_token_ids_logprobs_idx.append(
-                        logits_output.next_token_token_ids_logprobs_idx[i]
+                if req.return_logprob and batch.spec_algorithm.is_none():
+                    # speculative worker handles logprob in speculative decoding
+                    if next_token_logprobs is not None:
+                        req.output_token_logprobs_val.append(next_token_logprobs[i])
+                        req.output_token_logprobs_idx.append(next_token_id)
+                    if req.top_logprobs_num > 0:
+                        req.output_top_logprobs_val.append(
+                            logits_output.next_token_top_logprobs_val[i]
+                        )
+                        req.output_top_logprobs_idx.append(
+                            logits_output.next_token_top_logprobs_idx[i]
+                        )
+                    if req.token_ids_logprob is not None:
+                        req.output_token_ids_logprobs_val.append(
+                            logits_output.next_token_token_ids_logprobs_val[i]
+                        )
+                        req.output_token_ids_logprobs_idx.append(
+                            logits_output.next_token_token_ids_logprobs_idx[i]
+                        )
+
+                if req.return_hidden_states and logits_output.hidden_states is not None:
+                    req.hidden_states.append(
+                        logits_output.hidden_states[i].cpu().clone().tolist()
                     )
 
-            if req.return_hidden_states and logits_output.hidden_states is not None:
-                req.hidden_states.append(
-                    logits_output.hidden_states[i].cpu().clone().tolist()
-                )
-
-            if req.grammar is not None and batch.spec_algorithm.is_none():
-                # FIXME: this try-except block is for handling unexpected xgrammar issue.
-                try:
-                    req.grammar.accept_token(next_token_id)
-                except ValueError as e:
-                    # Grammar accept_token can raise ValueError if the token is not in the grammar.
-                    # This can happen if the grammar is not set correctly or the token is invalid.
-                    logger.error(
-                        f"Grammar accept_token failed for req {req.rid} with token {next_token_id}: {e}"
-                    )
-                    self.abort_request(AbortReq(req.rid))
-                req.grammar.finished = req.finished()
+                if req.grammar is not None and batch.spec_algorithm.is_none():
+                    # FIXME: this try-except block is for handling unexpected xgrammar issue.
+                    try:
+                        req.grammar.accept_token(next_token_id)
+                    except ValueError as e:
+                        # Grammar accept_token can raise ValueError if the token is not in the grammar.
+                        # This can happen if the grammar is not set correctly or the token is invalid.
+                        logger.error(
+                            f"Grammar accept_token failed for req {req.rid} with token {next_token_id}: {e}"
+                        )
+                        self.abort_request(AbortReq(req.rid))
+                    req.grammar.finished = req.finished()
 
         self.set_next_batch_sampling_info_done(batch)
         self.stream_output(batch.reqs, batch.return_logprob)
@@ -532,6 +558,7 @@ class SchedulerOutputProcessorMixin:
         cached_tokens = []
         spec_verify_ct = []
         output_hidden_states = None
+        beam_search_outputs: List[Optional["BeamSearchOutput"]] = []
 
         if return_logprob:
             input_token_logprobs_val = []
@@ -696,6 +723,11 @@ class SchedulerOutputProcessorMixin:
                         output_hidden_states = []
                     output_hidden_states.append(req.hidden_states)
 
+                beam_payload = getattr(req, "beam_search_output", None)
+                beam_search_outputs.append(beam_payload)
+                if beam_payload is not None:
+                    req.beam_search_output = None
+
             if (
                 req.finished()
                 and self.tp_rank == 0
@@ -738,6 +770,11 @@ class SchedulerOutputProcessorMixin:
                     output_hidden_states,
                     placeholder_tokens_idx=None,
                     placeholder_tokens_val=None,
+                    beam_search_output=(
+                        beam_search_outputs
+                        if any(item is not None for item in beam_search_outputs)
+                        else None
+                    ),
                 )
             )
 

@@ -647,6 +647,7 @@ class Req:
 
         # Beam search runtime info
         self.beam_list = None
+        self.beam_search_output = None
 
     @property
     def seqlen(self):

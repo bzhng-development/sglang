@@ -36,6 +36,7 @@ from torch.distributed import barrier
 from sglang.global_config import global_config
 from sglang.srt.beam_search import (
     BeamSearchList,
+    BeamSearchOutput,
     BeamSearchSequence,
     sort_by_beam_search_score,
 )
@@ -121,6 +122,7 @@ from sglang.srt.managers.mm_utils import init_embedding_cache
 from sglang.srt.managers.schedule_batch import (
     FINISH_ABORT,
     FINISH_LENGTH,
+    FINISH_MATCHED_STR,
     FINISH_MATCHED_TOKEN,
     BaseFinishReason,
     MultimodalInputs,
@@ -2271,6 +2273,366 @@ class Scheduler(
 
         if total_targets > 0 and all_targets_ready and ready_targets == total_targets:
             batch.beam_width = self.beam_width
+
+    def process_batch_result_beam_search(
+        self,
+        batch: ScheduleBatch,
+        logits_output: LogitsProcessorOutput,
+        next_token_ids: List[int],
+        next_token_logprobs: Optional[List[float]],
+    ) -> None:
+        total_rows = len(next_token_ids)
+        if batch.return_logprob and next_token_logprobs is None:
+            next_token_logprobs = [None] * total_rows
+
+        def _normalize_topk(payload):
+            if payload is None:
+                return None
+            normalized: List[List[float]] = []
+            for item in payload:
+                if item is None:
+                    normalized.append([])
+                    continue
+                if isinstance(item, torch.Tensor):
+                    normalized.append(item.tolist())
+                else:
+                    normalized.append(list(item))
+            return normalized
+
+        top_logprobs_val = _normalize_topk(logits_output.next_token_top_logprobs_val)
+        top_logprobs_idx = _normalize_topk(logits_output.next_token_top_logprobs_idx)
+        dense_logprobs = logits_output.next_token_top_logprobs
+        token_ids_logprob_val = logits_output.next_token_token_ids_logprobs_val
+        token_ids_logprob_idx = logits_output.next_token_token_ids_logprobs_idx
+        hidden_states = logits_output.hidden_states
+
+        row_cursor = 0
+        release_beam_rows = False
+
+        for req in batch.reqs:
+            if req.is_retracted:
+                continue
+
+            if row_cursor >= total_rows:
+                logger.warning(
+                    "Beam search decode received fewer logits rows than expected: "
+                    "row_cursor=%s total_rows=%s",
+                    row_cursor,
+                    total_rows,
+                )
+                break
+
+            main_row_idx = row_cursor
+            next_token_id = next_token_ids[main_row_idx]
+            req.output_ids.append(next_token_id)
+
+            if req.return_logprob:
+                if (
+                    next_token_logprobs is not None
+                    and main_row_idx < len(next_token_logprobs)
+                    and next_token_logprobs[main_row_idx] is not None
+                ):
+                    req.output_token_logprobs_val.append(
+                        next_token_logprobs[main_row_idx]
+                    )
+                    req.output_token_logprobs_idx.append(next_token_id)
+                if req.top_logprobs_num > 0:
+                    if top_logprobs_val is not None and main_row_idx < len(
+                        top_logprobs_val
+                    ):
+                        req.output_top_logprobs_val.append(
+                            top_logprobs_val[main_row_idx]
+                        )
+                        if top_logprobs_idx is not None:
+                            req.output_top_logprobs_idx.append(
+                                top_logprobs_idx[main_row_idx]
+                            )
+                        else:
+                            req.output_top_logprobs_idx.append([])
+                    else:
+                        req.output_top_logprobs_val.append([])
+                        req.output_top_logprobs_idx.append([])
+                if (
+                    req.token_ids_logprob is not None
+                    and token_ids_logprob_val is not None
+                    and main_row_idx < len(token_ids_logprob_val)
+                ):
+                    req.output_token_ids_logprobs_val.append(
+                        token_ids_logprob_val[main_row_idx]
+                    )
+                    if token_ids_logprob_idx is not None and main_row_idx < len(
+                        token_ids_logprob_idx
+                    ):
+                        req.output_token_ids_logprobs_idx.append(
+                            token_ids_logprob_idx[main_row_idx]
+                        )
+
+            if req.return_hidden_states and hidden_states is not None:
+                req.hidden_states.append(
+                    hidden_states[main_row_idx].cpu().clone().tolist()
+                )
+
+            req.check_finished()
+
+            beam_list: Optional[BeamSearchList] = getattr(req, "beam_list", None)
+            completed_children: List[BeamSearchSequence] = []
+            updated_incompleted: List[BeamSearchSequence] = []
+
+            row_cursor += 1
+
+            def _beam_length_penalty() -> float:
+                custom_params = getattr(req.sampling_params, "custom_params", None)
+                if isinstance(custom_params, dict):
+                    value = custom_params.get("length_penalty")
+                    if value is not None:
+                        try:
+                            return float(value)
+                        except (TypeError, ValueError):
+                            return 1.0
+                return 1.0
+
+            def _collect_candidates(
+                row_idx: int, beam_width: int
+            ) -> List[Tuple[int, float]]:
+                candidates: List[Tuple[int, float]] = []
+                if row_idx < total_rows:
+                    if (
+                        top_logprobs_idx is not None
+                        and row_idx < len(top_logprobs_idx)
+                        and top_logprobs_idx[row_idx]
+                    ):
+                        idxs = top_logprobs_idx[row_idx]
+                        vals = (
+                            top_logprobs_val[row_idx]
+                            if top_logprobs_val and row_idx < len(top_logprobs_val)
+                            else None
+                        )
+                        if isinstance(idxs, torch.Tensor):
+                            idxs = idxs.tolist()
+                        if isinstance(vals, torch.Tensor):
+                            vals = vals.tolist()
+                        for pos, token_id in enumerate(idxs):
+                            prob_val = None
+                            if vals is not None and pos < len(vals):
+                                prob_val = float(vals[pos])
+                            elif dense_logprobs is not None:
+                                prob_val = float(
+                                    dense_logprobs[row_idx][int(token_id)].item()
+                                )
+                            if prob_val is None:
+                                continue
+                            candidates.append((int(token_id), prob_val))
+                            if len(candidates) >= beam_width:
+                                break
+
+                    if not candidates and dense_logprobs is not None:
+                        row_tensor = dense_logprobs[row_idx]
+                        if isinstance(row_tensor, torch.Tensor):
+                            values, indices = torch.topk(row_tensor, beam_width, dim=-1)
+                            candidates.extend(
+                                (int(idx), float(val))
+                                for idx, val in zip(
+                                    indices.tolist(), values.tolist(), strict=False
+                                )
+                            )
+
+                    if (
+                        not candidates
+                        and next_token_logprobs is not None
+                        and row_idx < len(next_token_logprobs)
+                        and next_token_logprobs[row_idx] is not None
+                    ):
+                        candidates.append(
+                            (
+                                int(next_token_ids[row_idx]),
+                                float(next_token_logprobs[row_idx]),
+                            )
+                        )
+
+                return candidates
+
+            if beam_list and beam_list.incompleted:
+                scheduled_beams = beam_list.incompleted
+                beam_count = len(scheduled_beams)
+                beam_row_indices = list(range(row_cursor, row_cursor + beam_count))
+                row_cursor += beam_count
+
+                length_penalty = _beam_length_penalty()
+
+                for parent_beam, row_idx in zip(
+                    scheduled_beams, beam_row_indices, strict=False
+                ):
+                    candidates = _collect_candidates(row_idx, beam_list.beam_width)
+                    if not candidates:
+                        continue
+
+                    for token_id, logprob in candidates:
+                        child_tokens = list(parent_beam.tokens)
+                        child_tokens.append(token_id)
+                        child = BeamSearchSequence(
+                            tokens=child_tokens,
+                            last_token=token_id,
+                            cum_logprob=parent_beam.cum_logprob + logprob,
+                            prefix_len=parent_beam.prefix_len,
+                        )
+                        child.last_req_pool_idx = -1
+                        self.check_beam_finished(req, child)
+                        if child.finished():
+                            completed_children.append(child)
+                        else:
+                            updated_incompleted.append(child)
+
+                if completed_children:
+                    beam_list.completed.extend(completed_children)
+                    beam_list.completed.sort(
+                        key=lambda seq: sort_by_beam_search_score(seq, length_penalty),
+                        reverse=True,
+                    )
+                if updated_incompleted:
+                    updated_incompleted.sort(
+                        key=lambda seq: sort_by_beam_search_score(seq, length_penalty),
+                        reverse=True,
+                    )
+                    beam_list.incompleted = updated_incompleted[: beam_list.beam_width]
+                else:
+                    beam_list.incompleted = []
+
+                max_completed = max(beam_list.beam_width * 10, beam_list.beam_width)
+                if len(beam_list.completed) > max_completed:
+                    beam_list.completed = beam_list.completed[:max_completed]
+
+                if beam_list.completed and not req.finished():
+                    if (
+                        len(beam_list.incompleted) < beam_list.beam_width
+                        or len(beam_list.completed) > beam_list.beam_width * 10
+                    ):
+                        best_finished = beam_list.completed[0]
+                        if best_finished.finish is not None:
+                            req.finished_reason = best_finished.finish
+
+                beam_list.active_row_indices = []
+
+            if req.grammar is not None:
+                try:
+                    req.grammar.accept_token(next_token_id)
+                except ValueError as err:
+                    logger.error(
+                        "Grammar accept_token failed for req %s with token %s: %s",
+                        req.rid,
+                        next_token_id,
+                        err,
+                    )
+                    self.abort_request(AbortReq(req.rid))
+                req.grammar.finished = req.finished()
+
+            if req.finished():
+                if beam_list:
+                    if beam_list.incompleted:
+                        beam_list.completed.extend(beam_list.incompleted)
+                        beam_list.incompleted = []
+                    if beam_list.completed:
+                        penalty = _beam_length_penalty()
+                        beam_list.completed.sort(
+                            key=lambda seq: sort_by_beam_search_score(seq, penalty),
+                            reverse=True,
+                        )
+                        beam_list.completed = beam_list.completed[
+                            : beam_list.beam_width
+                        ]
+                        req.beam_search_output = BeamSearchOutput(
+                            sequences=list(beam_list.completed)
+                        )
+                    else:
+                        req.beam_search_output = None
+                    release_beam_rows = True
+                else:
+                    req.beam_search_output = None
+
+                self.tree_cache.cache_finished_req(req)
+                req.time_stats.completion_time = time.time()
+
+                if self.enable_overlap:
+                    if self.page_size == 1:
+                        self.token_to_kv_pool_allocator.free(
+                            batch.out_cache_loc[main_row_idx : main_row_idx + 1]
+                        )
+                    else:
+                        if (
+                            len(req.origin_input_ids) + len(req.output_ids) - 1
+                        ) % self.page_size == 0:
+                            self.token_to_kv_pool_allocator.free(
+                                batch.out_cache_loc[main_row_idx : main_row_idx + 1]
+                            )
+            else:
+                if req.grammar is not None:
+                    req.grammar.finished = False
+                if batch.decoding_reqs is None or req not in batch.decoding_reqs:
+                    self.tree_cache.cache_unfinished_req(req)
+                req.beam_search_output = None
+
+        if release_beam_rows and hasattr(self.tree_cache, "cache_finished_beam_search"):
+            try:
+                self.tree_cache.cache_finished_beam_search(batch)
+            except TypeError:
+                self.tree_cache.cache_finished_beam_search()
+
+    def check_beam_finished(self, req: Req, beam: BeamSearchSequence) -> None:
+        if beam.finished():
+            return
+
+        if req.to_abort:
+            beam.finish = FINISH_ABORT(message=req.to_abort_message)
+            return
+
+        generated_len = len(beam.tokens) - beam.prefix_len
+        max_new_tokens = req.sampling_params.max_new_tokens
+        if max_new_tokens is not None and generated_len >= max_new_tokens:
+            beam.finish = FINISH_LENGTH(length=max_new_tokens)
+            return
+
+        last_token_id = beam.tokens[-1]
+
+        if not req.sampling_params.ignore_eos:
+            matched_eos = False
+            if req.sampling_params.stop_token_ids:
+                matched_eos = last_token_id in req.sampling_params.stop_token_ids
+            if req.eos_token_ids:
+                matched_eos |= last_token_id in req.eos_token_ids
+            tokenizer = req.tokenizer
+            if tokenizer is not None:
+                if getattr(tokenizer, "eos_token_id", None) is not None:
+                    matched_eos |= last_token_id == tokenizer.eos_token_id
+                additional_ids = getattr(tokenizer, "additional_stop_token_ids", None)
+                if additional_ids:
+                    matched_eos |= last_token_id in additional_ids
+            if matched_eos:
+                beam.finish = FINISH_MATCHED_TOKEN(matched=last_token_id)
+                return
+
+        if req.vocab_size is not None and (
+            last_token_id >= req.vocab_size or last_token_id < 0
+        ):
+            beam.finish = FINISH_MATCHED_STR(matched="NaN happened")
+            return
+
+        stop_strs = getattr(req.sampling_params, "stop_strs", None) or []
+        if stop_strs:
+            tokenizer = req.tokenizer
+            if tokenizer is not None:
+                max_len = getattr(req.sampling_params, "stop_str_max_len", 0) or 0
+                if max_len > 0:
+                    tokens_to_decode = beam.tokens[-(max_len + 1) :]
+                else:
+                    tokens_to_decode = beam.tokens
+                try:
+                    tail_text = tokenizer.decode(tokens_to_decode)
+                except Exception:
+                    tail_text = ""
+                if tail_text:
+                    for stop_str in stop_strs:
+                        if stop_str and stop_str in tail_text:
+                            beam.finish = FINISH_MATCHED_STR(matched=stop_str)
+                            return
 
     def maybe_send_health_check_signal(self):
         if self.return_health_check_ct:
