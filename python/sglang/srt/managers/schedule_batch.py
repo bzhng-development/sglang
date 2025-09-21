@@ -1908,6 +1908,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         )
 
         for idx, req in enumerate(self.reqs):
+            base_position = len(row_input_ids)
             base_input = (
                 base_input_ids[idx]
                 if idx < len(base_input_ids)
@@ -1922,6 +1923,10 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
 
             if row_encoder_lens is not None and base_encoder_lens is not None:
                 row_encoder_lens.append(int(base_encoder_lens[idx]))
+
+            beam_list = getattr(req, "beam_list", None)
+            if beam_list is not None:
+                beam_list.req_pool_start_idx = base_position
 
             beams = beam_active_beams[idx]
             rows = beam_row_indices[idx]
@@ -1945,6 +1950,8 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
 
                 if row_encoder_lens is not None and base_encoder_lens is not None:
                     row_encoder_lens.append(int(base_encoder_lens[idx]))
+
+                beam.last_req_pool_idx = len(row_input_ids) - 1
 
         seq_lens_after = [val + 1 for val in row_prev_seq_lens]
         orig_seq_lens_after = [val + 1 for val in row_prev_orig_seq_lens]
@@ -2005,6 +2012,15 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         chunked_req_to_exclude: Optional[Union[Req, List[Req]]] = None,
         keep_indices: Optional[List[int]] = None,
     ):
+        if (
+            self.beam_width > 0
+            and self.req_pool_indices is not None
+            and self.req_pool_indices.numel() > 0
+            and self.req_pool_indices.shape[0] != len(self.reqs)
+        ):
+            self.filter_beam_search_batch(chunked_req_to_exclude, keep_indices)
+            return
+
         if keep_indices is None:
             if isinstance(chunked_req_to_exclude, Req):
                 chunked_req_to_exclude = [chunked_req_to_exclude]
@@ -2041,7 +2057,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         self.seq_lens = self.seq_lens[keep_indices_device]
         self.orig_seq_lens = self.orig_seq_lens[keep_indices_device]
         self.out_cache_loc = None
-        self.seq_lens_sum = self.seq_lens.sum().item()
+        self.seq_lens_sum = int(self.seq_lens.sum().item())
         self.output_ids = self.output_ids[keep_indices_device]
         self.return_logprob = any(req.return_logprob for req in self.reqs)
         if self.return_logprob:
@@ -2057,6 +2073,141 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         self.sampling_info.filter_batch(keep_indices, keep_indices_device)
         if self.spec_info:
             self.spec_info.filter_batch(keep_indices_device)
+
+    def filter_beam_search_batch(
+        self,
+        chunked_req_to_exclude: Optional[Union[Req, List[Req]]] = None,
+        keep_indices: Optional[List[int]] = None,
+    ) -> None:
+        if keep_indices is None:
+            if isinstance(chunked_req_to_exclude, Req):
+                chunked_req_to_exclude = [chunked_req_to_exclude]
+            elif chunked_req_to_exclude is None:
+                chunked_req_to_exclude = []
+            keep_indices = [
+                i
+                for i in range(len(self.reqs))
+                if not self.reqs[i].finished()
+                and self.reqs[i] not in chunked_req_to_exclude
+            ]
+
+        if keep_indices is None or len(keep_indices) == 0:
+            self.reqs = []
+            return
+
+        keep_indices = list(keep_indices)
+        keep_indices.sort()
+
+        if self.req_pool_indices is None:
+            raise RuntimeError("req_pool_indices unavailable for beam filtering")
+
+        total_rows = int(self.req_pool_indices.shape[0])
+        row_spans: List[Tuple[int, int, int]] = []
+        cursor = 0
+        for idx, req in enumerate(self.reqs):
+            beam_list = getattr(req, "beam_list", None)
+            if (
+                beam_list
+                and getattr(beam_list, "beam_width", 0) > 0
+                and getattr(beam_list, "incompleted", None)
+            ):
+                active_beams = min(len(beam_list.incompleted), beam_list.beam_width)
+            else:
+                active_beams = 0
+            row_count = 1 + active_beams
+            row_spans.append((cursor, row_count, active_beams))
+            cursor += row_count
+
+        if cursor != total_rows:
+            raise RuntimeError(
+                f"Beam row accounting mismatch: expected {cursor}, actual {total_rows}"
+            )
+
+        row_indices: List[int] = []
+        for idx in keep_indices:
+            start, row_count, _ = row_spans[idx]
+            row_indices.extend(range(start, start + row_count))
+
+        remap_tensor = torch.full((total_rows,), -1, dtype=torch.int64)
+        for new_pos, old_pos in enumerate(row_indices):
+            remap_tensor[old_pos] = new_pos
+        remap_list = remap_tensor.tolist()
+
+        row_indices_tensor = torch.tensor(row_indices, dtype=torch.int64).to(
+            self.device, non_blocking=True
+        )
+        keep_indices_tensor = torch.tensor(keep_indices, dtype=torch.int64).to(
+            self.device, non_blocking=True
+        )
+
+        self.reqs = [self.reqs[i] for i in keep_indices]
+        if self.multimodal_inputs is not None:
+            self.multimodal_inputs = [self.multimodal_inputs[i] for i in keep_indices]
+
+        self.req_pool_indices = self.req_pool_indices.index_select(
+            0, row_indices_tensor
+        )
+        self.seq_lens = self.seq_lens.index_select(0, row_indices_tensor)
+        self.orig_seq_lens = self.orig_seq_lens.index_select(0, row_indices_tensor)
+        if self.output_ids is not None and self.output_ids.shape[0] == total_rows:
+            self.output_ids = self.output_ids.index_select(0, row_indices_tensor)
+        if self.input_ids is not None and self.input_ids.shape[0] == total_rows:
+            self.input_ids = self.input_ids.index_select(0, row_indices_tensor)
+        if self.model_config.is_encoder_decoder and self.encoder_lens is not None:
+            self.encoder_lens = self.encoder_lens.index_select(0, row_indices_tensor)
+            self.encoder_lens_cpu = [self.encoder_lens_cpu[i] for i in row_indices]
+
+        self.out_cache_loc = None
+        self.seq_lens_sum = int(self.seq_lens.sum().item())
+
+        self.return_logprob = any(req.return_logprob for req in self.reqs)
+        if self.return_logprob:
+            if self.top_logprobs_nums is not None:
+                self.top_logprobs_nums = [
+                    self.top_logprobs_nums[i] for i in keep_indices
+                ]
+            else:
+                self.top_logprobs_nums = [0 for _ in self.reqs]
+            if self.token_ids_logprobs is not None:
+                self.token_ids_logprobs = [
+                    self.token_ids_logprobs[i] for i in keep_indices
+                ]
+            else:
+                self.token_ids_logprobs = [None for _ in self.reqs]
+        else:
+            self.top_logprobs_nums = None
+            self.token_ids_logprobs = None
+
+        self.has_stream = any(req.stream for req in self.reqs)
+        self.has_grammar = any(req.grammar for req in self.reqs)
+
+        self.sampling_info.filter_batch(keep_indices, keep_indices_tensor)
+        if self.spec_info:
+            self.spec_info.filter_batch(keep_indices_tensor)
+
+        span_info = [(start, beam_count) for start, _, beam_count in row_spans]
+        for req_idx, original_idx in enumerate(keep_indices):
+            req = self.reqs[req_idx]
+            beam_list = getattr(req, "beam_list", None)
+            if beam_list is None:
+                continue
+
+            start, beam_count = span_info[original_idx]
+            base_new_pos = remap_list[start]
+            beam_list.req_pool_start_idx = (
+                int(base_new_pos) if base_new_pos >= 0 else -1
+            )
+
+            incompleted = getattr(beam_list, "incompleted", None)
+            if not incompleted:
+                continue
+
+            assigned = min(beam_count, len(incompleted))
+            for offset in range(assigned):
+                beam = incompleted[offset]
+                old_pos = start + 1 + offset
+                new_pos = remap_list[old_pos]
+                beam.last_req_pool_idx = int(new_pos) if new_pos >= 0 else -1
 
     def merge_batch(self, other: "ScheduleBatch"):
         # Penalizer orchestrator must be merged before Batch.reqs is merged. This is because

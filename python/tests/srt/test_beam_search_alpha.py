@@ -6,14 +6,15 @@ beam integration lands.
 """
 
 from types import SimpleNamespace
+from typing import List
 
 import torch
 
-from sglang.srt.beam_search import BeamSearchOutput, BeamSearchSequence
+from sglang.srt.beam_search import BeamSearchList, BeamSearchOutput, BeamSearchSequence
 from sglang.srt.managers.detokenizer_manager import DetokenizerManager  # type: ignore
 from sglang.srt.managers.io_struct import BatchStrOut, BatchTokenIDOut
 from sglang.srt.managers.multi_tokenizer_mixin import _handle_output_by_index
-from sglang.srt.managers.schedule_batch import ScheduleBatch
+from sglang.srt.managers.schedule_batch import FINISH_LENGTH, ScheduleBatch
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
 from sglang.srt.model_executor.forward_batch_info import ForwardMode
 
@@ -317,8 +318,17 @@ class _DummyReq:
 
 def _make_schedule_batch(reqs, beam_width, pool_rows=4, pool_cols=8):
     pool = _DummyReqToTokenPool(pool_rows, pool_cols)
+    pool._next_row = len(reqs)
     token_allocator = _DummyTokenAllocator()
     model_config = SimpleNamespace(is_encoder_decoder=False, attention_chunk_size=1)
+    seq_lens_list = [len(req.origin_input_ids) + len(req.output_ids) for req in reqs]
+    if seq_lens_list:
+        output_tail = [
+            (req.output_ids[-1] if req.output_ids else req.origin_input_ids[-1])
+            for req in reqs
+        ]
+    else:
+        output_tail = []
     batch = ScheduleBatch(
         reqs=reqs,
         req_to_token_pool=pool,
@@ -335,17 +345,17 @@ def _make_schedule_batch(reqs, beam_width, pool_rows=4, pool_cols=8):
         input_ids=None,
         input_embeds=None,
         token_type_ids=None,
-        req_pool_indices=torch.tensor([0], dtype=torch.int64),
-        seq_lens=torch.tensor(
-            [len(reqs[0].origin_input_ids) + len(reqs[0].output_ids)], dtype=torch.int64
-        ),
+        req_pool_indices=torch.arange(len(reqs), dtype=torch.int64),
+        seq_lens=torch.tensor(seq_lens_list, dtype=torch.int64),
         out_cache_loc=None,
-        output_ids=torch.tensor([reqs[0].output_ids[-1]], dtype=torch.int64),
-        multimodal_inputs=None,
-        seq_lens_sum=len(reqs[0].origin_input_ids) + len(reqs[0].output_ids),
-        orig_seq_lens=torch.tensor(
-            [len(reqs[0].origin_input_ids) + len(reqs[0].output_ids)], dtype=torch.int32
+        output_ids=(
+            torch.tensor(output_tail, dtype=torch.int64)
+            if output_tail
+            else torch.empty(0, dtype=torch.int64)
         ),
+        multimodal_inputs=None,
+        seq_lens_sum=sum(seq_lens_list),
+        orig_seq_lens=torch.tensor(seq_lens_list, dtype=torch.int32),
         global_num_tokens=None,
         global_num_tokens_for_logprob=None,
         is_extend_in_batch=False,
@@ -419,3 +429,57 @@ def test_schedule_batch_prepares_beam_rows_when_ready():
         batch.req_to_token_pool.req_to_token[1, : beam.prefix_len],
         batch.req_to_token_pool.req_to_token[0, : beam.prefix_len],
     )
+
+
+def test_filter_beam_search_batch_remaps_rows():
+    beam_width = 2
+
+    def _make_beam(path_prefix: List[int]) -> BeamSearchSequence:
+        return BeamSearchSequence(
+            tokens=path_prefix,
+            last_token=path_prefix[-1],
+            cum_logprob=float(len(path_prefix)),
+        )
+
+    beams_req0 = [_make_beam([9, 10, 11]), _make_beam([9, 12, 13])]
+    beams_req1 = [_make_beam([21, 22, 23]), _make_beam([21, 24, 25])]
+
+    beam_list0 = BeamSearchList(beam_width=beam_width, req_pool_start_idx=-1)
+    beam_list0.incompleted = beams_req0
+    beam_list1 = BeamSearchList(beam_width=beam_width, req_pool_start_idx=-1)
+    beam_list1.incompleted = beams_req1
+
+    req0 = _DummyReq([1, 2, 3], [30], beam_list0)
+    req1 = _DummyReq([4, 5, 6], [40], beam_list1)
+
+    batch = _make_schedule_batch([req0, req1], beam_width=beam_width, pool_rows=10)
+    for idx, req in enumerate(batch.reqs):
+        req.req_pool_idx = idx
+
+    batch.prepare_for_decode()
+
+    assert req0.beam_list.req_pool_start_idx == 0
+    assert req1.beam_list.req_pool_start_idx == 3
+
+    req0.finished_reason = FINISH_LENGTH(length=0)
+    batch.filter_batch()
+
+    assert len(batch.reqs) == 1
+    kept_req = batch.reqs[0]
+    assert kept_req is req1
+    assert kept_req.beam_list.req_pool_start_idx == 0
+    assert [
+        beam.last_req_pool_idx for beam in kept_req.beam_list.incompleted[:beam_width]
+    ] == [1, 2]
+
+    assert batch.req_pool_indices.tolist() == [1, 4, 5]
+    actual_pool_rows = [
+        batch.req_pool_indices[idx]
+        for idx in [kept_req.beam_list.req_pool_start_idx]
+        + [
+            beam.last_req_pool_idx
+            for beam in kept_req.beam_list.incompleted[:beam_width]
+        ]
+    ]
+    expected_pool_rows = [kept_req.req_pool_idx] + kept_req.beam_list.active_row_indices
+    assert actual_pool_rows == expected_pool_rows
