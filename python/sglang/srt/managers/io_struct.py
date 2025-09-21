@@ -22,6 +22,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from sglang.srt.beam_search import BeamSearchOutput
 from sglang.srt.lora.lora_registry import LoRARef
 from sglang.srt.managers.schedule_batch import BaseFinishReason
 from sglang.srt.multimodal.mm_utils import has_valid_data
@@ -831,6 +832,8 @@ class BatchTokenIDOut:
     placeholder_tokens_idx: List[Optional[List[int]]]
     placeholder_tokens_val: List[Optional[List[int]]]
 
+    beam_search_output: Optional[List[BeamSearchOutput]] = None
+
 
 @dataclass
 class BatchMultimodalDecodeReq:
@@ -898,6 +901,8 @@ class BatchStrOut:
     placeholder_tokens_idx: List[Optional[List[int]]]
     placeholder_tokens_val: List[Optional[List[int]]]
 
+    beam_search_output: Optional[List[BeamSearchOutput]] = None
+
 
 @dataclass
 class BatchMultimodalOut:
@@ -924,6 +929,8 @@ class BatchMultimodalOut:
     placeholder_tokens_val: List[Optional[List[int]]]
 
     return_bytes: List[bool]
+
+    beam_search_output: Optional[List[BeamSearchOutput]] = None
 
 
 @dataclass

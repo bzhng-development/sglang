@@ -224,6 +224,32 @@ class DetokenizerManager(MultiHttpWorkerDetokenizerMixin):
             s.sent_offset = len(output_str)
             output_strs.append(incremental_output)
 
+        beam_search_output = recv_obj.beam_search_output
+        if beam_search_output:
+            beam_sequences = []
+            beam_tokens = []
+            for per_req in beam_search_output:
+                if per_req is None:
+                    continue
+                for seq in per_req.sequences:
+                    if getattr(seq, "text", None):
+                        continue
+                    seq.vid = len(beam_tokens)
+                    beam_sequences.append(seq)
+                    beam_tokens.append(seq.tokens)
+
+            if beam_tokens:
+                decoded_beam_texts = self.tokenizer.batch_decode(
+                    beam_tokens,
+                    skip_special_tokens=recv_obj.skip_special_tokens[0],
+                    spaces_between_special_tokens=recv_obj.spaces_between_special_tokens[
+                        0
+                    ],
+                )
+                for seq in beam_sequences:
+                    seq.text = decoded_beam_texts[seq.vid]
+                    delattr(seq, "vid")
+
         return BatchStrOut(
             rids=recv_obj.rids,
             finished_reasons=recv_obj.finished_reasons,
@@ -248,6 +274,7 @@ class DetokenizerManager(MultiHttpWorkerDetokenizerMixin):
             output_hidden_states=recv_obj.output_hidden_states,
             placeholder_tokens_idx=None,
             placeholder_tokens_val=None,
+            beam_search_output=beam_search_output,
         )
 
     def handle_multimodal_decode_req(self, recv_obj: BatchMultimodalDecodeReq):

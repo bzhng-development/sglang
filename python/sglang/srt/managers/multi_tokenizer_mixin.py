@@ -84,6 +84,11 @@ class SocketMapping:
 def _handle_output_by_index(output, i):
     """NOTE: A maintainable method is better here."""
     if isinstance(output, BatchTokenIDOut):
+        beam_item = (
+            output.beam_search_output[i]
+            if output.beam_search_output and len(output.beam_search_output) > i
+            else None
+        )
         new_output = BatchTokenIDOut(
             rids=[output.rids[i]],
             finished_reasons=(
@@ -197,6 +202,7 @@ def _handle_output_by_index(output, i):
             ),
             placeholder_tokens_idx=None,
             placeholder_tokens_val=None,
+            beam_search_output=([beam_item] if beam_item is not None else None),
         )
     elif isinstance(output, BatchEmbeddingOut):
         new_output = BatchEmbeddingOut(
@@ -217,6 +223,11 @@ def _handle_output_by_index(output, i):
             placeholder_tokens_val=None,
         )
     elif isinstance(output, BatchStrOut):
+        beam_item = (
+            output.beam_search_output[i]
+            if output.beam_search_output and len(output.beam_search_output) > i
+            else None
+        )
         new_output = BatchStrOut(
             rids=[output.rids[i]],
             finished_reasons=(
@@ -313,8 +324,14 @@ def _handle_output_by_index(output, i):
             ),
             placeholder_tokens_idx=None,
             placeholder_tokens_val=None,
+            beam_search_output=([beam_item] if beam_item is not None else None),
         )
     elif isinstance(output, BatchMultimodalOut):
+        beam_item = (
+            output.beam_search_output[i]
+            if output.beam_search_output and len(output.beam_search_output) > i
+            else None
+        )
         new_output = BatchMultimodalOut(
             rids=[output.rids[i]],
             finished_reasons=(
@@ -336,6 +353,14 @@ def _handle_output_by_index(output, i):
             ),
             placeholder_tokens_idx=None,
             placeholder_tokens_val=None,
+            return_bytes=(
+                [output.return_bytes[i]]
+                if hasattr(output, "return_bytes")
+                and isinstance(output.return_bytes, list)
+                and len(output.return_bytes) > i
+                else None
+            ),
+            beam_search_output=([beam_item] if beam_item is not None else None),
         )
     else:
         new_output = output
