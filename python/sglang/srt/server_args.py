@@ -190,6 +190,9 @@ class ServerArgs:
     disable_hybrid_swa_memory: bool = False
     radix_eviction_policy: str = "lru"
 
+    # Beam search
+    beam_width: int = 0
+
     # Runtime options
     device: Optional[str] = None
     tp_size: int = 1
@@ -488,6 +491,10 @@ class ServerArgs:
             print_deprecated_warning(
                 "NOTE: --enable-flashinfer-mxfp4-moe is deprecated. Please set `--moe-runner-backend` to 'flashinfer_mxfp4' instead."
             )
+
+        # Validate beam_width
+        if self.beam_width < 0:
+            raise ValueError(f"beam_width must be >= 0, got {self.beam_width}")
 
         # Set missing default values
         if self.tokenizer_path is None:
@@ -1303,6 +1310,12 @@ class ServerArgs:
             "--disable-hybrid-swa-memory",
             action="store_true",
             help="Disable the hybrid SWA memory.",
+        )
+        parser.add_argument(
+            "--beam-width",
+            type=int,
+            default=ServerArgs.beam_width,
+            help="The beam width for beam search. Set to 0 to disable beam search (default: 0).",
         )
 
         # Runtime options

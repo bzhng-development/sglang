@@ -269,6 +269,7 @@ class Scheduler(
         self.enable_hierarchical_cache = server_args.enable_hierarchical_cache
         self.enable_hicache_storage = server_args.hicache_storage_backend is not None
         self.page_size = server_args.page_size
+        self.beam_width = server_args.beam_width
 
         self.attn_tp_rank, self.attn_tp_size, self.attn_dp_rank = (
             compute_dp_attention_world_info(
@@ -1240,6 +1241,17 @@ class Scheduler(
             if recv_req.bootstrap_port is None:
                 # Use default bootstrap port
                 recv_req.bootstrap_port = self.server_args.disaggregation_bootstrap_port
+
+            # Beam search bootstrap logic
+            if self.beam_width > 0:
+                # Force return_logprob to True for beam search
+                recv_req.return_logprob = True
+                # Set top_logprobs_num to at least 2 × beam_width
+                if (
+                    recv_req.top_logprobs_num is None
+                    or recv_req.top_logprobs_num < 2 * self.beam_width
+                ):
+                    recv_req.top_logprobs_num = 2 * self.beam_width
 
             req = Req(
                 recv_req.rid,
