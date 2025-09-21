@@ -303,6 +303,7 @@ class _DummyReq:
         self.return_logprob = False
         self.return_hidden_states = False
         self.beam_list = beam_list
+        self.finished_reason = None
         self.sampling_params = SimpleNamespace(
             max_new_tokens=32,
             stop_token_ids=None,
@@ -314,6 +315,9 @@ class _DummyReq:
     @property
     def seqlen(self):
         return len(self.origin_input_ids) + len(self.output_ids)
+
+    def finished(self) -> bool:
+        return self.finished_reason is not None
 
 
 def _make_schedule_batch(reqs, beam_width, pool_rows=4, pool_cols=8):
