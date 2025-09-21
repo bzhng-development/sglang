@@ -581,13 +581,13 @@ class VisionAttention(nn.Module):
 
         if q.dim() == 4:
             # [b, s, head, head_size] --> [b * s, head, head_size]
-            q = rearrange(q, "b s ... -> (b s) ...")
+            q = q.reshape(bsz * s, *q.shape[2:])
         if k.dim() == 4:
             # [b, s, head, head_size] --> [b * s, head, head_size]
-            k = rearrange(k, "b s ... -> (b s) ...")
+            k = k.reshape(bsz * s, *k.shape[2:])
         if v.dim() == 4:
             # [b, s, head, head_size] --> [b * s, head, head_size]
-            v = rearrange(v, "b s ... -> (b s) ...")
+            v = v.reshape(bsz * s, *v.shape[2:])
 
         assert q.dim() == 3, q.dim()
         assert k.dim() == 3, k.dim()
@@ -611,7 +611,7 @@ class VisionAttention(nn.Module):
 
         if self.use_qkv_parallel:
             # [b * s, h, head_size] --> [b, s, h * head_size]
-            output = rearrange(output, "(b s) ... h d -> b s ... (h d)", b=bsz)
+            output = output.reshape(bsz, s, -1)
 
             # [b, s, h * head_size] --> [b, s, h * head_size]
             output, _ = self.proj(output)
