@@ -2558,11 +2558,14 @@ class Scheduler(
                         req.beam_search_output = BeamSearchOutput(
                             sequences=list(beam_list.completed)
                         )
+                        req.beam_output_sent = False
                     else:
                         req.beam_search_output = None
+                        req.beam_output_sent = False
                     release_beam_rows = True
                 else:
                     req.beam_search_output = None
+                    req.beam_output_sent = False
 
                 self.tree_cache.cache_finished_req(req)
                 req.time_stats.completion_time = time.time()
@@ -2585,6 +2588,7 @@ class Scheduler(
                 if batch.decoding_reqs is None or req not in batch.decoding_reqs:
                     self.tree_cache.cache_unfinished_req(req)
                 req.beam_search_output = None
+                req.beam_output_sent = False
 
         if release_beam_rows and hasattr(self.tree_cache, "cache_finished_beam_search"):
             try:

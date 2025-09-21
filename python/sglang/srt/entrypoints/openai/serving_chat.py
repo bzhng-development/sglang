@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import json
 import logging
-import os
 import time
 import uuid
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Dict, List, Optional, Union
@@ -11,6 +10,7 @@ from typing import TYPE_CHECKING, Any, AsyncGenerator, Dict, List, Optional, Uni
 from fastapi import Request
 from fastapi.responses import ORJSONResponse, StreamingResponse
 
+from sglang.srt.beam_search import BeamSearchOutput, beam_search_output_to_dict
 from sglang.srt.entrypoints.openai.protocol import (
     ChatCompletionRequest,
     ChatCompletionResponse,
@@ -719,19 +719,6 @@ class OpenAIServingChat(OpenAIServingBase):
             finish_reason = ret_item["meta_info"]["finish_reason"]
             text = ret_item["text"]
 
-            # Handle beam search outputs
-            beam_outputs = ret_item["meta_info"].get("beam_search_outputs")
-            if beam_outputs:
-                # Check for environment variable to select which beam to use
-                beam_kth_env = os.environ.get("SGLANG_TEST_BEAM_KTH_AS_OUTPUT")
-                if beam_kth_env is not None:
-                    try:
-                        kth_beam = int(beam_kth_env)
-                        if 0 <= kth_beam < len(beam_outputs):
-                            text = beam_outputs[kth_beam]
-                    except (ValueError, IndexError):
-                        pass  # Use default text if parsing fails or index out of range
-
             # Handle reasoning content
             reasoning_text = None
             reasoning_parser = self.tokenizer_manager.server_args.reasoning_parser
@@ -795,8 +782,13 @@ class OpenAIServingChat(OpenAIServingBase):
         # Add beam search outputs to metadata if available
         metadata = {"weight_version": ret[0]["meta_info"]["weight_version"]}
         beam_outputs = ret[0]["meta_info"].get("beam_search_outputs")
-        if beam_outputs:
-            metadata["beam_search_outputs"] = beam_outputs
+        serialized_beams = None
+        if isinstance(beam_outputs, BeamSearchOutput):
+            serialized_beams = beam_search_output_to_dict(beam_outputs)
+        elif beam_outputs:
+            serialized_beams = beam_outputs
+        if serialized_beams:
+            metadata["beam_search_outputs"] = serialized_beams
 
         return ChatCompletionResponse(
             id=ret[0]["meta_info"]["id"],

@@ -41,6 +41,7 @@ import zmq.asyncio
 from fastapi import BackgroundTasks
 
 from sglang.srt.aio_rwlock import RWLock
+from sglang.srt.beam_search import beam_search_output_to_dict
 from sglang.srt.configs.model_config import ModelConfig
 from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.hf_transformers_utils import (
@@ -1416,7 +1417,9 @@ class TokenizerManager(TokenizerCommunicatorMixin):
 
             beam_outputs = getattr(recv_obj, "beam_search_output", None)
             if beam_outputs and len(beam_outputs) > i:
-                meta_info["beam_search_outputs"] = beam_outputs[i]
+                item = beam_outputs[i]
+                if item is not None:
+                    meta_info["beam_search_outputs"] = beam_search_output_to_dict(item)
 
             if getattr(state.obj, "return_logprob", False):
                 self.convert_logprob_style(

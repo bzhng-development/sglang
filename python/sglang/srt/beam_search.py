@@ -1,7 +1,7 @@
 """Beam search data structures for SGLang."""
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from sglang.srt.managers.schedule_batch import BaseFinishReason
 
@@ -63,3 +63,20 @@ def sort_by_beam_search_score(
     if effective_length <= 0:
         effective_length = 1
     return seq.cum_logprob / (effective_length**length_penalty)
+
+
+def beam_search_sequence_to_dict(seq: BeamSearchSequence) -> Dict[str, Any]:
+    return {
+        "tokens": list(seq.tokens),
+        "last_token": seq.last_token,
+        "cum_logprob": seq.cum_logprob,
+        "finish_reason": seq.finish.to_json() if seq.finish else None,
+        "text": seq.text,
+        "prefix_len": seq.prefix_len,
+    }
+
+
+def beam_search_output_to_dict(output: BeamSearchOutput) -> Dict[str, Any]:
+    return {
+        "sequences": [beam_search_sequence_to_dict(seq) for seq in output.sequences]
+    }

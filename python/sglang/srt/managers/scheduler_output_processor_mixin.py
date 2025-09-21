@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 import torch
 
+from sglang.srt.beam_search import BeamSearchOutput
 from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.layers.logits_processor import LogitsProcessorOutput
 from sglang.srt.managers.io_struct import AbortReq, BatchEmbeddingOut, BatchTokenIDOut
@@ -724,8 +725,26 @@ class SchedulerOutputProcessorMixin:
                     output_hidden_states.append(req.hidden_states)
 
                 beam_payload = getattr(req, "beam_search_output", None)
+                payload_from_attr = beam_payload is not None
+
+                if (
+                    beam_payload is None
+                    and return_logprob
+                    and req.finished()
+                    and not req.beam_output_sent
+                ):
+                    beam_list = getattr(req, "beam_list", None)
+                    completed = (
+                        getattr(beam_list, "completed", None) if beam_list else None
+                    )
+                    if completed:
+                        beam_payload = BeamSearchOutput(sequences=list(completed))
+
                 beam_search_outputs.append(beam_payload)
+
                 if beam_payload is not None:
+                    req.beam_output_sent = True
+                if payload_from_attr:
                     req.beam_search_output = None
 
             if (

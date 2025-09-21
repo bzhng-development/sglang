@@ -10,7 +10,12 @@ from typing import List
 
 import torch
 
-from sglang.srt.beam_search import BeamSearchList, BeamSearchOutput, BeamSearchSequence
+from sglang.srt.beam_search import (
+    BeamSearchList,
+    BeamSearchOutput,
+    BeamSearchSequence,
+    beam_search_output_to_dict,
+)
 from sglang.srt.layers.logits_processor import LogitsProcessorOutput
 from sglang.srt.managers.detokenizer_manager import DetokenizerManager  # type: ignore
 from sglang.srt.managers.io_struct import BatchStrOut, BatchTokenIDOut
@@ -183,7 +188,9 @@ def test_tokenizer_manager_meta_includes_beams():
 
     assert state.event.triggered is True
     out_dict = state.out_list[-1]
-    assert out_dict["meta_info"]["beam_search_outputs"] is beam_output
+    assert out_dict["meta_info"]["beam_search_outputs"] == beam_search_output_to_dict(
+        beam_output
+    )
 
 
 def test_handle_output_by_index_keeps_single_beam_slice():
