@@ -38,7 +38,7 @@ from sglang.srt.mem_cache.evict_policy import EvictionStrategy, LFUStrategy, LRU
 from sglang.srt.mem_cache.memory_pool import ReqToTokenPool
 
 if TYPE_CHECKING:
-    from sglang.srt.managers.schedule_batch import Req
+    from sglang.srt.managers.schedule_batch import Req, ScheduleBatch
 
 
 class TreeNode:
@@ -247,6 +247,63 @@ class RadixCache(BasePrefixCache):
         # Remove req slot release the cache lock
         self.req_to_token_pool.free(req.req_pool_idx)
         self.dec_lock_ref(req.last_node)
+
+    def cache_finished_beam_search(self, batch: "ScheduleBatch") -> None:
+        if batch.req_pool_indices is None:
+            return
+
+        req_pool_indices = batch.req_pool_indices.to("cpu").tolist()
+        seq_lens = (
+            batch.seq_lens.to("cpu").tolist()
+            if batch.seq_lens is not None
+            else [0] * len(req_pool_indices)
+        )
+
+        for req_idx, req in enumerate(batch.reqs):
+            beam_list = getattr(req, "beam_list", None)
+            if beam_list is None:
+                continue
+
+            base_pos = getattr(beam_list, "req_pool_start_idx", -1)
+            if base_pos < 0 or base_pos >= len(req_pool_indices):
+                continue
+
+            base_row = int(req_pool_indices[base_pos])
+            base_seq_len = int(seq_lens[base_pos]) if base_pos < len(seq_lens) else 0
+
+            keep_indices: set[int] = set()
+            if base_seq_len > 0:
+                base_slice = (
+                    self.req_to_token_pool.req_to_token[base_row, :base_seq_len]
+                    .to(device="cpu")
+                    .tolist()
+                )
+                keep_indices.update(int(val) for val in base_slice if val > 0)
+
+            row_info = getattr(beam_list, "row_info", {})
+            for beam_row, (prefix_len, seq_len) in list(row_info.items()):
+                if beam_row == base_row:
+                    continue
+                effective_prefix = max(0, min(prefix_len, seq_len))
+                if seq_len > effective_prefix:
+                    kv_values = (
+                        self.req_to_token_pool.req_to_token[
+                            beam_row, effective_prefix:seq_len
+                        ]
+                        .to(device="cpu")
+                        .tolist()
+                    )
+                    to_free = [
+                        int(val)
+                        for val in kv_values
+                        if val > 0 and val not in keep_indices
+                    ]
+                    if to_free:
+                        self.token_to_kv_pool_allocator.free(
+                            torch.tensor(to_free, dtype=torch.int64, device=self.device)
+                        )
+                self.req_to_token_pool.free(int(beam_row))
+                row_info.pop(beam_row, None)
 
     def cache_unfinished_req(self, req: Req, chunked=False):
         """Cache request when it is unfinished."""

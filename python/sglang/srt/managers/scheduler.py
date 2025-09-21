@@ -2214,6 +2214,7 @@ class Scheduler(
                     cum_logprob=float(logprob),
                     prefix_len=prefix_len,
                 )
+                seq.prev_req_pool_idx = req.req_pool_idx
 
                 finish_reason: Optional[BaseFinishReason] = None
                 reached_length = (
@@ -2475,6 +2476,7 @@ class Scheduler(
                             cum_logprob=parent_beam.cum_logprob + logprob,
                             prefix_len=parent_beam.prefix_len,
                         )
+                        child.prev_req_pool_idx = parent_beam.last_req_pool_idx
                         child.last_req_pool_idx = -1
                         self.check_beam_finished(req, child)
                         if child.finished():

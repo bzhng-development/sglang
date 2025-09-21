@@ -1873,22 +1873,93 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         active_beams: List[List["BeamSearchSequence"]],
         beam_row_indices: List[List[int]],
     ) -> None:
+        keep_kv_indices: set[int] = set()
         for req_idx, beams in enumerate(active_beams):
             beam_list = getattr(self.reqs[req_idx], "beam_list", None)
-            if not beams or beam_list is None:
+            if beam_list is None:
                 continue
 
+            keep_kv_indices.clear()
+
+            previous_rows = set(getattr(beam_list, "active_row_indices", []) or [])
+            previous_info = getattr(beam_list, "row_info", {})
+
             current_rows: List[int] = []
+            current_info: dict[int, tuple[int, int]] = {}
+
             for beam_idx, beam in enumerate(beams):
                 row_idx = beam_row_indices[req_idx][beam_idx]
                 if row_idx is None or row_idx < 0:
                     raise RuntimeError(
                         f"Beam row index not initialized for request {req_idx}, beam {beam_idx}."
                     )
+
+                max_context_len = self.req_to_token_pool.req_to_token.shape[1]
+                prefix_len = max(
+                    0, min(getattr(beam, "prefix_len", 0), max_context_len)
+                )
+                beam_token_len = len(getattr(beam, "tokens", []))
+                history_len = max(prefix_len, beam_token_len - 1, 0)
+
+                src_row_idx = getattr(beam, "prev_req_pool_idx", -1)
+                if (
+                    src_row_idx is not None
+                    and src_row_idx >= 0
+                    and src_row_idx != row_idx
+                    and history_len > prefix_len
+                ):
+                    suffix_slice = self.req_to_token_pool.req_to_token[
+                        src_row_idx, prefix_len:history_len
+                    ]
+                    if suffix_slice.numel() > 0:
+                        self.req_to_token_pool.write(
+                            (row_idx, slice(prefix_len, history_len)), suffix_slice
+                        )
+
+                if history_len > prefix_len:
+                    suffix_indices = (
+                        self.req_to_token_pool.req_to_token[
+                            row_idx, prefix_len:history_len
+                        ]
+                        .to(device="cpu")
+                        .tolist()
+                    )
+                    keep_kv_indices.update(
+                        int(val) for val in suffix_indices if val > 0
+                    )
+
                 beam.last_req_pool_idx = row_idx
+                beam.prev_req_pool_idx = row_idx
+
                 current_rows.append(row_idx)
+                future_seq_len = history_len + 1
+                current_info[row_idx] = (prefix_len, future_seq_len)
+
+            rows_to_free = previous_rows - set(current_rows)
+            for old_row in rows_to_free:
+                prefix_len, seq_len = previous_info.get(old_row, (0, 0))
+                if seq_len and seq_len > prefix_len:
+                    kv_values = (
+                        self.req_to_token_pool.req_to_token[old_row, prefix_len:seq_len]
+                        .to(device="cpu")
+                        .tolist()
+                    )
+                    to_release = [
+                        int(val)
+                        for val in kv_values
+                        if val > 0 and val not in keep_kv_indices
+                    ]
+                    if to_release:
+                        self.token_to_kv_pool_allocator.free(
+                            torch.tensor(
+                                to_release, dtype=torch.int64, device=self.device
+                            )
+                        )
+                self.req_to_token_pool.free(int(old_row))
+                previous_info.pop(old_row, None)
 
             beam_list.active_row_indices = current_rows
+            beam_list.row_info = current_info
 
     def _update_common_beam_search(
         self,

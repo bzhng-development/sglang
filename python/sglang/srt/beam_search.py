@@ -19,6 +19,7 @@ class BeamSearchSequence:
     text: Optional[str] = None
 
     last_req_pool_idx: int = -1
+    prev_req_pool_idx: int = -1
     prefix_len: int = 0
 
     def finished(self) -> bool:
@@ -40,6 +41,9 @@ class BeamSearchList:
         self.req_pool_start_idx = req_pool_start_idx
         self.completed: List[BeamSearchSequence] = []
         self.incompleted: List[BeamSearchSequence] = []
+        # Track the req_to_token_pool rows and associated metadata for active beams.
+        self.active_row_indices: List[int] = []
+        self.row_info: dict[int, tuple[int, int]] = {}
 
     def empty(self) -> bool:
         return len(self.completed) == 0 and len(self.incompleted) == 0

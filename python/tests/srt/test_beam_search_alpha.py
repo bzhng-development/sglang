@@ -23,6 +23,7 @@ from sglang.srt.managers.schedule_batch import (
 )
 from sglang.srt.managers.scheduler import Scheduler
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
+from sglang.srt.mem_cache.radix_cache import RadixCache
 from sglang.srt.model_executor.forward_batch_info import ForwardMode
 from sglang.srt.sampling.sampling_params import SamplingParams
 
@@ -298,6 +299,7 @@ class _DummyReqToTokenPool:
     def __init__(self, rows: int, cols: int):
         self.req_to_token = torch.zeros((rows, cols), dtype=torch.int32)
         self._next_row = 1
+        self.freed_rows: List[int] = []
 
     def write(self, indices, values):
         rows, cols = indices
@@ -308,8 +310,11 @@ class _DummyReqToTokenPool:
         self._next_row += need_rows
         return rows
 
-    def free(self, *_args, **_kwargs):
-        raise NotImplementedError
+    def free(self, rows):
+        if isinstance(rows, int):
+            self.freed_rows.append(rows)
+        else:
+            self.freed_rows.extend(int(r) for r in rows)
 
 
 class _DummyTokenAllocator:
@@ -318,6 +323,8 @@ class _DummyTokenAllocator:
     def __init__(self):
         self._next = 0
         self._capacity = 10_000
+        self.freed: List[int] = []
+        self.device = "cpu"
 
     def alloc(self, num_tokens: int):
         start = self._next
@@ -328,8 +335,13 @@ class _DummyTokenAllocator:
     def available_size(self) -> int:
         return max(self._capacity - self._next, 0)
 
-    def free(self, *_args, **_kwargs):
-        pass
+    def free(self, free_index):
+        if isinstance(free_index, torch.Tensor):
+            self.freed.extend(int(x) for x in free_index.cpu().tolist())
+        elif isinstance(free_index, (list, tuple)):
+            self.freed.extend(int(x) for x in free_index)
+        else:
+            self.freed.append(int(free_index))
 
 
 class _DummyReq:
@@ -451,6 +463,7 @@ def test_schedule_batch_prepares_beam_rows_when_ready():
     beam = BeamSearchSequence(
         tokens=[1, 2, 3, 6], last_token=6, cum_logprob=0.0, prefix_len=3
     )
+    beam.prev_req_pool_idx = 0
     beam_list = SimpleNamespace(beam_width=1, incompleted=[beam], req_pool_start_idx=-1)
     req = _DummyReq([11, 12, 13, 14], [21], beam_list)
     batch = _make_schedule_batch([req], beam_width=1, pool_rows=3, pool_cols=8)
@@ -638,3 +651,35 @@ def test_process_batch_result_beam_search_finalizes_request():
     assert sched.tree_cache.finished[-1] is req
     assert batch in sched.tree_cache.beam_batches
     assert req.time_stats.completion_time > 0
+
+
+def test_radix_cache_cache_finished_beam_search_releases_rows():
+    pool = _DummyReqToTokenPool(rows=4, cols=6)
+    allocator = _DummyTokenAllocator()
+    cache = RadixCache(
+        req_to_token_pool=pool,
+        token_to_kv_pool_allocator=allocator,
+        page_size=1,
+    )
+
+    req = _DummyReq(
+        [1, 2, 3], [4], beam_list=BeamSearchList(beam_width=1, req_pool_start_idx=0)
+    )
+    req.req_pool_idx = 0
+
+    pool.req_to_token[0, :5] = torch.tensor([10, 11, 12, 13, 14], dtype=torch.int32)
+    pool.req_to_token[1, :5] = torch.tensor([10, 11, 12, 30, 31], dtype=torch.int32)
+
+    req.beam_list.row_info = {1: (3, 5)}
+    req.beam_list.req_pool_start_idx = 0
+
+    batch = SimpleNamespace(
+        reqs=[req],
+        req_pool_indices=torch.tensor([0, 1], dtype=torch.int64),
+        seq_lens=torch.tensor([5, 5], dtype=torch.int64),
+    )
+
+    cache.cache_finished_beam_search(batch)
+
+    assert sorted(allocator.freed) == [30, 31]
+    assert pool.freed_rows == [1]
