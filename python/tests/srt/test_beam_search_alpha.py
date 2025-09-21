@@ -7,11 +7,15 @@ beam integration lands.
 
 from types import SimpleNamespace
 
+import torch
+
 from sglang.srt.beam_search import BeamSearchOutput, BeamSearchSequence
 from sglang.srt.managers.detokenizer_manager import DetokenizerManager  # type: ignore
 from sglang.srt.managers.io_struct import BatchStrOut, BatchTokenIDOut
 from sglang.srt.managers.multi_tokenizer_mixin import _handle_output_by_index
+from sglang.srt.managers.schedule_batch import ScheduleBatch
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
+from sglang.srt.model_executor.forward_batch_info import ForwardMode
 
 
 class _DummyTokenizer:
@@ -217,3 +221,201 @@ def test_handle_output_by_index_keeps_single_beam_slice():
     assert sliced.beam_search_output == [beam_outputs[1]]
     assert sliced.beam_search_output[0] is beam_outputs[1]
     assert sliced.output_strs == ["one"]
+
+
+class _DummyPenalizer:
+    is_required = False
+
+    def cumulate_output_tokens(self, *_args, **_kwargs):
+        pass
+
+
+class _DummySamplingInfo:
+    def __init__(self):
+        self.penalizer_orchestrator = _DummyPenalizer()
+
+    def filter_batch(self, *_args, **_kwargs):
+        pass
+
+    def merge_batch(self, *_args, **_kwargs):
+        pass
+
+
+class _DummySpecAlgorithm:
+    def is_eagle(self):
+        return False
+
+    def is_standalone(self):
+        return False
+
+    def is_lookahead(self):
+        return False
+
+    def is_none(self):
+        return True
+
+
+class _DummyReqToTokenPool:
+    def __init__(self, rows: int, cols: int):
+        self.req_to_token = torch.zeros((rows, cols), dtype=torch.int32)
+        self._next_row = 1
+
+    def write(self, indices, values):
+        rows, cols = indices
+        self.req_to_token[rows, cols] = values
+
+    def alloc(self, need_rows: int, *_reqs):
+        rows = list(range(self._next_row, self._next_row + need_rows))
+        self._next_row += need_rows
+        return rows
+
+    def free(self, *_args, **_kwargs):
+        raise NotImplementedError
+
+
+class _DummyTokenAllocator:
+    page_size = 1
+
+    def __init__(self):
+        self._next = 0
+        self._capacity = 10_000
+
+    def alloc(self, num_tokens: int):
+        start = self._next
+        out = torch.arange(start, start + num_tokens, dtype=torch.int64)
+        self._next += num_tokens
+        return out
+
+    def available_size(self) -> int:
+        return max(self._capacity - self._next, 0)
+
+    def free(self, *_args, **_kwargs):
+        pass
+
+
+class _DummyReq:
+    def __init__(self, origin_ids, output_ids, beam_list=None):
+        self.origin_input_ids = origin_ids
+        self.output_ids = output_ids
+        self.stream = False
+        self.grammar = None
+        self.return_logprob = False
+        self.return_hidden_states = False
+        self.beam_list = beam_list
+        self.sampling_params = SimpleNamespace(
+            max_new_tokens=32,
+            stop_token_ids=None,
+            stop_strs=[],
+            stop_str_max_len=0,
+            ignore_eos=False,
+        )
+
+    @property
+    def seqlen(self):
+        return len(self.origin_input_ids) + len(self.output_ids)
+
+
+def _make_schedule_batch(reqs, beam_width, pool_rows=4, pool_cols=8):
+    pool = _DummyReqToTokenPool(pool_rows, pool_cols)
+    token_allocator = _DummyTokenAllocator()
+    model_config = SimpleNamespace(is_encoder_decoder=False, attention_chunk_size=1)
+    batch = ScheduleBatch(
+        reqs=reqs,
+        req_to_token_pool=pool,
+        token_to_kv_pool_allocator=token_allocator,
+        tree_cache=None,
+        is_hybrid=False,
+        model_config=model_config,
+        forward_mode=ForwardMode.DECODE,
+        enable_overlap=False,
+        batch_is_full=False,
+        beam_width=beam_width,
+        sampling_info=_DummySamplingInfo(),
+        next_batch_sampling_info=None,
+        input_ids=None,
+        input_embeds=None,
+        token_type_ids=None,
+        req_pool_indices=torch.tensor([0], dtype=torch.int64),
+        seq_lens=torch.tensor(
+            [len(reqs[0].origin_input_ids) + len(reqs[0].output_ids)], dtype=torch.int64
+        ),
+        out_cache_loc=None,
+        output_ids=torch.tensor([reqs[0].output_ids[-1]], dtype=torch.int64),
+        multimodal_inputs=None,
+        seq_lens_sum=len(reqs[0].origin_input_ids) + len(reqs[0].output_ids),
+        orig_seq_lens=torch.tensor(
+            [len(reqs[0].origin_input_ids) + len(reqs[0].output_ids)], dtype=torch.int32
+        ),
+        global_num_tokens=None,
+        global_num_tokens_for_logprob=None,
+        is_extend_in_batch=False,
+        can_run_dp_cuda_graph=False,
+        tbo_split_seq_index=None,
+        global_forward_mode=None,
+        return_logprob=False,
+        top_logprobs_nums=None,
+        token_ids_logprobs=None,
+        temp_scaled_logprobs=False,
+        top_p_normalized_logprobs=False,
+        prefix_lens=None,
+        extend_lens=None,
+        extend_num_tokens=None,
+        decoding_reqs=None,
+        extend_logprob_start_lens=None,
+        extend_input_logprob_token_ids=None,
+        encoder_cached=None,
+        encoder_lens=None,
+        encoder_lens_cpu=None,
+        encoder_out_cache_loc=None,
+        has_stream=False,
+        has_grammar=False,
+        device="cpu",
+        spec_algorithm=_DummySpecAlgorithm(),
+        spec_info=None,
+        return_hidden_states=False,
+        is_prefill_only=False,
+        hicache_consumer_index=-1,
+        chunked_req=None,
+        launch_done=None,
+    )
+    return batch
+
+
+def test_schedule_batch_regular_decode_when_beams_missing():
+    beam_list = SimpleNamespace(beam_width=1, incompleted=[], req_pool_start_idx=-1)
+    req = _DummyReq([1, 2, 3], [4], beam_list)
+    batch = _make_schedule_batch([req], beam_width=1)
+
+    batch.prepare_for_decode()
+
+    assert batch.input_ids.tolist() == [4]
+    # Original 3-token prompt + 1 generated token -> seq_len 4; decode adds one more -> 5.
+    assert batch.seq_lens.tolist() == [5]
+    assert batch.req_pool_indices.tolist() == [0]
+    assert batch.seq_lens_sum == sum(batch.seq_lens.tolist())
+
+
+def test_schedule_batch_prepares_beam_rows_when_ready():
+    beam = BeamSearchSequence(
+        tokens=[1, 2, 3, 6], last_token=6, cum_logprob=0.0, prefix_len=3
+    )
+    beam_list = SimpleNamespace(beam_width=1, incompleted=[beam], req_pool_start_idx=-1)
+    req = _DummyReq([11, 12, 13, 14], [21], beam_list)
+    batch = _make_schedule_batch([req], beam_width=1, pool_rows=3, pool_cols=8)
+    batch.req_to_token_pool.req_to_token[0, :4] = torch.tensor(
+        [100, 101, 102, 103], dtype=torch.int32
+    )
+
+    batch.prepare_for_decode()
+
+    assert batch.input_ids.tolist() == [21, 6]
+    assert batch.seq_lens.tolist() == [6, 4]
+    assert batch.req_pool_indices.tolist() == [0, 1]
+    assert batch.seq_lens_sum == sum(batch.seq_lens.tolist())
+    assert req.beam_list.req_pool_start_idx == 0
+    assert req.beam_list.active_row_indices == [1]
+    assert beam.last_req_pool_idx == 1
+    assert torch.equal(
+        batch.req_to_token_pool.req_to_token[1, : beam.prefix_len],
+        batch.req_to_token_pool.req_to_token[0, : beam.prefix_len],
+    )
