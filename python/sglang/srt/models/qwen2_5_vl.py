@@ -176,13 +176,13 @@ class Qwen2_5_VisionBlock(nn.Module):
         hidden_states = self.norm1(x2d).reshape(S, B, H)
 
         # Attention expects [B, S, H]
-        hidden_states = rearrange(hidden_states, "s b h -> b s h")
+        hidden_states = hidden_states.transpose(0, 1).contiguous()
         attn = self.attn(
             hidden_states,
             cu_seqlens=cu_seqlens,
             position_embeddings=position_embeddings,
         )
-        attn = rearrange(attn, "b s h -> s b h")
+        attn = attn.transpose(0, 1).contiguous()
 
         # norm2 with fused residual-add: also 2D
         attn2d = attn.reshape(-1, H)
