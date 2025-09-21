@@ -18,12 +18,13 @@ import logging
 import os
 import signal
 from collections import OrderedDict
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 import psutil
 import setproctitle
 import zmq
 
+from sglang.srt.beam_search import BeamSearchSequence
 from sglang.srt.hf_transformers_utils import get_tokenizer
 from sglang.srt.managers.io_struct import (
     BatchEmbeddingOut,
@@ -226,29 +227,41 @@ class DetokenizerManager(MultiHttpWorkerDetokenizerMixin):
 
         beam_search_output = recv_obj.beam_search_output
         if beam_search_output:
-            beam_sequences = []
-            beam_tokens = []
-            for per_req in beam_search_output:
+            beam_sequences: List[Tuple[BeamSearchSequence, bool]] = []
+            to_decode: List[List[int]] = []
+            decode_targets: List[BeamSearchSequence] = []
+
+            for req_idx, per_req in enumerate(beam_search_output):
                 if per_req is None:
                     continue
+                no_trim = False
+                if isinstance(recv_obj.no_stop_trim, list) and req_idx < len(
+                    recv_obj.no_stop_trim
+                ):
+                    no_trim = recv_obj.no_stop_trim[req_idx]
                 for seq in per_req.sequences:
-                    if getattr(seq, "text", None):
-                        continue
-                    seq.vid = len(beam_tokens)
-                    beam_sequences.append(seq)
-                    beam_tokens.append(seq.tokens)
+                    beam_sequences.append((seq, no_trim))
+                    if getattr(seq, "text", None) is None:
+                        to_decode.append(seq.tokens)
+                        decode_targets.append(seq)
 
-            if beam_tokens:
+            if to_decode:
                 decoded_beam_texts = self.tokenizer.batch_decode(
-                    beam_tokens,
+                    to_decode,
                     skip_special_tokens=recv_obj.skip_special_tokens[0],
                     spaces_between_special_tokens=recv_obj.spaces_between_special_tokens[
                         0
                     ],
                 )
-                for seq in beam_sequences:
-                    seq.text = decoded_beam_texts[seq.vid]
-                    delattr(seq, "vid")
+                for seq, text in zip(decode_targets, decoded_beam_texts, strict=False):
+                    seq.text = text
+
+            for seq, no_trim in beam_sequences:
+                finish_reason = (
+                    seq.finish.to_json() if getattr(seq, "finish", None) else None
+                )
+                if getattr(seq, "text", None) is not None:
+                    seq.text = self.trim_matched_stop(seq.text, finish_reason, no_trim)
 
         return BatchStrOut(
             rids=recv_obj.rids,

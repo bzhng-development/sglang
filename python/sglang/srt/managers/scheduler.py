@@ -25,7 +25,7 @@ from concurrent import futures
 from dataclasses import dataclass
 from http import HTTPStatus
 from types import SimpleNamespace
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import psutil
 import setproctitle
@@ -280,6 +280,9 @@ class Scheduler(
         self.enable_hicache_storage = server_args.hicache_storage_backend is not None
         self.page_size = server_args.page_size
         self.beam_width = server_args.beam_width
+        self.test_beam_fixed_max_token = get_bool_env_var(
+            "SGLANG_TEST_BEAM_FIXED_MAX_TOKEN", False
+        )
 
         self.attn_tp_rank, self.attn_tp_size, self.attn_dp_rank = (
             compute_dp_attention_world_info(
@@ -2373,9 +2376,20 @@ class Scheduler(
                     hidden_states[main_row_idx].cpu().clone().tolist()
                 )
 
+            beam_list: Optional[BeamSearchList] = getattr(req, "beam_list", None)
+
             req.check_finished()
 
-            beam_list: Optional[BeamSearchList] = getattr(req, "beam_list", None)
+            if (
+                req.finished()
+                and not self.test_beam_fixed_max_token
+                and isinstance(
+                    req.finished_reason, (FINISH_MATCHED_TOKEN, FINISH_MATCHED_STR)
+                )
+                and beam_list
+                and beam_list.incompleted
+            ):
+                req.finished_reason = None
             completed_children: List[BeamSearchSequence] = []
             updated_incompleted: List[BeamSearchSequence] = []
 
@@ -2578,6 +2592,33 @@ class Scheduler(
             except TypeError:
                 self.tree_cache.cache_finished_beam_search()
 
+    def _check_token_finish(
+        self, req: Req, last_token_id: int
+    ) -> Optional[BaseFinishReason]:
+        if not req.sampling_params.ignore_eos:
+            matched_eos = False
+            if req.sampling_params.stop_token_ids:
+                matched_eos = last_token_id in req.sampling_params.stop_token_ids
+            if req.eos_token_ids:
+                matched_eos |= last_token_id in req.eos_token_ids
+            tokenizer = req.tokenizer
+            if tokenizer is not None:
+                eos_id = getattr(tokenizer, "eos_token_id", None)
+                if eos_id is not None:
+                    matched_eos |= last_token_id == eos_id
+                additional_ids = getattr(tokenizer, "additional_stop_token_ids", None)
+                if additional_ids:
+                    matched_eos |= last_token_id in additional_ids
+            if matched_eos:
+                return FINISH_MATCHED_TOKEN(matched=last_token_id)
+
+        if req.vocab_size is not None and (
+            last_token_id >= req.vocab_size or last_token_id < 0
+        ):
+            return FINISH_MATCHED_STR(matched="NaN happened")
+
+        return None
+
     def check_beam_finished(self, req: Req, beam: BeamSearchSequence) -> None:
         if beam.finished():
             return
@@ -2594,47 +2635,45 @@ class Scheduler(
 
         last_token_id = beam.tokens[-1]
 
-        if not req.sampling_params.ignore_eos:
-            matched_eos = False
-            if req.sampling_params.stop_token_ids:
-                matched_eos = last_token_id in req.sampling_params.stop_token_ids
-            if req.eos_token_ids:
-                matched_eos |= last_token_id in req.eos_token_ids
-            tokenizer = req.tokenizer
-            if tokenizer is not None:
-                if getattr(tokenizer, "eos_token_id", None) is not None:
-                    matched_eos |= last_token_id == tokenizer.eos_token_id
-                additional_ids = getattr(tokenizer, "additional_stop_token_ids", None)
-                if additional_ids:
-                    matched_eos |= last_token_id in additional_ids
-            if matched_eos:
-                beam.finish = FINISH_MATCHED_TOKEN(matched=last_token_id)
-                return
-
-        if req.vocab_size is not None and (
-            last_token_id >= req.vocab_size or last_token_id < 0
-        ):
-            beam.finish = FINISH_MATCHED_STR(matched="NaN happened")
+        token_finish = self._check_token_finish(req, last_token_id)
+        if token_finish is not None:
+            beam.finish = token_finish
             return
 
         stop_strs = getattr(req.sampling_params, "stop_strs", None) or []
         if stop_strs:
             tokenizer = req.tokenizer
-            if tokenizer is not None:
-                max_len = getattr(req.sampling_params, "stop_str_max_len", 0) or 0
-                if max_len > 0:
-                    tokens_to_decode = beam.tokens[-(max_len + 1) :]
-                else:
-                    tokens_to_decode = beam.tokens
+            max_len = getattr(req.sampling_params, "stop_str_max_len", 0) or 0
+            window = max_len + 1 if max_len > 0 else len(beam.tokens)
+            window = min(len(beam.tokens), max(window, 1))
+            tokens_to_decode = beam.tokens[-window:]
+
+            candidate_texts: List[str] = []
+            tail_text = ""
+            if tokenizer is not None and tokens_to_decode:
                 try:
                     tail_text = tokenizer.decode(tokens_to_decode)
                 except Exception:
                     tail_text = ""
-                if tail_text:
-                    for stop_str in stop_strs:
-                        if stop_str and stop_str in tail_text:
-                            beam.finish = FINISH_MATCHED_STR(matched=stop_str)
-                            return
+            if tail_text:
+                candidate_texts.append(tail_text)
+
+            if beam.check_prefix(req) and req.decoded_text:
+                base_tail = req.decoded_text
+                limit = max(window, 1)
+                if len(base_tail) > limit:
+                    base_tail = base_tail[-limit:]
+                candidate_texts.append(base_tail)
+
+            seen: Set[str] = set()
+            for text in candidate_texts:
+                if not text or text in seen:
+                    continue
+                seen.add(text)
+                for stop_str in stop_strs:
+                    if stop_str and stop_str in text:
+                        beam.finish = FINISH_MATCHED_STR(matched=stop_str)
+                        return
 
     def maybe_send_health_check_signal(self):
         if self.return_health_check_ct:
