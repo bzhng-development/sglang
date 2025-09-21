@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
-from sglang.srt.layers.sampler import BaseFinishReason
+from sglang.srt.managers.schedule_batch import BaseFinishReason
 
 
 @dataclass
