@@ -60,7 +60,7 @@ from sglang.srt.managers.schedule_batch import MultimodalDataItem, MultimodalInp
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen2 import Qwen2Model
-from sglang.srt.utils import add_prefix
+from sglang.srt.utils import add_prefix, is_pin_memory_available
 
 logger = logging.getLogger(__name__)
 
@@ -343,6 +343,11 @@ class Qwen2_5_VisionTransformer(nn.Module):
         window_index = torch.cat(window_index, dim=0)
         return window_index, cu_window_seqlens
 
+    def compute_reverse_indices(self, perm: torch.Tensor) -> torch.Tensor:
+        inv = torch.empty_like(perm, pin_memory=is_pin_memory_available())
+        inv[perm] = torch.arange(perm.numel(), device=perm.device, dtype=perm.dtype)
+        return inv
+
     @property
     def dtype(self) -> torch.dtype:
         return self.patch_embed.proj.weight.dtype
@@ -403,8 +408,12 @@ class Qwen2_5_VisionTransformer(nn.Module):
         )
         cu_window_seqlens = torch.unique_consecutive(cu_window_seqlens)
 
+        # compute reverse indices
+        reverse_indices = self.compute_reverse_indices(window_index)
+
         # Move window_index to the same device as x before using it to index x
         window_index = window_index.to(device=x.device)
+        reverse_indices = reverse_indices.to(device=x.device, non_blocking=True)
 
         # Ensure rotary_pos_emb is on the same device/dtype as x
         rotary_pos_emb = rotary_pos_emb.to(device=x.device, dtype=x.dtype)
@@ -452,7 +461,6 @@ class Qwen2_5_VisionTransformer(nn.Module):
         # adapter
         x = self.merger(x)
 
-        reverse_indices = torch.argsort(window_index)
         x = x[reverse_indices, :]
 
         return x
