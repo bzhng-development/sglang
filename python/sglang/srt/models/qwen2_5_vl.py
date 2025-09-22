@@ -344,7 +344,7 @@ class Qwen2_5_VisionTransformer(nn.Module):
         return window_index, cu_window_seqlens
 
     def compute_reverse_indices(self, perm: torch.Tensor) -> torch.Tensor:
-        inv = torch.empty_like(perm, pin_memory=is_pin_memory_available())
+        inv = torch.empty_like(perm, pin_memory=True)
         inv[perm] = torch.arange(perm.numel(), device=perm.device, dtype=perm.dtype)
         return inv
 
