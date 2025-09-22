@@ -460,6 +460,7 @@ def get_available_gpu_memory(
     return free_gpu_memory / (1 << 30)
 
 
+@lru_cache(maxsize=1)
 def is_pin_memory_available() -> bool:
     return torch.cuda.is_available()
 

@@ -408,7 +408,6 @@ class Qwen2_5_VisionTransformer(nn.Module):
         )
         cu_window_seqlens = torch.unique_consecutive(cu_window_seqlens)
 
-        # compute reverse indices
         reverse_indices = self.compute_reverse_indices(window_index)
 
         # Move window_index to the same device as x before using it to index x
