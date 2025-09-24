@@ -9,7 +9,11 @@ from sglang.utils import cached_triton_kernel
 TRITON_PAD_NUM_PAGE_PER_BLOCK = 64
 
 
-@cached_triton_kernel(lambda _, kwargs: kwargs["req_to_token_ptr_stride"])
+@cached_triton_kernel(
+    lambda args, kwargs: kwargs.get(
+        "req_to_token_ptr_stride", args[6] if len(args) > 6 else None
+    )
+)
 @triton.jit
 def create_flashinfer_kv_indices_triton(
     req_to_token_ptr,  # [max_batch, max_context_len]
