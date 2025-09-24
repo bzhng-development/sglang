@@ -18,6 +18,7 @@ from sglang.srt.utils import (
     get_int_env_var,
     next_power_of_2,
 )
+from sglang.utils import cached_triton_kernel
 
 if TYPE_CHECKING:
     from sglang.srt.layers.radix_attention import RadixAttention
@@ -1011,6 +1012,7 @@ class TritonMultiStepDraftBackend:
         self.common_template(forward_batch, self.cuda_graph_kv_indices, call_fn)
 
 
+@cached_triton_kernel(lambda _, kwargs: kwargs["MAX_NUM_SEQ"])
 @triton.jit
 def get_num_kv_splits_triton(
     num_kv_splits_ptr,

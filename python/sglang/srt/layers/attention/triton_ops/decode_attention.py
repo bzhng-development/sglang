@@ -26,6 +26,7 @@ import triton
 import triton.language as tl
 
 from sglang.srt.utils import is_hip
+from sglang.utils import cached_triton_kernel
 
 _is_hip = is_hip()
 
@@ -41,6 +42,15 @@ def tanh(x):
     return 2 * tl.sigmoid(2 * x) - 1
 
 
+@cached_triton_kernel(
+    lambda _, kwargs: (
+        kwargs["BLOCK_DMODEL"],
+        kwargs["BLOCK_DV"],
+        kwargs["BLOCK_N"],
+        kwargs["kv_group_num"],
+        kwargs["MIN_BLOCK_KV"],
+    )
+)
 @triton.jit
 def _fwd_kernel_stage1(
     Q,
@@ -249,6 +259,17 @@ def _decode_att_m_fwd(
     )
 
 
+@cached_triton_kernel(
+    lambda _, kwargs: (
+        kwargs["BLOCK_DMODEL"],
+        kwargs["BLOCK_DV"],
+        kwargs["BLOCK_N"],
+        kwargs["BLOCK_H"],
+        kwargs["kv_group_num"],
+        kwargs["q_head_num"],
+        kwargs["MIN_BLOCK_KV"],
+    )
+)
 @triton.jit
 def _fwd_grouped_kernel_stage1(
     Q,
@@ -512,6 +533,14 @@ def _decode_grouped_att_m_fwd(
     )
 
 
+@cached_triton_kernel(
+    lambda _, kwargs: (
+        kwargs["MAX_KV_SPLITS"],
+        kwargs["MIN_BLOCK_KV"],
+        kwargs["BLOCK_DV"],
+        kwargs["HAS_SINK"],
+    )
+)
 @triton.jit
 def _fwd_kernel_stage2(
     Mid_O,

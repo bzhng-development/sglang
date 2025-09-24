@@ -24,6 +24,7 @@ from sglang.srt.layers.attention.triton_ops.prefill_attention import (
     context_attention_fwd,
 )
 from sglang.srt.utils import is_cuda, is_hip
+from sglang.utils import cached_triton_kernel
 
 _is_cuda = is_cuda()
 if _is_cuda:
@@ -38,6 +39,17 @@ def tanh(x):
     return 2 * tl.sigmoid(2 * x) - 1
 
 
+@cached_triton_kernel(
+    lambda _, kwargs: (
+        kwargs["BLOCK_DMODEL"],
+        kwargs["BLOCK_DV"],
+        kwargs["BLOCK_M"],
+        kwargs["BLOCK_N"],
+        kwargs["USE_CUSTOM_MASK"],
+        kwargs["IS_CAUSAL"],
+        kwargs["SLIDING_WINDOW_SIZE"],
+    )
+)
 @triton.jit
 def _fwd_kernel(
     Q_Extend,
