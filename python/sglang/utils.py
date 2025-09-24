@@ -603,14 +603,12 @@ class CachedKernel:
 
             if cached_kernel is None:
                 # First time: compile and cache the kernel
-                cached_kernel = self.fn[grid](*args, **kwargs)
+                cached_kernel = self.fn[grid]
                 self.kernel_cache[cache_key] = cached_kernel
-                return cached_kernel
+                return cached_kernel(*args, **kwargs)
             else:
                 # Use cached kernel
-                all_args = self._build_args(args, kwargs)
-                cached_kernel[grid](*all_args)
-                return cached_kernel
+                return cached_kernel(*args, **kwargs)
 
         return launcher
 
