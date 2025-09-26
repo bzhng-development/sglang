@@ -702,10 +702,13 @@ class ServerArgs:
 
     def _handle_attention_backend_compatibility(self):
         if self.attention_backend == "torch_native":
-            logger.warning(
-                "Cuda graph is disabled because of using torch native attention backend"
+            # logger.warning(
+            #     "Cuda graph is disabled because of using torch native attention backend"
+            # )
+            logger.info(
+                "Cuda graph is enabled because of using torch native attention backend. Using cuda graph"
             )
-            self.disable_cuda_graph = True
+            self.disable_cuda_graph = False
 
         if self.attention_backend == "flex_attention":
             logger.warning(
