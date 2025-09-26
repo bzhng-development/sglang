@@ -7,6 +7,7 @@ import unittest
 from types import SimpleNamespace
 
 import torch
+from torch.nn.functional import scaled_dot_product_attention
 
 from sglang.srt.layers.attention.torch_native_backend import TorchNativeAttnBackend
 from sglang.srt.model_executor.forward_batch_info import ForwardMode
@@ -70,10 +71,14 @@ class TorchNativeCudaGraphMetadataTest(unittest.TestCase):
 
         metadata = backend.forward_metadata
         self.assertIsNotNone(metadata)
-        self.assertEqual(
-            metadata.req_pool_indices.data_ptr(), req_pool_indices[:4].data_ptr()
+        self.assertTrue(torch.equal(metadata.req_pool_indices, req_pool_indices[:4]))
+        self.assertTrue(torch.equal(metadata.seq_lens, seq_lens[:4]))
+        self.assertTrue(
+            torch.equal(
+                metadata.seq_lens_cpu,
+                seq_lens[:4].to(device="cpu", dtype=torch.int32),
+            )
         )
-        self.assertEqual(metadata.seq_lens.data_ptr(), seq_lens[:4].data_ptr())
 
         # Update the underlying tensors to mimic runtime padding updates
         req_pool_indices[:] = torch.tensor([4, 5, 6, 7], dtype=torch.int32)
@@ -93,6 +98,12 @@ class TorchNativeCudaGraphMetadataTest(unittest.TestCase):
         metadata = backend.forward_metadata
         self.assertTrue(torch.equal(metadata.req_pool_indices, req_pool_indices[:4]))
         self.assertTrue(torch.equal(metadata.seq_lens, seq_lens[:4]))
+        self.assertTrue(
+            torch.equal(
+                metadata.seq_lens_cpu,
+                seq_lens[:4].to(device="cpu", dtype=torch.int32),
+            )
+        )
 
     def test_unsupported_forward_modes(self):
         backend = self.backend
@@ -135,6 +146,100 @@ class TorchNativeCudaGraphMetadataTest(unittest.TestCase):
                 spec_info=None,
                 seq_lens_cpu=None,
             )
+
+
+class TorchNativeSdpaDecodeTest(unittest.TestCase):
+    def setUp(self):
+        self.backend = TorchNativeAttnBackend(SimpleNamespace(device="cpu"))
+
+    def _reference_decode(
+        self,
+        query,
+        k_cache,
+        v_cache,
+        req_to_token,
+        req_pool_indices,
+        seq_lens,
+        scaling=None,
+        enable_gqa=False,
+        causal=False,
+    ):
+        num_tokens, num_heads, head_dim = query.shape
+        output = torch.zeros_like(query)
+
+        query_permute = query.movedim(0, 1)
+
+        for seq_idx, seq_len in enumerate(seq_lens.tolist()):
+            seq_len = int(seq_len)
+            if seq_len <= 0:
+                continue
+            per_req_query = query_permute[:, seq_idx : seq_idx + 1, :]
+            per_req_tokens = req_to_token[req_pool_indices[seq_idx], :seq_len]
+            per_req_key = k_cache[per_req_tokens].movedim(0, 1)
+            per_req_value = v_cache[per_req_tokens].movedim(0, 1)
+
+            attn = (
+                scaled_dot_product_attention(
+                    per_req_query.unsqueeze(0),
+                    per_req_key.unsqueeze(0),
+                    per_req_value.unsqueeze(0),
+                    enable_gqa=enable_gqa,
+                    scale=scaling,
+                    is_causal=causal,
+                )
+                .squeeze(0)
+                .movedim(0, 1)
+            )
+            output[seq_idx : seq_idx + 1] = attn
+        return output
+
+    def test_decode_matches_reference(self):
+        torch.manual_seed(0)
+        device = torch.device("cpu")
+
+        batch = 4
+        max_ctx = 6
+        num_heads = 3
+        head_dim = 5
+
+        query = torch.randn(batch, num_heads, head_dim, device=device, dtype=torch.float32)
+        output = torch.empty_like(query)
+        k_cache = torch.randn(max_ctx * batch, num_heads, head_dim, device=device, dtype=torch.float32)
+        v_cache = torch.randn_like(k_cache)
+
+        req_to_token = torch.arange(
+            0, max_ctx * batch, device=device, dtype=torch.int32
+        ).view(batch, max_ctx)
+        req_pool_indices = torch.arange(batch, device=device, dtype=torch.int32)
+
+        seq_lens = torch.tensor([0, 1, 3, max_ctx], dtype=torch.int32, device=device)
+
+        expected = self._reference_decode(
+            query,
+            k_cache,
+            v_cache,
+            req_to_token,
+            req_pool_indices,
+            seq_lens,
+            scaling=None,
+            enable_gqa=False,
+            causal=False,
+        )
+
+        self.backend._run_sdpa_forward_decode(
+            query.clone(),
+            output,
+            k_cache,
+            v_cache,
+            req_to_token,
+            req_pool_indices,
+            seq_lens,
+            scaling=None,
+            enable_gqa=False,
+            causal=False,
+        )
+
+        self.assertTrue(torch.allclose(output, expected, atol=1e-5, rtol=1e-4))
 
 
 if __name__ == "__main__":
