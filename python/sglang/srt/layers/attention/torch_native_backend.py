@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, Optional
 
@@ -34,6 +35,9 @@ class TorchNativeAttnBackend(AttentionBackend):
         self.device = model_runner.device
         self._graph_metadata: Dict[int, ForwardMetadata] = {}
         self._max_cuda_graph_bs = 0
+        self._decode_chunk_size = 256
+        self._chunk_token_buffer = None
+        self._chunk_position = None
 
     @staticmethod
     def _to_cpu_tensor(data: Optional[torch.Tensor], *, dtype=torch.int32):
@@ -85,6 +89,18 @@ class TorchNativeAttnBackend(AttentionBackend):
         )  # Unused but kept for signature compatibility
         self._graph_metadata.clear()
         self._max_cuda_graph_bs = max_bs
+        if max_bs > 0:
+            with torch.device(self.device):
+                self._chunk_token_buffer = torch.zeros(
+                    (max_bs, self._decode_chunk_size),
+                    dtype=torch.int32,
+                    device=self.device,
+                )
+                self._chunk_position = torch.arange(
+                    self._decode_chunk_size,
+                    device=self.device,
+                    dtype=torch.int32,
+                )
 
     def init_forward_metadata_capture_cuda_graph(
         self,
@@ -342,26 +358,15 @@ class TorchNativeAttnBackend(AttentionBackend):
             output: [num_tokens, num_heads, head_size]
         """
 
-        metadata = self.forward_metadata
-        seq_lens_cpu = metadata.seq_lens_cpu if metadata is not None else None
-        req_pool_indices_cpu = (
-            metadata.req_pool_indices_cpu if metadata is not None else None
+        if self._chunk_token_buffer is None or self._chunk_position is None:
+            raise RuntimeError("CUDA graph buffers are not initialized for torch native backend decode path.")
+
+        seq_lens_device = (
+            seq_lens
+            if seq_lens.device == req_to_token.device
+            else seq_lens.to(device=req_to_token.device)
         )
-
-        if seq_lens_cpu is None:
-            seq_lens_cpu = self._to_cpu_tensor(seq_lens)
-        if req_pool_indices_cpu is None:
-            req_pool_indices_cpu = self._to_cpu_tensor(req_pool_indices)
-
-        if isinstance(seq_lens_cpu, torch.Tensor):
-            seq_lens_list = seq_lens_cpu.tolist()
-        else:
-            seq_lens_list = list(seq_lens_cpu)
-
-        if isinstance(req_pool_indices_cpu, torch.Tensor):
-            req_pool_indices_list = req_pool_indices_cpu.tolist()
-        else:
-            req_pool_indices_list = list(req_pool_indices_cpu)
+        seq_lens_device = seq_lens_device.to(dtype=torch.int32)
 
         req_pool_indices_device = (
             req_pool_indices
@@ -373,50 +378,135 @@ class TorchNativeAttnBackend(AttentionBackend):
 
         req_to_token_rows = torch.index_select(req_to_token, 0, req_pool_indices_device)
 
-        # [num_tokens, num_heads, head_size] -> [num_heads, num_tokens, head_size]
-        query = query.movedim(0, query.dim() - 2)
+        batch_size = query.shape[0]
+        num_q_heads = query.shape[1]
+        head_dim = query.shape[2]
+        num_k_heads = k_cache.shape[1]
+        group_size = num_q_heads // num_k_heads if enable_gqa else 1
 
-        start_q = 0
-        for seq_idx, seq_len_kv in enumerate(seq_lens_list):
-            seq_len_kv = int(seq_len_kv)
-            per_req_query = query[:, start_q : start_q + 1, :]
+        query_fp32 = query.to(dtype=torch.float32)
+        output_fp32 = torch.zeros_like(query_fp32, dtype=torch.float32)
+        max_logit = torch.full(
+            (batch_size, num_q_heads, 1),
+            float("-inf"),
+            dtype=torch.float32,
+            device=query.device,
+        )
+        exp_sum = torch.zeros(
+            (batch_size, num_q_heads, 1),
+            dtype=torch.float32,
+            device=query.device,
+        )
+        value_accum = torch.zeros_like(query_fp32, dtype=torch.float32)
 
-            if seq_len_kv <= 0:
-                output[start_q : start_q + 1].zero_()
-                start_q += 1
-                continue
-
-            req_pool_idx = int(req_pool_indices_list[seq_idx])
-            if req_pool_idx < 0:
-                output[start_q : start_q + 1].zero_()
-                start_q += 1
-                continue
-
-            per_req_tokens = req_to_token_rows[seq_idx, :seq_len_kv]
-            if per_req_tokens.numel() == 0:
-                output[start_q : start_q + 1].zero_()
-                start_q += 1
-                continue
-
-            per_req_tokens = per_req_tokens.to(dtype=torch.long)
-            per_req_key = k_cache.index_select(0, per_req_tokens).movedim(0, query.dim() - 2)
-            per_req_value = v_cache.index_select(0, per_req_tokens).movedim(0, query.dim() - 2)
-
-            per_req_out = (
-                scaled_dot_product_attention(
-                    per_req_query.unsqueeze(0),
-                    per_req_key.unsqueeze(0),
-                    per_req_value.unsqueeze(0),
-                    enable_gqa=enable_gqa,
-                    scale=scaling,
-                    is_causal=causal,
-                )
-                .squeeze(0)
-                .movedim(query.dim() - 2, 0)
+        chunk_size = self._decode_chunk_size
+        max_context_len = req_to_token_rows.shape[1]
+        chunk_count = math.ceil(max_context_len / chunk_size) if max_context_len > 0 else 0
+        neg_inf = torch.finfo(torch.float32).min
+        if scaling is None:
+            scale_tensor = None
+        elif isinstance(scaling, torch.Tensor):
+            scale_tensor = scaling.to(dtype=torch.float32, device=query.device)
+        else:
+            scale_tensor = torch.tensor(
+                float(scaling), dtype=torch.float32, device=query.device
             )
 
-            output[start_q : start_q + 1, :, :] = per_req_out
-            start_q += 1
+        chunk_position = self._chunk_position
+
+        for chunk_idx in range(chunk_count):
+            chunk_start = chunk_idx * chunk_size
+            chunk_end = min(chunk_start + chunk_size, max_context_len)
+            chunk_width = chunk_end - chunk_start
+            if chunk_width <= 0:
+                break
+
+            if chunk_width == chunk_size:
+                chunk_tokens = req_to_token_rows[:, chunk_start:chunk_end]
+            else:
+                chunk_tokens = self._chunk_token_buffer[:batch_size]
+                chunk_tokens[:, :chunk_width] = req_to_token_rows[:, chunk_start:chunk_end]
+                if chunk_width < chunk_size:
+                    chunk_tokens[:, chunk_width:] = 0
+
+            token_positions = chunk_position + chunk_start
+            valid_mask = token_positions.view(1, -1) < seq_lens_device.view(batch_size, 1)
+            if chunk_width < chunk_size:
+                valid_mask[:, chunk_width:] = False
+
+            flat_tokens = chunk_tokens.reshape(-1).to(dtype=torch.long)
+
+            key_chunk = k_cache.index_select(0, flat_tokens)
+            value_chunk = v_cache.index_select(0, flat_tokens)
+
+            key_chunk = key_chunk.view(batch_size, chunk_size, num_k_heads, head_dim).permute(0, 2, 1, 3)
+            value_chunk = value_chunk.view(batch_size, chunk_size, num_k_heads, head_dim).permute(0, 2, 1, 3)
+
+            invalid_mask = (~valid_mask).unsqueeze(1).unsqueeze(-1)
+            key_chunk = key_chunk.masked_fill(invalid_mask, 0)
+            value_chunk = value_chunk.masked_fill(invalid_mask, 0)
+
+            if enable_gqa and group_size > 1:
+                key_chunk = key_chunk.repeat_interleave(group_size, dim=1)
+                value_chunk = value_chunk.repeat_interleave(group_size, dim=1)
+
+            key_chunk_fp32 = key_chunk.to(dtype=torch.float32)
+            value_chunk_fp32 = value_chunk.to(dtype=torch.float32)
+
+            q_chunk = query_fp32.unsqueeze(2)
+            scores = torch.matmul(q_chunk, key_chunk_fp32.transpose(-1, -2)).squeeze(2)
+            if scale_tensor is not None:
+                scores = scores * scale_tensor
+
+            scores = scores.masked_fill(~valid_mask.unsqueeze(1), neg_inf)
+
+            chunk_max = scores.max(dim=-1, keepdim=True).values
+            has_chunk = valid_mask.any(dim=-1, keepdim=True)
+            chunk_max = torch.where(has_chunk, chunk_max, torch.full_like(chunk_max, neg_inf))
+
+            new_max = torch.maximum(max_logit, chunk_max)
+            safe_new_max = torch.where(
+                torch.isfinite(new_max),
+                new_max,
+                torch.zeros_like(new_max),
+            )
+            safe_max_logit = torch.where(
+                torch.isfinite(max_logit),
+                max_logit,
+                torch.zeros_like(max_logit),
+            )
+
+            exp_prev_factor = torch.where(
+                torch.isfinite(max_logit),
+                torch.exp(safe_max_logit - safe_new_max),
+                torch.zeros_like(max_logit),
+            )
+
+            exp_chunk = torch.exp(scores - safe_new_max)
+            exp_chunk = exp_chunk * valid_mask.unsqueeze(1)
+
+            exp_sum = exp_prev_factor * exp_sum + exp_chunk.sum(dim=-1, keepdim=True)
+
+            value_prev_factor = exp_prev_factor
+            value_chunk_contrib = torch.matmul(
+                exp_chunk.unsqueeze(-2), value_chunk_fp32
+            ).squeeze(-2)
+            value_accum = value_prev_factor * value_accum + value_chunk_contrib
+
+            max_logit = torch.where(torch.isfinite(new_max), new_max, max_logit)
+
+        denom = exp_sum
+        output_fp32 = torch.where(
+            denom > 0,
+            value_accum / denom,
+            torch.zeros_like(value_accum),
+        )
+
+        output.copy_(output_fp32.to(dtype=output.dtype))
+
+        zero_seq_mask = seq_lens_device <= 0
+        if zero_seq_mask.any():
+            output[zero_seq_mask] = 0
 
         return output
 
