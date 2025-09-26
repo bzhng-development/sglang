@@ -403,14 +403,11 @@ class TorchNativeAttnBackend(AttentionBackend):
         max_context_len = req_to_token_rows.shape[1]
         chunk_count = math.ceil(max_context_len / chunk_size) if max_context_len > 0 else 0
         neg_inf = torch.finfo(torch.float32).min
+        scale_value: Optional[float]
         if scaling is None:
-            scale_tensor = None
-        elif isinstance(scaling, torch.Tensor):
-            scale_tensor = scaling.to(dtype=torch.float32, device=query.device)
+            scale_value = None
         else:
-            scale_tensor = torch.tensor(
-                float(scaling), dtype=torch.float32, device=query.device
-            )
+            scale_value = float(scaling)
 
         chunk_position = self._chunk_position
 
@@ -455,8 +452,8 @@ class TorchNativeAttnBackend(AttentionBackend):
 
             q_chunk = query_fp32.unsqueeze(2)
             scores = torch.matmul(q_chunk, key_chunk_fp32.transpose(-1, -2)).squeeze(2)
-            if scale_tensor is not None:
-                scores = scores * scale_tensor
+            if scale_value is not None:
+                scores = scores * scale_value
 
             scores = scores.masked_fill(~valid_mask.unsqueeze(1), neg_inf)
 
