@@ -21,6 +21,10 @@ class ForwardMetadata:
     seq_lens: torch.Tensor
     extend_prefix_lens: Optional[torch.Tensor] = None
     extend_seq_lens: Optional[torch.Tensor] = None
+    req_pool_indices_cpu: Optional[torch.Tensor] = None
+    seq_lens_cpu: Optional[torch.Tensor] = None
+    extend_prefix_lens_cpu: Optional[torch.Tensor] = None
+    extend_seq_lens_cpu: Optional[torch.Tensor] = None
 
 
 class TorchNativeAttnBackend(AttentionBackend):
@@ -31,13 +35,40 @@ class TorchNativeAttnBackend(AttentionBackend):
         self._graph_metadata: Dict[int, ForwardMetadata] = {}
         self._max_cuda_graph_bs = 0
 
+    @staticmethod
+    def _to_cpu_tensor(data: Optional[torch.Tensor], *, dtype=torch.int32):
+        if data is None:
+            return None
+        if isinstance(data, torch.Tensor):
+            return data.detach().to(device="cpu", dtype=dtype)
+        return torch.tensor(data, dtype=dtype)
+
     def init_forward_metadata(self, forward_batch: ForwardBatch):
         """Init the metadata for a forward pass."""
+        seq_lens_cpu_src = (
+            forward_batch.seq_lens_cpu
+            if forward_batch.seq_lens_cpu is not None
+            else forward_batch.seq_lens
+        )
+        extend_prefix_cpu_src = (
+            forward_batch.extend_prefix_lens_cpu
+            if forward_batch.extend_prefix_lens_cpu is not None
+            else forward_batch.extend_prefix_lens
+        )
+        extend_seq_cpu_src = (
+            forward_batch.extend_seq_lens_cpu
+            if forward_batch.extend_seq_lens_cpu is not None
+            else forward_batch.extend_seq_lens
+        )
         self.forward_metadata = ForwardMetadata(
             req_pool_indices=forward_batch.req_pool_indices,
             seq_lens=forward_batch.seq_lens,
             extend_prefix_lens=forward_batch.extend_prefix_lens,
             extend_seq_lens=forward_batch.extend_seq_lens,
+            req_pool_indices_cpu=self._to_cpu_tensor(forward_batch.req_pool_indices),
+            seq_lens_cpu=self._to_cpu_tensor(seq_lens_cpu_src),
+            extend_prefix_lens_cpu=self._to_cpu_tensor(extend_prefix_cpu_src),
+            extend_seq_lens_cpu=self._to_cpu_tensor(extend_seq_cpu_src),
         )
 
     # NOTE: The optional ``kv_indices_buf`` argument is accepted for API parity
@@ -78,6 +109,8 @@ class TorchNativeAttnBackend(AttentionBackend):
         metadata = ForwardMetadata(
             req_pool_indices=req_pool_indices[:bs],
             seq_lens=seq_lens[:bs],
+            req_pool_indices_cpu=self._to_cpu_tensor(req_pool_indices[:bs]),
+            seq_lens_cpu=self._to_cpu_tensor(seq_lens[:bs]),
         )
         self._graph_metadata[bs] = metadata
         self.forward_metadata = metadata
@@ -93,11 +126,8 @@ class TorchNativeAttnBackend(AttentionBackend):
         spec_info,
         seq_lens_cpu: Optional[torch.Tensor],
     ):
-        del (
-            seq_lens_sum,
-            encoder_lens,
-            seq_lens_cpu,
-        )  # Not required for torch native backend
+        del seq_lens_sum
+        del encoder_lens
         if not forward_mode.is_decode_or_idle():
             raise NotImplementedError(
                 "TorchNativeAttnBackend only supports CUDA graph replay for decode/idle modes."
@@ -112,11 +142,18 @@ class TorchNativeAttnBackend(AttentionBackend):
             metadata = ForwardMetadata(
                 req_pool_indices=req_pool_indices[:bs],
                 seq_lens=seq_lens[:bs],
+                req_pool_indices_cpu=self._to_cpu_tensor(req_pool_indices[:bs]),
+                seq_lens_cpu=self._to_cpu_tensor(seq_lens[:bs]),
             )
             self._graph_metadata[bs] = metadata
         else:
             metadata.req_pool_indices = req_pool_indices[:bs]
             metadata.seq_lens = seq_lens[:bs]
+            metadata.req_pool_indices_cpu = self._to_cpu_tensor(req_pool_indices[:bs])
+            if seq_lens_cpu is not None:
+                metadata.seq_lens_cpu = self._to_cpu_tensor(seq_lens_cpu[:bs])
+            else:
+                metadata.seq_lens_cpu = self._to_cpu_tensor(seq_lens[:bs])
 
         self.forward_metadata = metadata
 
@@ -161,20 +198,85 @@ class TorchNativeAttnBackend(AttentionBackend):
         assert seq_lens.shape[0] == extend_prefix_lens.shape[0]
         assert seq_lens.shape[0] == extend_seq_lens.shape[0]
 
+        metadata = self.forward_metadata
+        seq_lens_cpu = metadata.seq_lens_cpu if metadata is not None else None
+        extend_prefix_lens_cpu = (
+            metadata.extend_prefix_lens_cpu
+            if metadata is not None and metadata.extend_prefix_lens_cpu is not None
+            else None
+        )
+        extend_seq_lens_cpu = (
+            metadata.extend_seq_lens_cpu
+            if metadata is not None and metadata.extend_seq_lens_cpu is not None
+            else None
+        )
+
+        if seq_lens_cpu is None:
+            seq_lens_cpu = self._to_cpu_tensor(seq_lens)
+        if extend_prefix_lens_cpu is None:
+            extend_prefix_lens_cpu = self._to_cpu_tensor(extend_prefix_lens)
+        if extend_seq_lens_cpu is None:
+            extend_seq_lens_cpu = self._to_cpu_tensor(extend_seq_lens)
+        if extend_prefix_lens_cpu is None or extend_seq_lens_cpu is None:
+            raise RuntimeError(
+                "Extend metadata is unavailable for torch native backend."
+            )
+
+        seq_lens_list = (
+            seq_lens_cpu.tolist()
+            if isinstance(seq_lens_cpu, torch.Tensor)
+            else list(seq_lens_cpu)
+        )
+        extend_prefix_list = (
+            extend_prefix_lens_cpu.tolist()
+            if isinstance(extend_prefix_lens_cpu, torch.Tensor)
+            else list(extend_prefix_lens_cpu)
+        )
+        extend_seq_list = (
+            extend_seq_lens_cpu.tolist()
+            if isinstance(extend_seq_lens_cpu, torch.Tensor)
+            else list(extend_seq_lens_cpu)
+        )
+
+        if not (len(seq_lens_list) == len(extend_prefix_list) == len(extend_seq_list)):
+            raise RuntimeError(
+                "Mismatched extend metadata lengths for torch native backend."
+            )
+
+        req_pool_indices_device = (
+            req_pool_indices
+            if req_pool_indices.device == req_to_token.device
+            else req_pool_indices.to(device=req_to_token.device)
+        )
+        if req_pool_indices_device.dtype != torch.long:
+            req_pool_indices_device = req_pool_indices_device.to(dtype=torch.long)
+        req_to_token_rows = torch.index_select(req_to_token, 0, req_pool_indices_device)
+
+        if req_to_token_rows.size(0) != len(seq_lens_list):
+            raise RuntimeError(
+                "Sequence metadata and req_to_token rows have different lengths."
+            )
+
+        if len(seq_lens_list) != req_to_token_rows.size(0):
+            raise RuntimeError(
+                "Sequence length metadata mismatch with req_to_token rows for torch native backend."
+            )
+
         # [num_tokens, num_heads, head_size] -> [num_heads, num_tokens, head_size]
         query = query.movedim(0, query.dim() - 2)
 
-        start_q, start_kv = 0, 0
-        for seq_idx in range(seq_lens.shape[0]):
-            # TODO: this loop process a sequence per iter, this is inefficient.
-            # Need optimize the performance later.
+        start_q = 0
+        for seq_idx, (seq_len_kv, extend_seq_len_q, prefill_seq_len_q) in enumerate(
+            zip(seq_lens_list, extend_seq_list, extend_prefix_list)
+        ):
+            seq_len_kv = int(seq_len_kv)
+            extend_seq_len_q = int(extend_seq_len_q)
+            prefill_seq_len_q = int(prefill_seq_len_q)
 
-            extend_seq_len_q = extend_seq_lens[seq_idx]
-            prefill_seq_len_q = extend_prefix_lens[seq_idx]
+            if extend_seq_len_q == 0:
+                continue
 
-            seq_len_kv = seq_lens[seq_idx]
             end_q = start_q + extend_seq_len_q
-            end_kv = start_kv + seq_len_kv
 
             per_req_query = query[:, start_q:end_q, :]
             per_req_query_redudant = torch.empty(
@@ -182,13 +284,10 @@ class TorchNativeAttnBackend(AttentionBackend):
                 dtype=per_req_query.dtype,
                 device=per_req_query.device,
             )
-
+            per_req_query_redudant.zero_()
             per_req_query_redudant[:, prefill_seq_len_q:, :] = per_req_query
 
-            # get key and value from cache. per_req_tokens contains the kv cache
-            # index for each token in the sequence.
-            req_pool_idx = req_pool_indices[seq_idx]
-            per_req_tokens = req_to_token[req_pool_idx, :seq_len_kv]
+            per_req_tokens = req_to_token_rows[seq_idx, :seq_len_kv]
             per_req_key = k_cache[per_req_tokens].movedim(0, query.dim() - 2)
             per_req_value = v_cache[per_req_tokens].movedim(0, query.dim() - 2)
 
@@ -205,7 +304,7 @@ class TorchNativeAttnBackend(AttentionBackend):
                 .movedim(query.dim() - 2, 0)
             )
             output[start_q:end_q, :, :] = per_req_out_redudant[prefill_seq_len_q:, :, :]
-            start_q, start_kv = end_q, end_kv
+            start_q = end_q
         return output
 
     def _run_sdpa_forward_decode(
@@ -239,25 +338,38 @@ class TorchNativeAttnBackend(AttentionBackend):
             output: [num_tokens, num_heads, head_size]
         """
 
+        metadata = self.forward_metadata
+        seq_lens_cpu = metadata.seq_lens_cpu if metadata is not None else None
+        if seq_lens_cpu is None:
+            seq_lens_cpu = self._to_cpu_tensor(seq_lens)
+        seq_lens_list = (
+            seq_lens_cpu.tolist()
+            if isinstance(seq_lens_cpu, torch.Tensor)
+            else list(seq_lens_cpu)
+        )
+
+        req_pool_indices_device = (
+            req_pool_indices
+            if req_pool_indices.device == req_to_token.device
+            else req_pool_indices.to(device=req_to_token.device)
+        )
+        if req_pool_indices_device.dtype != torch.long:
+            req_pool_indices_device = req_pool_indices_device.to(dtype=torch.long)
+        req_to_token_rows = torch.index_select(req_to_token, 0, req_pool_indices_device)
+
         # [num_tokens, num_heads, head_size] -> [num_heads, num_tokens, head_size]
         query = query.movedim(0, query.dim() - 2)
 
-        start_q, start_kv = 0, 0
-        for seq_idx in range(seq_lens.shape[0]):
-            # TODO: this loop process a sequence per iter, this is inefficient.
-            # Need optimize the performance later.
+        start_q = 0
+        for seq_idx, seq_len_kv in enumerate(seq_lens_list):
+            seq_len_kv = int(seq_len_kv)
+            if seq_len_kv <= 0:
+                continue
 
-            seq_len_q = 1
-            seq_len_kv = seq_lens[seq_idx]
-            end_q = start_q + seq_len_q
-            end_kv = start_kv + seq_len_kv
-
+            end_q = start_q + 1
             per_req_query = query[:, start_q:end_q, :]
 
-            # get key and value from cache. per_req_tokens contains the kv cache
-            # index for each token in the sequence.
-            req_pool_idx = req_pool_indices[seq_idx]
-            per_req_tokens = req_to_token[req_pool_idx, :seq_len_kv]
+            per_req_tokens = req_to_token_rows[seq_idx, :seq_len_kv]
             per_req_key = k_cache[per_req_tokens].movedim(0, query.dim() - 2)
             per_req_value = v_cache[per_req_tokens].movedim(0, query.dim() - 2)
 
@@ -274,7 +386,7 @@ class TorchNativeAttnBackend(AttentionBackend):
                 .movedim(query.dim() - 2, 0)
             )
             output[start_q:end_q, :, :] = per_req_out
-            start_q, start_kv = end_q, end_kv
+            start_q = end_q
 
         return output
 
