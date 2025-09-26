@@ -343,83 +343,80 @@ class TorchNativeAttnBackend(AttentionBackend):
         """
 
         metadata = self.forward_metadata
-        seq_lens_device = (
-            metadata.seq_lens if metadata is not None and metadata.seq_lens is not None else seq_lens
+        seq_lens_cpu = metadata.seq_lens_cpu if metadata is not None else None
+        req_pool_indices_cpu = (
+            metadata.req_pool_indices_cpu if metadata is not None else None
         )
 
-        if seq_lens_device.device != req_to_token.device:
-            seq_lens_device = seq_lens_device.to(device=req_to_token.device)
+        if seq_lens_cpu is None:
+            seq_lens_cpu = self._to_cpu_tensor(seq_lens)
+        if req_pool_indices_cpu is None:
+            req_pool_indices_cpu = self._to_cpu_tensor(req_pool_indices)
 
-        seq_lens_device = seq_lens_device.to(dtype=torch.int64)
-
-        if req_pool_indices.device != req_to_token.device:
-            req_pool_indices_device = req_pool_indices.to(device=req_to_token.device)
+        if isinstance(seq_lens_cpu, torch.Tensor):
+            seq_lens_list = seq_lens_cpu.tolist()
         else:
-            req_pool_indices_device = req_pool_indices
+            seq_lens_list = list(seq_lens_cpu)
 
+        if isinstance(req_pool_indices_cpu, torch.Tensor):
+            req_pool_indices_list = req_pool_indices_cpu.tolist()
+        else:
+            req_pool_indices_list = list(req_pool_indices_cpu)
+
+        req_pool_indices_device = (
+            req_pool_indices
+            if req_pool_indices.device == req_to_token.device
+            else req_pool_indices.to(device=req_to_token.device)
+        )
         if req_pool_indices_device.dtype != torch.long:
             req_pool_indices_device = req_pool_indices_device.to(dtype=torch.long)
 
         req_to_token_rows = torch.index_select(req_to_token, 0, req_pool_indices_device)
-        batch_size, max_kv_len = req_to_token_rows.shape
 
-        if batch_size == 0:
-            return output
+        # [num_tokens, num_heads, head_size] -> [num_heads, num_tokens, head_size]
+        query = query.movedim(0, query.dim() - 2)
 
-        # Build an attention mask that marks tokens beyond the current KV sequence length as invalid.
-        position_ids = torch.arange(
-            max_kv_len, device=req_to_token_rows.device, dtype=seq_lens_device.dtype
-        )
-        valid_mask = position_ids.unsqueeze(0) < seq_lens_device.unsqueeze(1)
-        valid_mask = torch.where(
-            seq_lens_device.unsqueeze(1) > 0,
-            valid_mask,
-            torch.zeros_like(valid_mask, dtype=torch.bool),
-        )
+        start_q = 0
+        for seq_idx, seq_len_kv in enumerate(seq_lens_list):
+            seq_len_kv = int(seq_len_kv)
+            per_req_query = query[:, start_q : start_q + 1, :]
 
-        # Replace invalid token positions with a safe index (0) before gathering.
-        safe_req_to_token_rows = torch.where(
-            valid_mask,
-            req_to_token_rows,
-            torch.zeros_like(req_to_token_rows),
-        )
+            if seq_len_kv <= 0:
+                output[start_q : start_q + 1].zero_()
+                start_q += 1
+                continue
 
-        flat_tokens = safe_req_to_token_rows.reshape(-1).to(dtype=torch.long)
+            req_pool_idx = int(req_pool_indices_list[seq_idx])
+            if req_pool_idx < 0:
+                output[start_q : start_q + 1].zero_()
+                start_q += 1
+                continue
 
-        gathered_key = k_cache.index_select(0, flat_tokens)
-        gathered_value = v_cache.index_select(0, flat_tokens)
+            per_req_tokens = req_to_token_rows[seq_idx, :seq_len_kv]
+            if per_req_tokens.numel() == 0:
+                output[start_q : start_q + 1].zero_()
+                start_q += 1
+                continue
 
-        num_heads = gathered_key.shape[1]
-        head_dim = gathered_key.shape[2]
+            per_req_tokens = per_req_tokens.to(dtype=torch.long)
+            per_req_key = k_cache.index_select(0, per_req_tokens).movedim(0, query.dim() - 2)
+            per_req_value = v_cache.index_select(0, per_req_tokens).movedim(0, query.dim() - 2)
 
-        key = gathered_key.view(batch_size, max_kv_len, num_heads, head_dim).permute(0, 2, 1, 3)
-        value = gathered_value.view(batch_size, max_kv_len, num_heads, head_dim).permute(0, 2, 1, 3)
+            per_req_out = (
+                scaled_dot_product_attention(
+                    per_req_query.unsqueeze(0),
+                    per_req_key.unsqueeze(0),
+                    per_req_value.unsqueeze(0),
+                    enable_gqa=enable_gqa,
+                    scale=scaling,
+                    is_causal=causal,
+                )
+                .squeeze(0)
+                .movedim(query.dim() - 2, 0)
+            )
 
-        # Zero out padded positions to avoid propagating stale values when masks are applied.
-        padded_mask = (~valid_mask).unsqueeze(1).unsqueeze(-1)
-        key = key.masked_fill(padded_mask, 0)
-        value = value.masked_fill(padded_mask, 0)
-
-        attn_mask = (~valid_mask).unsqueeze(1)
-
-        query = query.view(batch_size, num_heads, head_dim).unsqueeze(2)
-
-        attn_out = scaled_dot_product_attention(
-            query,
-            key,
-            value,
-            attn_mask=attn_mask,
-            enable_gqa=enable_gqa,
-            scale=scaling,
-            is_causal=causal,
-        ).squeeze(2)
-
-        output.copy_(attn_out)
-
-        # For sequences with zero kv length, produce zeros explicitly to avoid NaNs from masked rows.
-        zero_length_mask = seq_lens_device <= 0
-        if zero_length_mask.any():
-            output[zero_length_mask] = 0
+            output[start_q : start_q + 1, :, :] = per_req_out
+            start_q += 1
 
         return output
 
