@@ -461,7 +461,7 @@ class TorchNativeAttnBackend(AttentionBackend):
             scores = scores.masked_fill(~valid_mask.unsqueeze(1), neg_inf)
 
             chunk_max = scores.max(dim=-1, keepdim=True).values
-            has_chunk = valid_mask.any(dim=-1, keepdim=True)
+            has_chunk = valid_mask.any(dim=-1, keepdim=True).unsqueeze(1)
             chunk_max = torch.where(has_chunk, chunk_max, torch.full_like(chunk_max, neg_inf))
 
             new_max = torch.maximum(max_logit, chunk_max)
