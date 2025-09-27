@@ -147,6 +147,9 @@ class SchedulerStats:
     num_running_reqs_offline_batch: int = 0
     avg_request_queue_latency: float = 0.0
     cache_hit_rate: float = 0.0
+    preempted_requests: int = 0
+    preempted_queries: int = 0
+    preempted_hits: int = 0
 
     # Speculative decoding
     spec_accept_length: float = 0.0
@@ -239,6 +242,24 @@ class SchedulerMetricsCollector:
         self.cache_hit_rate = Gauge(
             name="sglang:cache_hit_rate",
             documentation="The prefix cache hit rate.",
+            labelnames=labels.keys(),
+            multiprocess_mode="mostrecent",
+        )
+        self.preempted_requests = Gauge(
+            name="sglang:preempted_requests",
+            documentation="Running requests preempted in the last prefill batch.",
+            labelnames=labels.keys(),
+            multiprocess_mode="mostrecent",
+        )
+        self.preempted_queries = Gauge(
+            name="sglang:preempted_queries",
+            documentation="Tokens reclaimed from preempted requests in the last prefill batch.",
+            labelnames=labels.keys(),
+            multiprocess_mode="mostrecent",
+        )
+        self.preempted_hits = Gauge(
+            name="sglang:preempted_hits",
+            documentation="Matched prefix tokens associated with those preempted requests.",
             labelnames=labels.keys(),
             multiprocess_mode="mostrecent",
         )
@@ -550,6 +571,9 @@ class SchedulerMetricsCollector:
             self.num_running_reqs_offline_batch, stats.num_running_reqs_offline_batch
         )
         self._log_gauge(self.cache_hit_rate, stats.cache_hit_rate)
+        self._log_gauge(self.preempted_requests, stats.preempted_requests)
+        self._log_gauge(self.preempted_queries, stats.preempted_queries)
+        self._log_gauge(self.preempted_hits, stats.preempted_hits)
         self._log_gauge(self.avg_request_queue_latency, stats.avg_request_queue_latency)
 
         # Speculative decoding

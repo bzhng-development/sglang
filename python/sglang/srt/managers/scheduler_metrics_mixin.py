@@ -115,6 +115,7 @@ class SchedulerMetricsMixin:
             f"#new-seq: {num_new_seq}, "
             f"#new-token: {adder.log_input_tokens}, "
             f"#cached-token: {adder.log_hit_tokens}, "
+            f"#preempted-req: {adder.preempted_requests}, "
             f"{token_msg}"
         )
 
@@ -140,6 +141,9 @@ class SchedulerMetricsMixin:
             self.stats.token_usage = round(token_usage, 2)
             self.stats.num_queue_reqs = len(self.waiting_queue)
             self.stats.cache_hit_rate = cache_hit_rate
+            self.stats.preempted_requests = adder.preempted_requests
+            self.stats.preempted_queries = adder.preempted_queries
+            self.stats.preempted_hits = adder.preempted_hits
 
             total_queue_latency = 0
             for req in can_run_list:

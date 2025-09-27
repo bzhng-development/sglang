@@ -341,6 +341,9 @@ class PrefillAdder:
         self.log_hit_tokens = 0
         # TODO(lsyin): report the real input tokens excluding page alignment
         self.log_input_tokens = 0
+        self.preempted_requests = 0
+        self.preempted_queries = 0
+        self.preempted_hits = 0
 
         if running_batch is not None:
             self.rem_total_token_offset += sum(
@@ -678,6 +681,14 @@ class PrefillAdder:
         release_counter = 0
         for i, running_req in enumerate(self.running_batch.reqs):
             if running_req in preemptible_reqs:
+                self.preempted_requests += 1
+                self.preempted_queries += int(running_req.extend_input_len or 0)
+                prefix_len = (
+                    len(running_req.prefix_indices)
+                    if running_req.prefix_indices is not None
+                    else 0
+                )
+                self.preempted_hits += prefix_len
                 self.rem_total_token_offset -= (
                     self._get_running_request_total_token_offset(req)
                 )
