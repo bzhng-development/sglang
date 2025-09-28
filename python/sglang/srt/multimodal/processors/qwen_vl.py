@@ -70,22 +70,16 @@ def smart_resize(
 
 
 def resize_image(
-    image,
-    min_pixels: int = MIN_PIXELS,
-    max_pixels: int = MAX_PIXELS,
-    size_factor: int = IMAGE_FACTOR,
+    image: Image.Image,
+    min_pixels: int,
+    max_pixels: int,
+    size_factor: int,
 ) -> Image.Image:
     width, height = image.size
-    min_pixels = min_pixels
-    max_pixels = max_pixels
     resized_height, resized_width = smart_resize(
-        height,
-        width,
-        factor=size_factor,
-        min_pixels=min_pixels,
-        max_pixels=max_pixels,
+        height, width, factor=size_factor, min_pixels=min_pixels, max_pixels=max_pixels
     )
-    image = image.resize((resized_width, resized_height))
+    image = image.resize((resized_width, resized_height), resample=Image.BICUBIC)
     return image
 
 
