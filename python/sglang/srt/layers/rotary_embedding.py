@@ -1218,7 +1218,6 @@ class MRotaryEmbedding(RotaryEmbedding):
         """
         assert positions.ndim == 1 or positions.ndim == 2
 
-        # Use Triton kernel for multimodal M-RoPE if available and applicable
         if (
             positions.ndim == 2
             and self.mrope_section
@@ -1246,7 +1245,6 @@ class MRotaryEmbedding(RotaryEmbedding):
         query_shape = query.shape
         key_shape = key.shape
 
-        # Apply Triton M-RoPE directly on flattened tensors
         q, k = triton_mrope(
             query,
             key,
