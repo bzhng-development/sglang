@@ -35,54 +35,48 @@ def run_triton(
     return out
 
 
-def run_torch_silu(x: torch.Tensor) -> torch.Tensor:
-    return F.silu(x)
-
-
-def time_it(fn) -> float:
-    for _ in range(10):
+def time_it_events(fn, iters=200):
+    # warmup
+    for _ in range(20):
         fn()
     torch.cuda.synchronize()
-    median_ms = triton.testing.do_bench_cudagraph(fn, return_mode="median")
-    torch.cuda.synchronize()
-    return median_ms * 1000
+    start = torch.cuda.Event(enable_timing=True)
+    end = torch.cuda.Event(enable_timing=True)
+    start.record()
+    for _ in range(iters):
+        fn()
+    end.record()
+    end.synchronize()
+    return start.elapsed_time(end) / iters  # ms/op
 
 
 def benchmark_once(n_elements: int, dtype: torch.dtype, block_size: int) -> None:
     device = torch.device("cuda")
     x = torch.randn(n_elements, device=device, dtype=dtype)
-    out = torch.empty_like(x)
+    out_triton = torch.empty_like(x)
+    out_torch = torch.empty_like(x)
 
-    run_triton(x, out, block_size)
-    run_torch_silu(x)
+    run_triton(x, out_triton, block_size)
+    F.silu(x, out=out_torch)
     torch.cuda.synchronize()
 
-    def triton_call():
-        run_triton(x, out, block_size)
-        return out
+    triton_ms = time_it_events(lambda: run_triton(x, out_triton, block_size))
+    torch_ms = time_it_events(lambda: F.silu(x, out=out_torch))
 
-    def torch_call():
-        return run_torch_silu(x)
-
-    triton_us = time_it(triton_call)
-    torch_us = time_it(torch_call)
-
-    ref = torch_call()
+    ref = F.silu(x)
     torch.cuda.synchronize()
-    if not torch.allclose(out, ref, rtol=1e-3, atol=1e-5):
-        raise AssertionError(
-            "Triton SiLU result diverges from torch.nn.functional.silu"
-        )
+    assert torch.allclose(out_triton, ref, rtol=1e-3, atol=1e-5)
 
-    speedup = torch_us / triton_us if triton_us else float("nan")
-    bytes_processed = n_elements * x.element_size()
-    triton_gbps = bytes_processed / (triton_us / 1e6) / 1e9
-    torch_gbps = bytes_processed / (torch_us / 1e6) / 1e9
+    bytes_moved = 2 * n_elements * x.element_size()  # read + write
+    triton_gibps = (bytes_moved / (triton_ms / 1e3)) / (1024**3)
+    torch_gibps = (bytes_moved / (torch_ms / 1e3)) / (1024**3)
+    speedup = torch_ms / triton_ms
 
     print(
         f"N={n_elements:>12d} | dtype={str(dtype):>9s} | "
-        f"triton={triton_us:8.2f} µs | torch={torch_us:8.2f} µs | "
-        f"speedup={speedup:5.2f}× | bw_triton={triton_gbps:6.2f} GB/s | bw_torch={torch_gbps:6.2f} GB/s"
+        f"triton={triton_ms:8.3f} ms | torch={torch_ms:8.3f} ms | "
+        f"speedup={speedup:5.2f}× | RW_bw_triton={triton_gibps:6.2f} GiB/s | "
+        f"RW_bw_torch={torch_gibps:6.2f} GiB/s"
     )
 
 
