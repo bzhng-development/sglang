@@ -40,8 +40,11 @@ def run_torch_silu(x: torch.Tensor) -> torch.Tensor:
 
 
 def time_it(fn) -> float:
-    triton.testing.do_bench_cudagraph(fn, warmup=10)
-    median_ms, _, _ = triton.testing.do_bench_cudagraph(fn, quantiles=[0.5, 0.2, 0.8])
+    for _ in range(10):
+        fn()
+    torch.cuda.synchronize()
+    median_ms = triton.testing.do_bench_cudagraph(fn, return_mode="median")
+    torch.cuda.synchronize()
     return median_ms * 1000
 
 
