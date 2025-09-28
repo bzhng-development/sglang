@@ -9,8 +9,14 @@ import triton.testing
 
 
 @triton.jit
-def silu(x):
+def torch_silu_out(x):
     return x * tl.sigmoid(x)
+
+
+def torch_silu_out(x: torch.Tensor, out: torch.Tensor) -> torch.Tensor:
+    torch.sigmoid(x, out=out)  # writes σ(x) into out
+    out.mul_(x)  # out = x * σ(x)
+    return out
 
 
 @triton.jit
@@ -20,7 +26,7 @@ def silu_kernel(x_ptr, y_ptr, n_elements, BLOCK_SIZE: tl.constexpr):
     offsets = block_start + tl.arange(0, BLOCK_SIZE)
     mask = offsets < n_elements
     x = tl.load(x_ptr + offsets, mask=mask)
-    y = silu(x)
+    y = torch_silu_out(x)
     tl.store(y_ptr + offsets, y, mask=mask)
 
 
@@ -35,7 +41,7 @@ def run_triton(
     return out
 
 
-def time_it_events(fn, iters=200):
+def time_ms_per_call(fn, iters: int = 200) -> float:
     # warmup
     for _ in range(20):
         fn()
@@ -47,7 +53,7 @@ def time_it_events(fn, iters=200):
         fn()
     end.record()
     end.synchronize()
-    return start.elapsed_time(end) / iters  # ms/op
+    return start.elapsed_time(end) / iters  # milliseconds per call
 
 
 def benchmark_once(n_elements: int, dtype: torch.dtype, block_size: int) -> None:
@@ -56,21 +62,26 @@ def benchmark_once(n_elements: int, dtype: torch.dtype, block_size: int) -> None
     out_triton = torch.empty_like(x)
     out_torch = torch.empty_like(x)
 
+    # warmup correctness paths
     run_triton(x, out_triton, block_size)
-    F.silu(x, out=out_torch)
+    run_torch_silu_out(x, out_torch)
     torch.cuda.synchronize()
 
-    triton_ms = time_it_events(lambda: run_triton(x, out_triton, block_size))
-    torch_ms = time_it_events(lambda: F.silu(x, out=out_torch))
+    triton_ms = time_ms_per_call(lambda: run_triton(x, out_triton, block_size))
+    torch_ms = time_ms_per_call(lambda: run_torch_silu_out(x, out_torch))
 
-    ref = F.silu(x)
+    # correctness check vs reference
+    ref = torch._C._nn.silu(x)  # same as F.silu(x); avoids extra Python dispatch
     torch.cuda.synchronize()
-    assert torch.allclose(out_triton, ref, rtol=1e-3, atol=1e-5)
+    if not torch.allclose(out_triton, ref, rtol=1e-3, atol=1e-5):
+        raise AssertionError(
+            "Triton SiLU result diverges from torch.nn.functional.silu"
+        )
 
+    speedup = torch_ms / triton_ms
     bytes_moved = 2 * n_elements * x.element_size()  # read + write
     triton_gibps = (bytes_moved / (triton_ms / 1e3)) / (1024**3)
     torch_gibps = (bytes_moved / (torch_ms / 1e3)) / (1024**3)
-    speedup = torch_ms / triton_ms
 
     print(
         f"N={n_elements:>12d} | dtype={str(dtype):>9s} | "
