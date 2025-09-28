@@ -1240,7 +1240,7 @@ class MRotaryEmbedding(RotaryEmbedding):
         assert positions.ndim == 2
         assert self.mrope_section
 
-        num_tokens = positions.shape[-1]
+        # num_tokens = positions.shape[-1]
         cos_sin = self.cos_sin_cache[positions]
         cos, sin = cos_sin.chunk(2, dim=-1)
         query_shape = query.shape
@@ -1255,7 +1255,7 @@ class MRotaryEmbedding(RotaryEmbedding):
             self.head_size,
         )
 
-        return q.reshape(query_shape), k.reshape(key_shape)
+        return q.view(query_shape), k.view(key_shape)
 
     @torch.compile(dynamic=True, backend=get_compiler_backend())
     def _forward_native(
