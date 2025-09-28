@@ -9,7 +9,7 @@ import triton.testing
 
 
 @triton.jit
-def torch_silu_out(x):
+def triton_silu(x):
     return x * tl.sigmoid(x)
 
 
@@ -26,7 +26,7 @@ def silu_kernel(x_ptr, y_ptr, n_elements, BLOCK_SIZE: tl.constexpr):
     offsets = block_start + tl.arange(0, BLOCK_SIZE)
     mask = offsets < n_elements
     x = tl.load(x_ptr + offsets, mask=mask)
-    y = torch_silu_out(x)
+    y = triton_silu(x)
     tl.store(y_ptr + offsets, y, mask=mask)
 
 
