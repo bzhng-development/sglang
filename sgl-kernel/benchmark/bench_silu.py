@@ -2,10 +2,10 @@ import argparse
 from typing import Iterable, List
 
 import torch
+import torch.nn.functional as F
 import triton
 import triton.language as tl
 import triton.testing
-from transformers.activations import SiLUActivation
 
 
 @triton.jit
@@ -35,11 +35,8 @@ def run_triton(
     return out
 
 
-hf_silu = SiLUActivation()
-
-
-def run_huggingface(x: torch.Tensor) -> torch.Tensor:
-    return hf_silu(x)
+def run_torch_silu(x: torch.Tensor) -> torch.Tensor:
+    return F.silu(x)
 
 
 def time_it(fn) -> float:
@@ -54,33 +51,35 @@ def benchmark_once(n_elements: int, dtype: torch.dtype, block_size: int) -> None
     out = torch.empty_like(x)
 
     run_triton(x, out, block_size)
-    run_huggingface(x)
+    run_torch_silu(x)
     torch.cuda.synchronize()
 
     def triton_call():
         run_triton(x, out, block_size)
         return out
 
-    def huggingface_call():
-        return run_huggingface(x)
+    def torch_call():
+        return run_torch_silu(x)
 
     triton_us = time_it(triton_call)
-    hf_us = time_it(huggingface_call)
+    torch_us = time_it(torch_call)
 
-    ref = huggingface_call()
+    ref = torch_call()
     torch.cuda.synchronize()
     if not torch.allclose(out, ref, rtol=1e-3, atol=1e-5):
-        raise AssertionError("Triton and Hugging Face SiLU mismatch")
+        raise AssertionError(
+            "Triton SiLU result diverges from torch.nn.functional.silu"
+        )
 
-    speedup = hf_us / triton_us if triton_us else float("nan")
+    speedup = torch_us / triton_us if triton_us else float("nan")
     bytes_processed = n_elements * x.element_size()
     triton_gbps = bytes_processed / (triton_us / 1e6) / 1e9
-    hf_gbps = bytes_processed / (hf_us / 1e6) / 1e9
+    torch_gbps = bytes_processed / (torch_us / 1e6) / 1e9
 
     print(
         f"N={n_elements:>12d} | dtype={str(dtype):>9s} | "
-        f"triton={triton_us:8.2f} µs | hf={hf_us:8.2f} µs | "
-        f"speedup={speedup:5.2f}× | bw_triton={triton_gbps:6.2f} GB/s | bw_hf={hf_gbps:6.2f} GB/s"
+        f"triton={triton_us:8.2f} µs | torch={torch_us:8.2f} µs | "
+        f"speedup={speedup:5.2f}× | bw_triton={triton_gbps:6.2f} GB/s | bw_torch={torch_gbps:6.2f} GB/s"
     )
 
 
@@ -101,7 +100,7 @@ def parse_num_elements(arg: str) -> List[int]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Benchmark Triton SiLU vs Hugging Face SiLU"
+        description="Benchmark Triton SiLU kernel against torch.nn.functional.silu"
     )
     parser.add_argument(
         "--numel",
@@ -134,7 +133,7 @@ def main() -> None:
     }
     dtype = dtype_map[args.dtype]
 
-    print("Benchmarking Triton SiLU kernel against Hugging Face SiLU activation")
+    print("Benchmarking Triton SiLU kernel against torch.nn.functional.silu")
     print(f"Sizes: {args.numel} | dtype={dtype} | block_size={args.block_size}\n")
 
     for n in args.numel:
