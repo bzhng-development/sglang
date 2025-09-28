@@ -26,6 +26,8 @@ from typing import Dict, Iterable, List, Tuple
 REPO_ROOT = Path(__file__).resolve().parent
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 30000
+KILL_SCRIPT = REPO_ROOT / "scripts" / "killall_sglang.sh"
+START_STOP_SLEEP_SECONDS = 60
 
 SERVE_COMMAND: List[str] = [
     "python",
@@ -200,6 +202,7 @@ def launch_server(log_path: Path) -> Tuple[subprocess.Popen, Iterable[Path]]:
 
 
 def stop_server(process: subprocess.Popen, resources: Iterable[object]) -> None:
+    subprocess.run([str(KILL_SCRIPT)], cwd=REPO_ROOT, check=False)
     if process.poll() is None:
         process.terminate()
         try:
@@ -258,6 +261,7 @@ def run_benchmark_cycle(
             )
         if post_start_delay:
             time.sleep(post_start_delay)
+        time.sleep(START_STOP_SLEEP_SECONDS)
         print(f"[run:{tag}] Running benchmark...")
         bench_command = build_bench_command(host, port)
         stream_process_output(bench_command, bench_log)
@@ -265,6 +269,7 @@ def run_benchmark_cycle(
         accuracy_command = build_accuracy_command(port, accuracy_concurrency)
         stream_process_output(accuracy_command, accuracy_log)
     finally:
+        time.sleep(START_STOP_SLEEP_SECONDS)
         print(f"[run:{tag}] Stopping server...")
         stop_server(server_process, resources)
 
