@@ -64,11 +64,11 @@ def benchmark_once(n_elements: int, dtype: torch.dtype, block_size: int) -> None
 
     # warmup correctness paths
     run_triton(x, out_triton, block_size)
-    run_torch_silu_out(x, out_torch)
+    torch_silu_out(x, out_torch)
     torch.cuda.synchronize()
 
     triton_ms = time_ms_per_call(lambda: run_triton(x, out_triton, block_size))
-    torch_ms = time_ms_per_call(lambda: run_torch_silu_out(x, out_torch))
+    torch_ms = time_ms_per_call(lambda: torch_silu_out(x, out_torch))
 
     # correctness check vs reference
     ref = torch._C._nn.silu(x)  # same as F.silu(x); avoids extra Python dispatch
