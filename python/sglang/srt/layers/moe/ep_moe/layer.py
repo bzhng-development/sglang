@@ -369,6 +369,10 @@ class DeepEPMoE(EPMoE):
         )
         self.deepep_mode = get_deepep_mode()
 
+        # Lazily populated FP8 weight tuples
+        self._w13_weight_fp8: Optional[tuple[torch.Tensor, torch.Tensor]] = None
+        self._w2_weight_fp8: Optional[tuple[torch.Tensor, torch.Tensor]] = None
+
         # TODO: move to the beginning of the file
         from sglang.srt.distributed.parallel_state import get_tp_group
         from sglang.srt.two_batch_overlap import MaybeTboDeepEPDispatcher
@@ -405,22 +409,51 @@ class DeepEPMoE(EPMoE):
             # the last one is invalid rank_id
             self.expert_mask[:-1] = 1
         elif not _is_npu:
-            self.w13_weight_fp8 = (
-                self.w13_weight,
-                (
-                    self.w13_weight_scale_inv
-                    if self.use_block_quant
-                    else self.w13_weight_scale
-                ),
-            )
-            self.w2_weight_fp8 = (
-                self.w2_weight,
-                (
-                    self.w2_weight_scale_inv
-                    if self.use_block_quant
-                    else self.w2_weight_scale
-                ),
-            )
+            self._refresh_weight_fp8_tuples()
+
+    def _refresh_weight_fp8_tuples(self) -> None:
+        """Populate cached FP8 tuples when the required scale tensors are available."""
+        if not self.use_fp8_w8a8:
+            self._w13_weight_fp8 = None
+            self._w2_weight_fp8 = None
+            return
+
+        scale_attr_w13 = (
+            "w13_weight_scale_inv" if self.use_block_quant else "w13_weight_scale"
+        )
+        scale_attr_w2 = (
+            "w2_weight_scale_inv" if self.use_block_quant else "w2_weight_scale"
+        )
+        scale_w13 = getattr(self, scale_attr_w13, None)
+        scale_w2 = getattr(self, scale_attr_w2, None)
+
+        if scale_w13 is None or scale_w2 is None:
+            self._w13_weight_fp8 = None
+            self._w2_weight_fp8 = None
+            return
+
+        self._w13_weight_fp8 = (self.w13_weight, scale_w13)
+        self._w2_weight_fp8 = (self.w2_weight, scale_w2)
+
+    @property
+    def w13_weight_fp8(self) -> Optional[tuple[torch.Tensor, torch.Tensor]]:
+        if self._w13_weight_fp8 is None:
+            self._refresh_weight_fp8_tuples()
+        return self._w13_weight_fp8
+
+    @w13_weight_fp8.setter
+    def w13_weight_fp8(self, value: tuple[torch.Tensor, torch.Tensor]) -> None:
+        self._w13_weight_fp8 = value
+
+    @property
+    def w2_weight_fp8(self) -> Optional[tuple[torch.Tensor, torch.Tensor]]:
+        if self._w2_weight_fp8 is None:
+            self._refresh_weight_fp8_tuples()
+        return self._w2_weight_fp8
+
+    @w2_weight_fp8.setter
+    def w2_weight_fp8(self, value: tuple[torch.Tensor, torch.Tensor]) -> None:
+        self._w2_weight_fp8 = value
 
     def forward(
         self,
@@ -697,6 +730,15 @@ class DeepEPMoE(EPMoE):
         assert self.quant_method is not None
         assert self.moe_runner_config.activation == "silu"
 
+        self._refresh_weight_fp8_tuples()
+        w13_weight_fp8 = self.w13_weight_fp8
+        w2_weight_fp8 = self.w2_weight_fp8
+        if self.use_fp8_w8a8 and (w13_weight_fp8 is None or w2_weight_fp8 is None):
+            raise RuntimeError(
+                "DeepEP FP8 execution requires weight scales, but they are missing. "
+                "Confirm the model was loaded with FP8 quantization before enabling DeepEP."
+            )
+
         # GroupGemm-0
         num_groups, m, k = hidden_states_fp8[0].size()
         n = self.w13_weight.size(1)
@@ -706,7 +748,7 @@ class DeepEPMoE(EPMoE):
         )
         deep_gemm_wrapper.grouped_gemm_nt_f8f8bf16_masked(
             hidden_states_fp8,
-            self.w13_weight_fp8,
+            w13_weight_fp8 if w13_weight_fp8 is not None else (self.w13_weight, None),
             gateup_output,
             masked_m,
             expected_m,
@@ -758,7 +800,7 @@ class DeepEPMoE(EPMoE):
         )
         deep_gemm_wrapper.grouped_gemm_nt_f8f8bf16_masked(
             down_input_fp8,
-            self.w2_weight_fp8,
+            w2_weight_fp8 if w2_weight_fp8 is not None else (self.w2_weight, None),
             down_output,
             masked_m,
             expected_m,
