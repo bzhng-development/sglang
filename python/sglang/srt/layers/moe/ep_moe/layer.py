@@ -405,22 +405,10 @@ class DeepEPMoE(EPMoE):
             # the last one is invalid rank_id
             self.expert_mask[:-1] = 1
         elif not _is_npu:
-            self.w13_weight_fp8 = (
-                self.w13_weight,
-                (
-                    self.w13_weight_scale_inv
-                    if self.use_block_quant
-                    else self.w13_weight_scale
-                ),
-            )
-            self.w2_weight_fp8 = (
-                self.w2_weight,
-                (
-                    self.w2_weight_scale_inv
-                    if self.use_block_quant
-                    else self.w2_weight_scale
-                ),
-            )
+            # Defer weight_fp8 tuple creation until weights are loaded
+            # Weight scales are created during weight loading, not __init__
+            # They'll be created lazily in forward methods when needed
+            pass
 
     def forward(
         self,
@@ -696,6 +684,25 @@ class DeepEPMoE(EPMoE):
         hidden_states_fp8, _, _, masked_m, expected_m = dispatch_output
         assert self.quant_method is not None
         assert self.moe_runner_config.activation == "silu"
+
+        # Lazily create weight_fp8 tuples if they don't exist yet
+        if not hasattr(self, "w13_weight_fp8"):
+            self.w13_weight_fp8 = (
+                self.w13_weight,
+                (
+                    self.w13_weight_scale_inv
+                    if self.use_block_quant
+                    else self.w13_weight_scale
+                ),
+            )
+            self.w2_weight_fp8 = (
+                self.w2_weight,
+                (
+                    self.w2_weight_scale_inv
+                    if self.use_block_quant
+                    else self.w2_weight_scale
+                ),
+            )
 
         # GroupGemm-0
         num_groups, m, k = hidden_states_fp8[0].size()
