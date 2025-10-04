@@ -347,90 +347,71 @@ class Qwen3_VisionTransformer(nn.Module):
         rotary_pos_emb = rotary_pos_emb_full[pos_ids].flatten(1)
         return rotary_pos_emb
 
-    def fast_pos_embed_interpolate(self, grid_thw):
-        num_grid_per_side = int(self.num_position_embeddings**0.5)
+    def fast_pos_embed_interpolate(self, grid_thw: list[list[int]]) -> torch.Tensor:
 
-        idx_list = [[] for _ in range(4)]
-        weight_list = [[] for _ in range(4)]
-
-        # TODO: use torch instand of np
-        for t, h, w in grid_thw:
-            h_idxs = np.linspace(0, num_grid_per_side - 1, h)
-            w_idxs = np.linspace(0, num_grid_per_side - 1, w)
-
-            h_idxs_floor = h_idxs.astype(int)
-            w_idxs_floor = w_idxs.astype(int)
-            h_idxs_ceil = (h_idxs.astype(int) + 1).clip(max=num_grid_per_side - 1)
-            w_idxs_ceil = (w_idxs.astype(int) + 1).clip(max=num_grid_per_side - 1)
-
-            dh = h_idxs - h_idxs_floor
-            dw = w_idxs - w_idxs_floor
-
-            idx_list[0].extend(
-                ((h_idxs_floor * num_grid_per_side)[None].T + w_idxs_floor[None])
-                .flatten()
-                .tolist()
-                * t
-            )
-            idx_list[1].extend(
-                ((h_idxs_floor * num_grid_per_side)[None].T + w_idxs_ceil[None])
-                .flatten()
-                .tolist()
-                * t
-            )
-            idx_list[2].extend(
-                ((h_idxs_ceil * num_grid_per_side)[None].T + w_idxs_floor[None])
-                .flatten()
-                .tolist()
-                * t
-            )
-            idx_list[3].extend(
-                ((h_idxs_ceil * num_grid_per_side)[None].T + w_idxs_ceil[None])
-                .flatten()
-                .tolist()
-                * t
-            )
-
-            weight_list[0].extend(
-                ((1 - dh)[None].T * (1 - dw)[None]).flatten().tolist() * t
-            )
-            weight_list[1].extend(((1 - dh)[None].T * dw[None]).flatten().tolist() * t)
-            weight_list[2].extend((dh[None].T * (1 - dw)[None]).flatten().tolist() * t)
-            weight_list[3].extend((dh[None].T * dw[None]).flatten().tolist() * t)
-
-        device = self.pos_embed.weight.device
-        dtype = self.pos_embed.weight.dtype
-
-        p0 = (
-            self.pos_embed(torch.tensor(idx_list[0], dtype=torch.long, device=device))
-            * torch.tensor(weight_list[0], dtype=dtype, device=device)[:, None]
-        )
-        p1 = (
-            self.pos_embed(torch.tensor(idx_list[1], dtype=torch.long, device=device))
-            * torch.tensor(weight_list[1], dtype=dtype, device=device)[:, None]
-        )
-        p2 = (
-            self.pos_embed(torch.tensor(idx_list[2], dtype=torch.long, device=device))
-            * torch.tensor(weight_list[2], dtype=dtype, device=device)[:, None]
-        )
-        p3 = (
-            self.pos_embed(torch.tensor(idx_list[3], dtype=torch.long, device=device))
-            * torch.tensor(weight_list[3], dtype=dtype, device=device)[:, None]
-        )
-
-        patch_pos_embeds = p0 + p1 + p2 + p3
-        patch_pos_embeds = patch_pos_embeds.split([t * h * w for t, h, w in grid_thw])
-        patch_pos_embeds_permute = []
+        num_grid_per_side = self.num_grid_per_side
         m_size = self.spatial_merge_size
-        for pos_embed, (t, h, w) in zip(patch_pos_embeds, grid_thw):
-            pos_embed = (
-                pos_embed.view(t, h // m_size, m_size, w // m_size, m_size, -1)
-                .permute(0, 1, 3, 2, 4, 5)
-                .flatten(0, 4)
+        hidden_dim = self.pos_embed.embedding_dim
+
+        outputs = []
+        for t, h, w in grid_thw:
+            h_idxs = torch.linspace(
+                0, num_grid_per_side - 1, h, dtype=torch.float32, device=self.device
             )
-            patch_pos_embeds_permute.append(pos_embed)
-        patch_pos_embeds = torch.cat(patch_pos_embeds_permute)
-        return patch_pos_embeds
+            w_idxs = torch.linspace(
+                0, num_grid_per_side - 1, w, dtype=torch.float32, device=self.device
+            )
+
+            h_floor = h_idxs.to(torch.long)
+            w_floor = w_idxs.to(torch.long)
+            h_ceil = torch.clamp(h_floor + 1, max=num_grid_per_side - 1)
+            w_ceil = torch.clamp(w_floor + 1, max=num_grid_per_side - 1)
+
+            dh = h_idxs - h_floor
+            dw = w_idxs - w_floor
+
+            # Create meshgrid view for all h, w vars
+            dh_grid, dw_grid = torch.meshgrid(dh, dw, indexing="ij")
+            h_floor_grid, w_floor_grid = torch.meshgrid(h_floor, w_floor, indexing="ij")
+            h_ceil_grid, w_ceil_grid = torch.meshgrid(h_ceil, w_ceil, indexing="ij")
+            h_floor_grid_idx = h_floor_grid * num_grid_per_side
+            h_ceil_grid_idx = h_ceil_grid * num_grid_per_side
+
+            # original computation of weights
+            # w00 = (1 - dh_grid) * (1 - dw_grid)
+            # w01 = (1 - dh_grid) * dw_grid
+            # w10 = dh_grid * (1 - dw_grid)
+            # w11 = dh_grid * dw_grid
+            # we reuse w11 here to avoid duplicate
+            # dh_grid * dw_grid computation
+            w11 = dh_grid * dw_grid
+            w10 = dh_grid - w11
+            w01 = dw_grid - w11
+            w00 = 1 - dh_grid - dw_grid + w11
+
+            idx00 = h_floor_grid_idx + w_floor_grid
+            idx01 = h_floor_grid_idx + w_ceil_grid
+            idx10 = h_ceil_grid_idx + w_floor_grid
+            idx11 = h_ceil_grid_idx + w_ceil_grid
+
+            indices = torch.stack([idx00, idx01, idx10, idx11], dim=0).reshape(4, -1)
+            weights = torch.stack([w00, w01, w10, w11], dim=0).reshape(4, -1, 1)
+            weights = weights.to(dtype=self.dtype, device=self.device)
+
+            embeds = self.pos_embed(indices)
+            weighted_embeds = embeds * weights
+            p0, p1, p2, p3 = weighted_embeds.unbind(dim=0)
+            combined = p0 + p1 + p2 + p3
+
+            combined = combined.view(h * w, hidden_dim)
+            repeated = combined.unsqueeze(0).expand(t, -1, -1).contiguous()
+            repeated = repeated.view(
+                t, h // m_size, m_size, w // m_size, m_size, hidden_dim
+            )
+            repeated = repeated.permute(0, 1, 3, 2, 4, 5).reshape(-1, hidden_dim)
+            outputs.append(repeated)
+
+        return torch.cat(outputs, dim=0)
 
     def forward(
         self,
