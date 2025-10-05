@@ -147,6 +147,14 @@ class Engine(EngineBase):
                 thread_label = "Tokenizer"
                 trace_set_thread_info(thread_label)
 
+        # Enable and warm up environment variable caching after initialization is complete.
+        # After this point, environment variables are assumed to be static for
+        # optimal performance on hot paths.
+        from sglang.srt.environ import enable_and_warmup_env_caching
+
+        enable_and_warmup_env_caching()
+        logger.info("Environment variable caching enabled")
+
     def generate(
         self,
         # The input prompt. It can be a single prompt or a batch of prompts.

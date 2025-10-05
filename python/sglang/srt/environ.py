@@ -2,7 +2,14 @@ import os
 import subprocess
 import warnings
 from contextlib import ExitStack, contextmanager
+from functools import cache
 from typing import Any
+
+# Global flag to control whether environment variable reads should be cached
+_CACHING_ENABLED = False
+
+# Registry to track all EnvField instances for cache management
+_ENV_FIELD_REGISTRY = []
 
 
 class EnvField:
@@ -12,6 +19,10 @@ class EnvField:
         # If the value is manually set to None, we need mark it as _set_to_none.
         # Always use clear() to reset the value, which leads to the default fallback.
         self._set_to_none = False
+        # Register this instance for cache management
+        _ENV_FIELD_REGISTRY.append(self)
+        # Create a cached version of the getter for this specific instance
+        self._cached_get = cache(self._get_uncached)
 
     def __set_name__(self, owner, name):
         self.name = name
@@ -19,7 +30,8 @@ class EnvField:
     def parse(self, value: str) -> Any:
         raise NotImplementedError()
 
-    def get(self) -> Any:
+    def _get_uncached(self) -> Any:
+        """Internal method that performs the actual environment variable lookup."""
         value = os.getenv(self.name)
         if self._set_to_none:
             assert value is None
@@ -36,6 +48,17 @@ class EnvField:
             )
             return self.default
 
+    def get(self) -> Any:
+        """Get the environment variable value, using cache if enabled."""
+        if _CACHING_ENABLED:
+            return self._cached_get()
+        else:
+            return self._get_uncached()
+
+    def _clear_cache(self):
+        """Clear the cache for this field."""
+        self._cached_get.cache_clear()
+
     def is_set(self):
         # NOTE: If None is manually set, it is considered as set.
         return self.name in os.environ or self._set_to_none
@@ -51,6 +74,8 @@ class EnvField:
         else:
             self._set_to_none = False
             os.environ[self.name] = str(value)
+        # Invalidate cache when value is modified
+        self._clear_cache()
 
     @contextmanager
     def override(self, value: Any):
@@ -64,10 +89,14 @@ class EnvField:
         else:
             os.environ.pop(self.name, None)
         self._set_to_none = backup_set_to_none
+        # Invalidate cache after override context exits
+        self._clear_cache()
 
     def clear(self):
         os.environ.pop(self.name, None)
         self._set_to_none = False
+        # Invalidate cache when value is cleared
+        self._clear_cache()
 
     @property
     def value(self):
@@ -211,6 +240,69 @@ class Envs:
 
 
 envs = Envs()
+
+
+def enable_env_caching():
+    """
+    Enable caching for all environment variable reads.
+
+    This should be called after server startup is complete to optimize
+    hot path performance by caching environment variable lookups.
+    After this is called, environment variables are assumed to be static
+    and not modified at runtime.
+    """
+    global _CACHING_ENABLED
+    _CACHING_ENABLED = True
+
+
+def disable_env_caching():
+    """
+    Disable caching for environment variable reads.
+
+    This is useful in tests where environment variables may be modified
+    dynamically. When caching is disabled, each get() call will read
+    from os.environ directly.
+    """
+    global _CACHING_ENABLED
+    _CACHING_ENABLED = False
+
+
+def clear_all_env_caches():
+    """
+    Clear all cached environment variable values.
+
+    This should be called when environment variables have been modified
+    and caches need to be invalidated.
+    """
+    for field in _ENV_FIELD_REGISTRY:
+        field._clear_cache()
+
+
+def warmup_env_caches():
+    """
+    Pre-populate all environment variable caches.
+
+    This reads all environment variables once to warm up the caches.
+    Should be called after enable_env_caching() and before serving requests.
+    """
+    if not _CACHING_ENABLED:
+        return
+
+    for field in _ENV_FIELD_REGISTRY:
+        # Trigger a read to populate the cache
+        field.get()
+
+
+def enable_and_warmup_env_caching():
+    """
+    Enable caching and pre-populate all caches in one step.
+
+    This is a convenience function that combines enable_env_caching()
+    and warmup_env_caches(). It should be called after server startup
+    is complete to optimize runtime performance.
+    """
+    enable_env_caching()
+    warmup_env_caches()
 
 
 def _convert_SGL_to_SGLANG():

@@ -1446,6 +1446,14 @@ def _wait_and_warmup(
 
     logger.info("The server is fired up and ready to roll!")
 
+    # Enable and warm up environment variable caching after startup is complete.
+    # After this point, environment variables are assumed to be static for
+    # optimal performance on hot paths.
+    from sglang.srt.environ import enable_and_warmup_env_caching
+
+    enable_and_warmup_env_caching()
+    logger.info("Environment variable caching enabled")
+
     if pipe_finish_writer is not None:
         pipe_finish_writer.send("ready")
 
