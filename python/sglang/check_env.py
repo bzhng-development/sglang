@@ -17,6 +17,7 @@ def is_cuda_v2():
 
 
 # List of packages to check versions
+# TODO: We check this list of packages, but this list is certainly not the same as the `pyproject.toml`. Should we align it and make a plan to align it in your proposal? There are multiple ways to do it, but we should extract the same list from the `pyproject.toml` because this is not accurate when you run the check env module.
 PACKAGE_LIST = [
     "sglang",
     "sgl_kernel",
@@ -48,6 +49,11 @@ PACKAGE_LIST = [
     "anthropic",
     "litellm",
     "decord",
+    # TODO: decord has not been maintained for a long time.
+    # see the current usage of it, and see if we can remove / replace the usages.
+    # we had a PR to replace it:
+    # issue: https://github.com/sgl-project/sglang/issues/7611 but
+    # it was reverted.
 ]
 
 

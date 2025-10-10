@@ -171,6 +171,9 @@ def http_request(
 
 
 def encode_image_base64(image_path: Union[str, bytes]):
+    # re y does it only go to png. since pass jpeg / etc. maybe instead
+    # also for very large, it grows the payload a bit, the caller may want to
+    # have option to do so.
     """Encode an image in base64."""
     if isinstance(image_path, str):
         with open(image_path, "rb") as image_file:
@@ -217,6 +220,8 @@ def encode_video_base64(video_path: str, num_frames: int = 16):
         raise IOError(f"Could not open video file:{video_path}")
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    # TODO: pull all frame to ram and re-encode each. then duplicate the last frame too for now reason
+    # use the cv2 imencode or something faster
     print(f"target_frames: {num_frames}")
 
     frame_indices = np.linspace(0, total_frames - 1, num_frames, dtype=int)
@@ -520,6 +525,8 @@ def stream_and_merge(llm, prompt, sampling_params):
     2) Removes chunk overlaps,
     3) Returns the merged text.
     """
+    # TODO: the runtime is O(n^2) because of trim overlap.
+    # Just colect to list and join once. O(n)
     final_text = ""
     for chunk in llm.generate(prompt, sampling_params, stream=True):
         chunk_text = chunk["text"]
