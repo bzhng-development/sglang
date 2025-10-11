@@ -28,7 +28,11 @@ from sglang.srt.managers.io_struct import (
     TokenizedGenerateReqInput,
 )
 from sglang.srt.managers.scheduler import is_health_check_generate_req
-from sglang.srt.managers.utils import convert_to_token_id_list, extend_with_token_ids
+from sglang.srt.managers.utils import (
+    convert_to_token_id_list,
+    extend_with_token_ids,
+    get_token_count,
+)
 from sglang.srt.server_args import PortArgs, ServerArgs
 from sglang.srt.utils import get_zmq_socket, kill_process_tree
 from sglang.utils import get_exception_traceback
@@ -552,10 +556,14 @@ class GrpcRequestManager:
             state.last_time = now
 
             # Extract output for this request
-            # Convert token IDs to list format (handles both int and List[int])
+            raw_token_ids = (
+                batch_out.output_ids[i]
+                if batch_out.output_ids and len(batch_out.output_ids) > i
+                else None
+            )
             token_ids = (
-                convert_to_token_id_list(batch_out.output_ids[i])
-                if batch_out.output_ids
+                convert_to_token_id_list(raw_token_ids)
+                if raw_token_ids is not None
                 else []
             )
             output_data = {
@@ -643,8 +651,8 @@ class GrpcRequestManager:
                     }
 
             # Update state for accumulation
-            if output_data["token_ids"]:
-                state.output_ids.extend(output_data["token_ids"])
+            if get_token_count(raw_token_ids) > 0:
+                extend_with_token_ids(state.output_ids, raw_token_ids)
 
             await state.out_queue.put(output_data)
 

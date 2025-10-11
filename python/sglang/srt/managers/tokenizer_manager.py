@@ -69,7 +69,11 @@ from sglang.srt.managers.io_struct import (
     WatchLoadUpdateReq,
 )
 from sglang.srt.managers.mm_utils import TensorTransportMode
-from sglang.srt.managers.utils import extend_with_token_ids
+from sglang.srt.managers.utils import (
+    convert_to_token_id_list,
+    extend_with_token_ids,
+    get_token_count,
+)
 from sglang.srt.managers.multimodal_processor import get_mm_processor, import_processors
 from sglang.srt.managers.scheduler import is_health_check_generate_req
 from sglang.srt.managers.scheduler_input_blocker import input_blocker_guard_region
@@ -1356,13 +1360,21 @@ class TokenizerManager(TokenizerCommunicatorMixin):
 
             if isinstance(recv_obj, BatchStrOutput):
                 state.text += recv_obj.output_strs[i]
-                if state.obj.stream:
-                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
-                    output_token_ids = state.output_ids[state.last_output_offset :]
-                    state.last_output_offset = len(state.output_ids)
+                new_token_ids = (
+                    recv_obj.output_ids[i]
+                    if recv_obj.output_ids and len(recv_obj.output_ids) > i
+                    else None
+                )
+                if new_token_ids is not None:
+                    extend_with_token_ids(state.output_ids, new_token_ids)
+                    if state.obj.stream:
+                        output_token_ids = convert_to_token_id_list(new_token_ids)
+                        state.last_output_offset += get_token_count(new_token_ids)
+                    else:
+                        output_token_ids = state.output_ids.copy()
+                        state.last_output_offset = len(state.output_ids)
                 else:
-                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
-                    output_token_ids = state.output_ids.copy()
+                    output_token_ids = []
 
                 out_dict = {
                     "text": state.text,
@@ -1370,13 +1382,21 @@ class TokenizerManager(TokenizerCommunicatorMixin):
                     "meta_info": meta_info,
                 }
             elif isinstance(recv_obj, BatchTokenIDOutput):
-                if self.server_args.stream_output and state.obj.stream:
-                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
-                    output_token_ids = state.output_ids[state.last_output_offset :]
-                    state.last_output_offset = len(state.output_ids)
+                new_token_ids = (
+                    recv_obj.output_ids[i]
+                    if recv_obj.output_ids and len(recv_obj.output_ids) > i
+                    else None
+                )
+                if new_token_ids is not None:
+                    extend_with_token_ids(state.output_ids, new_token_ids)
+                    if self.server_args.stream_output and state.obj.stream:
+                        output_token_ids = convert_to_token_id_list(new_token_ids)
+                        state.last_output_offset += get_token_count(new_token_ids)
+                    else:
+                        output_token_ids = state.output_ids.copy()
+                        state.last_output_offset = len(state.output_ids)
                 else:
-                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
-                    output_token_ids = state.output_ids.copy()
+                    output_token_ids = []
 
                 out_dict = {
                     "output_ids": output_token_ids,

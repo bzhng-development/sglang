@@ -103,21 +103,19 @@ def get_logprob_from_pp_outputs(
 
 
 def convert_to_token_id_list(token_ids: TokenIDs) -> List[int]:
-    """Convert TokenIDs (int or List[int]) to a consistent List[int] format.
-    
-    This helper eliminates per-step list allocations when streaming single tokens.
-    In the common case where only one token is generated per decode cycle, we can
-    pass an int directly instead of allocating a one-element list.
-    
-    Args:
-        token_ids: Either a single token ID (int) or a list of token IDs
-        
-    Returns:
-        A list of token IDs (wrapping the int if needed)
-    """
+    """Convert TokenIDs (int or List[int]) to a consistent List[int] format."""
     if isinstance(token_ids, int):
         return [token_ids]
     return token_ids
+
+
+def get_token_count(token_ids: Optional[TokenIDs]) -> int:
+    """Return the number of tokens represented by TokenIDs."""
+    if token_ids is None:
+        return 0
+    if isinstance(token_ids, int):
+        return 1
+    return len(token_ids)
 
 
 def extend_with_token_ids(target: List[int], token_ids: TokenIDs) -> None:
@@ -134,5 +132,3 @@ def extend_with_token_ids(target: List[int], token_ids: TokenIDs) -> None:
         target.append(token_ids)
     else:
         target.extend(token_ids)
-
-
