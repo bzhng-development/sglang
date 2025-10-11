@@ -805,7 +805,9 @@ class BatchTokenIDOutput(BaseBatchReq):
     decode_ids: List[int]
     read_offsets: List[int]
     # Only used when `--skip-tokenizer-init` is on
-    output_ids: Optional[List[int]]
+    # Each element is either an int (single token, common case) or List[int] (multiple tokens)
+    # to avoid allocating single-element lists per decode cycle
+    output_ids: Optional[List[Union[int, List[int]]]]
     # Detokenization configs
     skip_special_tokens: List[bool]
     spaces_between_special_tokens: List[bool]

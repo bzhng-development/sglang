@@ -69,6 +69,7 @@ from sglang.srt.managers.io_struct import (
     WatchLoadUpdateReq,
 )
 from sglang.srt.managers.mm_utils import TensorTransportMode
+from sglang.srt.managers.utils import extend_with_token_ids
 from sglang.srt.managers.multimodal_processor import get_mm_processor, import_processors
 from sglang.srt.managers.scheduler import is_health_check_generate_req
 from sglang.srt.managers.scheduler_input_blocker import input_blocker_guard_region
@@ -1356,11 +1357,11 @@ class TokenizerManager(TokenizerCommunicatorMixin):
             if isinstance(recv_obj, BatchStrOutput):
                 state.text += recv_obj.output_strs[i]
                 if state.obj.stream:
-                    state.output_ids.extend(recv_obj.output_ids[i])
+                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
                     output_token_ids = state.output_ids[state.last_output_offset :]
                     state.last_output_offset = len(state.output_ids)
                 else:
-                    state.output_ids.extend(recv_obj.output_ids[i])
+                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
                     output_token_ids = state.output_ids.copy()
 
                 out_dict = {
@@ -1370,11 +1371,11 @@ class TokenizerManager(TokenizerCommunicatorMixin):
                 }
             elif isinstance(recv_obj, BatchTokenIDOutput):
                 if self.server_args.stream_output and state.obj.stream:
-                    state.output_ids.extend(recv_obj.output_ids[i])
+                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
                     output_token_ids = state.output_ids[state.last_output_offset :]
                     state.last_output_offset = len(state.output_ids)
                 else:
-                    state.output_ids.extend(recv_obj.output_ids[i])
+                    extend_with_token_ids(state.output_ids, recv_obj.output_ids[i])
                     output_token_ids = state.output_ids.copy()
 
                 out_dict = {

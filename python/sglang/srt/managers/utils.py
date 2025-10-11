@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import multiprocessing as mp
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 from sglang.srt.layers.logits_processor import LogitsProcessorOutput
 from sglang.srt.managers.schedule_batch import Req
@@ -12,6 +12,10 @@ if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import GenerationBatchResult
 
 logger = logging.getLogger(__name__)
+
+# Type alias for token IDs optimization: avoid allocating single-element lists
+# for the common case of streaming one token at a time
+TokenIDs = Union[int, List[int]]
 
 
 def validate_input_length(
@@ -96,3 +100,39 @@ def get_logprob_from_pp_outputs(
     ]
 
     return logits_output, extend_input_len_per_req, extend_logprob_start_len_per_req
+
+
+def convert_to_token_id_list(token_ids: TokenIDs) -> List[int]:
+    """Convert TokenIDs (int or List[int]) to a consistent List[int] format.
+    
+    This helper eliminates per-step list allocations when streaming single tokens.
+    In the common case where only one token is generated per decode cycle, we can
+    pass an int directly instead of allocating a one-element list.
+    
+    Args:
+        token_ids: Either a single token ID (int) or a list of token IDs
+        
+    Returns:
+        A list of token IDs (wrapping the int if needed)
+    """
+    if isinstance(token_ids, int):
+        return [token_ids]
+    return token_ids
+
+
+def extend_with_token_ids(target: List[int], token_ids: TokenIDs) -> None:
+    """Extend a list with token_ids, handling both int and List[int] inputs.
+    
+    This is an optimized version of list.extend() that avoids creating temporary
+    lists when token_ids is a single int.
+    
+    Args:
+        target: The list to extend
+        token_ids: Either a single token ID (int) or a list of token IDs
+    """
+    if isinstance(token_ids, int):
+        target.append(token_ids)
+    else:
+        target.extend(token_ids)
+
+
