@@ -79,9 +79,11 @@ class Qwen3_VisionMLP(nn.Module):
         )
         self.act = ACT2FN[hidden_act]
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x, should_allreduce_fusion: bool = False):
         x_fc1, _ = self.linear_fc1(x)
-        mlp_output, _ = self.linear_fc2(self.act(x_fc1))
+        mlp_output, _ = self.linear_fc2(
+            self.act(x_fc1), skip_all_reduce=should_allreduce_fusion
+        )
         return mlp_output
 
 
