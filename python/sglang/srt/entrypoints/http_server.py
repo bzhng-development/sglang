@@ -153,13 +153,15 @@ def gc_collection_counts() -> tuple[int, int, int]:
     return tuple(s["collections"] for s in stats)
 
 
-def _log_gc_counts(stage: str):
-    logger.info(
-        "GC collections (%s): stats=%s callback_totals=%s total_time_s=%s",
+def _log_gc_counts(stage: str, *, use_uvicorn_logger: bool = False, extra: Optional[dict] = None):
+    target_logger = logging.getLogger("uvicorn.error") if use_uvicorn_logger else logger
+    target_logger.warning(
+        "GC collections (%s): stats=%s callback_totals=%s total_time_s=%s extra=%s",
         stage,
         gc_collection_counts(),
         tuple(_gc_counts),
         tuple(_gc_durations),
+        extra or {},
     )
 
 
@@ -169,8 +171,11 @@ def ensure_gc_monitor_installed():
         return
     gc.callbacks.append(_gc_tally)
     _gc_monitor_installed = True
-    _log_gc_counts("startup")
-    atexit.register(lambda: _log_gc_counts("shutdown"))
+    atexit.register(
+        lambda extra=None: _log_gc_counts(
+            "shutdown", use_uvicorn_logger=True, extra=extra
+        )
+    )
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 HEALTH_CHECK_TIMEOUT = int(os.getenv("SGLANG_HEALTH_CHECK_TIMEOUT", 20))
