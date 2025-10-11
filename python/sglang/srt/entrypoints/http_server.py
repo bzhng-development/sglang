@@ -29,6 +29,9 @@ import time
 from http import HTTPStatus
 from typing import Any, AsyncIterator, Callable, Dict, List, Optional, Union
 
+import atexit
+import gc
+
 from sglang.srt.tracing.trace import process_tracing_init, trace_set_thread_info
 
 # Fix a bug of Python threading
@@ -125,6 +128,49 @@ from sglang.utils import get_exception_traceback
 from sglang.version import __version__
 
 logger = logging.getLogger(__name__)
+_gc_counts = [0, 0, 0]
+_gc_durations = [0.0, 0.0, 0.0]
+_gc_phase_start = [None, None, None]
+_gc_monitor_installed = False
+
+
+def _gc_tally(phase: str, info: dict):
+    generation = info.get("generation")
+    if not isinstance(generation, int) or not (0 <= generation < len(_gc_counts)):
+        return
+    if phase == "start":
+        _gc_phase_start[generation] = time.perf_counter()
+    elif phase == "stop":
+        start = _gc_phase_start[generation]
+        if start is not None:
+            _gc_durations[generation] += time.perf_counter() - start
+            _gc_phase_start[generation] = None
+        _gc_counts[generation] += 1
+
+
+def gc_collection_counts() -> tuple[int, int, int]:
+    stats = gc.get_stats()
+    return tuple(s["collections"] for s in stats)
+
+
+def _log_gc_counts(stage: str):
+    logger.info(
+        "GC collections (%s): stats=%s callback_totals=%s total_time_s=%s",
+        stage,
+        gc_collection_counts(),
+        tuple(_gc_counts),
+        tuple(_gc_durations),
+    )
+
+
+def ensure_gc_monitor_installed():
+    global _gc_monitor_installed
+    if _gc_monitor_installed:
+        return
+    gc.callbacks.append(_gc_tally)
+    _gc_monitor_installed = True
+    _log_gc_counts("startup")
+    atexit.register(lambda: _log_gc_counts("shutdown"))
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 HEALTH_CHECK_TIMEOUT = int(os.getenv("SGLANG_HEALTH_CHECK_TIMEOUT", 20))
@@ -1290,6 +1336,8 @@ def launch_server(
     1. The HTTP server, Engine, and TokenizerManager both run in the main process.
     2. Inter-process communication is done through IPC (each process uses a different port) via the ZMQ library.
     """
+    ensure_gc_monitor_installed()
+
     if server_args.tokenizer_worker_num > 1:
         port_args = PortArgs.init_new(server_args)
         port_args.tokenizer_worker_ipc_name = (
