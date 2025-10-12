@@ -409,7 +409,7 @@ def pre_permute_standard_to_triton(
         ),
         topk_output.topk_ids.shape[1],
         config_dtype,
-        block_shape=quant_info.block_shape,
+        block_shape=tuple(quant_info.block_shape) if quant_info.block_shape is not None else None,
     )
 
     config = get_config_func(num_tokens)
