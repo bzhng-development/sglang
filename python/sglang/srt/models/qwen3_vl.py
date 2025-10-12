@@ -15,6 +15,7 @@
 """Inference-only Qwen3-VL model compatible with HuggingFace weights."""
 import logging
 from functools import lru_cache, partial
+from itertools import islice
 from typing import Callable, Iterable, List, Literal, Optional, Tuple, TypedDict, Union
 
 import numpy as np
@@ -553,7 +554,7 @@ class Qwen3LLMModel(Qwen3Model):
 
         aux_hidden_states = []
         for layer_idx, layer in enumerate(
-            self.layers[self.start_layer : self.end_layer]
+            islice(self.layers, self.start_layer, self.end_layer)
         ):
             layer_idx = layer_idx + self.start_layer
             if layer_idx in self.layers_to_capture:
