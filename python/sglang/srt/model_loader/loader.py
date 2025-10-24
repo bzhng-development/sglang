@@ -456,7 +456,7 @@ class DefaultModelLoader(BaseModelLoader):
                 get_global_server_args().weight_loader_disable_mmap
             )
 
-            if extra_config.get("enable_multithread_load"):
+            if extra_config.get("enable_multithread_load", True):
                 weights_iterator = multi_thread_safetensors_weights_iterator(
                     hf_weights_files,
                     max_workers=extra_config.get(
@@ -470,7 +470,7 @@ class DefaultModelLoader(BaseModelLoader):
                 )
 
         else:
-            if extra_config.get("enable_multithread_load"):
+            if extra_config.get("enable_multithread_load", True):
                 weights_iterator = multi_thread_pt_weights_iterator(
                     hf_weights_files,
                     max_workers=extra_config.get(
