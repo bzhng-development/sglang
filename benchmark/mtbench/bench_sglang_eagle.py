@@ -12,6 +12,7 @@ import json
 import os
 import time
 import uuid
+from collections import defaultdict
 
 import sglang as sgl
 from sglang.test.test_utils import (
@@ -105,6 +106,70 @@ def main(args):
     print(
         f"#questions: {len(questions)}, Throughput: {output_throughput:.2f} token/s, Acceptance length: {accept_length:.2f}"
     )
+
+    # Per-category summary
+    category_stats = defaultdict(
+        lambda: {"count": 0, "out_tokens": 0, "verify_tokens": 0}
+    )
+    for i, ret in enumerate(rets):
+        q = questions[i]
+        category_value = q.get("category", "unknown")
+        if isinstance(category_value, list):
+            category_value = " / ".join(map(str, category_value))
+
+        out_tokens_i = (
+            ret.get_meta_info("answer_1")["completion_tokens"]
+            + ret.get_meta_info("answer_2")["completion_tokens"]
+        )
+        if has_verify:
+            verify_tokens_i = ret.get_meta_info("answer_1").get(
+                "spec_verify_ct", 0
+            ) + ret.get_meta_info("answer_2").get("spec_verify_ct", 0)
+        else:
+            verify_tokens_i = 0
+
+        category_stats[category_value]["count"] += 1
+        category_stats[category_value]["out_tokens"] += out_tokens_i
+        category_stats[category_value]["verify_tokens"] += verify_tokens_i
+
+    # Print summary table per category
+    headers = ["Category", "#Q", "OutTok"]
+    if has_verify:
+        headers.append("VerifyTok")
+    headers.append("AcceptLen")
+
+    rows = []
+    for cat in sorted(category_stats.keys()):
+        stats = category_stats[cat]
+        if has_verify and stats["verify_tokens"] > 0:
+            cat_accept_len = stats["out_tokens"] / stats["verify_tokens"]
+        else:
+            cat_accept_len = 1.0
+
+        row = [
+            str(cat),
+            str(stats["count"]),
+            str(stats["out_tokens"]),
+        ]
+        if has_verify:
+            row.append(str(stats["verify_tokens"]))
+        row.append(f"{cat_accept_len:.2f}")
+        rows.append(row)
+
+    col_widths = [len(h) for h in headers]
+    for row in rows:
+        for j, cell in enumerate(row):
+            if len(cell) > col_widths[j]:
+                col_widths[j] = len(cell)
+
+    def fmt_row(values):
+        return "  ".join(v.ljust(col_widths[i]) for i, v in enumerate(values))
+
+    print()
+    print(fmt_row(headers))
+    print("  ".join("-" * w for w in col_widths))
+    for row in rows:
+        print(fmt_row(row))
 
     # Write results
     model_id = backend.model_info["model_path"]
