@@ -10,6 +10,7 @@
 #include <thread>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "param.h"
@@ -58,7 +59,9 @@ class Ngram {
   bool quit_flag_;
   utils::Queue<std::vector<int32_t>> insert_queue_;
   std::thread insert_worker_;
-  std::vector<std::tuple<int32_t, int32_t, int32_t, int32_t>> match_tmp_data_;
+  mutable std::vector<std::pair<TrieNode*, int32_t>> match_states_;
+  mutable std::vector<std::pair<TrieNode*, int32_t>> match_next_states_;
+  mutable std::vector<std::pair<TrieNode*, int32_t>> match_results_;
 
  public:
   Ngram(size_t capacity, const Param& param);
