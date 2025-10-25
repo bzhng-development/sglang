@@ -1,6 +1,7 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/layers/quantization/modelopt.py
 from __future__ import annotations
 
+import importlib.util as importlib_util
 import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
@@ -8,6 +9,7 @@ import torch
 from torch.nn.parameter import Parameter
 
 from sglang.srt.distributed import get_tp_group
+from sglang.srt.environ import envs
 from sglang.srt.layers.dp_attention import get_dp_global_num_tokens, get_local_dp_buffer
 from sglang.srt.layers.moe import (
     MoeRunner,
@@ -40,6 +42,15 @@ from sglang.srt.layers.quantization.utils import (
 )
 from sglang.srt.layers.radix_attention import RadixAttention
 from sglang.srt.utils import get_bool_env_var, is_cuda, next_power_of_2
+
+_has_fbgemm_triton = (
+    importlib_util.find_spec("fbgemm_gpu.experimental.gemm.triton_gemm.fp4_quantize")
+    is not None
+)
+if _has_fbgemm_triton:
+    from fbgemm_gpu.experimental.gemm.triton_gemm.fp4_quantize import (
+        triton_scale_nvfp4_quant,
+    )
 
 if TYPE_CHECKING:
     from sglang.srt.layers.moe.fused_moe_triton.layer import FusedMoE
@@ -866,6 +877,28 @@ class ModelOptFp4LinearMethod(LinearMethodBase):
         w_n, _ = layer.weight.shape
         output_shape = [x_m, w_n]
 
+        if (
+            envs.SGLANG_USE_FBGEMM.get()
+            and _has_fbgemm_triton
+            and hasattr(torch.ops, "fbgemm")
+            and hasattr(torch.ops.fbgemm, "f4f4bf16")
+        ):
+            a_fp4, a_scale = triton_scale_nvfp4_quant(x, layer.input_scale)
+            w_scale_bytes = layer.weight_scale_interleaved.view(torch.uint8)
+            a_scale_bytes = a_scale.view(torch.uint8)
+            out = torch.ops.fbgemm.f4f4bf16(
+                a_fp4,
+                layer.weight,
+                a_scale_bytes,
+                w_scale_bytes,
+                layer.alpha,
+                use_mx=False,
+            ).to(output_dtype)
+            if bias is not None:
+                out = out + bias
+            return out.view(*output_shape)
+
+        # Default path: current FP4 flow (FlashInfer/CUTLASS backends)
         # Quantize BF16 or FP16 to (FP4 and interleaved block scale)
         x_fp4, x_scale_interleaved = scaled_fp4_quant(x, layer.input_scale_inv)
 
