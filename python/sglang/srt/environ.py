@@ -174,6 +174,8 @@ class Envs:
     SGLANG_IS_FLASHINFER_AVAILABLE = EnvBool(True)
     SGLANG_ENABLE_FLASHINFER_GEMM = EnvBool(False)
     SGLANG_FLASHINFER_WORKSPACE_SIZE = EnvInt(384 * 1024 * 1024)
+    # Enable fused RoPE+quantize path for MHA using FlashInfer rope_quantize
+    SGLANG_FUSED_MHA_ENABLE_ROPE_FUSION = EnvBool(False)
 
     # Triton
     SGLANG_TRITON_DECODE_ATTN_STATIC_KV_SPLITS = EnvBool(False)

@@ -228,3 +228,147 @@ def cleanup_flashinfer_workspace():
     global _workspace_manager
     if _workspace_manager is not None:
         _workspace_manager.cleanup()
+
+
+def flashinfer_allreduce_residual_rmsnorm_fp4_quant(
+    input_tensor: torch.Tensor,
+    residual: Optional[torch.Tensor],
+    weight: torch.Tensor,
+    eps: float,
+    input_global_scale: torch.Tensor,
+    *,
+    quant_out: torch.Tensor,
+    output_scale: torch.Tensor,
+    max_token_num: int = 2048,
+    use_oneshot: Optional[bool] = None,
+    trigger_completion_at_end: bool = False,
+    fp32_acc: bool = False,
+):
+    """
+    FlashInfer fused allreduce + residual add + RMSNorm + FP4 quantization.
+
+    Requirements:
+    - world_size > 1
+    - flashinfer.comm available and workspace initialized
+    - input_tensor: [tokens, hidden_dim]
+    - residual: same shape as input_tensor (or None if no residual path)
+    - quant_out: uint8 with shape [tokens, hidden_dim // 2]
+    - output_scale: NVFP4 block scale buffer (flashinfer-compatible layout)
+    - input_global_scale: scalar fp32 tensor (static scale)
+    """
+    if not is_flashinfer_available() or _flashinfer_comm is None:
+        logger.debug("FlashInfer not available for FP4 fused path")
+        return None, None
+
+    world_size = get_tensor_model_parallel_world_size()
+    if world_size <= 1:
+        logger.debug("Single GPU, skip FP4 fused allreduce")
+        return None, None
+
+    # Basic shape/type validations
+    assert (
+        input_tensor.dim() == 2
+    ), f"input_tensor must be 2D, got {input_tensor.dim()}D"
+    token_num, hidden_dim = input_tensor.shape
+    if residual is not None:
+        assert (
+            residual.shape == input_tensor.shape
+        ), f"residual shape {residual.shape} must match input {input_tensor.shape}"
+
+    assert (
+        quant_out.dtype == torch.uint8
+    ), f"quant_out must be uint8, got {quant_out.dtype}"
+    assert quant_out.shape == (
+        token_num,
+        hidden_dim // 2,
+    ), f"quant_out shape {quant_out.shape} must be (tokens, hidden_dim//2)"
+
+    if input_global_scale.numel() != 1:
+        raise ValueError("input_global_scale must be a scalar tensor")
+    if input_global_scale.dtype != torch.float32:
+        # FlashInfer expects fp32 scale factor
+        input_global_scale = input_global_scale.to(torch.float32)
+
+    # Ensure workspace is ready
+    if not ensure_workspace_initialized(
+        max_token_num=max_token_num,
+        hidden_dim=hidden_dim,
+        use_fp32_lamport=(input_tensor.dtype == torch.float32),
+    ):
+        logger.debug("FlashInfer workspace not available for FP4 fused path")
+        return None, None
+
+    # Prepare output buffers for residual/norm to satisfy the API
+    # We do not return norm_out here; fused path primarily consumes quant_out.
+    residual_out = input_tensor if residual is None else torch.empty_like(residual)
+    norm_out = torch.empty_like(input_tensor)
+
+    _flashinfer_comm.trtllm_allreduce_fusion(
+        allreduce_in=input_tensor,
+        world_size=world_size,
+        world_rank=dist.get_rank(),
+        token_num=token_num,
+        hidden_dim=hidden_dim,
+        workspace_ptrs=_workspace_manager.workspace_tensor,
+        launch_with_pdl=True,
+        use_oneshot=use_oneshot,
+        trigger_completion_at_end=trigger_completion_at_end,
+        fp32_acc=fp32_acc,
+        pattern_code=(
+            _flashinfer_comm.AllReduceFusionPattern.kARResidualRMSNormFP4Quant
+        ),
+        allreduce_out=None,
+        residual_in=residual,
+        residual_out=residual_out,
+        norm_out=norm_out,
+        quant_out=quant_out,
+        scale_out=output_scale,
+        rms_gamma=weight,
+        rms_eps=eps,
+        scale_factor=input_global_scale,
+        layout_code=None,
+    )
+
+    # Return outputs useful to the caller
+    if residual is not None:
+        return quant_out, residual_out
+    else:
+        # In no-residual path, residual_out acts as allreduce_out
+        return quant_out, residual_out
+
+
+def fake_flashinfer_allreduce_residual_rmsnorm_fp4_quant(
+    input_tensor: torch.Tensor,
+    residual: Optional[torch.Tensor],
+    weight: torch.Tensor,
+    eps: float,
+    input_global_scale: torch.Tensor,
+    *,
+    quant_out: torch.Tensor,
+    output_scale: torch.Tensor,
+    max_token_num: int = 2048,
+    use_oneshot: Optional[bool] = None,
+    trigger_completion_at_end: bool = False,
+    fp32_acc: bool = False,
+):
+    # No-op fake impl: just return provided buffers
+    if residual is not None:
+        return quant_out, residual
+    else:
+        return quant_out, input_tensor
+
+
+if supports_custom_op():
+    direct_register_custom_op(
+        "flashinfer_allreduce_residual_rmsnorm_fp4_quant",
+        flashinfer_allreduce_residual_rmsnorm_fp4_quant,
+        mutates_args=[
+            "input_tensor",
+            "residual",
+            "weight",
+            "input_global_scale",
+            "quant_out",
+            "output_scale",
+        ],
+        fake_impl=fake_flashinfer_allreduce_residual_rmsnorm_fp4_quant,
+    )

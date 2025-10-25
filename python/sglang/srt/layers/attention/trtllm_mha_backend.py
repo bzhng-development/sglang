@@ -523,6 +523,23 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
         **kwargs,
     ) -> torch.Tensor:
         """Run forward for decode using TRTLLM MHA kernel."""
+        # Optional fused RoPE+quantize path for MHA (guarded via kwargs)
+        if kwargs.get("enable_mha_fused_rope", False) and is_flashinfer_available():
+            cos_sin_cache: torch.Tensor = kwargs["cos_sin_cache"]
+            rope_dim: int = int(kwargs.get("rope_dim", layer.head_dim))
+            no_rope_dim: int = int(kwargs.get("no_rope_dim", layer.head_dim - rope_dim))
+            is_neox: bool = bool(kwargs.get("is_neox", False))
+            # Apply fused RoPE+quantization, then cast back to original dtype for safety
+            q, k = self._quantize_and_rope_for_mha(
+                q=q,
+                k=k,
+                forward_batch=forward_batch,
+                cos_sin_cache=cos_sin_cache,
+                rope_dim=rope_dim,
+                no_rope_dim=no_rope_dim,
+                is_neox=is_neox,
+            )
+
         cache_loc = forward_batch.out_cache_loc
         if save_kv_cache and k is not None:
             forward_batch.token_to_kv_pool.set_kv_buffer(
@@ -581,6 +598,23 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
         save_kv_cache=True,
         **kwargs,
     ):
+        # Optional fused RoPE+quantize path for MHA (guarded via kwargs)
+        if kwargs.get("enable_mha_fused_rope", False) and is_flashinfer_available():
+            cos_sin_cache: torch.Tensor = kwargs["cos_sin_cache"]
+            rope_dim: int = int(kwargs.get("rope_dim", layer.head_dim))
+            no_rope_dim: int = int(kwargs.get("no_rope_dim", layer.head_dim - rope_dim))
+            is_neox: bool = bool(kwargs.get("is_neox", False))
+            # Apply fused RoPE+quantization, then cast back to original dtype for safety
+            q, k = self._quantize_and_rope_for_mha(
+                q=q,
+                k=k,
+                forward_batch=forward_batch,
+                cos_sin_cache=cos_sin_cache,
+                rope_dim=rope_dim,
+                no_rope_dim=no_rope_dim,
+                is_neox=is_neox,
+            )
+
         cache_loc = forward_batch.out_cache_loc
         if save_kv_cache and k is not None:
             forward_batch.token_to_kv_pool.set_kv_buffer(
@@ -628,6 +662,71 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
         )
 
         return o.view(-1, layer.tp_q_head_num * layer.head_dim)
+
+    def _quantize_and_rope_for_mha(
+        self,
+        q: torch.Tensor,
+        k: torch.Tensor,
+        forward_batch: ForwardBatch,
+        cos_sin_cache: torch.Tensor,
+        rope_dim: int,
+        no_rope_dim: int,
+        is_neox: bool,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Apply RoPE on the rope dimensions and quantize q/k to FP8 via FlashInfer, then cast back.
+
+        Inputs are assumed to be shaped as:
+          q: (nnz, num_q_heads, no_rope_dim + rope_dim)
+          k: (nnz, num_kv_heads, no_rope_dim + rope_dim) or (nnz, no_rope_dim + rope_dim)
+        """
+        attn_dtype = torch.float8_e4m3fn
+
+        # Split q and k into nope/rope components
+        q_nope = q[..., :no_rope_dim]
+        q_rope = q[..., no_rope_dim:]
+
+        if k.dim() == 3:
+            k_nope = k[..., :no_rope_dim]
+            k_rope = k[..., no_rope_dim:]
+        else:
+            # 2D degenerate case (MLA-like shared K), still supported by rope_quantize
+            k_nope = k[..., :no_rope_dim]
+            k_rope = k[..., no_rope_dim:]
+
+        # Allocate output tensors
+        q_nope_out = torch.empty_like(q_nope, dtype=attn_dtype)
+        q_rope_out = torch.empty_like(q_rope, dtype=attn_dtype)
+        k_nope_out = torch.empty_like(k_nope, dtype=attn_dtype)
+        k_rope_out = torch.empty_like(k_rope, dtype=attn_dtype)
+
+        # Run fused rope + quantize
+        flashinfer.rope.rope_quantize_fp8(
+            q_rope=q_rope,
+            k_rope=k_rope,
+            q_nope=q_nope,
+            k_nope=k_nope,
+            cos_sin_cache=cos_sin_cache,
+            pos_ids=forward_batch.positions,
+            is_neox=is_neox,
+            q_rope_out=q_rope_out,
+            k_rope_out=k_rope_out,
+            q_nope_out=q_nope_out,
+            k_nope_out=k_nope_out,
+            quant_scale_q=1.0,
+            quant_scale_kv=1.0,
+        )
+
+        # Merge back and cast to original dtypes expected by downstream kernels
+        q_fp8 = torch.cat([q_nope_out, q_rope_out], dim=-1)
+        k_fp8 = (
+            torch.cat([k_nope_out, k_rope_out], dim=-1)
+            if k.dim() == 3
+            else torch.cat([k_nope_out, k_rope_out], dim=-1)
+        )
+
+        q_cast = q_fp8.to(q.dtype)
+        k_cast = k_fp8.to(k.dtype)
+        return q_cast, k_cast
 
 
 class TRTLLMHAAttnMultiStepDraftBackend(FlashInferMultiStepDraftBackend):

@@ -1483,11 +1483,36 @@ class DeepseekV2AttentionMLA(nn.Module):
         k_nope = kv[..., : self.qk_nope_head_dim]
         v = kv[..., self.qk_nope_head_dim :]
 
-        k = self._concat_and_cast_mha_k(k_nope, k_pe, forward_batch)
+        # Optionally bypass separate RoPE and use fused path in backend for MHA
+        enable_mha_fused = (
+            get_bool_env_var("SGLANG_FUSED_MHA_ENABLE_ROPE_FUSION", "false")
+            and _is_flashinfer_available
+            and self.attn_mha is not None
+        )
+        if not enable_mha_fused:
+            q_pe, k_pe = self.rotary_emb(positions, q_pe, k_pe)
+            q[..., self.qk_nope_head_dim :] = q_pe
+
+        if enable_mha_fused:
+            # Build full K (nope + rope) without pre-rotation; backend will apply RoPE
+            k = self._concat_and_cast_mha_k(k_nope, k_pe, forward_batch)
+            forward_batch.extra_attn_kwargs = {
+                "enable_mha_fused_rope": True,
+                "cos_sin_cache": self.rotary_emb.cos_sin_cache,
+                "rope_dim": int(self.qk_rope_head_dim),
+                "no_rope_dim": int(self.qk_nope_head_dim),
+                "is_neox": False,
+            }
+        else:
+            k = self._concat_and_cast_mha_k(k_nope, k_pe, forward_batch)
+            forward_batch.extra_attn_kwargs = {}
         return q, k, v, forward_batch
 
     def forward_normal_core(self, q, k, v, forward_batch):
-        attn_output = self.attn_mha(q, k, v, forward_batch, save_kv_cache=False)
+        kwargs = getattr(forward_batch, "extra_attn_kwargs", {}) or {}
+        attn_output = self.attn_mha(
+            q, k, v, forward_batch, save_kv_cache=False, **kwargs
+        )
         attn_output = attn_output.reshape(-1, self.num_local_heads * self.v_head_dim)
         output, _ = self.o_proj(attn_output)
         return output
