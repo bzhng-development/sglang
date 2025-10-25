@@ -1132,9 +1132,11 @@ class ServerArgs:
                     "TRTLLM MHA backend is only supported on Blackwell GPUs (SM100). Please use a different backend."
                 )
 
-            if self.page_size not in [16, 32, 64]:
+            # Allow 128 experimentally: FlashInfer TRTLLM-gen kernels can support up to 128 tokens/page
+            # if corresponding cubins are available. If unsupported at runtime, kernels will fail selection.
+            if self.page_size not in [16, 32, 64, 128]:
                 logger.warning(
-                    f"TensorRT-LLM MHA only supports page_size of 16, 32 or 64, changing page_size from {self.page_size} to 64."
+                    f"TensorRT-LLM MHA typically supports page_size of 16, 32, 64 (128 experimental). Changing page_size from {self.page_size} to 64."
                 )
                 self.page_size = 64
 
