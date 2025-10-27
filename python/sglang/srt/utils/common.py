@@ -1126,7 +1126,42 @@ def prepare_model_and_tokenizer(model_path: str, tokenizer_path: str):
     return model_path, tokenizer_path
 
 
+def _patch_logger_once_methods():
+    """Patch logging.Logger with info_once/warning_once methods.
+
+    These methods log a given message only once per-process per unique
+    (message, args) tuple. They accept standard logging formatting args.
+    """
+    import logging
+    from functools import lru_cache
+
+    # Guard to avoid re-patching
+    if hasattr(logging.Logger, "info_once") and hasattr(logging.Logger, "warning_once"):
+        return
+
+    @lru_cache(maxsize=None)
+    def _print_info_once(logger, msg: str, *args):
+        # stacklevel points to the original caller
+        logger.info(msg, *args, stacklevel=3)
+
+    @lru_cache(maxsize=None)
+    def _print_warning_once(logger, msg: str, *args):
+        # stacklevel points to the original caller
+        logger.warning(msg, *args, stacklevel=3)
+
+    def info_once(self, msg: str, *args):
+        _print_info_once(self, msg, *args)
+
+    def warning_once(self, msg: str, *args):
+        _print_warning_once(self, msg, *args)
+
+    setattr(logging.Logger, "info_once", info_once)
+    setattr(logging.Logger, "warning_once", warning_once)
+
+
 def configure_logger(server_args, prefix: str = ""):
+    # Ensure "once" helpers are available on all loggers.
+    _patch_logger_once_methods()
     if SGLANG_LOGGING_CONFIG_PATH := os.getenv("SGLANG_LOGGING_CONFIG_PATH"):
         if not os.path.exists(SGLANG_LOGGING_CONFIG_PATH):
             raise Exception(
@@ -1145,6 +1180,27 @@ def configure_logger(server_args, prefix: str = ""):
         datefmt="%Y-%m-%d %H:%M:%S",
         force=True,
     )
+
+
+def disable_uvicorn_logging():
+    """Disable uvicorn's default logging to avoid duplicate server logs.
+
+    - Turn off uvicorn access logs
+    - Mute uvicorn error/info loggers
+    """
+    try:
+        from uvicorn.config import LOGGING_CONFIG
+
+        # Disable access logs and mute uvicorn loggers
+        for name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+            if name in LOGGING_CONFIG.get("loggers", {}):
+                LOGGING_CONFIG["loggers"][name]["level"] = "CRITICAL"
+                LOGGING_CONFIG["loggers"][name]["handlers"] = []
+                LOGGING_CONFIG["loggers"][name]["propagate"] = False
+    except Exception:
+        # Fall back to runtime logger adjustments if LOGGING_CONFIG isn't available
+        logging.getLogger("uvicorn.error").setLevel(logging.CRITICAL)
+        logging.getLogger("uvicorn.access").disabled = True
 
 
 # source: https://github.com/vllm-project/vllm/blob/93b38bea5dd03e1b140ca997dfaadef86f8f1855/vllm/lora/utils.py#L9

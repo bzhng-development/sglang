@@ -120,8 +120,8 @@ from sglang.srt.utils import (
     delete_directory,
     get_bool_env_var,
     kill_process_tree,
-    set_uvicorn_logging_configs,
 )
+from sglang.srt.utils.common import disable_uvicorn_logging
 from sglang.srt.warmup import execute_warmups
 from sglang.utils import get_exception_traceback
 from sglang.version import __version__
@@ -1387,19 +1387,11 @@ def launch_server(
         app.warmup_thread = warmup_thread
 
     try:
-        # Update logging configs
-        set_uvicorn_logging_configs()
+        # Disable uvicorn logging to avoid duplicate logs; sglang handles logging centrally
+        disable_uvicorn_logging()
         app.server_args = server_args
         # Listen for HTTP requests
         if server_args.tokenizer_worker_num > 1:
-            from uvicorn.config import LOGGING_CONFIG
-
-            LOGGING_CONFIG["loggers"]["sglang.srt.entrypoints.http_server"] = {
-                "handlers": ["default"],
-                "level": "INFO",
-                "propagate": False,
-            }
-
             monkey_patch_uvicorn_multiprocessing()
 
             uvicorn.run(
