@@ -67,11 +67,30 @@ Note that CUDA graph consumes more memory, so you may need to reduce `--mem-frac
 
 ### Tune `--dp-size` and `--tp-size`
 
-Data parallelism is better for throughput. When there is enough GPU memory, always favor data parallelism for throughput. Refer to [sglang router](../advanced_features/router.md) for a better data parallelism rather than using `dp_size` parameter.
+Data parallelism is better for throughput. When there is enough GPU memory, always favor data parallelism for throughput. Refer to [sglang router](../advanced_features/router.md) for a better data parallelism solution rather than using the `dp_size` parameter.
 
 ### Try other options
 
-- `torch.compile` accelerates small models on small batch sizes. You can enable it with `--enable-torch-compile`.
 - Try other quantization (e.g. FP8 quantization with `--quantization fp8`)
 - Try other parallelism strategies (e.g. [expert parallelism](https://lmsys.org/blog/2025-05-05-large-scale-ep/)) or DP attention for deepseek models (with `--enable-dp-attention --dp-size 8`).
 - If the workload has many shared prefixes, try `--schedule-policy lpm`. Here, `lpm` stands for longest prefix match. It reorders requests to encourage more cache hits but introduces more scheduling overhead.
+
+## Achieving low latency for online serving
+
+### Use speculative decoding
+
+- Speculative decoding can significantly increase throughput at low batch sizes. See [Speculative Decoding](speculative_decoding.ipynb).
+
+### Attention backends
+
+- Optimized attention backends can significantly reduce your latency and increase throughput. SGLang tries it's best to select the best backend for your hardware and model. However, you can try different `--attention-backend` (see [list of supported backends](../advanced_features/attention_backend.md)) and choose the one that minimizes prefill latency and maxmizes throughput at your target batch.
+
+### Quantization
+
+- Quantization can significantly reduce ITL and increase throughput, while maintaining model accuracy. Different hardware and models have different quantization methods that are supported. See [Quantization](../advanced_features/quantization.md) for more information.
+
+### Chunked prefill
+
+- Chunked prefill processes long prompts in fixed-size chunks so prefill work can be interleaved with other requests instead of monopolizing the GPU.
+- For low latency, set `--chunked-prefill-size` to a moderate value (e.g., `2048`, `4096`, or `8192`). Smaller values smooth latency under long prompts at the cost of a small overhead; larger values speed up prefill but may increase tail latency.
+- `--chunked-prefill-size` must be divisible by `--page-size`. Set `--chunked-prefill-size -1` to disable when most prompts are short and you prefer the lowest overhead.
