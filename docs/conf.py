@@ -119,6 +119,14 @@ html_theme_options = {
     "use_download_button": True,
     "use_sidenotes": True,
     "show_toc_level": 2,
+    "navbar_end": [
+        "theme-switcher",
+        "version-switcher",
+    ],
+    "switcher": {
+        "json_url": "_static/versions.json",
+        "version_match": os.getenv("READTHEDOCS_VERSION", release),
+    },
 }
 
 html_context = {
