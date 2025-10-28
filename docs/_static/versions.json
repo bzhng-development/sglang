@@ -1,0 +1,4 @@
+[
+  { "version": "latest", "url": "/" },
+  { "version": "master", "url": "/en/master/" }
+]
