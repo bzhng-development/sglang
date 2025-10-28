@@ -199,16 +199,23 @@ class MiniMaxM2MoE(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("experts", prefix),
         )
-        self.topk = TopK(
+        topk_kwargs = dict(
             top_k=config.num_experts_per_tok,
             renormalize=True,
             scoring_func=config.scoring_func,
-            use_grouped_topk=True,  # TODO: Use "grouped top-k" flag only for hardcoded sigmoid scoring
-            num_expert_group=1,
-            topk_group=1,
-            correction_bias=self.e_score_correction_bias,
-            routed_scaling_factor=1.0,
         )
+        if self.use_routing_bias:
+            topk_kwargs.update(
+                use_grouped_topk=True,  # TODO: Use "grouped top-k" flag only for hardcoded sigmoid scoring
+                num_expert_group=1,
+                topk_group=1,
+                correction_bias=self.e_score_correction_bias,
+                routed_scaling_factor=1.0,
+            )
+        else:
+            topk_kwargs["use_grouped_topk"] = False
+
+        self.topk = TopK(**topk_kwargs)
 
         self.gate = ReplicatedLinear(
             config.hidden_size,
