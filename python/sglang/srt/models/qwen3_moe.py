@@ -45,6 +45,7 @@ from sglang.srt.layers.logits_processor import LogitsProcessor
 from sglang.srt.layers.moe import (
     get_moe_a2a_backend,
     should_use_flashinfer_cutlass_moe_fp4_allgather,
+    should_use_flashinfer_trtllm_moe,
 )
 from sglang.srt.layers.moe.ep_moe.layer import get_moe_impl_class
 from sglang.srt.layers.moe.fused_moe_triton.layer import FusedMoE
@@ -96,10 +97,27 @@ class Qwen3MoeSparseMoeBlock(nn.Module):
                 f"the number of experts {config.num_experts}."
             )
 
+        from sglang.srt.layers.moe import RoutingMethodType
+
+        if RoutingMethodType is not None:
+            routing_method_type = (
+                RoutingMethodType.RenormalizeNaive
+                if config.norm_topk_prob
+                else RoutingMethodType.Default
+            )
+        else:
+            routing_method_type = 4 if config.norm_topk_prob else 0
+
+        if should_use_flashinfer_trtllm_moe():
+            routing_method_type = (
+                RoutingMethodType.DeepSeekV3 if RoutingMethodType is not None else 2
+            )
+
         self.topk = TopK(
             top_k=config.num_experts_per_tok,
             renormalize=config.norm_topk_prob,
             use_grouped_topk=False,
+            routing_method_type=routing_method_type,
         )
 
         self.experts = get_moe_impl_class(quant_config)(
@@ -111,6 +129,7 @@ class Qwen3MoeSparseMoeBlock(nn.Module):
             intermediate_size=config.moe_intermediate_size,
             quant_config=quant_config,
             prefix=add_prefix("experts", prefix),
+            routing_method_type=routing_method_type,
         )
 
         self.gate = ReplicatedLinear(

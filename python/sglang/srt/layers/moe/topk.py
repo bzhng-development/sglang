@@ -98,6 +98,7 @@ class TopKConfig:
     torch_native: bool = False
     routed_scaling_factor: Optional[float] = None
     apply_routed_scaling_factor_on_output: bool = False
+    routing_method_type: Optional[int] = None
     output_format: Optional[TopKOutputFormat] = None
 
 
@@ -204,6 +205,7 @@ class TopK(CustomOp):
         quant_config: Optional[QuantizationConfig] = None,
         routed_scaling_factor: Optional[float] = None,
         apply_routed_scaling_factor_on_output: Optional[bool] = False,
+        routing_method_type: Optional[int] = None,
         output_format: Optional[TopKOutputFormat] = None,
     ):
         # NOTE: scoring_func is not used for now, but we keep it for future use
@@ -224,6 +226,7 @@ class TopK(CustomOp):
             correction_bias=correction_bias,
             routed_scaling_factor=routed_scaling_factor,
             apply_routed_scaling_factor_on_output=apply_routed_scaling_factor_on_output,
+            routing_method_type=routing_method_type,
             output_format=output_format,
         )
 

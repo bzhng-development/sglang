@@ -39,6 +39,7 @@ from sglang.srt.layers.linear import (
     ReplicatedLinear,
     RowParallelLinear,
 )
+from sglang.srt.layers.moe import RoutingMethodType
 from sglang.srt.layers.moe.fused_moe_triton import FusedMoE
 from sglang.srt.layers.moe.topk import TopK
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
@@ -104,10 +105,16 @@ class Llama4MoE(nn.Module):
             prefix=add_prefix("router", prefix),
         )
 
+        if RoutingMethodType is not None:
+            routing_method_type = RoutingMethodType.Llama4
+        else:
+            routing_method_type = 3
+
         self.topk = TopK(
             top_k=self.top_k,
             renormalize=False,
             custom_routing_function=Llama4MoE.custom_routing_function,
+            routing_method_type=routing_method_type,
         )
 
         self.experts = FusedMoE(
@@ -119,6 +126,7 @@ class Llama4MoE(nn.Module):
             quant_config=quant_config,
             apply_router_weight_on_input=True,
             prefix=add_prefix("experts", prefix),
+            routing_method_type=routing_method_type,
         )
 
         self.shared_expert = LlamaMLP(

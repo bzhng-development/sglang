@@ -635,8 +635,27 @@ class Mxfp4MoEMethod(FusedMoEMethodBase):
             assert x_quant.shape[-1] == self.hidden_size
             assert TopKOutputChecker.format_is_bypassed(topk_output)
 
-            top_k = topk_output.topk_config.top_k
+            topk_config = topk_output.topk_config
+            top_k = topk_config.top_k
             router_logits = topk_output.router_logits
+            routing_method_type = topk_config.routing_method_type
+            if routing_method_type is None:
+                routing_method_type = getattr(layer, "routing_method_type", None)
+            if routing_method_type is None:
+                routing_method_type = 1
+            rt_val = int(routing_method_type)
+            if top_k > 1 and rt_val == 3:
+                try:
+                    from sglang.srt.layers.moe import RoutingMethodType as _RoutingMethodType  # type: ignore
+                except ImportError:
+                    _RoutingMethodType = None
+                routing_method_type = (
+                    _RoutingMethodType.Renormalize
+                    if _RoutingMethodType is not None
+                    else 1
+                )
+                topk_config.routing_method_type = routing_method_type
+                rt_val = int(routing_method_type)
 
             trtllm_gen_output = trtllm_fp4_block_scale_moe(
                 router_logits.to(torch.bfloat16),
@@ -664,7 +683,7 @@ class Mxfp4MoEMethod(FusedMoEMethodBase):
                 layer.num_local_experts,  # local num experts
                 None,
                 None,  # tile_tokens_dim
-                1,  # routing_method_type, renormalize
+                rt_val,
                 True,  # do finalize
             )[0]
             return StandardCombineInput(hidden_states=trtllm_gen_output)
