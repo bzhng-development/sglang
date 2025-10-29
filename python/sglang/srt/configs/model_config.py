@@ -490,57 +490,63 @@ class ModelConfig:
 
     # adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/config.py
     def _parse_quant_hf_config(self):
+        """Parse quantization info with precedence: hf_quant_config.json first, then HF config.json.
+
+        This ensures ModelOpt checkpoints are detected without requiring CLI flags.
+        """
+        # 1) Prefer standalone hf_quant_config.json (ModelOpt).
+        is_local = os.path.exists(self.model_path)
+        try:
+            if is_local and os.path.exists(
+                os.path.join(self.model_path, "hf_quant_config.json")
+            ):
+                with open(os.path.join(self.model_path, "hf_quant_config.json")) as f:
+                    quant_config_dict = json.load(f)
+                cfg = self._parse_modelopt_quant_config(quant_config_dict)
+                if cfg is not None:
+                    return cfg
+        except Exception as e:
+            logger.warning(
+                f"Failed to read local hf_quant_config.json for {self.model_path}: {e}"
+            )
+
+        if not is_local:
+            import huggingface_hub
+
+            try:
+                from huggingface_hub import HfApi, hf_hub_download
+
+                hf_api = HfApi()
+                file_exists = retry(
+                    lambda: hf_api.file_exists(self.model_path, "hf_quant_config.json"),
+                    max_retry=2,
+                    initial_delay=1.0,
+                    max_delay=5.0,
+                )
+                if file_exists:
+                    quant_config_file = hf_hub_download(
+                        repo_id=self.model_path,
+                        filename="hf_quant_config.json",
+                        revision=self.revision,
+                    )
+                    with open(quant_config_file) as f:
+                        quant_config_dict = json.load(f)
+                    cfg = self._parse_modelopt_quant_config(quant_config_dict)
+                    if cfg is not None:
+                        return cfg
+            except huggingface_hub.errors.OfflineModeIsEnabled:
+                logger.warning(
+                    "Offline mode is enabled, skipping remote hf_quant_config.json check"
+                )
+            except Exception as e:
+                logger.warning(
+                    f"Failed remote hf_quant_config.json check for {self.model_path}: {e}"
+                )
+
+        # 2) Fallback to HF config.json (quantization_config/compression_config)
         quant_cfg = getattr(self.hf_config, "quantization_config", None)
         if quant_cfg is None:
-            # compressed-tensors uses a "compression_config" key
             quant_cfg = getattr(self.hf_config, "compression_config", None)
-        if quant_cfg is None:
-            # check if is modelopt or mixed-precision model -- Both of them don't have corresponding field
-            # in hf `config.json` but has a standalone `hf_quant_config.json` in the root directory
-            # example: https://huggingface.co/nvidia/Llama-3.1-8B-Instruct-FP8/tree/main
-            # example: https://huggingface.co/Barrrrry/DeepSeek-R1-W4AFP8/tree/main
-            is_local = os.path.exists(self.model_path)
-            if not is_local:
-                import huggingface_hub
-
-                try:
-                    from huggingface_hub import HfApi, hf_hub_download
-
-                    hf_api = HfApi()
-                    # Retry HF API call up to 3 times
-                    file_exists = retry(
-                        lambda: hf_api.file_exists(
-                            self.model_path, "hf_quant_config.json"
-                        ),
-                        max_retry=2,
-                        initial_delay=1.0,
-                        max_delay=5.0,
-                    )
-                    if file_exists:
-                        # Download and parse the quantization config for remote models
-                        quant_config_file = hf_hub_download(
-                            repo_id=self.model_path,
-                            filename="hf_quant_config.json",
-                            revision=self.revision,
-                        )
-                        with open(quant_config_file) as f:
-                            quant_config_dict = json.load(f)
-                        quant_cfg = self._parse_modelopt_quant_config(quant_config_dict)
-                except huggingface_hub.errors.OfflineModeIsEnabled:
-                    logger.warning(
-                        "Offline mode is enabled, skipping hf_quant_config.json check"
-                    )
-                except Exception as e:
-                    logger.warning(
-                        f"Failed to check hf_quant_config.json: {self.model_path} {e}"
-                    )
-            elif os.path.exists(os.path.join(self.model_path, "hf_quant_config.json")):
-                quant_config_file = os.path.join(
-                    self.model_path, "hf_quant_config.json"
-                )
-                with open(quant_config_file) as f:
-                    quant_config_dict = json.load(f)
-                quant_cfg = self._parse_modelopt_quant_config(quant_config_dict)
         return quant_cfg
 
     def _parse_modelopt_quant_config(self, quant_config_dict: dict) -> Optional[dict]:
@@ -564,8 +570,11 @@ class ModelConfig:
 
         return has_hf_quant_config(self.model_path)
 
-    def _get_modelopt_quant_type(self) -> str:
-        """Extract ModelOpt quantization type from unified quantization flag."""
+    def _get_modelopt_quant_type(self) -> Optional[str]:
+        """Extract ModelOpt quantization type from unified quantization flag.
+
+        Returns "fp8"/"nvfp4" when determinable, otherwise None.
+        """
         if self.quantization == "modelopt_fp8":
             return "fp8"
         elif self.quantization == "modelopt_fp4":
@@ -579,10 +588,11 @@ class ModelConfig:
                     return "fp4"
                 elif "fp8" in quant_method:
                     return "fp8"
-            # Default to fp8 if can't detect
-            return "fp8"
+            # No concrete type detected, this fix is needed for ModelOpt files
+            # That are EAGLE-3 checkpoints that don't have quantization.
+            return None
         else:
-            return "fp8"  # Default fallback
+            return None
 
     def _validate_quantize_and_serve_config(self):
         """Validate quantize_and_serve configuration."""
@@ -663,8 +673,9 @@ class ModelConfig:
 
         if quant_cfg is not None:
             quant_method = quant_cfg.get(
-                "quant_method", "" if not self.quantization else self.quantization
-            ).lower()
+                "quant_method", None if not self.quantization else self.quantization
+            )
+            quant_method = (quant_method or "").lower()
 
             # Detect which checkpoint is it
             for _, method in QUANTIZATION_METHODS.items():
@@ -677,8 +688,12 @@ class ModelConfig:
                     break
 
             # Verify quantization configurations.
-            if self.quantization is None:
+            if self.quantization is None and quant_method:
                 self.quantization = quant_method
+                logger.info(
+                    "Detected quantization from model config: %s",
+                    self.quantization,
+                )
             elif self.quantization != quant_method:
                 if (
                     self.quantization not in compatible_quantization_methods
@@ -710,6 +725,14 @@ class ModelConfig:
                     "non-quantized models.",
                     self.quantization,
                 )
+
+        # If user requested generic ModelOpt but we couldn't resolve to FP8/FP4,
+        # Raise an error, because it's not clear what the user wants.
+        if self.quantization == "modelopt":
+            raise ValueError(
+                "You specified --quantization modelopt, but no ModelOpt quantization was detected. "
+                "Ensure hf_quant_config.json exists and has quantization.quant_algo = FP8 or NVFP4, or remove the flag."
+            )
 
     def _verify_dual_chunk_attention_config(self) -> None:
         if hasattr(self.hf_config, "dual_chunk_attention_config"):
