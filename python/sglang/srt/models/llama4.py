@@ -331,11 +331,28 @@ class Llama4Attention(nn.Module):
 
         if self.qk_norm is not None:
             # TODO there are still 2 redundant direct_copy_kernel_cuda for this `reshape` and (in attn backend) q.contiguous(), maybe we can fuse them later
-            qk = qk.reshape(-1, self.head_dim).contiguous().bfloat16()
-            qk = self.qk_norm(qk).to(torch.bfloat16)
-            qk = qk.reshape(-1, self.q_size + self.kv_size)
+            # Normalize per head and directly pack into backend-ready per-head layout to avoid an extra contiguous copy later
+            num_tokens = qk.shape[0]
+            qk_heads = qk.reshape(-1, self.head_dim).contiguous().bfloat16()
+            qk_heads = self.qk_norm(qk_heads).to(torch.bfloat16)
 
-        q, k = qk.split([self.q_size, self.kv_size], dim=-1)
+            # First T * num_heads rows are Q heads; next T * num_kv_heads rows are K heads
+            q = (
+                qk_heads[: num_tokens * self.num_heads]
+                .reshape(num_tokens, self.num_heads, self.head_dim)
+                .contiguous()
+            )
+            k = (
+                qk_heads[
+                    num_tokens
+                    * self.num_heads : num_tokens
+                    * (self.num_heads + self.num_kv_heads)
+                ]
+                .reshape(num_tokens, self.num_kv_heads, self.head_dim)
+                .contiguous()
+            )
+        else:
+            q, k = qk.split([self.q_size, self.kv_size], dim=-1)
 
         # We are applying temperature tuning (https://arxiv.org/abs/2501.19399) to NoPE layers, where
         # the inference-time temperature tuning function is customized to not affect short context
