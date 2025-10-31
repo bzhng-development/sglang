@@ -338,17 +338,10 @@ class Llama4Attention(nn.Module):
             qk_heads = self.qk_norm(qk_heads).to(torch.bfloat16)
 
             qk_heads = qk_heads.view(num_tokens, total_heads, self.head_dim)
-            # First num_heads entries along head dimension are Q heads; remainder are K heads
-            q = (
-                qk_heads[:, : self.num_heads, :]
-                .contiguous()
-                .view(num_tokens, self.q_size)
-            )
-            k = (
-                qk_heads[:, self.num_heads :, :]
-                .contiguous()
-                .view(num_tokens, self.kv_size)
-            )
+            qk_heads = qk_heads.view(num_tokens, total_heads * self.head_dim)
+            # First num_heads entries along head dimension map to q, remainder map to k
+            q = qk_heads[:, : self.q_size]
+            k = qk_heads[:, self.q_size :]
         else:
             q, k = qk.split([self.q_size, self.kv_size], dim=-1)
 
