@@ -333,27 +333,22 @@ class Llama4Attention(nn.Module):
             # TODO there are still 2 redundant direct_copy_kernel_cuda for this `reshape` and (in attn backend) q.contiguous(), maybe we can fuse them later
             # Normalize per head and directly pack into backend-ready per-head layout to avoid an extra contiguous copy later
             num_tokens = qk.shape[0]
+            total_heads = self.num_heads + self.num_kv_heads
             qk_heads = qk.reshape(-1, self.head_dim).contiguous().bfloat16()
             qk_heads = self.qk_norm(qk_heads).to(torch.bfloat16)
 
-            # First T * num_heads rows are Q heads; next T * num_kv_heads rows are K heads
+            qk_heads = qk_heads.view(num_tokens, total_heads, self.head_dim)
+            # First num_heads entries along head dimension are Q heads; remainder are K heads
             q = (
-                qk_heads[: num_tokens * self.num_heads]
-                .reshape(num_tokens, self.num_heads, self.head_dim)
+                qk_heads[:, : self.num_heads, :]
                 .contiguous()
+                .view(num_tokens, self.q_size)
             )
             k = (
-                qk_heads[
-                    num_tokens
-                    * self.num_heads : num_tokens
-                    * (self.num_heads + self.num_kv_heads)
-                ]
-                .reshape(num_tokens, self.num_kv_heads, self.head_dim)
+                qk_heads[:, self.num_heads :, :]
                 .contiguous()
+                .view(num_tokens, self.kv_size)
             )
-            # Flatten back to 2D while preserving contiguous per-head layout for FA3 backends
-            q = q.view(num_tokens, self.q_size)
-            k = k.view(num_tokens, self.kv_size)
         else:
             q, k = qk.split([self.q_size, self.kv_size], dim=-1)
 
