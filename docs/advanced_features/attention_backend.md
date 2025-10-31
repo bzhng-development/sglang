@@ -21,7 +21,7 @@ The support matrix is split into two parts: MHA (standard attention) and MLA (mu
 | **Triton**                      | ❌                          | ❌               | ✅              | ✅              | ✅                 | ✅             |
 | **Torch Native (SDPA)**         | ❌                          | ❌               | ❌              | ❌              | ❌                 | ❌             |
 | **FlexAttention (PyTorch)**     | ❌                          | ❌               | ❌              | ❌              | ❌                 | ❌             |
-| **TRTLLM MHA**                  | 16, 32 or 64                | ❌               | ✅              | ❌              | ❌                 | ❌             |
+| **TRTLLM MHA**                  | 16, 32, 64 or 128           | ❌               | ✅              | ❌              | ❌                 | ❌             |
 | **Dual Chunk FlashAttention**   | ✅                          | ❌               | ❌              | ❌              | ❌                 | ❌             |
 | **AITER (ROCm)**                | ✅                          | ❌               | ✅              | ✅              | ❌                 | ❌             |
 | **Wave (ROCm)**                 | ✅                          | ❌               | ❌              | ❌              | ❌                 | ❌             |
@@ -54,7 +54,7 @@ FlashMLA FP8 KV cache is currently not working. See upstream issue [#8856](https
 Speculative decoding topk: `topk` is the number of draft tokens sampled per step from the draft model. `topk = 1` follows classic EAGLE; `topk > 1` explores multiple branches and requires backend support in both draft and verification paths.
 ```
 
-Note: Many backends that do not natively operate on pages can emulate `page_size > 1` at the wrapper layer by expanding page tables to per-token indices. The "Page Size > 1 (native)" column indicates true in-kernel paging. Some backends require fixed native page sizes and cannot be reduced/emulated differently: TRTLLM MHA (16/32/64), TRTLLM MLA (32/64), FlashMLA (64), Cutlass MLA (128), FA4 (128), Ascend (128).
+Note: Many backends that do not natively operate on pages can emulate `page_size > 1` at the wrapper layer by expanding page tables to per-token indices. The "Page Size > 1 (native)" column indicates true in-kernel paging. Some backends require fixed native page sizes and cannot be reduced/emulated differently: TRTLLM MHA (16/32/64/128), TRTLLM MLA (32/64), FlashMLA (64), Cutlass MLA (128), FA4 (128), Ascend (128).
 
 MLA page-size constraints:
 - FlashInfer MLA: page_size = 1.

@@ -1214,7 +1214,7 @@ class ServerArgs:
                     "TRTLLM MHA backend is only supported on Blackwell GPUs (SM100). Please use a different backend."
                 )
 
-            if self.page_size not in [16, 32, 64]:
+            if self.page_size not in [16, 32, 64, 128]:
                 logger.warning(
                     f"TensorRT-LLM MHA only supports page_size of 16, 32 or 64, changing page_size from {self.page_size} to 64."
                 )
