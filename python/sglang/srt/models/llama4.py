@@ -25,7 +25,11 @@ from transformers import Llama4TextConfig
 
 from sglang.srt.distributed import (
     get_tensor_model_parallel_world_size,
+    parallel_state,
     tensor_model_parallel_all_reduce,
+)
+from sglang.srt.distributed.device_communicators.pynccl_allocator import (
+    use_symmetric_memory,
 )
 from sglang.srt.layers.communicator import LayerCommunicator, LayerScatterModes
 from sglang.srt.layers.dp_attention import (
@@ -143,6 +147,12 @@ class Llama4MoE(nn.Module):
         out_aD = routed_out + shared_out
 
         if self.tp_size > 1 and not use_reduce_scatter:
+            # Allocate the reduction buffer from NCCL symmetric memory pool and tag it
+            with use_symmetric_memory(parallel_state.get_tp_group()) as sm:
+                out_aD_out = torch.empty_like(out_aD)
+            out_aD_out.copy_(out_aD)
+            out_aD = out_aD_out
+            sm.tag(out_aD)
             out_aD = tensor_model_parallel_all_reduce(out_aD)
 
         return out_aD
@@ -447,6 +457,14 @@ class Llama4DecoderLayer(nn.Module):
                 forward_batch=forward_batch,
             )
 
+        # Enable symmetric-memory fast all-reduce for attention output
+        if get_tensor_model_parallel_world_size() > 1 and hidden_states.shape[0] != 0:
+            with use_symmetric_memory(parallel_state.get_tp_group()) as sm:
+                _hs_symm = torch.empty_like(hidden_states)
+            _hs_symm.copy_(hidden_states)
+            hidden_states = _hs_symm
+            sm.tag(hidden_states)
+
         hidden_states, residual = self.layer_communicator.prepare_mlp(
             hidden_states, residual, forward_batch
         )
@@ -460,6 +478,18 @@ class Llama4DecoderLayer(nn.Module):
         hidden_states = self.feed_forward(
             hidden_states, forward_batch, use_reduce_scatter
         )
+
+        # Enable symmetric-memory fast all-reduce for MLP output when not using RS
+        if (
+            get_tensor_model_parallel_world_size() > 1
+            and not use_reduce_scatter
+            and hidden_states.shape[0] != 0
+        ):
+            with use_symmetric_memory(parallel_state.get_tp_group()) as sm:
+                _mlp_symm = torch.empty_like(hidden_states)
+            _mlp_symm.copy_(hidden_states)
+            hidden_states = _mlp_symm
+            sm.tag(hidden_states)
         hidden_states, residual = self.layer_communicator.postprocess_layer(
             hidden_states, residual, forward_batch
         )
