@@ -351,6 +351,9 @@ class Llama4Attention(nn.Module):
                 .reshape(num_tokens, self.num_kv_heads, self.head_dim)
                 .contiguous()
             )
+            # Flatten back to 2D while preserving contiguous per-head layout for FA3 backends
+            q = q.view(num_tokens, self.q_size)
+            k = k.view(num_tokens, self.kv_size)
         else:
             q, k = qk.split([self.q_size, self.kv_size], dim=-1)
 
