@@ -16,6 +16,29 @@ author = "SGLang Team"
 version = __version__
 release = __version__
 
+
+# Normalize version labels so the version switcher matches entries in versions.json
+def _normalize_version_label(label: str) -> str:
+    if not label:
+        return ""
+    if label in {"latest", "main", "stable"}:
+        return label
+    # Drop optional leading 'v'
+    if label.startswith("v"):
+        label = label[1:]
+    # Strip post/dev/local build suffixes
+    for sep in (".post", ".dev", "+"):
+        if sep in label:
+            label = label.split(sep)[0]
+    return label
+
+
+# Prefer explicit env var, then RTD var, then package release
+_raw_version_match = (
+    os.getenv("DOCS_VERSION") or os.getenv("READTHEDOCS_VERSION") or release
+)
+_version_match = _normalize_version_label(_raw_version_match)
+
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
@@ -125,7 +148,7 @@ html_theme_options = {
     ],
     "switcher": {
         "json_url": "_static/versions.json",
-        "version_match": os.getenv("READTHEDOCS_VERSION", release),
+        "version_match": _version_match,
     },
 }
 
