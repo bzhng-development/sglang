@@ -976,12 +976,6 @@ class ModelOptFp4Config(ModelOptQuantConfig):
                     first_group = next(iter(config_groups.values()), {})
                     weights_config = first_group.get("weights", {})
                     group_size = weights_config.get("group_size")
-            # If still missing, default to 16.
-            if group_size is None:
-                logger.warning(
-                    "NVFP4 group_size not found in config.json; defaulting to 16"
-                )
-                group_size = 16
 
             exclude_modules = config.get("ignore", [])
         else:
@@ -992,16 +986,7 @@ class ModelOptFp4Config(ModelOptQuantConfig):
                 kv_cache_quant_algo = quant_config.get("kv_cache_quant_algo")
                 if not kv_cache_quant_algo:
                     kv_cache_quant_algo = "auto"
-                # Prefer explicit group_size in the quantization block; otherwise try common_group_size.
-                group_size = quant_config.get("group_size")
-                if not isinstance(group_size, int):
-                    try:
-                        group_size = ModelOptFp4Config.common_group_size(config)
-                    except Exception:
-                        logger.warning(
-                            "NVFP4 group_size not found in hf_quant_config.json; defaulting to 16"
-                        )
-                        group_size = 16
+                group_size = ModelOptFp4Config.common_group_size(config)
                 exclude_modules = quant_config.get("exclude_modules", [])
             except (ValueError, KeyError):
                 raise ValueError(
@@ -1017,12 +1002,16 @@ class ModelOptFp4Config(ModelOptQuantConfig):
             )
         is_checkpoint_nvfp4_serialized = "NVFP4" in quant_method
 
-        # Ensure defaults if missing
-        if group_size is None:
-            logger.warning("NVFP4 group_size missing after parsing; defaulting to 16")
-            group_size = 16
-        if exclude_modules is None:
-            exclude_modules = []
+        if group_size is None or exclude_modules is None:
+            logger.warning(
+                f"group_size: {group_size},"
+                f"kv_cache_quant_algo: {kv_cache_quant_algo},"
+                f"exclude_modules: {exclude_modules}"
+            )
+            raise ValueError(
+                "NVFP4 quantization requires group_size and exclude_modules "
+                "specified in the quantization config"
+            )
         return cls(
             is_checkpoint_nvfp4_serialized,
             kv_cache_quant_algo,
@@ -1504,27 +1493,18 @@ class ModelOptNvFp4FusedMoEMethod(FusedMoEMethodBase):
                 )
             }
         )
-        block_size = 16
-        # Validate weight scales
-        assert_dim = 2 if layer.moe_runner_config.is_gated else 1
+        # Validate weight scales (be lenient on K alignment: swizzle pads to multiples of 4)
         for name, weight_scale in [
             ("w13", layer.w13_weight_scale),
             ("w2", layer.w2_weight_scale),
         ]:
-            # For NVFP4 TRTLLM we require one scale per 16 inputs (last dim == expected_blocks[name]).
-            if get_moe_runner_backend().is_flashinfer_trtllm():
-                expected_blocks = {
-                    "w13": layer.w13_weight.shape[2] * 2 // block_size,
-                    "w2": layer.w2_weight.shape[2] * 2 // block_size,
-                }
-                assert (
-                    weight_scale.shape[-1] == expected_blocks[name]
-                ), f"Expected {name}_weight_scale.dim(2) == {expected_blocks[name]}, got {weight_scale.shape[-1]}"
-            else:
-                # For other backends, ensure the per-input block dimension is aligned to 16.
-                assert (
-                    weight_scale.shape[assert_dim] % block_size == 0
-                ), f"Expected {name}_weight_scale.dim({assert_dim}) to be divisible by {block_size}"
+            if weight_scale.shape[2] % 4 != 0:
+                logger.warning(
+                    "NVFP4 %s_weight_scale K' not multiple of 4: shape=%s, group_size=%s",
+                    name,
+                    tuple(weight_scale.shape),
+                    getattr(self.quant_config, "group_size", None),
+                )
             assert (
                 weight_scale.dtype == torch.float8_e4m3fn
             ), f"{name} Weight Blockscale must be represented as FP8-E4M3"
