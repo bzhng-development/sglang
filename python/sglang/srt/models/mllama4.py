@@ -482,6 +482,9 @@ class Llama4ForConditionalGeneration(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("language_model", prefix),
         )
+        # Expose the text model via the conventional `model` attribute so runtime
+        # helpers can access decoder layers uniformly across architectures.
+        self.model = self.language_model
 
         self.logits_processor = LogitsProcessor(
             config.text_config if hasattr(config, "text_config") else config
