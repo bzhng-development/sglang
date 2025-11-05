@@ -787,6 +787,7 @@ def apply_fp8_linear(
             and x_scale.numel() == 1
             and weight_scale.numel() == 1
         ):
+            print("Using FlashInfer low-latency FP8 GEMM")
             prepared_w = prepare_low_latency_gemm_weights(
                 weight.t().contiguous(), _FI_LL_PERM_CACHE
             )
