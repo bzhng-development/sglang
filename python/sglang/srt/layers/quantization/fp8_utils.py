@@ -1,3 +1,4 @@
+import logging
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
@@ -53,6 +54,19 @@ if _is_cuda:
 
 use_vllm_cutlass_w8a8_fp8_kernel = get_bool_env_var("USE_VLLM_CUTLASS_W8A8_FP8_KERNEL")
 use_triton_w8a8_fp8_kernel = get_bool_env_var("USE_TRITON_W8A8_FP8_KERNEL")
+
+# Debug logging toggle for FP8 linear path
+_DEBUG_FP8_LINEAR = get_bool_env_var("SGLANG_DEBUG_FP8_LINEAR")
+_logger = logging.getLogger(__name__)
+
+
+def _dbg(msg: str):
+    if _DEBUG_FP8_LINEAR:
+        try:
+            _logger.info(msg)
+        except Exception:
+            print(msg)
+
 
 # Input scaling factors are no longer optional in _scaled_mm starting
 # from pytorch 2.5. Allocating a dummy tensor to pass as input_scale
@@ -585,6 +599,13 @@ def apply_fp8_linear(
     pad_output: Optional[bool] = None,
     compressed_tensor_quant: bool = False,
 ) -> torch.Tensor:
+    _dbg(
+        f"apply_fp8_linear: compressed={compressed_tensor_quant} input.dtype={input.dtype} "
+        f"weight.dtype={weight.dtype} weight.shape={tuple(weight.shape)} "
+        f"weight_scale.shape={tuple(weight_scale.shape)} input_scale={'set' if input_scale is not None else 'None'} "
+        f"ENABLE_FLASHINFER_MM_FP8={ENABLE_FLASHINFER_MM_FP8} cutlass_fp8_supported={cutlass_fp8_supported} "
+        f"use_triton_w8a8_fp8_kernel={use_triton_w8a8_fp8_kernel} use_vllm_cutlass_w8a8_fp8_kernel={use_vllm_cutlass_w8a8_fp8_kernel}"
+    )
     # Note: we pad the input because torch._scaled_mm is more performant
     # for matrices with batch dimension > 16.
     # This could change in the future.
@@ -602,13 +623,18 @@ def apply_fp8_linear(
     output_shape = [*input.shape[:-1], weight.shape[1]]
 
     if compressed_tensor_quant:
+        _dbg("branch=compressed_tensor_quant")
         # cutlass_scaled_mm supports per tensor/channel W and per tensor/token A
         # for sgl-kernel fp8_scaled_mm, it support per channel W now
         if cutlass_fp8_supported and weight_scale.numel() == weight.shape[1]:
+            _dbg("compressed: using cutlass/triton path with per-channel weight scale")
             qinput, x_scale = scaled_fp8_quant(
                 input_2d,
                 input_scale,
                 use_per_token_if_dynamic=use_per_token_if_dynamic,
+            )
+            _dbg(
+                f"compressed: x_scale.numel()={x_scale.numel()} per_tensor={x_scale.numel()==1}"
             )
 
             # Fused GEMM_DQ
@@ -631,12 +657,14 @@ def apply_fp8_linear(
                     weight.shape[0] % 16 == 0 and weight.shape[1] % 16 == 0
                 )
                 if not cutlass_compatible_b or use_triton_w8a8_fp8_kernel:
+                    _dbg("compressed: using triton_scaled_mm")
                     # Massage the input to be 2D
                     qinput = qinput.view(-1, qinput.shape[-1])
                     output = triton_scaled_mm(
                         qinput, weight, x_scale, weight_scale, input.dtype, bias
                     )
                 else:
+                    _dbg("compressed: using fp8_scaled_mm (sgl_kernel)")
                     output = fp8_scaled_mm(
                         qinput,
                         weight,
@@ -666,12 +694,16 @@ def apply_fp8_linear(
                     use_per_token_if_dynamic=use_per_token_if_dynamic,
                 )
             )
+            _dbg(
+                f"compressed: fallback quant done x_scale.numel()={x_scale.numel()} weight_scale.numel()={weight_scale.numel()}"
+            )
 
             per_tensor_weights = weight_scale.numel() == 1
             per_tensor_activations = x_scale.numel() == 1
 
             if per_tensor_weights and per_tensor_activations:
                 # Fused GEMM_DQ
+                _dbg("compressed: using torch._scaled_mm (per-tensor)")
                 output = torch._scaled_mm(
                     qinput,
                     weight,
@@ -726,12 +758,14 @@ def apply_fp8_linear(
                         scale_b=weight_scale.t(),
                         bias=bias,
                     )
+                    _dbg("compressed: using torch._scaled_mm rowwise (ROCm)")
                     return _process_scaled_mm_output(
                         output, input_2d.shape, output_shape
                     )
             else:
                 # Fallback for channelwise case, where we use unfused DQ
                 # due to limitations with scaled_mm
+                _dbg("compressed: using _apply_fallback_scaled_mm (channelwise)")
 
                 # Symmetric quantized GEMM by definition computes the following:
                 #   C = (s_x * X) (s_w * W) + bias
@@ -762,10 +796,12 @@ def apply_fp8_linear(
             qinput, x_scale = static_quant_fp8(
                 input_2d, input_scale, repeat_scale=cutlass_fp8_supported
             )
+            _dbg("non-compressed: static_quant_fp8 (per-tensor activation)")
         else:
             # default use per-token quantization if dynamic
             if _is_cuda:
                 qinput, x_scale = sglang_per_token_quant_fp8(input_2d)
+                _dbg("non-compressed: sglang_per_token_quant_fp8 (dynamic)")
             else:
                 # TODO(kkhuang): temporarily enforce per-tensor activation scaling if weight is per-tensor scaling
                 # final solution should be: 1. add support to per-tensor activation scaling.
@@ -780,6 +816,7 @@ def apply_fp8_linear(
                     qinput, x_scale = per_token_group_quant_fp8(
                         input_2d, group_size=input_2d.shape[1]
                     )
+                _dbg("non-compressed: HIP path quantization")
 
         if (
             ENABLE_FLASHINFER_MM_FP8
@@ -787,7 +824,7 @@ def apply_fp8_linear(
             and x_scale.numel() == 1
             and weight_scale.numel() == 1
         ):
-            print("Using FlashInfer low-latency FP8 GEMM")
+            _dbg("non-compressed: using FlashInfer mm_fp8 (per-tensor)")
             prepared_w = prepare_low_latency_gemm_weights(
                 weight.t().contiguous(), _FI_LL_PERM_CACHE
             )
@@ -818,12 +855,14 @@ def apply_fp8_linear(
                         weight.shape[0] % 16 == 0 and weight.shape[1] % 16 == 0
                     )
                     if not cutlass_compatible_b or use_triton_w8a8_fp8_kernel:
+                        _dbg("non-compressed: using triton_scaled_mm")
                         # Massage the input to be 2D
                         qinput = qinput.view(-1, qinput.shape[-1])
                         output = triton_scaled_mm(
                             qinput, weight, x_scale, weight_scale, input.dtype, bias
                         )
                     else:
+                        _dbg("non-compressed: using fp8_scaled_mm (sgl_kernel)")
                         output = fp8_scaled_mm(
                             qinput,
                             weight,
@@ -844,7 +883,7 @@ def apply_fp8_linear(
         if per_tensor_weights and per_tensor_activations:
             # Prefer FlashInfer low-latency FP8 GEMM if enabled and supported
             if ENABLE_FLASHINFER_MM_FP8 and input.dtype == torch.bfloat16:
-                print("Using FlashInfer low-latency FP8 GEMM")
+                _dbg("non-compressed: using FlashInfer mm_fp8 (per-tensor, late)")
                 prepared_w = prepare_low_latency_gemm_weights(
                     weight.t().contiguous(), _FI_LL_PERM_CACHE
                 )
@@ -854,6 +893,7 @@ def apply_fp8_linear(
                     out_2d = out_2d + bias
                 return out_2d.view(*output_shape)
             # Fallback: torch scaled_mm
+            _dbg("non-compressed: using torch._scaled_mm (per-tensor)")
             output = torch._scaled_mm(
                 qinput,
                 weight,
