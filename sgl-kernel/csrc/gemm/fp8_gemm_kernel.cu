@@ -803,7 +803,8 @@ template <
     typename MainloopScheduleType,
     typename EpilogueScheduleType,
     typename TileSchedulerType = void,
-    bool WithBias = false>
+    bool WithBias = false,
+    bool SwapAB = false>
 struct DeviceGemmFp8RowwiseSm100 {
   static_assert(std::is_same_v<ElementType, cutlass::float_e4m3_t>, "ElementType must be FP8(e4m3)");
   using TileShape = CTAShape;
@@ -836,10 +837,10 @@ struct DeviceGemmFp8RowwiseSm100 {
 
   using EVTCompute0 = cutlass::epilogue::fusion::Sm90EVT<Compute0, ScaleB, Accum>;
 
-  using LayoutA = cutlass::layout::RowMajor;
+  using LayoutA = typename std::conditional_t<SwapAB, cutlass::layout::ColumnMajor, cutlass::layout::RowMajor>;
   static constexpr int AlignmentA = 128 / cutlass::sizeof_bits<ElementType>::value;
 
-  using LayoutB = cutlass::layout::ColumnMajor;
+  using LayoutB = typename std::conditional_t<SwapAB, cutlass::layout::RowMajor, cutlass::layout::ColumnMajor>;
   static constexpr int AlignmentB = 128 / cutlass::sizeof_bits<ElementType>::value;
 
   using ElementC = void;
@@ -900,6 +901,7 @@ struct DeviceGemmFp8RowwiseSm100 {
   using GemmKernel =
       cutlass::gemm::kernel::GemmUniversal<Shape<int, int, int, int>, CollectiveMainloop, CollectiveEpilogue, void>;
   using Gemm = cutlass::gemm::device::GemmUniversalAdapter<GemmKernel>;
+  static constexpr bool kSwapAB = SwapAB;
   template <typename Descriptor, typename T>
   static auto args_from_tensor(torch::Tensor const& tensor) {
     using Arguments = typename Descriptor::Arguments;
@@ -956,13 +958,19 @@ typename GemmType::Gemm::Arguments prepare_sm100_fp8_args(
   ElementT const* ptr_a = reinterpret_cast<ElementT const*>(a.data_ptr());
   ElementT const* ptr_b = reinterpret_cast<ElementT const*>(b.data_ptr());
 
-  StrideA stride_a = cutlass::make_cute_packed_stride(StrideA{}, cute::make_shape(m, k, 1));
-  StrideB stride_b = cutlass::make_cute_packed_stride(StrideB{}, cute::make_shape(n, k, 1));
+  // For SwapAB, we logically compute using B as A and A as B in mainloop.
+  // Adjust strides accordingly: A(stride) uses (rows, cols) = (n, k) and B(stride) uses (m, k)
+  StrideA stride_a = GemmType::kSwapAB ? cutlass::make_cute_packed_stride(StrideA{}, cute::make_shape(n, k, 1))
+                                       : cutlass::make_cute_packed_stride(StrideA{}, cute::make_shape(m, k, 1));
+  StrideB stride_b = GemmType::kSwapAB ? cutlass::make_cute_packed_stride(StrideB{}, cute::make_shape(m, k, 1))
+                                       : cutlass::make_cute_packed_stride(StrideB{}, cute::make_shape(n, k, 1));
   StrideC stride_c = cutlass::make_cute_packed_stride(StrideC{}, cute::make_shape(m, n, 1));
   StrideD stride_d = cutlass::make_cute_packed_stride(StrideD{}, cute::make_shape(m, n, 1));
   StrideAux aux_stride = stride_d;
 
-  typename GemmKernel::MainloopArguments mainloop_args{ptr_a, stride_a, ptr_b, stride_b};
+  typename GemmKernel::MainloopArguments mainloop_args =
+      GemmType::kSwapAB ? typename GemmKernel::MainloopArguments{ptr_b, stride_a, ptr_a, stride_b}
+                        : typename GemmKernel::MainloopArguments{ptr_a, stride_a, ptr_b, stride_b};
 
   typename GemmKernel::ProblemShape prob_shape = {m, n, k, 1};
   cutlass::KernelHardwareInfo hw_info;
@@ -1050,7 +1058,8 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
-      true>;
+      true,
+      false>;
   using BiasGemm256 = DeviceGemmFp8RowwiseSm100<
       ElementInput,
       ElementOutput,
@@ -1060,7 +1069,8 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
-      true>;
+      true,
+      false>;
   using BiasGemm64 = DeviceGemmFp8RowwiseSm100<
       ElementInput,
       ElementOutput,
@@ -1070,7 +1080,8 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
-      true>;
+      true,
+      false>;
   using BiasGemm16 = DeviceGemmFp8RowwiseSm100<
       ElementInput,
       ElementOutput,
@@ -1080,6 +1091,29 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
+      true,
+      false>;
+  using BiasGemm64Swap = DeviceGemmFp8RowwiseSm100<
+      ElementInput,
+      ElementOutput,
+      AccumElementType,
+      CTAShape64,
+      ClusterShape64,
+      MainloopScheduleType,
+      EpilogueScheduleType,
+      TileSchedulerType,
+      true,
+      true>;
+  using BiasGemm16Swap = DeviceGemmFp8RowwiseSm100<
+      ElementInput,
+      ElementOutput,
+      AccumElementType,
+      CTAShape16,
+      ClusterShape16,
+      MainloopScheduleType,
+      EpilogueScheduleType,
+      TileSchedulerType,
+      true,
       true>;
 
   // Gemm type without bias
@@ -1092,6 +1126,7 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
+      false,
       false>;
   using Gemm256 = DeviceGemmFp8RowwiseSm100<
       ElementInput,
@@ -1102,6 +1137,7 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
+      false,
       false>;
   using Gemm64 = DeviceGemmFp8RowwiseSm100<
       ElementInput,
@@ -1112,6 +1148,7 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
+      false,
       false>;
   using Gemm16 = DeviceGemmFp8RowwiseSm100<
       ElementInput,
@@ -1122,19 +1159,46 @@ void sm100_fp8_dispatch_bias(
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
+      false,
       false>;
+  using Gemm64Swap = DeviceGemmFp8RowwiseSm100<
+      ElementInput,
+      ElementOutput,
+      AccumElementType,
+      CTAShape64,
+      ClusterShape64,
+      MainloopScheduleType,
+      EpilogueScheduleType,
+      TileSchedulerType,
+      false,
+      true>;
+  using Gemm16Swap = DeviceGemmFp8RowwiseSm100<
+      ElementInput,
+      ElementOutput,
+      AccumElementType,
+      CTAShape16,
+      ClusterShape16,
+      MainloopScheduleType,
+      EpilogueScheduleType,
+      TileSchedulerType,
+      false,
+      true>;
 
   // next power of 2 (minimum 16)
   uint32_t const m = a.size(0);
+  int32_t k = a.size(1);
   uint32_t const mp2 = std::max(static_cast<uint32_t>(16), next_pow_2(m));
 
   if (bias) {
     if (mp2 <= 16) {
-      // m in [1, 16]
-      return launch_sm100_fp8_scaled_mm<BiasGemm16, true>(out, a, b, scales_a, scales_b, bias);
+      // m in [1, 16] -> enable swap AB
+      return launch_sm100_fp8_scaled_mm<BiasGemm16Swap, true>(out, a, b, scales_a, scales_b, bias);
     } else if (mp2 <= 64) {
       // m in (16, 64]
-      return launch_sm100_fp8_scaled_mm<BiasGemm64, true>(out, a, b, scales_a, scales_b, bias);
+      if (m == 64 && k < 4096) {
+        return launch_sm100_fp8_scaled_mm<BiasGemm64, true>(out, a, b, scales_a, scales_b, bias);
+      }
+      return launch_sm100_fp8_scaled_mm<BiasGemm64Swap, true>(out, a, b, scales_a, scales_b, bias);
     } else if (mp2 <= 256) {
       // m in (64, 256]
       return launch_sm100_fp8_scaled_mm<BiasGemm256, true>(out, a, b, scales_a, scales_b, bias);
@@ -1144,11 +1208,14 @@ void sm100_fp8_dispatch_bias(
     }
   } else {
     if (mp2 <= 16) {
-      // m in [1, 16]
-      return launch_sm100_fp8_scaled_mm<Gemm16, false>(out, a, b, scales_a, scales_b, bias);
+      // m in [1, 16] -> enable swap AB
+      return launch_sm100_fp8_scaled_mm<Gemm16Swap, false>(out, a, b, scales_a, scales_b, bias);
     } else if (mp2 <= 64) {
       // m in (16, 64]
-      return launch_sm100_fp8_scaled_mm<Gemm64, false>(out, a, b, scales_a, scales_b, bias);
+      if (m == 64 && k < 4096) {
+        return launch_sm100_fp8_scaled_mm<Gemm64, false>(out, a, b, scales_a, scales_b, bias);
+      }
+      return launch_sm100_fp8_scaled_mm<Gemm64Swap, false>(out, a, b, scales_a, scales_b, bias);
     } else if (mp2 <= 256) {
       // m in (64, 256]
       return launch_sm100_fp8_scaled_mm<Gemm256, false>(out, a, b, scales_a, scales_b, bias);
