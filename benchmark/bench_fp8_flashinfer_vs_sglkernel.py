@@ -148,6 +148,12 @@ def main():
         description="Benchmark FP8 GEMM: sgl-kernel (CUTLASS) vs FlashInfer (SM100)"
     )
     parser.add_argument("--m", type=int, default=16, help="Tokens (M)")
+    parser.add_argument(
+        "--m_list",
+        type=str,
+        default=None,
+        help="Comma-separated list of M sizes to sweep (e.g. '16,32,64,128,256,512,1024')",
+    )
     parser.add_argument("--n", type=int, default=16384, help="Output features (N)")
     parser.add_argument("--k", type=int, default=8192, help="Hidden size (K)")
     parser.add_argument(
@@ -174,35 +180,67 @@ def main():
     device = torch.device(args.device)
     out_dtype = torch.bfloat16 if args.dtype == "bf16" else torch.half
 
-    a, b_row = generate_inputs(args.m, args.n, args.k, out_dtype, device, args.seed)
+    # Build list of M values to run
+    m_values = [args.m]
+    if args.m_list is not None and args.m_list.strip() != "":
+        try:
+            m_values = [int(x.strip()) for x in args.m_list.split(",") if x.strip()]
+        except Exception as exc:
+            raise ValueError(f"Failed to parse --m_list: {args.m_list}") from exc
 
-    # Prepare inputs for sgl-kernel fp8_scaled_mm (per-tensor quant, expanded scales)
-    a_q_sgl, b_cm_sgl, a_s_vec, b_s_vec = quantize_per_tensor_fp8_sglkernel_for_cutlass(
-        a, b_row
-    )
+    results = []  # (m, ms_sgl, tflops_sgl, ms_fi|None, tflops_fi|None)
 
-    # Prepare inputs for FlashInfer (per-tensor, with column-major B view)
-    a_q_fi, b_q_fi_cm, a_s_fi, b_s_fi = quantize_per_tensor_fp8_for_flashinfer(a, b_row)
+    for m in m_values:
+        a, b_row = generate_inputs(m, args.n, args.k, out_dtype, device, args.seed)
 
-    # Run sgl-kernel
-    ms_sgl = bench_sglkernel_fp8_mm(a_q_sgl, b_cm_sgl, a_s_vec, b_s_vec, out_dtype)
-    tflops_sgl = to_tflops(args.m, args.n, args.k, ms_sgl)
+        # Prepare inputs for sgl-kernel fp8_scaled_mm (per-tensor quant, expanded scales)
+        a_q_sgl, b_cm_sgl, a_s_vec, b_s_vec = (
+            quantize_per_tensor_fp8_sglkernel_for_cutlass(a, b_row)
+        )
 
-    ms_fi = None
-    tflops_fi = None
-    if not args.skip_flashinfer:
-        ms_fi = bench_flashinfer_fp8_mm(a_q_fi, b_q_fi_cm, a_s_fi, b_s_fi, out_dtype)
-        if ms_fi is not None:
-            tflops_fi = to_tflops(args.m, args.n, args.k, ms_fi)
+        # Prepare inputs for FlashInfer (per-tensor, with column-major B view)
+        a_q_fi, b_q_fi_cm, a_s_fi, b_s_fi = quantize_per_tensor_fp8_for_flashinfer(
+            a, b_row
+        )
 
-    print("===== FP8 GEMM Bench (SM100 assumed) =====")
-    print(f"Shape M={args.m} N={args.n} K={args.k} dtype={args.dtype}")
-    print(f"sgl-kernel fp8_scaled_mm: {ms_sgl:.3f} ms, {tflops_sgl:.2f} TFLOPs")
-    if ms_fi is not None:
-        print(f"FlashInfer bmm_fp8:      {ms_fi:.3f} ms, {tflops_fi:.2f} TFLOPs")
-    else:
+        # Run sgl-kernel
+        ms_sgl = bench_sglkernel_fp8_mm(a_q_sgl, b_cm_sgl, a_s_vec, b_s_vec, out_dtype)
+        tflops_sgl = to_tflops(m, args.n, args.k, ms_sgl)
+
+        ms_fi = None
+        tflops_fi = None
         if not args.skip_flashinfer:
-            print("FlashInfer not available; skipped FI bench.")
+            ms_fi = bench_flashinfer_fp8_mm(
+                a_q_fi, b_q_fi_cm, a_s_fi, b_s_fi, out_dtype
+            )
+            if ms_fi is not None:
+                tflops_fi = to_tflops(m, args.n, args.k, ms_fi)
+
+        results.append((m, ms_sgl, tflops_sgl, ms_fi, tflops_fi))
+
+    # Output
+    print("===== FP8 GEMM Bench (SM100 assumed) =====")
+    if len(results) == 1:
+        m, ms_sgl, tflops_sgl, ms_fi, tflops_fi = results[0]
+        print(f"Shape M={m} N={args.n} K={args.k} dtype={args.dtype}")
+        print(f"sgl-kernel fp8_scaled_mm: {ms_sgl:.3f} ms, {tflops_sgl:.2f} TFLOPs")
+        if ms_fi is not None:
+            print(f"FlashInfer bmm_fp8:      {ms_fi:.3f} ms, {tflops_fi:.2f} TFLOPs")
+        else:
+            if not args.skip_flashinfer:
+                print("FlashInfer not available; skipped FI bench.")
+    else:
+        print(f"Shape N={args.n} K={args.k} dtype={args.dtype}")
+        header = "{:>6}  {:>10}  {:>10}  {:>10}  {:>10}".format(
+            "M", "sgl ms", "sgl TFLOPs", "FI ms", "FI TFLOPs"
+        )
+        print(header)
+        for m, ms_sgl, tflops_sgl, ms_fi, tflops_fi in results:
+            fi_ms_str = f"{ms_fi:.3f}" if ms_fi is not None else "-"
+            fi_tf_str = f"{tflops_fi:.2f}" if tflops_fi is not None else "-"
+            print(
+                f"{m:6d}  {ms_sgl:10.3f}  {tflops_sgl:10.2f}  {fi_ms_str:>10}  {fi_tf_str:>10}"
+            )
 
 
 if __name__ == "__main__":
