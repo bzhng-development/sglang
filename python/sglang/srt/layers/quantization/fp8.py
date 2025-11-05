@@ -106,7 +106,6 @@ _is_fp8_fnuz = is_fp8_fnuz()
 
 _use_hip_int4 = get_bool_env_var("SGLANG_INT4_WEIGHT")
 _use_aiter = get_bool_env_var("SGLANG_USE_AITER") and _is_hip
-_force_mmfp8_per_tensor = get_bool_env_var("SGLANG_ENABLE_FLASHINFER_MM_FP8")
 
 if _is_hip and (_use_aiter or _use_hip_int4):
     from aiter import ActivationType, QuantType
@@ -370,9 +369,7 @@ class Fp8LinearMethod(LinearMethodBase):
 
             # If checkpoint not serialized fp8, quantize the weights.
             if not self.quant_config.is_checkpoint_fp8_serialized:
-                if (
-                    self.cutlass_fp8_supported or self.use_marlin
-                ) and not _force_mmfp8_per_tensor:
+                if self.cutlass_fp8_supported or self.use_marlin:
                     # apply per-channel quantization default as
                     # cutlass sgl-kernel and marlin only support per-channel scale
                     qweight, weight_scale = per_token_group_quant_fp8(
@@ -406,9 +403,7 @@ class Fp8LinearMethod(LinearMethodBase):
                     )
 
                 # cutlass sgl-kernel and marlin only support per-channel scale
-                if (
-                    self.cutlass_fp8_supported or self.use_marlin
-                ) and not _force_mmfp8_per_tensor:
+                if self.cutlass_fp8_supported or self.use_marlin:
                     weight = layer.weight
                     weight_scale = convert_to_channelwise(
                         layer.weight_scale, layer.logical_widths

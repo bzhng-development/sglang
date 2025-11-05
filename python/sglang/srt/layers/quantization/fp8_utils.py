@@ -822,22 +822,53 @@ def apply_fp8_linear(
             f"non-compressed: x_scale.numel()={x_scale.numel()} weight_scale.numel()={weight_scale.numel()}"
         )
 
+        # FlashInfer groupwise GEMM fast-path for channelwise weights on SM100+
         if (
-            ENABLE_FLASHINFER_MM_FP8
+            ENABLE_FLASHINFER_GEMM
             and input.dtype == torch.bfloat16
-            and weight_scale.numel() == 1
-            and (input_scale is not None and (input_scale.numel() == 1))
+            and weight_scale.dim() == 2
+            and weight_scale.shape[0] == weight.shape[1]
+            and weight_scale.shape[1] == 1
         ):
-            _dbg("non-compressed: using FlashInfer mm_fp8 (per-tensor)")
-            prepared_w = prepare_low_latency_gemm_weights(
-                weight.t().contiguous(), _FI_LL_PERM_CACHE
-            )
-            # x_scale may be repeated per-token; use the original per-tensor input_scale
-            alpha = (input_scale * weight_scale).to(torch.float32)
-            out_2d = mm_fp8(qinput, prepared_w, alpha=alpha, out_dtype=input.dtype)
-            if bias is not None:
-                out_2d = out_2d + bias
-            return out_2d.view(*output_shape)
+            try:
+                _dbg(
+                    "non-compressed: using FlashInfer gemm_fp8_nt_groupwise (channelwise)"
+                )
+                # Per-token-group quantization for activations with K-major scales
+                k_blocks = (weight.shape[0] + 127) // 128
+                n = weight.shape[1]
+                n_blocks = (n + 127) // 128
+
+                qinput, a_scale = sglang_per_token_group_quant_fp8(
+                    input_2d, 128, column_major_scales=False
+                )  # a_scale shape (m, k_blocks)
+
+                # Build B scales per (n_block, k_block) by pooling channelwise scales over N blocks
+                ws = weight_scale.view(n)
+                if n % 128 == 0:
+                    ws_blocks = ws.view(n_blocks, 128).max(dim=1, keepdim=False).values
+                else:
+                    pad = 128 - (n % 128)
+                    ws_padded = torch.cat([ws, ws.new_full((pad,), ws[-1])])
+                    ws_blocks = (
+                        ws_padded.view(n_blocks, 128).max(dim=1, keepdim=False).values
+                    )
+                b_scale = ws_blocks.unsqueeze(1).repeat(1, k_blocks).contiguous()
+
+                out_2d = gemm_fp8_nt_groupwise(
+                    qinput,
+                    weight.t().contiguous(),
+                    a_scale,
+                    b_scale,
+                    scale_major_mode="K",
+                    out_dtype=input.dtype,
+                    backend="cutlass",
+                )
+                if bias is not None:
+                    out_2d = out_2d + bias
+                return out_2d.view(*output_shape)
+            except Exception as e:
+                _dbg(f"groupwise path failed, falling back: {e}")
 
         if cutlass_fp8_supported:
             try:

@@ -278,12 +278,6 @@ class ModelOptFp8LinearMethod(LinearMethodBase):
         super().__init__()
         self.quant_config = quant_config
         self.cutlass_fp8_supported = cutlass_fp8_supported()
-        # If enabled, prefer per-tensor scales (for FlashInfer mm_fp8)
-        from sglang.srt.utils import get_bool_env_var
-
-        self.force_mmfp8_per_tensor = get_bool_env_var(
-            "SGLANG_ENABLE_FLASHINFER_MM_FP8"
-        )
 
     def create_weights(
         self,
@@ -343,9 +337,8 @@ class ModelOptFp8LinearMethod(LinearMethodBase):
             layer.weight, layer.weight_scale, layer.logical_widths
         )
         layer.weight = Parameter(quantized_weight.t(), requires_grad=False)
-        # cutlass sgl-kernel only supports per-channel scale; but keep per-tensor
-        # when SGLANG_ENABLE_FLASHINFER_MM_FP8 is enabled
-        if self.cutlass_fp8_supported and not self.force_mmfp8_per_tensor:
+        # cutlass sgl-kernel only supports per-channel scale
+        if self.cutlass_fp8_supported:
             max_w_scale = convert_to_channelwise(max_w_scale, layer.logical_widths)
         layer.weight_scale = Parameter(max_w_scale, requires_grad=False)
         layer.input_scale = Parameter(layer.input_scale.max(), requires_grad=False)
