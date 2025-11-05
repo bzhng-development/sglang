@@ -825,14 +825,15 @@ def apply_fp8_linear(
         if (
             ENABLE_FLASHINFER_MM_FP8
             and input.dtype == torch.bfloat16
-            and x_scale.numel() == 1
             and weight_scale.numel() == 1
+            and (input_scale is not None and (input_scale.numel() == 1))
         ):
             _dbg("non-compressed: using FlashInfer mm_fp8 (per-tensor)")
             prepared_w = prepare_low_latency_gemm_weights(
                 weight.t().contiguous(), _FI_LL_PERM_CACHE
             )
-            alpha = (x_scale * weight_scale).to(torch.float32)
+            # x_scale may be repeated per-token; use the original per-tensor input_scale
+            alpha = (input_scale * weight_scale).to(torch.float32)
             out_2d = mm_fp8(qinput, prepared_w, alpha=alpha, out_dtype=input.dtype)
             if bias is not None:
                 out_2d = out_2d + bias
