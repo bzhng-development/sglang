@@ -844,6 +844,7 @@ def apply_fp8_linear(
         if per_tensor_weights and per_tensor_activations:
             # Prefer FlashInfer low-latency FP8 GEMM if enabled and supported
             if ENABLE_FLASHINFER_MM_FP8 and input.dtype == torch.bfloat16:
+                print("Using FlashInfer low-latency FP8 GEMM")
                 prepared_w = prepare_low_latency_gemm_weights(
                     weight.t().contiguous(), _FI_LL_PERM_CACHE
                 )
