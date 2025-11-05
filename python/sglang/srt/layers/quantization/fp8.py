@@ -435,6 +435,40 @@ class Fp8LinearMethod(LinearMethodBase):
                 # Update layer with new values.
                 layer.weight = Parameter(weight.t(), requires_grad=False)
                 layer.weight_scale = Parameter(weight_scale, requires_grad=False)
+                # Precompute groupwise block scales for SM100 cutlass groupwise GEMM
+                try:
+                    if self.cutlass_fp8_supported:
+                        k = layer.weight.shape[
+                            1
+                        ]  # after t(), weight is (K, N) → here (K, N)
+                        n = layer.weight.shape[0]
+                        n_blocks = (n + 127) // 128
+                        k_blocks = (k + 127) // 128
+                        # channelwise scale expected shape (num_logical_output, 1)
+                        if (
+                            layer.weight_scale.dim() == 2
+                            and layer.weight_scale.shape[0] == n
+                        ):
+                            ws = layer.weight_scale.view(n)
+                            if n % 128 == 0:
+                                ws_blocks = (
+                                    ws.view(n_blocks, 128)
+                                    .max(dim=1, keepdim=False)
+                                    .values
+                                )
+                            else:
+                                pad = 128 - (n % 128)
+                                ws_padded = torch.cat([ws, ws.new_full((pad,), ws[-1])])
+                                ws_blocks = (
+                                    ws_padded.view(n_blocks, 128)
+                                    .max(dim=1, keepdim=False)
+                                    .values
+                                )
+                            layer.weight_scale_blocks = (
+                                ws_blocks.unsqueeze(1).repeat(1, k_blocks).contiguous()
+                            )
+                except Exception:
+                    pass
                 if (
                     hasattr(self.quant_config, "activation_scheme")
                     and self.quant_config.activation_scheme == "static"
@@ -490,6 +524,36 @@ class Fp8LinearMethod(LinearMethodBase):
                 input_scale=None,
                 bias=bias,
             )
+
+        # Fast path: SM100 groupwise GEMM with precomputed block scales
+        try:
+            from flashinfer.gemm import gemm_fp8_nt_groupwise
+            from sglang.srt.layers.quantization.fp8_kernel import (
+                sglang_per_token_group_quant_fp8 as _ptg_quant,
+            )
+
+            k = x.shape[-1]
+            if (
+                self.cutlass_fp8_supported
+                and hasattr(layer, "weight_scale_blocks")
+                and isinstance(layer.weight_scale_blocks, torch.Tensor)
+            ):
+                x2d = x.view(-1, k)
+                qx, a_scale = _ptg_quant(x2d, 128, column_major_scales=False)
+                out2d = gemm_fp8_nt_groupwise(
+                    qx,
+                    layer.weight.t().contiguous(),
+                    a_scale,
+                    layer.weight_scale_blocks,
+                    scale_major_mode="K",
+                    out_dtype=x2d.dtype,
+                    backend="cutlass",
+                )
+                if bias is not None:
+                    out2d = out2d + bias
+                return out2d.view(*x.shape[:-1], layer.weight.shape[1])
+        except Exception:
+            pass
 
         return apply_fp8_linear(
             input=x,
