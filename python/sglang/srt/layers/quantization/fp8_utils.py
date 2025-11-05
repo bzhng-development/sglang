@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
 
@@ -134,6 +134,17 @@ ENABLE_FLASHINFER_GEMM = (
 )
 if ENABLE_FLASHINFER_GEMM:
     from flashinfer.gemm import gemm_fp8_nt_groupwise
+
+# Optional: enable FlashInfer low-latency FP8 GEMM for per-tensor FP8 linear
+ENABLE_FLASHINFER_MM_FP8 = (
+    get_bool_env_var("SGLANG_ENABLE_FLASHINFER_MM_FP8")
+    and is_blackwell_supported()
+    and is_flashinfer_available()
+)
+if ENABLE_FLASHINFER_MM_FP8:
+    from flashinfer import mm_fp8, prepare_low_latency_gemm_weights
+
+    _FI_LL_PERM_CACHE: Dict[torch.Size, torch.Tensor] = {}
 
 
 def dispatch_w8a8_block_fp8_linear() -> Callable:
@@ -770,6 +781,21 @@ def apply_fp8_linear(
                         input_2d, group_size=input_2d.shape[1]
                     )
 
+        if (
+            ENABLE_FLASHINFER_MM_FP8
+            and input.dtype == torch.bfloat16
+            and x_scale.numel() == 1
+            and weight_scale.numel() == 1
+        ):
+            prepared_w = prepare_low_latency_gemm_weights(
+                weight.t().contiguous(), _FI_LL_PERM_CACHE
+            )
+            alpha = (x_scale * weight_scale).to(torch.float32)
+            out_2d = mm_fp8(qinput, prepared_w, alpha=alpha, out_dtype=input.dtype)
+            if bias is not None:
+                out_2d = out_2d + bias
+            return out_2d.view(*output_shape)
+
         if cutlass_fp8_supported:
             try:
                 if VLLM_AVAILABLE and use_vllm_cutlass_w8a8_fp8_kernel:
@@ -815,7 +841,17 @@ def apply_fp8_linear(
         per_tensor_activations = x_scale.numel() == 1
 
         if per_tensor_weights and per_tensor_activations:
-            # Fused GEMM_DQ
+            # Prefer FlashInfer low-latency FP8 GEMM if enabled and supported
+            if ENABLE_FLASHINFER_MM_FP8 and input.dtype == torch.bfloat16:
+                prepared_w = prepare_low_latency_gemm_weights(
+                    weight.t().contiguous(), _FI_LL_PERM_CACHE
+                )
+                alpha = (x_scale * weight_scale).to(torch.float32)
+                out_2d = mm_fp8(qinput, prepared_w, alpha=alpha, out_dtype=input.dtype)
+                if bias is not None:
+                    out_2d = out_2d + bias
+                return out_2d.view(*output_shape)
+            # Fallback: torch scaled_mm
             output = torch._scaled_mm(
                 qinput,
                 weight,
