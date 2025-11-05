@@ -818,6 +818,10 @@ def apply_fp8_linear(
                     )
                 _dbg("non-compressed: HIP path quantization")
 
+        _dbg(
+            f"non-compressed: x_scale.numel()={x_scale.numel()} weight_scale.numel()={weight_scale.numel()}"
+        )
+
         if (
             ENABLE_FLASHINFER_MM_FP8
             and input.dtype == torch.bfloat16
