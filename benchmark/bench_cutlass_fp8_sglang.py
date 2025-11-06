@@ -2,6 +2,7 @@ import argparse
 from typing import List, Tuple
 
 import torch
+from triton.testing import do_bench_cudagraph
 
 
 def generate_inputs(
@@ -51,22 +52,11 @@ def bench_fp8_mm(
 ) -> float:
     from sgl_kernel import fp8_scaled_mm
 
-    # Warmup
-    torch.cuda.synchronize()
-    for _ in range(warmup):
-        _ = fp8_scaled_mm(a_q, b_cm, a_s, b_s, out_dtype, bias=None)
-    torch.cuda.synchronize()
+    def run():
+        return fp8_scaled_mm(a_q, b_cm, a_s, b_s, out_dtype, bias=None)
 
-    start = torch.cuda.Event(enable_timing=True)
-    end = torch.cuda.Event(enable_timing=True)
-
-    start.record()
-    for _ in range(iters):
-        _ = fp8_scaled_mm(a_q, b_cm, a_s, b_s, out_dtype, bias=None)
-    end.record()
-    torch.cuda.synchronize()
-    total_ms = start.elapsed_time(end)
-    return total_ms / max(1, iters)
+    ms = do_bench_cudagraph(run)
+    return ms
 
 
 def to_tflops(m: int, n: int, k: int, ms: float) -> float:
