@@ -20,6 +20,9 @@ from sglang.srt.utils import is_flashinfer_available
 if is_flashinfer_available():
     import flashinfer
 
+# cuDNN SDPA supported head sizes for this path
+CUDNN_SUPPORTED_HEAD_SIZES = (128,)
+
 if TYPE_CHECKING:
     from sglang.srt.layers.radix_attention import RadixAttention
     from sglang.srt.model_executor.model_runner import ModelRunner
@@ -614,24 +617,53 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
         bmm1_scale = q_scale * k_scale * layer.scaling
         bmm2_scale = 1.0
 
-        o = flashinfer.prefill.trtllm_batch_context_with_kv_cache(
-            query=q,
-            kv_cache=kv_cache,
-            workspace_buffer=self.workspace_buffer,
-            block_tables=self.forward_metadata.page_table,
-            seq_lens=self.forward_metadata.cache_seqlens_int32,
-            max_q_len=self.forward_metadata.max_seq_len_q,
-            max_kv_len=self.max_context_len,
-            bmm1_scale=bmm1_scale,
-            bmm2_scale=bmm2_scale,
-            batch_size=forward_batch.batch_size,
-            cum_seq_lens_q=self.forward_metadata.cu_seqlens_q,
-            cum_seq_lens_kv=self.forward_metadata.cu_seqlens_k,
-            window_left=layer.sliding_window_size,
-            # TODO: add attention_sink operation or nvfp4 scale factor if needed
-            sinks=attention_sink,
-            out_dtype=self.q_data_type,  # model_runner.dtype
+        # Prefer cuDNN prefill when supported; otherwise, fall back to TRT-LLM path
+        use_cudnn = (
+            layer.head_dim in CUDNN_SUPPORTED_HEAD_SIZES
+            and self.data_type != torch.float8_e4m3fn
         )
+
+        if use_cudnn:
+            actual_seq_lens_q = (
+                self.forward_metadata.cu_seqlens_q[1:]
+                - self.forward_metadata.cu_seqlens_q[:-1]
+            )
+            o, _ = flashinfer.prefill.cudnn_batch_prefill_with_kv_cache(
+                q=q,
+                k_cache=kv_cache[0],
+                v_cache=kv_cache[1],
+                scale=layer.scaling,
+                workspace_buffer=self.workspace_buffer.view(torch.int8),
+                max_token_per_sequence=self.forward_metadata.max_seq_len_q,
+                max_sequence_kv=self.forward_metadata.max_seq_len_k,
+                block_tables=self.forward_metadata.page_table,
+                actual_seq_lens_q=actual_seq_lens_q.view(-1, 1, 1, 1),
+                actual_seq_lens_kv=self.forward_metadata.cache_seqlens_int32.view(
+                    -1, 1, 1, 1
+                ),
+                causal=True,
+                return_lse=True,
+                is_cuda_graph_compatible=True,
+            )
+        else:
+            o = flashinfer.prefill.trtllm_batch_context_with_kv_cache(
+                query=q,
+                kv_cache=kv_cache,
+                workspace_buffer=self.workspace_buffer,
+                block_tables=self.forward_metadata.page_table,
+                seq_lens=self.forward_metadata.cache_seqlens_int32,
+                max_q_len=self.forward_metadata.max_seq_len_q,
+                max_kv_len=self.max_context_len,
+                bmm1_scale=bmm1_scale,
+                bmm2_scale=bmm2_scale,
+                batch_size=forward_batch.batch_size,
+                cum_seq_lens_q=self.forward_metadata.cu_seqlens_q,
+                cum_seq_lens_kv=self.forward_metadata.cu_seqlens_k,
+                window_left=layer.sliding_window_size,
+                # TODO: add attention_sink operation or nvfp4 scale factor if needed
+                sinks=attention_sink,
+                out_dtype=self.q_data_type,  # model_runner.dtype
+            )
 
         return o.view(-1, layer.tp_q_head_num * layer.head_dim)
 
