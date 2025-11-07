@@ -1043,6 +1043,9 @@ void sm100_fp8_dispatch_bias(
   using CTAShape64Swap = Shape<_128, _64, _256>;
   using ClusterShape64Swap = Shape<_4, _1, _1>;
 
+  using CTAShape16 = Shape<_64, _64, _128>;
+  using ClusterShape16 = Shape<_1, _4, _1>;
+
   using MainloopScheduleType = cutlass::gemm::collective::KernelScheduleAuto;
   using EpilogueScheduleType = cutlass::epilogue::collective::EpilogueScheduleAuto;
   using TileSchedulerType = void;
