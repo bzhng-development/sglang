@@ -794,7 +794,13 @@ class Llama4ForConditionalGeneration(nn.Module):
             )
         else:
             return self._handle_expert_weight_params(
-                name, loaded_weight, params_dict, num_experts, loaded_params
+                name,
+                loaded_weight,
+                params_dict,
+                num_experts,
+                loaded_params,
+                executor,
+                futures,
             )
 
     def _handle_other_expert_params(
