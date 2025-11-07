@@ -1037,8 +1037,11 @@ void sm100_fp8_dispatch_bias(
   using CTAShape64 = Shape<_64, _64, _128>;
   using ClusterShape64 = Shape<_1, _1, _1>;
 
-  using CTAShape16 = Shape<_64, _64, _128>;
-  using ClusterShape16 = Shape<_1, _4, _1>;
+  using CTAShape16Swap = Shape<_128, _32, _128>;
+  using ClusterShape16Swap = Shape<_4, _1, _1>;
+
+  using CTAShape64Swap = Shape<_128, _64, _256>;
+  using ClusterShape64Swap = Shape<_4, _1, _1>;
 
   using MainloopScheduleType = cutlass::gemm::collective::KernelScheduleAuto;
   using EpilogueScheduleType = cutlass::epilogue::collective::EpilogueScheduleAuto;
@@ -1097,8 +1100,8 @@ void sm100_fp8_dispatch_bias(
       ElementInput,
       ElementOutput,
       AccumElementType,
-      CTAShape64,
-      ClusterShape64,
+      CTAShape64Swap,
+      ClusterShape64Swap,
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
@@ -1108,8 +1111,8 @@ void sm100_fp8_dispatch_bias(
       ElementInput,
       ElementOutput,
       AccumElementType,
-      CTAShape16,
-      ClusterShape16,
+      CTAShape16Swap,
+      ClusterShape16Swap,
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
@@ -1165,8 +1168,8 @@ void sm100_fp8_dispatch_bias(
       ElementInput,
       ElementOutput,
       AccumElementType,
-      CTAShape64,
-      ClusterShape64,
+      CTAShape64Swap,
+      ClusterShape64Swap,
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
@@ -1176,8 +1179,8 @@ void sm100_fp8_dispatch_bias(
       ElementInput,
       ElementOutput,
       AccumElementType,
-      CTAShape16,
-      ClusterShape16,
+      CTAShape16Swap,
+      ClusterShape16Swap,
       MainloopScheduleType,
       EpilogueScheduleType,
       TileSchedulerType,
@@ -1190,16 +1193,16 @@ void sm100_fp8_dispatch_bias(
   uint32_t const mp2 = std::max(static_cast<uint32_t>(16), next_pow_2(m));
 
   if (bias) {
-    if (mp2 <= 16) {
-      // m in [1, 16] -> enable swap AB
+    if (m <= 16) {
+      // m in [1, 16] -> enable swap AB with updated shapes
       return launch_sm100_fp8_scaled_mm<BiasGemm16Swap, true>(out, a, b, scales_a, scales_b, bias);
-    } else if (mp2 <= 64) {
+    } else if (m <= 64) {
       // m in (16, 64]
       if (m == 64 && k < 4096) {
         return launch_sm100_fp8_scaled_mm<BiasGemm64, true>(out, a, b, scales_a, scales_b, bias);
       }
       return launch_sm100_fp8_scaled_mm<BiasGemm64Swap, true>(out, a, b, scales_a, scales_b, bias);
-    } else if (mp2 <= 256) {
+    } else if (m <= 256) {
       // m in (64, 256]
       return launch_sm100_fp8_scaled_mm<BiasGemm256, true>(out, a, b, scales_a, scales_b, bias);
     } else {
@@ -1207,16 +1210,16 @@ void sm100_fp8_dispatch_bias(
       return launch_sm100_fp8_scaled_mm<BiasGemmDefault, true>(out, a, b, scales_a, scales_b, bias);
     }
   } else {
-    if (mp2 <= 16) {
-      // m in [1, 16] -> enable swap AB
+    if (m <= 16) {
+      // m in [1, 16] -> enable swap AB with updated shapes
       return launch_sm100_fp8_scaled_mm<Gemm16Swap, false>(out, a, b, scales_a, scales_b, bias);
-    } else if (mp2 <= 64) {
+    } else if (m <= 64) {
       // m in (16, 64]
       if (m == 64 && k < 4096) {
         return launch_sm100_fp8_scaled_mm<Gemm64, false>(out, a, b, scales_a, scales_b, bias);
       }
       return launch_sm100_fp8_scaled_mm<Gemm64Swap, false>(out, a, b, scales_a, scales_b, bias);
-    } else if (mp2 <= 256) {
+    } else if (m <= 256) {
       // m in (64, 256]
       return launch_sm100_fp8_scaled_mm<Gemm256, false>(out, a, b, scales_a, scales_b, bias);
     } else {
