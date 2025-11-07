@@ -99,7 +99,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 pygments_style = "sphinx"
 
-html_theme = "sphinx_book_theme"
+html_theme = "pydata_sphinx_theme"
 html_logo = "_static/image/logo.png"
 html_favicon = "_static/image/logo.ico"
 html_title = project
@@ -107,22 +107,38 @@ html_copy_source = True
 html_last_updated_fmt = ""
 
 html_theme_options = {
-    "repository_url": "https://github.com/sgl-project/sgl-project.github.io",
-    "repository_branch": "main",
-    "show_navbar_depth": 3,
-    "max_navbar_depth": 4,
-    "collapse_navbar": True,
     "use_edit_page_button": True,
-    "use_source_button": True,
-    "use_issues_button": True,
-    "use_repository_button": True,
-    "use_download_button": True,
-    "use_sidenotes": True,
-    "show_toc_level": 2,
+    "navigation_depth": 4,
+    "pygments_light_style": "stata-dark",
+    "pygments_dark_style": "stata-dark",
+    "logo": {
+        "image_light": "_static/image/logo.png",
+        "image_dark": "_static/image/logo.png",
+        "text": project,
+    },
+    "navbar_align": "left",
+    "navbar_start": ["navbar-logo"],
+    "navbar_center": ["navbar-links"],
     "navbar_end": [
         "theme-switcher",
         "version-switcher",
+        "navbar-icon-links",
     ],
+    "show_nav_level": 2,
+    "collapse_navigation": False,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/sgl-project/sgl-project.github.io",
+            "icon": "fa-brands fa-github",
+            "type": "fontawesome",
+        }
+    ],
+    "secondary_sidebar_items": [
+        "page-toc",
+        "edit-this-page",
+    ],
+    "show_toc_level": 2,
     "switcher": {
         "json_url": "_static/versions.json",
         "version_match": os.getenv("READTHEDOCS_VERSION", release),
@@ -134,6 +150,8 @@ html_context = {
     "github_user": "sgl-project",
     "github_repo": "sgl-project.github.io",
     "github_version": "main",
+    # For pydata-sphinx-theme edit page button
+    "doc_path": "docs/",
     "conf_py_path": "/docs/",
 }
 
@@ -199,7 +217,12 @@ intersphinx_mapping = {
     "torch": ("https://pytorch.org/docs/stable", None),
 }
 
-html_theme = "sphinx_book_theme"
+html_theme = "pydata_sphinx_theme"
+html_sidebars = {
+    "**": [
+        "main-sidebar",
+    ],
+}
 
 
 nbsphinx_prolog = """

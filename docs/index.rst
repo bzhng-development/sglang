@@ -12,98 +12,49 @@ Its core features include:
 - **Active Community**: SGLang is open-source and supported by a vibrant community with widespread industry adoption, powering over 300,000 GPUs worldwide.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Get Started
 
-   get_started/install.md
+   get_started/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Basic Usage
 
-   basic_usage/send_request.ipynb
-   basic_usage/openai_api.rst
-   basic_usage/offline_engine_api.ipynb
-   basic_usage/native_api.ipynb
-   basic_usage/sampling_params.md
-   basic_usage/deepseek.md
-   basic_usage/deepseek_v32.md
-   basic_usage/gpt_oss.md
-   basic_usage/llama4.md
-   basic_usage/qwen3.md
+   basic_usage/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Advanced Features
 
-   advanced_features/server_arguments.md
-   advanced_features/hyperparameter_tuning.md
-   advanced_features/attention_backend.md
-   advanced_features/speculative_decoding.ipynb
-   advanced_features/structured_outputs.ipynb
-   advanced_features/structured_outputs_for_reasoning_models.ipynb
-   advanced_features/tool_parser.ipynb
-   advanced_features/separate_reasoning.ipynb
-   advanced_features/quantization.md
-   advanced_features/lora.ipynb
-   advanced_features/pd_disaggregation.md
-   advanced_features/hicache.rst
-   advanced_features/pd_multiplexing.md
-   advanced_features/vlm_query.ipynb
-   advanced_features/router.md
-   advanced_features/deterministic_inference.md
-   advanced_features/observability.md
-   advanced_features/checkpoint_engine.md
+   advanced_features/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Supported Models
 
-   supported_models/generative_models.md
-   supported_models/multimodal_language_models.md
-   supported_models/embedding_models.md
-   supported_models/reward_models.md
-   supported_models/rerank_models.md
-   supported_models/support_new_models.md
-   supported_models/transformers_fallback.md
-   supported_models/modelscope.md
+   supported_models/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Hardware Platforms
 
-   platforms/amd_gpu.md
-   platforms/blackwell_gpu.md
-   platforms/cpu_server.md
-   platforms/tpu.md
-   platforms/nvidia_jetson.md
-   platforms/ascend_npu.md
-   platforms/xpu.md
+   platforms/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Developer Guide
 
-   developer_guide/contribution_guide.md
-   developer_guide/development_guide_using_docker.md
-   developer_guide/benchmark_and_profiling.md
-   developer_guide/bench_serving.md
+   developer_guide/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: References
 
-   references/faq.md
-   references/environment_variables.md
-   references/production_metrics.md
-   references/production_request_trace.md
-   references/multi_node_deployment/multi_node_index.rst
-   references/custom_chat_template.md
-   references/frontend/frontend_index.rst
-   references/learn_more.md
+   references/index
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Security Acknowledgement
 
    security/acknowledgements.md

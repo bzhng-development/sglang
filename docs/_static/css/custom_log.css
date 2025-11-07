@@ -27,3 +27,10 @@ div.output_area.stderr {
 div.output_area.stdout {
     color: #d3d3d3 !important;
 }
+
+/* Ensure right-hand page TOC (secondary sidebar) is visible on large screens */
+@media (min-width: 992px) {
+  .bd-sidebar-secondary {
+    display: block !important; /* override Bootstrap d-none */
+  }
+}

@@ -10,7 +10,7 @@ pandoc
 pillow
 pydantic
 sphinx
-sphinx-book-theme
+pydata-sphinx-theme
 sphinx-copybutton
 sphinx-tabs
 nbstripout
