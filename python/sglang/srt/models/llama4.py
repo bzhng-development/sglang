@@ -16,8 +16,9 @@
 # https://github.com/vllm-project/vllm/blob/v0.8.3/vllm/model_executor/models/llama4.py
 """Inference-only LLaMA model compatible with HuggingFace weights."""
 
+import concurrent.futures
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 from torch import nn
@@ -49,6 +50,10 @@ from sglang.srt.model_executor.forward_batch_info import (
     ForwardBatch,
     ForwardMode,
     PPProxyTensors,
+)
+from sglang.srt.model_loader.weight_utils import (
+    default_weight_loader,
+    maybe_remap_kv_scale_name,
 )
 from sglang.srt.models.llama import LlamaForCausalLM, LlamaMLP
 from sglang.srt.utils import (
@@ -556,6 +561,67 @@ class Llama4ForCausalLM(LlamaForCausalLM):
         prefix: str = "",
     ):
         return Llama4Model(config, quant_config=quant_config, prefix=prefix)
+
+    def load_weights(self, weights: Iterable[Tuple[str, torch.Tensor]]):
+        params_dict = dict(self.named_parameters())
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
+
+            for name, loaded_weight in weights:
+                # Skip irrelevant or training-time-only tensors
+                if "rotary_emb.inv_freq" in name or "projector" in name:
+                    continue
+                if "rotary_emb.cos_cached" in name or "rotary_emb.sin_cached" in name:
+                    # Some checkpoints (e.g., ColossalAI) include these cached tensors
+                    continue
+                if self.config.tie_word_embeddings and "lm_head.weight" in name:
+                    continue
+
+                # Handle KV scale remapping if present
+                if "scale" in name:
+                    mapped = maybe_remap_kv_scale_name(name, params_dict)
+                    if mapped is None:
+                        continue
+                    name = mapped
+
+                # Try stacked params mapping first
+                for param_name, weight_name, shard_id in self.stacked_params_mapping:
+                    if weight_name not in name:
+                        continue
+                    mapped_name = name.replace(weight_name, param_name)
+                    # Skip loading extra bias for GPTQ models.
+                    if mapped_name.endswith(".bias") and mapped_name not in params_dict:
+                        continue
+                    if mapped_name not in params_dict:
+                        continue
+                    param = params_dict[mapped_name]
+                    weight_loader = param.weight_loader
+                    futures.append(
+                        executor.submit(weight_loader, param, loaded_weight, shard_id)
+                    )
+                    break
+                else:
+                    # Fallback to direct param match
+                    if name.endswith(".bias") and name not in params_dict:
+                        continue
+                    # Skip loading kv_scale from ckpts towards new design.
+                    if name.endswith(".kv_scale") and name not in params_dict:
+                        continue
+                    if name in params_dict:
+                        param = params_dict[name]
+                        weight_loader = getattr(
+                            param, "weight_loader", default_weight_loader
+                        )
+                        futures.append(
+                            executor.submit(weight_loader, param, loaded_weight)
+                        )
+                    else:
+                        logger.warning(f"Parameter {name} not found in params_dict")
+
+            # Ensure any exceptions inside threads are surfaced
+            for future in concurrent.futures.as_completed(futures):
+                future.result()
 
 
 EntryClass = [Llama4ForCausalLM]
