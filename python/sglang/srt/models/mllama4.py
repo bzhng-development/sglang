@@ -1,3 +1,4 @@
+import concurrent.futures
 import json as json_lib
 import logging
 import math
@@ -33,16 +34,14 @@ from sglang.srt.managers.schedule_batch import (
     MultimodalInputs,
 )
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
-from sglang.srt.server_args import get_global_server_args
-from sglang.srt.utils import is_cpu
-
-_is_cpu = is_cpu()
-
 from sglang.srt.model_loader.weight_utils import (
     default_weight_loader,
     maybe_remap_kv_scale_name,
 )
-from sglang.srt.utils import add_prefix
+from sglang.srt.server_args import get_global_server_args
+from sglang.srt.utils import add_prefix, is_cpu
+
+_is_cpu = is_cpu()
 
 logger = logging.getLogger(__name__)
 
@@ -650,40 +649,56 @@ class Llama4ForConditionalGeneration(nn.Module):
 
         loaded_params = set()
 
-        for name, loaded_weight in weights:
-            if self._should_skip_weight(name):
-                continue
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
 
-            name = self._transform_weight_name(name)
+            for name, loaded_weight in weights:
+                if self._should_skip_weight(name):
+                    continue
 
-            if "vision" in name:
-                name = name.replace(".self_attn.o_proj", ".self_attn.proj")
-            else:
-                name, loaded_weight = self.permute_qk_weight_for_rotary(
-                    name, loaded_weight
+                name = self._transform_weight_name(name)
+
+                if "vision" in name:
+                    name = name.replace(".self_attn.o_proj", ".self_attn.proj")
+                else:
+                    name, loaded_weight = self.permute_qk_weight_for_rotary(
+                        name, loaded_weight
+                    )
+
+                if self._handle_scale_remapping(name, params_dict):
+                    loaded_params.add(name)
+                    continue
+
+                if self._handle_stacked_params(
+                    name,
+                    loaded_weight,
+                    stacked_params_mapping,
+                    params_dict,
+                    loaded_params,
+                    executor,
+                    futures,
+                ):
+                    continue
+
+                if self._handle_expert_weights(
+                    name,
+                    loaded_weight,
+                    expert_params_mapping,
+                    params_dict,
+                    num_experts,
+                    loaded_params,
+                    executor,
+                    futures,
+                ):
+                    continue
+
+                loaded_params.add(name)
+                self._handle_default_weight(
+                    name, loaded_weight, params_dict, executor, futures
                 )
 
-            if self._handle_scale_remapping(name, params_dict):
-                loaded_params.add(name)
-                continue
-
-            if self._handle_stacked_params(
-                name, loaded_weight, stacked_params_mapping, params_dict, loaded_params
-            ):
-                continue
-
-            if self._handle_expert_weights(
-                name,
-                loaded_weight,
-                expert_params_mapping,
-                params_dict,
-                num_experts,
-                loaded_params,
-            ):
-                continue
-
-            loaded_params.add(name)
-            self._handle_default_weight(name, loaded_weight, params_dict)
+            for future in concurrent.futures.as_completed(futures):
+                future.result()
         unloaded_params = params_dict.keys() - loaded_params
         if unloaded_params:
             logger.warning(
@@ -720,6 +735,8 @@ class Llama4ForConditionalGeneration(nn.Module):
         stacked_params_mapping: list,
         params_dict: dict,
         loaded_params: set,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        futures: list,
     ) -> bool:
         """Handle stacked parameter loading. Returns True if handled."""
         for param_name, weight_name, shard_id in stacked_params_mapping:
@@ -727,7 +744,10 @@ class Llama4ForConditionalGeneration(nn.Module):
                 transformed_name = name.replace(weight_name, param_name)
                 loaded_params.add(transformed_name)
                 param = params_dict[transformed_name]
-                param.weight_loader(param, loaded_weight, shard_id)
+                weight_loader = param.weight_loader
+                futures.append(
+                    executor.submit(weight_loader, param, loaded_weight, shard_id)
+                )
                 return True
         return False
 
@@ -739,6 +759,8 @@ class Llama4ForConditionalGeneration(nn.Module):
         params_dict: dict,
         num_experts: int,
         loaded_params: set,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        futures: list,
     ) -> bool:
         """Handle expert weight loading for MoE (Mixture of Experts) layers.
 
@@ -757,7 +779,13 @@ class Llama4ForConditionalGeneration(nn.Module):
 
         if "experts.gate_up_proj" not in name and "experts.down_proj" not in name:
             return self._handle_other_expert_params(
-                name, loaded_weight, expert_params_mapping, params_dict, loaded_params
+                name,
+                loaded_weight,
+                expert_params_mapping,
+                params_dict,
+                loaded_params,
+                executor,
+                futures,
             )
 
         if "scale" in name:
@@ -776,6 +804,8 @@ class Llama4ForConditionalGeneration(nn.Module):
         expert_params_mapping: list,
         params_dict: dict,
         loaded_params: set,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        futures: list,
     ) -> bool:
         """Handle expert parameters that are not gate_up_proj or down_proj weights.
 
@@ -793,8 +823,16 @@ class Llama4ForConditionalGeneration(nn.Module):
             if weight_name in name:
                 transformed_name = name.replace(weight_name, param_name)
                 param = params_dict[transformed_name]
-                param.weight_loader(
-                    param, loaded_weight, name, shard_id=shard_id, expert_id=expert_id
+                weight_loader = param.weight_loader
+                futures.append(
+                    executor.submit(
+                        weight_loader,
+                        param,
+                        loaded_weight,
+                        name,
+                        shard_id=shard_id,
+                        expert_id=expert_id,
+                    )
                 )
                 loaded_params.add(transformed_name)
                 return True
@@ -884,6 +922,8 @@ class Llama4ForConditionalGeneration(nn.Module):
         params_dict: dict,
         num_experts: int,
         loaded_params: set,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        futures: list,
     ) -> bool:
         """Handle actual weight tensors for expert layers (gate_up_proj and down_proj).
 
@@ -921,28 +961,39 @@ class Llama4ForConditionalGeneration(nn.Module):
             if weight_chunk.dim() == 2:
                 # Single tensor case - load for all experts
                 for expert_id in range(num_experts):
-                    weight_loader(
-                        param,
-                        weight_chunk.T,
-                        param_name,
-                        shard_id=shard_id,
-                        expert_id=expert_id,
+                    futures.append(
+                        executor.submit(
+                            weight_loader,
+                            param,
+                            weight_chunk.T,
+                            param_name,
+                            shard_id=shard_id,
+                            expert_id=expert_id,
+                        )
                     )
             else:
                 # Multiple experts case - load each expert's weights
                 for expert_id in range(num_experts):
-                    weight_loader(
-                        param,
-                        weight_chunk[expert_id].T,
-                        param_name,
-                        shard_id=shard_id,
-                        expert_id=expert_id,
+                    futures.append(
+                        executor.submit(
+                            weight_loader,
+                            param,
+                            weight_chunk[expert_id].T,
+                            param_name,
+                            shard_id=shard_id,
+                            expert_id=expert_id,
+                        )
                     )
 
         return True
 
     def _handle_default_weight(
-        self, name: str, loaded_weight: torch.Tensor, params_dict: dict
+        self,
+        name: str,
+        loaded_weight: torch.Tensor,
+        params_dict: dict,
+        executor: concurrent.futures.ThreadPoolExecutor,
+        futures: list,
     ):
         """Handle default weight loading."""
         # Skip loading extra bias for GPTQ models
@@ -951,7 +1002,7 @@ class Llama4ForConditionalGeneration(nn.Module):
 
         param = params_dict[name]
         weight_loader = getattr(param, "weight_loader", default_weight_loader)
-        weight_loader(param, loaded_weight)
+        futures.append(executor.submit(weight_loader, param, loaded_weight))
 
     def set_eagle3_layers_to_capture(self, layer_ids: Optional[List[int]] = None):
         if hasattr(self.language_model, "set_eagle3_layers_to_capture"):
