@@ -1044,9 +1044,9 @@ void launch_sm100_fp8_scaled_mm(
   auto workspace = torch::empty(workspace_size, workspace_options);
   auto stream = at::cuda::getCurrentCUDAStream(a.get_device());
   auto can_implement = gemm_op.can_implement(args);
-  TORCH_CHECK(can_implement == cutlass::Status::kSuccess)
+  TORCH_CHECK(can_implement == cutlass::Status::kSuccess, cutlassGetStatusString(can_implement))
   auto status = gemm_op.run(args, workspace.data_ptr(), stream);
-  TORCH_CHECK(status == cutlass::Status::kSuccess)
+  TORCH_CHECK(status == cutlass::Status::kSuccess, cutlassGetStatusString(status))
 }
 
 template <typename OutType>
@@ -1488,9 +1488,9 @@ void launch_sm120_fp8_scaled_mm(
   auto workspace = torch::empty(workspace_size, workspace_options);
   auto stream = at::cuda::getCurrentCUDAStream(a.get_device());
   auto can_implement = gemm_op.can_implement(args);
-  TORCH_CHECK(can_implement == cutlass::Status::kSuccess)
+  TORCH_CHECK(can_implement == cutlass::Status::kSuccess, cutlassGetStatusString(can_implement))
   auto status = gemm_op.run(args, workspace.data_ptr(), stream);
-  TORCH_CHECK(status == cutlass::Status::kSuccess)
+  TORCH_CHECK(status == cutlass::Status::kSuccess, cutlassGetStatusString(status))
 }
 
 template <typename OutType>
