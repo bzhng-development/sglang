@@ -1,4 +1,5 @@
 import argparse
+import time
 from typing import List, Tuple
 
 import torch
@@ -49,13 +50,26 @@ def bench_fp8_mm(
     out_dtype: torch.dtype,
     warmup: int,
     iters: int,
+    use_cuda_graph: bool = True,
 ) -> float:
     from sgl_kernel import fp8_scaled_mm
 
     def run():
         return fp8_scaled_mm(a_q, b_cm, a_s, b_s, out_dtype, bias=None)
 
-    ms = do_bench_cudagraph(run)
+    if use_cuda_graph:
+        ms = do_bench_cudagraph(run)
+    else:
+        # Manual timing path (exposes errors without CUDA Graphs)
+        for _ in range(warmup):
+            run()
+        torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        for _ in range(iters):
+            run()
+        torch.cuda.synchronize()
+        t1 = time.perf_counter()
+        ms = (t1 - t0) * 1e3 / iters
     return ms
 
 
@@ -91,6 +105,11 @@ def main():
     parser.add_argument("--iters", type=int, default=100, help="Timing iterations")
     parser.add_argument("--warmup", type=int, default=20, help="Warmup iterations")
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--disable-cuda-graph",
+        action="store_true",
+        help="Disable CUDA Graph in timing to surface kernel errors directly",
+    )
     args = parser.parse_args()
 
     if not torch.cuda.is_available():
@@ -117,7 +136,16 @@ def main():
     for m in m_vals:
         a, b_row = generate_inputs(m, args.n, args.k, in_dtype, device, args.seed)
         a_q, b_cm_q, a_s, b_s = quantize_per_token_fp8(a, b_row)
-        ms = bench_fp8_mm(a_q, b_cm_q, a_s, b_s, out_dtype, args.warmup, args.iters)
+        ms = bench_fp8_mm(
+            a_q,
+            b_cm_q,
+            a_s,
+            b_s,
+            out_dtype,
+            args.warmup,
+            args.iters,
+            use_cuda_graph=not args.disable_cuda_graph,
+        )
         tflops = to_tflops(m, args.n, args.k, ms)
         print(f"{m:6d}  {ms:10.3f}  {tflops:10.2f}")
 
