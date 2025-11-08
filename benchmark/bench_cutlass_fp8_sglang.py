@@ -36,7 +36,7 @@ def quantize_per_token_fp8(
     sgl_per_token_quant_fp8(b_row.contiguous(), b_row_q, b_s)
 
     # Column-major view for [K, N]
-    b_q_cm = b_row_q.t().contiguous()
+    b_q_cm = b_row_q.t()
 
     return a_q, b_q_cm, a_s, b_s
 
