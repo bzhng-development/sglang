@@ -878,6 +878,10 @@ struct DeviceGemmFp8RowwiseSm100 {
 
   using LayoutD = cutlass::layout::RowMajor;
   static constexpr int AlignmentD = AlignmentC;
+  using LayoutC_T = typename cutlass::layout::LayoutTranspose<LayoutC>::type;
+  using LayoutD_T = typename cutlass::layout::LayoutTranspose<LayoutD>::type;
+  using LayoutC_Epilogue = typename std::conditional_t<SwapAB, LayoutC_T, LayoutC>;
+  using LayoutD_Epilogue = typename std::conditional_t<SwapAB, LayoutD_T, LayoutD>;
 
   using Compute1MulAdd = cutlass::epilogue::fusion::
       Sm90Compute<cutlass::multiply_add, OutElementType, float, cutlass::FloatRoundStyle::round_to_nearest>;
@@ -904,10 +908,10 @@ struct DeviceGemmFp8RowwiseSm100 {
       ElementAccumulator,
       ElementCompute,
       ElementC,
-      LayoutC,
+      LayoutC_Epilogue,
       AlignmentC,
       OutElementType,
-      LayoutD,
+      LayoutD_Epilogue,
       AlignmentD,
       EpilogueScheduleType,
       EVTCompute>::CollectiveOp;
@@ -993,15 +997,18 @@ typename GemmType::Gemm::Arguments prepare_sm100_fp8_args(
                                        : cutlass::make_cute_packed_stride(StrideA{}, cute::make_shape(m, k, 1));
   StrideB stride_b = GemmType::kSwapAB ? cutlass::make_cute_packed_stride(StrideB{}, cute::make_shape(m, k, 1))
                                        : cutlass::make_cute_packed_stride(StrideB{}, cute::make_shape(n, k, 1));
-  StrideC stride_c = cutlass::make_cute_packed_stride(StrideC{}, cute::make_shape(m, n, 1));
-  StrideD stride_d = cutlass::make_cute_packed_stride(StrideD{}, cute::make_shape(m, n, 1));
+  StrideC stride_c = GemmType::kSwapAB ? cutlass::make_cute_packed_stride(StrideC{}, cute::make_shape(n, m, 1))
+                                       : cutlass::make_cute_packed_stride(StrideC{}, cute::make_shape(m, n, 1));
+  StrideD stride_d = GemmType::kSwapAB ? cutlass::make_cute_packed_stride(StrideD{}, cute::make_shape(n, m, 1))
+                                       : cutlass::make_cute_packed_stride(StrideD{}, cute::make_shape(m, n, 1));
   StrideAux aux_stride = stride_d;
 
   typename GemmKernel::MainloopArguments mainloop_args =
       GemmType::kSwapAB ? typename GemmKernel::MainloopArguments{ptr_b, stride_a, ptr_a, stride_b}
                         : typename GemmKernel::MainloopArguments{ptr_a, stride_a, ptr_b, stride_b};
 
-  typename GemmKernel::ProblemShape prob_shape = {m, n, k, 1};
+  typename GemmKernel::ProblemShape prob_shape =
+      GemmType::kSwapAB ? typename GemmKernel::ProblemShape{n, m, k, 1} : typename GemmKernel::ProblemShape{m, n, k, 1};
   cutlass::KernelHardwareInfo hw_info;
   typename GemmKernel::TileSchedulerArguments scheduler = {};
 
