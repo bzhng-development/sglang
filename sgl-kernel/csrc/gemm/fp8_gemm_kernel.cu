@@ -745,28 +745,57 @@ void sm90_fp8_dispatch_shape(
     const torch::Tensor& scales_b,
     const c10::optional<torch::Tensor>& bias) {
   uint32_t const m = a.size(0);
+  uint32_t const n = b.size(1);
   using FastPingpongScheduler = cutlass::gemm::KernelTmaWarpSpecializedPingpongFP8FastAccum;
   using FastBasicScheduler = cutlass::gemm::KernelTmaWarpSpecializedFP8FastAccum;
   using PersistentTileScheduler = cutlass::gemm::PersistentScheduler;
   using BasicTileScheduler = void;
-  if (m <= 1) {
+  if (m <= 16) {
+    // m in [1, 16]
+    if (n <= 1280) {
+      // swap AB, pass scales as (b_scales, a_scales)
+      return sm90_fp8_dispatch_bias<
+          OutType,
+          Shape<_64, _16, _256>,
+          Shape<_1, _2, _1>,
+          FastBasicScheduler,
+          BasicTileScheduler>(out, a, b, scales_b, scales_a, bias);
+    }
+    // swap AB, larger N
     return sm90_fp8_dispatch_bias<
         OutType,
-        Shape<_64, _64, _128>,
-        Shape<_1, _8, _1>,
+        Shape<_64, _16, _256>,
+        Shape<_1, _1, _1>,
         FastBasicScheduler,
-        BasicTileScheduler>(out, a, b, scales_a, scales_b, bias);
-  }
-  if (m <= 64) {
-    // m in [1, 64]
+        BasicTileScheduler>(out, a, b, scales_b, scales_a, bias);
+  } else if (m <= 64) {
+    // m in (16, 64]
+    if (n <= 1280) {
+      // swap AB, small N
+      return sm90_fp8_dispatch_bias<
+          OutType,
+          Shape<_64, _16, _256>,
+          Shape<_1, _4, _1>,
+          FastBasicScheduler,
+          PersistentTileScheduler>(out, a, b, scales_b, scales_a, bias);
+    }
+    // swap AB, larger N
     return sm90_fp8_dispatch_bias<
         OutType,
-        Shape<_64, _64, _128>,
-        Shape<_1, _4, _1>,
+        Shape<_64, _64, _256>,
+        Shape<_1, _1, _1>,
+        FastBasicScheduler,
+        PersistentTileScheduler>(out, a, b, scales_b, scales_a, bias);
+  } else if (m <= 128) {
+    // m in (64, 128]
+    return sm90_fp8_dispatch_bias<
+        OutType,
+        Shape<_64, _128, _128>,
+        Shape<_2, _1, _1>,
         FastPingpongScheduler,
         PersistentTileScheduler>(out, a, b, scales_a, scales_b, bias);
   } else if (m <= 256) {
-    // m in (64, 256]
+    // m in (128, 256]
     return sm90_fp8_dispatch_bias<
         OutType,
         Shape<_64, _64, _128>,
@@ -1028,7 +1057,7 @@ void sm100_fp8_dispatch_bias(
     const torch::Tensor& scales_a,
     const torch::Tensor& scales_b,
     const c10::optional<torch::Tensor>& bias) {
-  using CTAShapeDefault = Shape<_256, _128, _64>;
+  using CTAShapeDefault = Shape<_256, _128, _128>;
   using ClusterShapeDefault = Shape<_2, _2, _1>;
 
   using CTAShape256 = Shape<_128, _128, _128>;
@@ -1198,13 +1227,15 @@ void sm100_fp8_dispatch_bias(
   if (bias) {
     if (m <= 16) {
       // m in [1, 16] -> enable swap AB with updated shapes
-      return launch_sm100_fp8_scaled_mm<BiasGemm16Swap, true>(out, a, b, scales_a, scales_b, bias);
+      // swap AB: swap scales order (b_scales, a_scales)
+      return launch_sm100_fp8_scaled_mm<BiasGemm16Swap, true>(out, a, b, scales_b, scales_a, bias);
     } else if (m <= 64) {
       // m in (16, 64]
       if (m == 64 && k < 4096) {
         return launch_sm100_fp8_scaled_mm<BiasGemm64, true>(out, a, b, scales_a, scales_b, bias);
       }
-      return launch_sm100_fp8_scaled_mm<BiasGemm64Swap, true>(out, a, b, scales_a, scales_b, bias);
+      // swap AB: swap scales order (b_scales, a_scales)
+      return launch_sm100_fp8_scaled_mm<BiasGemm64Swap, true>(out, a, b, scales_b, scales_a, bias);
     } else if (m <= 256) {
       // m in (64, 256]
       return launch_sm100_fp8_scaled_mm<BiasGemm256, true>(out, a, b, scales_a, scales_b, bias);
@@ -1215,13 +1246,15 @@ void sm100_fp8_dispatch_bias(
   } else {
     if (m <= 16) {
       // m in [1, 16] -> enable swap AB with updated shapes
-      return launch_sm100_fp8_scaled_mm<Gemm16Swap, false>(out, a, b, scales_a, scales_b, bias);
+      // swap AB: swap scales order (b_scales, a_scales)
+      return launch_sm100_fp8_scaled_mm<Gemm16Swap, false>(out, a, b, scales_b, scales_a, bias);
     } else if (m <= 64) {
       // m in (16, 64]
       if (m == 64 && k < 4096) {
         return launch_sm100_fp8_scaled_mm<Gemm64, false>(out, a, b, scales_a, scales_b, bias);
       }
-      return launch_sm100_fp8_scaled_mm<Gemm64Swap, false>(out, a, b, scales_a, scales_b, bias);
+      // swap AB: swap scales order (b_scales, a_scales)
+      return launch_sm100_fp8_scaled_mm<Gemm64Swap, false>(out, a, b, scales_b, scales_a, bias);
     } else if (m <= 256) {
       // m in (64, 256]
       return launch_sm100_fp8_scaled_mm<Gemm256, false>(out, a, b, scales_a, scales_b, bias);
