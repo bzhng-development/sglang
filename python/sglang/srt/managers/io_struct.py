@@ -1332,6 +1332,8 @@ class ProfileReqInput(BaseReq):
     record_shapes: Optional[bool] = None
     # Merge profiles from all ranks into a single trace
     merge_profiles: bool = False
+    # Optional run identifier for profile files
+    run_id: Optional[str] = None
 
 
 class ProfileReqType(Enum):

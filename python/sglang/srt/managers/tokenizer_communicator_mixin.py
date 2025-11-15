@@ -315,6 +315,7 @@ class TokenizerCommunicatorMixin:
         record_shapes: Optional[bool] = None,
         profile_by_stage: bool = False,
         merge_profiles: bool = False,
+        run_id: Optional[str] = None,
     ):
         self.auto_create_handle_loop()
         env_with_stack: bool = get_bool_env_var("SGLANG_PROFILE_WITH_STACK", "true")
@@ -323,6 +324,9 @@ class TokenizerCommunicatorMixin:
             "SGLANG_PROFILE_RECORD_SHAPES", "true"
         )
         record_shapes = (record_shapes is not False) and env_record_shapes
+
+        profile_id = run_id if run_id else str(time.time())
+
         req = ProfileReq(
             type=ProfileReqType.START_PROFILE,
             output_dir=output_dir,
@@ -332,7 +336,7 @@ class TokenizerCommunicatorMixin:
             with_stack=with_stack,
             record_shapes=record_shapes,
             profile_by_stage=profile_by_stage,
-            profile_id=str(time.time()),
+            profile_id=profile_id,
             merge_profiles=merge_profiles,
         )
         return await self._execute_profile(req)
