@@ -612,13 +612,60 @@ async def async_request_gserver(
     raise NotImplementedError()
 
 
-async def async_request_profile(api_url: str) -> RequestFuncOutput:
+def generate_profile_run_id(
+    backend: str,
+    dataset_name: str,
+    custom_prefix: Optional[str] = None,
+    tag: Optional[str] = None,
+    num_prompts: Optional[int] = None,
+    random_input_len: Optional[int] = None,
+    random_output_len: Optional[int] = None,
+) -> str:
+    """Generate a meaningful profile run ID from benchmark context.
+
+    Deep module: Hides complexity of creating informative, timestamped run IDs.
+    Users get automatic, collision-resistant identifiers without manual construction.
+
+    Args:
+        backend: Backend name (e.g., "sglang", "vllm")
+        dataset_name: Dataset type (e.g., "sharegpt", "random")
+        custom_prefix: Optional user-specified prefix for full control
+        tag: Optional semantic tag for the run
+        num_prompts: Number of prompts (added for certain datasets)
+        random_input_len: Input length for random dataset
+        random_output_len: Output length for random dataset
+
+    Returns:
+        Formatted run ID like: "custom_tag_20241115_143022_sglang_random_i1024o1024"
+    """
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    parts = [timestamp, backend, dataset_name]
+
+    if dataset_name == "random" and random_input_len and random_output_len:
+        parts.append(f"i{random_input_len}o{random_output_len}")
+    elif dataset_name == "sharegpt" and num_prompts:
+        parts.append(f"n{num_prompts}")
+
+    if tag:
+        parts.insert(0, tag)
+
+    if custom_prefix:
+        parts.insert(0, custom_prefix)
+
+    return "_".join(parts)
+
+
+async def async_request_profile(
+    api_url: str, run_id: Optional[str] = None
+) -> RequestFuncOutput:
     async with _create_bench_client_session() as session:
         output = RequestFuncOutput()
         try:
             body = {
                 "activities": getattr(args, "profile_activities", []),
             }
+            if run_id:
+                body["run_id"] = run_id
             async with session.post(url=api_url, json=body) as response:
                 if response.status == 200:
                     output.success = True
@@ -652,12 +699,15 @@ def _build_profile_urls(
     return profile_urls
 
 
-async def _call_profile_pd(profile_urls: List[Tuple[str, str]], mode: str) -> None:
+async def _call_profile_pd(
+    profile_urls: List[Tuple[str, str]], mode: str, run_id: Optional[str] = None
+) -> None:
     """Call profile endpoint (start/stop) on PD separated workers.
 
     Args:
         profile_urls: List of (worker_type, url) tuples
         mode: "start" or "stop"
+        run_id: Optional run identifier for profile files
     """
     endpoint = "/start_profile" if mode == "start" else "/stop_profile"
     action = "Starting" if mode == "start" else "Stopping"
@@ -666,7 +716,9 @@ async def _call_profile_pd(profile_urls: List[Tuple[str, str]], mode: str) -> No
     print(f"{action} profiler...")
 
     for worker_type, url in profile_urls:
-        profile_output = await async_request_profile(api_url=url + endpoint)
+        profile_output = await async_request_profile(
+            api_url=url + endpoint, run_id=run_id
+        )
         if profile_output.success:
             print(f"Profiler {action_past} for {worker_type} worker at {url}")
         else:
@@ -1879,14 +1931,26 @@ async def benchmark(
             print("Skipping profiler start. Please specify worker URLs for profiling.")
 
     # Start profiler
+    profile_run_id = None
     if profile:
+        profile_run_id = generate_profile_run_id(
+            backend=backend,
+            dataset_name=args.dataset_name,
+            custom_prefix=getattr(args, "profile_run_id", None),
+            tag=getattr(args, "tag", None),
+            num_prompts=args.num_prompts,
+            random_input_len=args.random_input_len,
+            random_output_len=args.random_output_len,
+        )
+        print(f"Profile run ID: {profile_run_id}")
+
         if pd_separated:
             if pd_profile_urls:
-                await _call_profile_pd(pd_profile_urls, "start")
+                await _call_profile_pd(pd_profile_urls, "start", run_id=profile_run_id)
         else:
             print("Starting profiler...")
             profile_output = await async_request_profile(
-                api_url=base_url + "/start_profile"
+                api_url=base_url + "/start_profile", run_id=profile_run_id
             )
             if profile_output.success:
                 print("Profiler started")
@@ -1959,11 +2023,11 @@ async def benchmark(
     if profile:
         if pd_separated:
             if pd_profile_urls:
-                await _call_profile_pd(pd_profile_urls, "stop")
+                await _call_profile_pd(pd_profile_urls, "stop", run_id=profile_run_id)
         else:
             print("Stopping profiler...")
             profile_output = await async_request_profile(
-                api_url=base_url + "/stop_profile"
+                api_url=base_url + "/stop_profile", run_id=profile_run_id
             )
             if profile_output.success:
                 print("Profiler stopped")
@@ -2598,6 +2662,13 @@ if __name__ == "__main__":
         action="store_true",
         help="Use Torch Profiler. The endpoint must be launched with "
         "SGLANG_TORCH_PROFILER_DIR to enable profiler.",
+    )
+    parser.add_argument(
+        "--profile-run-id",
+        type=str,
+        default=None,
+        help="Optional custom prefix for profile output files. "
+        "If not specified, auto-generates from timestamp, backend, and dataset info.",
     )
     # TODO unify all these
     parser.add_argument(

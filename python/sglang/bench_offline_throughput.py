@@ -25,6 +25,7 @@ import numpy as np
 
 from sglang.bench_serving import (
     DatasetRow,
+    generate_profile_run_id,
     get_dataset,
     get_tokenizer,
     sample_random_requests,
@@ -57,6 +58,7 @@ class BenchArgs:
     extra_request_body: Optional[str] = None
     apply_chat_template: bool = False
     profile: bool = False
+    profile_run_id: Optional[str] = None
     skip_warmup: bool = False
     do_not_exit: bool = False
     prompt_suffix: str = ""
@@ -174,6 +176,13 @@ class BenchArgs:
             "SGLANG_TORCH_PROFILER_DIR to enable profiler.",
         )
         parser.add_argument(
+            "--profile-run-id",
+            type=str,
+            default=BenchArgs.profile_run_id,
+            help="Optional custom prefix for profile output files. "
+            "If not specified, auto-generates from timestamp, backend, and dataset info.",
+        )
+        parser.add_argument(
             "--skip-warmup",
             action="store_true",
             help="Skip the warmup batches.",
@@ -216,6 +225,7 @@ def throughput_test_once(
     profile: bool,
     return_logprob: bool = False,
     logprob_start_len: int = -1,
+    profile_run_id: Optional[str] = None,
 ):
     measurement_results = {
         "backend": backend_name,
@@ -245,7 +255,12 @@ def throughput_test_once(
             "SGLANG_TORCH_PROFILER_DIR" in os.environ
         ), "Please set SGLANG_TORCH_PROFILER_DIR."
         os.makedirs(os.environ["SGLANG_TORCH_PROFILER_DIR"], exist_ok=True)
-        backend.start_profile()
+
+        if profile_run_id:
+            print(f"Profile run ID: {profile_run_id}")
+            backend.start_profile(run_id=profile_run_id)
+        else:
+            backend.start_profile()
 
     st = time.perf_counter()
     gen_out = backend.generate(
@@ -365,6 +380,18 @@ def throughput_test(
         dataset_path=bench_args.dataset_path,
     )
 
+    # Generate profile run ID if profiling is enabled
+    profile_run_id = None
+    if bench_args.profile:
+        profile_run_id = generate_profile_run_id(
+            backend=bench_args.backend,
+            dataset_name=bench_args.dataset_name,
+            custom_prefix=bench_args.profile_run_id,
+            num_prompts=bench_args.num_prompts,
+            random_input_len=bench_args.random_input_len,
+            random_output_len=bench_args.random_output_len,
+        )
+
     # Warm up
     if not bench_args.skip_warmup:
         logging.info("\nWarmup...")
@@ -390,6 +417,7 @@ def throughput_test(
         profile=bench_args.profile,
         return_logprob=bench_args.return_logprob,
         logprob_start_len=bench_args.logprob_start_len,
+        profile_run_id=profile_run_id,
     )
     backend.shutdown()
 
