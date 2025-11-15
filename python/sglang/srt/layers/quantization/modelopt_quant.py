@@ -1619,7 +1619,7 @@ class ModelOptNvFp4FusedMoEMethod(FusedMoEMethodBase):
                     get_tp_group(), disabled=not is_allocation_symmetric()
                 ):
                     if x.shape[0] > 0:
-                        x, x_sf = fp4_quantize_flashinfer(
+                        x, x_sf = fp4_quantize(
                             x, layer.w13_input_scale_quant, is_sf_swizzled_layout=False
                         )
                     else:
