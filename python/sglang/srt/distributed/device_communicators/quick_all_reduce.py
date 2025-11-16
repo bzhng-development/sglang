@@ -150,7 +150,9 @@ class QuickAllReduce:
         if cuda_visible_devices:
             device_ids = list(map(int, cuda_visible_devices.split(",")))
         else:
-            device_ids = list(range(torch.cuda.device_count()))
+            # Only include the device being used by this process
+            # to avoid initializing CUDA contexts on all GPUs
+            device_ids = [device.index]
         physical_device_id = device_ids[device.index]
         tensor = torch.tensor([physical_device_id], dtype=torch.int, device="cpu")
         gather_list = [

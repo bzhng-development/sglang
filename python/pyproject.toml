@@ -116,6 +116,12 @@ tracing = [
   "opentelemetry-exporter-otlp-proto-grpc",
   "opentelemetry-sdk",
 ]
+all = [
+  "sglang[checkpoint-engine]",
+  "sglang[diffusion]",
+  "sglang[test]",
+  "sglang[tracing]",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/sgl-project/sglang"

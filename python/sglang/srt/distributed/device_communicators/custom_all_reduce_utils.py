@@ -245,10 +245,22 @@ def gpu_p2p_access_check(src: int, tgt: int) -> bool:
 
     is_distributed = dist.is_initialized()
 
-    num_dev = torch.cuda.device_count()
     cuda_visible_devices = os.environ.get("CUDA_VISIBLE_DEVICES", None)
     if cuda_visible_devices is None:
-        cuda_visible_devices = ",".join(str(i) for i in range(num_dev))
+        # Only test devices in the actual distributed group
+        # to avoid initializing CUDA contexts on all GPUs
+        from sglang.srt.distributed.parallel_state import get_world_group
+
+        if is_distributed:
+            world_group = get_world_group()
+            num_dev = world_group.world_size
+            cuda_visible_devices = ",".join(str(i) for i in range(num_dev))
+        else:
+            # Not distributed, only use current device
+            num_dev = 1
+            cuda_visible_devices = "0"
+    else:
+        num_dev = len(cuda_visible_devices.split(","))
 
     # VLLM_CACHE_ROOT -> SGLANG_CACHE_ROOT
     # "~/.cache/vllm" -> "~/.cache/sglang"

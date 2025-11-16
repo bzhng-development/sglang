@@ -70,6 +70,8 @@ enable_hf_transfer()
 
 class DisabledTqdm(tqdm):
     def __init__(self, *args, **kwargs):
+        # Remove 'disable' from kwargs if it exists to avoid duplicate keyword argument
+        kwargs.pop("disable", None)
         super().__init__(*args, **kwargs, disable=True)
 
 

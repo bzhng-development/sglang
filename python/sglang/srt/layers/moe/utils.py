@@ -169,6 +169,10 @@ def get_moe_runner_backend() -> MoeRunnerBackend:
             "MOE_RUNNER_BACKEND is not initialized, the backend will be automatically selected",
         )
         MOE_RUNNER_BACKEND = MoeRunnerBackend.AUTO
+        log_info_on_rank0(
+            logger,
+            f"Using auto backend for MoE runner: {MOE_RUNNER_BACKEND}",
+        )
     return MOE_RUNNER_BACKEND
 
 
