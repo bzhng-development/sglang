@@ -245,12 +245,13 @@ def gpu_p2p_access_check(src: int, tgt: int) -> bool:
 
     is_distributed = dist.is_initialized()
 
+    # Import once at the top
+    from sglang.srt.distributed.parallel_state import get_world_group
+
     cuda_visible_devices = os.environ.get("CUDA_VISIBLE_DEVICES", None)
     if cuda_visible_devices is None:
         # Only test devices in the actual distributed group
         # to avoid initializing CUDA contexts on all GPUs
-        from sglang.srt.distributed.parallel_state import get_world_group
-
         if is_distributed:
             world_group = get_world_group()
             num_dev = world_group.world_size
@@ -260,7 +261,16 @@ def gpu_p2p_access_check(src: int, tgt: int) -> bool:
             num_dev = 1
             cuda_visible_devices = "0"
     else:
-        num_dev = len(cuda_visible_devices.split(","))
+        # Even when CUDA_VISIBLE_DEVICES is set, only test devices
+        # that are actually used by the distributed group
+        if is_distributed:
+            world_group = get_world_group()
+            num_dev = world_group.world_size
+            # Use only the first num_dev devices from CUDA_VISIBLE_DEVICES
+            visible_devices = cuda_visible_devices.split(",")
+            cuda_visible_devices = ",".join(visible_devices[:num_dev])
+        else:
+            num_dev = len(cuda_visible_devices.split(","))
 
     # VLLM_CACHE_ROOT -> SGLANG_CACHE_ROOT
     # "~/.cache/vllm" -> "~/.cache/sglang"
@@ -269,7 +279,6 @@ def gpu_p2p_access_check(src: int, tgt: int) -> bool:
         SGLANG_CACHE_ROOT, f"gpu_p2p_access_cache_for_{cuda_visible_devices}.json"
     )
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    from sglang.srt.distributed.parallel_state import get_world_group
 
     if (not is_distributed or get_world_group().local_rank == 0) and (
         not os.path.exists(path)
@@ -293,8 +302,14 @@ def gpu_p2p_access_check(src: int, tgt: int) -> bool:
         # because the subprocess might produce logging output
         with tempfile.NamedTemporaryFile() as output_file:
             input_bytes = pickle.dumps((batch_src, batch_tgt, output_file.name))
+            # Pass the potentially modified CUDA_VISIBLE_DEVICES to subprocess
+            env = os.environ.copy()
+            env["CUDA_VISIBLE_DEVICES"] = cuda_visible_devices
             returned = subprocess.run(
-                [sys.executable, __file__], input=input_bytes, capture_output=True
+                [sys.executable, __file__],
+                input=input_bytes,
+                capture_output=True,
+                env=env,
             )
             # check if the subprocess is successful
             try:
