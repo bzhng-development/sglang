@@ -12,7 +12,6 @@
 # limitations under the License.
 # ==============================================================================
 
-import functools
 import json
 import logging
 import os
@@ -936,8 +935,8 @@ def _w8a8_block_fp8_matmul_unrolledx4(
     tl.store(c_ptrs, c, mask=c_mask)
 
 
-@functools.lru_cache
-@torch._dynamo.disable()
+# @functools.lru_cache Try this
+# @torch._dynamo.disable() Not the right solution
 def get_w8a8_block_fp8_configs(
     N: int, K: int, block_n: int, block_k: int
 ) -> Optional[Dict[int, Any]]:
