@@ -83,11 +83,11 @@ if _is_cuda:
         routed_scaling_factor,
         apply_routed_scaling_factor_on_output,
     ):
-        topk_weights = torch.new_empty(
-            input_tensor.shape[0], topk, device=input_tensor.device
+        topk_weights = input_tensor.new_empty(
+            input_tensor.shape[0], topk, dtype=torch.float32, device=input_tensor.device
         )
-        topk_ids = torch.new_empty(
-            input_tensor.shape[0], topk, device=input_tensor.device
+        topk_ids = input_tensor.new_empty(
+            input_tensor.shape[0], topk, dtype=torch.int32, device=input_tensor.device
         )
         return topk_weights, topk_ids
 
