@@ -85,10 +85,14 @@ if _is_cuda:
     ):
         num_rows = input_tensor.shape[0]
         topk_weights = input_tensor.new_empty(
-            num_rows, topk, dtype=torch.float32, device=input_tensor.device
+            num_rows,
+            topk,
+            dtype=torch.float32,
         )
         topk_ids = input_tensor.new_empty(
-            num_rows, topk, dtype=torch.int32, device=input_tensor.device
+            num_rows,
+            topk,
+            dtype=torch.int32,
         )
         return topk_weights, topk_ids
 
