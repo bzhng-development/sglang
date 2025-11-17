@@ -1758,7 +1758,12 @@ def print_info_once(msg: str) -> None:
     logger.info(msg)
 
 
-def get_device_name(device_id: int = 0) -> str:
+# Cache for device names to avoid querying torch.* inside Dynamo-compiled regions.
+_DEVICE_NAME_CACHE: dict[int, str] = {}
+
+
+def _compute_device_name(device_id: int = 0) -> str:
+    """Eager-only helper that actually queries the backend for a device name."""
     if hasattr(torch, "cuda") and torch.cuda.is_available():
         return torch.cuda.get_device_name(device_id)
 
@@ -1770,6 +1775,34 @@ def get_device_name(device_id: int = 0) -> str:
 
     if hasattr(torch, "npu") and torch.npu.is_available():
         return torch.npu.get_device_name(device_id)
+
+    # If no accelerator is available, fall back to a generic name.
+    return "cpu"
+
+
+# Pre-populate cache for the default device id 0 at import time, so that
+# later calls from Dynamo-compiled regions hit the cache and do not invoke
+# any torch.* APIs.
+try:
+    _DEVICE_NAME_CACHE[0] = _compute_device_name(0)
+except Exception:
+    # Fall back to a generic name; this is only used for config filenames.
+    _DEVICE_NAME_CACHE[0] = "unknown"
+
+
+def get_device_name(device_id: int = 0) -> str:
+    """Return cached device name; safe to call from Dynamo-compiled regions.
+
+    For device_id=0 (the only id used in the current codebase), the name
+    is pre-computed at import time. For other ids, we lazily populate the
+    cache on first use.
+    """
+    if device_id in _DEVICE_NAME_CACHE:
+        return _DEVICE_NAME_CACHE[device_id]
+
+    name = _compute_device_name(device_id)
+    _DEVICE_NAME_CACHE[device_id] = name
+    return name
 
 
 @lru_cache(maxsize=1)
