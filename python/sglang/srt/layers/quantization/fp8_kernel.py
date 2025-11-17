@@ -937,6 +937,7 @@ def _w8a8_block_fp8_matmul_unrolledx4(
 
 
 @functools.lru_cache
+@torch._dynamo.disable()
 def get_w8a8_block_fp8_configs(
     N: int, K: int, block_n: int, block_k: int
 ) -> Optional[Dict[int, Any]]:
