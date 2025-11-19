@@ -237,10 +237,15 @@ def is_sm90_supported(device=None) -> bool:
 @lru_cache(maxsize=1)
 def supports_pdl(device: Optional[torch.device] = None) -> bool:
     """
-    Return True if PDL is supported on the given device.
+    Return True if PDL is supported on the given device, for the use case in Triton.
     PDL requires Hopper (SM90) or newer.
+    Triton and PDL requires Triton version >= 3.5
     """
-    return bool(is_cuda() and is_sm90_supported(device))
+    return bool(
+        is_cuda()
+        and is_sm90_supported(device)
+        and triton.__version__.startswith("3.5.")
+    )
 
 
 _warned_bool_env_var_keys = set()
