@@ -5,7 +5,6 @@ from contextlib import nullcontext
 from datetime import datetime
 from typing import Any, Dict, List, Tuple
 
-import ray
 import torch
 import triton
 from common_utils import (
@@ -17,8 +16,9 @@ from common_utils import (
     save_configs,
     sort_config,
 )
-from ray.experimental.tqdm_ray import tqdm
 
+import ray
+from ray.experimental.tqdm_ray import tqdm
 from sglang.srt.layers.moe.fused_moe_triton import override_config
 from sglang.srt.layers.moe.fused_moe_triton.fused_moe import fused_moe
 from sglang.srt.layers.moe.fused_moe_triton.fused_moe_triton_config import (
@@ -28,6 +28,10 @@ from sglang.srt.layers.moe.fused_moe_triton.fused_moe_triton_config import (
 )
 from sglang.srt.layers.moe.moe_runner import MoeRunnerConfig
 from sglang.srt.layers.moe.topk import TopKConfig, select_experts
+from sglang.srt.server_args import (
+    prepare_server_args,
+    set_global_server_args_for_scheduler,
+)
 from sglang.srt.utils import is_hip
 
 _is_hip = is_hip()
@@ -313,6 +317,9 @@ class BenchmarkWorker:
 
 def main(args: argparse.Namespace):
     print(args)
+
+    server_args = prepare_server_args([])
+    set_global_server_args_for_scheduler(server_args)
 
     model_config = get_model_config(
         args.model, args.tp_size, args.ep_size, args.disable_shared_experts_fusion
