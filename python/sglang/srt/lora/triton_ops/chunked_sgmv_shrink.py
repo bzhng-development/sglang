@@ -2,9 +2,8 @@ import torch
 import triton
 import triton.language as tl
 
-from sglang.srt.lora.triton_ops.utils import supports_pdl
 from sglang.srt.lora.utils import LoRABatchInfo
-from sglang.srt.utils import cached_triton_kernel
+from sglang.srt.utils import cached_triton_kernel, supports_pdl
 
 
 @cached_triton_kernel(

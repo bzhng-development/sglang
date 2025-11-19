@@ -234,6 +234,15 @@ def is_sm90_supported(device=None) -> bool:
     )
 
 
+@lru_cache(maxsize=1)
+def supports_pdl(device: Optional[torch.device] = None) -> bool:
+    """
+    Return True if PDL is supported on the given device.
+    PDL requires Hopper (SM90) or newer.
+    """
+    return bool(is_cuda() and is_sm90_supported(device))
+
+
 _warned_bool_env_var_keys = set()
 
 
