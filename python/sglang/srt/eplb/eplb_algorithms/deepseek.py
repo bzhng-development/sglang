@@ -1,6 +1,7 @@
 # This file is copied from https://github.com/deepseek-ai/EPLB/blob/main/eplb.py since that one is not a pypi package
 from typing import Tuple
 
+import numpy as np
 import torch
 
 
@@ -30,22 +31,33 @@ def balanced_packing(
         rank_in_pack = torch.zeros_like(weight, dtype=torch.int64)
         return pack_index, rank_in_pack
 
-    indices = weight.float().sort(-1, descending=True).indices.cpu()
-    pack_index = torch.full_like(weight, fill_value=-1, dtype=torch.int64, device="cpu")
-    rank_in_pack = torch.full_like(pack_index, fill_value=-1)
+    weight_cpu = weight.float().cpu()
+    indices = weight_cpu.sort(-1, descending=True).indices.contiguous()
+    weight_np = weight_cpu.numpy()
+    indices_np = indices.numpy()
+    pack_index_np = np.full(weight_np.shape, -1, dtype=np.int64)
+    rank_in_pack_np = np.full_like(pack_index_np, -1)
+
     for i in range(num_layers):
         pack_weights = [0] * num_packs
         pack_items = [0] * num_packs
-        for group in indices[i]:
+        for group in indices_np[i]:
             pack = min(
-                (i for i in range(num_packs) if pack_items[i] < groups_per_pack),
+                (
+                    candidate
+                    for candidate in range(num_packs)
+                    if pack_items[candidate] < groups_per_pack
+                ),
                 key=pack_weights.__getitem__,
             )
             assert pack_items[pack] < groups_per_pack
-            pack_index[i, group] = pack
-            rank_in_pack[i, group] = pack_items[pack]
-            pack_weights[pack] += weight[i, group]
+            pack_index_np[i, group] = pack
+            rank_in_pack_np[i, group] = pack_items[pack]
+            pack_weights[pack] += weight_np[i, group]
             pack_items[pack] += 1
+
+    pack_index = torch.from_numpy(pack_index_np)
+    rank_in_pack = torch.from_numpy(rank_in_pack_np)
     return pack_index, rank_in_pack
 
 
@@ -201,21 +213,25 @@ def rebalance_experts(
         phy2log, phyrank, logcnt = rebalance_experts_hierarchical(
             weight, num_replicas, 1, 1, num_gpus
         )
-    maxlogcnt = logcnt.max().item()
-    log2phy: torch.Tensor = torch.full(
-        (num_layers, num_logical_experts, maxlogcnt),
-        -1,
-        dtype=torch.int64,
-        device=logcnt.device,
+    phy2log_cpu = phy2log.contiguous()
+    phyrank_cpu = phyrank.contiguous()
+    logcnt_cpu = logcnt.contiguous()
+
+    phy2log_np = phy2log_cpu.numpy()
+    phyrank_np = phyrank_cpu.numpy()
+    logcnt_np = logcnt_cpu.numpy()
+
+    maxlogcnt = int(logcnt_np.max())
+    log2phy_np = np.full(
+        (num_layers, num_logical_experts, maxlogcnt), -1, dtype=np.int64
     )
-    log2phy.view(num_layers, -1).scatter_(
-        -1,
-        phy2log * maxlogcnt + phyrank,
-        torch.arange(num_replicas, dtype=torch.int64, device=log2phy.device).expand(
-            num_layers, -1
-        ),
-    )
-    return phy2log, log2phy, logcnt
+    replica_indices = np.arange(num_replicas, dtype=np.int64)
+
+    for layer in range(num_layers):
+        log2phy_np[layer, phy2log_np[layer], phyrank_np[layer]] = replica_indices
+
+    log2phy = torch.from_numpy(log2phy_np)
+    return phy2log_cpu, log2phy, logcnt_cpu
 
 
 __all__ = ["rebalance_experts"]
