@@ -123,6 +123,12 @@ class CUDAPiecewiseBackend:
             self.first_run_finished = True
             self.check_for_ending_compilation()
             return self.compiled_graph_for_general_shape(*args)
+
+        # If there is no symbolic shape index, fall back to the general graph.
+        # In this case, there is nothing to "piecewise" on.
+        if not self.sym_shape_indices:
+            return self.compiled_graph_for_general_shape(*args)
+
         runtime_shape = args[self.sym_shape_indices[0]]
         if runtime_shape not in self.concrete_size_entries:
             # we don't need to do anything for this shape
