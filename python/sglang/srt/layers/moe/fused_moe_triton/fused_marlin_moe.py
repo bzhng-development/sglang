@@ -3,6 +3,7 @@ from typing import Optional
 
 import torch
 
+from python.sglang.srt.utils.common import direct_register_custom_op
 from sglang.srt.utils import is_cuda
 
 _is_cuda = is_cuda()
@@ -237,3 +238,11 @@ def fused_marlin_moe_fake(
     routed_scaling_factor: float = None,
 ) -> torch.Tensor:
     return torch.empty_like(hidden_states)
+
+
+direct_register_custom_op(
+    op_name="fused_marlin_moe",
+    op_func=fused_marlin_moe,
+    mutates_args=[],
+    fake_impl=fused_marlin_moe_fake,
+)
