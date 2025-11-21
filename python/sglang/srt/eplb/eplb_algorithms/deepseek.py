@@ -1,4 +1,5 @@
 # This file is copied from https://github.com/deepseek-ai/EPLB/blob/main/eplb.py since that one is not a pypi package
+import heapq
 from typing import Tuple
 
 import numpy as np
@@ -9,55 +10,78 @@ def balanced_packing(
     weight: torch.Tensor, num_packs: int
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
-    Pack n weighted objects to m packs, such that each bin contains exactly n/m objects and the weights of all packs
-    are as balanced as possible.
+    Pack n weighted objects to m packs, such that each bin contains exactly n/m objects
+    and the weights of all packs are as balanced as possible.
 
     Parameters:
         weight: [X, n], the weight of each item
         num_packs: number of packs
 
     Returns:
-        pack_index: [X, n], the pack index of each item
-        rank_in_pack: [X, n], the rank of the item in the pack
+        pack_index:  [X, n], the pack index of each item
+        rank_in_pack:[X, n], the rank of the item in the pack
     """
+    assert weight.dim() == 2, "Expected weight to be [X, n]"
     num_layers, num_groups = weight.shape
     assert num_groups % num_packs == 0
     groups_per_pack = num_groups // num_packs
 
+    device = weight.device
+
+    # Trivial case: exactly one item per pack → fixed mapping
     if groups_per_pack == 1:
         pack_index = torch.arange(
-            weight.size(-1), dtype=torch.int64, device=weight.device
-        ).expand(weight.shape)
+            num_groups, dtype=torch.int64, device=device
+        ).expand_as(weight)
         rank_in_pack = torch.zeros_like(weight, dtype=torch.int64)
         return pack_index, rank_in_pack
 
+    # Work on CPU / NumPy (same as your version, but we improve the inner loop)
     weight_cpu = weight.float().cpu()
-    indices = weight_cpu.sort(-1, descending=True).indices.contiguous()
+    # Sort groups by descending weight per layer
+    sorted_indices = weight_cpu.sort(dim=-1, descending=True).indices.contiguous()
+
     weight_np = weight_cpu.numpy()
-    indices_np = indices.numpy()
-    pack_index_np = np.full(weight_np.shape, -1, dtype=np.int64)
-    rank_in_pack_np = np.full_like(pack_index_np, -1)
+    sorted_indices_np = sorted_indices.numpy()
 
-    for i in range(num_layers):
-        pack_weights = [0] * num_packs
-        pack_items = [0] * num_packs
-        for group in indices_np[i]:
-            pack = min(
-                (
-                    candidate
-                    for candidate in range(num_packs)
-                    if pack_items[candidate] < groups_per_pack
-                ),
-                key=pack_weights.__getitem__,
-            )
-            assert pack_items[pack] < groups_per_pack
-            pack_index_np[i, group] = pack
-            rank_in_pack_np[i, group] = pack_items[pack]
-            pack_weights[pack] += weight_np[i, group]
-            pack_items[pack] += 1
+    pack_index_np = np.empty_like(sorted_indices_np, dtype=np.int64)
+    rank_in_pack_np = np.empty_like(sorted_indices_np, dtype=np.int64)
 
-    pack_index = torch.from_numpy(pack_index_np)
-    rank_in_pack = torch.from_numpy(rank_in_pack_np)
+    for layer in range(num_layers):
+        # Min-heap of (current_weight, pack_id)
+        # Initially all packs have weight 0 and 0 items
+        heap = [(0.0, p) for p in range(num_packs)]
+        heapq.heapify(heap)
+
+        # Track how many items each pack has so we can stop pushing full packs
+        pack_counts = [0] * num_packs
+
+        for group in sorted_indices_np[layer]:
+            # Pop packs until we find one with capacity left
+            while True:
+                current_weight, pack_id = heapq.heappop(heap)
+                if pack_counts[pack_id] < groups_per_pack:
+                    break
+                # If the pack is full, skip it and keep popping
+
+            # Assign this group to the selected pack
+            rank = pack_counts[pack_id]
+            pack_index_np[layer, group] = pack_id
+            rank_in_pack_np[layer, group] = rank
+
+            pack_counts[pack_id] += 1
+            new_weight = current_weight + float(weight_np[layer, group])
+
+            # Only reinsert if the pack is not yet full
+            if pack_counts[pack_id] < groups_per_pack:
+                heapq.heappush(heap, (new_weight, pack_id))
+
+        # At this point, all num_groups items in this layer are assigned
+
+    pack_index = torch.from_numpy(pack_index_np).to(device=device, dtype=torch.int64)
+    rank_in_pack = torch.from_numpy(rank_in_pack_np).to(
+        device=device, dtype=torch.int64
+    )
     return pack_index, rank_in_pack
 
 
