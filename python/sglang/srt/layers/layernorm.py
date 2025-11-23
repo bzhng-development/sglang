@@ -47,17 +47,24 @@ _is_cpu_amx_available = cpu_has_amx_support()
 _is_cpu = is_cpu()
 _is_xpu = is_xpu()
 _flashinfer_layernorm_available = False
+_flashinfer_rmsnorm_available = False
+flashinfer_rmsnorm = None
 
 if _is_cuda or _is_xpu:
     if _is_flashinfer_available:
         try:
             from flashinfer.norm import layernorm
+            from flashinfer.norm import rmsnorm as flashinfer_rmsnorm
 
             _flashinfer_layernorm_available = True
+            _flashinfer_rmsnorm_available = True
         except (ImportError, AttributeError):
             _flashinfer_layernorm_available = False
+            _flashinfer_rmsnorm_available = False
+            flashinfer_rmsnorm = None
     else:
         _flashinfer_layernorm_available = False
+        _flashinfer_rmsnorm_available = False
 
     from sgl_kernel import (
         fused_add_rmsnorm,
@@ -122,6 +129,14 @@ class RMSNorm(CustomOp):
         if residual is not None:
             fused_add_rmsnorm(x, residual, self.weight.data, self.variance_epsilon)
             return x, residual
+        if not x.is_contiguous():
+            if _flashinfer_rmsnorm_available:
+                return flashinfer_rmsnorm(
+                    x,
+                    self.weight.data,
+                    self.variance_epsilon,
+                )
+            x = x.contiguous()
         out = rmsnorm(x, self.weight.data, self.variance_epsilon)
         return out
 

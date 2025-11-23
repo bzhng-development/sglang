@@ -142,24 +142,18 @@ class Qwen3Attention(nn.Module):
     def _apply_qk_norm(
         self, q: torch.Tensor, k: torch.Tensor
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        # overlap qk norm
+        # overlap qk norm without forcing extra contiguous copies
         if self.alt_stream is not None and get_is_capture_mode():
             current_stream = torch.cuda.current_stream()
             self.alt_stream.wait_stream(current_stream)
-            q_by_head = q.reshape(-1, self.head_dim)
-            q_by_head = self.q_norm(q_by_head)
+            q_normed = self.q_norm(q)
             with torch.cuda.stream(self.alt_stream):
-                k_by_head = k.reshape(-1, self.head_dim)
-                k_by_head = self.k_norm(k_by_head)
+                k_normed = self.k_norm(k)
             current_stream.wait_stream(self.alt_stream)
         else:
-            q_by_head = q.reshape(-1, self.head_dim)
-            q_by_head = self.q_norm(q_by_head)
-            k_by_head = k.reshape(-1, self.head_dim)
-            k_by_head = self.k_norm(k_by_head)
-        q = q_by_head.view(q.shape)
-        k = k_by_head.view(k.shape)
-        return q, k
+            q_normed = self.q_norm(q)
+            k_normed = self.k_norm(k)
+        return q_normed, k_normed
 
     def forward(
         self,
