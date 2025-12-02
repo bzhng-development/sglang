@@ -64,12 +64,18 @@ class TestNightlyVLMModelsPerformance(unittest.TestCase):
                     "--dataset-name=mmmu",
                 ]
 
+                # Add mm-attention-backend fa3 to other_args
+                other_args = (model_setup.extra_args or []) + [
+                    "--mm-attention-backend",
+                    "fa3",
+                ]
+
                 results, success = self.runner.run_benchmark_for_model(
                     model_path=model_setup.model_path,
                     batch_sizes=self.batch_sizes,
                     input_lens=self.input_lens,
                     output_lens=self.output_lens,
-                    other_args=model_setup.extra_args,
+                    other_args=other_args,
                     extra_bench_args=extra_bench_args,
                 )
 

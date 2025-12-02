@@ -15,7 +15,6 @@ from sglang.srt.layers.dp_attention import get_attention_tp_rank, get_attention_
 from sglang.srt.utils import (
     get_bool_env_var,
     get_device_capability,
-    is_blackwell,
     is_cuda,
     is_hip,
     is_npu,
@@ -602,8 +601,6 @@ class VisionAttention(nn.Module):
                 backend = "triton_attn"
         else:
             backend = "sdpa"
-        if backend == "fa3" and is_blackwell():
-            raise ValueError("The 'fa3' backend is not supported on Blackwell GPUs")
 
         return backend
 
