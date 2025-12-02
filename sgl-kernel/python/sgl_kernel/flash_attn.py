@@ -314,9 +314,7 @@ def flash_attn_varlen_func(
         )
 
     if not is_fa3_supported():
-        raise NotImplementedError(
-            "flash_attn at sgl-kernel is only supported on sm90 and above"
-        )
+        pass
 
     # FA3 requires max_seqlen_q and max_seqlen_k
     if max_seqlen_q is None or max_seqlen_k is None:
