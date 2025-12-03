@@ -1826,14 +1826,62 @@ def crash_on_warnings():
     return get_bool_env_var("SGLANG_IS_IN_CI")
 
 
-def print_warning_once(msg: str) -> None:
-    # Set the stacklevel to 2 to print the caller's line info
-    logger.warning(msg, stacklevel=2)
+def is_local_first_rank() -> bool:
+    """Check if this process is local rank 0 on its node."""
+    if not torch.distributed.is_initialized():
+        return True
+    return int(os.environ.get("LOCAL_RANK", "0")) == 0
 
 
-@functools.lru_cache(None)
-def print_info_once(msg: str) -> None:
-    logger.info(msg)
+def is_global_first_rank() -> bool:
+    """Check if this process is global rank 0."""
+    if not torch.distributed.is_initialized():
+        return True
+    try:
+        return torch.distributed.get_rank() == 0
+    except Exception:
+        return int(os.environ.get("RANK", "0")) == 0
+
+
+def _should_log_with_scope(scope: str) -> bool:
+    """Check if logging should occur based on scope."""
+    if scope == "process":
+        return True
+    elif scope == "global":
+        return is_global_first_rank()
+    elif scope == "local":
+        return is_local_first_rank()
+    raise ValueError(f"Unknown scope: {scope}")
+
+
+_print_once_cache: Set[str] = set()
+
+
+def print_warning_once(msg: str, scope: str = "process") -> None:
+    """Log a warning once. Use scope='global' to log only on rank 0."""
+    if msg in _print_once_cache:
+        return
+    _print_once_cache.add(msg)
+    if _should_log_with_scope(scope):
+        logger.warning(msg, stacklevel=2)
+
+
+def print_info_once(msg: str, scope: str = "process") -> None:
+    """Log info once. Use scope='global' to log only on rank 0."""
+    if msg in _print_once_cache:
+        return
+    _print_once_cache.add(msg)
+    if _should_log_with_scope(scope):
+        logger.info(msg, stacklevel=2)
+
+
+def print_debug_once(msg: str, scope: str = "process") -> None:
+    """Log debug once. Use scope='global' to log only on rank 0."""
+    if msg in _print_once_cache:
+        return
+    _print_once_cache.add(msg)
+    if _should_log_with_scope(scope):
+        logger.debug(msg, stacklevel=2)
 
 
 def get_device_name(device_id: int = 0) -> str:
@@ -2790,12 +2838,8 @@ class BumpAllocator:
 
 
 def log_info_on_rank0(logger, msg):
-    from sglang.srt.distributed import get_tensor_model_parallel_rank
-
-    try:
-        if torch.distributed.is_initialized() and get_tensor_model_parallel_rank() == 0:
-            logger.info(msg)
-    except:
+    """Log info only on global rank 0. Consider using print_info_once(msg, scope='global')."""
+    if is_global_first_rank():
         logger.info(msg)
 
 

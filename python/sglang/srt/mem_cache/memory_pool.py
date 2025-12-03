@@ -50,7 +50,7 @@ from sglang.srt.mem_cache.utils import (
     set_mla_kv_buffer_triton,
     set_mla_kv_scale_buffer_triton,
 )
-from sglang.srt.utils import is_cuda, is_npu, next_power_of_2
+from sglang.srt.utils import is_cuda, is_npu, next_power_of_2, print_info_once
 
 if TYPE_CHECKING:
     from sglang.srt.managers.cache_controller import LayerDoneCounter
@@ -475,14 +475,16 @@ class KVCache(abc.ABC):
             k_size, v_size = kv_size_bytes
             k_size_GB = k_size / GB
             v_size_GB = v_size / GB
-            logger.info(
-                f"KV Cache is allocated. #tokens: {num_tokens}, K size: {k_size_GB:.2f} GB, V size: {v_size_GB:.2f} GB"
+            print_info_once(
+                f"KV Cache is allocated. #tokens: {num_tokens}, K size: {k_size_GB:.2f} GB, V size: {v_size_GB:.2f} GB",
+                scope="global",
             )
             self.mem_usage = k_size_GB + v_size_GB
         else:
             kv_size_GB = kv_size_bytes / GB
-            logger.info(
-                f"KV Cache is allocated. #tokens: {num_tokens}, KV size: {kv_size_GB:.2f} GB"
+            print_info_once(
+                f"KV Cache is allocated. #tokens: {num_tokens}, KV size: {kv_size_GB:.2f} GB",
+                scope="global",
             )
             self.mem_usage = kv_size_GB
 

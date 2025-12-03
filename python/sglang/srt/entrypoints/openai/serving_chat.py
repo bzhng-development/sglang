@@ -46,6 +46,7 @@ from sglang.srt.managers.io_struct import GenerateReqInput
 from sglang.srt.parser.conversation import generate_chat_conv
 from sglang.srt.parser.jinja_template_utils import process_content_for_template_format
 from sglang.srt.parser.reasoning_parser import ReasoningParser
+from sglang.srt.utils import print_info_once
 
 if TYPE_CHECKING:
     from sglang.srt.managers.template_manager import TemplateManager
@@ -72,8 +73,9 @@ class OpenAIServingChat(OpenAIServingBase):
             self.tokenizer_manager.model_config.get_default_sampling_params()
         )
         if self.default_sampling_params:
-            logger.info(
+            print_info_once(
                 f"Using default chat sampling params from model generation config: {self.default_sampling_params}",
+                scope="global",
             )
 
         # Check if the model is a GPT-OSS model

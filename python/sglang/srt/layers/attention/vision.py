@@ -532,8 +532,13 @@ class VisionAttention(nn.Module):
             get_global_server_args().mm_attention_backend is None
             and _passed_backend is None
         ):
-            print_info_once(f"Multimodal attention backend not set. Use {qkv_backend}.")
-        print_info_once(f"Using {qkv_backend} as multimodal attention backend.")
+            print_info_once(
+                f"Multimodal attention backend not set. Use {qkv_backend}.",
+                scope="global",
+            )
+        print_info_once(
+            f"Using {qkv_backend} as multimodal attention backend.", scope="global"
+        )
 
         self.customized_position_embedding_applier = (
             customized_position_embedding_applier

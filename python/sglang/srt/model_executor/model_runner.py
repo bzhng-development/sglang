@@ -161,6 +161,7 @@ from sglang.srt.utils import (
     init_custom_process_group,
     is_cuda,
     is_float4_e2m1fn_x2,
+    is_global_first_rank,
     is_hip,
     is_npu,
     log_info_on_rank0,
@@ -731,9 +732,10 @@ class ModelRunner:
 
     def load_model(self):
         before_avail_memory = get_available_gpu_memory(self.device, self.gpu_id)
-        logger.info(
-            f"Load weight begin. avail mem={get_available_gpu_memory(self.device, self.gpu_id):.2f} GB"
-        )
+        if is_global_first_rank():
+            logger.info(
+                f"Load weight begin. avail mem={get_available_gpu_memory(self.device, self.gpu_id):.2f} GB"
+            )
 
         # This can reduce thread conflicts and speed up weight loading.
         if self.device != "cpu":
@@ -2026,10 +2028,11 @@ class ModelRunner:
         else:
             assert self.is_draft_worker
 
-        logger.info(
-            f"Memory pool end. "
-            f"avail mem={get_available_gpu_memory(self.device, self.gpu_id):.2f} GB"
-        )
+        if is_global_first_rank():
+            logger.info(
+                f"Memory pool end. "
+                f"avail mem={get_available_gpu_memory(self.device, self.gpu_id):.2f} GB"
+            )
 
     def init_cublas(self):
         """We need to run a small matmul to init cublas. Otherwise, it will raise some errors later."""
@@ -2427,9 +2430,10 @@ class ModelRunner:
 
         tic = time.perf_counter()
         before_mem = get_available_gpu_memory(self.device, self.gpu_id)
-        logger.info(
-            f"Capture {'cpu graph' if self.device == 'cpu' else 'cuda graph'} begin. This can take up to several minutes. avail mem={before_mem:.2f} GB"
-        )
+        if is_global_first_rank():
+            logger.info(
+                f"Capture {'cpu graph' if self.device == 'cpu' else 'cuda graph'} begin. This can take up to several minutes. avail mem={before_mem:.2f} GB"
+            )
         graph_runners = defaultdict(
             lambda: CudaGraphRunner,
             {
