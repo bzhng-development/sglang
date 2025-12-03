@@ -116,6 +116,7 @@ Please consult the documentation below and [server_args.py](https://github.com/s
 | `--modelopt-checkpoint-save-path` | Path to save the ModelOpt quantized checkpoint after quantization. This allows reusing the quantized model in future runs. | `None` | Type: str |
 | `--kv-cache-dtype` | Data type for kv cache storage. "auto" will use model data type. "fp8_e5m2" and "fp8_e4m3" is supported for CUDA 11.8+. | `auto` | `auto`, `fp8_e5m2`, `fp8_e4m3` |
 | `--enable-fp32-lm-head` | If set, the LM head outputs (logits) are in FP32. | `False` | bool flag (set to enable) |
+| `--fp8-gemm-runner-backend` | Choose the runner backend for FP8 GEMM operations. Options: 'auto' (default, auto-selects based on hardware), 'flashinfer' (optimal for Blackwell GPUs), 'cutlass' (optimal for Hopper/Blackwell GPUs), 'deep_gemm' (JIT-compiled, good for block-wise FP8), 'triton' (fallback, widely compatible), 'aiter' (AMD GPUs only). **NOTE**: This replaces the deprecated environment variables SGLANG_ENABLE_FLASHINFER_FP8_GEMM and SGLANG_SUPPORT_CUTLASS_BLOCK_FP8. | `auto` | `auto`, `flashinfer`, `cutlass`, `deep_gemm`, `triton`, `aiter` |
 
 ## Memory and scheduling
 | Argument | Description | Defaults | Options |

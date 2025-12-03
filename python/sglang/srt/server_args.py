@@ -166,6 +166,15 @@ MOE_RUNNER_BACKEND_CHOICES = [
     "cutlass",
 ]
 
+FP8_GEMM_RUNNER_BACKEND_CHOICES = [
+    "auto",
+    "flashinfer",
+    "cutlass",
+    "deep_gemm",
+    "triton",
+    "aiter",
+]
+
 MAMBA_SSM_DTYPE_CHOICES = ["float32", "bfloat16"]
 
 
@@ -192,6 +201,10 @@ def add_grammar_backend_choices(choices):
 
 def add_moe_runner_backend_choices(choices):
     MOE_RUNNER_BACKEND_CHOICES.extend(choices)
+
+
+def add_fp8_gemm_runner_backend_choices(choices):
+    FP8_GEMM_RUNNER_BACKEND_CHOICES.extend(choices)
 
 
 def add_deterministic_attention_backend_choices(choices):
@@ -261,6 +274,7 @@ class ServerArgs:
     modelopt_checkpoint_save_path: Optional[str] = None
     modelopt_export_path: Optional[str] = None
     quantize_and_serve: bool = False
+    fp8_gemm_runner_backend: str = "auto"
 
     # Memory and scheduling
     mem_fraction_static: Optional[float] = None
@@ -2283,6 +2297,21 @@ class ServerArgs:
             help="Quantize the model with ModelOpt and immediately serve it without exporting. "
             "This is useful for development and prototyping. For production, it's recommended "
             "to use separate quantization and deployment steps.",
+        )
+        parser.add_argument(
+            "--fp8-gemm-runner-backend",
+            type=str,
+            choices=FP8_GEMM_RUNNER_BACKEND_CHOICES,
+            default=ServerArgs.fp8_gemm_runner_backend,
+            help="Choose the runner backend for FP8 GEMM operations. "
+            "Options: 'auto' (default, auto-selects based on hardware), "
+            "'flashinfer' (optimal for Blackwell GPUs), "
+            "'cutlass' (optimal for Hopper/Blackwell GPUs), "
+            "'deep_gemm' (JIT-compiled, good for block-wise FP8), "
+            "'triton' (fallback, widely compatible), "
+            "'aiter' (AMD GPUs only). "
+            "NOTE: This replaces the deprecated environment variables "
+            "SGLANG_ENABLE_FLASHINFER_FP8_GEMM and SGLANG_SUPPORT_CUTLASS_BLOCK_FP8.",
         )
 
         # Memory and scheduling

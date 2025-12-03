@@ -1,3 +1,30 @@
+"""
+Tests for DeepSeek R1 FP8 with FlashInfer backend.
+
+=============================================================================
+DEPRECATION NOTICE
+=============================================================================
+
+This test uses the deprecated SGLANG_ENABLE_FLASHINFER_FP8_GEMM environment
+variable to enable the FlashInfer FP8 GEMM backend.
+
+Please migrate to using the --fp8-gemm-runner-backend server argument instead:
+
+    DEPRECATED (this test):
+        env={"SGLANG_ENABLE_FLASHINFER_FP8_GEMM": "1"}
+
+    RECOMMENDED (new approach):
+        other_args=["--fp8-gemm-runner-backend", "flashinfer"]
+
+See test_fp8_gemm_runner_backend.py for the equivalent test using the new
+server argument. Both tests should produce the same results.
+
+This test is kept for backward compatibility during the deprecation period.
+It will be removed in a future release once all users have migrated to the
+new --fp8-gemm-runner-backend server argument.
+=============================================================================
+"""
+
 import os
 import unittest
 from types import SimpleNamespace
@@ -19,6 +46,13 @@ FULL_DEEPSEEK_V3_MODEL_PATH = "deepseek-ai/DeepSeek-V3-0324"
 
 
 class TestDeepseekR1Fp8Flashinfer(CustomTestCase):
+    """Test using deprecated SGLANG_ENABLE_FLASHINFER_FP8_GEMM env var.
+
+    NOTE: This test uses the deprecated environment variable approach.
+    See TestFp8GemmRunnerBackendFlashinfer in test_fp8_gemm_runner_backend.py
+    for the equivalent test using the new --fp8-gemm-runner-backend argument.
+    """
+
     @classmethod
     def setUpClass(cls):
         cls.model = try_cached_model(FULL_DEEPSEEK_V3_MODEL_PATH)

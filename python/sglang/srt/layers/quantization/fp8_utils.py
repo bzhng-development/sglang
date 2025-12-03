@@ -1,9 +1,14 @@
+import warnings
 from typing import Callable, List, Optional, Tuple
 
 import torch
 
 from sglang.srt.environ import envs
 from sglang.srt.layers import deep_gemm_wrapper
+from sglang.srt.layers.quantization.fp8_gemm_backend import (
+    Fp8GemmRunnerBackend,
+    get_fp8_gemm_runner_backend,
+)
 from sglang.srt.layers.quantization.fp8_kernel import sglang_per_token_group_quant_fp8
 from sglang.srt.layers.quantization.mxfp4_tensor import MXFP4QuantizeUtil
 from sglang.srt.utils import ceil_div, is_blackwell_supported, offloader
@@ -125,10 +130,25 @@ def normalize_e4m3fn_to_e4m3fnuz(
     return weight, weight_scale, input_scale
 
 
-# TODO(ch-wan): define these backends in --moe-runner-backend
-def cutlass_block_fp8_supported() -> bool:
-    if not get_bool_env_var("SGLANG_SUPPORT_CUTLASS_BLOCK_FP8"):
-        return False
+# =============================================================================
+# FP8 GEMM Backend Selection
+# =============================================================================
+#
+# DEPRECATED: The environment variables SGLANG_ENABLE_FLASHINFER_FP8_GEMM and
+# SGLANG_SUPPORT_CUTLASS_BLOCK_FP8 are deprecated. Please use the server argument
+# --fp8-gemm-runner-backend instead.
+#
+# The legacy environment variable logic below is kept for backward compatibility
+# but should be removed in a future release. The new --fp8-gemm-runner-backend
+# argument provides a cleaner, more explicit way to select the FP8 GEMM backend.
+#
+# TODO(deprecation): Remove the environment variable-based backend selection
+# once all users have migrated to --fp8-gemm-runner-backend.
+# =============================================================================
+
+
+def _check_cutlass_block_fp8_hardware_support() -> bool:
+    """Check if hardware supports CUTLASS block FP8 (Hopper or newer with CUDA 12.0+)."""
     if _is_cuda:
         major, minor = torch.cuda.get_device_capability()
         sm_version = major * 10 + minor
@@ -138,20 +158,170 @@ def cutlass_block_fp8_supported() -> bool:
     return False
 
 
+def _check_flashinfer_fp8_gemm_available() -> bool:
+    """Check if FlashInfer FP8 GEMM is available (Blackwell + FlashInfer installed)."""
+    return is_blackwell_supported() and is_flashinfer_available()
+
+
+# DEPRECATED: These functions check the deprecated environment variables.
+# They are kept for backward compatibility but will be removed in the future.
+# Users should migrate to --fp8-gemm-runner-backend.
+def cutlass_block_fp8_supported() -> bool:
+    """DEPRECATED: Check if CUTLASS block FP8 is enabled via environment variable.
+
+    This function checks the deprecated SGLANG_SUPPORT_CUTLASS_BLOCK_FP8 env var.
+    Please use --fp8-gemm-runner-backend=cutlass instead.
+    """
+    env_enabled = get_bool_env_var("SGLANG_SUPPORT_CUTLASS_BLOCK_FP8")
+    if env_enabled:
+        # DEPRECATED: This environment variable is deprecated.
+        # The warning is issued once during dispatch to avoid spam.
+        pass
+    if not env_enabled:
+        return False
+    return _check_cutlass_block_fp8_hardware_support()
+
+
+# DEPRECATED: These module-level variables are kept for backward compatibility
+# but the logic has been moved to dispatch_w8a8_block_fp8_linear().
+# TODO(deprecation): Remove these once environment variable support is removed.
 CUTLASS_BLOCK_FP8_SUPPORTED = cutlass_block_fp8_supported()
 ENABLE_FLASHINFER_FP8_GEMM = (
     envs.SGLANG_ENABLE_FLASHINFER_FP8_GEMM.get()
     and is_blackwell_supported()
     and is_flashinfer_available()
 )
-if ENABLE_FLASHINFER_FP8_GEMM:
-    from flashinfer.gemm import gemm_fp8_nt_groupwise
+
+# Conditionally import FlashInfer if enabled via either new or old config
+_flashinfer_gemm_imported = False
+if ENABLE_FLASHINFER_FP8_GEMM or _check_flashinfer_fp8_gemm_available():
+    try:
+        from flashinfer.gemm import gemm_fp8_nt_groupwise
+
+        _flashinfer_gemm_imported = True
+    except ImportError:
+        _flashinfer_gemm_imported = False
 
 
 def dispatch_w8a8_block_fp8_linear() -> Callable:
-    if ENABLE_FLASHINFER_FP8_GEMM:
+    """Dispatch to the appropriate FP8 block linear implementation.
+
+    This function selects the backend based on:
+    1. The --fp8-gemm-runner-backend server argument (preferred)
+    2. Deprecated environment variables (backward compatibility, will warn)
+    3. Auto-detection based on hardware capabilities
+
+    Returns:
+        A callable that implements w8a8 block FP8 linear operation.
+    """
+    backend = get_fp8_gemm_runner_backend()
+
+    # Handle explicit backend selection via --fp8-gemm-runner-backend
+    if not backend.is_auto():
+        return _dispatch_explicit_backend(backend)
+
+    # Auto mode: Check deprecated environment variables first for backward compatibility
+    # TODO(deprecation): Remove this block once env var support is removed
+    if _check_deprecated_env_vars():
+        return _dispatch_from_deprecated_env_vars()
+
+    # Auto mode: Select based on hardware capabilities
+    return _dispatch_auto_backend()
+
+
+def _dispatch_explicit_backend(backend: Fp8GemmRunnerBackend) -> Callable:
+    """Dispatch based on explicitly selected backend."""
+    if backend.is_flashinfer():
+        if not _flashinfer_gemm_imported:
+            raise RuntimeError(
+                "FlashInfer FP8 GEMM requested via --fp8-gemm-runner-backend=flashinfer, "
+                "but FlashInfer is not available or not supported on this hardware. "
+                "FlashInfer FP8 GEMM requires Blackwell GPUs and FlashInfer to be installed."
+            )
         return flashinfer_gemm_w8a8_block_fp8_linear
-    elif CUTLASS_BLOCK_FP8_SUPPORTED:
+
+    elif backend.is_cutlass():
+        if not _check_cutlass_block_fp8_hardware_support():
+            raise RuntimeError(
+                "CUTLASS block FP8 requested via --fp8-gemm-runner-backend=cutlass, "
+                "but hardware does not support it. CUTLASS block FP8 requires "
+                "Hopper (SM90+) GPUs with CUDA 12.0+."
+            )
+        return cutlass_w8a8_block_fp8_linear_with_fallback
+
+    elif backend.is_aiter():
+        if not _use_aiter:
+            raise RuntimeError(
+                "AITER backend requested via --fp8-gemm-runner-backend=aiter, "
+                "but AITER is not available. AITER requires AMD GPUs with "
+                "SGLANG_USE_AITER=1 environment variable set."
+            )
+        return aiter_w8a8_block_fp8_linear
+
+    elif backend.is_deep_gemm():
+        if not deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM:
+            raise RuntimeError(
+                "DeepGEMM backend requested via --fp8-gemm-runner-backend=deep_gemm, "
+                "but DeepGEMM is not enabled. Enable it with SGLANG_ENABLE_JIT_DEEPGEMM=1."
+            )
+        return deepgemm_w8a8_block_fp8_linear_with_fallback
+
+    elif backend.is_triton():
+        return triton_w8a8_block_fp8_linear
+
+    else:
+        raise ValueError(f"Unknown FP8 GEMM backend: {backend}")
+
+
+def _check_deprecated_env_vars() -> bool:
+    """Check if any deprecated environment variables are set."""
+    return envs.SGLANG_ENABLE_FLASHINFER_FP8_GEMM.get() or get_bool_env_var(
+        "SGLANG_SUPPORT_CUTLASS_BLOCK_FP8"
+    )
+
+
+def _dispatch_from_deprecated_env_vars() -> Callable:
+    """Dispatch based on deprecated environment variables.
+
+    TODO(deprecation): Remove this function once env var support is removed.
+    """
+    # Issue deprecation warning once
+    if envs.SGLANG_ENABLE_FLASHINFER_FP8_GEMM.get():
+        warnings.warn(
+            "SGLANG_ENABLE_FLASHINFER_FP8_GEMM is deprecated. "
+            "Please use --fp8-gemm-runner-backend=flashinfer instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        if _flashinfer_gemm_imported and is_blackwell_supported():
+            return flashinfer_gemm_w8a8_block_fp8_linear
+
+    if get_bool_env_var("SGLANG_SUPPORT_CUTLASS_BLOCK_FP8"):
+        warnings.warn(
+            "SGLANG_SUPPORT_CUTLASS_BLOCK_FP8 is deprecated. "
+            "Please use --fp8-gemm-runner-backend=cutlass instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        if _check_cutlass_block_fp8_hardware_support():
+            return cutlass_w8a8_block_fp8_linear_with_fallback
+
+    # Fall back to auto if env vars are set but conditions not met
+    return _dispatch_auto_backend()
+
+
+def _dispatch_auto_backend() -> Callable:
+    """Auto-select the best backend based on hardware capabilities."""
+    # Priority order for auto selection:
+    # 1. FlashInfer (if Blackwell GPU and available)
+    # 2. CUTLASS (if Hopper+ GPU and CUDA 12.0+)
+    # 3. AITER (if AMD GPU with AITER enabled)
+    # 4. DeepGEMM (if enabled)
+    # 5. Triton (fallback)
+
+    if _flashinfer_gemm_imported and is_blackwell_supported():
+        return flashinfer_gemm_w8a8_block_fp8_linear
+    elif _check_cutlass_block_fp8_hardware_support():
         return cutlass_w8a8_block_fp8_linear_with_fallback
     elif _use_aiter:
         return aiter_w8a8_block_fp8_linear
