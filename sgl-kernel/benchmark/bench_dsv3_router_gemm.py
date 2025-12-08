@@ -13,13 +13,31 @@ import triton
 import triton.testing
 from sgl_kernel import dsv3_router_gemm
 
+from sglang.srt.utils.common import is_sm100_supported
+
+# FlashInfer DSv3 router GEMM (SM100 only, M in [1, 16])
+HAS_FLASHINFER = False
+if is_sm100_supported():
+    from flashinfer.dsv3_ops import mm_M1_16_K7168_N256
+
+    HAS_FLASHINFER = True
+
 # CI environment uses simplified parameters
 if IS_CI:
     num_tokens_vals = [1]  # Only test 1 value in CI
-    line_vals = ["sgl-kernel-256"]  # Only test one implementation in CI
+    line_vals_bf16 = ["sgl-kernel-256"]  # Only test one implementation in CI
+    line_vals_float = ["sgl-kernel-256"]
 else:
     num_tokens_vals = [i + 1 for i in range(16)]  # Test 1-16 in full mode
-    line_vals = ["torch-256", "sgl-kernel-256", "torch-384", "sgl-kernel-384"]
+    line_vals_bf16 = ["torch-256", "sgl-kernel-256", "torch-384", "sgl-kernel-384"]
+    line_vals_float = [
+        "torch-256",
+        "sgl-kernel-256",
+        "torch-384",
+        "sgl-kernel-384",
+    ]
+    if HAS_FLASHINFER:
+        line_vals_float += ["flashinfer-256", "flashinfer-384"]
 
 
 @triton.testing.perf_report(
@@ -28,7 +46,7 @@ else:
         x_vals=num_tokens_vals,
         x_log=False,
         line_arg="impl",
-        line_vals=line_vals,
+        line_vals=line_vals_bf16,
         line_names=(
             [
                 "torch-256",
@@ -90,21 +108,43 @@ def benchmark_bf16_output(num_tokens, impl):
         x_vals=num_tokens_vals,
         x_log=False,
         line_arg="impl",
-        line_vals=line_vals,
+        line_vals=line_vals_float,
         line_names=(
             [
                 "torch-256",
                 "dsv3_router_gemm-256",
                 "torch-384",
                 "dsv3_router_gemm-384",
+                "flashinfer-256",
+                "flashinfer-384",
             ]
-            if not IS_CI
-            else ["dsv3_router_gemm-256"]
+            if (not IS_CI and HAS_FLASHINFER)
+            else (
+                [
+                    "torch-256",
+                    "dsv3_router_gemm-256",
+                    "torch-384",
+                    "dsv3_router_gemm-384",
+                ]
+                if not IS_CI
+                else ["dsv3_router_gemm-256"]
+            )
         ),
         styles=(
-            [("blue", "-"), ("orange", "-"), ("green", "-"), ("red", "-")]
-            if not IS_CI
-            else [("orange", "-")]
+            [
+                ("blue", "-"),
+                ("orange", "-"),
+                ("green", "-"),
+                ("red", "-"),
+                ("purple", "-"),
+                ("brown", "-"),
+            ]
+            if (not IS_CI and HAS_FLASHINFER)
+            else (
+                [("blue", "-"), ("orange", "-"), ("green", "-"), ("red", "-")]
+                if not IS_CI
+                else [("orange", "-")]
+            )
         ),
         ylabel="TFLOPs",
         plot_name="input-bf16-output-fp32 dsv3 router gemm throughput",
@@ -136,6 +176,14 @@ def benchmark_float_output(num_tokens, impl):
 
         def runner():
             dsv3_router_gemm(mat_a, mat_b, out_dtype=torch.float32)
+
+    elif (impl == "flashinfer-256" or impl == "flashinfer-384") and HAS_FLASHINFER:
+
+        def runner():
+            # FlashInfer expects mat_b column-major (K, N) and out float32
+            mat_b_col = mat_b.t()
+            out = torch.empty((M, N), device="cuda", dtype=torch.float32)
+            mm_M1_16_K7168_N256(mat_a, mat_b_col, out, launch_with_pdl=False)
 
     ms, min_ms, max_ms = triton.testing.do_bench_cudagraph(runner, quantiles=quantiles)
 
