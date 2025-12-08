@@ -71,9 +71,13 @@ def benchmark_bf16_output(num_tokens, impl):
     # M: num_tokens, K: hidden_dim, N: num_experts
     M, K = num_tokens, 7168
 
-    if impl == "torch-256" or impl == "sgl-kernel-256":
+    if impl in {"torch-256", "sgl-kernel-256"}:
         N = 256
-    elif impl == "torch-384" or impl == "sgl-kernel-384":
+    elif impl in {"torch-384", "sgl-kernel-384"}:
+        N = 384
+    elif impl == "flashinfer-256" and HAS_FLASHINFER:
+        N = 256
+    elif impl == "flashinfer-384" and HAS_FLASHINFER:
         N = 384
     else:
         raise ValueError(f"Unknown impl: {impl}")
