@@ -1314,6 +1314,7 @@ class ServerArgs:
 
         # TRTLLM AllReduce Fusion supports SM90 and SM100, enable it by default
         # for models with explicit support (DeepseekV3, GptOss, Glm4Moe, Qwen3Moe)
+        # TODO: currently, it is only supported in the single node scenario. https://github.com/flashinfer-ai/flashinfer/issues/2006
         if (
             not self.enable_flashinfer_allreduce_fusion
             and model_arch
@@ -1323,7 +1324,7 @@ class ServerArgs:
                 "Glm4MoeForCausalLM",
                 "Qwen3MoeForCausalLM",
             ]
-            and (is_sm90_supported() or is_sm100_supported())
+            and (is_sm90_supported() or is_blackwell_supported())
             and not self.enable_dp_attention
             and self.nnodes == 1
         ):
