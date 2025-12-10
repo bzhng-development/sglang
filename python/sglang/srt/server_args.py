@@ -1064,12 +1064,6 @@ class ServerArgs:
 
             # common to all Deepseek MoE models
             if is_cuda() and is_sm100_supported():
-                # workaround for https://github.com/flashinfer-ai/flashinfer/issues/2006
-                if not self.enable_dp_attention and self.nnodes == 1:
-                    self.enable_flashinfer_allreduce_fusion = True
-                    logger.info(
-                        "Enable FlashInfer AllReduce Fusion on sm100 for DeepseekV3ForCausalLM"
-                    )
                 quantization_config = getattr(hf_config, "quantization_config", None)
                 quant_method = (
                     quantization_config.get("quant_method")
@@ -1121,13 +1115,6 @@ class ServerArgs:
                 f"- Decode: {decode_attn_backend}\n"
             )
 
-            if is_blackwell_supported():
-                # workaround for https://github.com/flashinfer-ai/flashinfer/issues/2006
-                if not self.enable_dp_attention and self.nnodes == 1:
-                    self.enable_flashinfer_allreduce_fusion = True
-                    logger.info(
-                        "Enable FlashInfer AllReduce Fusion on sm100 for GptOssForCausalLM"
-                    )
             quantization_config = getattr(hf_config, "quantization_config", None)
             is_mxfp4_quant_format = (
                 quantization_config is not None
@@ -1324,6 +1311,26 @@ class ServerArgs:
                     "overlap schedule currently, try to use --disable-radix-cache if overlap schedule is necessary"
                 )
                 self.disable_overlap_schedule = True
+
+        # TRTLLM AllReduce Fusion supports SM90 and SM100, enable it by default
+        # for models with explicit support (DeepseekV3, GptOss, Glm4Moe, Qwen3Moe)
+        if (
+            not self.enable_flashinfer_allreduce_fusion
+            and model_arch
+            in [
+                "DeepseekV3ForCausalLM",
+                "GptOssForCausalLM",
+                "Glm4MoeForCausalLM",
+                "Qwen3MoeForCausalLM",
+            ]
+            and (is_sm90_supported() or is_sm100_supported())
+            and not self.enable_dp_attention
+            and self.nnodes == 1
+        ):
+            self.enable_flashinfer_allreduce_fusion = True
+            logger.info(
+                f"Enable FlashInfer AllReduce Fusion by default for {model_arch}"
+            )
 
     def _handle_sampling_backend(self):
         if self.sampling_backend is None:
