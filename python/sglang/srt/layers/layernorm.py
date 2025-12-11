@@ -256,9 +256,6 @@ class RMSNorm(CustomOp):
         x: torch.Tensor,
         residual: Optional[torch.Tensor] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
-        """
-        Forward method with allreduce fusion, prioritizing flashinfer fused operations
-        """
         if residual is not None:
             from sglang.srt.distributed import get_tensor_model_parallel_world_size
             from sglang.srt.layers.flashinfer_comm_fusion import (
@@ -268,38 +265,14 @@ class RMSNorm(CustomOp):
             from sglang.srt.server_args import get_global_server_args
 
             if get_tensor_model_parallel_world_size() > 1:
-                # Check if we can use do fused allreduce + RMSNorm + FP4 quant
                 server_args = get_global_server_args()
                 quant = server_args.quantization or ""
                 use_fp4_fusion = quant == "modelopt_fp4"
 
                 if use_fp4_fusion:
-                    # Use fused allreduce + RMSNorm + FP4 quantization.
-                    # The kernel returns both unquantized RMSNorm output and
-                    # FP4-quantized activations with their interleaved scales.
-                    # We attach the FP4 buffers to the normalized activations so
-                    # downstream FP4 GEMM can consume them without requantizing.
-                    from sglang.srt.layers.quantization.modelopt_quant import (
-                        ModelOptFp4Config,
+                    input_global_scale = torch.tensor(
+                        1.0, dtype=torch.float32, device=x.device
                     )
-
-                    # Derive a per-layer scalar scale factor from the ModelOpt FP4
-                    # config when available; fall back to 1.0 as a conservative
-                    # default if not.
-                    if isinstance(server_args.modelopt_quant, ModelOptFp4Config):
-                        input_global_scale = torch.tensor(
-                            (
-                                server_args.modelopt_quant.group_size
-                                if hasattr(server_args.modelopt_quant, "group_size")
-                                else 1.0
-                            ),
-                            dtype=torch.float32,
-                            device=x.device,
-                        )
-                    else:
-                        input_global_scale = torch.tensor(
-                            1.0, dtype=torch.float32, device=x.device
-                        )
 
                     fused_result = flashinfer_allreduce_residual_rmsnorm_fp4_quant(
                         input_tensor=x,
@@ -310,8 +283,6 @@ class RMSNorm(CustomOp):
                     )
                     if fused_result[0] is not None:
                         norm_out, residual_out, quant_out, scale_out = fused_result
-                        # Tag norm_out with pre-quantized FP4 activations so that
-                        # ModelOptFp4LinearMethod.apply can skip fp4_quantize.
                         norm_out._sglang_fp4 = quant_out
                         norm_out._sglang_fp4_scale_interleaved = scale_out
                         return norm_out, residual_out

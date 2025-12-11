@@ -213,18 +213,7 @@ def flashinfer_allreduce_residual_rmsnorm_fp4_quant(
     trigger_completion_at_end: bool = False,
     fp32_acc: bool = False,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-    """
-    FlashInfer fused allreduce + residual + RMS norm + FP4 quantization.
-
-    This wraps TRT-LLM's kARResidualRMSNormFP4Quant pattern and is intended
-    for DeepSeek / ModelOpt FP4-style activation quantization.
-
-    Returns:
-        norm_out:     RMSNorm output in original dtype.
-        residual_out: Updated residual tensor.
-        quant_out:    FP4-quantized activation buffer.
-        scale_out:    Per-group FP4 output scales.
-    """
+    """FlashInfer fused allreduce + residual + RMS norm + FP4 quantization."""
     if not is_flashinfer_available() or _flashinfer_comm is None:
         logger.debug(
             "FlashInfer not available, falling back to standard implementation"
@@ -251,8 +240,6 @@ def flashinfer_allreduce_residual_rmsnorm_fp4_quant(
     residual_out = torch.empty_like(residual)
     norm_out = torch.empty_like(input_tensor)
 
-    # FP4 activations are stored in 4 bits; we follow the benchmark
-    # convention and allocate quant_out with hidden_dim // 2 bytes.
     quant_out = torch.empty(
         token_num,
         hidden_dim // 2,
@@ -260,8 +247,6 @@ def flashinfer_allreduce_residual_rmsnorm_fp4_quant(
         device=input_tensor.device,
     )
 
-    # The exact layout of scale_out is kernel-defined; we mirror the
-    # benchmark shape here so there is enough space for scale metadata.
     scale_out = torch.empty(
         128,
         4,
@@ -295,7 +280,10 @@ def flashinfer_allreduce_residual_rmsnorm_fp4_quant(
         layout_code=None,
     )
 
-    return norm_out, residual_out, quant_out, scale_out
+    # Kernel fills an int32 buffer with packed FP8 scale factors; reinterpret as FP8.
+    scale_out_fp8 = scale_out.view(torch.float8_e4m3fn)
+
+    return norm_out, residual_out, quant_out, scale_out_fp8
 
 
 def fake_flashinfer_allreduce_residual_rmsnorm(
@@ -335,7 +323,7 @@ def fake_flashinfer_allreduce_residual_rmsnorm_fp4_quant(
     scale_out = torch.empty(
         128,
         4,
-        dtype=torch.int32,
+        dtype=torch.float8_e4m3fn,
         device=input_tensor.device,
     )
     return norm_out, residual_out, quant_out, scale_out
