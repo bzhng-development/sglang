@@ -1197,8 +1197,20 @@ class ModelOptFp4LinearMethod(LinearMethodBase):
         w_n, _ = layer.weight.shape
         output_shape = [x_m, w_n]
 
-        # Quantize BF16 or FP16 to (FP4 and interleaved block scale)
-        x_fp4, x_scale_interleaved = fp4_quantize(x, layer.input_scale_inv)
+        # Quantize BF16 or FP16 to (FP4 and interleaved block scale), unless the
+        # input already carries pre-quantized FP4 activations from a fused
+        # kernel. Two cases:
+        #  1) x is BF16/FP16 but has `_sglang_fp4` + `_sglang_fp4_scale_interleaved`
+        #     attributes attached (e.g. from fused allreduce + FP4 quant).
+        #  2) x itself is uint8 FP4 with `_sglang_fp4_scale_interleaved`.
+        if hasattr(x, "_sglang_fp4") and hasattr(x, "_sglang_fp4_scale_interleaved"):
+            x_fp4 = x._sglang_fp4
+            x_scale_interleaved = x._sglang_fp4_scale_interleaved
+        elif x.dtype == torch.uint8 and hasattr(x, "_sglang_fp4_scale_interleaved"):
+            x_fp4 = x
+            x_scale_interleaved = x._sglang_fp4_scale_interleaved
+        else:
+            x_fp4, x_scale_interleaved = fp4_quantize(x, layer.input_scale_inv)
 
         assert x_fp4.dtype == torch.uint8
         assert layer.weight.dtype == torch.uint8

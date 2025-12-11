@@ -202,6 +202,102 @@ def flashinfer_allreduce_residual_rmsnorm(
     return norm_out, residual_out
 
 
+def flashinfer_allreduce_residual_rmsnorm_fp4_quant(
+    input_tensor: torch.Tensor,
+    residual: torch.Tensor,
+    weight: torch.Tensor,
+    input_global_scale: torch.Tensor,
+    eps: float = 1e-6,
+    max_token_num: int = 2048,
+    use_oneshot: Optional[bool] = None,
+    trigger_completion_at_end: bool = False,
+    fp32_acc: bool = False,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    FlashInfer fused allreduce + residual + RMS norm + FP4 quantization.
+
+    This wraps TRT-LLM's kARResidualRMSNormFP4Quant pattern and is intended
+    for DeepSeek / ModelOpt FP4-style activation quantization.
+
+    Returns:
+        norm_out:     RMSNorm output in original dtype.
+        residual_out: Updated residual tensor.
+        quant_out:    FP4-quantized activation buffer.
+        scale_out:    Per-group FP4 output scales.
+    """
+    if not is_flashinfer_available() or _flashinfer_comm is None:
+        logger.debug(
+            "FlashInfer not available, falling back to standard implementation"
+        )
+        return None, None, None, None
+
+    world_size = get_tensor_model_parallel_world_size()
+    if world_size <= 1:
+        logger.debug("Single GPU, no need for allreduce fusion (FP4)")
+        return None, None, None, None
+
+    assert input_tensor.shape[0] <= max_token_num
+
+    if not ensure_workspace_initialized(
+        max_token_num=max_token_num,
+        hidden_dim=input_tensor.shape[-1],
+        use_fp32_lamport=(input_tensor.dtype == torch.float32),
+    ):
+        logger.debug("FlashInfer workspace not available (FP4)")
+        return None, None, None, None
+
+    token_num, hidden_dim = input_tensor.shape
+
+    residual_out = torch.empty_like(residual)
+    norm_out = torch.empty_like(input_tensor)
+
+    # FP4 activations are stored in 4 bits; we follow the benchmark
+    # convention and allocate quant_out with hidden_dim // 2 bytes.
+    quant_out = torch.empty(
+        token_num,
+        hidden_dim // 2,
+        dtype=torch.uint8,
+        device=input_tensor.device,
+    )
+
+    # The exact layout of scale_out is kernel-defined; we mirror the
+    # benchmark shape here so there is enough space for scale metadata.
+    scale_out = torch.empty(
+        128,
+        4,
+        dtype=torch.int32,
+        device=input_tensor.device,
+    )
+
+    _flashinfer_comm.trtllm_allreduce_fusion(
+        allreduce_in=input_tensor,
+        world_size=world_size,
+        world_rank=dist.get_rank(),
+        token_num=token_num,
+        hidden_dim=hidden_dim,
+        workspace_ptrs=_workspace_manager.workspace_tensor,
+        launch_with_pdl=True,
+        use_oneshot=use_oneshot,
+        trigger_completion_at_end=trigger_completion_at_end,
+        fp32_acc=fp32_acc,
+        pattern_code=(
+            _flashinfer_comm.AllReduceFusionPattern.kARResidualRMSNormFP4Quant
+        ),
+        allreduce_out=None,
+        residual_in=residual,
+        residual_out=residual_out,
+        norm_out=norm_out,
+        quant_out=quant_out,
+        scale_out=scale_out,
+        rms_gamma=weight,
+        rms_eps=eps,
+        scale_factor=input_global_scale,
+        layout_code=None,
+    )
+
+    return norm_out, residual_out, quant_out, scale_out
+
+
 def fake_flashinfer_allreduce_residual_rmsnorm(
     input_tensor: torch.Tensor,
     residual: torch.Tensor,
@@ -217,12 +313,46 @@ def fake_flashinfer_allreduce_residual_rmsnorm(
     return norm_out, residual_out
 
 
+def fake_flashinfer_allreduce_residual_rmsnorm_fp4_quant(
+    input_tensor: torch.Tensor,
+    residual: torch.Tensor,
+    weight: torch.Tensor,
+    input_global_scale: torch.Tensor,
+    eps: float = 1e-6,
+    max_token_num: int = 16384,
+    use_oneshot: Optional[bool] = None,
+    trigger_completion_at_end: bool = False,
+    fp32_acc: bool = False,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    residual_out = torch.empty_like(residual)
+    norm_out = torch.empty_like(input_tensor)
+    quant_out = torch.empty(
+        input_tensor.shape[0],
+        input_tensor.shape[-1] // 2,
+        dtype=torch.uint8,
+        device=input_tensor.device,
+    )
+    scale_out = torch.empty(
+        128,
+        4,
+        dtype=torch.int32,
+        device=input_tensor.device,
+    )
+    return norm_out, residual_out, quant_out, scale_out
+
+
 if supports_custom_op():
     direct_register_custom_op(
         "flashinfer_allreduce_residual_rmsnorm",
         flashinfer_allreduce_residual_rmsnorm,
         mutates_args=["input_tensor", "residual", "weight"],
         fake_impl=fake_flashinfer_allreduce_residual_rmsnorm,
+    )
+    direct_register_custom_op(
+        "flashinfer_allreduce_residual_rmsnorm_fp4_quant",
+        flashinfer_allreduce_residual_rmsnorm_fp4_quant,
+        mutates_args=["input_tensor", "residual", "weight", "input_global_scale"],
+        fake_impl=fake_flashinfer_allreduce_residual_rmsnorm_fp4_quant,
     )
 
 
