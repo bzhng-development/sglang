@@ -91,6 +91,8 @@ class RMSNorm(CustomOp):
         self.cast_x_before_out_mul = cast_x_before_out_mul
         self.fp32_residual = fp32_residual
         self.override_orig_dtype = override_orig_dtype
+        # Optional global scale used for fused FP4 allreduce + RMSNorm.
+        self.fp4_input_global_scale: Optional[torch.Tensor] = None
         self.weight = nn.Parameter(torch.ones(hidden_size, dtype=weight_dtype))
         self.variance_epsilon = eps
         self.hidden_size = hidden_size
@@ -270,31 +272,29 @@ class RMSNorm(CustomOp):
                 use_fp4_fusion = quant == "modelopt_fp4"
 
                 if use_fp4_fusion:
-                    input_global_scale = torch.tensor(
-                        1.0, dtype=torch.float32, device=x.device
-                    )
+                    input_global_scale = getattr(self, "fp4_input_global_scale", None)
+                    if input_global_scale is not None:
+                        fused_result = flashinfer_allreduce_residual_rmsnorm_fp4_quant(
+                            input_tensor=x,
+                            residual=residual,
+                            weight=self.weight,
+                            input_global_scale=input_global_scale,
+                            eps=self.variance_epsilon,
+                        )
+                        if fused_result[0] is not None:
+                            norm_out, residual_out, quant_out, scale_out = fused_result
+                            norm_out._sglang_fp4 = quant_out
+                            norm_out._sglang_fp4_scale_interleaved = scale_out
+                            return norm_out, residual_out
 
-                    fused_result = flashinfer_allreduce_residual_rmsnorm_fp4_quant(
-                        input_tensor=x,
-                        residual=residual,
-                        weight=self.weight,
-                        input_global_scale=input_global_scale,
-                        eps=self.variance_epsilon,
-                    )
-                    if fused_result[0] is not None:
-                        norm_out, residual_out, quant_out, scale_out = fused_result
-                        norm_out._sglang_fp4 = quant_out
-                        norm_out._sglang_fp4_scale_interleaved = scale_out
-                        return norm_out, residual_out
-                else:
-                    fused_result = flashinfer_allreduce_residual_rmsnorm(
-                        input_tensor=x,
-                        residual=residual,
-                        weight=self.weight,
-                        eps=self.variance_epsilon,
-                    )
-                    if fused_result[0] is not None:
-                        return fused_result
+                fused_result = flashinfer_allreduce_residual_rmsnorm(
+                    input_tensor=x,
+                    residual=residual,
+                    weight=self.weight,
+                    eps=self.variance_epsilon,
+                )
+                if fused_result[0] is not None:
+                    return fused_result
 
         return self.forward(x, residual)
 

@@ -2811,6 +2811,19 @@ class DeepseekV2DecoderLayer(nn.Module):
         gemm_output_zero_allocator: BumpAllocator = None,
         llama_4_scaling: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
+        # Lazily attach FP4 activation global scale to the post-attention RMSNorm
+        # so that fused allreduce + RMSNorm + FP4 quantization can reuse the same
+        # scale as ModelOpt FP4 linear layers.
+        if (
+            isinstance(self.mlp, DeepseekV2MLP)
+            and getattr(self.post_attention_layernorm, "fp4_input_global_scale", None)
+            is None
+        ):
+            gate_up_proj = getattr(self.mlp, "gate_up_proj", None)
+            input_scale_inv = getattr(gate_up_proj, "input_scale_inv", None)
+            if isinstance(input_scale_inv, torch.nn.Parameter):
+                self.post_attention_layernorm.fp4_input_global_scale = input_scale_inv
+
         quant_format = (
             "mxfp4"
             if (
