@@ -592,7 +592,7 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 )
             )
             q_shape = q.shape
-            q, _ = scaled_fp8_quant(q.reshape(-1, q.shape[-1]), q_scale)
+            q, _ = scaled_fp8_quant(q.contiguous().reshape(-1, q.shape[-1]), q_scale)
             q = q.reshape(q_shape)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
@@ -681,7 +681,7 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 )
             )
             q_shape = q.shape
-            q, _ = scaled_fp8_quant(q.reshape(-1, q.shape[-1]), q_scale)
+            q, _ = scaled_fp8_quant(q.contiguous().reshape(-1, q.shape[-1]), q_scale)
             q = q.reshape(q_shape)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         # [num_pages, page_size, num_kv_heads, head_dim] -> [num_pages, num_kv_heads, page_size, head_dim]
