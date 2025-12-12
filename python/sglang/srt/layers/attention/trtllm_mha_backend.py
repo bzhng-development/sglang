@@ -581,19 +581,19 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 )
 
         if self.data_type == torch.float8_e4m3fn:
-            q_scale = (
-                torch.tensor(layer.k_scale_float, dtype=torch.float32, device=q.device)
-                if getattr(layer, "k_scale_float", None) is not None
-                else (
-                    layer.k_scale.to(torch.float32)
-                    if getattr(layer, "k_scale", None) is not None
-                    and layer.k_scale.numel() == 1
-                    else torch.tensor(1.0, dtype=torch.float32, device=q.device)
+            # Use existing k_scale tensor to avoid creating new tensors during CUDA graph capture
+            # layer.k_scale is a Parameter tensor created during initialization
+            if (
+                getattr(layer, "k_scale", None) is not None
+                and layer.k_scale.numel() == 1
+            ):
+                q_scale = layer.k_scale.to(torch.float32)
+                q_shape = q.shape
+                q, _ = scaled_fp8_quant(
+                    q.contiguous().reshape(-1, q.shape[-1]), q_scale
                 )
-            )
-            q_shape = q.shape
-            q, _ = scaled_fp8_quant(q.contiguous().reshape(-1, q.shape[-1]), q_scale)
-            q = q.reshape(q_shape)
+                q = q.reshape(q_shape)
+            # If k_scale doesn't exist, query should already be FP8 (matching vLLM behavior)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
         # shape conversion:
@@ -670,19 +670,19 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 )
 
         if self.data_type == torch.float8_e4m3fn:
-            q_scale = (
-                torch.tensor(layer.k_scale_float, dtype=torch.float32, device=q.device)
-                if getattr(layer, "k_scale_float", None) is not None
-                else (
-                    layer.k_scale.to(torch.float32)
-                    if getattr(layer, "k_scale", None) is not None
-                    and layer.k_scale.numel() == 1
-                    else torch.tensor(1.0, dtype=torch.float32, device=q.device)
+            # Use existing k_scale tensor to avoid creating new tensors during CUDA graph capture
+            # layer.k_scale is a Parameter tensor created during initialization
+            if (
+                getattr(layer, "k_scale", None) is not None
+                and layer.k_scale.numel() == 1
+            ):
+                q_scale = layer.k_scale.to(torch.float32)
+                q_shape = q.shape
+                q, _ = scaled_fp8_quant(
+                    q.contiguous().reshape(-1, q.shape[-1]), q_scale
                 )
-            )
-            q_shape = q.shape
-            q, _ = scaled_fp8_quant(q.contiguous().reshape(-1, q.shape[-1]), q_scale)
-            q = q.reshape(q_shape)
+                q = q.reshape(q_shape)
+            # If k_scale doesn't exist, query should already be FP8 (matching vLLM behavior)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         # [num_pages, page_size, num_kv_heads, head_dim] -> [num_pages, num_kv_heads, page_size, head_dim]
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
