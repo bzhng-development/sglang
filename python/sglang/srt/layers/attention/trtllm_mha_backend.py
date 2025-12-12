@@ -16,7 +16,6 @@ from sglang.srt.layers.attention.flashinfer_backend import (
     FlashInferMultiStepDraftBackend,
 )
 from sglang.srt.layers.attention.trtllm_fp8_kv_kernel import fused_fp8_set_kv_buffer
-from sglang.srt.layers.quantization.fp8_kernel import scaled_fp8_quant
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch, ForwardMode
 from sglang.srt.utils import is_flashinfer_available
 
@@ -446,6 +445,12 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
             page_size=self.page_size,
         )
 
+        # Cast Q to FP8 if needed
+        if self.data_type == torch.float8_e4m3fn:
+            q = q.to(torch.float8_e4m3fn)
+
+        return q
+
     def init_forward_metadata(self, forward_batch: ForwardBatch):
         """Initialize the metadata for a forward pass."""
 
@@ -564,7 +569,7 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
 
         if use_fused_fp8_path:
             # Use fused FP8 quantization + KV cache write path
-            self._fused_fp8_set_kv_buffer(
+            q = self._fused_fp8_set_kv_buffer(
                 q=q,
                 k=k,
                 v=v,
@@ -579,21 +584,9 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 forward_batch.token_to_kv_pool.set_kv_buffer(
                     layer, cache_loc, k, v, layer.k_scale, layer.v_scale
                 )
-
-        if self.data_type == torch.float8_e4m3fn:
-            # Use existing k_scale tensor to avoid creating new tensors during CUDA graph capture
-            # layer.k_scale is a Parameter tensor created during initialization
-            if (
-                getattr(layer, "k_scale", None) is not None
-                and layer.k_scale.numel() == 1
-            ):
-                q_scale = layer.k_scale.to(torch.float32)
-                q_shape = q.shape
-                q, _ = scaled_fp8_quant(
-                    q.contiguous().reshape(-1, q.shape[-1]), q_scale
-                )
-                q = q.reshape(q_shape)
-            # If k_scale doesn't exist, query should already be FP8 (matching vLLM behavior)
+            # Cast Q to FP8 if needed (non-fused path)
+            if self.data_type == torch.float8_e4m3fn:
+                q = q.to(torch.float8_e4m3fn)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
         # shape conversion:
@@ -653,7 +646,7 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
 
         if use_fused_fp8_path:
             # Use fused FP8 quantization + KV cache write path
-            self._fused_fp8_set_kv_buffer(
+            q = self._fused_fp8_set_kv_buffer(
                 q=q,
                 k=k,
                 v=v,
@@ -668,21 +661,9 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 forward_batch.token_to_kv_pool.set_kv_buffer(
                     layer, cache_loc, k, v, layer.k_scale, layer.v_scale
                 )
-
-        if self.data_type == torch.float8_e4m3fn:
-            # Use existing k_scale tensor to avoid creating new tensors during CUDA graph capture
-            # layer.k_scale is a Parameter tensor created during initialization
-            if (
-                getattr(layer, "k_scale", None) is not None
-                and layer.k_scale.numel() == 1
-            ):
-                q_scale = layer.k_scale.to(torch.float32)
-                q_shape = q.shape
-                q, _ = scaled_fp8_quant(
-                    q.contiguous().reshape(-1, q.shape[-1]), q_scale
-                )
-                q = q.reshape(q_shape)
-            # If k_scale doesn't exist, query should already be FP8 (matching vLLM behavior)
+            # Cast Q to FP8 if needed (non-fused path)
+            if self.data_type == torch.float8_e4m3fn:
+                q = q.to(torch.float8_e4m3fn)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         # [num_pages, page_size, num_kv_heads, head_dim] -> [num_pages, num_kv_heads, page_size, head_dim]
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
