@@ -16,6 +16,7 @@ import logging
 from typing import Optional
 
 import torch
+
 import triton
 import triton.language as tl
 
@@ -82,6 +83,35 @@ def _process_kv_tensor(
         )
 
         tl.store(cache_ptr + cache_offsets, block_fp8, mask=mask)
+
+
+@triton.jit
+def _cast_q_to_fp8_kernel(
+    q_ptr,
+    q_out_ptr,
+    num_tokens: tl.constexpr,
+    head_dim: tl.constexpr,
+    q_stride_token: tl.constexpr,
+    q_stride_dim: tl.constexpr,
+    BLOCK_DIM: tl.constexpr,
+):
+    """Cast Q tensor to FP8 using Triton."""
+    token_id = tl.program_id(0)
+
+    for dim_idx in range(0, head_dim, BLOCK_DIM):
+        num_dims_in_block = min(BLOCK_DIM, head_dim - dim_idx)
+        dim_offsets = dim_idx + tl.arange(0, BLOCK_DIM)
+        dim_mask = dim_offsets < (dim_idx + num_dims_in_block)
+
+        # Load from input
+        q_offsets = token_id * q_stride_token + dim_offsets * q_stride_dim
+        q_vals = tl.load(q_ptr + q_offsets, mask=dim_mask, other=0.0)
+
+        # Cast to FP8 (no scaling, direct cast)
+        q_fp8 = q_vals.to(tl.float8e4nv)
+
+        # Store to output
+        tl.store(q_out_ptr + q_offsets, q_fp8, mask=dim_mask)
 
 
 @triton.jit
@@ -213,7 +243,11 @@ def fused_fp8_set_kv_buffer(
     v_scale: Optional[float] = None,
     page_size: int = 16,
     use_triton: bool = True,  # Whether to use Triton kernel (set to False to force naive fallback)
-) -> None:
+    q: Optional[torch.Tensor] = None,  # Query tensor to cast to FP8 if needed
+    q_dtype: Optional[
+        torch.dtype
+    ] = None,  # Target dtype for Q (e.g., torch.float8_e4m3fn)
+) -> Optional[torch.Tensor]:
     """
     Python wrapper for the fused FP8 quantization + paged KV cache write kernel.
 
@@ -230,6 +264,11 @@ def fused_fp8_set_kv_buffer(
         v_scale: Optional scalar scale for V (matching original set_kv_buffer)
         page_size: Number of tokens per page
         use_triton: Whether to use optimized Triton kernel
+        q: Optional query tensor to cast to FP8 if needed
+        q_dtype: Optional target dtype for Q (e.g., torch.float8_e4m3fn)
+
+    Returns:
+        Q tensor cast to q_dtype if q and q_dtype are provided, None otherwise
     """
     num_tokens = k.shape[0]
 
@@ -415,6 +454,41 @@ def fused_fp8_set_kv_buffer(
         _naive_fp8_set_kv_buffer(
             k_2d, v_2d, k_cache, v_cache, cache_loc, k_scale, v_scale, page_size
         )
+
+    # Cast Q to FP8 if needed (applies to both Triton and naive paths)
+    if q is not None and q_dtype is not None and q.dtype != q_dtype:
+        # Use Triton kernel for casting
+        q_shape = q.shape
+        if q.ndim == 2:
+            # Q is [num_tokens, head_dim] or [num_tokens, num_heads * head_dim]
+            num_tokens_q = q.shape[0]
+            q_head_dim = q.shape[1]
+        elif q.ndim == 3:
+            # Q is [num_tokens, num_heads, head_dim]
+            num_tokens_q = q.shape[0]
+            q_head_dim = q.shape[2]
+            q = q.reshape(num_tokens_q, -1)  # Flatten to 2D
+        else:
+            raise ValueError(f"Unsupported q.ndim={q.ndim}, expected 2 or 3")
+
+        # Create output tensor
+        q_out = torch.empty_like(q, dtype=q_dtype)
+
+        # Launch Triton kernel
+        BLOCK_DIM = min(q_head_dim, 128)
+        grid = (num_tokens_q,)
+        _cast_q_to_fp8_kernel[grid](
+            q,
+            q_out,
+            num_tokens_q,
+            q_head_dim,
+            q.stride(0),
+            q.stride(1),
+            BLOCK_DIM=BLOCK_DIM,
+        )
+        q = q_out.reshape(q_shape) if len(q_shape) == 3 else q_out
+
+    return q
 
 
 def _naive_fp8_set_kv_buffer(

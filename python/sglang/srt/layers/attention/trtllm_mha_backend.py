@@ -434,7 +434,8 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
         # Get K/V cache buffers from token_to_kv_pool
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
 
-        fused_fp8_set_kv_buffer(
+        # Cast Q to FP8 if needed (handled inside fused_fp8_set_kv_buffer)
+        q = fused_fp8_set_kv_buffer(
             k=k,
             v=v,
             k_cache=k_cache,
@@ -443,11 +444,9 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
             k_scale=layer.k_scale,  # May be None
             v_scale=layer.v_scale,  # May be None
             page_size=self.page_size,
+            q=q,
+            q_dtype=self.data_type if self.data_type == torch.float8_e4m3fn else None,
         )
-
-        # Cast Q to FP8 if needed
-        if self.data_type == torch.float8_e4m3fn:
-            q = q.to(torch.float8_e4m3fn)
 
         return q
 
