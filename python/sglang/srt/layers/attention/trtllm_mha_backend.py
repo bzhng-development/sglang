@@ -16,6 +16,7 @@ from sglang.srt.layers.attention.flashinfer_backend import (
     FlashInferMultiStepDraftBackend,
 )
 from sglang.srt.layers.attention.trtllm_fp8_kv_kernel import fused_fp8_set_kv_buffer
+from sglang.srt.layers.quantization.fp8_kernel import scaled_fp8_quant
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch, ForwardMode
 from sglang.srt.utils import is_flashinfer_available
 
@@ -580,7 +581,19 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 )
 
         if self.data_type == torch.float8_e4m3fn:
-            q = q.to(torch.float8_e4m3fn)
+            q_scale = (
+                torch.tensor(layer.k_scale_float, dtype=torch.float32, device=q.device)
+                if getattr(layer, "k_scale_float", None) is not None
+                else (
+                    layer.k_scale.to(torch.float32)
+                    if getattr(layer, "k_scale", None) is not None
+                    and layer.k_scale.numel() == 1
+                    else torch.tensor(1.0, dtype=torch.float32, device=q.device)
+                )
+            )
+            q_shape = q.shape
+            q, _ = scaled_fp8_quant(q.reshape(-1, q.shape[-1]), q_scale)
+            q = q.reshape(q_shape)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
         # shape conversion:
@@ -657,7 +670,19 @@ class TRTLLMHAAttnBackend(FlashInferAttnBackend):
                 )
 
         if self.data_type == torch.float8_e4m3fn:
-            q = q.to(torch.float8_e4m3fn)
+            q_scale = (
+                torch.tensor(layer.k_scale_float, dtype=torch.float32, device=q.device)
+                if getattr(layer, "k_scale_float", None) is not None
+                else (
+                    layer.k_scale.to(torch.float32)
+                    if getattr(layer, "k_scale", None) is not None
+                    and layer.k_scale.numel() == 1
+                    else torch.tensor(1.0, dtype=torch.float32, device=q.device)
+                )
+            )
+            q_shape = q.shape
+            q, _ = scaled_fp8_quant(q.reshape(-1, q.shape[-1]), q_scale)
+            q = q.reshape(q_shape)
         q = q.contiguous().view(-1, layer.tp_q_head_num, layer.head_dim)
         # [num_pages, page_size, num_kv_heads, head_dim] -> [num_pages, num_kv_heads, page_size, head_dim]
         k_cache, v_cache = forward_batch.token_to_kv_pool.get_kv_buffer(layer.layer_id)
