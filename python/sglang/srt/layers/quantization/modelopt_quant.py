@@ -119,6 +119,15 @@ def _sglang_fp4_gemm(
         return fp4_gemm(input, weight, input_sf, weight_sf, alpha, out_dtype)
 
 
+direct_register_custom_op(
+    op_name="fp4_gemm",
+    op_func=_sglang_fp4_gemm,
+    mutates_args=[],
+    fake_impl=None,
+)
+
+
+@register_fake_if_exists("sglang::fp4_gemm")
 def _sglang_fp4_gemm_fake(
     input,
     weight,
@@ -131,14 +140,6 @@ def _sglang_fp4_gemm_fake(
     M = input.shape[-2]
     N = int(out_features)
     return input.new_empty((M, N), dtype=out_dtype)
-
-
-direct_register_custom_op(
-    op_name="fp4_gemm",
-    op_func=_sglang_fp4_gemm,
-    mutates_args=[],
-    fake_impl=_sglang_fp4_gemm_fake,
-)
 
 
 if is_cuda() and (not is_sm120_supported()) and (fp4_quantize is not None):
