@@ -150,6 +150,10 @@ class KVNVFP4QuantizeUtil:
             quant_tensor: Quantized tensor of shape [B, M, N/2]
             scale_factors: FP8 E4M3FN scale factors (uint8)
         """
+        # nvfp4_batched_quantize requires contiguous input.
+        if not tensor.is_contiguous():
+            tensor = tensor.contiguous()
+
         # Always pass a global scale (default to 1.0 if not provided)
         if global_scale is None:
             global_scale = torch.tensor(
