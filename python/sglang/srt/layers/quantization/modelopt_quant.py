@@ -119,16 +119,33 @@ def _sglang_fp4_gemm(
         return fp4_gemm(input, weight, input_sf, weight_sf, alpha, out_dtype)
 
 
+# Register fake implementation for Dynamo tracing
+def _sglang_fp4_gemm_fake(
+    input,
+    weight,
+    input_sf,
+    weight_sf,
+    alpha,
+    out_dtype,
+    out_features: int,
+):
+    M = input.shape[-2]
+    N = int(out_features)
+    return input.new_empty((M, N), dtype=out_dtype)
+
+
+# Register op and fake at import time to ensure they're available before Dynamo tracing
 direct_register_custom_op(
     op_name="fp4_gemm",
     op_func=_sglang_fp4_gemm,
     mutates_args=[],
-    fake_impl=None,
+    fake_impl=_sglang_fp4_gemm_fake,
 )
 
 
+# Also register fake using register_fake_if_exists as a safeguard
 @register_fake_if_exists("sglang::fp4_gemm")
-def _sglang_fp4_gemm_fake(
+def _sglang_fp4_gemm_fake_if_exists(
     input,
     weight,
     input_sf,
