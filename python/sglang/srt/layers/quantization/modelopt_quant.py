@@ -143,22 +143,6 @@ direct_register_custom_op(
 )
 
 
-# Also register fake using register_fake_if_exists as a safeguard
-@register_fake_if_exists("sglang::fp4_gemm")
-def _sglang_fp4_gemm_fake_if_exists(
-    input,
-    weight,
-    input_sf,
-    weight_sf,
-    alpha,
-    out_dtype,
-    out_features: int,
-):
-    M = input.shape[-2]
-    N = int(out_features)
-    return input.new_empty((M, N), dtype=out_dtype)
-
-
 if is_cuda() and (not is_sm120_supported()) and (fp4_quantize is not None):
 
     @register_fake_if_exists("sgl_kernel::scaled_fp4_quant")
@@ -1240,7 +1224,9 @@ class ModelOptFp4LinearMethod(LinearMethodBase):
         backend = (
             FLASHINFER_FP4_GEMM_BACKEND if FLASHINFER_FP4_GEMM_BACKEND else "cutlass"
         )
-        out = _sglang_fp4_gemm(
+        # Call through the registered custom op so torch.compile/Dynamo doesn't
+        # trace into flashinfer's Python/JIT initialization (which can touch filesystem ops).
+        out = torch.ops.sglang.fp4_gemm(
             x_fp4,
             w,
             x_scale_interleaved,
