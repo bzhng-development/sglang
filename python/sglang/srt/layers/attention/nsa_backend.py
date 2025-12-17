@@ -422,9 +422,18 @@ class NativeSparseAttnBackend(AttentionBackend):
                     )
                 ]
             )
-            page_table = torch.repeat_interleave(
-                page_table, repeats=forward_batch.extend_seq_lens, dim=0
-            )
+            if forward_batch.forward_mode.is_draft_extend_v2():
+                # DRAFT_EXTEND_V2: all extend lengths are uniform (speculative_num_draft_tokens)
+                # Use scalar to avoid GPU sync from tensor-based repeat_interleave
+                page_table = torch.repeat_interleave(
+                    page_table, repeats=self.speculative_num_draft_tokens, dim=0
+                )
+            else:
+                # DRAFT_EXTEND (v1): extend lengths vary per request (accept_length)
+                # Use CPU list to avoid GPU sync
+                page_table = torch.repeat_interleave(
+                    page_table, repeats=extend_seq_lens_cpu, dim=0
+                )
 
         elif forward_batch.forward_mode.is_extend():
             assert (
