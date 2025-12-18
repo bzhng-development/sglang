@@ -1199,7 +1199,7 @@ class Fp8MoEMethod(FusedMoEMethodBase):
             from flashinfer.fused_moe import (
                 cutlass_fused_moe as flashinfer_cutlass_fused_moe,
             )
-            from sglang.srt.layers.moe.topk import ActivationType
+            from flashinfer.fused_moe.core import ActivationType
 
             activation = ActivationType.Swiglu
             topk_weights, topk_ids, _ = dispatch_output.topk_output
