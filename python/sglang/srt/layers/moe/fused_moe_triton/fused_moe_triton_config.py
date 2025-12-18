@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import torch
 import triton
 
-from sglang.srt.server_args import get_global_server_args
+from sglang.srt.server_args import _global_server_args
 from sglang.srt.utils import get_device_name, is_hip
 
 logger = logging.getLogger(__name__)
@@ -34,6 +34,13 @@ def get_config_file_name(
     return f"E={E},N={N},device_name={device_name}{dtype_selector}{block_shape_selector}{per_channel_quant_selector}{down_moe_selector}.json"
 
 
+def _is_deterministic_inference_enabled() -> bool:
+    """Check if deterministic inference is enabled, handling uninitialized server args."""
+    if _global_server_args is None:
+        return False
+    return _global_server_args.enable_deterministic_inference
+
+
 @functools.lru_cache
 def get_moe_configs(
     E: int,
@@ -52,7 +59,7 @@ def get_moe_configs(
     kernel on a given batch size bs, the closest batch size in the grid should
     be picked and the associated configuration chosen to invoke the kernel.
     """
-    if get_global_server_args().enable_deterministic_inference:
+    if _is_deterministic_inference_enabled():
         logger.warning(
             "Deterministic inference is enabled, using default MoE kernel config."
         )
@@ -145,7 +152,7 @@ def get_default_config(
     is_marlin: bool,
     block_shape: Optional[List[int]] = None,
 ) -> Dict[str, int]:
-    if get_global_server_args().enable_deterministic_inference:
+    if _is_deterministic_inference_enabled():
         config = {
             "BLOCK_SIZE_M": 64,
             "BLOCK_SIZE_N": 64,
