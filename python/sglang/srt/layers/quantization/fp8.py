@@ -1195,6 +1195,66 @@ class Fp8MoEMethod(FusedMoEMethodBase):
             )
             return StandardCombineInput(hidden_states=output)
 
+        if get_moe_runner_backend().is_flashinfer_cutlass():
+            from flashinfer.fused_moe import (
+                cutlass_fused_moe as flashinfer_cutlass_fused_moe,
+            )
+            from sglang.srt.layers.moe.topk import ActivationType
+
+            activation = ActivationType.Swiglu
+            topk_weights, topk_ids, _ = dispatch_output.topk_output
+            x_fp8, _ = scaled_fp8_quant(x, layer.w13_input_scale)
+            output_dtype = x.dtype
+
+            with use_symmetric_memory(
+                get_tp_group(), disabled=not is_allocation_symmetric()
+            ):
+                symm_output = torch.empty(
+                    x.shape[0], x.shape[1], dtype=output_dtype, device=x.device
+                )
+
+            # Compute the combined scales for flashinfer cutlass
+            input_scale = layer.w13_input_scale.to(torch.float32)
+            activation_scale = layer.w2_input_scale.to(torch.float32)
+            w13_weight_scale = (
+                layer.w13_weight_scale_inv
+                if self.block_quant
+                else layer.w13_weight_scale
+            ).to(torch.float32)
+            w2_weight_scale = (
+                layer.w2_weight_scale_inv if self.block_quant else layer.w2_weight_scale
+            ).to(torch.float32)
+
+            fc1_dequant = w13_weight_scale * input_scale
+            fc2_quant = activation_scale.reciprocal()
+            fc2_dequant = activation_scale * w2_weight_scale
+            fc1_input_dequant = input_scale
+
+            output = flashinfer_cutlass_fused_moe(
+                output=symm_output,
+                input=x_fp8,
+                token_selected_experts=topk_ids.to(torch.int),
+                token_final_scales=topk_weights,
+                fc1_expert_weights=layer.w13_weight,
+                fc2_expert_weights=layer.w2_weight,
+                output_dtype=output_dtype,
+                input_sf=None,
+                quant_scales=[
+                    fc1_dequant,
+                    fc2_quant,
+                    fc2_dequant,
+                    fc1_input_dequant,
+                ],
+                ep_size=layer.moe_ep_size,
+                ep_rank=layer.moe_ep_rank,
+                tp_size=layer.moe_tp_size,
+                tp_rank=layer.moe_tp_rank,
+                tune_max_num_tokens=next_power_of_2(x.shape[0]),
+                activation_type=activation,
+            )[0]
+
+            return StandardCombineInput(hidden_states=output)
+
         if self.runner.runner_backend.is_deep_gemm():
 
             w13_weight = layer.w13_weight
@@ -1318,7 +1378,6 @@ class Fp8MoEMethod(FusedMoEMethodBase):
             trtllm_fp8_block_scale_moe,
             trtllm_fp8_per_tensor_scale_moe,
         )
-
         from sglang.srt.layers.moe.topk import TopKOutputChecker
         from sglang.srt.layers.moe.utils import RoutingMethodType
 
