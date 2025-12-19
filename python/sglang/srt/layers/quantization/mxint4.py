@@ -44,9 +44,7 @@ from sglang.srt.layers.quantization.base_config import (
 )
 from sglang.srt.layers.quantization.unquant import UnquantizedLinearMethod
 from sglang.srt.utils import (
-    is_cuda,
     is_flashinfer_available,
-    is_sm100_supported,
     log_info_on_rank0,
     next_power_of_2,
     round_up,
@@ -60,8 +58,6 @@ if TYPE_CHECKING:
         CombineInput,
         StandardDispatchOutput,
     )
-
-_is_sm100_supported = is_cuda() and is_sm100_supported()
 
 # MX-INT4 block size (elements per scale)
 MXINT4_BLOCK_SIZE = 32
