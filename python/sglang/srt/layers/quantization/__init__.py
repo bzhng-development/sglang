@@ -33,6 +33,7 @@ from sglang.srt.layers.quantization.modelopt_quant import (
 )
 from sglang.srt.layers.quantization.moe_wna16 import MoeWNA16Config
 from sglang.srt.layers.quantization.mxfp4 import Mxfp4Config
+from sglang.srt.layers.quantization.mxint4 import MxInt4Config
 from sglang.srt.layers.quantization.petit import PetitNvFp4Config
 from sglang.srt.layers.quantization.qoq import QoQConfig
 from sglang.srt.layers.quantization.quark.quark import QuarkConfig
@@ -75,6 +76,7 @@ if is_cuda() or (_is_mxfp_supported and is_hip()):
     BASE_QUANTIZATION_METHODS.update(
         {
             "mxfp4": Mxfp4Config,
+            "mxint4": MxInt4Config,
         }
     )
 
