@@ -627,6 +627,7 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
 
             result = trtllm_mxint4_block_scale_moe(
                 routing_logits=router_logits,
+                routing_bias=None,
                 hidden_states=hidden_states,
                 gemm1_weights=layer.w13_weight,
                 gemm1_weights_scale=layer.w13_weight_scale,
