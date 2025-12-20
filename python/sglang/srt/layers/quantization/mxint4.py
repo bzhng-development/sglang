@@ -47,6 +47,7 @@ from sglang.srt.utils import (
     is_flashinfer_available,
     log_info_on_rank0,
     next_power_of_2,
+    print_warning_once,
     round_up,
     set_weight_attrs,
 )
@@ -214,15 +215,26 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
     """MoE method for MX-INT4 quantization using TRT-LLM Gen kernels.
 
     This method handles:
-    1. Weight creation with proper shapes for MX-INT4 format
-    2. Weight processing (shuffling, scale interleaving) after loading
+    1. Weight creation compatible with compressed-tensors checkpoints
+    2. Weight processing (unpacking, shuffling, scale interleaving) after loading
     3. Forward pass using trtllm_mxint4_block_scale_moe kernel
+
+    The compressed-tensors checkpoint format uses:
+    - int32 packed weights (8 INT4 values per int32)
+    - bf16 scales with group_size=32
+
+    This method converts to MX-INT4 format required by TRT-LLM Gen kernels:
+    - uint8 packed weights (2 INT4 values per uint8)
+    - bf16 scales with interleaving for SM100 tensor cores
+    - BlockMajorK weight layout
     """
 
     def __init__(self, quant_config: MxInt4Config):
         super().__init__()
         self.quant_config = quant_config
         self._cache_permute_indices: Dict[str, torch.Tensor] = {}
+        # INT4 packing factor for compressed-tensors (8 INT4 values per int32)
+        self.packed_factor = 8
 
     def create_weights(
         self,
@@ -233,13 +245,15 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
         params_dtype: torch.dtype,
         **extra_weight_attrs,
     ):
-        """Create weight tensors for MX-INT4 MoE.
+        """Create weight tensors compatible with compressed-tensors checkpoint format.
 
-        Weight shapes:
-        - w13_weight: [num_experts, 2*intermediate_size, hidden_size//2] uint8
-        - w13_weight_scale: [num_experts, 2*intermediate_size, hidden_size//32] bf16
-        - w2_weight: [num_experts, hidden_size, intermediate_size//2] uint8
-        - w2_weight_scale: [num_experts, hidden_size, intermediate_size//32] bf16
+        The checkpoint format uses:
+        - w13_weight_packed: [num_experts, hidden_size // 8, 2 * intermediate_size] int32
+        - w2_weight_packed: [num_experts, intermediate_size // 8, hidden_size] int32
+        - w13_weight_scale: [num_experts, num_groups, 2 * intermediate_size] params_dtype
+        - w2_weight_scale: [num_experts, num_groups, hidden_size] params_dtype
+
+        Note: Weights are stored transposed in compressed-tensors format.
         """
         block_size = self.quant_config.block_size
 
@@ -254,69 +268,90 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
         self.intermediate_size_padded = intermediate_size_padded
         self.num_experts = num_experts
 
-        weight_dtype = torch.uint8
-        scale_dtype = torch.bfloat16
+        # Set transposed flag for weight loading (compressed-tensors stores weights transposed)
+        extra_weight_attrs.update({"is_transposed": True, "quant_method": "group"})
 
-        # GEMM1: [num_experts, 2*intermediate_size, hidden_size//2] (packed INT4)
+        # GEMM1: [num_experts, hidden_size // 8, 2 * intermediate_size] (packed int32)
+        # 8 INT4 values packed per int32
         w13_weight = torch.nn.Parameter(
             torch.zeros(
                 layer.num_local_experts,
+                hidden_size_padded // self.packed_factor,
                 2 * intermediate_size_padded,
-                hidden_size_padded // 2,
-                dtype=weight_dtype,
+                dtype=torch.int32,
             ),
             requires_grad=False,
         )
-        layer.register_parameter("w13_weight", w13_weight)
+        layer.register_parameter("w13_weight_packed", w13_weight)
         set_weight_attrs(w13_weight, extra_weight_attrs)
 
-        # GEMM1 scales: [num_experts, 2*intermediate_size, hidden_size//32] bf16
-        w13_weight_scale = torch.nn.Parameter(
+        # GEMM2: [num_experts, intermediate_size // 8, hidden_size] (packed int32)
+        w2_weight = torch.nn.Parameter(
             torch.zeros(
                 layer.num_local_experts,
+                intermediate_size_padded // self.packed_factor,
+                hidden_size_padded,
+                dtype=torch.int32,
+            ),
+            requires_grad=False,
+        )
+        layer.register_parameter("w2_weight_packed", w2_weight)
+        set_weight_attrs(w2_weight, extra_weight_attrs)
+
+        # Number of groups for scales
+        num_groups_w13 = hidden_size_padded // block_size
+        num_groups_w2 = intermediate_size_padded // block_size
+
+        # GEMM1 scales: [num_experts, num_groups, 2 * intermediate_size]
+        w13_weight_scale = torch.nn.Parameter(
+            torch.ones(
+                layer.num_local_experts,
+                num_groups_w13,
                 2 * intermediate_size_padded,
-                hidden_size_padded // block_size,
-                dtype=scale_dtype,
+                dtype=params_dtype,
             ),
             requires_grad=False,
         )
         layer.register_parameter("w13_weight_scale", w13_weight_scale)
         set_weight_attrs(w13_weight_scale, extra_weight_attrs)
 
-        # GEMM2: [num_experts, hidden_size, intermediate_size//2] (packed INT4)
-        w2_weight = torch.nn.Parameter(
-            torch.zeros(
-                layer.num_local_experts,
-                hidden_size_padded,
-                intermediate_size_padded // 2,
-                dtype=weight_dtype,
-            ),
-            requires_grad=False,
-        )
-        layer.register_parameter("w2_weight", w2_weight)
-        set_weight_attrs(w2_weight, extra_weight_attrs)
-
-        # GEMM2 scales: [num_experts, hidden_size, intermediate_size//32] bf16
+        # GEMM2 scales: [num_experts, num_groups, hidden_size]
         w2_weight_scale = torch.nn.Parameter(
-            torch.zeros(
+            torch.ones(
                 layer.num_local_experts,
+                num_groups_w2,
                 hidden_size_padded,
-                intermediate_size_padded // block_size,
-                dtype=scale_dtype,
+                dtype=params_dtype,
             ),
             requires_grad=False,
         )
         layer.register_parameter("w2_weight_scale", w2_weight_scale)
         set_weight_attrs(w2_weight_scale, extra_weight_attrs)
 
+        # Shape metadata (used by some loaders)
+        w13_weight_shape = torch.nn.Parameter(
+            torch.empty(layer.num_local_experts, 2), requires_grad=False
+        )
+        layer.register_parameter("w13_weight_shape", w13_weight_shape)
+        set_weight_attrs(w13_weight_shape, extra_weight_attrs)
+
+        w2_weight_shape = torch.nn.Parameter(
+            torch.empty(layer.num_local_experts, 2), requires_grad=False
+        )
+        layer.register_parameter("w2_weight_shape", w2_weight_shape)
+        set_weight_attrs(w2_weight_shape, extra_weight_attrs)
+
     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
-        """Process MX-INT4 weights after loading.
+        """Process MX-INT4 weights after loading from compressed-tensors checkpoint.
 
         This involves:
-        1. Reordering W1/W3 rows for fused gated activation (swap gate/up order)
-        2. Shuffling weights for transposed MMA output
-        3. Interleaving scales for SM100 tensor cores
-        4. Converting weights to BlockMajorK layout
+        1. Converting from int32 packed format (8 INT4/int32) to uint8 packed (2 INT4/uint8)
+        2. Transposing weights to [num_experts, N, K//2] layout
+        3. Transposing scales to [num_experts, N, num_groups] layout
+        4. Reordering W1/W3 rows for fused gated activation (swap gate/up order)
+        5. Shuffling weights for transposed MMA output
+        6. Interleaving scales for SM100 tensor cores
+        7. Converting weights to BlockMajorK layout
         """
         if not is_flashinfer_available():
             raise ImportError(
@@ -339,14 +374,59 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
         epilogue_tile_m = 128
         block_k = 128
 
-        w13_weight = layer.w13_weight.data
-        w13_weight_scale = layer.w13_weight_scale.data
-        w2_weight = layer.w2_weight.data
-        w2_weight_scale = layer.w2_weight_scale.data
+        # Step 1: Convert from int32 packed to uint8 packed and transpose
+        # Loaded format: [num_experts, K // 8, N] int32 (transposed, 8 INT4 per int32)
+        # Target format: [num_experts, N, K // 2] uint8 (2 INT4 per uint8)
+        w13_weight_packed = layer.w13_weight_packed.data  # [E, K//8, 2*inter]
+        w2_weight_packed = layer.w2_weight_packed.data  # [E, inter//8, hidden]
+        w13_weight_scale = layer.w13_weight_scale.data  # [E, num_groups, 2*inter]
+        w2_weight_scale = layer.w2_weight_scale.data  # [E, num_groups, hidden]
 
-        num_experts = w13_weight.shape[0]
+        num_experts = w13_weight_packed.shape[0]
 
-        # Swap W1 and W3 rows for TRT-LLM Gen swiglu definition
+        # Convert int32 packed to uint8 packed:
+        # int32 contains 8 INT4 values, uint8 contains 2 INT4 values
+        # So int32 -> 4 uint8 values
+        def int32_to_uint8_packed(x):
+            """Convert int32 packed INT4 to uint8 packed INT4.
+
+            Input: [*, K//8] int32 (8 INT4 per int32)
+            Output: [*, K//2] uint8 (2 INT4 per uint8)
+            """
+            # View as uint8 to get 4 bytes per int32
+            return x.view(torch.uint8)
+
+        # Convert and transpose weights
+        # From [E, K//8, N] int32 -> [E, K//8*4, N] uint8 = [E, K//2, N] uint8
+        # Then transpose to [E, N, K//2]
+        w13_uint8 = int32_to_uint8_packed(
+            w13_weight_packed
+        )  # [E, K//8, N, 4] -> [E, K//8*4, N] = [E, K//2, N]
+        # The view gives us [E, K//8, N] -> [E, K//8, N*4/4] with bytes interleaved
+        # Actually int32 is stored as 4 bytes, so we need to reshape properly
+        # [E, K//8, N] int32.view(uint8) -> [E, K//8, N*4] uint8 which is wrong
+        # We need to view the last two dims together
+        E, K_div_8, N = w13_weight_packed.shape
+        # Reshape to [E, K//8 * N] then view as uint8 gives [E, K//8 * N * 4]
+        # Then reshape to [E, K//2, N]
+        w13_flat = w13_weight_packed.reshape(E, -1)  # [E, K//8 * N]
+        w13_uint8_flat = w13_flat.view(torch.uint8)  # [E, K//8 * N * 4] = [E, K//2 * N]
+        w13_uint8 = w13_uint8_flat.reshape(E, K_div_8 * 4, N)  # [E, K//2, N]
+        w13_weight = w13_uint8.permute(0, 2, 1).contiguous()  # [E, N, K//2]
+
+        E, inter_div_8, hidden = w2_weight_packed.shape
+        w2_flat = w2_weight_packed.reshape(E, -1)
+        w2_uint8_flat = w2_flat.view(torch.uint8)
+        w2_uint8 = w2_uint8_flat.reshape(
+            E, inter_div_8 * 4, hidden
+        )  # [E, inter//2, hidden]
+        w2_weight = w2_uint8.permute(0, 2, 1).contiguous()  # [E, hidden, inter//2]
+
+        # Transpose scales: [E, num_groups, N] -> [E, N, num_groups]
+        w13_scale = w13_weight_scale.permute(0, 2, 1).contiguous().to(torch.bfloat16)
+        w2_scale = w2_weight_scale.permute(0, 2, 1).contiguous().to(torch.bfloat16)
+
+        # Step 2: Swap W1 and W3 rows for TRT-LLM Gen swiglu definition
         # TRT-LLM expects [W3, W1] order for gated activation
         def swap_gate_up_rows(x, axis=-2):
             """Swap every pair of rows: [W1, W3] -> [W3, W1]"""
@@ -361,9 +441,9 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
             return x.reshape(*shape)
 
         w13_weight = swap_gate_up_rows(w13_weight, axis=-2)
-        w13_weight_scale = swap_gate_up_rows(w13_weight_scale, axis=-2)
+        w13_scale = swap_gate_up_rows(w13_scale, axis=-2)
 
-        # Process each expert's weights
+        # Step 3: Process each expert's weights
         gemm1_weights_shuffled = []
         gemm1_scales_shuffled = []
         gemm2_weights_shuffled = []
@@ -372,48 +452,40 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
         for i in range(num_experts):
             # GEMM1 weight shuffling
             permute_indices = get_shuffle_matrix_a_row_indices(
-                w13_weight[i].view(torch.uint8), epilogue_tile_m
+                w13_weight[i], epilogue_tile_m
             )
-            w13_shuffled = (
-                w13_weight[i]
-                .view(torch.uint8)[permute_indices.to(w13_weight.device)]
-                .contiguous()
-            )
+            w13_shuffled = w13_weight[i][
+                permute_indices.to(w13_weight.device)
+            ].contiguous()
 
             # GEMM1 scale shuffling and interleaving
             permute_sf_indices = get_shuffle_matrix_sf_a_row_indices(
-                w13_weight_scale[i].view(torch.bfloat16),
+                w13_scale[i],
                 epilogue_tile_m,
                 num_elts_per_sf=block_size,
             )
-            w13_scale_shuffled = (
-                w13_weight_scale[i]
-                .view(torch.bfloat16)[permute_sf_indices.to(w13_weight_scale.device)]
-                .contiguous()
-            )
+            w13_scale_shuffled = w13_scale[i][
+                permute_sf_indices.to(w13_scale.device)
+            ].contiguous()
             w13_scale_interleaved = block_scale_interleave(w13_scale_shuffled)
 
             # GEMM2 weight shuffling
             permute_indices_w2 = get_shuffle_matrix_a_row_indices(
-                w2_weight[i].view(torch.uint8), epilogue_tile_m
+                w2_weight[i], epilogue_tile_m
             )
-            w2_shuffled = (
-                w2_weight[i]
-                .view(torch.uint8)[permute_indices_w2.to(w2_weight.device)]
-                .contiguous()
-            )
+            w2_shuffled = w2_weight[i][
+                permute_indices_w2.to(w2_weight.device)
+            ].contiguous()
 
             # GEMM2 scale shuffling and interleaving
             permute_sf_indices_w2 = get_shuffle_matrix_sf_a_row_indices(
-                w2_weight_scale[i].view(torch.bfloat16),
+                w2_scale[i],
                 epilogue_tile_m,
                 num_elts_per_sf=block_size,
             )
-            w2_scale_shuffled = (
-                w2_weight_scale[i]
-                .view(torch.bfloat16)[permute_sf_indices_w2.to(w2_weight_scale.device)]
-                .contiguous()
-            )
+            w2_scale_shuffled = w2_scale[i][
+                permute_sf_indices_w2.to(w2_scale.device)
+            ].contiguous()
             w2_scale_interleaved = block_scale_interleave(w2_scale_shuffled)
 
             # Convert to BlockMajorK layout
@@ -425,7 +497,8 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
             gemm2_weights_shuffled.append(w2_block_layout)
             gemm2_scales_shuffled.append(w2_scale_interleaved)
 
-        # Stack and store processed weights
+        # Step 4: Stack and store processed weights
+        # Create new parameters with the final format names
         layer.w13_weight = Parameter(
             torch.stack(gemm1_weights_shuffled), requires_grad=False
         )
@@ -438,6 +511,16 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
         layer.w2_weight_scale = Parameter(
             torch.stack(gemm2_scales_shuffled).view(torch.bfloat16), requires_grad=False
         )
+
+        # Clean up the packed parameters that are no longer needed
+        if hasattr(layer, "w13_weight_packed"):
+            delattr(layer, "w13_weight_packed")
+        if hasattr(layer, "w2_weight_packed"):
+            delattr(layer, "w2_weight_packed")
+        if hasattr(layer, "w13_weight_shape"):
+            delattr(layer, "w13_weight_shape")
+        if hasattr(layer, "w2_weight_shape"):
+            delattr(layer, "w2_weight_shape")
 
         torch.cuda.empty_cache()
 
@@ -515,7 +598,7 @@ class MxInt4MoEMethod(FusedMoEMethodBase):
 
         # Note: MX-INT4 MoE does not support routing_bias
         if topk_config.correction_bias is not None:
-            logger.warning_once(
+            print_warning_once(
                 "MX-INT4 MoE does not support routing_bias/correction_bias. "
                 "It will be ignored."
             )

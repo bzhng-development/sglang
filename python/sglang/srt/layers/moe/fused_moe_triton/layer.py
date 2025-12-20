@@ -635,6 +635,7 @@ class FusedMoE(torch.nn.Module):
                 in [
                     "CompressedTensorsWNA16MarlinMoEMethod",
                     "CompressedTensorsWNA16MoEMethod",
+                    "MxInt4MoEMethod",
                 ]
             )
             else loaded_weight
