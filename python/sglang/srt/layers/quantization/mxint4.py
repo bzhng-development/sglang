@@ -98,9 +98,93 @@ class MxInt4Config(QuantizationConfig):
         return ["quantize_config.json"]
 
     @classmethod
+    def override_quantization_method(cls, hf_quant_cfg, user_quant) -> Optional[str]:
+        """Auto-detect MX-INT4 from compressed-tensors config.
+
+        MX-INT4 can be detected from compressed-tensors config when:
+        - quant_method is "compressed-tensors" or "compressed_tensors"
+        - config_groups contain weights with:
+          - num_bits == 4
+          - group_size == 32 (MX-INT4 block size)
+          - type == "int"
+          - symmetric == True
+        """
+        if hf_quant_cfg is None:
+            return None
+
+        quant_method = hf_quant_cfg.get("quant_method", "").lower()
+
+        # Check if it's compressed-tensors format
+        if quant_method not in ("compressed-tensors", "compressed_tensors"):
+            return None
+
+        # Check config_groups for MX-INT4 characteristics
+        config_groups = hf_quant_cfg.get("config_groups", {})
+        if not config_groups:
+            return None
+
+        # Check if any config group matches MX-INT4 specs
+        for group_name, group_config in config_groups.items():
+            if not isinstance(group_config, dict):
+                continue
+
+            weights_config = group_config.get("weights")
+            if not isinstance(weights_config, dict):
+                continue
+
+            # Check MX-INT4 characteristics
+            num_bits = weights_config.get("num_bits")
+            group_size = weights_config.get("group_size")
+            weight_type = weights_config.get("type", "").lower()
+            symmetric = weights_config.get("symmetric", False)
+
+            # MX-INT4 uses: INT4, group_size=32, symmetric=True
+            if (
+                num_bits == 4
+                and group_size == MXINT4_BLOCK_SIZE
+                and weight_type == "int"
+                and symmetric is True
+            ):
+                return cls.get_name()
+
+        return None
+
+    @classmethod
     def from_config(cls, config: Dict[str, Any]) -> "MxInt4Config":
-        quant_method = cls.get_from_keys(config, ["quant_method"])
-        is_checkpoint_mxint4_serialized = "mxint4" in quant_method.lower()
+        """Create MX-INT4 config from quantization config.
+
+        Supports both:
+        1. Direct MX-INT4 config: {"quant_method": "mxint4", ...}
+        2. Compressed-tensors config: {"quant_method": "compressed-tensors", "config_groups": {...}}
+        """
+        # Try to get quant_method, but handle compressed-tensors format
+        quant_method = config.get("quant_method", "").lower()
+
+        # Check if it's explicitly MX-INT4
+        if "mxint4" in quant_method:
+            is_checkpoint_mxint4_serialized = True
+        # Check if it's compressed-tensors format that matches MX-INT4
+        elif quant_method in ("compressed-tensors", "compressed_tensors"):
+            # Verify it matches MX-INT4 characteristics
+            config_groups = config.get("config_groups", {})
+            is_mxint4_format = False
+            for group_config in config_groups.values():
+                if not isinstance(group_config, dict):
+                    continue
+                weights_config = group_config.get("weights", {})
+                if (
+                    isinstance(weights_config, dict)
+                    and weights_config.get("num_bits") == 4
+                    and weights_config.get("group_size") == MXINT4_BLOCK_SIZE
+                    and weights_config.get("type", "").lower() == "int"
+                    and weights_config.get("symmetric") is True
+                ):
+                    is_mxint4_format = True
+                    break
+            is_checkpoint_mxint4_serialized = is_mxint4_format
+        else:
+            is_checkpoint_mxint4_serialized = False
+
         return cls(is_checkpoint_mxint4_serialized=is_checkpoint_mxint4_serialized)
 
     def get_quant_method(
