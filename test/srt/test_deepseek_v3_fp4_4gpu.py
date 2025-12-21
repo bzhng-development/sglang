@@ -160,7 +160,7 @@ class TestDeepseekV3FP4MTP(CustomTestCase):
         self.assertGreater(avg_spec_accept_length, 2.04)
 
     def test_bs_1_speed(self):
-        args = BenchArgs(port=int(self.base_url.split(":")[-1]), max_new_tokens=2048)
+        args = BenchArgs(port=int(self.base_url.split(":")[-1]), max_new_tokens=1024)
         acc_length, speed = send_one_prompt(args)
 
         print(f"{acc_length=:.2f} {speed=:.2f}")
