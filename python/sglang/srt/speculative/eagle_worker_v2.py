@@ -755,6 +755,47 @@ class EAGLEWorkerV2(BaseSpecWorker):
             verify_done=verify_done,
         )
 
+        # Update mamba state for hybrid GDN models after verification
+        if (
+            self.target_worker.model_runner.hybrid_gdn_config is not None
+            or self.target_worker.model_runner.mamba2_config is not None
+        ):
+            # #region agent log
+            # import json; open("/sgl-workspace/sglang/.cursor/debug.log", "a").write(json.dumps({"hypothesisId": "C", "location": "eagle_worker_v2.py:verify:mamba_update", "message": "calling update_mamba_state_after_mtp_verify", "data": {"bs": bs, "accept_length_sum": accept_length.sum().item()}, "timestamp": __import__("time").time()}) + "\n")
+            # #endregion
+            # Calculate accepted_steps for mamba state update
+            # Include the bonus token (+1)
+            accepted_length_with_bonus = accept_length
+            if not batch.forward_mode.is_idle() and accept_index.numel() > 0:
+                if verify_input.topk > 1:
+                    # For topk > 1, calculate the per-request spec step offsets from accept_index
+                    cumulative_accepted_lengths = torch.cumsum(
+                        accepted_length_with_bonus, dim=0
+                    )
+                    accepted_indices_offset = torch.arange(
+                        0,
+                        bs * self.speculative_num_draft_tokens,
+                        step=self.speculative_num_draft_tokens,
+                        dtype=cumulative_accepted_lengths.dtype,
+                        device=cumulative_accepted_lengths.device,
+                    )
+                    # Get the accepted step for each request from the last accepted token
+                    accepted_steps = (
+                        accept_index[cumulative_accepted_lengths - 1]
+                        - accepted_indices_offset
+                    )
+                else:
+                    accepted_steps = accepted_length_with_bonus - 1
+
+                self.target_worker.model_runner.attn_backend.update_mamba_state_after_mtp_verify(
+                    accepted_steps=accepted_steps,
+                    mamba_track_indices=None,  # V2 doesn't use prefix caching tracking
+                    mamba_steps_to_track=None,
+                    model=self.target_worker.model_runner.model,
+                    skip_masking=True,  # All accepted_steps >= 0 guaranteed by the guard above
+                )
+                #
+
         return GenerationBatchResult(
             logits_output=logits_output,
             next_token_ids=predict,

@@ -26,6 +26,8 @@ import random
 import tempfile
 from typing import Any, Callable, Dict, List, Literal, Optional, Union
 
+import rich.repr
+
 from sglang.srt.connector import ConnectorType
 from sglang.srt.environ import ToolStrictLevel, envs
 from sglang.srt.function_call.function_call_parser import FunctionCallParser
@@ -641,6 +643,31 @@ class ServerArgs:
 
     # For forward hooks
     forward_hooks: Optional[List[dict[str, Any]]] = None
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        """Rich repr for pretty printing with proper formatting.
+
+        Fields are sorted alphabetically. Fields with default values are omitted
+        when they match the default, making the output much cleaner.
+        """
+        # Get all fields sorted alphabetically
+        fields = sorted(dataclasses.fields(self), key=lambda f: f.name)
+        for field in fields:
+            value = getattr(self, field.name)
+            # Use MISSING as sentinel for fields without defaults
+            if field.default is not dataclasses.MISSING:
+                yield field.name, value, field.default
+            elif field.default_factory is not dataclasses.MISSING:
+                yield field.name, value, field.default_factory()
+            else:
+                # No default - always show this field
+                yield field.name, value
+
+    def __repr__(self) -> str:
+        """Return a pretty-formatted string representation using Rich."""
+        from rich.pretty import pretty_repr
+
+        return pretty_repr(self, max_width=120)
 
     def __post_init__(self):
         """

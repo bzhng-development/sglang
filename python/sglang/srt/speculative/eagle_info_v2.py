@@ -204,8 +204,14 @@ class EagleDraftInputV2Mixin:
             if batch.forward_mode.is_idle()
             else ForwardMode.DRAFT_EXTEND_V2
         )
+        # #region agent log
+        # import json; open("/sgl-workspace/sglang/.cursor/debug.log", "a").write(json.dumps({"hypothesisId": "D", "location": "eagle_info_v2.py:prepare_for_extend_to_fill_draft_kvcache", "message": "prepare_for_extend called", "data": {"forward_mode": str(batch.forward_mode), "is_idle": batch.forward_mode.is_idle()}, "timestamp": __import__("time").time()}) + "\n")
+        # #endregion
         forward_batch = ForwardBatch.init_new(batch, draft_model_runner)
         can_cuda_graph = cuda_graph_runner and cuda_graph_runner.can_run(forward_batch)
+        # #region agent log
+        # import json; open("/sgl-workspace/sglang/.cursor/debug.log", "a").write(json.dumps({"hypothesisId": "D", "location": "eagle_info_v2.py:prepare_for_extend_to_fill_draft_kvcache:before_init", "message": "about to call init_forward_metadata", "data": {"can_cuda_graph": can_cuda_graph, "will_call_init": not batch.forward_mode.is_idle() and not can_cuda_graph}, "timestamp": __import__("time").time()}) + "\n")
+        # #endregion
         if not batch.forward_mode.is_idle() and not can_cuda_graph:
             draft_model_runner.attn_backend.init_forward_metadata(forward_batch)
         return forward_batch
