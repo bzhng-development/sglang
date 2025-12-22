@@ -323,6 +323,12 @@ class Glm4MoeAttention(nn.Module):
 
 
 class Glm4MoeGate(nn.Module):
+    # Routing precision mode:
+    #   "bf16"        - All BF16 (fastest, default SGLang behavior)
+    #   "fp32_output" - BF16 compute, FP32 output (matches dsv3_router_gemm CUDA kernel)
+    #   "fp32_inputs" - FP32 inputs & compute (matches HuggingFace reference, slowest)
+    ROUTING_DTYPE_MODE = "bf16"
+
     def __init__(
         self,
         config,
@@ -337,7 +343,19 @@ class Glm4MoeGate(nn.Module):
         )
 
     def forward(self, hidden_states):
-        logits = F.linear(hidden_states, self.weight, None)
+        if Glm4MoeGate.ROUTING_DTYPE_MODE == "fp32_inputs":
+            # HuggingFace reference: cast inputs to FP32, compute in FP32
+            logits = F.linear(
+                hidden_states.type(torch.float32),
+                self.weight.type(torch.float32),
+                None,
+            )
+        elif Glm4MoeGate.ROUTING_DTYPE_MODE == "fp32_output":
+            # CUDA kernel style: BF16 compute, cast output to FP32
+            logits = F.linear(hidden_states, self.weight, None).type(torch.float32)
+        else:  # "bf16"
+            # Default: all BF16 (fastest)
+            logits = F.linear(hidden_states, self.weight, None)
         return logits
 
 
