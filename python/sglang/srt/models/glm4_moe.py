@@ -331,7 +331,6 @@ class Glm4MoeAttention(nn.Module):
 
 
 class Glm4MoeGate(nn.Module):
-    # GLM4-MOE dimensions for specialized router GEMM kernel
     _GLM4_MOE_HIDDEN_DIM = 5120
     _GLM4_MOE_NUM_EXPERTS = 160
     _MAX_TOKENS_FOR_ROUTER_GEMM = 16
@@ -371,36 +370,9 @@ class Glm4MoeGate(nn.Module):
             logits = _dsv3_router_gemm(
                 hidden_states, self.weight, out_dtype=torch.float32
             )
-            self._write_router_status(True, num_tokens, hidden_states.dtype)
         else:
             logits = F.linear(hidden_states, self.weight, None)
-            self._write_router_status(False, num_tokens, hidden_states.dtype)
         return logits
-
-    def _write_router_status(self, used_kernel: bool, num_tokens: int, dtype):
-        import json
-        import time
-
-        is_decode = num_tokens <= self._MAX_TOKENS_FOR_ROUTER_GEMM
-
-        status = {
-            "timestamp": time.time(),
-            "stage": "decode" if is_decode else "prefill",
-            "used_dsv3_router_gemm": used_kernel,
-            "num_tokens": num_tokens,
-            "hidden_states_dtype": str(dtype),
-            "weight_dtype": str(self.weight.dtype),
-            "logits_dtype": "float32" if used_kernel else str(dtype),
-            "use_fp32_router_gemm_flag": self.use_fp32_router_gemm,
-            "hidden_size": self.hidden_size,
-            "n_routed_experts": self.n_routed_experts,
-            "device_sm": _device_sm,
-            "is_cuda": _is_cuda,
-            "has_kernel": _dsv3_router_gemm is not None,
-            "max_tokens_for_kernel": self._MAX_TOKENS_FOR_ROUTER_GEMM,
-        }
-        with open("/sgl-workspace/sglang/router_gemm_log.jsonl", "a") as f:
-            f.write(json.dumps(status) + "\n")
 
 
 class Glm4MoeSparseMoeBlock(nn.Module):
