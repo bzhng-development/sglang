@@ -40,3 +40,6 @@ minimum-version = "build-system.requires"
 wheel.py-api = "cp310"
 wheel.license-files = []
 wheel.packages = ["python/sgl_kernel"]
+
+[tool.uv.extra-build-dependencies]
+sgl-kernel = ["scikit_build_core"]

@@ -32,6 +32,21 @@ Requires
 make build
 ```
 
+### Limit build resource usage (CPU / parallelism)
+
+By default, `make build` uses 50% of available CPU cores for parallel jobs and 25% for NVCC compile threads to avoid OOM on high-core machines. You can override these settings:
+
+```bash
+# Use default resource-limited settings (recommended for high-core machines)
+make build
+
+# Override parallel jobs and compile threads
+make build MAX_JOBS=4 CMAKE_BUILD_PARALLEL_LEVEL=4 CMAKE_ARGS="-DSGL_KERNEL_COMPILE_THREADS=2"
+
+# Use all cores (may cause OOM on high-core machines)
+make build MAX_JOBS=$(nproc) CMAKE_BUILD_PARALLEL_LEVEL=$(nproc) CMAKE_ARGS="-DSGL_KERNEL_COMPILE_THREADS=$(nproc)"
+```
+
 ## Contribution
 
 ### Steps to add a new kernel:
