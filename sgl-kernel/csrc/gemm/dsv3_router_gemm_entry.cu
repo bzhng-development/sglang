@@ -27,7 +27,9 @@
 
 static constexpr int DEFAULT_NUM_EXPERTS = 256;
 static constexpr int KIMI_K2_NUM_EXPERTS = 384;
+static constexpr int GLM4_MOE_NUM_EXPERTS = 160;
 static constexpr int DEFAULT_HIDDEN_DIM = 7168;
+static constexpr int GLM4_MOE_HIDDEN_DIM = 5120;
 
 template <typename T, int kNumTokens, int kNumExperts, int kHiddenDim>
 void invokeRouterGemmFloatOutput(float* output, T const* mat_a, T const* mat_b, cudaStream_t stream);
@@ -100,17 +102,21 @@ void dsv3_router_gemm(
 
   TORCH_CHECK(mat_a.size(1) == mat_b.size(1), "mat_a and mat_b must have the same hidden_dim");
   TORCH_CHECK(
-      hidden_dim == DEFAULT_HIDDEN_DIM,
+      hidden_dim == DEFAULT_HIDDEN_DIM || hidden_dim == GLM4_MOE_HIDDEN_DIM,
       "Expected hidden_dim=",
       DEFAULT_HIDDEN_DIM,
+      " or hidden_dim=",
+      GLM4_MOE_HIDDEN_DIM,
       ", but got hidden_dim=",
       hidden_dim);
   TORCH_CHECK(
-      num_experts == DEFAULT_NUM_EXPERTS || num_experts == KIMI_K2_NUM_EXPERTS,
+      num_experts == DEFAULT_NUM_EXPERTS || num_experts == KIMI_K2_NUM_EXPERTS || num_experts == GLM4_MOE_NUM_EXPERTS,
       "Expected num_experts=",
       DEFAULT_NUM_EXPERTS,
       " or num_experts=",
       KIMI_K2_NUM_EXPERTS,
+      " or num_experts=",
+      GLM4_MOE_NUM_EXPERTS,
       ", but got num_experts=",
       num_experts);
   TORCH_CHECK(
@@ -126,36 +132,58 @@ void dsv3_router_gemm(
   const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
 
   if (output.dtype() == torch::kFloat32) {
-    if (num_experts == DEFAULT_NUM_EXPERTS) {
-      LoopUnroller<1, 16, DEFAULT_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_float_output(
-          num_tokens,
-          reinterpret_cast<float*>(output.mutable_data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
-          stream);
-    } else if (num_experts == KIMI_K2_NUM_EXPERTS) {
-      LoopUnroller<1, 16, KIMI_K2_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_float_output(
-          num_tokens,
-          reinterpret_cast<float*>(output.mutable_data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
-          stream);
+    if (hidden_dim == DEFAULT_HIDDEN_DIM) {
+      if (num_experts == DEFAULT_NUM_EXPERTS) {
+        LoopUnroller<1, 16, DEFAULT_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_float_output(
+            num_tokens,
+            reinterpret_cast<float*>(output.mutable_data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
+            stream);
+      } else if (num_experts == KIMI_K2_NUM_EXPERTS) {
+        LoopUnroller<1, 16, KIMI_K2_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_float_output(
+            num_tokens,
+            reinterpret_cast<float*>(output.mutable_data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
+            stream);
+      }
+    } else if (hidden_dim == GLM4_MOE_HIDDEN_DIM) {
+      if (num_experts == GLM4_MOE_NUM_EXPERTS) {
+        LoopUnroller<1, 16, GLM4_MOE_NUM_EXPERTS, GLM4_MOE_HIDDEN_DIM>::unroll_float_output(
+            num_tokens,
+            reinterpret_cast<float*>(output.mutable_data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
+            stream);
+      }
     }
   } else if (output.dtype() == torch::kBFloat16) {
-    if (num_experts == DEFAULT_NUM_EXPERTS) {
-      LoopUnroller<1, 16, DEFAULT_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_bf16_output(
-          num_tokens,
-          reinterpret_cast<__nv_bfloat16*>(output.mutable_data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
-          stream);
-    } else if (num_experts == KIMI_K2_NUM_EXPERTS) {
-      LoopUnroller<1, 16, KIMI_K2_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_bf16_output(
-          num_tokens,
-          reinterpret_cast<__nv_bfloat16*>(output.mutable_data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
-          reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
-          stream);
+    if (hidden_dim == DEFAULT_HIDDEN_DIM) {
+      if (num_experts == DEFAULT_NUM_EXPERTS) {
+        LoopUnroller<1, 16, DEFAULT_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_bf16_output(
+            num_tokens,
+            reinterpret_cast<__nv_bfloat16*>(output.mutable_data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
+            stream);
+      } else if (num_experts == KIMI_K2_NUM_EXPERTS) {
+        LoopUnroller<1, 16, KIMI_K2_NUM_EXPERTS, DEFAULT_HIDDEN_DIM>::unroll_bf16_output(
+            num_tokens,
+            reinterpret_cast<__nv_bfloat16*>(output.mutable_data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
+            stream);
+      }
+    } else if (hidden_dim == GLM4_MOE_HIDDEN_DIM) {
+      if (num_experts == GLM4_MOE_NUM_EXPERTS) {
+        LoopUnroller<1, 16, GLM4_MOE_NUM_EXPERTS, GLM4_MOE_HIDDEN_DIM>::unroll_bf16_output(
+            num_tokens,
+            reinterpret_cast<__nv_bfloat16*>(output.mutable_data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_a.data_ptr()),
+            reinterpret_cast<__nv_bfloat16 const*>(mat_b.data_ptr()),
+            stream);
+      }
     }
   }
 }
