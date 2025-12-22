@@ -1196,7 +1196,7 @@ class AudioEmbedding(nn.Module):
             input_embeds: audio features (B, T, D)  B: num audios in a sequence
         """
         if self.freeze_audio_processor:
-            with torch.no_grad():
+            with torch.inference_mode():
                 audio_features, masks = self.encoder(input_embeds, audio_attention_mask)
         else:
             audio_features, masks = self.encoder(input_embeds, audio_attention_mask)

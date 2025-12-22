@@ -344,7 +344,7 @@ class Gemma3ForConditionalGeneration(PreTrainedModel):
         else:
             return torch.tensor([], device=self.language_model.device)
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def forward(
         self,
         input_ids: torch.LongTensor,

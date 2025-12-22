@@ -101,7 +101,7 @@ class DecodingStage(PipelineStage):
                 latents += shift_factor
         return latents
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def decode(self, latents: torch.Tensor, server_args: ServerArgs) -> torch.Tensor:
         """
         Decode latent representations into pixel space using VAE.
@@ -153,7 +153,7 @@ class DecodingStage(PipelineStage):
         image = (image / 2 + 0.5).clamp(0, 1)
         return image
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def forward(
         self,
         batch: Req,

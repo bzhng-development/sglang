@@ -351,7 +351,7 @@ def prepare_synthetic_inputs_for_latency_test(
     return reqs
 
 
-@torch.no_grad
+@torch.inference_mode()
 def extend(reqs, model_runner):
     # Create dummy tree_cache for benchmarks (no prefix caching, just allocation)
     dummy_tree_cache = SimpleNamespace(
@@ -378,7 +378,7 @@ def extend(reqs, model_runner):
     return next_token_ids, logits_output.next_token_logits, batch
 
 
-@torch.no_grad
+@torch.inference_mode()
 def decode(input_token_ids, batch, model_runner):
     batch.output_ids = input_token_ids
     batch.prepare_for_decode()

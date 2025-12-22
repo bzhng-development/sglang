@@ -1250,7 +1250,7 @@ class DeepseekOCRForCausalLM(nn.Module):
 
         images_in_this_batch = []
 
-        with torch.no_grad():
+        with torch.inference_mode():
             for jdx in range(images_spatial_crop.size(0)):
                 patches = images_crop[jdx][0].to(torch.bfloat16)
                 image_ori = pixel_values[jdx]

@@ -588,11 +588,11 @@ class STEP1TextEncoder(torch.nn.Module):
         text_encoder = Step1Model.from_pretrained(model_dir)
         self.text_encoder = text_encoder.eval().to(torch.bfloat16)
 
-    @torch.no_grad
+    @torch.inference_mode()
     def forward(self, prompts, with_mask=True, max_length=None):
         self.device = next(self.text_encoder.parameters()).device
 
-        with torch.no_grad(), torch.amp.autocast(
+        with torch.inference_mode(), torch.amp.autocast(
             current_platform.device_type, dtype=torch.bfloat16
         ):
             if type(prompts) is str:

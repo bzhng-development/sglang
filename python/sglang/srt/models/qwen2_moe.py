@@ -697,7 +697,7 @@ class Qwen2MoeForCausalLM(nn.Module):
         # For EAGLE3 support
         self.capture_aux_hidden_states = False
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def forward(
         self,
         input_ids: torch.Tensor,
@@ -723,7 +723,7 @@ class Qwen2MoeForCausalLM(nn.Module):
         else:
             return hidden_states
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def forward_split_prefill(
         self,
         input_ids: torch.Tensor,

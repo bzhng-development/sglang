@@ -825,7 +825,7 @@ class DecodeTransferQueue:
 
 class SchedulerDisaggregationDecodeMixin:
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def event_loop_normal_disagg_decode(self: Scheduler):
         """A normal scheduler loop for decode worker in disaggregation mode."""
 
@@ -851,7 +851,7 @@ class SchedulerDisaggregationDecodeMixin:
             # Update last_batch
             self.last_batch = batch
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def event_loop_overlap_disagg_decode(self: Scheduler):
         self.result_queue = deque()
         self.last_batch: Optional[ScheduleBatch] = None
