@@ -460,7 +460,7 @@ class QuarkW8A8FP8MoEMethod(QuarkMoEMethod):
             and self.is_weight_per_channel
             and self.moe_runner_config.apply_router_weight_on_input
         ):
-            with torch.no_grad():
+            with torch.inference_mode():
                 # Pre-shuffle weights
                 layer.w13_weight = torch.nn.Parameter(
                     shuffle_weight(layer.w13_weight.data, (16, 16)),

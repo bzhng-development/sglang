@@ -761,7 +761,7 @@ class CompressedTensorsW8A8Fp8MoEMethod(CompressedTensorsMoEMethod):
             )
 
         if self.weight_quant.strategy == QuantizationStrategy.CHANNEL and _use_aiter:
-            with torch.no_grad():
+            with torch.inference_mode():
                 # Pre-shuffle weights
                 layer.w13_weight = torch.nn.Parameter(
                     shuffle_weight(layer.w13_weight.data, (16, 16)),

@@ -26,7 +26,7 @@ class HunyuanClip(nn.Module):
             os.path.join(model_dir, "clip_text_encoder")
         )
 
-    @torch.no_grad
+    @torch.inference_mode()
     def forward(self, prompts, with_mask=True):
         self.device = next(self.text_encoder.parameters()).device
         text_inputs = self.tokenizer(

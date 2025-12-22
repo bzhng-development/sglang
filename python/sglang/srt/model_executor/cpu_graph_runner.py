@@ -68,7 +68,7 @@ def patch_model(
             # even with ENABLE_INTRA_NODE_COMM=1.
             # tp_group.ca_comm = None
             yield torch.compile(
-                torch.no_grad()(model.forward),
+                torch.inference_mode()(model.forward),
                 dynamic=False,
             )
         else:
@@ -548,7 +548,7 @@ class CPUGraphRunner:
             )
             return logits_output_or_pp_proxy_tensors
 
-        with torch.no_grad():
+        with torch.inference_mode():
             for _ in range(2):
                 self.model_runner.tp_group.barrier()
                 out = run_once()

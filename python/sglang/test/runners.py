@@ -197,7 +197,7 @@ class HFRunner:
             return_tensors="pt",
         )
         inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
-        with torch.no_grad():
+        with torch.inference_mode():
             embeddings = self._forward_gme_qwen2_vl(**inputs)
         return embeddings.tolist()
 

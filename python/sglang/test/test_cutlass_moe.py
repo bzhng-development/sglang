@@ -218,7 +218,7 @@ def run_test(tp_size, batch_size, model_config, check=False):
     # --- Correctness Check ---
     if check:
         print("Running correctness check...")
-        with torch.no_grad():
+        with torch.inference_mode():
             # Run CUTLASS version (requires transposed weights)
             y_cutlass = cutlass_fused_experts_fp8(
                 x,

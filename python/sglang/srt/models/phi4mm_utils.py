@@ -1443,7 +1443,7 @@ class NemoConvSubsampling(torch.nn.Module):
     def reset_parameters(self):
         # initialize weights
         if self._subsampling == "dw_striding":
-            with torch.no_grad():
+            with torch.inference_mode():
                 # init conv
                 scale = 1.0 / self._kernel_size
                 dw_max = (self._kernel_size**2) ** -0.5

@@ -47,7 +47,7 @@ class TestDynamicGradMode(CustomTestCase):
 
         @DynamicGradMode()
         def create_tensor_w():
-            with torch.no_grad():
+            with torch.inference_mode():
                 return torch.empty(0)
 
         W = create_tensor_w()

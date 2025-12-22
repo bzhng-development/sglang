@@ -62,7 +62,7 @@ def patch_model_npu(
     if enable_compile:
         backend = get_compiler_backend("npugraph_ex")
         yield torch.compile(
-            torch.no_grad()(model.forward),
+            torch.inference_mode()(model.forward),
             fullgraph=True,
             dynamic=False,
             backend=backend,

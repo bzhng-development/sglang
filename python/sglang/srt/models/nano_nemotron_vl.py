@@ -161,7 +161,7 @@ class NemotronH_Nano_VL_V2(nn.Module):
         video_features = self.extract_feature(pixel_values)
         return video_features
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def forward(
         self,
         input_ids: torch.Tensor,
@@ -206,7 +206,7 @@ class NemotronH_Nano_VL_V2(nn.Module):
                 # Load vision-language adapter weights directly
                 trimmed_name = ".".join(name.split(".")[1:])
                 param = adapter_dict[trimmed_name]
-                with torch.no_grad():
+                with torch.inference_mode():
                     default_weight_loader(param, w)
             elif is_vision_weights(name):
                 # Convert: vision_model.radio_model.* → radio_model.*

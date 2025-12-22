@@ -150,25 +150,25 @@ class PixtralForConditionalGeneration(nn.Module):
                     if "fake_quantizer.qscale_act" in trimmed_name:
                         continue
                     param = vision_encoder_dict[trimmed_name]
-                    with torch.no_grad():
+                    with torch.inference_mode():
                         default_weight_loader(param, w)
                 elif is_patch_merger((name, w)):
                     # Load vision patch merger weights directly
                     trimmed_name = ".".join(name.split(".")[1:])
                     param = patch_merger_dict[trimmed_name]
-                    with torch.no_grad():
+                    with torch.inference_mode():
                         default_weight_loader(param, w)
                 elif is_pre_mm_projector_norm((name, w)):
                     # Load vision pre_mm_projector_norm weights directly
                     trimmed_name = ".".join(name.split(".")[1:])
                     param = pre_mm_projector_norm_dict[trimmed_name]
-                    with torch.no_grad():
+                    with torch.inference_mode():
                         default_weight_loader(param, w)
                 elif is_vision_lang_adapter_weights((name, w)):
                     # Load vision-language adapter weights directly
                     trimmed_name = ".".join(name.split(".")[1:])
                     param = vision_lang_adapter_dict[trimmed_name]
-                    with torch.no_grad():
+                    with torch.inference_mode():
                         default_weight_loader(param, w)
                 else:
                     # LLM weights: yield them to be loaded
