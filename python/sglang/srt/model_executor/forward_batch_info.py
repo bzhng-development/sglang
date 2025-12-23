@@ -703,20 +703,23 @@ class ForwardBatch:
                     batch.extend_prefix_lens[batch_idx],
                 )
                 if mm_input is None:
-                    # text only
-                    mrope_positions = torch.tensor(
-                        [
-                            [
-                                pos
-                                for pos in range(
-                                    extend_prefix_len,
-                                    extend_prefix_len + extend_seq_len,
-                                )
-                            ]
-                        ]
-                        * 3
+                    # text only - create directly on device to avoid H2D transfer
+                    mrope_positions = (
+                        torch.arange(
+                            extend_prefix_len,
+                            extend_prefix_len + extend_seq_len,
+                            dtype=torch.int64,
+                            device=model_runner.device,
+                        )
+                        .unsqueeze(0)
+                        .repeat(3, 1)
                     )
                 else:
+                    # ensure mrope_positions is on device before slicing
+                    if mm_input.mrope_positions.device != model_runner.device:
+                        mm_input.mrope_positions = mm_input.mrope_positions.to(
+                            model_runner.device, non_blocking=True
+                        )
                     mrope_positions = mm_input.mrope_positions[
                         :,
                         extend_prefix_len : extend_prefix_len + extend_seq_len,
@@ -727,10 +730,10 @@ class ForwardBatch:
                         )
                 mrope_positions_list[batch_idx] = mrope_positions
 
-        self.mrope_positions = torch.cat(
-            [pos.to(device=model_runner.device) for pos in mrope_positions_list],
-            dim=1,
-        ).to(dtype=torch.int64, device=model_runner.device)
+        # All tensors are already on device, just cat and ensure dtype
+        self.mrope_positions = torch.cat(mrope_positions_list, dim=1).to(
+            dtype=torch.int64
+        )
 
     def get_max_chunk_capacity(self):
         # Maximum number of tokens in each chunk
