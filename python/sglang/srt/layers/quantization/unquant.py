@@ -27,7 +27,6 @@ from sglang.srt.utils import (
     is_hip,
     next_power_of_2,
     set_weight_attrs,
-    use_intel_amx_backend,
 )
 
 if TYPE_CHECKING:
@@ -126,7 +125,7 @@ class UnquantizedLinearMethod(LinearMethodBase):
         x: torch.Tensor,
         bias: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
-        if use_intel_amx_backend(layer):
+        if getattr(layer, "use_intel_amx_backend", False):
             x_shapes = x.shape
             if len(x_shapes) == 3:
                 x = x.view(-1, x.shape[-1])
@@ -420,7 +419,7 @@ class UnquantizedFusedMoEMethod(FusedMoEMethodBase, CustomOp):
             moe_runner_config.activation == "silu"
         ), f"activation = {moe_runner_config.activation} is not supported."
 
-        if use_intel_amx_backend(layer):
+        if getattr(layer, "use_intel_amx_backend", False):
             from sglang.srt.layers.moe.topk import apply_topk_weights_cpu
 
             topk_weights, topk_ids, _ = topk_output

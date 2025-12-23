@@ -55,7 +55,7 @@ from sglang.srt.model_executor.forward_batch_info import (
     ForwardMode,
 )
 from sglang.srt.server_args import get_global_server_args
-from sglang.srt.utils import is_npu, use_intel_amx_backend
+from sglang.srt.utils import is_npu
 
 logger = logging.getLogger(__name__)
 
@@ -868,7 +868,7 @@ class LogitsProcessor(nn.Module):
                 logits = torch.matmul(
                     hidden_states.to(torch.float32), lm_head.weight.to(torch.float32).T
                 )
-            elif use_intel_amx_backend(lm_head):
+            elif getattr(lm_head, "use_intel_amx_backend", False):
                 logits = torch.ops.sgl_kernel.weight_packed_linear(
                     hidden_states.to(lm_head.weight.dtype),
                     lm_head.weight,

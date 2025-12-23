@@ -77,7 +77,6 @@ from sglang.srt.utils import (
     is_cpu,
     is_cuda,
     make_layers,
-    use_intel_amx_backend,
 )
 
 logger = logging.getLogger(__name__)
@@ -230,7 +229,7 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
         if self.shared_expert is not None:
             shared_output = self.shared_expert(hidden_states)
             if self.shared_expert_gate is not None:
-                if use_intel_amx_backend(self.shared_expert_gate):
+                if getattr(self.shared_expert_gate, "use_intel_amx_backend", False):
                     shared_output = torch.ops.sgl_kernel.fused_linear_sigmoid_mul(
                         hidden_states,
                         self.shared_expert_gate.weight,

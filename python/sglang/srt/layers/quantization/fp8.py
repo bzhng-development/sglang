@@ -72,7 +72,6 @@ from sglang.srt.utils import (
     next_power_of_2,
     print_warning_once,
     set_weight_attrs,
-    use_intel_amx_backend,
 )
 
 if TYPE_CHECKING:
@@ -500,7 +499,7 @@ class Fp8LinearMethod(LinearMethodBase):
             )
 
         if self.block_quant:
-            if use_intel_amx_backend(layer):
+            if getattr(layer, "use_intel_amx_backend", False):
                 return torch.ops.sgl_kernel.fp8_scaled_mm_cpu(
                     x,
                     layer.weight,
@@ -1130,7 +1129,7 @@ class Fp8MoEMethod(FusedMoEMethodBase):
         x = dispatch_output.hidden_states
         moe_runner_config = self.moe_runner_config
 
-        if use_intel_amx_backend(layer):
+        if getattr(layer, "use_intel_amx_backend", False):
             from sglang.srt.layers.moe.topk import apply_topk_weights_cpu
 
             topk_weights, topk_ids, _ = dispatch_output.topk_output
@@ -1325,7 +1324,6 @@ class Fp8MoEMethod(FusedMoEMethodBase):
             trtllm_fp8_block_scale_moe,
             trtllm_fp8_per_tensor_scale_moe,
         )
-
         from sglang.srt.layers.moe.topk import TopKOutputChecker
         from sglang.srt.layers.moe.utils import RoutingMethodType
 

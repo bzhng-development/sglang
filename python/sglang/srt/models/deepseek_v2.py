@@ -158,7 +158,6 @@ from sglang.srt.utils import (
     is_nvidia_cublas_cu12_version_ge_12_9,
     log_info_on_rank0,
     make_layers,
-    use_intel_amx_backend,
 )
 
 _is_hip = is_hip()
@@ -295,7 +294,9 @@ def _dispatch_mla_subtype(attn, forward_batch):
         else:
             return AttnForwardMethod.MLA
     else:
-        if hasattr(attn, "fused_qkv_a_proj_with_mqa") and use_intel_amx_backend(attn):
+        if hasattr(attn, "fused_qkv_a_proj_with_mqa") and getattr(
+            attn, "use_intel_amx_backend", False
+        ):
             return AttnForwardMethod.MLA_FUSED_ROPE_CPU
         else:
             return AttnForwardMethod.MLA
@@ -563,7 +564,7 @@ class MoEGate(nn.Module):
         gemm_output_zero_allocator: BumpAllocator = None,
         forward_batch: ForwardBatch = None,
     ):
-        if use_intel_amx_backend(self):
+        if getattr(self, "use_intel_amx_backend", False):
             return torch.ops.sgl_kernel.weight_packed_linear(
                 hidden_states,
                 self.weight,
@@ -858,8 +859,8 @@ class DeepseekV2MoE(nn.Module):
         use_reduce_scatter: bool = False,
         gemm_output_zero_allocator: BumpAllocator = None,
     ) -> torch.Tensor:
-        if hasattr(self, "shared_experts") and use_intel_amx_backend(
-            self.shared_experts.gate_up_proj
+        if hasattr(self, "shared_experts") and getattr(
+            self.shared_experts.gate_up_proj, "use_intel_amx_backend", False
         ):
             return self.forward_cpu(hidden_states, should_allreduce_fusion)
 
@@ -941,9 +942,9 @@ class DeepseekV2MoE(nn.Module):
             hidden_states=hidden_states, topk_output=topk_output
         )
 
-        assert use_intel_amx_backend(
-            self.shared_experts.gate_up_proj
-        ) == use_intel_amx_backend(self.shared_experts.down_proj)
+        assert getattr(
+            self.shared_experts.gate_up_proj, "use_intel_amx_backend", False
+        ) == getattr(self.shared_experts.down_proj, "use_intel_amx_backend", False)
         # [Note] inplace should be False in fused_experts.
         # If inplace is True in fused_experts (self.experts), hidden_states will be changed after fused_experts
         # While hidden_states is still needed in shared_expert.
@@ -2345,8 +2346,8 @@ class DeepseekV2AttentionMLA(nn.Module):
         forward_batch: ForwardBatch,
         zero_allocator: BumpAllocator,
     ):
-        assert self.q_lora_rank is not None and use_intel_amx_backend(
-            self
+        assert self.q_lora_rank is not None and getattr(
+            self, "use_intel_amx_backend", False
         ), "forward_absorb_fused_mla_rope_cpu_prepare requires q_lora_rank is not None and use_intel_amx_backend"
 
         q_input, k_input, v_input = (
@@ -2465,8 +2466,8 @@ class DeepseekV2AttentionMLA(nn.Module):
     def forward_absorb_fused_mla_rope_cpu_core(
         self, q_input, k_input, v_input, forward_batch, zero_allocator
     ):
-        assert self.q_lora_rank is not None and use_intel_amx_backend(
-            self
+        assert self.q_lora_rank is not None and getattr(
+            self, "use_intel_amx_backend", False
         ), "forward_absorb_fused_mla_rope_cpu_core requires q_lora_rank is not None and use_intel_amx_backend"
 
         attn_output = self.attn_mqa(q_input, k_input, v_input, forward_batch)
