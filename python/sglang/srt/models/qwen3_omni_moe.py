@@ -31,6 +31,7 @@ from sglang.srt.configs.qwen3_omni import (
 )
 from sglang.srt.configs.qwen3_vl import Qwen3VLMoeConfig
 from sglang.srt.layers.attention.vision import VisionAttention
+from sglang.srt.layers.layernorm import LayerNorm as SGLLayerNorm
 from sglang.srt.layers.linear import ColumnParallelLinear, RowParallelLinear
 from sglang.srt.layers.moe.fused_moe_triton.layer import FusedMoE
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
@@ -65,13 +66,17 @@ class Qwen3OmniMoeAudioEncoderLayer(nn.Module):
             quant_config=quant_config,
             prefix=add_prefix("attn", prefix),
         )
-        self.self_attn_layer_norm = nn.LayerNorm(self.embed_dim)
+        self.self_attn_layer_norm = SGLLayerNorm(
+            self.embed_dim, eps=1e-5, dtype=torch.float32
+        )
         self.dropout = config.dropout
         self.activation_fn = ACT2FN[config.activation_function]
         self.activation_dropout = config.activation_dropout
         self.fc1 = nn.Linear(self.embed_dim, config.encoder_ffn_dim)
         self.fc2 = nn.Linear(config.encoder_ffn_dim, self.embed_dim)
-        self.final_layer_norm = nn.LayerNorm(self.embed_dim)
+        self.final_layer_norm = SGLLayerNorm(
+            self.embed_dim, eps=1e-5, dtype=torch.float32
+        )
 
     def forward(
         self,
@@ -169,7 +174,7 @@ class Qwen3OmniMoeAudioEncoder(PreTrainedModel):
                 for _ in range(config.encoder_layers)
             ]
         )
-        self.ln_post = nn.LayerNorm(config.d_model)
+        self.ln_post = SGLLayerNorm(config.d_model, eps=1e-5, dtype=torch.float32)
         self.gradient_checkpointing = False
         self.conv2d1 = nn.Conv2d(1, config.downsample_hidden_size, 3, 2, padding=1)
         self.conv2d2 = nn.Conv2d(
