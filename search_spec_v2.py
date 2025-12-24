@@ -895,7 +895,6 @@ if __name__ == "__main__":
         print("=" * 60)
         results = search_github(args.search)
         save_jsonl(results, args.input)
-        did_action = True
         if not (
             args.process_arg
             or args.process_model
@@ -908,6 +907,50 @@ if __name__ == "__main__":
             print(
                 f"[e2e] No processing flag provided; using --process-model {args.process_model}"
             )
+        # Run the processing step directly for e2e
+        if args.process_arg:
+            arg_info = _build_arg_info(args.process_arg)
+            process_entries_for_arg(
+                args.input,
+                arg_info,
+                args.output_prefix,
+                concurrency=args.concurrency,
+            )
+        elif args.process_model:
+            process_entries_for_model(
+                args.input,
+                args.process_model,
+                args.output_prefix,
+                concurrency=args.concurrency,
+            )
+        elif args.test_args:
+            half = len(LIST_OF_ARGS_TO_TEST) // 2
+            print(f"Testing first {half} arguments...")
+            for arg_str in LIST_OF_ARGS_TO_TEST[:half]:
+                arg_info = parse_arg_info(arg_str)
+                print(f"\n{'=' * 60}")
+                print(f"Processing: {arg_info['arg_name']}")
+                print(f"{'=' * 60}")
+                process_entries_for_arg(
+                    args.input,
+                    arg_info,
+                    args.output_prefix,
+                    concurrency=args.concurrency,
+                )
+        elif args.all_args:
+            print(f"Processing all {len(LIST_OF_ARGS_TO_TEST)} arguments...")
+            for arg_str in LIST_OF_ARGS_TO_TEST:
+                arg_info = parse_arg_info(arg_str)
+                print(f"\n{'=' * 60}")
+                print(f"Processing: {arg_info['arg_name']}")
+                print(f"{'=' * 60}")
+                process_entries_for_arg(
+                    args.input,
+                    arg_info,
+                    args.output_prefix,
+                    concurrency=args.concurrency,
+                )
+        did_action = True
 
     if args.search and not args.e2e:
         print("=" * 60)
