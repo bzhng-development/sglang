@@ -1228,20 +1228,27 @@ class OpenAIServingResponses(OpenAIServingChat):
         # Convert final_response to the format expected by ResponseCompletedEvent
         response_dict = final_response.model_dump()
 
-        # Convert UsageInfo to ResponseUsage format
+        # Convert legacy UsageInfo payloads to Responses API usage schema
         if response_dict.get("usage"):
             usage_info = response_dict["usage"]
-            response_dict["usage"] = {
-                "input_tokens": usage_info.get("prompt_tokens", 0),
-                "input_tokens_details": {
-                    "cached_tokens": usage_info.get("cached_tokens", 0)
-                },
-                "output_tokens": usage_info.get("completion_tokens", 0),
-                "output_tokens_details": {
-                    "reasoning_tokens": usage_info.get("reasoning_tokens", 0)
-                },
-                "total_tokens": usage_info.get("total_tokens", 0),
-            }
+            if "input_tokens" not in usage_info and "prompt_tokens" in usage_info:
+                logger.warning(
+                    "Responses API usage.* legacy fields (prompt_tokens, completion_tokens, "
+                    "prompt_tokens_details, reasoning_tokens) are deprecated; use input_tokens, "
+                    "output_tokens, input_tokens_details, output_tokens_details instead."
+                )
+                prompt_details = usage_info.get("prompt_tokens_details") or {}
+                response_dict["usage"] = {
+                    "input_tokens": usage_info.get("prompt_tokens", 0),
+                    "input_tokens_details": {
+                        "cached_tokens": prompt_details.get("cached_tokens", 0)
+                    },
+                    "output_tokens": usage_info.get("completion_tokens", 0),
+                    "output_tokens_details": {
+                        "reasoning_tokens": usage_info.get("reasoning_tokens", 0)
+                    },
+                    "total_tokens": usage_info.get("total_tokens", 0),
+                }
 
         yield _send_event(
             openai_responses_types.ResponseCompletedEvent(

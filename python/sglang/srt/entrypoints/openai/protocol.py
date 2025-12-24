@@ -30,6 +30,7 @@ from openai.types.responses import (
 from openai.types.responses.response import ToolChoice
 from openai.types.responses.tool import Tool
 from pydantic import (
+    AliasChoices,
     BaseModel,
     Field,
     field_validator,
@@ -46,6 +47,7 @@ except:
 from sglang.utils import convert_json_schema_to_str
 
 logger = logging.getLogger(__name__)
+_LEGACY_RESPONSES_USAGE_WARNED = False
 
 DEFAULT_MODEL_NAME = "default"
 
@@ -109,6 +111,106 @@ class UsageInfo(BaseModel):
     # only used to return cached tokens when --enable-cache-report is set
     prompt_tokens_details: Optional[Dict[str, int]] = None
     reasoning_tokens: Optional[int] = 0
+
+
+class ResponseUsageInfo(BaseModel):
+    input_tokens: int = Field(
+        default=0,
+        validation_alias=AliasChoices("input_tokens", "prompt_tokens"),
+    )
+    output_tokens: int = Field(
+        default=0,
+        validation_alias=AliasChoices("output_tokens", "completion_tokens"),
+    )
+    total_tokens: int = 0
+    input_tokens_details: Optional[Dict[str, int]] = Field(
+        default=None,
+        validation_alias=AliasChoices("input_tokens_details", "prompt_tokens_details"),
+    )
+    output_tokens_details: Optional[Dict[str, int]] = None
+
+    @staticmethod
+    def _warn_legacy_usage_fields() -> None:
+        global _LEGACY_RESPONSES_USAGE_WARNED
+        if _LEGACY_RESPONSES_USAGE_WARNED:
+            return
+        _LEGACY_RESPONSES_USAGE_WARNED = True
+        logger.warning(
+            "Responses API usage.* legacy fields (prompt_tokens, completion_tokens, "
+            "prompt_tokens_details, reasoning_tokens) are deprecated; use input_tokens, "
+            "output_tokens, input_tokens_details, output_tokens_details instead."
+        )
+
+    @classmethod
+    def from_usage_info(cls, usage: UsageInfo) -> "ResponseUsageInfo":
+        cached_tokens = None
+        if usage.prompt_tokens_details is not None:
+            if isinstance(usage.prompt_tokens_details, PromptTokenUsageInfo):
+                cached_tokens = usage.prompt_tokens_details.cached_tokens
+            else:
+                cached_tokens = usage.prompt_tokens_details.get("cached_tokens", 0)
+
+        input_details = (
+            {"cached_tokens": cached_tokens} if cached_tokens is not None else None
+        )
+        output_details = (
+            {"reasoning_tokens": usage.reasoning_tokens}
+            if usage.reasoning_tokens is not None
+            else None
+        )
+        return cls(
+            input_tokens=usage.prompt_tokens,
+            output_tokens=usage.completion_tokens or 0,
+            total_tokens=usage.total_tokens,
+            input_tokens_details=input_details,
+            output_tokens_details=output_details,
+        )
+
+    def to_usage_info(self) -> UsageInfo:
+        reasoning_tokens = None
+        if self.output_tokens_details is not None:
+            reasoning_tokens = self.output_tokens_details.get("reasoning_tokens", 0)
+
+        return UsageInfo(
+            prompt_tokens=self.input_tokens,
+            completion_tokens=self.output_tokens,
+            total_tokens=self.total_tokens,
+            prompt_tokens_details=self.input_tokens_details,
+            reasoning_tokens=reasoning_tokens,
+        )
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce_legacy_fields(cls, data: Any) -> Any:
+        if isinstance(data, UsageInfo):
+            return cls.from_usage_info(data).model_dump()
+        if not isinstance(data, dict):
+            return data
+
+        legacy_keys = {
+            "prompt_tokens",
+            "completion_tokens",
+            "prompt_tokens_details",
+            "reasoning_tokens",
+        }
+        if legacy_keys.intersection(data.keys()):
+            cls._warn_legacy_usage_fields()
+            data = dict(data)
+            if "input_tokens" not in data and "prompt_tokens" in data:
+                data["input_tokens"] = data.get("prompt_tokens", 0)
+            if "output_tokens" not in data and "completion_tokens" in data:
+                data["output_tokens"] = data.get("completion_tokens", 0)
+            if "input_tokens_details" not in data and "prompt_tokens_details" in data:
+                data["input_tokens_details"] = data.get("prompt_tokens_details")
+            if "output_tokens_details" not in data and "reasoning_tokens" in data:
+                data["output_tokens_details"] = {
+                    "reasoning_tokens": data.get("reasoning_tokens", 0)
+                }
+            if "total_tokens" not in data:
+                data["total_tokens"] = data.get("input_tokens", 0) + data.get(
+                    "output_tokens", 0
+                )
+        return data
 
 
 class StreamOptions(BaseModel):
@@ -351,7 +453,7 @@ class CompletionStreamResponse(BaseModel):
     created: int = Field(default_factory=lambda: int(time.time()))
     model: str
     choices: List[CompletionResponseStreamChoice]
-    usage: Optional[UsageInfo] = None
+    usage: Optional[ResponseUsageInfo] = None
 
 
 class ChatCompletionMessageContentTextPart(BaseModel):
@@ -1253,7 +1355,7 @@ class ResponsesResponse(BaseModel):
             model=model_name,
             output=output,
             status=status,
-            usage=usage,
+            usage=ResponseUsageInfo.from_usage_info(usage) if usage else None,
             parallel_tool_calls=request.parallel_tool_calls or True,
             tool_choice=request.tool_choice,
             tools=request.tools,
