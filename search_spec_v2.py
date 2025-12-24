@@ -8,15 +8,27 @@ import asyncio
 import csv
 import json
 import os
+import re
 import traceback
 from datetime import datetime
+
+try:
+    from dotenv import load_dotenv
+except Exception:
+    load_dotenv = None
 
 from github import Auth, Github
 from openai import AsyncOpenAI
 from tqdm import tqdm
 
+# Load .env if available
+if load_dotenv is not None:
+    load_dotenv()
+
 # GitHub token
 GH_TOKEN = os.getenv("GITHUB_TOKEN")
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 # Repo
 REPO = "sgl-project/sglang"
@@ -228,12 +240,72 @@ def search_github(query):
     return all_results
 
 
+def collect_search_results(queries):
+    """Search multiple queries and deduplicate results by URL."""
+    dedup = {}
+    for q in queries:
+        print("=" * 60)
+        print(f"Searching GitHub for: {q}")
+        print("=" * 60)
+        results = search_github(q)
+        for item in results:
+            dedup[item["html_url"]] = item
+    return list(dedup.values())
+
+
 def save_jsonl(results, filename):
     """Save results to JSONL format."""
     with open(filename, "w") as f:
         for result in results:
             f.write(json.dumps(result) + "\n")
     print(f"\nSaved {len(results)} results to {filename}")
+
+
+def _slugify(text):
+    return re.sub(r"[^A-Za-z0-9._-]+", "_", text).strip("_") or "query"
+
+
+def _build_arg_info(arg_name):
+    arg_info = None
+    for arg_str in LIST_OF_ARGS_TO_TEST:
+        info = parse_arg_info(arg_str)
+        if info["arg_name"] == arg_name or info["arg_name"].lstrip(
+            "-"
+        ) == arg_name.lstrip("-"):
+            arg_info = info
+            break
+    if arg_info is None:
+        arg_info = {
+            "arg_name": arg_name if arg_name.startswith("-") else f"--{arg_name}",
+            "description": "Unknown argument",
+            "default": "Unknown",
+            "type_info": "Unknown",
+        }
+    return arg_info
+
+
+def run_query_list(queries, query_mode, output_prefix, concurrency):
+    """For each query, search GitHub and run the LLM extraction pipeline."""
+    for term in queries:
+        mode = query_mode
+        print("=" * 60)
+        print(f"Searching GitHub for: {term}")
+        print("=" * 60)
+        results = search_github(term)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        search_output = f"{output_prefix}_search_{_slugify(term)}_{timestamp}.jsonl"
+        save_jsonl(results, search_output)
+
+        if mode == "arg":
+            arg_info = _build_arg_info(term)
+            process_entries_for_arg(
+                search_output, arg_info, output_prefix, concurrency=concurrency
+            )
+        else:
+            process_entries_for_model(
+                search_output, term, output_prefix, concurrency=concurrency
+            )
 
 
 def format_for_llm(result):
@@ -422,7 +494,7 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
     async def _run():
         client = AsyncOpenAI(
             base_url="https://openrouter.ai/api/v1",
-            api_key=os.getenv("OPENROUTER_API_KEY"),
+            api_key=OPENROUTER_API_KEY,
         )
 
         results = []
@@ -553,8 +625,7 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
 
     async def _run():
         client = AsyncOpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key="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",
+            base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY
         )
 
         results = []
@@ -698,6 +769,16 @@ if __name__ == "__main__":
         help="Process all args in LIST_OF_ARGS_TO_TEST",
     )
     parser.add_argument(
+        "--all-nvfp4",
+        action="store_true",
+        help="Process all models in NVFP4_MODELS",
+    )
+    parser.add_argument(
+        "--all-fp8",
+        action="store_true",
+        help="Process all models in FP8_MODELS",
+    )
+    parser.add_argument(
         "--input", type=str, default=OUTPUT_FILE, help="Input JSONL file"
     )
     parser.add_argument(
@@ -717,6 +798,22 @@ if __name__ == "__main__":
         action="store_true",
         help="Run search and then process results in one run (requires --search)",
     )
+    parser.add_argument(
+        "--query-list",
+        type=str,
+        help="Comma-separated list of queries; each will be searched and processed",
+    )
+    parser.add_argument(
+        "--query-file",
+        type=str,
+        help="File with one query per line; each will be searched and processed",
+    )
+    parser.add_argument(
+        "--query-mode",
+        type=str,
+        choices=["model", "arg"],
+        help="How to interpret query items (model/arg). Required with --query-list/--query-file.",
+    )
 
     args = parser.parse_args()
 
@@ -728,8 +825,49 @@ if __name__ == "__main__":
         exit(0)
 
     did_action = False
+    query_items = []
+    if args.query_list:
+        query_items.extend([q.strip() for q in args.query_list.split(",") if q.strip()])
+    if args.query_file:
+        with open(args.query_file, "r") as f:
+            for line in f:
+                s = line.strip()
+                if not s or s.startswith("#"):
+                    continue
+                query_items.append(s)
 
-    if args.e2e:
+    if args.e2e and args.all_nvfp4:
+        if args.search:
+            print(
+                "[e2e] --all-nvfp4 provided; ignoring --search and querying each model."
+            )
+        run_query_list(
+            NVFP4_MODELS, "model", args.output_prefix, concurrency=args.concurrency
+        )
+        did_action = True
+    elif args.e2e and args.all_fp8:
+        if args.search:
+            print(
+                "[e2e] --all-fp8 provided; ignoring --search and querying each model."
+            )
+        run_query_list(
+            FP8_MODELS, "model", args.output_prefix, concurrency=args.concurrency
+        )
+        did_action = True
+    elif query_items:
+        if not args.query_mode:
+            raise SystemExit(
+                "--query-mode is required with --query-list/--query-file. Use 'model' or 'arg'."
+            )
+        run_query_list(
+            query_items,
+            args.query_mode,
+            args.output_prefix,
+            concurrency=args.concurrency,
+        )
+        did_action = True
+
+    if args.e2e and not did_action:
         if not args.search:
             if args.process_arg:
                 args.search = args.process_arg
@@ -759,7 +897,12 @@ if __name__ == "__main__":
         save_jsonl(results, args.input)
         did_action = True
         if not (
-            args.process_arg or args.process_model or args.test_args or args.all_args
+            args.process_arg
+            or args.process_model
+            or args.test_args
+            or args.all_args
+            or args.all_nvfp4
+            or args.all_fp8
         ):
             args.process_model = args.search
             print(
@@ -774,7 +917,7 @@ if __name__ == "__main__":
         save_jsonl(results, args.input)
         did_action = True
 
-    if args.process_arg:
+    if args.process_arg and not did_action:
         # Find the arg info
         arg_info = None
         for arg_str in LIST_OF_ARGS_TO_TEST:
@@ -803,13 +946,39 @@ if __name__ == "__main__":
         )
         did_action = True
 
-    elif args.process_model:
+    elif args.process_model and not did_action:
         process_entries_for_model(
             args.input,
             args.process_model,
             args.output_prefix,
             concurrency=args.concurrency,
         )
+        did_action = True
+    elif args.all_nvfp4 and not did_action:
+        print(f"Processing all {len(NVFP4_MODELS)} NVFP4 models...")
+        for model_id in NVFP4_MODELS:
+            print(f"\n{'=' * 60}")
+            print(f"Processing model: {model_id}")
+            print(f"{'=' * 60}")
+            process_entries_for_model(
+                args.input,
+                model_id,
+                args.output_prefix,
+                concurrency=args.concurrency,
+            )
+        did_action = True
+    elif args.all_fp8 and not did_action:
+        print(f"Processing all {len(FP8_MODELS)} FP8 models...")
+        for model_id in FP8_MODELS:
+            print(f"\n{'=' * 60}")
+            print(f"Processing model: {model_id}")
+            print(f"{'=' * 60}")
+            process_entries_for_model(
+                args.input,
+                model_id,
+                args.output_prefix,
+                concurrency=args.concurrency,
+            )
         did_action = True
 
     elif args.test_args:
@@ -856,6 +1025,12 @@ Paths (pick one):
    python search_spec_v2.py --e2e --search deepseek-ai/DeepSeek-V3
    python search_spec_v2.py --e2e --process-arg --enable-dp-attention
    python search_spec_v2.py --e2e --process-model deepseek-ai/DeepSeek-V3
+   python search_spec_v2.py --e2e --all-nvfp4
+   python search_spec_v2.py --e2e --all-fp8
+
+4) Query list (each entry is searched and processed):
+   python search_spec_v2.py --query-list "deepseek-ai/DeepSeek-V3,--enable-dp-attention" --query-mode model
+   python search_spec_v2.py --query-file queries.txt --query-mode arg
 
 Why search vs process can look similar:
 - --search is a GitHub query (can be broad or different from the arg/model you want).
