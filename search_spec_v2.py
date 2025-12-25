@@ -11,6 +11,7 @@ import os
 import re
 import traceback
 from datetime import datetime
+from pathlib import Path
 
 try:
     from dotenv import load_dotenv
@@ -60,6 +61,35 @@ NVFP4_MODELS = [
     "nvidia/Qwen3-235B-A22B-NVFP4",
     "nvidia/DeepSeek-R1-NVFP4",
     "nvidia/Llama-3.1-405B-Instruct-NVFP4",
+]
+
+# FP4 legacy models (old naming before NVIDIA renamed to NVFP4)
+FP4_MODELS = [
+    m.replace("-NVFP4", "-FP4")
+    for m in [
+        "nvidia/Llama-4-Scout-17B-16E-Instruct-NVFP4",
+        "nvidia/Kimi-K2-Thinking-NVFP4",
+        "nvidia/Qwen2.5-VL-7B-Instruct-NVFP4",
+        "nvidia/Llama-3_3-Nemotron-Super-49B-v1_5-NVFP4",
+        "nvidia/DeepSeek-V3.1-NVFP4",
+        "nvidia/NVIDIA-Nemotron-Nano-9B-v2-NVFP4",
+        "nvidia/NVIDIA-Nemotron-Nano-12B-v2-VL-NVFP4-QAD",
+        "nvidia/Llama-3.1-8B-Instruct-NVFP4",
+        "nvidia/Qwen3-30B-A3B-NVFP4",
+        "nvidia/Qwen3-32B-NVFP4",
+        "nvidia/Qwen3-14B-NVFP4",
+        "nvidia/Qwen3-8B-NVFP4",
+        "nvidia/Phi-4-reasoning-plus-NVFP4",
+        "nvidia/Phi-4-multimodal-instruct-NVFP4",
+        "nvidia/DeepSeek-R1-0528-NVFP4-v2",
+        "nvidia/DeepSeek-V3-0324-NVFP4",
+        "nvidia/DeepSeek-R1-0528-NVFP4",
+        "nvidia/Llama-3.3-70B-Instruct-NVFP4",
+        "nvidia/DeepSeek-R1-NVFP4-v2",
+        "nvidia/Qwen3-235B-A22B-NVFP4",
+        "nvidia/DeepSeek-R1-NVFP4",
+        "nvidia/Llama-3.1-405B-Instruct-NVFP4",
+    ]
 ]
 
 # FP8 models to test (cleaned up)
@@ -263,6 +293,102 @@ def save_jsonl(results, filename):
 
 def _slugify(text):
     return re.sub(r"[^A-Za-z0-9._-]+", "_", text).strip("_") or "query"
+
+
+def merge_csvs(input_dir, output_file, keep_largest=True):
+    """Merge all CSV files from input_dir into a single output file.
+
+    Args:
+        input_dir: Directory containing CSV files
+        output_file: Output merged CSV path
+        keep_largest: If True, keep only the largest CSV per model (dedup)
+    """
+    from collections import defaultdict
+
+    input_path = Path(input_dir)
+    if not input_path.exists():
+        print(f"Error: Directory {input_dir} does not exist")
+        return 0
+
+    csv_files = list(input_path.glob("*.csv"))
+    if not csv_files:
+        print(f"No CSV files found in {input_dir}")
+        return 0
+
+    # Deduplicate by model if requested
+    if keep_largest:
+        model_files = defaultdict(list)
+        for csv_file in csv_files:
+            match = re.search(r"_model_(.+?)_\d{8}_\d{6}\.csv$", csv_file.name)
+            if match:
+                model = match.group(1)
+                model_files[model].append((csv_file, csv_file.stat().st_size))
+            else:
+                model_files[csv_file.name].append((csv_file, csv_file.stat().st_size))
+
+        csv_files = []
+        for model, files in model_files.items():
+            largest = max(files, key=lambda x: x[1])
+            csv_files.append(largest[0])
+
+    print(f"Merging {len(csv_files)} CSV files...")
+
+    all_rows = []
+    fieldnames = None
+
+    for csv_file in sorted(csv_files):
+        with open(csv_file, "r", newline="", encoding="utf-8", errors="replace") as f:
+            reader = csv.DictReader(f)
+            if fieldnames is None and reader.fieldnames:
+                fieldnames = reader.fieldnames
+            for row in reader:
+                all_rows.append(row)
+
+    if fieldnames and all_rows:
+        # Ensure output directory exists
+        output_path = Path(output_file)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(output_file, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(all_rows)
+        print(f"✓ Merged {len(all_rows)} rows into {output_file}")
+        return len(all_rows)
+    return 0
+
+
+def generate_unmentioned_list(model_list, merged_csv, output_file, list_name="Models"):
+    """Generate a list of models not mentioned in the merged CSV.
+
+    Args:
+        model_list: List of model IDs to check
+        merged_csv: Path to merged CSV file
+        output_file: Output txt file path
+        list_name: Name for the list header
+    """
+    mentioned = set()
+    if Path(merged_csv).exists():
+        with open(merged_csv, "r", newline="", encoding="utf-8", errors="replace") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if "model_analyzed" in row and row["model_analyzed"]:
+                    mentioned.add(row["model_analyzed"])
+
+    unmentioned = [m for m in model_list if m not in mentioned]
+
+    # Ensure output directory exists
+    output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(output_file, "w") as f:
+        f.write(f"{list_name} Not Mentioned ({len(unmentioned)}/{len(model_list)})\n")
+        f.write("=" * 60 + "\n\n")
+        for m in unmentioned:
+            f.write(m + "\n")
+
+    print(f"✓ Created {output_file} ({len(unmentioned)}/{len(model_list)} unmentioned)")
+    return unmentioned
 
 
 def _build_arg_info(arg_name):
@@ -779,6 +905,11 @@ if __name__ == "__main__":
         help="Process all models in FP8_MODELS",
     )
     parser.add_argument(
+        "--all-fp4",
+        action="store_true",
+        help="Process all models in FP4_MODELS (legacy naming)",
+    )
+    parser.add_argument(
         "--input", type=str, default=OUTPUT_FILE, help="Input JSONL file"
     )
     parser.add_argument(
@@ -814,14 +945,58 @@ if __name__ == "__main__":
         choices=["model", "arg"],
         help="How to interpret query items (model/arg). Required with --query-list/--query-file.",
     )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        help="Directory for output files (created if needed). If not specified, uses current directory.",
+    )
+    parser.add_argument(
+        "--merge-csv",
+        type=str,
+        metavar="DIR",
+        help="Merge all CSVs in DIR into a single file. Use with --output-prefix to name output.",
+    )
+    parser.add_argument(
+        "--unmentioned",
+        type=str,
+        choices=["nvfp4", "fp8", "fp4"],
+        help="Generate unmentioned models list. Requires --merge-csv result or existing merged CSV.",
+    )
 
     args = parser.parse_args()
+
+    # Handle output directory
+    if args.output_dir:
+        Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+        args.output_prefix = str(Path(args.output_dir) / args.output_prefix)
 
     if args.list_args:
         print("Available arguments to test:")
         for i, arg_str in enumerate(LIST_OF_ARGS_TO_TEST):
             info = parse_arg_info(arg_str)
             print(f"  {i + 1}. {info['arg_name']}: {info['description'][:60]}...")
+        exit(0)
+
+    # Handle --merge-csv
+    if args.merge_csv:
+        merged_output = f"{args.output_prefix}_merged.csv"
+        merge_csvs(args.merge_csv, merged_output)
+
+        # Handle --unmentioned if specified
+        if args.unmentioned:
+            model_lists = {
+                "nvfp4": (NVFP4_MODELS, "NVFP4 Models"),
+                "fp8": (FP8_MODELS, "FP8 Models"),
+                "fp4": (
+                    [m.replace("-NVFP4", "-FP4") for m in NVFP4_MODELS],
+                    "FP4 Legacy Models",
+                ),
+            }
+            models, name = model_lists[args.unmentioned]
+            unmentioned_output = (
+                f"{args.output_prefix}_{args.unmentioned}_unmentioned.txt"
+            )
+            generate_unmentioned_list(models, merged_output, unmentioned_output, name)
         exit(0)
 
     did_action = False
@@ -852,6 +1027,15 @@ if __name__ == "__main__":
             )
         run_query_list(
             FP8_MODELS, "model", args.output_prefix, concurrency=args.concurrency
+        )
+        did_action = True
+    elif args.e2e and args.all_fp4:
+        if args.search:
+            print(
+                "[e2e] --all-fp4 provided; ignoring --search and querying each model."
+            )
+        run_query_list(
+            FP4_MODELS, "model", args.output_prefix, concurrency=args.concurrency
         )
         did_action = True
     elif query_items:
@@ -902,6 +1086,7 @@ if __name__ == "__main__":
             or args.all_args
             or args.all_nvfp4
             or args.all_fp8
+            or args.all_fp4
         ):
             args.process_model = args.search
             print(
@@ -1024,6 +1209,20 @@ if __name__ == "__main__":
             )
         did_action = True
 
+    elif args.all_fp4 and not did_action:
+        print(f"Processing all {len(FP4_MODELS)} FP4 legacy models...")
+        for model_id in FP4_MODELS:
+            print(f"\n{'=' * 60}")
+            print(f"Processing model: {model_id}")
+            print(f"{'=' * 60}")
+            process_entries_for_model(
+                args.input,
+                model_id,
+                args.output_prefix,
+                concurrency=args.concurrency,
+            )
+        did_action = True
+
     elif args.test_args:
         # Test first half of args
         half = len(LIST_OF_ARGS_TO_TEST) // 2
@@ -1064,16 +1263,22 @@ Paths (pick one):
    python search_spec_v2.py --process-model deepseek-ai/DeepSeek-V3
 
 3) E2E (search + process in one run):
-   python search_spec_v2.py --e2e --search SGLANG_ENABLE_SPEC_V2=1 --process-arg --enable-dp-attention
    python search_spec_v2.py --e2e --search deepseek-ai/DeepSeek-V3
-   python search_spec_v2.py --e2e --process-arg --enable-dp-attention
-   python search_spec_v2.py --e2e --process-model deepseek-ai/DeepSeek-V3
    python search_spec_v2.py --e2e --all-nvfp4
    python search_spec_v2.py --e2e --all-fp8
+   python search_spec_v2.py --e2e --all-fp4
 
-4) Query list (each entry is searched and processed):
-   python search_spec_v2.py --query-list "deepseek-ai/DeepSeek-V3,--enable-dp-attention" --query-mode model
-   python search_spec_v2.py --query-file queries.txt --query-mode arg
+4) E2E with output directory:
+   python search_spec_v2.py --e2e --all-fp8 --output-dir nvidia_fp8_results --output-prefix fp8
+
+5) Query list (each entry is searched and processed):
+   python search_spec_v2.py --query-file models.txt --query-mode model --output-dir results
+
+6) Merge CSVs from a directory:
+   python search_spec_v2.py --merge-csv nvidia_fp8_results --output-prefix fp8_merged
+
+7) Merge CSVs and generate unmentioned list:
+   python search_spec_v2.py --merge-csv nvidia_fp8_results --output-prefix fp8 --unmentioned fp8
 
 Why search vs process can look similar:
 - --search is a GitHub query (can be broad or different from the arg/model you want).
