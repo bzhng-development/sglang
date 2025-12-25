@@ -1688,6 +1688,7 @@ class MRotaryEmbedding(RotaryEmbedding):
 
                     if model_type in (
                         "qwen2_5_vl",
+                        "qwen2_5_vl_text",
                         "paddleocr_vl",
                     ):
                         range_tensor = torch.arange(llm_grid_t).view(-1, 1)
