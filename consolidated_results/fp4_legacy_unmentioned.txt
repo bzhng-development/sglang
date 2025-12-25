@@ -1,0 +1,7 @@
+FP4 Legacy Models Not Mentioned in SGLang (4/22)
+============================================================
+
+nvidia/Llama-3_3-Nemotron-Super-49B-v1_5-FP4
+nvidia/NVIDIA-Nemotron-Nano-12B-v2-VL-FP4-QAD
+nvidia/Phi-4-reasoning-plus-FP4
+nvidia/Phi-4-multimodal-instruct-FP4

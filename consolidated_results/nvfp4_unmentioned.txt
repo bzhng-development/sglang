@@ -1,0 +1,18 @@
+NVFP4 Models Not Mentioned in SGLang (15/22)
+============================================================
+
+nvidia/Llama-3_3-Nemotron-Super-49B-v1_5-NVFP4
+nvidia/DeepSeek-V3.1-NVFP4
+nvidia/NVIDIA-Nemotron-Nano-12B-v2-VL-NVFP4-QAD
+nvidia/Qwen3-14B-NVFP4
+nvidia/Qwen3-8B-NVFP4
+nvidia/Phi-4-reasoning-plus-NVFP4
+nvidia/Phi-4-multimodal-instruct-NVFP4
+nvidia/DeepSeek-R1-0528-NVFP4-v2
+nvidia/DeepSeek-V3-0324-NVFP4
+nvidia/DeepSeek-R1-0528-NVFP4
+nvidia/Llama-3.3-70B-Instruct-NVFP4
+nvidia/DeepSeek-R1-NVFP4-v2
+nvidia/Qwen3-235B-A22B-NVFP4
+nvidia/DeepSeek-R1-NVFP4
+nvidia/Llama-3.1-405B-Instruct-NVFP4
