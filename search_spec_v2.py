@@ -180,6 +180,31 @@ def extract_json_array(text):
     return None
 
 
+def extract_json_object(text):
+    """Extract a JSON object from a model response, handling fenced blocks."""
+    if not text:
+        return None
+    cleaned = text.strip()
+    if cleaned.startswith("```"):
+        cleaned = cleaned.split("\n", 1)[1] if "\n" in cleaned else ""
+        if cleaned.endswith("```"):
+            cleaned = cleaned.rsplit("```", 1)[0]
+        cleaned = cleaned.strip()
+    try:
+        return json.loads(cleaned)
+    except Exception:
+        pass
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        snippet = cleaned[start : end + 1]
+        try:
+            return json.loads(snippet)
+        except Exception:
+            return None
+    return None
+
+
 def search_github(query):
     """Search for issues and PRs matching the query."""
     g = Github(auth=Auth.Token(GH_TOKEN))
@@ -438,6 +463,31 @@ def run_query_list(queries, query_mode, output_prefix, concurrency):
             )
 
 
+def contains_exact_string(result, search_string):
+    """Check if the exact search string appears in the issue/PR content."""
+    search_lower = search_string.lower()
+
+    # Check title
+    if search_lower in result.get("title", "").lower():
+        return True
+
+    # Check body
+    if search_lower in result.get("body", "").lower():
+        return True
+
+    # Check comments
+    for comment in result.get("comments", []):
+        if search_lower in comment.get("body", "").lower():
+            return True
+
+    # Check review comments
+    for comment in result.get("review_comments", []):
+        if search_lower in comment.get("body", "").lower():
+            return True
+
+    return False
+
+
 def format_for_llm(result):
     """Format a single result as context for LLM."""
     lines = [
@@ -492,7 +542,11 @@ Many SGLang arguments are undocumented or poorly documented. By finding real-wor
 
 ## Your Task
 
-Extract ALL commands from the above GitHub issue/PR that use `{arg_name}`. There may be MULTIPLE commands - extract each one separately.
+Extract ALL commands from the above GitHub issue/PR that use the **EXACT** argument `{arg_name}`. There may be MULTIPLE commands - extract each one separately.
+
+**IMPORTANT**: Only extract commands that use the exact argument `{arg_name}`. Do NOT extract commands for similar arguments with different names.
+
+If there are NO commands using the exact argument `{arg_name}`, return an empty array: `[]`
 
 ## Output Format
 
@@ -568,7 +622,13 @@ By collecting real-world commands from issues/PRs, we can identify:
 
 ## Your Task
 
-Extract ALL commands from the above GitHub issue/PR that run `{model_id}`. There may be MULTIPLE commands - extract each one separately.
+Extract ALL commands from the above GitHub issue/PR that run the **EXACT** model `{model_id}`. There may be MULTIPLE commands - extract each one separately.
+
+**IMPORTANT**: Only extract commands that use the exact model string `{model_id}`. Do NOT extract commands for similar or related models. For example:
+- If looking for `nvidia/Qwen3-30B-A3B-NVFP4`, do NOT include `Qwen/Qwen3-30B-A3B-Instruct`
+- If looking for `deepseek-ai/DeepSeek-V3`, do NOT include `deepseek-ai/DeepSeek-V2.5`
+
+If there are NO commands for the exact model `{model_id}`, return an empty array: `[]`
 
 ## Output Format
 
@@ -721,6 +781,75 @@ Return a JSON array. Each bug/issue gets its own object:
 6. Return ONLY the JSON array, no additional text
 """
 
+PROMPT_TEMPLATE_FOR_ISSUE_SUMMARY = """Below is a GitHub issue/PR that may be relevant to a specific model or topic.
+
+{context}
+
+---
+
+## Your Task
+
+Provide a comprehensive summary of this GitHub issue/PR. Focus on:
+1. What was the problem or issue?
+2. What was tried/attempted to solve it?
+3. What was the outcome/resolution?
+
+## Output Format
+
+Return a JSON object with exactly these keys:
+- `issue_summary`: A detailed summary (12-15 sentences) covering: the original problem, error symptoms, what was attempted, any workarounds or debugging steps, and the final resolution or current status. Be specific with technical details, error messages, configuration values, and version numbers when available.
+- `key_problem`: One sentence describing the core problem.
+- `resolution_status`: One of: "resolved", "workaround_found", "open", "wont_fix", "duplicate", "not_applicable"
+
+## Example Output
+
+```json
+{{
+  "issue_summary": "User reported that loading DeepSeek-V3 with NVFP4 quantization on 8xH100 nodes was causing CUDA out-of-memory errors during model initialization. The error occurred specifically when initializing the MoE expert weights, with the stack trace pointing to tensor allocation in the FlashInfer backend. Initial attempts included reducing --mem-fraction-static from 0.9 to 0.8, but this didn't resolve the issue. The user then tried enabling --enable-overlap-schedule thinking it might reduce peak memory, but the crash persisted. After investigation, it was discovered that the NVFP4 kernel was creating temporary FP16 copies of the weights during dequantization, effectively doubling the memory footprint during load time. A workaround was suggested to load with --disable-flashinfer-sampling and use the default attention backend, which reduced peak memory by ~15GB. However, this came with a ~20% performance penalty on decode. The root cause was identified as inefficient memory handling in the NVFP4 weight loader. A fix was merged in PR #15234 that implements in-place dequantization for NVFP4 weights, eliminating the temporary buffers. Users on v0.4.1 and earlier need to upgrade to v0.4.2 or use the --disable-flashinfer-sampling workaround. The fix has been validated on both H100 and A100 systems with various MoE models including DeepSeek-V3, Mixtral-8x22B, and DBRX.",
+  "key_problem": "NVFP4 quantization caused OOM during DeepSeek-V3 loading due to temporary FP16 weight copies during dequantization.",
+  "resolution_status": "resolved"
+}}
+```
+
+## Rules
+
+1. Write 12-15 complete sentences in `issue_summary` - be thorough and detailed
+2. Include specific technical details: error messages, config values, version numbers, hardware specs
+3. If the issue is not relevant or is spam/off-topic, use `resolution_status: "not_applicable"` and provide a brief summary explaining why
+4. Return ONLY the JSON object, no additional text
+"""
+
+
+async def generate_issue_summary(client, result):
+    """Generate a comprehensive summary for a single GitHub issue/PR."""
+    context = format_for_llm(result)
+    prompt = PROMPT_TEMPLATE_FOR_ISSUE_SUMMARY.format(context=context)
+
+    try:
+        completion = await client.chat.completions.create(
+            model="google/gemini-3-flash-preview",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You summarize GitHub issues/PRs in detail. Return only valid JSON objects.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
+
+        response = completion.choices[0].message.content
+        summary = extract_json_object(response)
+
+        if summary and isinstance(summary, dict):
+            return summary
+        else:
+            tqdm.write(f"Failed to parse summary for #{result['number']}")
+            return None
+
+    except Exception as e:
+        tqdm.write(f"Error generating summary for #{result['number']}: {e}")
+        return None
+
 
 def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
     """Process entries looking for a specific server argument."""
@@ -736,7 +865,18 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
             for line in f:
                 results.append(json.loads(line))
 
+        # Filter to only issues that contain the exact arg string
         arg_name = arg_info["arg_name"]
+        print(f"Filtering issues for exact match of '{arg_name}'...")
+        filtered_results = [r for r in results if contains_exact_string(r, arg_name)]
+        print(
+            f"Filtered {len(results)} -> {len(filtered_results)} issues containing '{arg_name}'"
+        )
+
+        if not filtered_results:
+            print(f"No issues found containing exact string '{arg_name}'. Skipping.")
+            return []
+
         arg_name_stripped = arg_name.lstrip("-")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -744,8 +884,28 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
         output_csv = f"{output_prefix}_{arg_name_stripped}_{timestamp}.csv"
 
         all_commands = []
-        outputs = [None] * len(results)
+        outputs = [None] * len(filtered_results)
         sem = asyncio.Semaphore(concurrency)
+
+        # Step 1: Generate summaries for unique issues (once per issue)
+        unique_issues = {}
+        for result in filtered_results:
+            issue_num = result["number"]
+            if issue_num not in unique_issues:
+                unique_issues[issue_num] = result
+
+        issue_summaries = {}
+        print(f"Generating summaries for {len(unique_issues)} unique issues...")
+        summary_tasks = []
+        for issue_num, result in unique_issues.items():
+            summary_tasks.append((issue_num, generate_issue_summary(client, result)))
+
+        summary_pbar = tqdm(total=len(summary_tasks), desc="Generating summaries")
+        for issue_num, coro in summary_tasks:
+            summary = await coro
+            issue_summaries[issue_num] = summary
+            summary_pbar.update(1)
+        summary_pbar.close()
 
         async def handle(idx, result):
             async with sem:
@@ -783,10 +943,25 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
                     commands = extract_json_array(response)
                     parsed_commands = []
                     if isinstance(commands, list):
+                        # Get the summary for this issue
+                        summary = issue_summaries.get(result["number"], {})
+
                         for cmd in commands:
                             cmd["arg_analyzed"] = arg_name
                             cmd["issue_number"] = result["html_url"]
                             cmd["issue_title"] = result["title"]
+
+                            # Add summary fields
+                            cmd["issue_summary"] = (
+                                summary.get("issue_summary", "") if summary else ""
+                            )
+                            cmd["key_problem"] = (
+                                summary.get("key_problem", "") if summary else ""
+                            )
+                            cmd["resolution_status"] = (
+                                summary.get("resolution_status", "") if summary else ""
+                            )
+
                             parsed_commands.append(cmd)
                     elif commands is None:
                         tqdm.write(
@@ -807,7 +982,9 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
                     )
                     return idx, None, []
 
-        tasks = [asyncio.create_task(handle(i, r)) for i, r in enumerate(results)]
+        tasks = [
+            asyncio.create_task(handle(i, r)) for i, r in enumerate(filtered_results)
+        ]
         pbar = tqdm(total=len(tasks), desc=f"Processing for {arg_name}")
         for coro in asyncio.as_completed(tasks):
             idx, output, parsed_commands = await coro
@@ -835,6 +1012,9 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
                 "status",
                 "issue_number",
                 "issue_title",
+                "issue_summary",
+                "key_problem",
+                "resolution_status",
             ]
             with open(output_csv, "w", newline="") as csvfile:
                 writer = csv.DictWriter(
@@ -867,14 +1047,45 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
             for line in f:
                 results.append(json.loads(line))
 
+        # Filter to only issues that contain the exact model string
+        print(f"Filtering issues for exact match of '{model_id}'...")
+        filtered_results = [r for r in results if contains_exact_string(r, model_id)]
+        print(
+            f"Filtered {len(results)} -> {len(filtered_results)} issues containing '{model_id}'"
+        )
+
+        if not filtered_results:
+            print(f"No issues found containing exact string '{model_id}'. Skipping.")
+            return []
+
         model_name = model_id.replace("/", "_")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_jsonl = f"{output_prefix}_model_{model_name}_{timestamp}.jsonl"
         output_csv = f"{output_prefix}_model_{model_name}_{timestamp}.csv"
 
         all_commands = []
-        outputs = [None] * len(results)
+        outputs = [None] * len(filtered_results)
         sem = asyncio.Semaphore(concurrency)
+
+        # Step 1: Generate summaries for unique issues (once per issue)
+        unique_issues = {}
+        for result in filtered_results:
+            issue_num = result["number"]
+            if issue_num not in unique_issues:
+                unique_issues[issue_num] = result
+
+        issue_summaries = {}
+        print(f"Generating summaries for {len(unique_issues)} unique issues...")
+        summary_tasks = []
+        for issue_num, result in unique_issues.items():
+            summary_tasks.append((issue_num, generate_issue_summary(client, result)))
+
+        summary_pbar = tqdm(total=len(summary_tasks), desc="Generating summaries")
+        for issue_num, coro in summary_tasks:
+            summary = await coro
+            issue_summaries[issue_num] = summary
+            summary_pbar.update(1)
+        summary_pbar.close()
 
         async def handle(idx, result):
             async with sem:
@@ -908,10 +1119,25 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
                     commands = extract_json_array(response)
                     parsed_commands = []
                     if isinstance(commands, list):
+                        # Get the summary for this issue
+                        summary = issue_summaries.get(result["number"], {})
+
                         for cmd in commands:
                             cmd["model_analyzed"] = model_id
                             cmd["issue_number"] = result["html_url"]
                             cmd["issue_title"] = result["title"]
+
+                            # Add summary fields
+                            cmd["issue_summary"] = (
+                                summary.get("issue_summary", "") if summary else ""
+                            )
+                            cmd["key_problem"] = (
+                                summary.get("key_problem", "") if summary else ""
+                            )
+                            cmd["resolution_status"] = (
+                                summary.get("resolution_status", "") if summary else ""
+                            )
+
                             parsed_commands.append(cmd)
                     elif commands is None:
                         tqdm.write(
@@ -933,7 +1159,9 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
                     )
                     return idx, None, []
 
-        tasks = [asyncio.create_task(handle(i, r)) for i, r in enumerate(results)]
+        tasks = [
+            asyncio.create_task(handle(i, r)) for i, r in enumerate(filtered_results)
+        ]
         pbar = tqdm(total=len(tasks), desc=f"Processing for {model_id}")
         for coro in asyncio.as_completed(tasks):
             idx, output, parsed_commands = await coro
@@ -959,6 +1187,9 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
                 "status",
                 "issue_number",
                 "issue_title",
+                "issue_summary",
+                "key_problem",
+                "resolution_status",
             ]
             with open(output_csv, "w", newline="") as csvfile:
                 writer = csv.DictWriter(
