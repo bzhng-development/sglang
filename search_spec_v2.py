@@ -428,6 +428,10 @@ def run_query_list(queries, query_mode, output_prefix, concurrency):
             process_entries_for_arg(
                 search_output, arg_info, output_prefix, concurrency=concurrency
             )
+        elif mode == "bugs":
+            process_entries_for_bugs(
+                search_output, term, output_prefix, concurrency=concurrency
+            )
         else:
             process_entries_for_model(
                 search_output, term, output_prefix, concurrency=concurrency
@@ -610,6 +614,110 @@ Return a JSON array. Each command gets its own object:
 3. Only include commands that run `{model_id}` (or close variants like quantized versions)
 4. Include meaningful detail in purpose and result - specific numbers, error messages, observations when available
 5. If no commands for this model, return empty array: `[]`
+6. Return ONLY the JSON array, no additional text
+"""
+
+PROMPT_TEMPLATE_FOR_BUG_FINDING = """Below is a GitHub issue/PR that may contain bug reports or issues related to `{library_or_feature}`.
+
+{context}
+
+---
+
+## Background
+
+You are helping collect and categorize bugs/issues related to `{library_or_feature}` in SGLang.
+
+This could include:
+- Crashes, errors, or unexpected behavior
+- Performance regressions
+- Compatibility issues
+- Configuration problems
+- Missing features or documentation gaps
+
+## Your Task
+
+Analyze the above GitHub issue/PR and extract ALL bug reports or issues related to `{library_or_feature}`. For each distinct bug/issue, extract structured information.
+
+## Output Format
+
+Return a JSON array. Each bug/issue gets its own object:
+- `bug_id`: A short identifier for this bug (e.g., "modelopt-fp8-oom", "nvfp4-loading-crash")
+- `summary`: One-sentence summary of the bug/issue
+- `description`: Detailed description of the problem, including error messages, stack traces, or symptoms
+- `status`: Current status - "open", "resolved", "workaround_available", or "wont_fix"
+- `resolution`: If resolved or has workaround, describe the fix/workaround. Otherwise null.
+- `affected_versions`: SGLang versions affected (if mentioned), e.g., ["0.4.0", "0.4.1"] or "unknown"
+- `affected_hardware`: Hardware where the issue occurs (e.g., "H100", "A100-80GB", "RTX 4090") or "unknown"
+- `affected_models`: Models affected (if specific), e.g., ["DeepSeek-V3", "Llama-3.1-405B"] or "any"
+- `reproduction_command`: Command to reproduce the issue (if provided), with env vars inline
+- `error_message`: Key error message or exception (if any)
+- `root_cause`: Root cause if identified, otherwise null
+- `related_args`: List of SGLang args involved in the issue
+- `severity`: "critical" (crashes/data loss), "high" (major functionality broken), "medium" (degraded performance/workaround exists), "low" (minor/cosmetic)
+- `category`: "crash", "oom", "performance", "compatibility", "loading", "inference", "quantization", "configuration", "other"
+
+## Example Output
+
+```json
+[
+  {{
+    "bug_id": "modelopt-fp8-h100-oom",
+    "summary": "ModelOpt FP8 quantization causes OOM on H100 during model loading",
+    "description": "When loading models with --quantization modelopt and FP8 weights on H100-80GB, the server runs out of memory during the weight loading phase. The issue occurs specifically with models larger than 70B parameters. Stack trace shows the OOM happens in `load_weights_from_hf` when allocating FP8 tensors.",
+    "status": "workaround_available",
+    "resolution": "Use --mem-fraction-static 0.85 to reserve less memory for KV cache during loading. PR #1234 has a proper fix pending review.",
+    "affected_versions": ["0.4.0", "0.4.1"],
+    "affected_hardware": ["H100-80GB"],
+    "affected_models": ["Llama-3.1-70B-Instruct-FP8", "Llama-3.3-70B-Instruct-FP8"],
+    "reproduction_command": "python -m sglang.launch_server --model-path nvidia/Llama-3.1-70B-Instruct-FP8 --quantization modelopt --tp 4",
+    "error_message": "torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.00 GiB",
+    "root_cause": "FP8 weight conversion creates temporary FP16 copies that double memory usage during loading",
+    "related_args": ["--quantization modelopt", "--tp 4", "--mem-fraction-static"],
+    "severity": "high",
+    "category": "oom"
+  }},
+  {{
+    "bug_id": "nvfp4-deepseek-moe-crash",
+    "summary": "NVFP4 quantization crashes with DeepSeek MoE models",
+    "description": "Attempting to load DeepSeek-V3 with NVFP4 quantization results in a CUDA error during expert weight loading. The crash happens when initializing the MoE experts with FP4 weights. Error: 'RuntimeError: CUDA error: invalid configuration argument'.",
+    "status": "open",
+    "resolution": null,
+    "affected_versions": ["0.4.1"],
+    "affected_hardware": ["H100", "A100"],
+    "affected_models": ["nvidia/DeepSeek-V3-NVFP4", "nvidia/DeepSeek-R1-NVFP4"],
+    "reproduction_command": "python -m sglang.launch_server --model-path nvidia/DeepSeek-V3-NVFP4 --tp 8 --trust-remote-code",
+    "error_message": "RuntimeError: CUDA error: invalid configuration argument",
+    "root_cause": null,
+    "related_args": ["--tp 8", "--trust-remote-code"],
+    "severity": "critical",
+    "category": "crash"
+  }},
+  {{
+    "bug_id": "modelopt-int4-slow-prefill",
+    "summary": "INT4 AWQ quantization has 3x slower prefill than expected",
+    "description": "Using ModelOpt INT4 AWQ quantization results in significantly slower prefill performance compared to FP16. User reports 3x slowdown on long context prompts (>4K tokens). Decode performance is as expected.",
+    "status": "resolved",
+    "resolution": "Fixed in v0.4.2 by using optimized INT4 GEMM kernels. Upgrade to latest version.",
+    "affected_versions": ["0.4.0", "0.4.1"],
+    "affected_hardware": ["A100-80GB", "H100"],
+    "affected_models": "any",
+    "reproduction_command": "python -m sglang.launch_server --model-path TheBloke/Llama-2-70B-AWQ --quantization int4_awq",
+    "error_message": null,
+    "root_cause": "Default INT4 kernel was using unoptimized path for prefill batches",
+    "related_args": ["--quantization int4_awq"],
+    "severity": "medium",
+    "category": "performance"
+  }}
+]
+```
+
+## Rules
+
+1. Extract EACH distinct bug/issue as a separate entry
+2. Be specific in descriptions - include actual error messages, numbers, versions when available
+3. Only include bugs/issues actually related to `{library_or_feature}`
+4. If the issue is resolved, always include the resolution
+5. If no relevant bugs/issues are found, return empty array: `[]`
 6. Return ONLY the JSON array, no additional text
 """
 
@@ -867,6 +975,147 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
     return asyncio.run(_run())
 
 
+def process_entries_for_bugs(
+    jsonl_file, library_or_feature, output_prefix, concurrency=8
+):
+    """Process entries looking for bugs related to a library or feature."""
+
+    async def _run():
+        client = AsyncOpenAI(
+            base_url="https://openrouter.ai/api/v1", api_key=OPENROUTER_API_KEY
+        )
+
+        results = []
+        with open(jsonl_file, "r") as f:
+            for line in f:
+                results.append(json.loads(line))
+
+        feature_slug = _slugify(library_or_feature)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_jsonl = f"{output_prefix}_bugs_{feature_slug}_{timestamp}.jsonl"
+        output_csv = f"{output_prefix}_bugs_{feature_slug}_{timestamp}.csv"
+
+        all_bugs = []
+        outputs = [None] * len(results)
+        sem = asyncio.Semaphore(concurrency)
+
+        async def handle(idx, result):
+            async with sem:
+                context = format_for_llm(result)
+                prompt = PROMPT_TEMPLATE_FOR_BUG_FINDING.format(
+                    context=context,
+                    library_or_feature=library_or_feature,
+                )
+
+                try:
+                    completion = await client.chat.completions.create(
+                        model="google/gemini-3-flash-preview",
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": "You extract bug reports from GitHub issues/PRs. Return only valid JSON arrays.",
+                            },
+                            {"role": "user", "content": prompt},
+                        ],
+                    )
+
+                    response = completion.choices[0].message.content
+                    output = {
+                        "number": result["number"],
+                        "title": result["title"],
+                        "type": result["type"],
+                        "library_analyzed": library_or_feature,
+                        "extracted_bugs": response,
+                    }
+
+                    bugs = extract_json_array(response)
+                    parsed_bugs = []
+                    if isinstance(bugs, list):
+                        for bug in bugs:
+                            bug["library_analyzed"] = library_or_feature
+                            bug["issue_number"] = result["html_url"]
+                            bug["issue_title"] = result["title"]
+                            parsed_bugs.append(bug)
+                    elif bugs is None:
+                        tqdm.write(
+                            f"Parse failed for #{result['number']} ({result['title'][:80]})."
+                        )
+
+                    return idx, output, parsed_bugs
+
+                except Exception as e:
+                    traceback.print_exc()
+                    tqdm.write(
+                        f"Error on #{result['number']} ({result['title'][:80]}): {e}"
+                    )
+                    tqdm.write(
+                        f"Library: {library_or_feature} | Input: {jsonl_file} | Output: {output_jsonl}"
+                    )
+                    tqdm.write(
+                        "Hint: OpenRouter connection errors are often transient or due to rate limits."
+                    )
+                    return idx, None, []
+
+        tasks = [asyncio.create_task(handle(i, r)) for i, r in enumerate(results)]
+        pbar = tqdm(total=len(tasks), desc=f"Processing bugs for {library_or_feature}")
+        for coro in asyncio.as_completed(tasks):
+            idx, output, parsed_bugs = await coro
+            outputs[idx] = output
+            all_bugs.extend(parsed_bugs)
+            pbar.update(1)
+        pbar.close()
+
+        with open(output_jsonl, "w") as out_f:
+            for output in outputs:
+                if output is None:
+                    continue
+                out_f.write(json.dumps(output) + "\n")
+
+        # Write CSV
+        if all_bugs:
+            csv_fields = [
+                "library_analyzed",
+                "bug_id",
+                "summary",
+                "description",
+                "status",
+                "resolution",
+                "affected_versions",
+                "affected_hardware",
+                "affected_models",
+                "reproduction_command",
+                "error_message",
+                "root_cause",
+                "related_args",
+                "severity",
+                "category",
+                "issue_number",
+                "issue_title",
+            ]
+            with open(output_csv, "w", newline="") as csvfile:
+                writer = csv.DictWriter(
+                    csvfile, fieldnames=csv_fields, extrasaction="ignore"
+                )
+                writer.writeheader()
+                for bug in all_bugs:
+                    # Convert lists to strings for CSV
+                    for field in [
+                        "affected_versions",
+                        "affected_hardware",
+                        "affected_models",
+                        "related_args",
+                    ]:
+                        if isinstance(bug.get(field), list):
+                            bug[field] = "; ".join(str(x) for x in bug[field])
+                    writer.writerow(bug)
+            print(f"Saved CSV to {output_csv}")
+
+        print(f"Saved JSONL to {output_jsonl}")
+        return all_bugs
+
+    return asyncio.run(_run())
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Search GitHub and extract SGLang commands"
@@ -883,6 +1132,11 @@ if __name__ == "__main__":
         "--process-model",
         type=str,
         help="Process JSONL for a specific model ID (e.g., deepseek-ai/DeepSeek-V3)",
+    )
+    parser.add_argument(
+        "--process-bugs",
+        type=str,
+        help="Process JSONL for bugs related to a library/feature (e.g., ModelOpt, NVFP4, flashinfer)",
     )
     parser.add_argument(
         "--test-args",
@@ -942,8 +1196,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--query-mode",
         type=str,
-        choices=["model", "arg"],
-        help="How to interpret query items (model/arg). Required with --query-list/--query-file.",
+        choices=["model", "arg", "bugs"],
+        help="How to interpret query items (model/arg/bugs). Required with --query-list/--query-file.",
     )
     parser.add_argument(
         "--output-dir",
@@ -1041,7 +1295,7 @@ if __name__ == "__main__":
     elif query_items:
         if not args.query_mode:
             raise SystemExit(
-                "--query-mode is required with --query-list/--query-file. Use 'model' or 'arg'."
+                "--query-mode is required with --query-list/--query-file. Use 'model', 'arg', or 'bugs'."
             )
         run_query_list(
             query_items,
@@ -1061,9 +1315,12 @@ if __name__ == "__main__":
                 print(
                     f"[e2e] No --search provided; using --process-model {args.search}"
                 )
+            elif args.process_bugs:
+                args.search = args.process_bugs
+                print(f"[e2e] No --search provided; using --process-bugs {args.search}")
             else:
                 raise SystemExit(
-                    "--e2e requires --search, --process-arg, or --process-model."
+                    "--e2e requires --search, --process-arg, --process-model, or --process-bugs."
                 )
         else:
             if args.process_arg and args.search != args.process_arg:
@@ -1074,6 +1331,10 @@ if __name__ == "__main__":
                 print(
                     f"[e2e] Warning: --search '{args.search}' != --process-model '{args.process_model}'. Using --search."
                 )
+            if args.process_bugs and args.search != args.process_bugs:
+                print(
+                    f"[e2e] Warning: --search '{args.search}' != --process-bugs '{args.process_bugs}'. Using --search."
+                )
         print("=" * 60)
         print(f"Searching GitHub for: {args.search}")
         print("=" * 60)
@@ -1082,6 +1343,7 @@ if __name__ == "__main__":
         if not (
             args.process_arg
             or args.process_model
+            or args.process_bugs
             or args.test_args
             or args.all_args
             or args.all_nvfp4
@@ -1105,6 +1367,13 @@ if __name__ == "__main__":
             process_entries_for_model(
                 args.input,
                 args.process_model,
+                args.output_prefix,
+                concurrency=args.concurrency,
+            )
+        elif args.process_bugs:
+            process_entries_for_bugs(
+                args.input,
+                args.process_bugs,
                 args.output_prefix,
                 concurrency=args.concurrency,
             )
@@ -1178,6 +1447,14 @@ if __name__ == "__main__":
         process_entries_for_model(
             args.input,
             args.process_model,
+            args.output_prefix,
+            concurrency=args.concurrency,
+        )
+        did_action = True
+    elif args.process_bugs and not did_action:
+        process_entries_for_bugs(
+            args.input,
+            args.process_bugs,
             args.output_prefix,
             concurrency=args.concurrency,
         )
@@ -1261,18 +1538,21 @@ Paths (pick one):
 2) Process only (use an existing JSONL, no GitHub search):
    python search_spec_v2.py --process-arg --enable-dp-attention
    python search_spec_v2.py --process-model deepseek-ai/DeepSeek-V3
+   python search_spec_v2.py --process-bugs ModelOpt
 
 3) E2E (search + process in one run):
    python search_spec_v2.py --e2e --search deepseek-ai/DeepSeek-V3
    python search_spec_v2.py --e2e --all-nvfp4
    python search_spec_v2.py --e2e --all-fp8
    python search_spec_v2.py --e2e --all-fp4
+   python search_spec_v2.py --e2e --process-bugs ModelOpt
 
 4) E2E with output directory:
    python search_spec_v2.py --e2e --all-fp8 --output-dir nvidia_fp8_results --output-prefix fp8
 
 5) Query list (each entry is searched and processed):
    python search_spec_v2.py --query-file models.txt --query-mode model --output-dir results
+   python search_spec_v2.py --query-list "ModelOpt,NVFP4,flashinfer" --query-mode bugs --output-dir bug_reports
 
 6) Merge CSVs from a directory:
    python search_spec_v2.py --merge-csv nvidia_fp8_results --output-prefix fp8_merged
@@ -1281,8 +1561,8 @@ Paths (pick one):
    python search_spec_v2.py --merge-csv nvidia_fp8_results --output-prefix fp8 --unmentioned fp8
 
 Why search vs process can look similar:
-- --search is a GitHub query (can be broad or different from the arg/model you want).
-- --process-arg/--process-model is the exact thing you want extracted.
-Use the same string when you want the search to be tightly scoped; use different strings when you want a broader search but still extract a specific arg/model.
+- --search is a GitHub query (can be broad or different from the arg/model/library you want).
+- --process-arg/--process-model/--process-bugs is the exact thing you want extracted.
+Use the same string when you want the search to be tightly scoped; use different strings when you want a broader search but still extract a specific arg/model/library.
 """
         )
