@@ -1379,12 +1379,12 @@ class ServerArgs:
                     not self.disable_radix_cache
                     and self.attention_backend == "trtllm_mha"
                 ):
-                    logger.warning(
-                        "Disabling radix cache since trtllm_mha does not support page_size = 1, which is required by MambaRadixCache. "
-                        "Try to use --attention-backend triton if radix cache is necessary."
-                    )
-                    self.disable_radix_cache = True
-                    self.disable_overlap_schedule = False
+                    if not self.enable_mamba_extra_buffer():
+                        logger.warning(
+                            "Enabling mamba extra_buffer for radix cache with trtllm_mha. "
+                            "This is required for mamba radix cache to work with paged KV cache (e.g. page_size=32)."
+                        )
+                        self.mamba_scheduler_strategy = "extra_buffer"
 
             # Mamba radix cache v2
             if self.enable_mamba_extra_buffer():
