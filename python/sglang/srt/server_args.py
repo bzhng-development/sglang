@@ -1382,6 +1382,7 @@ class ServerArgs:
                     logger.warning(
                         "Disabling radix cache since trtllm_mha does not support page_size = 1, which is required by MambaRadixCache. "
                         "Try to use --attention-backend triton if radix cache is necessary."
+                        "To keep using radix cache with trtllm_mha, use --mamba-scheduler-strategy extra_buffer"
                     )
                     self.disable_radix_cache = True
                     self.disable_overlap_schedule = False
