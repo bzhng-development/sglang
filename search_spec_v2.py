@@ -16,7 +16,7 @@ from pathlib import Path
 try:
     from dotenv import load_dotenv
 except Exception:
-    load_dotenv = None
+    load_dotenv = None  # type: ignore[assignment]
 
 from github import Auth, Github
 from openai import AsyncOpenAI
@@ -36,6 +36,54 @@ REPO = "sgl-project/sglang"
 
 # Output files
 OUTPUT_FILE = "spec_v2_results.jsonl"
+
+# Default results directory
+DEFAULT_RESULTS_DIR = Path(__file__).parent / "results"
+
+
+def get_output_dir_for_model(model_id: str, base_dir: Path | None = None) -> Path:
+    """Determine the output directory for a model based on provider and quantization."""
+    if base_dir is None:
+        base_dir = DEFAULT_RESULTS_DIR
+
+    models_dir = base_dir / "models"
+    provider = model_id.split("/")[0] if "/" in model_id else "unknown"
+
+    # Special handling for nvidia models - split by quantization type
+    if provider == "nvidia":
+        if "-NVFP4" in model_id or "_NVFP4" in model_id:
+            return models_dir / "nvidia" / "nvfp4"
+        elif "-FP8" in model_id or "_FP8" in model_id:
+            return models_dir / "nvidia" / "fp8"
+        elif "-FP4" in model_id or "_FP4" in model_id:
+            return models_dir / "nvidia" / "fp4"
+        return models_dir / "nvidia" / "other"
+
+    return models_dir / provider
+
+
+def get_output_dir_for_arg(arg_name: str, base_dir: Path | None = None) -> Path:
+    """Get output directory for server argument analysis."""
+    if base_dir is None:
+        base_dir = DEFAULT_RESULTS_DIR
+    return base_dir / "args"
+
+
+def get_output_dir_for_bugs(
+    library_or_feature: str, base_dir: Path | None = None
+) -> Path:
+    """Get output directory for bug analysis."""
+    if base_dir is None:
+        base_dir = DEFAULT_RESULTS_DIR
+    return base_dir / "bugs"
+
+
+def get_search_cache_dir(base_dir: Path | None = None) -> Path:
+    """Get directory for search result cache files."""
+    if base_dir is None:
+        base_dir = DEFAULT_RESULTS_DIR
+    return base_dir / "search_cache"
+
 
 # NVFP4 models to test
 NVFP4_MODELS = [
@@ -207,6 +255,8 @@ def extract_json_object(text):
 
 def search_github(query):
     """Search for issues and PRs matching the query."""
+    if not GH_TOKEN:
+        raise ValueError("GITHUB_TOKEN environment variable is required")
     g = Github(auth=Auth.Token(GH_TOKEN))
 
     all_results = []
@@ -435,7 +485,7 @@ def _build_arg_info(arg_name):
     return arg_info
 
 
-def run_query_list(queries, query_mode, output_prefix, concurrency):
+def run_query_list(queries, query_mode, output_prefix, concurrency, base_dir=None):
     """For each query, search GitHub and run the LLM extraction pipeline."""
     for term in queries:
         mode = query_mode
@@ -444,22 +494,40 @@ def run_query_list(queries, query_mode, output_prefix, concurrency):
         print("=" * 60)
         results = search_github(term)
 
+        # Save search results to search_cache
+        search_cache_dir = get_search_cache_dir(base_dir)
+        search_cache_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        search_output = f"{output_prefix}_search_{_slugify(term)}_{timestamp}.jsonl"
+        search_output = str(
+            search_cache_dir
+            / f"{output_prefix}_search_{_slugify(term)}_{timestamp}.jsonl"
+        )
         save_jsonl(results, search_output)
 
         if mode == "arg":
             arg_info = _build_arg_info(term)
             process_entries_for_arg(
-                search_output, arg_info, output_prefix, concurrency=concurrency
+                search_output,
+                arg_info,
+                output_prefix,
+                concurrency=concurrency,
+                base_dir=base_dir,
             )
         elif mode == "bugs":
             process_entries_for_bugs(
-                search_output, term, output_prefix, concurrency=concurrency
+                search_output,
+                term,
+                output_prefix,
+                concurrency=concurrency,
+                base_dir=base_dir,
             )
         else:
             process_entries_for_model(
-                search_output, term, output_prefix, concurrency=concurrency
+                search_output,
+                term,
+                output_prefix,
+                concurrency=concurrency,
+                base_dir=base_dir,
             )
 
 
@@ -851,7 +919,9 @@ async def generate_issue_summary(client, result):
         return None
 
 
-def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
+def process_entries_for_arg(
+    jsonl_file, arg_info, output_prefix, concurrency=8, base_dir=None
+):
     """Process entries looking for a specific server argument."""
 
     async def _run():
@@ -877,11 +947,19 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
             print(f"No issues found containing exact string '{arg_name}'. Skipping.")
             return []
 
+        # Use organized output directory
+        output_dir = get_output_dir_for_arg(arg_name, base_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         arg_name_stripped = arg_name.lstrip("-")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        output_jsonl = f"{output_prefix}_{arg_name_stripped}_{timestamp}.jsonl"
-        output_csv = f"{output_prefix}_{arg_name_stripped}_{timestamp}.csv"
+        output_jsonl = str(
+            output_dir / f"{output_prefix}_{arg_name_stripped}_{timestamp}.jsonl"
+        )
+        output_csv = str(
+            output_dir / f"{output_prefix}_{arg_name_stripped}_{timestamp}.csv"
+        )
 
         all_commands = []
         outputs = [None] * len(filtered_results)
@@ -1034,7 +1112,9 @@ def process_entries_for_arg(jsonl_file, arg_info, output_prefix, concurrency=8):
     return asyncio.run(_run())
 
 
-def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=32):
+def process_entries_for_model(
+    jsonl_file, model_id, output_prefix, concurrency=32, base_dir=None
+):
     """Process entries looking for a specific model."""
 
     async def _run():
@@ -1058,10 +1138,18 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
             print(f"No issues found containing exact string '{model_id}'. Skipping.")
             return []
 
+        # Use organized output directory
+        output_dir = get_output_dir_for_model(model_id, base_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         model_name = model_id.replace("/", "_")
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_jsonl = f"{output_prefix}_model_{model_name}_{timestamp}.jsonl"
-        output_csv = f"{output_prefix}_model_{model_name}_{timestamp}.csv"
+        output_jsonl = str(
+            output_dir / f"{output_prefix}_model_{model_name}_{timestamp}.jsonl"
+        )
+        output_csv = str(
+            output_dir / f"{output_prefix}_model_{model_name}_{timestamp}.csv"
+        )
 
         all_commands = []
         outputs = [None] * len(filtered_results)
@@ -1207,7 +1295,7 @@ def process_entries_for_model(jsonl_file, model_id, output_prefix, concurrency=3
 
 
 def process_entries_for_bugs(
-    jsonl_file, library_or_feature, output_prefix, concurrency=8
+    jsonl_file, library_or_feature, output_prefix, concurrency=8, base_dir=None
 ):
     """Process entries looking for bugs related to a library or feature."""
 
@@ -1221,10 +1309,18 @@ def process_entries_for_bugs(
             for line in f:
                 results.append(json.loads(line))
 
+        # Use organized output directory
+        output_dir = get_output_dir_for_bugs(library_or_feature, base_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         feature_slug = _slugify(library_or_feature)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_jsonl = f"{output_prefix}_bugs_{feature_slug}_{timestamp}.jsonl"
-        output_csv = f"{output_prefix}_bugs_{feature_slug}_{timestamp}.csv"
+        output_jsonl = str(
+            output_dir / f"{output_prefix}_bugs_{feature_slug}_{timestamp}.jsonl"
+        )
+        output_csv = str(
+            output_dir / f"{output_prefix}_bugs_{feature_slug}_{timestamp}.csv"
+        )
 
         all_bugs = []
         outputs = [None] * len(results)
@@ -1450,10 +1546,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Handle output directory
-    if args.output_dir:
-        Path(args.output_dir).mkdir(parents=True, exist_ok=True)
-        args.output_prefix = str(Path(args.output_dir) / args.output_prefix)
+    # Handle output directory - use specified dir or default to results/
+    base_dir = Path(args.output_dir) if args.output_dir else DEFAULT_RESULTS_DIR
+    base_dir.mkdir(parents=True, exist_ok=True)
 
     if args.list_args:
         print("Available arguments to test:")
@@ -1502,7 +1597,11 @@ if __name__ == "__main__":
                 "[e2e] --all-nvfp4 provided; ignoring --search and querying each model."
             )
         run_query_list(
-            NVFP4_MODELS, "model", args.output_prefix, concurrency=args.concurrency
+            NVFP4_MODELS,
+            "model",
+            args.output_prefix,
+            concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
     elif args.e2e and args.all_fp8:
@@ -1511,7 +1610,11 @@ if __name__ == "__main__":
                 "[e2e] --all-fp8 provided; ignoring --search and querying each model."
             )
         run_query_list(
-            FP8_MODELS, "model", args.output_prefix, concurrency=args.concurrency
+            FP8_MODELS,
+            "model",
+            args.output_prefix,
+            concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
     elif args.e2e and args.all_fp4:
@@ -1520,7 +1623,11 @@ if __name__ == "__main__":
                 "[e2e] --all-fp4 provided; ignoring --search and querying each model."
             )
         run_query_list(
-            FP4_MODELS, "model", args.output_prefix, concurrency=args.concurrency
+            FP4_MODELS,
+            "model",
+            args.output_prefix,
+            concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
     elif query_items:
@@ -1533,6 +1640,7 @@ if __name__ == "__main__":
             args.query_mode,
             args.output_prefix,
             concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
 
@@ -1593,6 +1701,7 @@ if __name__ == "__main__":
                 arg_info,
                 args.output_prefix,
                 concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         elif args.process_model:
             process_entries_for_model(
@@ -1600,6 +1709,7 @@ if __name__ == "__main__":
                 args.process_model,
                 args.output_prefix,
                 concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         elif args.process_bugs:
             process_entries_for_bugs(
@@ -1607,6 +1717,7 @@ if __name__ == "__main__":
                 args.process_bugs,
                 args.output_prefix,
                 concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         elif args.test_args:
             half = len(LIST_OF_ARGS_TO_TEST) // 2
@@ -1621,6 +1732,7 @@ if __name__ == "__main__":
                     arg_info,
                     args.output_prefix,
                     concurrency=args.concurrency,
+                    base_dir=base_dir,
                 )
         elif args.all_args:
             print(f"Processing all {len(LIST_OF_ARGS_TO_TEST)} arguments...")
@@ -1634,6 +1746,7 @@ if __name__ == "__main__":
                     arg_info,
                     args.output_prefix,
                     concurrency=args.concurrency,
+                    base_dir=base_dir,
                 )
         did_action = True
 
@@ -1670,7 +1783,11 @@ if __name__ == "__main__":
             }
 
         process_entries_for_arg(
-            args.input, arg_info, args.output_prefix, concurrency=args.concurrency
+            args.input,
+            arg_info,
+            args.output_prefix,
+            concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
 
@@ -1680,6 +1797,7 @@ if __name__ == "__main__":
             args.process_model,
             args.output_prefix,
             concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
     elif args.process_bugs and not did_action:
@@ -1688,6 +1806,7 @@ if __name__ == "__main__":
             args.process_bugs,
             args.output_prefix,
             concurrency=args.concurrency,
+            base_dir=base_dir,
         )
         did_action = True
     elif args.all_nvfp4 and not did_action:
@@ -1701,6 +1820,7 @@ if __name__ == "__main__":
                 model_id,
                 args.output_prefix,
                 concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         did_action = True
     elif args.all_fp8 and not did_action:
@@ -1714,6 +1834,7 @@ if __name__ == "__main__":
                 model_id,
                 args.output_prefix,
                 concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         did_action = True
 
@@ -1728,6 +1849,7 @@ if __name__ == "__main__":
                 model_id,
                 args.output_prefix,
                 concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         did_action = True
 
@@ -1741,7 +1863,11 @@ if __name__ == "__main__":
             print(f"Processing: {arg_info['arg_name']}")
             print(f"{'=' * 60}")
             process_entries_for_arg(
-                args.input, arg_info, args.output_prefix, concurrency=args.concurrency
+                args.input,
+                arg_info,
+                args.output_prefix,
+                concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         did_action = True
 
@@ -1753,7 +1879,11 @@ if __name__ == "__main__":
             print(f"Processing: {arg_info['arg_name']}")
             print(f"{'=' * 60}")
             process_entries_for_arg(
-                args.input, arg_info, args.output_prefix, concurrency=args.concurrency
+                args.input,
+                arg_info,
+                args.output_prefix,
+                concurrency=args.concurrency,
+                base_dir=base_dir,
             )
         did_action = True
 
