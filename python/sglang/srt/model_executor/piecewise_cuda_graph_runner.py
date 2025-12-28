@@ -246,6 +246,15 @@ class PiecewiseCudaGraphRunner:
                     graph_pool=get_global_graph_memory_pool(),
                 )
 
+                # Pre-warmup in eager mode to trigger flashinfer JIT kernel loading
+                # This ensures all kernels are compiled and loaded before torch.compile starts
+                log_info_on_rank0(
+                    logger, "Pre-warming flashinfer kernels in eager mode..."
+                )
+                with set_compiled(False), enable_piecewise_cuda_graph_compile():
+                    # Run one warmup iteration to trigger flashinfer JIT loading
+                    self.warmup_torch_compile(num_tokens=min(self.capture_num_tokens))
+
                 with set_compiled(True), enable_piecewise_cuda_graph_compile():
                     compile_range = (
                         tqdm.tqdm(list(reversed(self.capture_num_tokens)))
