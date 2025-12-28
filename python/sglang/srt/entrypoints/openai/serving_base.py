@@ -15,6 +15,7 @@ from sglang.srt.entrypoints.openai.encoding_dsv32 import DS32EncodingError
 from sglang.srt.entrypoints.openai.protocol import ErrorResponse, OpenAIServingRequest
 from sglang.srt.managers.io_struct import EmbeddingReqInput, GenerateReqInput
 from sglang.srt.server_args import ServerArgs
+from sglang.srt.utils.request_profiler import get_request_profiler
 
 if TYPE_CHECKING:
     from sglang.srt.managers.tokenizer_manager import TokenizerManager
@@ -92,58 +93,69 @@ class OpenAIServingBase(ABC):
         received_time = time.time()
         received_time_perf = time.perf_counter()
 
-        try:
-            # Validate request
-            validation_start = time.perf_counter()
-            error_msg = self._validate_request(request)
-            validation_time = time.perf_counter() - validation_start
-            if error_msg:
-                return self.create_error_response(error_msg)
+        # Generate a request ID for profiling
+        profile_request_id = (
+            getattr(request, "rid", None) or f"req-{uuid.uuid4().hex[:8]}"
+        )
+        profiler = get_request_profiler()
 
-            # Convert to internal format
-            adapted_request, processed_request = self._convert_to_internal_request(
-                request, raw_request
-            )
+        with profiler.profile_request(profile_request_id) as profile_session:
+            try:
+                # Validate request
+                with profile_session.stage("validation"):
+                    validation_start = time.perf_counter()
+                    error_msg = self._validate_request(request)
+                    validation_time = time.perf_counter() - validation_start
+                if error_msg:
+                    return self.create_error_response(error_msg)
 
-            if isinstance(adapted_request, (GenerateReqInput, EmbeddingReqInput)):
-                # Only set timing fields if adapted_request supports them
-                adapted_request.validation_time = validation_time
-                adapted_request.received_time = received_time
-                adapted_request.received_time_perf = received_time_perf
+                # Convert to internal format (includes message processing, tokenization)
+                with profile_session.stage("convert_to_internal"):
+                    adapted_request, processed_request = (
+                        self._convert_to_internal_request(request, raw_request)
+                    )
 
-            # Note(Xinyuan): raw_request below is only used for detecting the connection of the client
-            if hasattr(request, "stream") and request.stream:
-                return await self._handle_streaming_request(
-                    adapted_request, processed_request, raw_request
+                if isinstance(adapted_request, (GenerateReqInput, EmbeddingReqInput)):
+                    # Only set timing fields if adapted_request supports them
+                    adapted_request.validation_time = validation_time
+                    adapted_request.received_time = received_time
+                    adapted_request.received_time_perf = received_time_perf
+
+                # Note(Xinyuan): raw_request below is only used for detecting the connection of the client
+                if hasattr(request, "stream") and request.stream:
+                    return await self._handle_streaming_request(
+                        adapted_request, processed_request, raw_request
+                    )
+                else:
+                    return await self._handle_non_streaming_request(
+                        adapted_request, processed_request, raw_request
+                    )
+            except HTTPException as e:
+                return self.create_error_response(
+                    message=e.detail,
+                    err_type=str(e.status_code),
+                    status_code=e.status_code,
                 )
-            else:
-                return await self._handle_non_streaming_request(
-                    adapted_request, processed_request, raw_request
+            except ValueError as e:
+                return self.create_error_response(
+                    message=str(e),
+                    err_type="BadRequest",
+                    status_code=400,
                 )
-        except HTTPException as e:
-            return self.create_error_response(
-                message=e.detail, err_type=str(e.status_code), status_code=e.status_code
-            )
-        except ValueError as e:
-            return self.create_error_response(
-                message=str(e),
-                err_type="BadRequest",
-                status_code=400,
-            )
-        except DS32EncodingError as e:
-            logger.info(f"DS32EncodingError: {e}")
-            return self.create_error_response(
-                message=str(e),
-                err_type="BadRequest",
-                status_code=400,
-            )
-        except Exception as e:
-            logger.exception(f"Error in request: {e}")
-            return self.create_error_response(
-                message=f"Internal server error: {str(e)}",
-                err_type="InternalServerError",
-                status_code=500,
-            )
+            except DS32EncodingError as e:
+                logger.info(f"DS32EncodingError: {e}")
+                return self.create_error_response(
+                    message=str(e),
+                    err_type="BadRequest",
+                    status_code=400,
+                )
+            except Exception as e:
+                logger.exception(f"Error in request: {e}")
+                return self.create_error_response(
+                    message=f"Internal server error: {str(e)}",
+                    err_type="InternalServerError",
+                    status_code=500,
+                )
 
     @abstractmethod
     def _request_id_prefix(self) -> str:

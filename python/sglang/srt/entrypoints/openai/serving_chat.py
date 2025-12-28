@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextvars
 import copy
 import json
 import logging
@@ -47,6 +48,12 @@ from sglang.srt.managers.io_struct import GenerateReqInput
 from sglang.srt.parser.conversation import generate_chat_conv
 from sglang.srt.parser.jinja_template_utils import process_content_for_template_format
 from sglang.srt.parser.reasoning_parser import ReasoningParser
+from sglang.srt.utils.request_profiler import get_request_profiler
+
+# Context variable to pass profile session to sub-methods
+_profile_session_ctx: contextvars.ContextVar = contextvars.ContextVar(
+    "profile_session", default=None
+)
 
 if TYPE_CHECKING:
     from sglang.srt.managers.template_manager import TemplateManager
@@ -97,6 +104,64 @@ class OpenAIServingChat(OpenAIServingBase):
 
     def _request_id_prefix(self) -> str:
         return "chatcmpl-"
+
+    async def handle_request(
+        self, request: ChatCompletionRequest, raw_request: Request
+    ):
+        """Override to add chat-specific profiling stages"""
+        import uuid as uuid_mod
+
+        from sglang.srt.managers.io_struct import GenerateReqInput
+
+        received_time = time.time()
+        received_time_perf = time.perf_counter()
+
+        # Generate a request ID for profiling
+        profile_request_id = (
+            getattr(request, "rid", None) or f"chatcmpl-{uuid_mod.uuid4().hex[:8]}"
+        )
+        profiler = get_request_profiler()
+
+        with profiler.profile_request(profile_request_id) as profile_session:
+            # Store profile session in context for sub-methods
+            token = _profile_session_ctx.set(profile_session)
+            try:
+                # Validate request
+                with profile_session.stage("validation"):
+                    validation_start = time.perf_counter()
+                    error_msg = self._validate_request(request)
+                    validation_time = time.perf_counter() - validation_start
+                if error_msg:
+                    return self.create_error_response(error_msg)
+
+                # Convert to internal format with granular profiling
+                with profile_session.stage("convert_to_internal_total"):
+                    adapted_request, processed_request = (
+                        self._convert_to_internal_request(request, raw_request)
+                    )
+
+                if isinstance(adapted_request, GenerateReqInput):
+                    adapted_request.validation_time = validation_time
+                    adapted_request.received_time = received_time
+                    adapted_request.received_time_perf = received_time_perf
+
+                if hasattr(request, "stream") and request.stream:
+                    return await self._handle_streaming_request(
+                        adapted_request, processed_request, raw_request
+                    )
+                else:
+                    return await self._handle_non_streaming_request(
+                        adapted_request, processed_request, raw_request
+                    )
+            except Exception as e:
+                logger.exception(f"Error in chat request: {e}")
+                return self.create_error_response(
+                    message=f"Internal server error: {str(e)}",
+                    err_type="InternalServerError",
+                    status_code=500,
+                )
+            finally:
+                _profile_session_ctx.reset(token)
 
     def _validate_request(self, request: ChatCompletionRequest) -> Optional[str]:
         """Validate that the input is valid."""
@@ -227,6 +292,8 @@ class OpenAIServingChat(OpenAIServingBase):
         self, request: ChatCompletionRequest, is_multimodal: bool
     ) -> MessageProcessingResult:
         """Process chat messages and apply chat template"""
+        profile_session = _profile_session_ctx.get()
+
         # GptOss model needs to keep special tokens for harmony parsing
         if self.is_gpt_oss:
             request.skip_special_tokens = False
@@ -235,35 +302,53 @@ class OpenAIServingChat(OpenAIServingBase):
 
         # Apply chat template and its stop strings
         tools = None
-        if request.tools and request.tool_choice != "none":
-            request.skip_special_tokens = False
-            if not isinstance(request.tool_choice, str):
-                tools = [
-                    item.function.model_dump()
-                    for item in request.tools
-                    if item.function.name == request.tool_choice.function.name
-                ]
-            else:
-                tools = [item.function.model_dump() for item in request.tools]
-            if self.tool_call_parser:
-                parser = FunctionCallParser(request.tools, self.tool_call_parser)
-                tool_call_constraint = parser.get_structure_constraint(
-                    request.tool_choice
-                )
-            # Handle JSON schema constraint directly for required or named tool choice
-            if request.tool_choice == "required" or isinstance(
-                request.tool_choice, ToolChoice
-            ):
-                json_schema = get_json_schema_constraint(
-                    request.tools, request.tool_choice
-                )
-                tool_call_constraint = ("json_schema", json_schema)
+
+        # Tool processing stage
+        def _process_tools():
+            nonlocal tools, tool_call_constraint
+            if request.tools and request.tool_choice != "none":
+                request.skip_special_tokens = False
+                if not isinstance(request.tool_choice, str):
+                    tools = [
+                        item.function.model_dump()
+                        for item in request.tools
+                        if item.function.name == request.tool_choice.function.name
+                    ]
+                else:
+                    tools = [item.function.model_dump() for item in request.tools]
+                if self.tool_call_parser:
+                    parser = FunctionCallParser(request.tools, self.tool_call_parser)
+                    tool_call_constraint = parser.get_structure_constraint(
+                        request.tool_choice
+                    )
+                # Handle JSON schema constraint directly for required or named tool choice
+                if request.tool_choice == "required" or isinstance(
+                    request.tool_choice, ToolChoice
+                ):
+                    json_schema = get_json_schema_constraint(
+                        request.tools, request.tool_choice
+                    )
+                    tool_call_constraint = ("json_schema", json_schema)
+
+        if profile_session:
+            with profile_session.stage("tool_processing"):
+                _process_tools()
+        else:
+            _process_tools()
 
         # Use chat template
         if self.template_manager.chat_template_name is None:
-            result = self._apply_jinja_template(request, tools, is_multimodal)
+            if profile_session:
+                with profile_session.stage("jinja_template"):
+                    result = self._apply_jinja_template(request, tools, is_multimodal)
+            else:
+                result = self._apply_jinja_template(request, tools, is_multimodal)
         else:
-            result = self._apply_conversation_template(request, is_multimodal)
+            if profile_session:
+                with profile_session.stage("conversation_template"):
+                    result = self._apply_conversation_template(request, is_multimodal)
+            else:
+                result = self._apply_conversation_template(request, is_multimodal)
 
         result.tool_call_constraint = tool_call_constraint
         return result
@@ -275,6 +360,8 @@ class OpenAIServingChat(OpenAIServingBase):
         is_multimodal: bool,
     ) -> MessageProcessingResult:
         """Apply Jinja chat template"""
+        profile_session = _profile_session_ctx.get()
+
         prompt = ""
         prompt_ids = []
         openai_compatible_messages = []
@@ -286,56 +373,73 @@ class OpenAIServingChat(OpenAIServingBase):
         template_content_format = self.template_manager.jinja_template_content_format
 
         if self.use_dpsk_v32_encoding:
-            thinking_mode = (
-                "thinking"
-                if (request.chat_template_kwargs or {}).get("thinking")
-                else "chat"
-            )
-            messages = request.messages
-            messages = [msg.model_dump() for msg in messages]
 
-            if messages[0]["role"] != "system":
-                # insert an empty system prompt to help render tool system prompt
-                messages.insert(0, {"role": "system", "content": ""})
-            if request.tools:
-                messages[0]["tools"] = [tool.model_dump() for tool in request.tools]
-            real_input = encode_messages(messages, thinking_mode=thinking_mode)
-            prompt_ids = self.tokenizer_manager.tokenizer.encode(real_input)
-        else:
-            for message in request.messages:
-                if message.content is None:
-                    message.content = ""
-                msg_dict = message.model_dump()
-
-                # Process content based on detected template format
-                processed_msg = process_content_for_template_format(
-                    msg_dict,
-                    template_content_format,
-                    image_data,
-                    video_data,
-                    audio_data,
-                    modalities,
+            def _dpsk_encode():
+                nonlocal prompt_ids
+                thinking_mode = (
+                    "thinking"
+                    if (request.chat_template_kwargs or {}).get("thinking")
+                    else "chat"
                 )
+                messages = request.messages
+                messages = [msg.model_dump() for msg in messages]
 
-                # per the Transformers docs & maintainers, tool call arguments in
-                # assistant-role messages with tool_calls need to be dicts not JSON str -
-                # this is how tool-use chat templates will expect them moving forwards
-                # so, for messages that have tool_calls, parse the string (which we get
-                # from openAI format) to dict
-                if (
-                    processed_msg["role"] == "assistant"
-                    and "tool_calls" in processed_msg
-                    and isinstance(processed_msg["tool_calls"], list)
-                ):
-                    for item in processed_msg["tool_calls"]:
-                        if "arguments" in item["function"] and isinstance(
-                            item["function"]["arguments"], str
-                        ):
-                            item["function"]["arguments"] = orjson.loads(
-                                item["function"]["arguments"]
-                            )
+                if messages[0]["role"] != "system":
+                    # insert an empty system prompt to help render tool system prompt
+                    messages.insert(0, {"role": "system", "content": ""})
+                if request.tools:
+                    messages[0]["tools"] = [tool.model_dump() for tool in request.tools]
+                real_input = encode_messages(messages, thinking_mode=thinking_mode)
+                prompt_ids = self.tokenizer_manager.tokenizer.encode(real_input)
 
-                openai_compatible_messages.append(processed_msg)
+            if profile_session:
+                with profile_session.stage("dpsk_v32_encoding"):
+                    _dpsk_encode()
+            else:
+                _dpsk_encode()
+        else:
+            # Message preprocessing stage
+            def _preprocess_messages():
+                for message in request.messages:
+                    if message.content is None:
+                        message.content = ""
+                    msg_dict = message.model_dump()
+
+                    # Process content based on detected template format
+                    processed_msg = process_content_for_template_format(
+                        msg_dict,
+                        template_content_format,
+                        image_data,
+                        video_data,
+                        audio_data,
+                        modalities,
+                    )
+
+                    # per the Transformers docs & maintainers, tool call arguments in
+                    # assistant-role messages with tool_calls need to be dicts not JSON str -
+                    # this is how tool-use chat templates will expect them moving forwards
+                    # so, for messages that have tool_calls, parse the string (which we get
+                    # from openAI format) to dict
+                    if (
+                        processed_msg["role"] == "assistant"
+                        and "tool_calls" in processed_msg
+                        and isinstance(processed_msg["tool_calls"], list)
+                    ):
+                        for item in processed_msg["tool_calls"]:
+                            if "arguments" in item["function"] and isinstance(
+                                item["function"]["arguments"], str
+                            ):
+                                item["function"]["arguments"] = orjson.loads(
+                                    item["function"]["arguments"]
+                                )
+
+                    openai_compatible_messages.append(processed_msg)
+
+            if profile_session:
+                with profile_session.stage("message_preprocessing"):
+                    _preprocess_messages()
+            else:
+                _preprocess_messages()
 
             # Handle assistant prefix for continue_final_message
             assistant_prefix = None
@@ -347,28 +451,9 @@ class OpenAIServingChat(OpenAIServingBase):
                     assistant_prefix = openai_compatible_messages[-1]["content"]
                     openai_compatible_messages = openai_compatible_messages[:-1]
 
-            try:
-                prompt_ids = self.tokenizer_manager.tokenizer.apply_chat_template(
-                    openai_compatible_messages,
-                    tokenize=True,
-                    add_generation_prompt=True,
-                    tools=tools,
-                    reasoning_effort=request.reasoning_effort,
-                    **(
-                        request.chat_template_kwargs
-                        if request.chat_template_kwargs
-                        else {}
-                    ),
-                )
-            except Exception as e:
-                # If the first attempt fails, try transforming the tools format
-                # This handles models like Mistral that have a different tools input format
-                # that is not compatible with OpenAI's apply_chat_template tool_call format
-                tools = (
-                    [t if "function" in t else {"function": t} for t in tools]
-                    if tools
-                    else None
-                )
+            # Apply chat template (tokenization) stage
+            def _apply_template():
+                nonlocal prompt_ids, tools
                 try:
                     prompt_ids = self.tokenizer_manager.tokenizer.apply_chat_template(
                         openai_compatible_messages,
@@ -382,22 +467,70 @@ class OpenAIServingChat(OpenAIServingBase):
                             else {}
                         ),
                     )
-                except jinja2.TemplateError as template_error:
-                    # Template errors (e.g., from raise_exception in Jinja templates)
-                    # should be treated as client errors (400 BadRequest)
-                    raise ValueError(str(template_error)) from template_error
+                except Exception as e:
+                    # If the first attempt fails, try transforming the tools format
+                    # This handles models like Mistral that have a different tools input format
+                    # that is not compatible with OpenAI's apply_chat_template tool_call format
+                    tools = (
+                        [t if "function" in t else {"function": t} for t in tools]
+                        if tools
+                        else None
+                    )
+                    try:
+                        prompt_ids = (
+                            self.tokenizer_manager.tokenizer.apply_chat_template(
+                                openai_compatible_messages,
+                                tokenize=True,
+                                add_generation_prompt=True,
+                                tools=tools,
+                                reasoning_effort=request.reasoning_effort,
+                                **(
+                                    request.chat_template_kwargs
+                                    if request.chat_template_kwargs
+                                    else {}
+                                ),
+                            )
+                        )
+                    except jinja2.TemplateError as template_error:
+                        # Template errors (e.g., from raise_exception in Jinja templates)
+                        # should be treated as client errors (400 BadRequest)
+                        raise ValueError(str(template_error)) from template_error
+
+            if profile_session:
+                with profile_session.stage("apply_chat_template"):
+                    _apply_template()
+            else:
+                _apply_template()
 
             if assistant_prefix:
-                encoded = self.tokenizer_manager.tokenizer.encode(assistant_prefix)
-                if (
-                    encoded
-                    and encoded[0] == self.tokenizer_manager.tokenizer.bos_token_id
-                ):
-                    encoded = encoded[1:]
-                prompt_ids += encoded
+
+                def _encode_prefix():
+                    nonlocal prompt_ids
+                    encoded = self.tokenizer_manager.tokenizer.encode(assistant_prefix)
+                    if (
+                        encoded
+                        and encoded[0] == self.tokenizer_manager.tokenizer.bos_token_id
+                    ):
+                        encoded = encoded[1:]
+                    prompt_ids += encoded
+
+                if profile_session:
+                    with profile_session.stage("encode_assistant_prefix"):
+                        _encode_prefix()
+                else:
+                    _encode_prefix()
 
             if is_multimodal:
-                prompt = self.tokenizer_manager.tokenizer.decode(prompt_ids)
+
+                def _decode_for_multimodal():
+                    nonlocal prompt
+                    prompt = self.tokenizer_manager.tokenizer.decode(prompt_ids)
+
+                if profile_session:
+                    with profile_session.stage("decode_multimodal"):
+                        _decode_for_multimodal()
+                else:
+                    _decode_for_multimodal()
 
         stop = request.stop
         image_data = image_data if image_data else None

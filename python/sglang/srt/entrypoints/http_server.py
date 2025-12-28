@@ -148,6 +148,7 @@ from sglang.srt.utils import (
     kill_process_tree,
     set_uvicorn_logging_configs,
 )
+from sglang.srt.utils.request_profiler import get_request_profiler
 from sglang.utils import get_exception_traceback
 from sglang.version import __version__
 
@@ -748,6 +749,102 @@ async def stop_profile_async():
     await _global_state.tokenizer_manager.stop_profile()
     return Response(
         content="Stop profiling. This will take some time.\n",
+        status_code=200,
+    )
+
+
+# ======================== Request CPU Profiler Endpoints ========================
+# These endpoints profile the CPU time spent in forming/processing HTTP requests
+# (e.g., chat template application, tokenization) separate from GPU inference time.
+
+
+@app.api_route("/start_request_profile", methods=["GET", "POST"])
+async def start_request_profile(use_cprofile: bool = False):
+    """Start request CPU profiling for chat completions.
+
+    This profiles the CPU time spent in processing HTTP requests, including:
+    - Request validation
+    - Message processing (chat template application)
+    - Tokenization
+    - Request conversion
+
+    Args:
+        use_cprofile: If True, also collect detailed cProfile statistics.
+                     More overhead but more detailed function-level info.
+    """
+    profiler = get_request_profiler()
+    profiler.enable(use_cprofile=use_cprofile)
+    return Response(
+        content=f"Request CPU profiling started (cprofile={use_cprofile}).\n",
+        status_code=200,
+    )
+
+
+@app.api_route("/stop_request_profile", methods=["GET", "POST"])
+async def stop_request_profile():
+    """Stop request CPU profiling."""
+    profiler = get_request_profiler()
+    profiler.disable()
+    return Response(
+        content="Request CPU profiling stopped.\n",
+        status_code=200,
+    )
+
+
+@app.api_route("/get_request_profile_results", methods=["GET", "POST"])
+async def get_request_profile_results(request_id: Optional[str] = None):
+    """Get request CPU profiling results.
+
+    Args:
+        request_id: If specified, return results for this request only.
+                   Otherwise return all results.
+
+    Returns:
+        JSON with timing breakdown per request:
+        {
+            "request_id": {
+                "total_time_ms": float,
+                "stages_ms": {
+                    "validation": float,
+                    "message_preprocessing": float,
+                    "apply_chat_template": float,
+                    ...
+                }
+            }
+        }
+    """
+    profiler = get_request_profiler()
+    results = profiler.get_results(request_id=request_id)
+    return ORJSONResponse(content=results)
+
+
+@app.api_route("/get_request_profile_summary", methods=["GET", "POST"])
+async def get_request_profile_summary():
+    """Get aggregate statistics across all profiled requests.
+
+    Returns:
+        JSON with min/max/avg/p50/p90/p99 for total time and each stage:
+        {
+            "count": int,
+            "total_time_ms": {"min": float, "max": float, "avg": float, ...},
+            "stages_ms": {
+                "validation": {"min": float, "max": float, "avg": float, ...},
+                ...
+            }
+        }
+    """
+    profiler = get_request_profiler()
+    summary = profiler.get_summary()
+    return ORJSONResponse(content=summary)
+
+
+@app.api_route("/clear_request_profile_results", methods=["GET", "POST"])
+async def clear_request_profile_results():
+    """Clear all stored request profiling results."""
+    profiler = get_request_profiler()
+    profiler.clear_results()
+    return Response(
+        content="Request profile results cleared.\n",
         status_code=200,
     )
 
