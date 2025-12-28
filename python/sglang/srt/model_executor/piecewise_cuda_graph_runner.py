@@ -133,6 +133,35 @@ def _prewarm_flashinfer_trtllm_gemm(device: torch.device) -> None:
         pass
 
 
+def _disable_flashinfer_jit_compile():
+    """
+    Disable torch.compile tracing for flashinfer's JIT loading functions.
+    FlashInfer uses file I/O (open()) during kernel loading which is incompatible
+    with torch.compile's tracing.
+    """
+    try:
+        import flashinfer.jit.cubin_loader
+        import flashinfer.jit.gemm.core
+        import flashinfer.gemm.gemm_base
+
+        # Disable compile for functions that do file I/O
+        flashinfer.jit.cubin_loader.load_cubin = torch._dynamo.disable(
+            flashinfer.jit.cubin_loader.load_cubin
+        )
+        flashinfer.jit.cubin_loader.get_cubin = torch._dynamo.disable(
+            flashinfer.jit.cubin_loader.get_cubin
+        )
+        flashinfer.jit.gemm.core.gen_trtllm_gen_gemm_module = torch._dynamo.disable(
+            flashinfer.jit.gemm.core.gen_trtllm_gen_gemm_module
+        )
+        flashinfer.gemm.gemm_base.get_trtllm_gemm_module = torch._dynamo.disable(
+            flashinfer.gemm.gemm_base.get_trtllm_gemm_module
+        )
+    except (ImportError, AttributeError):
+        # FlashInfer not installed or API changed, skip
+        pass
+
+
 def set_torch_compile_config():
     import torch._dynamo.config
 
@@ -162,6 +191,9 @@ def set_torch_compile_config():
     except ImportError:
         # FlashInfer not installed, skip
         pass
+
+    # Disable torch.compile for flashinfer JIT loading functions
+    _disable_flashinfer_jit_compile()
 
 
 class PiecewiseCudaGraphRunner:
