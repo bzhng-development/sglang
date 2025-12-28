@@ -149,6 +149,7 @@ from sglang.srt.utils import (
     set_uvicorn_logging_configs,
 )
 from sglang.srt.utils.request_profiler import get_request_profiler
+from sglang.srt.utils.server_tracer import ServerTracingMiddleware, get_server_tracer
 from sglang.utils import get_exception_traceback
 from sglang.version import __version__
 
@@ -358,6 +359,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add server tracing middleware for Perfetto trace export
+app.add_middleware(ServerTracingMiddleware)
 
 
 @app.exception_handler(HTTPException)
@@ -847,6 +851,69 @@ async def clear_request_profile_results():
         content="Request profile results cleared.\n",
         status_code=200,
     )
+
+
+# ======================== Server Tracing Endpoints (Perfetto) ========================
+# These endpoints capture ALL HTTP requests for visualization in Perfetto UI.
+# Output is Chrome Trace format which Perfetto can directly load.
+
+
+@app.api_route("/start_server_trace", methods=["GET", "POST"])
+async def start_server_trace(
+    output_dir: Optional[str] = None,
+    trace_id: Optional[str] = None,
+):
+    """Start server-wide tracing for Perfetto visualization.
+
+    All HTTP requests will be traced with timing information until stop is called.
+    Output is in Chrome Trace format (.trace.json.gz) viewable in Perfetto UI.
+
+    Args:
+        output_dir: Directory to save trace file (default: /tmp or SGLANG_TORCH_PROFILER_DIR)
+        trace_id: Custom trace identifier (default: auto-generated with timestamp)
+
+    Usage:
+        1. POST /start_server_trace
+        2. Make requests to the server
+        3. POST /stop_server_trace
+        4. Open the trace file in https://ui.perfetto.dev
+    """
+    tracer = get_server_tracer()
+    tracer.enable(output_dir=output_dir, trace_id=trace_id)
+    return Response(
+        content=f"Server tracing started. Trace ID: {tracer._trace_id}\n",
+        status_code=200,
+    )
+
+
+@app.api_route("/stop_server_trace", methods=["GET", "POST"])
+async def stop_server_trace():
+    """Stop server tracing and export the trace file.
+
+    Returns:
+        Path to the exported trace file (.trace.json.gz)
+    """
+    tracer = get_server_tracer()
+    output_path = tracer.disable()
+    if output_path:
+        return ORJSONResponse(
+            content={
+                "message": "Server tracing stopped",
+                "trace_file": output_path,
+                "view_in": "https://ui.perfetto.dev",
+            }
+        )
+    return Response(
+        content="Server tracing was not enabled.\n",
+        status_code=400,
+    )
+
+
+@app.api_route("/get_server_trace_stats", methods=["GET", "POST"])
+async def get_server_trace_stats():
+    """Get current server tracing statistics."""
+    tracer = get_server_tracer()
+    return ORJSONResponse(content=tracer.get_stats())
 
 
 @app.api_route("/freeze_gc", methods=["GET", "POST"])
