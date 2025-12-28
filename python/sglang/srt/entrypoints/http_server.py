@@ -862,15 +862,20 @@ async def clear_request_profile_results():
 async def start_server_trace(
     output_dir: Optional[str] = None,
     trace_id: Optional[str] = None,
+    with_stack: bool = True,
+    record_shapes: bool = False,
 ):
-    """Start server-wide tracing for Perfetto visualization.
+    """Start server-wide CPU tracing using torch.profiler for Perfetto visualization.
 
-    All HTTP requests will be traced with timing information until stop is called.
-    Output is in Chrome Trace format (.trace.json.gz) viewable in Perfetto UI.
+    This captures ALL Python function calls during request processing, giving you
+    full visibility into where CPU time is spent. Output is Chrome Trace format
+    (.trace.json.gz) viewable in Perfetto UI.
 
     Args:
         output_dir: Directory to save trace file (default: /tmp or SGLANG_TORCH_PROFILER_DIR)
         trace_id: Custom trace identifier (default: auto-generated with timestamp)
+        with_stack: Capture Python stack traces (default: True, recommended)
+        record_shapes: Record tensor shapes (default: False, adds overhead)
 
     Usage:
         1. POST /start_server_trace
@@ -879,9 +884,14 @@ async def start_server_trace(
         4. Open the trace file in https://ui.perfetto.dev
     """
     tracer = get_server_tracer()
-    tracer.enable(output_dir=output_dir, trace_id=trace_id)
+    tracer.enable(
+        output_dir=output_dir,
+        trace_id=trace_id,
+        with_stack=with_stack,
+        record_shapes=record_shapes,
+    )
     return Response(
-        content=f"Server tracing started. Trace ID: {tracer._trace_id}\n",
+        content=f"Server CPU tracing started. Trace ID: {tracer._trace_id}\n",
         status_code=200,
     )
 

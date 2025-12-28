@@ -217,21 +217,10 @@ class _ProfileSession:
         self.timings = StageTimings(request_id=request_id)
         self.use_cprofile = use_cprofile
         self._cprofile: Optional[cProfile.Profile] = None
-        self._server_tracer = None
 
         if use_cprofile:
             self._cprofile = cProfile.Profile()
             self._cprofile.enable()
-
-        # Try to get the server tracer for integrated tracing
-        try:
-            from sglang.srt.utils.server_tracer import get_server_tracer
-
-            tracer = get_server_tracer()
-            if tracer.is_enabled():
-                self._server_tracer = tracer
-        except ImportError:
-            pass
 
     @contextmanager
     def stage(self, name: str):
@@ -242,22 +231,11 @@ class _ProfileSession:
         """
         start = time.perf_counter()
         self.timings.stage_start_times[name] = start
-
-        # Also emit to server tracer if enabled
-        if self._server_tracer:
-            self._server_tracer.trace_span_start(
-                name, self.request_id, category="chat_processing"
-            )
         try:
             yield
         finally:
             end = time.perf_counter()
             self.timings.stages[name] = end - start
-
-            if self._server_tracer:
-                self._server_tracer.trace_span_end(
-                    name, self.request_id, category="chat_processing"
-                )
 
     def stage_start(self, name: str):
         """Start timing a stage (lower overhead than context manager)
@@ -266,12 +244,6 @@ class _ProfileSession:
             name: Name of the stage
         """
         self.timings.stage_start_times[name] = time.perf_counter()
-
-        # Also emit to server tracer if enabled
-        if self._server_tracer:
-            self._server_tracer.trace_span_start(
-                name, self.request_id, category="chat_processing"
-            )
 
     def stage_end(self, name: str):
         """End timing a stage started with stage_start()
@@ -282,12 +254,6 @@ class _ProfileSession:
         start = self.timings.stage_start_times.get(name)
         if start is not None:
             self.timings.stages[name] = time.perf_counter() - start
-
-        # Also emit to server tracer if enabled
-        if self._server_tracer:
-            self._server_tracer.trace_span_end(
-                name, self.request_id, category="chat_processing"
-            )
 
     def finish(self):
         """Finalize the profiling session"""
