@@ -123,6 +123,25 @@ def set_torch_compile_config():
     if hasattr(torch._dynamo.config, "cache_size_limit"):
         torch._dynamo.config.cache_size_limit = 1024
 
+    # Ignore flashinfer logger methods to avoid graph breaks during compile
+    # FlashInfer's cubin_loader uses logger.debug() during JIT compilation
+    # which would otherwise cause graph breaks
+    try:
+        import flashinfer.jit.cubin_loader
+
+        logger_methods = [
+            flashinfer.jit.cubin_loader.logger.debug,
+            flashinfer.jit.cubin_loader.logger.info,
+            flashinfer.jit.cubin_loader.logger.warning,
+            flashinfer.jit.cubin_loader.logger.error,
+            flashinfer.jit.cubin_loader.logger.critical,
+        ]
+        for method in logger_methods:
+            torch._dynamo.config.ignore_logger_methods.add(method)
+    except ImportError:
+        # FlashInfer not installed, skip
+        pass
+
 
 class PiecewiseCudaGraphRunner:
     """A PiecewiseCudaGraphRunner runs the forward pass of a model with cuda graph and torch.compile."""
