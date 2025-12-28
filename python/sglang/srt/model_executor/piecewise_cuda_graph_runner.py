@@ -104,6 +104,7 @@ def patch_model(model: torch.nn.Module, compiler: str):
 
 # Reuse this memory pool across all cuda graph runners.
 global_graph_memory_pool = None
+_flashinfer_trtllm_gemm_prewarmed = False
 
 
 def get_global_graph_memory_pool():
@@ -113,6 +114,23 @@ def get_global_graph_memory_pool():
 def set_global_graph_memory_pool(val):
     global global_graph_memory_pool
     global_graph_memory_pool = val
+
+
+def _prewarm_flashinfer_trtllm_gemm(device: torch.device) -> None:
+    global _flashinfer_trtllm_gemm_prewarmed
+    if _flashinfer_trtllm_gemm_prewarmed:
+        return
+    try:
+        if not torch.cuda.is_available():
+            return
+        from flashinfer.gemm import gemm_base
+
+        with torch.cuda.device(device):
+            gemm_base.get_trtllm_gemm_module()
+        _flashinfer_trtllm_gemm_prewarmed = True
+    except Exception:
+        # Best-effort warmup; if it fails, compile may still work in eager mode.
+        pass
 
 
 def set_torch_compile_config():
@@ -138,6 +156,9 @@ def set_torch_compile_config():
         ]
         for method in logger_methods:
             torch._dynamo.config.ignore_logger_methods.add(method)
+        if hasattr(torch._dynamo.config, "reorderable_logging_functions"):
+            for method in logger_methods:
+                torch._dynamo.config.reorderable_logging_functions.add(method)
     except ImportError:
         # FlashInfer not installed, skip
         pass
@@ -251,6 +272,7 @@ class PiecewiseCudaGraphRunner:
                 log_info_on_rank0(
                     logger, "Pre-warming flashinfer kernels in eager mode..."
                 )
+                _prewarm_flashinfer_trtllm_gemm(self.device)
                 with set_compiled(False), enable_piecewise_cuda_graph_compile():
                     # Run one warmup iteration to trigger flashinfer JIT loading
                     self.warmup_torch_compile(num_tokens=min(self.capture_num_tokens))
