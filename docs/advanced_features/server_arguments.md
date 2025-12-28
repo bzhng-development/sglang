@@ -261,6 +261,7 @@ Please consult the documentation below and [server_args.py](https://github.com/s
 | `--speculative-accept-threshold-single` | Accept a draft token if its probability in the target model is greater than this threshold. | `1.0` | Type: float |
 | `--speculative-accept-threshold-acc` | The accept probability of a draft token is raised from its target probability p to min(1, p / threshold_acc). | `1.0` | Type: float |
 | `--speculative-token-map` | The path of the draft model's small vocab table. | `None` | Type: str |
+| `--speculative-draft-attention-backend` | Attention backend for speculative decoding drafting. This is useful for example, when the draft model is MLA and the drafter is Eagle3 Llama. | `None` | Type: str |
 | `--speculative-attention-mode` | Attention backend for speculative decoding operations (both target verify and draft extend). Can be one of 'prefill' (default) or 'decode'. | `prefill` | `prefill`, `decode` |
 | `--speculative-moe-runner-backend` | MOE backend for EAGLE speculative decoding, see --moe-runner-backend for options. Same as moe runner backend if unset. | `None` | |
 | `--speculative-moe-a2a-backend` | MOE A2A backend for EAGLE speculative decoding, see --moe-a2a-backend for options. Same as moe a2a backend if unset. | `None` | |
