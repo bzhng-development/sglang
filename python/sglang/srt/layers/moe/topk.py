@@ -35,6 +35,9 @@ try:
 except ImportError:
     pass
 
+from sglang.srt.compilation.piecewise_context_manager import (
+    is_in_piecewise_cuda_graph,
+)
 from sglang.srt.custom_op import CustomOp
 from sglang.srt.distributed import get_tp_group
 from sglang.srt.distributed.device_communicators.pynccl_allocator import (
@@ -269,7 +272,16 @@ class TopK(CustomOp):
         num_token_non_padded: Optional[torch.Tensor] = None,
         expert_location_dispatch_info: Optional[ExpertLocationDispatchInfo] = None,
     ) -> TopKOutput:
-        if self.topk_config.output_format is not None:
+        # Piecewise CUDA graph prefers STANDARD output format, except flashinfer
+        if is_in_piecewise_cuda_graph():
+            if (
+                get_moe_runner_backend().is_flashinfer_trtllm()
+                or get_moe_runner_backend().is_flashinfer_mxfp4()
+            ):
+                output_format = TopKOutputFormat.BYPASSED
+            else:
+                output_format = TopKOutputFormat.STANDARD
+        elif self.topk_config.output_format is not None:
             output_format = self.topk_config.output_format
         elif get_moe_runner_backend().is_triton_kernels():
             output_format = TopKOutputFormat.TRITON_KERNEL
