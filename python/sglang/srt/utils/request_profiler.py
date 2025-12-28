@@ -236,6 +236,24 @@ class _ProfileSession:
             end = time.perf_counter()
             self.timings.stages[name] = end - start
 
+    def stage_start(self, name: str):
+        """Start timing a stage (lower overhead than context manager)
+
+        Args:
+            name: Name of the stage
+        """
+        self.timings.stage_start_times[name] = time.perf_counter()
+
+    def stage_end(self, name: str):
+        """End timing a stage started with stage_start()
+
+        Args:
+            name: Name of the stage (must match stage_start call)
+        """
+        start = self.timings.stage_start_times.get(name)
+        if start is not None:
+            self.timings.stages[name] = time.perf_counter() - start
+
     def finish(self):
         """Finalize the profiling session"""
         self.timings.end_time = time.perf_counter()
@@ -255,6 +273,12 @@ class _NoOpProfileSession:
     @contextmanager
     def stage(self, name: str):
         yield
+
+    def stage_start(self, name: str):
+        pass
+
+    def stage_end(self, name: str):
+        pass
 
 
 # Decorator for profiling specific functions

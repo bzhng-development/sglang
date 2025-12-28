@@ -299,56 +299,52 @@ class OpenAIServingChat(OpenAIServingBase):
             request.skip_special_tokens = False
 
         tool_call_constraint = None
-
-        # Apply chat template and its stop strings
         tools = None
 
         # Tool processing stage
-        def _process_tools():
-            nonlocal tools, tool_call_constraint
-            if request.tools and request.tool_choice != "none":
-                request.skip_special_tokens = False
-                if not isinstance(request.tool_choice, str):
-                    tools = [
-                        item.function.model_dump()
-                        for item in request.tools
-                        if item.function.name == request.tool_choice.function.name
-                    ]
-                else:
-                    tools = [item.function.model_dump() for item in request.tools]
-                if self.tool_call_parser:
-                    parser = FunctionCallParser(request.tools, self.tool_call_parser)
-                    tool_call_constraint = parser.get_structure_constraint(
-                        request.tool_choice
-                    )
-                # Handle JSON schema constraint directly for required or named tool choice
-                if request.tool_choice == "required" or isinstance(
-                    request.tool_choice, ToolChoice
-                ):
-                    json_schema = get_json_schema_constraint(
-                        request.tools, request.tool_choice
-                    )
-                    tool_call_constraint = ("json_schema", json_schema)
+        if profile_session:
+            profile_session.stage_start("tool_processing")
+
+        if request.tools and request.tool_choice != "none":
+            request.skip_special_tokens = False
+            if not isinstance(request.tool_choice, str):
+                tools = [
+                    item.function.model_dump()
+                    for item in request.tools
+                    if item.function.name == request.tool_choice.function.name
+                ]
+            else:
+                tools = [item.function.model_dump() for item in request.tools]
+            if self.tool_call_parser:
+                parser = FunctionCallParser(request.tools, self.tool_call_parser)
+                tool_call_constraint = parser.get_structure_constraint(
+                    request.tool_choice
+                )
+            # Handle JSON schema constraint directly for required or named tool choice
+            if request.tool_choice == "required" or isinstance(
+                request.tool_choice, ToolChoice
+            ):
+                json_schema = get_json_schema_constraint(
+                    request.tools, request.tool_choice
+                )
+                tool_call_constraint = ("json_schema", json_schema)
 
         if profile_session:
-            with profile_session.stage("tool_processing"):
-                _process_tools()
-        else:
-            _process_tools()
+            profile_session.stage_end("tool_processing")
 
         # Use chat template
         if self.template_manager.chat_template_name is None:
             if profile_session:
-                with profile_session.stage("jinja_template"):
-                    result = self._apply_jinja_template(request, tools, is_multimodal)
-            else:
-                result = self._apply_jinja_template(request, tools, is_multimodal)
+                profile_session.stage_start("jinja_template")
+            result = self._apply_jinja_template(request, tools, is_multimodal)
+            if profile_session:
+                profile_session.stage_end("jinja_template")
         else:
             if profile_session:
-                with profile_session.stage("conversation_template"):
-                    result = self._apply_conversation_template(request, is_multimodal)
-            else:
-                result = self._apply_conversation_template(request, is_multimodal)
+                profile_session.stage_start("conversation_template")
+            result = self._apply_conversation_template(request, is_multimodal)
+            if profile_session:
+                profile_session.stage_end("conversation_template")
 
         result.tool_call_constraint = tool_call_constraint
         return result
@@ -373,73 +369,62 @@ class OpenAIServingChat(OpenAIServingBase):
         template_content_format = self.template_manager.jinja_template_content_format
 
         if self.use_dpsk_v32_encoding:
+            # DeepSeek V3.2 encoding path
+            if profile_session:
+                profile_session.stage_start("dpsk_v32_encoding")
 
-            def _dpsk_encode():
-                nonlocal prompt_ids
-                thinking_mode = (
-                    "thinking"
-                    if (request.chat_template_kwargs or {}).get("thinking")
-                    else "chat"
-                )
-                messages = request.messages
-                messages = [msg.model_dump() for msg in messages]
+            thinking_mode = (
+                "thinking"
+                if (request.chat_template_kwargs or {}).get("thinking")
+                else "chat"
+            )
+            messages = [msg.model_dump() for msg in request.messages]
 
-                if messages[0]["role"] != "system":
-                    # insert an empty system prompt to help render tool system prompt
-                    messages.insert(0, {"role": "system", "content": ""})
-                if request.tools:
-                    messages[0]["tools"] = [tool.model_dump() for tool in request.tools]
-                real_input = encode_messages(messages, thinking_mode=thinking_mode)
-                prompt_ids = self.tokenizer_manager.tokenizer.encode(real_input)
+            if messages[0]["role"] != "system":
+                messages.insert(0, {"role": "system", "content": ""})
+            if request.tools:
+                messages[0]["tools"] = [tool.model_dump() for tool in request.tools]
+            real_input = encode_messages(messages, thinking_mode=thinking_mode)
+            prompt_ids = self.tokenizer_manager.tokenizer.encode(real_input)
 
             if profile_session:
-                with profile_session.stage("dpsk_v32_encoding"):
-                    _dpsk_encode()
-            else:
-                _dpsk_encode()
+                profile_session.stage_end("dpsk_v32_encoding")
         else:
-            # Message preprocessing stage
-            def _preprocess_messages():
-                for message in request.messages:
-                    if message.content is None:
-                        message.content = ""
-                    msg_dict = message.model_dump()
+            # Standard path: Message preprocessing
+            if profile_session:
+                profile_session.stage_start("message_preprocessing")
 
-                    # Process content based on detected template format
-                    processed_msg = process_content_for_template_format(
-                        msg_dict,
-                        template_content_format,
-                        image_data,
-                        video_data,
-                        audio_data,
-                        modalities,
-                    )
+            for message in request.messages:
+                if message.content is None:
+                    message.content = ""
+                msg_dict = message.model_dump()
 
-                    # per the Transformers docs & maintainers, tool call arguments in
-                    # assistant-role messages with tool_calls need to be dicts not JSON str -
-                    # this is how tool-use chat templates will expect them moving forwards
-                    # so, for messages that have tool_calls, parse the string (which we get
-                    # from openAI format) to dict
-                    if (
-                        processed_msg["role"] == "assistant"
-                        and "tool_calls" in processed_msg
-                        and isinstance(processed_msg["tool_calls"], list)
-                    ):
-                        for item in processed_msg["tool_calls"]:
-                            if "arguments" in item["function"] and isinstance(
-                                item["function"]["arguments"], str
-                            ):
-                                item["function"]["arguments"] = orjson.loads(
-                                    item["function"]["arguments"]
-                                )
+                processed_msg = process_content_for_template_format(
+                    msg_dict,
+                    template_content_format,
+                    image_data,
+                    video_data,
+                    audio_data,
+                    modalities,
+                )
 
-                    openai_compatible_messages.append(processed_msg)
+                if (
+                    processed_msg["role"] == "assistant"
+                    and "tool_calls" in processed_msg
+                    and isinstance(processed_msg["tool_calls"], list)
+                ):
+                    for item in processed_msg["tool_calls"]:
+                        if "arguments" in item["function"] and isinstance(
+                            item["function"]["arguments"], str
+                        ):
+                            item["function"]["arguments"] = orjson.loads(
+                                item["function"]["arguments"]
+                            )
+
+                openai_compatible_messages.append(processed_msg)
 
             if profile_session:
-                with profile_session.stage("message_preprocessing"):
-                    _preprocess_messages()
-            else:
-                _preprocess_messages()
+                profile_session.stage_end("message_preprocessing")
 
             # Handle assistant prefix for continue_final_message
             assistant_prefix = None
@@ -451,9 +436,26 @@ class OpenAIServingChat(OpenAIServingBase):
                     assistant_prefix = openai_compatible_messages[-1]["content"]
                     openai_compatible_messages = openai_compatible_messages[:-1]
 
-            # Apply chat template (tokenization) stage
-            def _apply_template():
-                nonlocal prompt_ids, tools
+            # Apply chat template (tokenization)
+            if profile_session:
+                profile_session.stage_start("apply_chat_template")
+
+            try:
+                prompt_ids = self.tokenizer_manager.tokenizer.apply_chat_template(
+                    openai_compatible_messages,
+                    tokenize=True,
+                    add_generation_prompt=True,
+                    tools=tools,
+                    reasoning_effort=request.reasoning_effort,
+                    **(request.chat_template_kwargs or {}),
+                )
+            except Exception:
+                # If the first attempt fails, try transforming the tools format
+                tools = (
+                    [t if "function" in t else {"function": t} for t in tools]
+                    if tools
+                    else None
+                )
                 try:
                     prompt_ids = self.tokenizer_manager.tokenizer.apply_chat_template(
                         openai_compatible_messages,
@@ -461,76 +463,37 @@ class OpenAIServingChat(OpenAIServingBase):
                         add_generation_prompt=True,
                         tools=tools,
                         reasoning_effort=request.reasoning_effort,
-                        **(
-                            request.chat_template_kwargs
-                            if request.chat_template_kwargs
-                            else {}
-                        ),
+                        **(request.chat_template_kwargs or {}),
                     )
-                except Exception as e:
-                    # If the first attempt fails, try transforming the tools format
-                    # This handles models like Mistral that have a different tools input format
-                    # that is not compatible with OpenAI's apply_chat_template tool_call format
-                    tools = (
-                        [t if "function" in t else {"function": t} for t in tools]
-                        if tools
-                        else None
-                    )
-                    try:
-                        prompt_ids = (
-                            self.tokenizer_manager.tokenizer.apply_chat_template(
-                                openai_compatible_messages,
-                                tokenize=True,
-                                add_generation_prompt=True,
-                                tools=tools,
-                                reasoning_effort=request.reasoning_effort,
-                                **(
-                                    request.chat_template_kwargs
-                                    if request.chat_template_kwargs
-                                    else {}
-                                ),
-                            )
-                        )
-                    except jinja2.TemplateError as template_error:
-                        # Template errors (e.g., from raise_exception in Jinja templates)
-                        # should be treated as client errors (400 BadRequest)
-                        raise ValueError(str(template_error)) from template_error
+                except jinja2.TemplateError as template_error:
+                    raise ValueError(str(template_error)) from template_error
 
             if profile_session:
-                with profile_session.stage("apply_chat_template"):
-                    _apply_template()
-            else:
-                _apply_template()
+                profile_session.stage_end("apply_chat_template")
 
             if assistant_prefix:
+                if profile_session:
+                    profile_session.stage_start("encode_assistant_prefix")
 
-                def _encode_prefix():
-                    nonlocal prompt_ids
-                    encoded = self.tokenizer_manager.tokenizer.encode(assistant_prefix)
-                    if (
-                        encoded
-                        and encoded[0] == self.tokenizer_manager.tokenizer.bos_token_id
-                    ):
-                        encoded = encoded[1:]
-                    prompt_ids += encoded
+                encoded = self.tokenizer_manager.tokenizer.encode(assistant_prefix)
+                if (
+                    encoded
+                    and encoded[0] == self.tokenizer_manager.tokenizer.bos_token_id
+                ):
+                    encoded = encoded[1:]
+                prompt_ids += encoded
 
                 if profile_session:
-                    with profile_session.stage("encode_assistant_prefix"):
-                        _encode_prefix()
-                else:
-                    _encode_prefix()
+                    profile_session.stage_end("encode_assistant_prefix")
 
             if is_multimodal:
+                if profile_session:
+                    profile_session.stage_start("decode_multimodal")
 
-                def _decode_for_multimodal():
-                    nonlocal prompt
-                    prompt = self.tokenizer_manager.tokenizer.decode(prompt_ids)
+                prompt = self.tokenizer_manager.tokenizer.decode(prompt_ids)
 
                 if profile_session:
-                    with profile_session.stage("decode_multimodal"):
-                        _decode_for_multimodal()
-                else:
-                    _decode_for_multimodal()
+                    profile_session.stage_end("decode_multimodal")
 
         stop = request.stop
         image_data = image_data if image_data else None
