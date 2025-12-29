@@ -531,6 +531,7 @@ class ServerArgs:
     enable_nccl_nvls: bool = False
     enable_symm_mem: bool = False
     disable_flashinfer_cutlass_moe_fp4_allgather: bool = False
+    disable_flashinfer_cutlass_moe_fp8_allgather: bool = False
     enable_tokenizer_batch_encode: bool = False
     disable_tokenizer_batch_decode: bool = False
     disable_outlines_disk_cache: bool = False
@@ -3937,7 +3938,12 @@ class ServerArgs:
         parser.add_argument(
             "--disable-flashinfer-cutlass-moe-fp4-allgather",
             action="store_true",
-            help="Disables quantize before all-gather for flashinfer cutlass moe.",
+            help="Disables FP4 quantize before all-gather for flashinfer cutlass moe.",
+        )
+        parser.add_argument(
+            "--disable-flashinfer-cutlass-moe-fp8-allgather",
+            action="store_true",
+            help="Disables FP8 quantize before all-gather for flashinfer cutlass moe.",
         )
         parser.add_argument(
             "--enable-tokenizer-batch-encode",
