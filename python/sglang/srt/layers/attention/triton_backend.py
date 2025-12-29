@@ -229,17 +229,23 @@ class TritonAttnBackend(AttentionBackend):
     def init_forward_metadata(self, forward_batch: ForwardBatch):
         """Init auxiliary variables for triton attention backend."""
 
-        bs = forward_batch.batch_size
         seq_lens = forward_batch.seq_lens
         req_pool_indices = forward_batch.req_pool_indices
-        if seq_lens.shape[0] != bs:
-            # Keep attention metadata consistent with the actual per-seq tensors.
-            bs = seq_lens.shape[0]
-        if req_pool_indices is not None and req_pool_indices.shape[0] != bs:
-            bs = min(bs, req_pool_indices.shape[0])
-        seq_lens = seq_lens[:bs]
+        # Keep attention metadata consistent with per-seq tensors.
+        bs = seq_lens.shape[0]
         if req_pool_indices is not None:
+            bs = min(bs, req_pool_indices.shape[0])
+        if bs != forward_batch.batch_size:
+            forward_batch.batch_size = bs
+        if bs != seq_lens.shape[0]:
+            seq_lens = seq_lens[:bs]
+            forward_batch.seq_lens = seq_lens
+            forward_batch.seq_lens_sum = int(seq_lens.sum().item())
+            if forward_batch.seq_lens_cpu is not None:
+                forward_batch.seq_lens_cpu = forward_batch.seq_lens_cpu[:bs]
+        if req_pool_indices is not None and req_pool_indices.shape[0] != bs:
             req_pool_indices = req_pool_indices[:bs]
+            forward_batch.req_pool_indices = req_pool_indices
         kv_indptr = self.kv_indptr
         window_kv_indptr = self.window_kv_indptr
         window_kv_indices = None
