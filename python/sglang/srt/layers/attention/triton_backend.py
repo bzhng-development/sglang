@@ -230,6 +230,16 @@ class TritonAttnBackend(AttentionBackend):
         """Init auxiliary variables for triton attention backend."""
 
         bs = forward_batch.batch_size
+        seq_lens = forward_batch.seq_lens
+        req_pool_indices = forward_batch.req_pool_indices
+        if seq_lens.shape[0] != bs:
+            # Keep attention metadata consistent with the actual per-seq tensors.
+            bs = seq_lens.shape[0]
+        if req_pool_indices is not None and req_pool_indices.shape[0] != bs:
+            bs = min(bs, req_pool_indices.shape[0])
+        seq_lens = seq_lens[:bs]
+        if req_pool_indices is not None:
+            req_pool_indices = req_pool_indices[:bs]
         kv_indptr = self.kv_indptr
         window_kv_indptr = self.window_kv_indptr
         window_kv_indices = None
@@ -239,15 +249,15 @@ class TritonAttnBackend(AttentionBackend):
 
         if forward_batch.forward_mode.is_decode_or_idle():
             if spec_info is None:
-                kv_indptr[1 : bs + 1] = torch.cumsum(forward_batch.seq_lens, dim=0)
+                kv_indptr[1 : bs + 1] = torch.cumsum(seq_lens, dim=0)
                 kv_indptr = kv_indptr[: bs + 1]
                 kv_indices = torch.empty(
                     forward_batch.seq_lens_sum, dtype=torch.int64, device=self.device
                 )
                 create_flashinfer_kv_indices_triton[(bs,)](
                     self.req_to_token,
-                    forward_batch.req_pool_indices,
-                    forward_batch.seq_lens,
+                    req_pool_indices,
+                    seq_lens,
                     kv_indptr,
                     None,
                     kv_indices,
@@ -263,8 +273,8 @@ class TritonAttnBackend(AttentionBackend):
                             self.window_kv_indptr,
                             self.req_to_token,
                             self.sliding_window_size,
-                            forward_batch.seq_lens,
-                            forward_batch.req_pool_indices,
+                            seq_lens,
+                            req_pool_indices,
                             bs,
                             self.device,
                             self.token_to_kv_pool_allocator,
@@ -289,14 +299,15 @@ class TritonAttnBackend(AttentionBackend):
                 device=self.device,
             )
             num_kv_splits = torch.empty((bs,), dtype=torch.int32, device=self.device)
-            self.get_num_kv_splits(num_kv_splits, forward_batch.seq_lens)
+            self.get_num_kv_splits(num_kv_splits, seq_lens)
 
             qo_indptr = None
             custom_mask = None
             mask_indptr = None
             max_extend_len = None
         elif forward_batch.forward_mode.is_target_verify():
-            bs = len(forward_batch.req_pool_indices)
+            bs = len(req_pool_indices)
+            seq_lens = forward_batch.seq_lens[:bs]
             qo_indptr = torch.arange(
                 0,
                 (1 + bs) * self.num_draft_tokens,
@@ -305,15 +316,15 @@ class TritonAttnBackend(AttentionBackend):
                 device=self.device,
             )
             # Different with flashinfer kv_indptr and kv_indices construction
-            kv_indptr[1 : bs + 1] = torch.cumsum(forward_batch.seq_lens, dim=0)
+            kv_indptr[1 : bs + 1] = torch.cumsum(seq_lens, dim=0)
             kv_indptr = kv_indptr[: bs + 1]
             kv_indices = torch.empty(
                 kv_indptr[-1], dtype=torch.int64, device=self.device
             )
             create_flashinfer_kv_indices_triton[(bs,)](
                 self.req_to_token,
-                forward_batch.req_pool_indices,
-                forward_batch.seq_lens,
+                req_pool_indices,
+                seq_lens,
                 kv_indptr,
                 None,
                 kv_indices,
@@ -331,17 +342,15 @@ class TritonAttnBackend(AttentionBackend):
                     self.window_kv_indptr,
                     self.req_to_token,
                     self.sliding_window_size,
-                    forward_batch.seq_lens,
-                    forward_batch.req_pool_indices,
+                    seq_lens,
+                    req_pool_indices,
                     bs,
                     self.device,
                     self.token_to_kv_pool_allocator,
                 )
 
             custom_mask = spec_info.custom_mask
-            seq_mask_len = self.num_draft_tokens * (
-                forward_batch.seq_lens + self.num_draft_tokens
-            )
+            seq_mask_len = self.num_draft_tokens * (seq_lens + self.num_draft_tokens)
             mask_indptr = self.mask_indptr
             mask_indptr[1 : bs + 1] = torch.cumsum(seq_mask_len[:bs], dim=0)
             mask_indptr = mask_indptr[: bs + 1]
