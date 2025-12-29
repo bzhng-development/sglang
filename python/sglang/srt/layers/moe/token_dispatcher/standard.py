@@ -29,6 +29,7 @@ from sglang.srt.layers.moe.topk import StandardTopKOutput, TopKOutput, TopKOutpu
 from sglang.srt.layers.moe.utils import (
     get_moe_runner_backend,
     should_use_flashinfer_cutlass_moe_fp4_allgather,
+    should_use_flashinfer_cutlass_moe_fp8_allgather,
 )
 from sglang.srt.utils.common import get_bool_env_var, is_hip, is_sm120_supported
 
@@ -48,6 +49,11 @@ try:
     from flashinfer import fp4_quantize as fp4_quantize_flashinfer
 except ImportError:
     fp4_quantize = None
+
+try:
+    from sglang.srt.layers.quantization.fp8_kernel import scaled_fp8_quant
+except ImportError:
+    scaled_fp8_quant = None
 
 
 class StandardDispatchOutput(NamedTuple):
@@ -134,6 +140,34 @@ class StandardDispatcher(BaseDispatcher):
                 topk_ids=topk_ids,
                 router_logits=topk_output.router_logits,  # never tested
             )
+        elif should_use_flashinfer_cutlass_moe_fp8_allgather():
+            # all-gather fp8 hidden states
+            input_scale = self.quant_config.get("input_scale", None)
+            assert input_scale is not None, "input_scale is not set for FP8 allgather"
+            topk_weights, topk_ids = topk_output.topk_weights, topk_output.topk_ids
+
+            # Quantize to FP8 before communication
+            with use_symmetric_memory(
+                get_tp_group(), disabled=not is_allocation_symmetric()
+            ):
+                if hidden_states.shape[0] > 0:
+                    x_fp8, _ = scaled_fp8_quant(hidden_states, input_scale)
+                else:
+                    x_col = hidden_states.shape[1]
+                    x_fp8 = torch.zeros(
+                        0, x_col, dtype=torch.float8_e4m3fn, device=hidden_states.device
+                    )
+            topk_weights, topk_ids, x_fp8 = get_tp_group().all_gatherv(
+                [topk_weights, topk_ids, x_fp8], sizes=get_dp_global_num_tokens()
+            )
+
+            hidden_states = x_fp8
+            hidden_states_scale = None  # FP8 uses per-tensor scale, not per-token
+            topk_output = StandardTopKOutput(
+                topk_weights=topk_weights,
+                topk_ids=topk_ids,
+                router_logits=topk_output.router_logits,
+            )
         else:
             hidden_states = hidden_states
             hidden_states_scale = None
@@ -182,7 +216,10 @@ class StandardDispatcher(BaseDispatcher):
 
     def combine(self, combine_input: StandardCombineInput) -> torch.Tensor:
         (hidden_states,) = combine_input
-        if should_use_flashinfer_cutlass_moe_fp4_allgather():
+        if (
+            should_use_flashinfer_cutlass_moe_fp4_allgather()
+            or should_use_flashinfer_cutlass_moe_fp8_allgather()
+        ):
             hidden_states, global_hidden_states = get_local_dp_buffer(), hidden_states
             get_tp_group().reduce_scatterv(
                 global_hidden_states,

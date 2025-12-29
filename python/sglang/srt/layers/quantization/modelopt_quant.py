@@ -696,6 +696,16 @@ class ModelOptFp8MoEMethod(FusedMoEMethodBase):
             )
             layer.fc1_input_dequant = Parameter(input_scale, requires_grad=False)
 
+            # Set quant config for FP8 allgather optimization
+            from sglang.srt.layers.moe.utils import (
+                should_use_flashinfer_cutlass_moe_fp8_allgather,
+            )
+
+            if should_use_flashinfer_cutlass_moe_fp8_allgather():
+                layer.dispatcher.set_quant_config(
+                    {"input_scale": layer.w13_input_scale}
+                )
+
     def create_moe_runner(
         self, layer: torch.nn.Module, moe_runner_config: MoeRunnerConfig
     ):

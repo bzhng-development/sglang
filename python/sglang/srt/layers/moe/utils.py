@@ -132,6 +132,7 @@ IS_SBO_ENABLED: Optional[bool] = None
 TBO_TOKEN_DISTRIBUTION_THRESHOLD: Optional[float] = None
 DEEPEP_CONFIG: Optional[str] = None
 DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER: Optional[bool] = None
+DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER: Optional[bool] = None
 MOE_QUANTIZATION: Optional[str] = None
 
 
@@ -146,6 +147,7 @@ def initialize_moe_config(server_args: ServerArgs):
     global IS_SBO_ENABLED
     global TBO_TOKEN_DISTRIBUTION_THRESHOLD
     global DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER
+    global DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER
     global MOE_QUANTIZATION
 
     MOE_A2A_BACKEND = MoeA2ABackend(server_args.moe_a2a_backend)
@@ -167,6 +169,9 @@ def initialize_moe_config(server_args: ServerArgs):
     TBO_TOKEN_DISTRIBUTION_THRESHOLD = server_args.tbo_token_distribution_threshold
     DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER = (
         server_args.disable_flashinfer_cutlass_moe_fp4_allgather
+    )
+    DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER = (
+        server_args.disable_flashinfer_cutlass_moe_fp8_allgather
     )
     MOE_QUANTIZATION = server_args.quantization
 
@@ -262,6 +267,19 @@ def should_use_flashinfer_cutlass_moe_fp4_allgather():
     )
 
 
+def should_use_flashinfer_cutlass_moe_fp8_allgather():
+    """
+    Perform FP8 quantize before all-gather for flashinfer cutlass moe to reduce communication cost for high-throughput serving.
+    """
+    return (
+        not DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER
+        and get_moe_runner_backend().is_flashinfer_cutlass()
+        and is_dp_attention_enabled()
+        and MOE_QUANTIZATION == "modelopt_fp8"
+        and get_moe_expert_parallel_world_size() == get_attention_dp_size()
+    )
+
+
 @contextmanager
 def speculative_moe_backend_context():
     """
@@ -285,19 +303,27 @@ def speculative_moe_a2a_backend_context():
     """
     global MOE_A2A_BACKEND
     global DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER
+    global DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER
     original_backend = MOE_A2A_BACKEND
     original_disable_flashinfer_cutlass_moe_fp4_allgather = (
         DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER
     )
+    original_disable_flashinfer_cutlass_moe_fp8_allgather = (
+        DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER
+    )
     try:
         MOE_A2A_BACKEND = get_speculative_moe_a2a_backend()
-        # Disable FP4 allgather for spec decode since MTP layers are unquantized
+        # Disable FP4/FP8 allgather for spec decode since MTP layers are unquantized
         DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER = True
+        DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER = True
         yield
     finally:
         MOE_A2A_BACKEND = original_backend
         DISABLE_FLASHINFER_CUTLASS_MOE_FP4_ALLGATHER = (
             original_disable_flashinfer_cutlass_moe_fp4_allgather
+        )
+        DISABLE_FLASHINFER_CUTLASS_MOE_FP8_ALLGATHER = (
+            original_disable_flashinfer_cutlass_moe_fp8_allgather
         )
 
 
