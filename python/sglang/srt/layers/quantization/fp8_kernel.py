@@ -90,6 +90,20 @@ else:
     fp8_max = torch.finfo(fp8_dtype).max
 fp8_min = -fp8_max
 
+# All FP8 dtypes supported by PyTorch
+FP8_DTYPES = {
+    torch.float8_e4m3fn,
+    torch.float8_e4m3fnuz,
+    torch.float8_e5m2,
+    torch.float8_e5m2fnuz,
+}
+
+
+def is_fp8_dtype(dtype: torch.dtype) -> bool:
+    """Check if a dtype is an FP8 dtype."""
+    return dtype in FP8_DTYPES
+
+
 if supports_custom_op():
 
     def deep_gemm_fp8_fp8_bf16_nt(

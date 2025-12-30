@@ -10,6 +10,7 @@ import triton.language as tl
 
 from sglang.srt.configs.model_config import AttentionArch
 from sglang.srt.layers.attention.base_attn_backend import AttentionBackend
+from sglang.srt.layers.quantization.fp8_kernel import is_fp8_dtype
 from sglang.srt.layers.radix_attention import AttentionType
 from sglang.srt.mem_cache.memory_pool import SWAKVPool
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch, ForwardMode
@@ -744,7 +745,7 @@ class FlashAttentionBackend(AttentionBackend):
         # 3) layer.head_dim <= 256 since fa3 kernel require fp16 and bf16 data type in this case,
         # 4) fa_impl_ver != 4 since fa4 does not currently support fp8 queries and keys.
         if (
-            self.kv_cache_dtype_str != "auto"
+            is_fp8_dtype(self.kv_cache_dtype)
             and layer.head_dim <= 256
             and self.fa_impl_ver != 4
         ):
@@ -1091,7 +1092,7 @@ class FlashAttentionBackend(AttentionBackend):
         # only use kv scaling if: 1) fp8 kv is explicitly enabled, 2) RadixAttention
         # has corresponding quantization method so that layer.k_scale is not None,
         # 3) layer.head_dim <= 256 since fa3 kernel require fp16 and bf16 data type in this case.
-        if self.kv_cache_dtype_str != "auto" and layer.head_dim <= 256:
+        if is_fp8_dtype(self.kv_cache_dtype) and layer.head_dim <= 256:
             if layer.k_scale is not None:
                 descale_shape = (forward_batch.batch_size, layer.tp_k_head_num)
                 k_descale = layer.k_scale.expand(descale_shape)
