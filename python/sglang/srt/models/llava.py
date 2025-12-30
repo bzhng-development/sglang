@@ -444,11 +444,11 @@ class LlavaBaseForCausalLM(nn.Module):
         vision_path = self.config.mm_vision_tower
         if "clip" in vision_path:
             self.vision_tower = CLIPVisionModel.from_pretrained(
-                vision_path, torch_dtype=torch.float16
+                vision_path, dtype=torch.float16
             ).cuda()
         elif "siglip" in vision_path:
             self.vision_tower = SiglipVisionModel.from_pretrained(
-                vision_path, torch_dtype=torch.float16
+                vision_path, dtype=torch.float16
             ).cuda()
             # Siglip needs all feature tokens
             self.config.mm_vision_select_feature = "full"
@@ -680,12 +680,12 @@ class LlavaForConditionalGeneration(LlavaBaseForCausalLM):
         self.config = config
         self.text_config = self.config.text_config
         self.vision_config = self.config.vision_config
-        self.torch_dtype = getattr(self.config, "torch_dtype")
+        self.torch_dtype = getattr(self.config, "dtype")
 
-        if not getattr(self.text_config, "torch_dtype"):
-            self.text_config.torch_dtype = self.torch_dtype
-        if not getattr(self.vision_config, "torch_dtype"):
-            self.vision_config.torch_dtype = self.torch_dtype
+        if not getattr(self.text_config, "dtype"):
+            self.text_config.dtype = self.torch_dtype
+        if not getattr(self.vision_config, "dtype"):
+            self.vision_config.dtype = self.torch_dtype
 
         if not hasattr(self.config, "vocab_size"):
             self.config.vocab_size = self.text_config.vocab_size

@@ -107,7 +107,7 @@ def _get_sentence_transformer_embedding_model(
     if is_sentence_transformer_model(model_path):
         model = SentenceTransformer(
             model_path,
-            model_kwargs={"torch_dtype": torch_dtype},
+            model_kwargs={"dtype": torch_dtype},
             truncate_dim=matryoshka_dim,
         )
     else:  # if no pre-trained sentence-transformers model
@@ -268,7 +268,7 @@ class HFRunner:
                 model_cls = getattr(transformers, model_arch)
             self.base_model = model_cls.from_pretrained(
                 model_path,
-                torch_dtype=torch_dtype,
+                dtype=torch_dtype,
                 trust_remote_code=self.trust_remote_code,
                 low_cpu_mem_usage=True,
             ).cuda()
@@ -276,7 +276,7 @@ class HFRunner:
             if "gme-qwen2-vl" in model_path.lower():
                 self.model = AutoModelForVision2Seq.from_pretrained(
                     model_path,
-                    torch_dtype=torch_dtype,
+                    dtype=torch_dtype,
                     trust_remote_code=False,
                     low_cpu_mem_usage=True,
                 ).cuda()
@@ -293,7 +293,7 @@ class HFRunner:
 
             self.model = AutoModelForSequenceClassification.from_pretrained(
                 model_path,
-                torch_dtype=torch_dtype,
+                dtype=torch_dtype,
                 trust_remote_code=self.needs_trust_remote_code(model_path),
             ).cuda()
         else:

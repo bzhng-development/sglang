@@ -305,7 +305,7 @@ cat ../dummy_grok1/config.json
   "rms_norm_eps": 1e-05,
   "rope_theta": 10000.0,
   "model_type": "mixtral",
-  "torch_dtype": "bfloat16"
+  "dtype": "bfloat16"
 }
 ```
 5. Launch server with rpd enabled script ./server.sh in one terminal inside the docker container.

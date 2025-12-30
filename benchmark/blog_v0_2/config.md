@@ -92,7 +92,7 @@
   "rope_scaling": null,
   "rope_theta": 500000.0,
   "tie_word_embeddings": false,
-  "torch_dtype": "bfloat16",
+  "dtype": "bfloat16",
   "transformers_version": "4.41.1",
   "use_cache": true,
   "vocab_size": 128256

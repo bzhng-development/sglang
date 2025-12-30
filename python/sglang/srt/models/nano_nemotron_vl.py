@@ -77,7 +77,7 @@ class NemotronH_Nano_VL_V2(nn.Module):
             ),
             ReLU2(),
             nn.Linear(vision_projection_hidden_size, llm_hidden_size, bias=False),
-        ).to(self.language_model.config.torch_dtype)
+        ).to(self.language_model.config.dtype)
         self.config = config
 
     def pad_input_ids(self, input_ids: list[int], mm_inputs: MultimodalInputs):

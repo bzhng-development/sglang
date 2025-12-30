@@ -29,7 +29,7 @@ def eval_mmmu(args):
 
         model = AutoModelForImageTextToText.from_pretrained(
             args.model_path,
-            torch_dtype="auto",
+            dtype="auto",
             trust_remote_code=True,
         )
     except Exception as first_exception:
@@ -43,7 +43,7 @@ def eval_mmmu(args):
                 tokenizer = AutoTokenizer.from_pretrained(args.model_path)
                 model = AutoModel.from_pretrained(
                     args.model_path,
-                    torch_dtype="auto",
+                    dtype="auto",
                     trust_remote_code=True,
                 )
                 generation_config_internvl = dict(
@@ -53,7 +53,7 @@ def eval_mmmu(args):
             else:
                 model = AutoModel.from_pretrained(
                     args.model_path,
-                    torch_dtype="auto",
+                    dtype="auto",
                     trust_remote_code=True,
                     init_tts=False,
                 )
@@ -66,7 +66,7 @@ def eval_mmmu(args):
     model = model.eval().cuda()
 
     processor = AutoProcessor.from_pretrained(
-        args.model_path, torch_dtype="auto", device_map="auto", trust_remote_code=True
+        args.model_path, dtype="auto", device_map="auto", trust_remote_code=True
     )
 
     samples = prepare_samples(eval_args)

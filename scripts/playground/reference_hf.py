@@ -47,7 +47,7 @@ def vlm_text_with_image(args):
     processor = AutoProcessor.from_pretrained(args.model_path, trust_remote_code=True)
     model = AutoModelForImageTextToText.from_pretrained(
         args.model_path,
-        torch_dtype=args.dtype,
+        dtype=args.dtype,
         low_cpu_mem_usage=True,
         device_map="auto",
         trust_remote_code=True,
@@ -116,7 +116,7 @@ def normal_text(args):
     t = get_tokenizer(args.model_path, trust_remote_code=True)
     m = AutoModelForCausalLM.from_pretrained(
         args.model_path,
-        torch_dtype=args.dtype,
+        dtype=args.dtype,
         low_cpu_mem_usage=True,
         device_map="auto",
         trust_remote_code=True,
@@ -152,7 +152,7 @@ def normal_text(args):
 @torch.no_grad()
 def synthetic_tokens(args):
     m = AutoModelForCausalLM.from_pretrained(
-        args.model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True
+        args.model_path, dtype=torch.float16, low_cpu_mem_usage=True
     )
     m.cuda()
     print(m)

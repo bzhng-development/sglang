@@ -174,7 +174,7 @@ class TestMiniCPMV2_6Logits(VisionLLMLogitsBase):
         cls.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         cls.hf_model = (
             AutoModel.from_pretrained(
-                cls.model_path, torch_dtype=torch.bfloat16, trust_remote_code=True
+                cls.model_path, dtype=torch.bfloat16, trust_remote_code=True
             )
             .eval()
             .to(cls.device)
@@ -280,7 +280,7 @@ class TestMiniCPMV4Logits(VisionLLMLogitsBase):
         cls.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         cls.hf_model = (
             AutoModel.from_pretrained(
-                cls.model_path, torch_dtype=torch.bfloat16, trust_remote_code=True
+                cls.model_path, dtype=torch.bfloat16, trust_remote_code=True
             )
             .eval()
             .to(cls.device)

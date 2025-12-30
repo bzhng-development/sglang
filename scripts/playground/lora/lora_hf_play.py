@@ -24,7 +24,7 @@ base_model = LlamaForCausalLM.from_pretrained(
     MODEL,
     device_map="auto",
     # load_in_8bit=True,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     # use_auth_token=HF_TOKEN,
 ).cuda()
 
@@ -46,7 +46,7 @@ print(output)
 model = PeftModel.from_pretrained(
     base_model,
     ADAPTER,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     is_trainable=False,
 )
 

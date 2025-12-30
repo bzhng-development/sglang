@@ -224,7 +224,7 @@ class LlavaVidForCausalLM(nn.Module):
         # We put the initialization here instead of __init__ to allow it being reused by other subclasses.
         vision_path = self.config.mm_vision_tower
         self.vision_tower = CLIPVisionModel.from_pretrained(
-            vision_path, torch_dtype=torch.float16
+            vision_path, dtype=torch.float16
         ).cuda()
         self.vision_tower.eval()
 

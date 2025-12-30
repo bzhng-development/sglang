@@ -80,7 +80,7 @@ def _clean_hf_config_inplace(model_config: dict) -> None:
         "transformers_version",
         "model_type",
         "tokenizer_class",
-        "torch_dtype",
+        "dtype",
     ):
         model_config.pop(key, None)
 

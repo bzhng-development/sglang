@@ -50,7 +50,7 @@ class TestOriginalLogprob(unittest.TestCase):
         # ----- HF side (float32 weights) -----
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, padding_side="right")
         self.hf_model = AutoModelForCausalLM.from_pretrained(
-            MODEL_ID, torch_dtype=torch.float32, device_map="auto"
+            MODEL_ID, dtype=torch.float32, device_map="auto"
         )
 
         # Shared sampling parameters

@@ -123,7 +123,7 @@ def get_hf_text_config(config: PretrainedConfig):
         if class_name.startswith("Llava") and class_name.endswith("ForCausalLM"):
             # We support non-hf version of llava models, so we do not want to
             # read the wrong values from the unused default text_config.
-            # NOTE(HandH1998): We set `torch_dtype` of config to `torch.float16` for the weights, as
+            # NOTE(HandH1998): We set `dtype` of config to `torch.float16` for the weights, as
             # `torch.float16` is default used for image features in `python/sglang/srt/models/llava.py`.
             setattr(config, "dtype", torch.float16)
             return config
@@ -148,8 +148,8 @@ def get_hf_text_config(config: PretrainedConfig):
         if hasattr(thinker_config, "text_config"):
             setattr(
                 thinker_config.text_config,
-                "torch_dtype",
-                getattr(thinker_config, "torch_dtype", None),
+                "dtype",
+                getattr(thinker_config, "dtype", None),
             )
             return thinker_config.text_config
         return thinker_config

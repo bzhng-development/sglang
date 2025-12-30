@@ -157,7 +157,7 @@ class TransformersForCausalLM(nn.Module):
         # model is loaded under set_default_torch_dtype(model_config.dtype)
         self.model: PreTrainedModel = AutoModel.from_config(
             self.config,
-            torch_dtype=torch.get_default_dtype(),
+            dtype=torch.get_default_dtype(),
             attn_implementation="sglang",
             trust_remote_code=True,
         )

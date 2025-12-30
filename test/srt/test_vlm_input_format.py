@@ -197,7 +197,7 @@ class TestQwenVLUnderstandsImage(VLMInputTestBase, unittest.IsolatedAsyncioTestC
     def _init_visual(cls):
         cls.visual_model = (
             Qwen2_5_VLForConditionalGeneration.from_pretrained(
-                cls.model_path, torch_dtype=torch.bfloat16
+                cls.model_path, dtype=torch.bfloat16
             )
             .eval()
             .visual.to(cls.device)
@@ -217,7 +217,7 @@ class TestGemmaUnderstandsImage(VLMInputTestBase, unittest.IsolatedAsyncioTestCa
     @classmethod
     def _init_visual(cls):
         model = Gemma3ForConditionalGeneration.from_pretrained(
-            cls.model_path, torch_dtype=torch.bfloat16
+            cls.model_path, dtype=torch.bfloat16
         )
         base_model = model.model
 

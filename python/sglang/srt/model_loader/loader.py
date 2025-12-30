@@ -562,15 +562,15 @@ class DefaultModelLoader(BaseModelLoader):
             model_config.model_path, trust_remote_code=True
         )
         with init_empty_weights():
-            torch_dtype = getattr(hf_config, "torch_dtype", torch.float16)
+            dtype = getattr(hf_config, "dtype", torch.float16)
             model = AutoModelForCausalLM.from_config(
-                hf_config, torch_dtype=torch_dtype, trust_remote_code=True
+                hf_config, dtype=dtype, trust_remote_code=True
             )
         max_memory = get_max_memory()
         inferred_device_map = infer_auto_device_map(model, max_memory=max_memory)
 
         on_cpu = "cpu" in inferred_device_map.values()
-        model_kwargs = {"torch_dtype": "auto"}
+        model_kwargs = {"dtype": "auto"}
         device_map = "auto"
 
         if on_cpu:

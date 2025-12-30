@@ -285,7 +285,7 @@ class Qwen3GatedDeltaNet(nn.Module):
             group_size=None,
             norm_before_gate=True,
             device=torch.get_device_module().current_device(),
-            dtype=config.torch_dtype,
+            dtype=config.dtype,
         )
 
         self.out_proj = RowParallelLinear(

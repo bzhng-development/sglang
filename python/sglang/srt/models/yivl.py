@@ -42,7 +42,7 @@ class YiVLForCausalLM(LlavaLlamaForCausalLM):
         # We have to use the subfolder of the main model directory (e.g. 01-ai/Yi-VL-6B)
         self.vision_tower = CLIPVisionModel.from_pretrained(
             self.config._name_or_path,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             subfolder=self.vision_tower_subfolder,
         ).to("cuda")
 

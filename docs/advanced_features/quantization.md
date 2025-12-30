@@ -164,7 +164,7 @@ from llmcompressor.modifiers.quantization import QuantizationModifier
 MODEL_ID = "meta-llama/Meta-Llama-3-8B-Instruct"
 
 model = SparseAutoModelForCausalLM.from_pretrained(
-  MODEL_ID, device_map="auto", torch_dtype="auto")
+  MODEL_ID, device_map="auto", dtype="auto")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
 
 # Step 2: Perform offline quantization.
