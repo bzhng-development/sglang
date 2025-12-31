@@ -1206,13 +1206,39 @@ class ModelOptFp4LinearMethod(LinearMethodBase):
         x: torch.Tensor,
         bias: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
-        output_dtype = x.dtype
-        x_m, _ = x.shape
+        """Apply FP4 GEMM.
+
+        Supports two input formats (following AMD MXFP4 pattern):
+        1. Regular tensor (BF16/FP16): Will be quantized to FP4 before GEMM
+        2. Tuple (x_fp4, x_scale): Pre-quantized FP4 + scales, skip quantization
+
+        Args:
+            layer: The linear layer module containing weights
+            x: Either a BF16/FP16 tensor, or tuple (x_fp4, x_scale) for pre-quantized
+            bias: Optional bias tensor
+
+        Returns:
+            Output tensor of shape (batch_size, out_features)
+        """
+        # Support pre-quantized tuple input (like AMD MXFP4 pattern)
+        x_scale_prequant = None
+        if isinstance(x, tuple):
+            assert len(x) == 2, "Tuple input must be (x_fp4, x_scale)"
+            x, x_scale_prequant = x
+
+        output_dtype = x.dtype if x_scale_prequant is None else torch.bfloat16
+        x_m = x.shape[0]
         w_n, _ = layer.weight.shape
         output_shape = [x_m, w_n]
 
-        # Quantize BF16 or FP16 to (FP4 and interleaved block scale)
-        x_fp4, x_scale_interleaved = fp4_quantize(x, layer.input_scale_inv)
+        # Quantize BF16/FP16 to FP4, or use pre-quantized if provided
+        if x_scale_prequant is not None:
+            # Pre-quantized path: x is already FP4 (uint8), x_scale_prequant has scales
+            x_fp4 = x
+            x_scale_interleaved = x_scale_prequant
+        else:
+            # Regular path: quantize BF16/FP16 to FP4
+            x_fp4, x_scale_interleaved = fp4_quantize(x, layer.input_scale_inv)
 
         assert x_fp4.dtype == torch.uint8
         assert layer.weight.dtype == torch.uint8

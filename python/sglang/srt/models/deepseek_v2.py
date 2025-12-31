@@ -229,6 +229,22 @@ else:
 
 _is_cublas_ge_129 = is_nvidia_cublas_cu12_version_ge_12_9()
 
+# NVFP4 fused RMSNorm + FP4 quant kernels (Blackwell only)
+_nvfp4_fused_kernels_available = False
+fused_rmsnorm_fp4quant = None
+fused_add_rmsnorm_fp4quant = None
+if _is_cuda:
+    try:
+        from sglang.srt.layers.quantization.nvfp4_fused_kernels import (
+            fused_add_rmsnorm_fp4quant,
+            fused_rmsnorm_fp4quant,
+            is_nvfp4_fused_kernels_available,
+        )
+
+        _nvfp4_fused_kernels_available = is_nvfp4_fused_kernels_available()
+    except ImportError:
+        pass
+
 logger = logging.getLogger(__name__)
 
 
@@ -1755,6 +1771,19 @@ class DeepseekV2AttentionMLA(nn.Module):
                     output_unquantized_inp1=False,
                 )
                 q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
+            elif (
+                _nvfp4_fused_kernels_available
+                and self.q_b_proj.weight.dtype == torch.uint8
+            ):
+                # NVFP4: Fused RMSNorm + FP4 quant for Q path
+                q = fused_rmsnorm_fp4quant(
+                    q,
+                    self.q_a_layernorm.weight,
+                    eps=self.q_a_layernorm.variance_epsilon,
+                    global_scale=self.q_b_proj.input_scale_inv,
+                    is_sf_swizzled_layout=True,
+                )
+                q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
             else:
                 q = self.q_a_layernorm(q)
                 q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
@@ -1914,15 +1943,34 @@ class DeepseekV2AttentionMLA(nn.Module):
                             output_unquantized_inp1=False,
                         )
 
+                    elif (
+                        _nvfp4_fused_kernels_available
+                        and self.q_b_proj.weight.dtype == torch.uint8
+                    ):
+                        # NVFP4: Fused RMSNorm + FP4 quant for Q path
+                        # K_nope stays BF16 for BMM operations
+                        # For NSA, we need BF16 normalized q for indexer
+                        if self.use_nsa:
+                            q_lora = self.q_a_layernorm(q)
+                        # Returns tuple (fp4, scales) that linear accepts directly
+                        q = fused_rmsnorm_fp4quant(
+                            q,
+                            self.q_a_layernorm.weight,
+                            eps=self.q_a_layernorm.variance_epsilon,
+                            global_scale=self.q_b_proj.input_scale_inv,
+                            is_sf_swizzled_layout=True,
+                        )
+                        k_nope = self.kv_a_layernorm(k_nope)
                     else:
                         q = self.q_a_layernorm(q)
                         k_nope = self.kv_a_layernorm(k_nope)
 
             # q_lora needed by indexer
-            if self.use_nsa:
+            if self.use_nsa and q_lora is None:
                 q_lora = q
 
             k_nope = k_nope.unsqueeze(1)
+            # q_b_proj accepts both regular tensor and tuple (fp4, scales)
             q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
         else:
             q = self.q_proj(hidden_states)[0].view(
@@ -2246,7 +2294,20 @@ class DeepseekV2AttentionMLA(nn.Module):
             q, latent_cache = self.fused_qkv_a_proj_with_mqa(hidden_states)[0].split(
                 [self.q_lora_rank, self.kv_lora_rank + self.qk_rope_head_dim], dim=-1
             )
-            q = self.q_a_layernorm(q)
+            if (
+                _nvfp4_fused_kernels_available
+                and self.q_b_proj.weight.dtype == torch.uint8
+            ):
+                # NVFP4: Fused RMSNorm + FP4 quant for Q path
+                q = fused_rmsnorm_fp4quant(
+                    q,
+                    self.q_a_layernorm.weight,
+                    eps=self.q_a_layernorm.variance_epsilon,
+                    global_scale=self.q_b_proj.input_scale_inv,
+                    is_sf_swizzled_layout=True,
+                )
+            else:
+                q = self.q_a_layernorm(q)
             q = self.q_b_proj(q)[0].view(-1, self.num_local_heads, self.qk_head_dim)
         else:
             q = self.q_proj(hidden_states)[0].view(

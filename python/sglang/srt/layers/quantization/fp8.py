@@ -1331,7 +1331,6 @@ class Fp8MoEMethod(FusedMoEMethodBase):
             trtllm_fp8_block_scale_moe,
             trtllm_fp8_per_tensor_scale_moe,
         )
-
         from sglang.srt.layers.moe.topk import TopKOutputChecker
         from sglang.srt.layers.moe.utils import RoutingMethodType
 
@@ -1395,7 +1394,7 @@ class Fp8MoEMethod(FusedMoEMethodBase):
                         if routed_scaling_factor is not None
                         else 1.0
                     ),
-                    tile_tokens_dim=None,
+                    # tile_tokens_dim=None,
                     routing_method_type=routing_method_type,
                     use_shuffled_weight=False,
                     tune_max_num_tokens=next_power_of_2(a_q.shape[0]),
