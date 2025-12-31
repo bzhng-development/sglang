@@ -31,6 +31,17 @@ GH_TOKEN = os.getenv("GITHUB_TOKEN")
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
+# OpenRouter reasoning tokens configuration
+# See: https://openrouter.ai/docs/guides/best-practices/reasoning-tokens
+# Options:
+#   effort: "xhigh", "high", "medium", "low", "minimal", "none" (OpenAI-style)
+#   max_tokens: int - specific token limit (Anthropic-style)
+#   exclude: bool - exclude reasoning from response (default: False)
+#   enabled: bool - enable reasoning with default params (default: inferred)
+DEFAULT_REASONING_CONFIG = {
+    "max_tokens": 2000,  # Anthropic-style specific token limit
+}
+
 # Repo
 REPO = "sgl-project/sglang"
 
@@ -903,6 +914,9 @@ async def generate_issue_summary(client, result):
                 },
                 {"role": "user", "content": prompt},
             ],
+            extra_body={
+                "reasoning": DEFAULT_REASONING_CONFIG,
+            },
         )
 
         response = completion.choices[0].message.content
@@ -1007,6 +1021,9 @@ def process_entries_for_arg(
                             },
                             {"role": "user", "content": prompt},
                         ],
+                        extra_body={
+                            "reasoning": DEFAULT_REASONING_CONFIG,
+                        },
                     )
 
                     response = completion.choices[0].message.content
@@ -1193,6 +1210,9 @@ def process_entries_for_model(
                             },
                             {"role": "user", "content": prompt},
                         ],
+                        extra_body={
+                            "reasoning": DEFAULT_REASONING_CONFIG,
+                        },
                     )
 
                     response = completion.choices[0].message.content
@@ -1344,6 +1364,9 @@ def process_entries_for_bugs(
                             },
                             {"role": "user", "content": prompt},
                         ],
+                        extra_body={
+                            "reasoning": DEFAULT_REASONING_CONFIG,
+                        },
                     )
 
                     response = completion.choices[0].message.content
