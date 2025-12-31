@@ -25,9 +25,6 @@ if is_cuda():
         top_p_renorm_prob,
     )
 
-    # flashinfer Python API (newer, supports bf16/fp16, faster multi-CTA + radix top-k)
-    import flashinfer.sampling as flashinfer_sampling
-
 if is_npu():
     import torch_npu
 
@@ -138,7 +135,14 @@ class Sampler(nn.Module):
                 )
             else:
                 if get_global_server_args().sampling_backend == "flashinfer_python":
-                    # Use flashinfer Python API (supports bf16/fp16, multi-CTA + radix top-k)
+                    # flashinfer Python API (supports bf16/fp16, multi-CTA + radix top-k)
+                    try:
+                        import flashinfer.sampling as flashinfer_sampling
+                    except ImportError as exc:
+                        raise ImportError(
+                            "flashinfer is required for sampling_backend='flashinfer_python'. "
+                            "Install flashinfer or choose a different sampling_backend."
+                        ) from exc
                     if sampling_info.need_min_p_sampling:
                         probs = flashinfer_sampling.top_k_renorm_probs(
                             probs, sampling_info.top_ks
