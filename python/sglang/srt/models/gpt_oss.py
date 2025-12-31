@@ -44,11 +44,7 @@ from sglang.srt.layers.dp_attention import (
     is_dp_attention_enabled,
 )
 from sglang.srt.layers.layernorm import RMSNorm
-from sglang.srt.layers.linear import (
-    QKVParallelLinear,
-    ReplicatedLinear,
-    RowParallelLinear,
-)
+from sglang.srt.layers.linear import QKVParallelLinear, RowParallelLinear
 from sglang.srt.layers.logits_processor import LogitsProcessor
 from sglang.srt.layers.moe import get_moe_a2a_backend
 from sglang.srt.layers.moe.ep_moe.layer import get_moe_impl_class
@@ -70,13 +66,20 @@ from sglang.srt.models.utils import (
     enable_fused_set_kv_buffer,
 )
 from sglang.srt.server_args import get_global_server_args
-from sglang.srt.utils import LazyValue, add_prefix, is_cuda, make_layers
+from sglang.srt.utils import LazyValue, add_prefix, get_device_sm, is_cuda, make_layers
 
 _is_cuda = is_cuda()
+_device_sm = get_device_sm()
+tgv_gemm_sm100 = None
 
 
 if _is_cuda:
     from sgl_kernel import FusedSetKVBufferArg  # noqa: F401
+
+    try:
+        from flashinfer import tgv_gemm_sm100
+    except ModuleNotFoundError:
+        tgv_gemm_sm100 = None
 
 
 class GptOssConfig(PretrainedConfig):
@@ -93,6 +96,65 @@ logger = logging.getLogger(__name__)
 # SGLang assumes exclusive
 def get_attention_sliding_window_size(config):
     return config.sliding_window - 1
+
+
+class GptOssRouterGate(nn.Module):
+    """Custom router gate for GPT-OSS that uses optimized BF16 GEMM.
+
+    This bypasses ReplicatedLinear to use a custom router GEMM kernel that:
+    - Is optimized for small batch sizes (decode phase)
+    - Can run with fewer CUDA blocks to avoid breaking PDL
+    - Can potentially run in parallel with MXFP8 quantization
+    """
+
+    def __init__(
+        self,
+        config: GptOssConfig,
+        prefix: str = "",
+    ):
+        super().__init__()
+        self.hidden_size = config.hidden_size
+        self.num_experts = config.num_local_experts
+
+        self.weight = nn.Parameter(
+            torch.empty(
+                (self.num_experts, self.hidden_size),
+                dtype=config.torch_dtype,
+            )
+        )
+        self.bias = nn.Parameter(
+            torch.empty(self.num_experts, dtype=config.torch_dtype)
+        )
+
+    def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
+        # Use TGV GEMM for small batches on Blackwell (SM100+)
+        # TGV GEMM is optimized for small M and can run with fewer CUDA blocks,
+        # avoiding breaking PDL and potentially running in parallel with MXFP8 quantization
+        use_tgv_gemm = (
+            _is_cuda
+            and tgv_gemm_sm100 is not None
+            and hidden_states.shape[0] <= 16
+            and _device_sm >= 100  # Blackwell SM100+
+        )
+
+        if use_tgv_gemm:
+            # tgv_gemm_sm100 API:
+            #   a: (M, K) row-major - hidden_states
+            #   b: (K, N) column-major - weight.t() since weight is (N, K)
+            #   bias: (N,)
+            #   pdl: bool - Persistent Data Loader mode
+            # Note: .t() creates a column-major view, no .contiguous() needed
+            logits = tgv_gemm_sm100(
+                hidden_states,
+                self.weight.t(),  # (K, N) column-major
+                self.bias,
+                pdl=False,
+            )
+        else:
+            # Fallback to standard F.linear for large batches or unsupported hardware
+            logits = torch.nn.functional.linear(hidden_states, self.weight, self.bias)
+
+        return logits
 
 
 class GptOssSparseMoeBlock(nn.Module):
@@ -144,13 +206,10 @@ class GptOssSparseMoeBlock(nn.Module):
             **extra_kwargs,
         )
 
-        self.router = ReplicatedLinear(
-            config.hidden_size,
-            config.num_local_experts,
-            bias=True,
-            quant_config=None,
+        # Use custom router gate with optimized BF16 GEMM
+        self.router = GptOssRouterGate(
+            config=config,
             prefix=add_prefix("gate", prefix),
-            params_dtype=config.torch_dtype,
         )
 
     def forward(
@@ -178,7 +237,7 @@ class GptOssSparseMoeBlock(nn.Module):
     ) -> torch.Tensor:
         num_tokens, hidden_dim = hidden_states.shape
 
-        router_logits, _ = self.router(hidden_states)
+        router_logits = self.router(hidden_states)
         topk_output = self.topk(hidden_states, router_logits)
         final_hidden_states = self.experts(hidden_states, topk_output)
 
