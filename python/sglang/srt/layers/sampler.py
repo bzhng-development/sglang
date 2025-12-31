@@ -143,10 +143,17 @@ class Sampler(nn.Module):
                             "flashinfer is required for sampling_backend='flashinfer_python'. "
                             "Install flashinfer or choose a different sampling_backend."
                         ) from exc
+                    top_ks = sampling_info.top_ks
+                    if sampling_info.need_top_k_sampling and torch.any(
+                        top_ks == TOP_K_ALL
+                    ):
+                        top_ks = top_ks.clone()
+                        top_ks.masked_fill_(top_ks == TOP_K_ALL, probs.shape[1])
                     if sampling_info.need_min_p_sampling:
-                        probs = flashinfer_sampling.top_k_renorm_probs(
-                            probs, sampling_info.top_ks
-                        )
+                        if sampling_info.need_top_k_sampling:
+                            probs = flashinfer_sampling.top_k_renorm_probs(
+                                probs, top_ks
+                            )
                         probs = flashinfer_sampling.top_p_renorm_probs(
                             probs, sampling_info.top_ps
                         )
@@ -157,9 +164,10 @@ class Sampler(nn.Module):
                         # Use separate ops to get bf16 + radix speedup on renorm step
                         # Note: top_k_renorm_probs keeps bf16, top_p_sampling casts to fp32 internally
                         # Still beneficial: radix speedup on renorm + less data to cast
-                        probs = flashinfer_sampling.top_k_renorm_probs(
-                            probs, sampling_info.top_ks
-                        )
+                        if sampling_info.need_top_k_sampling:
+                            probs = flashinfer_sampling.top_k_renorm_probs(
+                                probs, top_ks
+                            )
                         batch_next_token_ids = (
                             flashinfer_sampling.top_p_sampling_from_probs(
                                 probs.contiguous(),
