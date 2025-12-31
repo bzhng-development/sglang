@@ -150,12 +150,16 @@ class Sampler(nn.Module):
                             probs, sampling_info.min_ps
                         )
                     else:
+                        # Use separate ops to get bf16 + radix speedup on renorm step
+                        # Note: top_k_renorm_probs keeps bf16, top_p_sampling casts to fp32 internally
+                        # Still beneficial: radix speedup on renorm + less data to cast
+                        probs = flashinfer_sampling.top_k_renorm_probs(
+                            probs, sampling_info.top_ks
+                        )
                         batch_next_token_ids = (
-                            flashinfer_sampling.top_k_top_p_sampling_from_probs(
+                            flashinfer_sampling.top_p_sampling_from_probs(
                                 probs.contiguous(),
-                                sampling_info.top_ks,
                                 sampling_info.top_ps,
-                                filter_apply_order="joint",
                                 check_nan=self.use_nan_detection,
                             )
                         )

@@ -70,7 +70,7 @@ logger = logging.getLogger(__name__)
 
 
 # Define constants
-SAMPLING_BACKEND_CHOICES = {"flashinfer", "pytorch", "ascend"}
+SAMPLING_BACKEND_CHOICES = {"flashinfer", "flashinfer_python", "pytorch", "ascend"}
 LOAD_FORMAT_CHOICES = [
     "auto",
     "pt",
