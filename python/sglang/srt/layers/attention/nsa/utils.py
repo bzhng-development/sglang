@@ -12,6 +12,9 @@ from sglang.srt.utils import get_bool_env_var
 
 NSA_DUAL_STREAM = get_bool_env_var("SGLANG_NSA_DUAL_STREAM", "true")
 NSA_FUSE_TOPK = get_bool_env_var("SGLANG_NSA_FUSE_TOPK", "true")
+# Use FlashInfer's radix top-k for decode (1.2-5x faster for long sequences)
+# Falls back to sgl-kernel when row_starts is provided (extend/prefill with ragged keys)
+NSA_USE_FLASHINFER_TOPK = get_bool_env_var("SGLANG_NSA_USE_FLASHINFER_TOPK", "true")
 
 NSA_FLASHMLA_BACKEND_DECODE_COMPUTE_FP8 = get_bool_env_var(
     "SGLANG_NSA_FLASHMLA_BACKEND_DECODE_COMPUTE_FP8", "true"
