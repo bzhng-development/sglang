@@ -182,7 +182,8 @@ class PyNcclCommunicator:
         )
         stream = self._resolve_stream(stream)
 
-        if sizes is not None:
+        # Use efficient ncclAllGather when sizes are uniform (all equal)
+        if sizes is not None and sizes.count(sizes[0]) != len(sizes):
             split_offset = 0
 
             self.nccl.ncclGroupStart()
@@ -256,7 +257,8 @@ class PyNcclCommunicator:
         )
         stream = self._resolve_stream(stream)
 
-        if sizes is not None:
+        # Use efficient ncclReduceScatter when sizes are uniform (all equal)
+        if sizes is not None and sizes.count(sizes[0]) != len(sizes):
             split_offset = 0
             self.nccl.ncclGroupStart()
             for root, split_size in enumerate(sizes):
