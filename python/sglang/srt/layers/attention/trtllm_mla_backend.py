@@ -251,6 +251,14 @@ class TRTLLMMLADecodeMetadata:
     seq_lens_q: Optional[torch.Tensor] = None
     seq_lens_k: Optional[torch.Tensor] = None
 
+    # The following fields are used for Flashinfer KV update fusion
+    kv_indices: Optional[torch.Tensor] = None  # page indices for all requests
+    kv_indptr: Optional[torch.Tensor] = None  # cumulative page count per request
+    batch_indices: Optional[torch.Tensor] = None  # which request each token belongs to
+    positions: Optional[torch.Tensor] = (
+        None  # position of each token within its sequence
+    )
+
 
 class TRTLLMMLABackend(FlashInferMLAAttnBackend):
     """TRTLLM MLA attention kernel from flashinfer."""
@@ -421,6 +429,20 @@ class TRTLLMMLABackend(FlashInferMLAAttnBackend):
                 device=self.device,
             )
 
+        # Allocate kv_indices buffer for RoPE fusion if supported
+        if self.support_rope_fusion():
+            max_num_pages = max_bs * (
+                (self.max_context_len + self.page_size - 1) // self.page_size
+            )
+            if (
+                not hasattr(self, "forward_decode_metadata")
+                or self.forward_decode_metadata is None
+            ):
+                self.forward_decode_metadata = TRTLLMMLADecodeMetadata()
+            self.forward_decode_metadata.kv_indices = torch.zeros(
+                max_num_pages, dtype=torch.int32, device=self.device
+            )
+
         super().init_cuda_graph_state(max_bs, max_num_tokens, kv_indices_buf)
 
     def init_forward_metadata_capture_cuda_graph(
@@ -573,6 +595,10 @@ class TRTLLMMLABackend(FlashInferMLAAttnBackend):
         """Get the fill value for sequence lengths in CUDA graph."""
         return 1
 
+    def support_rope_fusion(self) -> bool:
+        """Check if supports RoPE fusion."""
+        return self.data_type == torch.float8_e4m3fn
+
     def init_forward_metadata(self, forward_batch: ForwardBatch):
         """Initialize the metadata for a forward pass."""
         # Delegate to parent for non-decode modes.
@@ -656,6 +682,20 @@ class TRTLLMMLABackend(FlashInferMLAAttnBackend):
             self.forward_decode_metadata.block_kv_indices = block_kv_indices
             self.forward_decode_metadata.max_seq_len_k = int(max_seq)
             self.forward_decode_metadata.batch_size = bs
+
+            # Initialize RoPE fusion metadata if supported
+            if self.support_rope_fusion():
+                # Compute total number of tokens
+                if forward_batch.forward_mode.is_decode_or_idle():
+                    total_num_tokens = bs
+                elif forward_batch.forward_mode.is_target_verify():
+                    total_num_tokens = bs * self.num_draft_tokens
+                else:  # draft_extend
+                    total_num_tokens = self.forward_decode_metadata.sum_seq_lens_q
+
+                self._init_forward_metadata_for_rope_fusion(
+                    self.forward_decode_metadata, bs, total_num_tokens
+                )
 
             forward_batch.decode_trtllm_mla_metadata = self.forward_decode_metadata
         else:
@@ -741,6 +781,78 @@ class TRTLLMMLABackend(FlashInferMLAAttnBackend):
         )
 
         return q_out, k_nope_out, k_rope_out
+
+    def _init_forward_metadata_for_rope_fusion(
+        self,
+        metadata: TRTLLMMLADecodeMetadata,
+        batch_size: int,
+        total_num_tokens: int,
+        update_inplace: bool = False,
+    ):
+        """Initialize metadata for RoPE + FP8 quantization + KV cache update kernel.
+
+        Prepares the following metadata:
+        - kv_indptr: cumulative page count per request
+        - batch_indices: which request each token belongs to
+        - positions: position of each token within its sequence
+        - kv_indices: flattened page indices for all requests
+        """
+
+        # Compute number of pages per request
+        num_pages_per_req = (metadata.seq_lens_k + self.page_size - 1) // self.page_size
+
+        # kv_indptr: cumulative page count
+        if update_inplace:
+            metadata.kv_indptr[1:].copy_(
+                torch.cumsum(num_pages_per_req, dim=0, dtype=torch.int32)
+            )
+        else:
+            metadata.kv_indptr = torch.nn.functional.pad(
+                torch.cumsum(num_pages_per_req, dim=0, dtype=torch.int32), (1, 0)
+            )
+
+        # batch_indices and positions
+        # For decode: cu_seqlens_q is [0, 1, 2, ..., batch_size]
+        device = metadata.kv_indptr.device
+        cu_seqlens_q = torch.arange(0, batch_size + 1, dtype=torch.int32, device=device)
+
+        if update_inplace:
+            (
+                metadata.batch_indices[:total_num_tokens],
+                metadata.positions[:total_num_tokens],
+            ) = flashinfer.page.get_batch_indices_positions(
+                cu_seqlens_q,
+                metadata.seq_lens_k,
+                total_num_tokens,
+            )
+        else:
+            metadata.batch_indices, metadata.positions = (
+                flashinfer.page.get_batch_indices_positions(
+                    cu_seqlens_q,
+                    metadata.seq_lens_k,
+                    total_num_tokens,
+                )
+            )
+
+        # kv_indices: flattened page indices
+        if metadata.kv_indices is None:
+            max_pages_per_req = (
+                metadata.max_seq_len_k + self.page_size - 1
+            ) // self.page_size
+            metadata.kv_indices = torch.zeros(
+                batch_size * max_pages_per_req, dtype=torch.int32, device=device
+            )
+
+        # Use create_flashmla_kv_indices_triton to convert block_kv_indices to kv_indices
+        create_flashmla_kv_indices_triton[(batch_size,)](
+            metadata.block_kv_indices,
+            torch.arange(batch_size, dtype=torch.int32, device=device),
+            num_pages_per_req,
+            metadata.kv_indptr,
+            None,
+            metadata.kv_indices,
+            metadata.block_kv_indices.stride(0),
+        )
 
     def pad_draft_extend_query(
         self,
@@ -844,25 +956,78 @@ class TRTLLMMLABackend(FlashInferMLAAttnBackend):
             assert all(
                 x is not None for x in [q_rope, k_rope, cos_sin_cache]
             ), "For FP8 path and using flashinfer.rope.mla_rope_quantize we need all of q_rope, k_rope and cos_sin_cache to be not None."
-            q, k, k_rope = self.quantize_and_rope_for_fp8(
-                q,
-                q_rope,
-                k.squeeze(1),
-                k_rope.squeeze(1),
-                forward_batch,
-                cos_sin_cache,
-                is_neox,
-            )
-            merge_query = False
 
-        # Save KV cache if requested
-        if save_kv_cache:
-            assert (
-                k is not None and k_rope is not None
-            ), "For populating trtllm_mla kv cache, both k_nope and k_rope should be not None."
-            forward_batch.token_to_kv_pool.set_mla_kv_buffer(
-                layer, forward_batch.out_cache_loc, k, k_rope
-            )
+            # Use fused RoPE + FP8 quantization + KV cache update kernel if supported
+            if save_kv_cache and self.support_rope_fusion():
+                # Get unified KV buffer and split into ckv_cache and kpe_cache views
+                k_cache = forward_batch.token_to_kv_pool.get_key_buffer(layer.layer_id)
+                k_cache_reshaped = k_cache.view(-1, self.page_size, self.kv_cache_dim)
+                ckv_cache = k_cache_reshaped[..., : self.kv_lora_rank]
+                kpe_cache = k_cache_reshaped[..., self.kv_lora_rank :]
+
+                # Prepare input tensors (squeeze head dimension for MLA)
+                q_rope_in = q_rope
+                k_rope_in = k_rope.squeeze(1)  # MLA: (nnz, rope_dim)
+                q_nope_in = q
+                k_nope_in = k.squeeze(1)  # MLA: (nnz, kv_lora_rank)
+
+                # Call fused kernel
+                q_rope_out, q_nope_out = (
+                    flashinfer.rope.rope_quantize_fp8_append_paged_kv_cache(
+                        q_rope=q_rope_in,
+                        k_rope=k_rope_in,
+                        q_nope=q_nope_in,
+                        k_nope=k_nope_in,
+                        v=None,  # MLA doesn't use separate V
+                        cos_sin_cache=cos_sin_cache,
+                        pos_ids=forward_batch.positions,
+                        paged_kv_cache=(ckv_cache, kpe_cache),
+                        kv_indices=self.forward_decode_metadata.kv_indices,
+                        kv_indptr=self.forward_decode_metadata.kv_indptr,
+                        batch_indices=self.forward_decode_metadata.batch_indices,
+                        positions=self.forward_decode_metadata.positions,
+                        is_neox=is_neox,
+                        quantize_dtype=torch.float8_e4m3fn,
+                        quant_scale_q=1.0,
+                        quant_scale_kv=1.0,
+                        page_size=self.page_size,
+                        kv_layout="NHD",  # Ignored for MLA but included for consistency
+                    )
+                )
+
+                # Merge q_nope and q_rope outputs for subsequent processing
+                q = torch.cat([q_nope_out, q_rope_out], dim=-1)
+                merge_query = False
+            else:
+                # Fallback to existing path (non-FP8 fusion or when fusion not supported)
+                q, k, k_rope = self.quantize_and_rope_for_fp8(
+                    q,
+                    q_rope,
+                    k.squeeze(1),
+                    k_rope.squeeze(1),
+                    forward_batch,
+                    cos_sin_cache,
+                    is_neox,
+                )
+                merge_query = False
+
+                # Save KV cache if requested
+                if save_kv_cache:
+                    assert (
+                        k is not None and k_rope is not None
+                    ), "For populating trtllm_mla kv cache, both k_nope and k_rope should be not None."
+                    forward_batch.token_to_kv_pool.set_mla_kv_buffer(
+                        layer, forward_batch.out_cache_loc, k, k_rope
+                    )
+        else:
+            # Save KV cache if requested (non-FP8 path)
+            if save_kv_cache:
+                assert (
+                    k is not None and k_rope is not None
+                ), "For populating trtllm_mla kv cache, both k_nope and k_rope should be not None."
+                forward_batch.token_to_kv_pool.set_mla_kv_buffer(
+                    layer, forward_batch.out_cache_loc, k, k_rope
+                )
 
         # Prepare query tensor inline
         if merge_query:
@@ -970,25 +1135,78 @@ class TRTLLMMLABackend(FlashInferMLAAttnBackend):
             assert all(
                 x is not None for x in [q_rope, k_rope, cos_sin_cache]
             ), "For FP8 path and using flashinfer.rope.mla_rope_quantize we need all of q_rope, k_rope and cos_sin_cache to be not None."
-            q, k, k_rope = self.quantize_and_rope_for_fp8(
-                q,
-                q_rope,
-                k.squeeze(1),
-                k_rope.squeeze(1),
-                forward_batch,
-                cos_sin_cache,
-                is_neox,
-            )
-            merge_query = False
 
-        # Save KV cache if requested
-        if save_kv_cache:
-            assert (
-                k is not None and k_rope is not None
-            ), "For populating trtllm_mla kv cache, both k_nope and k_rope should be not None."
-            forward_batch.token_to_kv_pool.set_mla_kv_buffer(
-                layer, forward_batch.out_cache_loc, k, k_rope
-            )
+            # Use fused RoPE + FP8 quantization + KV cache update kernel if supported
+            if save_kv_cache and self.support_rope_fusion():
+                # Get unified KV buffer and split into ckv_cache and kpe_cache views
+                k_cache = forward_batch.token_to_kv_pool.get_key_buffer(layer.layer_id)
+                k_cache_reshaped = k_cache.view(-1, self.page_size, self.kv_cache_dim)
+                ckv_cache = k_cache_reshaped[..., : self.kv_lora_rank]
+                kpe_cache = k_cache_reshaped[..., self.kv_lora_rank :]
+
+                # Prepare input tensors (squeeze head dimension for MLA)
+                q_rope_in = q_rope
+                k_rope_in = k_rope.squeeze(1)  # MLA: (nnz, rope_dim)
+                q_nope_in = q
+                k_nope_in = k.squeeze(1)  # MLA: (nnz, kv_lora_rank)
+
+                # Call fused kernel
+                q_rope_out, q_nope_out = (
+                    flashinfer.rope.rope_quantize_fp8_append_paged_kv_cache(
+                        q_rope=q_rope_in,
+                        k_rope=k_rope_in,
+                        q_nope=q_nope_in,
+                        k_nope=k_nope_in,
+                        v=None,  # MLA doesn't use separate V
+                        cos_sin_cache=cos_sin_cache,
+                        pos_ids=forward_batch.positions,
+                        paged_kv_cache=(ckv_cache, kpe_cache),
+                        kv_indices=self.forward_decode_metadata.kv_indices,
+                        kv_indptr=self.forward_decode_metadata.kv_indptr,
+                        batch_indices=self.forward_decode_metadata.batch_indices,
+                        positions=self.forward_decode_metadata.positions,
+                        is_neox=is_neox,
+                        quantize_dtype=torch.float8_e4m3fn,
+                        quant_scale_q=1.0,
+                        quant_scale_kv=1.0,
+                        page_size=self.page_size,
+                        kv_layout="NHD",  # Ignored for MLA but included for consistency
+                    )
+                )
+
+                # Merge q_nope and q_rope outputs for subsequent processing
+                q = torch.cat([q_nope_out, q_rope_out], dim=-1)
+                merge_query = False
+            else:
+                # Fallback to existing path (non-FP8 fusion or when fusion not supported)
+                q, k, k_rope = self.quantize_and_rope_for_fp8(
+                    q,
+                    q_rope,
+                    k.squeeze(1),
+                    k_rope.squeeze(1),
+                    forward_batch,
+                    cos_sin_cache,
+                    is_neox,
+                )
+                merge_query = False
+
+                # Save KV cache if requested
+                if save_kv_cache:
+                    assert (
+                        k is not None and k_rope is not None
+                    ), "For populating trtllm_mla kv cache, both k_nope and k_rope should be not None."
+                    forward_batch.token_to_kv_pool.set_mla_kv_buffer(
+                        layer, forward_batch.out_cache_loc, k, k_rope
+                    )
+        else:
+            # Save KV cache if requested (non-FP8 path)
+            if save_kv_cache:
+                assert (
+                    k is not None and k_rope is not None
+                ), "For populating trtllm_mla kv cache, both k_nope and k_rope should be not None."
+                forward_batch.token_to_kv_pool.set_mla_kv_buffer(
+                    layer, forward_batch.out_cache_loc, k, k_rope
+                )
 
         # TODO refactor to avoid code duplication
         # Prepare query tensor inline
