@@ -125,7 +125,8 @@ struct RadixTree::Impl {
 #ifdef TRACY_ENABLE
         ZoneScopedN("Impl/tree_walk/find_child");
 #endif
-        return node->find_child(get_key(key));
+        const auto page = key.subspan(0, page_size);
+        return node->find_child(page);
       }();
       if (iterator == node->end()) break;
 

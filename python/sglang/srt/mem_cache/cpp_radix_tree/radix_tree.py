@@ -16,6 +16,7 @@ _abs_path = os.path.dirname(os.path.abspath(__file__))
 #     * add Tracy's include path (equivalent to target_include_directories)
 #     * define TRACY_ENABLE (equivalent to target_compile_definitions)
 _repo_root = os.path.abspath(os.path.join(_abs_path, "../../../../../"))
+_abseil_root = os.path.join(_repo_root, "3rdparty", "abseil-cpp")
 _tracy_root = os.path.join(_repo_root, "3rdparty", "tracy")
 _enable_tracy = os.getenv("SGLANG_ENABLE_TRACY", "").lower() in (
     "1",
@@ -29,9 +30,25 @@ _sources = [
     f"{_abs_path}/tree_v2_debug.cpp",
     f"{_abs_path}/tree_v2.cpp",
 ]
+_abseil_sources = [
+    os.path.join(_abseil_root, "absl", "container", "internal", "raw_hash_set.cc"),
+    os.path.join(_abseil_root, "absl", "hash", "internal", "hash.cc"),
+    os.path.join(_abseil_root, "absl", "hash", "internal", "city.cc"),
+    os.path.join(_abseil_root, "absl", "base", "internal", "raw_logging.cc"),
+    os.path.join(_abseil_root, "absl", "base", "log_severity.cc"),
+]
 _extra_include_paths = []
 _extra_cflags = ["-O3", "-std=c++20"]
 _extra_ldflags = []
+
+if not os.path.isdir(_abseil_root):
+    raise FileNotFoundError(
+        f"Abseil not found at {_abseil_root}. "
+        "Clone https://github.com/abseil/abseil-cpp.git into 3rdparty/abseil-cpp."
+    )
+_extra_include_paths.append(_abseil_root)
+_sources.extend(_abseil_sources)
+_sources.append(os.path.join(_abs_path, "absl_hashtablez_stub.cc"))
 
 if _enable_tracy:
     # When Tracy is enabled, we must compile its client into the extension and

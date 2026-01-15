@@ -11,6 +11,7 @@
 #include <ranges>
 #include <unordered_map>
 
+#include "absl/container/flat_hash_map.h"
 #include "common.h"
 
 #ifdef TRACY_ENABLE
@@ -19,20 +20,46 @@
 
 namespace radix_tree_v2 {
 
-struct std_vector_hash {
+struct PageKeyHash {
+  using is_transparent = void;
+
   // see https://stackoverflow.com/questions/20511347/a-good-hash-function-for-a-vector
-  std::size_t operator()(const token_vec_t& vec) const {
+  std::size_t operator()(token_slice slice) const noexcept {
     std::size_t hash = 0;
-    for (const auto& token : vec) {
+    for (const auto& token : slice) {
       hash ^= token + 0x9e3779b9 + (hash << 6) + (hash >> 2);
     }
     return hash;
+  }
+
+  std::size_t operator()(const token_vec_t& vec) const noexcept {
+    return operator()(token_slice{vec.data(), vec.size()});
+  }
+};
+
+struct PageKeyEq {
+  using is_transparent = void;
+
+  bool operator()(token_slice a, token_slice b) const noexcept {
+    return a.size() == b.size() && std::equal(a.begin(), a.end(), b.begin());
+  }
+
+  bool operator()(const token_vec_t& a, const token_vec_t& b) const noexcept {
+    return operator()(token_slice{a.data(), a.size()}, token_slice{b.data(), b.size()});
+  }
+
+  bool operator()(const token_vec_t& a, token_slice b) const noexcept {
+    return operator()(token_slice{a.data(), a.size()}, b);
+  }
+
+  bool operator()(token_slice a, const token_vec_t& b) const noexcept {
+    return operator()(a, token_slice{b.data(), b.size()});
   }
 };
 
 struct TreeNode {
  public:
-  using childern_map_t = std::unordered_map<token_vec_t, std::unique_ptr<TreeNode>, std_vector_hash>;
+  using childern_map_t = absl::flat_hash_map<token_vec_t, std::unique_ptr<TreeNode>, PageKeyHash, PageKeyEq>;
   using iterator_t = typename childern_map_t::iterator;
   using const_iterator_t = typename childern_map_t::const_iterator;
   using timestamp_t = std::chrono::steady_clock::time_point;
@@ -118,6 +145,10 @@ struct TreeNode {
     ZoneScopedN("TreeNode/erase_child");
 #endif
     _assert(m_children.erase(v) > 0, "Child node not found");
+  }
+
+  iterator_t find_child(token_slice v) {
+    return m_children.find(v);
   }
 
   iterator_t find_child(const token_vec_t& v) {
