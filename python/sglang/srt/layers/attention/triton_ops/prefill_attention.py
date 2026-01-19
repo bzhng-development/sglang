@@ -30,6 +30,10 @@ _is_hip = is_hip()
 if _is_cuda or _is_hip:
     CUDA_CAPABILITY = torch.cuda.get_device_capability()
 
+# Approximate value of 1/ln(2), used for log/exp base conversion
+# Best FP32 approximation: 1.4426950216 (hex 0x3FB8AA3B)
+RCP_LN2 = 1.4426950216
+
 
 @triton.jit
 def _fwd_kernel(
@@ -102,47 +106,33 @@ def _fwd_kernel(
         else tl.minimum((start_m + 1) * BLOCK_M, cur_batch_seq_len)
     )
     for start_n in range(0, block_mask * end_n, BLOCK_N):
+        # -- prepare attention mask ----
+        pos_q = offs_m[:, None]
+        pos_k = start_n + offs_n[None, :]
+        mask_k = pos_k < cur_batch_seq_len
+        mask = mask_k
+        if IS_CAUSAL:
+            mask &= pos_q >= pos_k
+
         start_n = tl.multiple_of(start_n, BLOCK_N)
         # -- compute qk ----
         k = tl.load(
             k_ptrs + (cur_batch_in_all_start_index + start_n) * stride_kbs,
-            mask=((start_n + offs_n[None, :]) < cur_batch_seq_len) & (mask_d[:, None]),
+            mask=mask_k & (mask_d[:, None]),
             other=0.0,
         )
-        # mask = tl.load(mask_ptrs + start_n, mask=start_n + offs_n < cur_batch_end_loc, other=0.0)
 
-        qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
-        qk += tl.dot(q, k)
-        qk *= sm_scale
-
-        if IS_CAUSAL:
-            qk += tl.where(
-                (start_n + offs_n[None, :] < cur_batch_seq_len)
-                & (offs_m[:, None] >= (start_n + offs_n[None, :])),
-                0,
-                float("-inf"),
-            )
-        else:
-            qk += tl.where(
-                (start_n + offs_n[None, :]) < cur_batch_seq_len, 0, float("-inf")
-            )
-
-        # -- compute m_ij, p, l_ij
-        m_ij = tl.max(qk, 1)
-        p = tl.exp(qk - m_ij[:, None])
+        qk = tl.dot(q, k)
+        qk = tl.where(mask, qk * sm_scale, -1.0e8)
+        m_ij = tl.maximum(m_i, tl.max(qk, 1))
+        qk -= m_ij[:, None]
+        p = tl.math.exp2(qk)
         l_ij = tl.sum(p, 1)
         # -- update m_i and l_i
-        m_i_new = tl.maximum(m_i, m_ij)
-        alpha = tl.exp(m_i - m_i_new)
-        beta = tl.exp(m_ij - m_i_new)
-        l_i_new = alpha * l_i + beta * l_ij
+        alpha = tl.math.exp2(m_i - m_ij)
+        l_i = l_i * alpha + l_ij
         # -- update output accumulator --
-        # scale p
-        p_scale = beta / l_i_new
-        p = p * p_scale[:, None]
-        # scale acc
-        acc_scale = l_i / l_i_new * alpha
-        acc = acc * acc_scale[:, None]
+        acc = acc * alpha[:, None]
         # update acc
         v = tl.load(
             v_ptrs + (cur_batch_in_all_start_index + start_n) * stride_vbs,
@@ -151,10 +141,11 @@ def _fwd_kernel(
         )
 
         p = p.to(v.dtype)
-        acc += tl.dot(p, v)
-        # update m_i and l_i
-        l_i = l_i_new
-        m_i = m_i_new
+        acc = tl.dot(p, v, acc)
+        # update m_i
+        m_i = m_ij
+
+    acc = acc / l_i[:, None]
     # initialize pointers to output
     off_o = (
         (cur_batch_in_all_start_index + offs_m[:, None]) * stride_obs
@@ -184,6 +175,7 @@ def context_attention_fwd(
     Lq, Lk, Lv = q.shape[-1], k.shape[-1], v.shape[-1]
 
     sm_scale = 1.0 / (Lq**0.5)
+    sm_scale *= RCP_LN2
     batch, head = b_seq_len.shape[0], q.shape[1]
     kv_group_num = q.shape[1] // k.shape[1]
 

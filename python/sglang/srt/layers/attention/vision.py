@@ -64,6 +64,10 @@ ROTARY_EMBED_CLASSES = {
     "normal": apply_rotary_pos_emb,
 }
 
+# Approximate value of 1/ln(2), used for log/exp base conversion
+# Best FP32 approximation: 1.4426950216 (hex 0x3FB8AA3B)
+RCP_LN2 = 1.4426950216
+
 
 @dataclasses.dataclass
 class SingletonCache:
