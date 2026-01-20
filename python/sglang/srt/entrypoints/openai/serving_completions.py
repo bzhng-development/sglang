@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 import time
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Dict, List, Optional, Union
 
 from fastapi import Request
 from fastapi.responses import ORJSONResponse, StreamingResponse
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import (
     CompletionRequest,
@@ -30,8 +30,6 @@ from sglang.utils import convert_json_schema_to_str
 if TYPE_CHECKING:
     from sglang.srt.managers.template_manager import TemplateManager
     from sglang.srt.managers.tokenizer_manager import TokenizerManager
-
-logger = logging.getLogger(__name__)
 
 
 class OpenAIServingCompletion(OpenAIServingBase):

@@ -1,5 +1,4 @@
 import concurrent.futures
-import logging
 from typing import List, Tuple
 
 import numpy as np
@@ -14,8 +13,6 @@ from sglang.srt.disaggregation.mooncake.conn import (
     MooncakeKVSender,
 )
 from sglang.srt.utils import get_local_ip_auto
-
-logger = logging.getLogger(__name__)
 
 
 class AscendKVManager(MooncakeKVManager):

@@ -1,9 +1,5 @@
-import logging
-
 from sglang.srt.environ import envs
 from sglang.srt.utils import get_device_sm, is_blackwell_supported
-
-logger = logging.getLogger(__name__)
 
 
 def _compute_enable_deep_gemm():

@@ -13,10 +13,10 @@
 # ==============================================================================
 
 import contextlib
-import logging
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.layers.moe.utils import speculative_moe_backend_context
@@ -46,9 +46,6 @@ from sglang.srt.utils.common import empty_context, fast_topk
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.model_runner import ModelRunnerOutput
-
-
-logger = logging.getLogger(__name__)
 
 
 def _get_plan_stream(

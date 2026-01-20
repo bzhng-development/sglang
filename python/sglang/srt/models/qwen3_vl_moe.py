@@ -13,13 +13,13 @@
 # limitations under the License.
 # ==============================================================================
 """Inference-only Qwen3-VL model compatible with HuggingFace weights."""
-import logging
 import re
 from functools import lru_cache
 from typing import Iterable, Optional, Tuple, Union
 
 import torch
 import torch.nn as nn
+from loguru import logger
 
 from sglang.srt.configs.qwen3_vl import Qwen3VLMoeConfig, Qwen3VLMoeTextConfig
 from sglang.srt.eplb.expert_location import ModelConfigForExpertLocation
@@ -30,8 +30,6 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen3_moe import Qwen3MoeModel
 from sglang.srt.models.qwen3_vl import Qwen3VLForConditionalGeneration
 from sglang.srt.utils.hf_transformers_utils import get_processor
-
-logger = logging.getLogger(__name__)
 
 cached_get_processor = lru_cache(get_processor)
 

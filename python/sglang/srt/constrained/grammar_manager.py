@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 import time
 from concurrent import futures
 from typing import TYPE_CHECKING, List
 
 import torch
+from loguru import logger
 
 from sglang.srt.constrained.base_grammar_backend import (
     INVALID_GRAMMAR_OBJ,
@@ -17,8 +17,6 @@ if TYPE_CHECKING:
     from sglang.srt.managers.io_struct import AbortReq
     from sglang.srt.managers.schedule_batch import Req
     from sglang.srt.managers.scheduler import Scheduler
-
-logger = logging.getLogger(__name__)
 
 
 class GrammarManager:

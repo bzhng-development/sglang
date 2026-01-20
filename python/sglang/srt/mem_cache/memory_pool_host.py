@@ -1,5 +1,4 @@
 import abc
-import logging
 import threading
 from collections import defaultdict
 from functools import wraps
@@ -7,6 +6,7 @@ from typing import Optional
 
 import psutil
 import torch
+from loguru import logger
 
 from sglang.jit_kernel.hicache import can_use_hicache_jit_kernel
 from sglang.jit_kernel.hicache import (
@@ -39,8 +39,6 @@ if not (_is_npu or _is_xpu):
     )
 if _is_npu:
     from sgl_kernel_npu.kvcacheio import TransferDirection, transfer_kv_dim_exchange
-
-logger = logging.getLogger(__name__)
 
 
 def synchronized(func):

@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import fnmatch
-import logging
 from typing import Any, List, Optional, cast
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.linear import LinearBase, UnquantizedLinearMethod
 from sglang.srt.layers.quantization.base_config import (  # noqa: E501
@@ -24,8 +24,6 @@ from sglang.srt.layers.radix_attention import RadixAttention
 from sglang.srt.utils import get_device_capability
 
 __all__ = ["QuarkLinearMethod"]
-
-logger = logging.getLogger(__name__)
 
 
 class QuarkConfig(QuantizationConfig):

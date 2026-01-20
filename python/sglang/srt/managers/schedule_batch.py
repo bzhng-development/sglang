@@ -38,7 +38,6 @@ TODO(lmzheng): ModelWorkerBatch seems a bit redundant and we consider removing i
 
 import copy
 import dataclasses
-import logging
 import re
 import time
 from enum import Enum, auto
@@ -48,6 +47,7 @@ from typing import TYPE_CHECKING, Any, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import torch
+from loguru import logger
 
 from sglang.srt.constrained.base_grammar_backend import BaseGrammarObject
 from sglang.srt.disaggregation.base import BaseKVSender
@@ -93,9 +93,6 @@ if TYPE_CHECKING:
     from sglang.srt.speculative.spec_info import SpecInput, SpeculativeAlgorithm
 
 INIT_INCREMENTAL_DETOKENIZATION_OFFSET = 5
-
-
-logger = logging.getLogger(__name__)
 
 
 class BaseFinishReason:

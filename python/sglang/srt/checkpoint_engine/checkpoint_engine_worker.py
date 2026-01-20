@@ -15,11 +15,11 @@
 Checkpoint-engine integration for SGLang.
 This module provides weight update functionality via IPC for checkpoint-engine compatibility.
 """
-import logging
 from typing import Callable, Dict, Optional
 
 import torch
 import zmq
+from loguru import logger
 
 try:
     from checkpoint_engine.worker import update_weights_from_ipc
@@ -28,8 +28,6 @@ except ImportError:
         "checkpoint-engine is not installed. "
         "Please install it with: pip install sglang[checkpoint-engine]"
     )
-
-logger = logging.getLogger(__name__)
 
 
 class SGLangCheckpointEngineWorkerExtension:

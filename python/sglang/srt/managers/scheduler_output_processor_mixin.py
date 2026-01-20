@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 import time
 from typing import TYPE_CHECKING, List, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 
 from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.environ import envs
@@ -32,8 +32,6 @@ if TYPE_CHECKING:
         ScheduleBatch,
         Scheduler,
     )
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_FORCE_STREAM_INTERVAL = 50
 

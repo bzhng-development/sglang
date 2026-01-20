@@ -1,16 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 from typing import Generator, Optional, Tuple
 from urllib.parse import urlparse
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 
 from sglang.srt.connector import BaseConnector
 from sglang.srt.utils import init_custom_process_group
-
-logger = logging.getLogger(__name__)
 
 
 class RemoteInstanceConnector(BaseConnector):

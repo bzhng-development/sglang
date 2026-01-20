@@ -1,10 +1,10 @@
 import dataclasses
-import logging
 import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, NamedTuple, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.utils import get_bool_env_var
 
@@ -12,8 +12,6 @@ if TYPE_CHECKING:
     from sglang.srt.metrics.collector import SchedulerMetricsCollector
 
 _DEBUG_LOG = get_bool_env_var("SGLANG_PREFILL_DELAYER_DEBUG_LOG")
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)

@@ -14,7 +14,6 @@
 """A controller that dispatches requests to multiple data parallel workers."""
 
 import faulthandler
-import logging
 import multiprocessing as mp
 import signal
 import threading
@@ -25,6 +24,7 @@ from typing import Callable, List, Optional
 import psutil
 import setproctitle
 import zmq
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.layers.dp_attention import compute_dp_attention_world_info
@@ -62,8 +62,6 @@ from sglang.srt.utils.common import (
 from sglang.srt.utils.torch_memory_saver_adapter import TorchMemorySaverAdapter
 from sglang.srt.utils.watchdog import Watchdog
 from sglang.utils import TypeBasedDispatcher, get_exception_traceback
-
-logger = logging.getLogger(__name__)
 
 
 class LoadBalanceMethod(Enum):

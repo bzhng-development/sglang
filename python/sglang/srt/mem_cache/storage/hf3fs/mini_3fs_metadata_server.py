@@ -11,6 +11,7 @@ import orjson
 import requests
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import ORJSONResponse
+from loguru import logger
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -123,10 +124,10 @@ class GlobalMetadataState:
 
     def load_from_disk(self):
         if not self.persistence_path or not self.persistence_path.exists():
-            logging.info("Persistence file not found. Starting with a clean state.")
+            logger.info("Persistence file not found. Starting with a clean state.")
             return
 
-        logging.info(f"Loading state from {self.persistence_path}")
+        logger.info(f"Loading state from {self.persistence_path}")
         try:
             with open(self.persistence_path, "r") as f:
                 persisted_data = json.load(f)
@@ -139,11 +140,11 @@ class GlobalMetadataState:
                     rank_meta.free_pages = data["free_pages"]
                     rank_meta.key_to_index = OrderedDict(data["key_to_index"])
                     self.ranks[rank_id] = rank_meta
-                logging.info(
+                logger.info(
                     f"Successfully loaded metadata for {len(self.ranks)} ranks."
                 )
         except (json.JSONDecodeError, KeyError, TypeError) as e:
-            logging.error(
+            logger.error(
                 f"Failed to load or parse persistence file: {e}. Starting fresh.",
                 exc_info=True,
             )
@@ -153,7 +154,7 @@ class GlobalMetadataState:
         if not self.persistence_path:
             return
 
-        logging.info("Persisting metadata to disk...")
+        logger.info("Persisting metadata to disk...")
         with self.global_lock:
             serializable_state = {}
             for rank_id, rank_meta in self.ranks.items():
@@ -169,9 +170,9 @@ class GlobalMetadataState:
             with open(temp_path, "w") as f:
                 json.dump(serializable_state, f, indent=4)
             temp_path.rename(self.persistence_path)
-            logging.info(f"Metadata successfully persisted to {self.persistence_path}")
+            logger.info(f"Metadata successfully persisted to {self.persistence_path}")
         except Exception as e:
-            logging.error(f"Failed to save metadata to disk: {e}", exc_info=True)
+            logger.error(f"Failed to save metadata to disk: {e}", exc_info=True)
 
     def schedule_save(self):
         if self.is_shutting_down or not self.persistence_path:
@@ -181,12 +182,12 @@ class GlobalMetadataState:
         self.save_timer.start()
 
     def shutdown(self):
-        logging.info("Shutting down metadata server...")
+        logger.info("Shutting down metadata server...")
         self.is_shutting_down = True
         if self.save_timer:
             self.save_timer.cancel()
         self.save_to_disk()
-        logging.info("Shutdown complete.")
+        logger.info("Shutdown complete.")
 
 
 # --- Global MetadataServer implementation ---
@@ -235,15 +236,15 @@ class Hf3fsMetadataServer:
         num_pages = data["num_pages"]
         with self.state.global_lock:
             if rank in self.state.ranks:
-                logging.info(
+                logger.info(
                     f"Rank {rank} already exists. Initialization request ignored."
                 )
                 if self.state.ranks[rank].num_pages != num_pages:
-                    logging.warning(
+                    logger.warning(
                         f"Rank {rank} initialized with different num_pages. Existing: {self.state.ranks[rank].num_pages}, New: {num_pages}"
                     )
             else:
-                logging.info(f"Initializing new Rank {rank} with {num_pages} pages.")
+                logger.info(f"Initializing new Rank {rank} with {num_pages} pages.")
                 self.state.ranks[rank] = RankMetadata(num_pages)
         return Response(status_code=204)
 
@@ -304,13 +305,13 @@ class Hf3fsMetadataServer:
 
         import uvicorn
 
-        logging.info(f"Starting metadata server on http://{host}:{port}")
+        logger.info(f"Starting metadata server on http://{host}:{port}")
         if self.state.persistence_path:
-            logging.info(
+            logger.info(
                 f"Persistence is ENABLED. Saving to '{self.state.persistence_path}' every {self.state.save_interval} seconds."
             )
         else:
-            logging.info("Persistence is DISABLED.")
+            logger.info("Persistence is DISABLED.")
 
         uvicorn.run(self.app, host=host, port=port)
 
@@ -346,7 +347,7 @@ class Hf3fsGlobalMetadataClient(Hf3fsMetadataInterface):
                 return {}
             return orjson.loads(response.content)  # type: ignore[union-attr]
         except requests.exceptions.RequestException as e:
-            logging.error(f"Failed to POST to {endpoint} after retries: {e}")
+            logger.error(f"Failed to POST to {endpoint} after retries: {e}")
             raise RuntimeError(f"Failed to connect to metadata server: {e}") from e
 
     def initialize(self, rank: int, num_pages: int) -> None:

@@ -16,7 +16,6 @@
 # https://github.com/vllm-project/vllm/blob/v0.8.3/vllm/model_executor/models/llama4.py
 """Inference-only LLaMA model compatible with HuggingFace weights."""
 
-import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -61,8 +60,6 @@ from sglang.srt.utils import (
 from sglang.srt.utils.common import get_current_device_stream_fast
 
 _is_cuda = is_cuda()
-
-logger = logging.getLogger(__name__)
 
 
 class Llama4MoE(nn.Module):

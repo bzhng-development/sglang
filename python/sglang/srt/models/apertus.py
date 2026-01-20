@@ -17,10 +17,10 @@
 # https://github.com/vllm-project/vllm/blob/c7f2cf2b7f67bce5842fedfdba508440fe257375/vllm/model_executor/models/llama.py#L1
 """Inference-only Apertus model compatible with HuggingFace weights."""
 
-import logging
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import ApertusConfig
 
@@ -54,8 +54,6 @@ from sglang.srt.model_loader.weight_utils import (
 )
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, make_layers
-
-logger = logging.getLogger(__name__)
 
 
 class ApertusMLP(nn.Module):

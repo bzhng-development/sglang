@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import dataclasses
-import logging
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple
 
 import torch
@@ -13,9 +12,6 @@ from sglang.srt.server_args import get_global_server_args
 
 if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import ScheduleBatch
-
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass

@@ -14,11 +14,11 @@
 
 """Inference-only GLM-4.5, GLM-4.6 and GLM-4.7 model compatible with HuggingFace weights"""
 
-import logging
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -98,8 +98,6 @@ _use_aiter = get_bool_env_var("SGLANG_USE_AITER") and _is_hip
 _is_cpu_amx_available = cpu_has_amx_support()
 _is_cpu = is_cpu()
 _device_sm = get_device_sm()
-
-logger = logging.getLogger(__name__)
 
 
 class Glm4MoeMLP(nn.Module):

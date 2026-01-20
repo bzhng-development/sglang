@@ -9,6 +9,7 @@ and uses BatchMLAPaged wrapper for decoding.
 More details can be found in https://docs.flashinfer.ai/api/mla.html
 """
 
+import logging
 from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING, Callable, Optional, Union

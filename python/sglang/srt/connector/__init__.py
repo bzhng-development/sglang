@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import enum
-import logging
+
+from loguru import logger
 
 from sglang.srt.connector.base_connector import (
     BaseConnector,
@@ -12,8 +13,6 @@ from sglang.srt.connector.redis import RedisConnector
 from sglang.srt.connector.remote_instance import RemoteInstanceConnector
 from sglang.srt.connector.s3 import S3Connector
 from sglang.srt.utils import parse_connector_type
-
-logger = logging.getLogger(__name__)
 
 
 class ConnectorType(str, enum.Enum):

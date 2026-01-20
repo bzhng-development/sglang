@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import logging
 import time
 from collections import defaultdict
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
+
+from loguru import logger
 
 from sglang.srt.disaggregation.kv_events import EventPublisherFactory, KVEventBatch
 from sglang.srt.disaggregation.utils import DisaggregationMode
@@ -34,8 +35,6 @@ from sglang.srt.utils.scheduler_status_logger import SchedulerStatusLogger
 
 if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import EmbeddingBatchResult, Scheduler
-
-logger = logging.getLogger(__name__)
 
 RECORD_STEP_TIME = get_bool_env_var("SGLANG_RECORD_STEP_TIME")
 LOG_FORWARD_ITERS = envs.SGLANG_LOG_FORWARD_ITERS.get()

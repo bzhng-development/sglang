@@ -2,12 +2,10 @@
 Common utilities for torchao.
 """
 
-import logging
 from typing import Callable, Optional
 
 import torch
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def proj_filter(

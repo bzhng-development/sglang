@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import logging
 from typing import Any, List, Optional
 
 import torch
@@ -32,8 +31,6 @@ from sglang.srt.utils import get_bool_env_var, is_cuda
 
 _is_cuda = is_cuda()
 _is_fp8_fnuz = is_fp8_fnuz()
-
-logger = logging.getLogger(__name__)
 
 
 class FBGEMMFp8Config(QuantizationConfig):

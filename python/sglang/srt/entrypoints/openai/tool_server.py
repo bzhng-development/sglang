@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
-import logging
 from abc import ABC, abstractmethod
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 from typing import Any
+
+from loguru import logger
 
 try:
     from mcp import ClientSession
@@ -13,8 +14,6 @@ except ImportError as e:
     ClientSession = sse_client = ListToolsResult = e
 
 from openai_harmony import ToolDescription, ToolNamespaceConfig
-
-logger = logging.getLogger(__name__)
 
 
 async def list_server_and_tools(server_url: str):

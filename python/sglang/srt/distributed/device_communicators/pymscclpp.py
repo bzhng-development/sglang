@@ -1,5 +1,4 @@
 import bisect
-import logging
 import math
 import os
 from contextlib import contextmanager
@@ -8,12 +7,11 @@ from typing import Optional, Union
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.distributed import ProcessGroup, ReduceOp
 
 import sglang.srt.distributed.device_communicators.custom_all_reduce_ops as ops
 from sglang.srt.utils import is_hip
-
-logger = logging.getLogger(__name__)
 
 _is_hip = is_hip()
 

@@ -12,11 +12,11 @@
 # limitations under the License.
 # ==============================================================================
 
-import logging
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from torch import nn
 
 from sglang.srt.distributed import (
@@ -69,8 +69,6 @@ from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import LazyValue, add_prefix, make_layers
 
 MiMoV2FlashConfig = None
-
-logger = logging.getLogger(__name__)
 
 
 class MiMoV2MLP(nn.Module):

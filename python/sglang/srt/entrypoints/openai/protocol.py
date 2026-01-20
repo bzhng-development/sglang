@@ -13,12 +13,12 @@
 # ==============================================================================
 """Pydantic models for OpenAI API protocol"""
 
-import logging
 import time
 import uuid
 from dataclasses import dataclass
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypeAlias, Union
 
+from loguru import logger
 from openai.types.responses import (
     ResponseFunctionToolCall,
     ResponseInputItemParam,
@@ -44,8 +44,6 @@ except:
     StructuralTag = Any
 
 from sglang.utils import convert_json_schema_to_str
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_MODEL_NAME = "default"
 

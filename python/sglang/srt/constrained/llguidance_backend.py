@@ -14,7 +14,6 @@
 """Constrained decoding with llguidance backend."""
 
 import json
-import logging
 import os
 from typing import List, Optional, Tuple
 
@@ -26,6 +25,7 @@ from llguidance.torch import (
     apply_token_bitmask_inplace,
     fill_next_token_bitmask,
 )
+from loguru import logger
 
 from sglang.srt.constrained.base_grammar_backend import (
     INVALID_GRAMMAR_OBJ,
@@ -33,8 +33,6 @@ from sglang.srt.constrained.base_grammar_backend import (
     BaseGrammarObject,
 )
 from sglang.srt.constrained.utils import is_legacy_structural_tag
-
-logger = logging.getLogger(__name__)
 
 
 class GuidanceGrammar(BaseGrammarObject):

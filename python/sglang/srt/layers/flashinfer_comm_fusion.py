@@ -1,14 +1,12 @@
-import logging
 from typing import Optional, Tuple
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 
 from sglang.srt.distributed import get_tensor_model_parallel_world_size
 from sglang.srt.utils import is_flashinfer_available
 from sglang.srt.utils.custom_op import register_custom_op
-
-logger = logging.getLogger(__name__)
 
 _flashinfer_comm = None
 _workspace_manager = None

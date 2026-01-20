@@ -14,7 +14,6 @@
 """A scheduler that manages a tensor parallel GPU worker."""
 
 import faulthandler
-import logging
 import os
 import signal
 import sys
@@ -29,6 +28,7 @@ import setproctitle
 import torch
 import torch.distributed
 import zmq
+from loguru import logger
 from torch.cuda import Stream as CudaStream
 from torch.cuda import StreamContext as CudaStreamContext
 from torch.distributed import barrier
@@ -205,8 +205,6 @@ from sglang.srt.utils.hf_transformers_utils import (
 )
 from sglang.srt.utils.torch_memory_saver_adapter import TorchMemorySaverAdapter
 from sglang.utils import TypeBasedDispatcher, get_exception_traceback
-
-logger = logging.getLogger(__name__)
 
 # Test retract decode for debugging purposes
 TEST_RETRACT = envs.SGLANG_TEST_RETRACT.get()
@@ -2420,7 +2418,7 @@ class Scheduler(
             logger.info("Hierarchical cache cleared successfully!")
             if_success = True
         else:
-            logging.warning("Hierarchical cache is not enabled.")
+            logger.warning("Hierarchical cache is not enabled.")
             if_success = False
         return ClearHiCacheReqOutput(success=if_success)
 
@@ -2463,7 +2461,7 @@ class Scheduler(
             logger.info("Cache flushed successfully!")
             success = True
         else:
-            logging.warning(
+            logger.warning(
                 f"Cache not flushed because there are pending requests. "
                 f"#queue-req: {len(self.waiting_queue)}, "
                 f"#running-req: {len(self.running_batch.reqs)}"
@@ -2510,13 +2508,13 @@ class Scheduler(
         if_success = True
         for k, v in server_args_dict.items():
             if k not in args_allow_update:
-                logging.warning(f"Updating {k} is not supported.")
+                logger.warning(f"Updating {k} is not supported.")
                 if_success = False
                 break
             elif k == "pp_max_micro_batch_size" and (
                 v > self.max_running_requests // self.pp_size or v < 1
             ):
-                logging.warning(
+                logger.warning(
                     f"Updating {k} to {v} is rejected because it is out of the valid range [1, {self.max_running_requests // self.pp_size}]."
                 )
                 if_success = False

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 """Cache for chunked prefill, used when RadixCache is disabled."""
 
-import logging
 from typing import TYPE_CHECKING, Any, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.base_prefix_cache import BasePrefixCache, MatchResult
 from sglang.srt.mem_cache.swa_memory_pool import SWATokenToKVPoolAllocator
@@ -13,9 +13,6 @@ from sglang.srt.mem_cache.swa_memory_pool import SWATokenToKVPoolAllocator
 if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import Req
     from sglang.srt.mem_cache.cache_init_params import CacheInitParams
-
-
-logger = logging.getLogger(__name__)
 
 
 class ChunkCache(BasePrefixCache):

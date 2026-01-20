@@ -1,8 +1,6 @@
-import logging
 from typing import TYPE_CHECKING
 
-logger = logging.getLogger(__name__)
-
+from loguru import logger
 
 if TYPE_CHECKING:
     # evade circular imports

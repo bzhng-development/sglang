@@ -6,7 +6,6 @@ Mimics TokenizerManager's state management and ZMQ communication patterns.
 import asyncio
 import copy
 import dataclasses
-import logging
 import os
 import signal
 import sys
@@ -18,6 +17,7 @@ from typing import Any, AsyncGenerator, Dict, List, Optional, Union
 import grpc
 import zmq
 import zmq.asyncio
+from loguru import logger
 
 from sglang.srt.managers.io_struct import (
     AbortReq,
@@ -32,8 +32,6 @@ from sglang.srt.managers.io_struct import (
 from sglang.srt.server_args import PortArgs, ServerArgs
 from sglang.srt.utils import get_or_create_event_loop, get_zmq_socket, kill_process_tree
 from sglang.utils import get_exception_traceback
-
-logger = logging.getLogger(__name__)
 
 
 class _GrpcCommunicator:

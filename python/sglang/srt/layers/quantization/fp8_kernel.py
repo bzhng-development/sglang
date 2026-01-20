@@ -14,7 +14,6 @@
 
 import functools
 import json
-import logging
 import os
 from functools import lru_cache
 from typing import Any, Dict, List, Optional, Tuple
@@ -22,6 +21,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import torch
 import triton
 import triton.language as tl
+from loguru import logger
 
 from sglang.srt.layers import deep_gemm_wrapper
 from sglang.srt.utils import (
@@ -73,8 +73,6 @@ if _is_hip:
             import vllm._C  # noqa: F401
         except ImportError:
             raise ImportError("vllm is required when SGLANG_USE_AITER is set to False")
-
-logger = logging.getLogger(__name__)
 
 
 @lru_cache()

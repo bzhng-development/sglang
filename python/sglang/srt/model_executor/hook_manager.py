@@ -1,11 +1,9 @@
 import fnmatch
 import importlib
-import logging
 from typing import Any, Callable, List, Optional
 
 import torch.nn as nn
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def register_forward_hooks(model: nn.Module, hook_specs: List[dict[str, Any]]) -> None:

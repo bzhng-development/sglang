@@ -1,4 +1,3 @@
-import logging
 import multiprocessing
 import os
 import random
@@ -6,10 +5,10 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
+from loguru import logger
+
 from sglang.srt.environ import envs
 from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 @contextmanager

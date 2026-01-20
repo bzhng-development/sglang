@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import time
 from typing import Any, List, Optional, Tuple
@@ -7,6 +6,7 @@ from typing import Any, List, Optional, Tuple
 import eic
 import torch
 import yaml
+from loguru import logger
 
 from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorage,
@@ -14,9 +14,6 @@ from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorageExtraInfo,
 )
 from sglang.srt.mem_cache.memory_pool_host import HostKVCache
-
-logger = logging.getLogger(__name__)
-
 
 TensorPoolSize = 2048
 

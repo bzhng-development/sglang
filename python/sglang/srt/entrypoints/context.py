@@ -1,12 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copied from vLLM
-import logging
 from abc import ABC, abstractmethod
 from typing import Union
 
 import orjson
-
-logger = logging.getLogger(__name__)
 
 try:
     from mcp import ClientSession

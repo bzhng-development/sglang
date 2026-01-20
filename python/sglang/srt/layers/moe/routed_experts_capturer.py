@@ -1,10 +1,10 @@
-import logging
 from abc import ABC
 from typing import Optional
 
 import numpy as np
 import pybase64
 import torch
+from loguru import logger
 
 from sglang.srt.configs.model_config import ModelConfig
 from sglang.srt.layers.dp_attention import (
@@ -15,8 +15,6 @@ from sglang.srt.layers.dp_attention import (
 from sglang.srt.mem_cache.memory_pool import ReqToTokenPool
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.server_args import get_global_server_args
-
-logger = logging.getLogger(__name__)
 
 _GB = 1024 * 1024 * 1024
 _MB = 1024 * 1024

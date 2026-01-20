@@ -82,6 +82,7 @@ import torch.distributed
 import torch.distributed as dist
 import triton
 import zmq
+from loguru import logger
 from packaging import version as pkg_version
 from PIL import Image
 from starlette.routing import Mount
@@ -99,8 +100,6 @@ if TYPE_CHECKING:
     from decord import VideoReader
 
     from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 # https://pytorch.org/docs/stable/notes/hip.html#checking-for-hip
@@ -1021,13 +1020,9 @@ def suppress_other_loggers():
         return
 
     vllm_default_logger.setLevel(logging.WARN)
-    logging.getLogger("vllm.distributed.device_communicators.pynccl").setLevel(
-        logging.WARN
-    )
-    logging.getLogger("vllm.distributed.device_communicators.shm_broadcast").setLevel(
-        logging.WARN
-    )
-    logging.getLogger("vllm.config").setLevel(logging.ERROR)
+    logger.setLevel(logging.WARN)
+    logger.setLevel(logging.WARN)
+    logger.setLevel(logging.ERROR)
 
 
 def assert_pkg_version(pkg: str, min_version: str, message: str):
@@ -1137,6 +1132,16 @@ def rank0_log(msg: str):
 
 
 def configure_logger(server_args, prefix: str = ""):
+    """Configure loguru logger for SGLang.
+
+    Args:
+        server_args: Server arguments containing log_level.
+        prefix: Optional prefix to add to log messages.
+    """
+    import logging
+    import sys
+
+    # Check for custom logging config (still supported for backwards compatibility)
     if SGLANG_LOGGING_CONFIG_PATH := os.getenv("SGLANG_LOGGING_CONFIG_PATH"):
         if not os.path.exists(SGLANG_LOGGING_CONFIG_PATH):
             raise Exception(
@@ -1145,16 +1150,40 @@ def configure_logger(server_args, prefix: str = ""):
             )
         with open(SGLANG_LOGGING_CONFIG_PATH, encoding="utf-8") as file:
             custom_config = orjson.loads(file.read())
+        # For custom configs, configure standard logging for interception
+        import logging.config
+
         logging.config.dictConfig(custom_config)
-        return
-    maybe_ms = ".%(msecs)03d" if envs.SGLANG_LOG_MS.get() else ""
-    format = f"[%(asctime)s{maybe_ms}{prefix}] %(message)s"
-    logging.basicConfig(
-        level=getattr(logging, server_args.log_level.upper()),
-        format=format,
-        datefmt="%Y-%m-%d %H:%M:%S",
-        force=True,
+
+    # Build loguru format string
+    maybe_ms = ".SSS" if envs.SGLANG_LOG_MS.get() else ""
+    format_str = "[{time:YYYY-MM-DD HH:mm:ss" + maybe_ms + prefix + "}] {message}"
+
+    # Remove default handler and add our configured one
+    logger.remove()
+    logger.add(
+        sys.stderr,
+        level=server_args.log_level.upper(),
+        format=format_str,
+        colorize=True,
     )
+
+    # Set up interception to capture standard logging from third-party libraries
+    class InterceptHandler(logging.Handler):
+        def emit(self, record: logging.LogRecord) -> None:
+            try:
+                level = logger.level(record.levelname).name
+            except ValueError:
+                level = record.levelno
+            frame, depth = logging.currentframe(), 2
+            while frame and frame.f_code.co_filename == logging.__file__:
+                frame = frame.f_back
+                depth += 1
+            logger.opt(depth=depth, exception=record.exc_info).log(
+                level, record.getMessage()
+            )
+
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
 
 
 # source: https://github.com/vllm-project/vllm/blob/93b38bea5dd03e1b140ca997dfaadef86f8f1855/vllm/lora/utils.py#L9

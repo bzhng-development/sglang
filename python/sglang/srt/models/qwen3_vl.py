@@ -13,7 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 """Inference-only Qwen3-VL model compatible with HuggingFace weights."""
-import logging
 import math
 import re
 from functools import lru_cache, partial
@@ -65,9 +64,6 @@ from sglang.srt.multimodal.vit_cuda_graph_runner import ViTCudaGraphRunner
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, get_int_env_var, is_npu
 from sglang.srt.utils.hf_transformers_utils import get_processor
-
-logger = logging.getLogger(__name__)
-
 
 # === Vision Encoder === #
 

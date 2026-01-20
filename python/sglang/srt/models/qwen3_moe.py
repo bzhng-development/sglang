@@ -17,11 +17,11 @@
 
 """Inference-only Qwen3MoE model compatible with HuggingFace weights."""
 
-import logging
 import math
 from typing import Any, Dict, Iterable, List, Optional, Tuple, TypeVar
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -89,7 +89,6 @@ Qwen3MoeConfig = None
 
 _is_flashinfer_available = is_flashinfer_available()
 
-logger = logging.getLogger(__name__)
 _is_cuda = is_cuda()
 _is_npu = is_npu()
 

@@ -13,7 +13,6 @@
 # ==============================================================================
 # Adapted from https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/models/nano_nemotron_vl.py
 
-import logging
 from typing import Iterable
 
 import torch
@@ -38,8 +37,6 @@ from sglang.srt.models.nemotron_h import NemotronHForCausalLM
 from sglang.srt.models.radio import RadioModel
 from sglang.srt.multimodal.evs import EVS, EVSConfig
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class NemotronH_Nano_VL_V2(EVS):

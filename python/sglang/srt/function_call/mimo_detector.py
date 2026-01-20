@@ -15,16 +15,15 @@
 import ast
 import html
 import json
-import logging
 import re
 from typing import Any, Dict, List
+
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import Tool
 from sglang.srt.environ import envs
 from sglang.srt.function_call.base_format_detector import BaseFormatDetector
 from sglang.srt.function_call.core_types import StreamingParseResult, _GetInfoFunc
-
-logger = logging.getLogger(__name__)
 
 
 def _get_param_type(func_name: str, param_name: str, tools: List[Tool]) -> str:

@@ -31,10 +31,10 @@
 # SOFTWARE.
 
 import concurrent.futures
-import logging
 from typing import Iterable, List, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 
 from sglang.srt.configs import LongcatFlashConfig
@@ -121,8 +121,6 @@ elif _is_hip:
     )
 else:
     pass
-
-logger = logging.getLogger(__name__)
 
 
 class LongcatFlashMLP(nn.Module):

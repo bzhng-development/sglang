@@ -1,19 +1,13 @@
 from __future__ import annotations
 
 import copy
-import logging
+from dataclasses import dataclass
 from typing import Optional, Tuple
 
 import torch
-import triton
-
-from sglang.srt.server_args import get_global_server_args
-
-logger = logging.getLogger(__name__)
-
-from dataclasses import dataclass
-
 import torch.nn.functional as F
+import triton
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.layers.attention.utils import create_flashinfer_kv_indices_triton
@@ -26,6 +20,7 @@ from sglang.srt.mem_cache.common import (
     get_last_loc,
 )
 from sglang.srt.sampling.sampling_batch_info import SamplingBatchInfo
+from sglang.srt.server_args import get_global_server_args
 from sglang.srt.speculative.spec_info import SpecInput, SpecInputType
 from sglang.srt.speculative.spec_utils import (
     TREE_SPEC_KERNEL_AVAILABLE,

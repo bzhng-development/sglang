@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, cast
 
@@ -52,9 +51,6 @@ if _is_cuda:
         M = mat_a.shape[-2]
         N = mat_b.shape[-1]
         return mat_a.new_empty((M, N), dtype=out_dtype)
-
-
-logger = logging.getLogger(__name__)
 
 
 class W8A8Int8Config(QuantizationConfig):

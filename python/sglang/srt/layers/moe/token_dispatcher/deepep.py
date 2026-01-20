@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import logging
 from contextlib import nullcontext
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
+
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.eplb.expert_distribution import get_global_expert_distribution_recorder
@@ -56,8 +57,6 @@ import torch
 import torch.distributed as dist
 
 _use_aiter = get_bool_env_var("SGLANG_USE_AITER") and is_hip()
-
-logger = logging.getLogger(__name__)
 
 
 class DeepEPPDispatchHooks(DispatcherBaseHooks):

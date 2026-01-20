@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import copy
 import dataclasses
-import logging
 from dataclasses import replace
 from typing import TYPE_CHECKING, Dict, List, Optional, Sequence
 
 import torch
+from loguru import logger
 
 from sglang.srt.batch_overlap.operations import (
     execute_operations,
@@ -50,9 +50,6 @@ if TYPE_CHECKING:
 _is_hip = is_hip()
 
 _tbo_debug = get_bool_env_var("SGLANG_TBO_DEBUG")
-
-logger = logging.getLogger(__name__)
-
 
 # -------------------------------- Compute Basic Info ---------------------------------------
 

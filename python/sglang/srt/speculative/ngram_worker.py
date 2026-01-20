@@ -1,4 +1,3 @@
-import logging
 from typing import List, Optional
 
 import numpy as np
@@ -14,9 +13,6 @@ from sglang.srt.server_args import ServerArgs
 from sglang.srt.speculative.cpp_ngram.ngram_cache import NgramCache
 from sglang.srt.speculative.ngram_info import NgramVerifyInput
 from sglang.srt.speculative.spec_info import SpeculativeAlgorithm
-
-logger = logging.getLogger(__name__)
-
 
 USE_FULL_MASK = True
 

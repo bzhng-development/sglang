@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import logging
 import time
 import warnings
 from typing import TYPE_CHECKING
+
+from loguru import logger
 
 from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.environ import envs
@@ -14,8 +15,6 @@ from sglang.srt.utils.watchdog import WatchdogRaw
 
 if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import Scheduler
-
-logger = logging.getLogger(__name__)
 
 
 class SchedulerRuntimeCheckerMixin:

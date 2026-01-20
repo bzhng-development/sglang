@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import logging
 import os
 from typing import TYPE_CHECKING, Optional
+
+from loguru import logger
 
 from sglang.srt.layers.moe.moe_runner.base import (
     FusedOpPool,
@@ -19,8 +20,6 @@ if TYPE_CHECKING:
     from sglang.srt.layers.moe.moe_runner.base import MoeQuantInfo
     from sglang.srt.layers.moe.token_dispatcher.base import CombineInput, DispatchOutput
     from sglang.srt.layers.moe.utils import MoeRunnerBackend
-
-logger = logging.getLogger(__name__)
 
 
 class MoeRunner:

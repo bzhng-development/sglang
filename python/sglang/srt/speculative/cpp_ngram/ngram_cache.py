@@ -5,9 +5,8 @@ import os
 from typing import List, Tuple
 
 import numpy as np
+from loguru import logger
 from torch.utils.cpp_extension import load
-
-logger = logging.getLogger(__name__)
 
 _abs_path = os.path.dirname(os.path.abspath(__file__))
 ngram_cache_cpp = load(

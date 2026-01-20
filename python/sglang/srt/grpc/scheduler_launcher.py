@@ -5,10 +5,11 @@ This module handles launching and managing scheduler processes for the gRPC serv
 including tensor parallelism, pipeline parallelism, and data parallelism configurations.
 """
 
-import logging
 import multiprocessing as mp
 import signal
 from typing import Dict, List, Optional, Tuple
+
+from loguru import logger
 
 from sglang.srt.managers.data_parallel_controller import (
     run_data_parallel_controller_process,
@@ -17,8 +18,6 @@ from sglang.srt.managers.scheduler import run_scheduler_process
 from sglang.srt.server_args import PortArgs, ServerArgs
 from sglang.srt.utils import configure_logger, numa_utils
 from sglang.srt.utils.torch_memory_saver_adapter import TorchMemorySaverAdapter
-
-logger = logging.getLogger(__name__)
 
 
 def run_scheduler_with_signal_handling(*args, **kwargs):

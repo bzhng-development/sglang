@@ -1,7 +1,5 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.10.0/vllm/compilation/pass_manager.py
 
-import logging
-
 from torch import fx as fx
 
 from sglang.srt.compilation.fix_functionalization import FixFunctionalizationPass
@@ -11,8 +9,6 @@ from sglang.srt.compilation.inductor_pass import (
     SGLangInductorPass,
     get_pass_context,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class PostGradPassManager(CustomGraphPass):

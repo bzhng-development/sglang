@@ -1,10 +1,10 @@
-import logging
 import os
 import time
 import uuid
 from typing import Any, List, Optional, Union
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.hicache_storage import HiCacheStorage, HiCacheStorageConfig
 
@@ -18,8 +18,6 @@ except ImportError as e:
         "https://github.com/ai-dynamo/nixl/blob/main/README.md "
         "to use HiCacheNixl storage backend."
     ) from e
-
-logger = logging.getLogger(__name__)
 
 
 class HiCacheNixl(HiCacheStorage):

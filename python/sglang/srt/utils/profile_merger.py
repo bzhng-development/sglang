@@ -3,12 +3,11 @@
 import glob
 import gzip
 import json
-import logging
 import os
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class ProfileMerger:

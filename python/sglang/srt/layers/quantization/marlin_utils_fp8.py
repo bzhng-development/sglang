@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 from typing import Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.quantization.marlin_utils import (
     USE_FP32_REDUCE_DEFAULT,
@@ -20,8 +20,6 @@ if _is_cuda:
     from sgl_kernel import gptq_marlin_gemm, gptq_marlin_repack
 
 ScalarType, scalar_types = get_scalar_types()
-
-logger = logging.getLogger(__name__)
 
 
 def fp8_fused_exponent_bias_into_scales(scales):

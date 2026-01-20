@@ -2,15 +2,14 @@
 # SPDX-FileCopyrightText: Copyright contributors to SGLang project
 
 import importlib
-import logging
 from typing import TYPE_CHECKING, Any, Dict
+
+from loguru import logger
 
 from sglang.srt.mem_cache.hicache_storage import HiCacheStorage, HiCacheStorageConfig
 
 if TYPE_CHECKING:
     pass
-
-logger = logging.getLogger(__name__)
 
 
 class StorageBackendFactory:

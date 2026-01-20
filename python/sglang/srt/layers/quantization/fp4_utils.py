@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import logging
 from enum import Enum
 from typing import TYPE_CHECKING
+
+from loguru import logger
 
 from sglang.srt.environ import envs
 
 if TYPE_CHECKING:
     from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 class Fp4GemmRunnerBackend(Enum):

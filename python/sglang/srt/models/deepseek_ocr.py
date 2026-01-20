@@ -17,13 +17,13 @@
 # https://github.com/vllm-project/vllm/blob/c7f2cf2b7f67bce5842fedfdba508440fe257375/vllm/model_executor/models/llama.py#L1
 """Inference-only Apertus model compatible with HuggingFace weights."""
 import copy
-import logging
 import math
 from functools import partial
 from typing import Iterable, List, Optional, Set, Tuple, Type, TypeAlias, Union
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from torch import Tensor, nn
 from transformers.models.vitdet.modeling_vitdet import get_rel_pos
 
@@ -48,8 +48,6 @@ NestedTensors: TypeAlias = Union[
 ]
 
 MultiModalEmbeddings: TypeAlias = list[Tensor] | Tensor | tuple[Tensor, ...]
-
-logger = logging.getLogger(__name__)
 
 
 def _flatten_embeddings(embeddings: NestedTensors) -> torch.Tensor:

@@ -22,7 +22,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Inference-only Qwen2-VL model compatible with HuggingFace weights."""
-import logging
 import re
 from functools import partial
 from typing import Iterable, List, Optional, Tuple, Type
@@ -79,8 +78,6 @@ from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, is_cuda, is_npu
 
 _is_cuda = is_cuda()
-
-logger = logging.getLogger(__name__)
 
 
 class Qwen2_5_VLMLP(nn.Module):

@@ -1,10 +1,10 @@
-import logging
 from copy import copy
 from dataclasses import dataclass
 from typing import ClassVar, List, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 
 from sglang.srt.constrained.base_grammar_backend import BaseGrammarObject
 from sglang.srt.environ import envs
@@ -47,8 +47,6 @@ if is_cuda():
         top_p_renorm_prob,
         tree_speculative_sampling_target_only,
     )
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

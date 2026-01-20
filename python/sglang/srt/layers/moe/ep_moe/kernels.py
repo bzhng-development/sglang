@@ -1,11 +1,7 @@
-import logging
-
 import torch
 import triton
 
 from sglang.srt.utils import ceil_div, is_cuda
-
-logger = logging.getLogger(__name__)
 
 _is_cuda = is_cuda()
 if _is_cuda:

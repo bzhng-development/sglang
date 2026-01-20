@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING
 
 import torch
 import triton
 import triton.language as tl
+from loguru import logger
 
 from sglang.srt.mem_cache.base_prefix_cache import BasePrefixCache
 from sglang.srt.mem_cache.memory_pool import HybridReqToTokenPool, ReqToTokenPool
@@ -20,8 +20,6 @@ if TYPE_CHECKING:
 # Needs 2 + 1 slots for mamba request with prefix cache. 2 for ping pong cache, 1 for running mamba state.
 MAMBA_STATE_PER_REQ_PREFIX_CACHE = 3
 MAMBA_STATE_PER_REQ_NO_CACHE = 1
-
-logger = logging.getLogger(__name__)
 
 
 @triton.jit

@@ -1,4 +1,3 @@
-import logging
 from typing import Union
 
 from fastapi import Request
@@ -9,8 +8,6 @@ from sglang.srt.entrypoints.openai.protocol import (
     ScoringResponse,
 )
 from sglang.srt.entrypoints.openai.serving_base import OpenAIServingBase
-
-logger = logging.getLogger(__name__)
 
 
 class OpenAIServingScore(OpenAIServingBase):

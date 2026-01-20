@@ -20,7 +20,6 @@ This file uses multiple processes to handle requests and tokenization, reducing 
 """
 
 import asyncio
-import logging
 import multiprocessing as multiprocessing
 import os
 import pickle
@@ -33,6 +32,7 @@ from typing import TYPE_CHECKING, Any, Dict, Union
 import setproctitle
 import zmq
 import zmq.asyncio
+from loguru import logger
 
 from sglang.srt.disaggregation.utils import DisaggregationMode, TransferBackend
 from sglang.srt.managers.disagg_service import start_disagg_service
@@ -52,8 +52,6 @@ from sglang.utils import get_exception_traceback
 
 if TYPE_CHECKING:
     from sglang.srt.managers.detokenizer_manager import DetokenizerManager
-
-logger = logging.getLogger(__name__)
 
 
 class SocketMapping:

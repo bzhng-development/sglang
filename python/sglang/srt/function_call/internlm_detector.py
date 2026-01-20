@@ -1,9 +1,10 @@
 # modified from https://github.com/InternLM/lmdeploy/blob/main/lmdeploy/serve/openai/tool_parser/internlm2_parser.py
 
 import json
-import logging
 import re
 from typing import List
+
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import Tool
 from sglang.srt.environ import envs
@@ -14,8 +15,6 @@ from sglang.srt.function_call.core_types import (
     ToolCallItem,
     _GetInfoFunc,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class InternlmDetector(BaseFormatDetector):

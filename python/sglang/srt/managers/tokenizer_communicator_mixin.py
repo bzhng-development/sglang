@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import copy
-import logging
 import time
 import uuid
 from collections import deque
@@ -21,6 +20,7 @@ from typing import (
 
 import fastapi
 import zmq
+from loguru import logger
 
 from sglang.srt.managers.io_struct import (
     CheckWeightsReqInput,
@@ -83,8 +83,6 @@ if TYPE_CHECKING:
     from sglang.srt.managers.tokenizer_manager import TokenizerManager
 
 T = TypeVar("T")
-
-logger = logging.getLogger(__name__)
 
 
 class _Communicator(Generic[T]):

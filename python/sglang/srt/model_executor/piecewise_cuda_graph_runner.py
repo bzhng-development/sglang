@@ -17,12 +17,12 @@ from __future__ import annotations
 
 import bisect
 import gc
-import logging
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Union
 
 import torch
 import tqdm
+from loguru import logger
 
 from sglang.srt.batch_overlap.two_batch_overlap import TboCudaGraphRunnerPlugin
 from sglang.srt.compilation.compilation_config import CompilationConfig
@@ -56,8 +56,6 @@ from sglang.srt.model_executor.forward_batch_info import (
     PPProxyTensors,
 )
 from sglang.srt.utils import get_available_gpu_memory, is_npu, log_info_on_rank0
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.model_runner import ModelRunner

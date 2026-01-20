@@ -1,7 +1,6 @@
 # coding=utf-8
 # Adapted from Qwen2.5-VL SGLang implementation
 
-import logging
 from typing import Iterable, List, Optional, Tuple
 
 import torch
@@ -21,8 +20,6 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.dots_vlm_vit import DotsVisionTransformer
 from sglang.srt.models.qwen2 import Qwen2ForCausalLM
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class DotsOCRForCausalLM(nn.Module):

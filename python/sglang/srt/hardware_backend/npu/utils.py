@@ -1,9 +1,9 @@
 import functools
-import logging
 from enum import IntEnum
 from typing import TYPE_CHECKING, Callable
 
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.utils import get_npu_memory_capacity, is_npu
@@ -11,7 +11,6 @@ from sglang.srt.utils import get_npu_memory_capacity, is_npu
 if TYPE_CHECKING:
     from sglang.srt.server_args import ServerArgs
 
-logger = logging.getLogger(__name__)
 _is_npu = is_npu()
 indexer_weight_stream = None
 

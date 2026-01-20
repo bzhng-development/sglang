@@ -14,7 +14,6 @@
 """A tensor parallel worker."""
 from __future__ import annotations
 
-import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
@@ -52,8 +51,6 @@ from sglang.srt.utils.patch_torch import monkey_patch_torch_reductions
 if TYPE_CHECKING:
     from sglang.srt.managers.cache_controller import LayerDoneCounter
     from sglang.srt.model_executor.model_runner import ModelRunner
-
-logger = logging.getLogger(__name__)
 
 
 class BaseTpWorker(ABC):

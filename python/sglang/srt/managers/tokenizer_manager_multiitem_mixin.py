@@ -1,10 +1,9 @@
-import logging
 import math
 from typing import Any, Dict, List, Optional, Union
 
-from sglang.srt.managers.io_struct import GenerateReqInput
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+from sglang.srt.managers.io_struct import GenerateReqInput
 
 
 class TokenizerManagerMultiItemMixin:

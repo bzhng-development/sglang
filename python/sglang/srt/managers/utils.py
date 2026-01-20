@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
-import logging
 from typing import TYPE_CHECKING, List, Optional, Union
 
 import torch
+from loguru import logger
 
 from sglang.srt.eplb.expert_distribution import ExpertDistributionMetrics
 from sglang.srt.layers.logits_processor import LogitsProcessorOutput
@@ -15,9 +15,6 @@ from sglang.srt.model_executor.forward_batch_info import PPProxyTensors
 if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import GenerationBatchResult
     from sglang.srt.speculative.eagle_info import EagleDraftInput
-
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass

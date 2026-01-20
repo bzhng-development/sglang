@@ -1,15 +1,13 @@
-import logging
 from enum import Enum, auto
 from typing import Dict, Optional
 
 import torch
+from loguru import logger
 from torch.cuda import Event as CudaEvent
 from torch.cuda import Stream as CudaStream
 from torch.cuda import StreamContext as CudaStreamContext
 
 from sglang.srt.lora.lora_manager import LoRAManager
-
-logger = logging.getLogger(__name__)
 
 
 class LoRAOverlapLoadStatus(Enum):

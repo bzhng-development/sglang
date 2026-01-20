@@ -20,11 +20,12 @@ import dataclasses
 import importlib
 import importlib.util
 import json
-import logging
 import os
 import random
 import tempfile
 from typing import Any, Callable, Dict, List, Literal, Optional, Union
+
+from loguru import logger
 
 from sglang.srt.connector import ConnectorType
 from sglang.srt.environ import ToolStrictLevel, envs
@@ -66,8 +67,6 @@ from sglang.srt.utils.common import (
 )
 from sglang.srt.utils.hf_transformers_utils import check_gguf_file
 from sglang.utils import is_in_ci
-
-logger = logging.getLogger(__name__)
 
 # Define constants
 DEFAULT_UVICORN_ACCESS_LOG_EXCLUDE_PREFIXES = ()

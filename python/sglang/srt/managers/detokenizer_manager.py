@@ -14,7 +14,6 @@
 """DetokenizerManager is a process that detokenizes the token ids."""
 
 import dataclasses
-import logging
 import os
 import signal
 from collections import OrderedDict, defaultdict
@@ -24,6 +23,7 @@ import psutil
 import pybase64
 import setproctitle
 import zmq
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.managers.io_struct import (
@@ -49,8 +49,6 @@ from sglang.utils import (
     find_printable_text,
     get_exception_traceback,
 )
-
-logger = logging.getLogger(__name__)
 
 # Maximum number of request states that detokenizer can hold. When exceeded,
 # oldest request states will be evicted. Default: 65536 (1<<16).

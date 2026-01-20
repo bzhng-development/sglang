@@ -1,8 +1,8 @@
-import logging
 from typing import List, Optional
 
 import numpy as np
 import numpy.typing as npt
+from loguru import logger
 
 from sglang.srt.disaggregation.base.conn import (
     BaseKVManager,
@@ -10,8 +10,6 @@ from sglang.srt.disaggregation.base.conn import (
     BaseKVSender,
     KVPoll,
 )
-
-logger = logging.getLogger(__name__)
 
 
 # For warmup reqs, we don't kv transfer, we use the fake sender and receiver

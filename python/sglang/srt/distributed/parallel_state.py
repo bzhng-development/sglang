@@ -23,7 +23,6 @@ If you only need to use the distributed environment without model/pipeline
 """
 import contextlib
 import gc
-import logging
 import os
 import pickle
 import weakref
@@ -37,6 +36,7 @@ from unittest.mock import patch
 
 import torch
 import torch.distributed
+from loguru import logger
 from torch.distributed import Backend, ProcessGroup
 
 from sglang.srt.compilation.compilation_config import register_split_op
@@ -1428,8 +1428,6 @@ def graph_capture(stream: Optional[torch.cuda.Stream] = None):
     ) as context, get_pp_group().graph_capture(context):
         yield context
 
-
-logger = logging.getLogger(__name__)
 
 _ENABLE_CUSTOM_ALL_REDUCE = True
 _ENABLE_MSCCLPP_ALL_REDUCE = False

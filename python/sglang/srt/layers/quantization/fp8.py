@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from torch.nn import Module
 from torch.nn.parameter import Parameter
 
@@ -98,8 +98,6 @@ if _use_aiter or _use_hip_int4:
 
 
 ACTIVATION_SCHEMES = ["static", "dynamic"]
-
-logger = logging.getLogger(__name__)
 
 
 class Fp8Config(QuantizationConfig):

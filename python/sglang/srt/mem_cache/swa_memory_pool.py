@@ -1,8 +1,8 @@
-import logging
 import weakref
 from typing import Dict, List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.radix_attention import RadixAttention
 from sglang.srt.mem_cache.allocator import (
@@ -13,7 +13,6 @@ from sglang.srt.mem_cache.allocator import (
 from sglang.srt.mem_cache.memory_pool import KVCache, MHATokenToKVPool
 from sglang.srt.mem_cache.utils import maybe_init_custom_mem_pool
 
-logger = logging.getLogger(__name__)
 GB = 1024 * 1024 * 1024
 
 

@@ -1,15 +1,13 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/config.py
 import enum
-import logging
 from dataclasses import dataclass, field
 from typing import Any, List, Optional, Union
 
 import orjson
+from loguru import logger
 
 from sglang.srt.configs.modelopt_config import ModelOptConfig
 from sglang.srt.utils import is_hip
-
-logger = logging.getLogger(__name__)
 
 
 class LoadFormat(str, enum.Enum):

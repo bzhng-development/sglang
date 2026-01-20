@@ -1,6 +1,5 @@
 import ctypes
 import json
-import logging
 import os
 import time
 import uuid
@@ -9,6 +8,7 @@ from typing import Any, List, Optional
 
 import requests
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.mem_cache.hicache_storage import (
@@ -21,8 +21,6 @@ from sglang.srt.metrics.collector import StorageMetrics
 
 DEFAULT_LOCAL_BUFFER_SIZE = 16 * 1024 * 1024  # 16 MB
 SETUP_TIMEOUT = 600  # 10min
-
-logger = logging.getLogger(__name__)
 
 
 class MooncakeHostTensorAllocator(HostTensorAllocator):

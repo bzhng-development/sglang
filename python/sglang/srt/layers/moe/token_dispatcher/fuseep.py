@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import NamedTuple
 
 import torch
@@ -16,8 +15,6 @@ from sglang.srt.layers.moe.token_dispatcher.base import (
 from sglang.srt.layers.moe.token_dispatcher.deepep import DeepEPBuffer
 from sglang.srt.layers.moe.topk import TopKOutput
 from sglang.srt.layers.moe.utils import DeepEPMode
-
-logger = logging.getLogger(__name__)
 
 
 class FuseEPDispatchOutput(NamedTuple):

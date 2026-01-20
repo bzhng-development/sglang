@@ -10,9 +10,10 @@
 # limitations under the License.
 # ==============================================================================
 
-import logging
 import uuid
 from typing import Dict, Optional
+
+from loguru import logger
 
 from sglang.srt.managers.io_struct import TokenizedGenerateReqInput
 from sglang.srt.managers.schedule_batch import FINISH_ABORT, Req
@@ -92,7 +93,7 @@ class Session:
                     last_req_node = self.req_nodes[session_params.rid]
                     last_req = last_req_node.req
                     if not last_req.finished():
-                        logging.warning(
+                        logger.warning(
                             "The request in a session is appending to a request that hasn't finished."
                         )
                         abort = True

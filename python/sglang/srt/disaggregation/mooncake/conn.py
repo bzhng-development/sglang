@@ -3,7 +3,6 @@ from __future__ import annotations
 import concurrent.futures
 import ctypes
 import dataclasses
-import logging
 import os
 import struct
 import threading
@@ -15,6 +14,7 @@ import numpy as np
 import numpy.typing as npt
 import requests
 import zmq
+from loguru import logger
 
 from sglang.srt.disaggregation.base.conn import KVArgs, KVPoll
 from sglang.srt.disaggregation.common.conn import (
@@ -35,8 +35,6 @@ from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.environ import envs
 from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import format_tcp_address, is_valid_ipv6_address
-
-logger = logging.getLogger(__name__)
 
 
 class KVTransferError(Exception):

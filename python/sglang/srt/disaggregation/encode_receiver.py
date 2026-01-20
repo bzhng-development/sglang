@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import pickle
 import random
 import threading
@@ -10,6 +9,7 @@ import aiohttp
 import torch
 import zmq
 import zmq.asyncio
+from loguru import logger
 from transformers import PretrainedConfig
 
 from sglang.srt.disaggregation.mooncake.transfer_engine import MooncakeTransferEngine
@@ -19,8 +19,6 @@ from sglang.srt.managers.multimodal_processor import get_mm_processor, import_pr
 from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import get_local_ip_auto, get_zmq_socket_on_host
 from sglang.srt.utils.hf_transformers_utils import get_processor
-
-logger = logging.getLogger(__name__)
 
 
 class EmbeddingData:

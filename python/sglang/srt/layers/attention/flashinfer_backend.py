@@ -15,6 +15,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Callable, List, Optional, Union
 
 import torch
+from loguru import logger
 
 from sglang.srt.dllm.config import DllmConfig
 from sglang.srt.environ import envs
@@ -35,8 +36,6 @@ from sglang.srt.utils import (
 if TYPE_CHECKING:
     from sglang.srt.layers.radix_attention import RadixAttention
     from sglang.srt.model_executor.model_runner import ModelRunner
-
-logger = logging.getLogger(__name__)
 
 if envs.SGLANG_ENABLE_TORCH_COMPILE.get():
     torch._logging.set_logs(dynamo=logging.ERROR)

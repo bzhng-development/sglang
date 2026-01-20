@@ -1,7 +1,8 @@
 import json
-import logging
 import re
 from typing import List
+
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import Tool
 from sglang.srt.function_call.base_format_detector import BaseFormatDetector
@@ -10,8 +11,6 @@ from sglang.srt.function_call.core_types import (
     StructureInfo,
     _GetInfoFunc,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class Qwen25Detector(BaseFormatDetector):

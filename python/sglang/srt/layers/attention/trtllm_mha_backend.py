@@ -5,7 +5,6 @@ Support attention backend for TRTLLM MHA kernels from flashinfer.
 The kernel supports sm100 only, with sliding window and attention sink features.
 """
 
-import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional
 
@@ -21,8 +20,6 @@ from sglang.srt.layers.attention.triton_ops.trtllm_fp8_kv_kernel import (
 )
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch, ForwardMode
 from sglang.srt.utils import is_flashinfer_available
-
-logger = logging.getLogger(__name__)
 
 if is_flashinfer_available():
     import flashinfer

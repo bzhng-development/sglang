@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import itertools
-import logging
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch.nn.parameter import Parameter, UninitializedParameter
 
 from sglang.srt.distributed import (
@@ -45,8 +45,6 @@ _is_hip = is_hip()
 _disable_hip_linear_quant = _is_hip and get_bool_env_var(
     "SGLANG_ROCM_DISABLE_LINEARQUANT"
 )
-
-logger = logging.getLogger(__name__)
 
 WEIGHT_LOADER_V2_SUPPORTED = [
     "CompressedTensorsLinearMethod",

@@ -3,7 +3,6 @@
 
 import contextlib
 import functools
-import logging
 import os
 import sys
 from enum import Enum
@@ -12,9 +11,8 @@ from typing import Any, Callable, Dict, Literal, Optional, Tuple
 
 import torch
 import triton
+from loguru import logger
 from packaging import version
-
-logger = logging.getLogger(__name__)
 
 COMPILER_MODE = os.getenv("FLA_COMPILER_MODE") == "1"
 FLA_CI_ENV = os.getenv("FLA_CI_ENV") == "1"

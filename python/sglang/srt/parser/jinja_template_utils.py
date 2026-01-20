@@ -4,14 +4,11 @@ This module provides utilities for analyzing and processing Jinja chat templates
 including content format detection and message processing.
 """
 
-import logging
-
 import jinja2
 import transformers.utils.chat_template_utils as hf_chat_utils
+from loguru import logger
 
 from sglang.srt.utils import ImageData
-
-logger = logging.getLogger(__name__)
 
 # ============================================================================
 # JINJA TEMPLATE CONTENT FORMAT DETECTION

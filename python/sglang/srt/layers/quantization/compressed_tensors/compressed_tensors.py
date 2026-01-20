@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import logging
 from contextlib import suppress
 from typing import (
     TYPE_CHECKING,
@@ -27,6 +26,7 @@ from compressed_tensors.quantization import (
     QuantizationStrategy,
     QuantizationType,
 )
+from loguru import logger
 from pydantic import BaseModel
 
 from sglang.srt.layers.quantization.base_config import (
@@ -61,8 +61,6 @@ _is_npu = is_npu()
 
 if TYPE_CHECKING:
     from sglang.srt.models.utils import WeightsMapper
-
-logger = logging.getLogger(__name__)
 
 __all__ = ["CompressedTensorsLinearMethod"]
 

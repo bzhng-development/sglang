@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import dataclasses
-import logging
 import struct
 import threading
 import time
@@ -12,6 +11,7 @@ from typing import Dict, List, Optional, Set
 import numpy as np
 import numpy.typing as npt
 import requests
+from loguru import logger
 
 from sglang.srt.disaggregation.base.conn import KVArgs, KVPoll
 from sglang.srt.disaggregation.common.conn import (
@@ -24,8 +24,6 @@ from sglang.srt.disaggregation.common.utils import group_concurrent_contiguous
 from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.environ import envs
 from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 GUARD = "NixlMsgGuard".encode("ascii")
 

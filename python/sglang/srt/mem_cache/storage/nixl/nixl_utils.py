@@ -1,10 +1,8 @@
-import logging
 import os
 from typing import Any, List, Optional, Tuple, Union
 
 import torch
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class NixlBackendSelection:

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import time
 import uuid
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
@@ -9,6 +8,7 @@ import torch
 import torch.nn.functional as F
 from fastapi import Request
 from fastapi.responses import ORJSONResponse
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import (
     ClassifyRequest,
@@ -21,8 +21,6 @@ from sglang.srt.managers.io_struct import EmbeddingReqInput
 if TYPE_CHECKING:
     from sglang.srt.managers.template_manager import TemplateManager
     from sglang.srt.managers.tokenizer_manager import TokenizerManager
-
-logger = logging.getLogger(__name__)
 
 
 class OpenAIServingClassify(OpenAIServingBase):

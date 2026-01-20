@@ -26,7 +26,6 @@ KVCache actually holds the physical kv cache.
 
 import abc
 import dataclasses
-import logging
 from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
@@ -35,6 +34,7 @@ import numpy as np
 import torch
 import triton
 import triton.language as tl
+from loguru import logger
 
 from sglang.jit_kernel.kvcache import can_use_store_cache, store_cache
 from sglang.srt.configs.mamba_utils import BaseLinearStateParams
@@ -62,8 +62,6 @@ if TYPE_CHECKING:
     from sglang.srt.managers.cache_controller import LayerDoneCounter
     from sglang.srt.managers.schedule_batch import Req
 
-
-logger = logging.getLogger(__name__)
 
 GB = 1024 * 1024 * 1024
 _is_cuda = is_cuda()

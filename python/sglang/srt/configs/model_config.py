@@ -13,7 +13,6 @@
 # ==============================================================================
 
 import json
-import logging
 import math
 import os
 from enum import Enum, IntEnum, auto
@@ -21,6 +20,7 @@ from pathlib import Path
 from typing import Any, List, Optional, Set, Union
 
 import torch
+from loguru import logger
 from transformers import PretrainedConfig
 
 from sglang.srt.environ import envs
@@ -35,8 +35,6 @@ from sglang.srt.utils.hf_transformers_utils import (
     get_sparse_attention_config,
 )
 from sglang.utils import is_in_ci
-
-logger = logging.getLogger(__name__)
 
 
 class AttentionArch(IntEnum):

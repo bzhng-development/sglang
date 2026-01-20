@@ -3,7 +3,6 @@
 
 import ast
 import dataclasses
-import logging
 import os
 import pprint
 import time
@@ -13,6 +12,7 @@ from typing import Any, Callable, Optional
 
 import torch
 import torch.fx as fx
+from loguru import logger
 from torch._dispatch.python import enable_python_dispatcher
 
 from sglang.srt.compilation.compilation_config import CompilationConfig
@@ -22,8 +22,6 @@ from sglang.srt.compilation.cuda_piecewise_backend import CUDAPiecewiseBackend
 from sglang.srt.compilation.npu_piecewise_backend import NPUPiecewiseBackend
 from sglang.srt.compilation.pass_manager import PostGradPassManager
 from sglang.srt.utils.common import is_npu, rank0_log
-
-logger = logging.getLogger(__name__)
 
 
 def make_compiler(config: CompilationConfig):

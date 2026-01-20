@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 import threading
 from contextlib import contextmanager
@@ -24,6 +23,7 @@ from typing import TYPE_CHECKING, Dict, Optional, Union
 
 import numpy as np
 import torch
+from loguru import logger
 
 import sglang
 from sglang.srt.configs.model_config import AttentionArch, is_deepseek_nsa
@@ -42,8 +42,6 @@ is_npu = is_npu()
 if is_npu:
     import torch_npu
     from torch_npu.profiler import ProfilerActivity, profile
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.model_runner import ModelRunner

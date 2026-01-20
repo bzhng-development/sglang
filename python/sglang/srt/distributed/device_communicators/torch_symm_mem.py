@@ -1,9 +1,9 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/bf214ca22625e311a2c4c0dfbf7af19128f4919c/vllm/distributed/device_communicators/symm_mem.py
-import logging
 from typing import Optional, Union
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.distributed import ProcessGroup
 
 from sglang.srt.distributed.device_communicators.all_reduce_utils import (
@@ -22,9 +22,6 @@ try:
         torch_symm_mem_available = True
 except ImportError:
     torch_symm_mem_available = False
-
-
-logger = logging.getLogger(__name__)
 
 
 class TorchSymmMemCommunicator:

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import heapq
 import json
-import logging
 import threading
 import time
 from typing import TYPE_CHECKING, List, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.managers.cache_controller import HiCacheController, PrefetchOperation
 from sglang.srt.mem_cache.base_prefix_cache import MatchResult
@@ -29,8 +29,6 @@ from sglang.srt.utils import bind_to_closest_numa_node_cuda
 if TYPE_CHECKING:
     from sglang.srt.mem_cache.cache_init_params import CacheInitParams
     from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 class HiRadixCache(RadixCache):

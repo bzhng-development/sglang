@@ -1,6 +1,7 @@
-import logging
 from abc import ABC
 from contextlib import contextmanager
+
+from loguru import logger
 
 try:
     import torch_memory_saver
@@ -10,8 +11,6 @@ try:
 except ImportError as e:
     import_error = e
     pass
-
-logger = logging.getLogger(__name__)
 
 
 class TorchMemorySaverAdapter(ABC):

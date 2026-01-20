@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import logging
 from contextlib import contextmanager
 from enum import Enum, IntEnum
 from typing import TYPE_CHECKING, Optional
+
+from loguru import logger
 
 from sglang.srt.distributed.parallel_state import get_moe_expert_parallel_world_size
 from sglang.srt.layers.dp_attention import (
@@ -14,8 +15,6 @@ from sglang.srt.utils import log_info_on_rank0
 
 if TYPE_CHECKING:
     from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 class MoeA2ABackend(Enum):

@@ -6,7 +6,6 @@ from __future__ import annotations
 import asyncio
 import copy
 import json
-import logging
 import time
 from contextlib import AsyncExitStack
 from http import HTTPStatus
@@ -17,6 +16,7 @@ import openai.types.responses as openai_responses_types
 import orjson
 from fastapi import Request
 from fastapi.responses import ORJSONResponse
+from loguru import logger
 from openai.types.responses import (
     ResponseOutputMessage,
     ResponseOutputText,
@@ -62,8 +62,6 @@ from sglang.srt.utils import random_uuid
 if TYPE_CHECKING:
     from sglang.srt.managers.template_manager import TemplateManager
     from sglang.srt.managers.tokenizer_manager import TokenizerManager
-
-logger = logging.getLogger(__name__)
 
 
 class OpenAIServingResponses(OpenAIServingChat):

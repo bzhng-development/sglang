@@ -1,10 +1,10 @@
-import logging
 from typing import Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint
+from loguru import logger
 from torch.nn import LayerNorm
 from transformers.modeling_utils import PreTrainedModel
 
@@ -13,8 +13,6 @@ from sglang.srt.distributed import parallel_state
 from sglang.srt.layers.attention.vision import VisionAttention
 from sglang.srt.layers.quantization import QuantizationConfig
 from sglang.srt.utils import add_prefix, is_npu
-
-logger = logging.getLogger(__name__)
 
 
 class VisionRotaryEmbedding(nn.Module):

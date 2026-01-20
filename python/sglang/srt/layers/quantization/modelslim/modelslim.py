@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 from types import MappingProxyType
 from typing import Any, Dict, List, Mapping, Optional, Tuple, Union, cast
 
 import torch
+from loguru import logger
 
 from sglang.srt.hardware_backend.npu.quantization.linear_method_npu import (
     _NPULinearMethodBase,
@@ -22,8 +22,6 @@ from sglang.srt.layers.quantization.modelslim.schemes import (
 )
 from sglang.srt.layers.quantization.unquant import UnquantizedLinearMethod
 from sglang.srt.utils import apply_module_patch
-
-logger = logging.getLogger(__name__)
 
 
 # func refers to RMSNorm.__init__

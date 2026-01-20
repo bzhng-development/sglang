@@ -1,8 +1,8 @@
 import json
-import logging
 from typing import Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.sparsity.algorithms.base_algorithm import BaseSparseAlgorithm
 from sglang.srt.mem_cache.sparsity.algorithms.deepseek_nsa import DeepSeekNSAAlgorithm
@@ -15,8 +15,6 @@ from sglang.srt.mem_cache.sparsity.core.sparse_coordinator import (
     SparseConfig,
     SparseCoordinator,
 )
-
-logger = logging.getLogger(__name__)
 
 _global_sparse_coordinator: Optional[SparseCoordinator] = None
 

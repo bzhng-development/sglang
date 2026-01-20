@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 from multiprocessing import shared_memory
 from pathlib import Path
@@ -9,8 +8,6 @@ import torch
 
 from sglang.srt.distributed.naive_distributed import get_naive_distributed
 from sglang.srt.utils import check_cuda_result
-
-logger = logging.getLogger(__name__)
 
 
 class HostSharedMemoryManager:

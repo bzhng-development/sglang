@@ -3,12 +3,12 @@
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy
 import torch
+from loguru import logger
 
 from sglang.srt.layers.parameter import (
     BasevLLMParameter,
@@ -44,8 +44,6 @@ _is_cuda = is_cuda()
 
 if _is_cuda:
     from sgl_kernel import gptq_marlin_gemm
-
-logger = logging.getLogger(__name__)
 
 ScalarType, scalar_types = get_scalar_types()
 

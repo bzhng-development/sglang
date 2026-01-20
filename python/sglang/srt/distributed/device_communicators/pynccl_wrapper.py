@@ -22,16 +22,14 @@
 # variable in the code.
 
 import ctypes
-import logging
 import os
 import platform
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 import torch
+from loguru import logger
 from torch.distributed import ReduceOp
-
-logger = logging.getLogger(__name__)
 
 
 def find_nccl_library() -> str:

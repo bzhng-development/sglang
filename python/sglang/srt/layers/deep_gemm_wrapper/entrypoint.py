@@ -1,4 +1,3 @@
-import logging
 from contextlib import contextmanager
 from typing import Any, Optional, Tuple
 
@@ -12,8 +11,6 @@ from sglang.srt.layers.deep_gemm_wrapper.configurer import (  # noqa: F401
 )
 from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import get_bool_env_var
-
-logger = logging.getLogger(__name__)
 
 if ENABLE_JIT_DEEPGEMM:
     import deep_gemm

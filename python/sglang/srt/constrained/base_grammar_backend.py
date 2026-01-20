@@ -13,7 +13,6 @@
 # ==============================================================================
 """The baseclass of a backend for grammar-guided constrained decoding."""
 
-import logging
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
@@ -21,10 +20,9 @@ from threading import Event
 from typing import Dict, List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

@@ -1,7 +1,7 @@
-import logging
 import re
 
 import torch
+from loguru import logger
 
 from sglang.srt.managers.schedule_batch import Modality
 from sglang.srt.models.midashenglm import MiDashengLMModel
@@ -9,8 +9,6 @@ from sglang.srt.multimodal.processors.base_processor import (
     BaseMultimodalProcessor,
     MultimodalSpecialTokens,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class MiDashengLMMultimodalProcessor(BaseMultimodalProcessor):

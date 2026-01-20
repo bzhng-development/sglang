@@ -2,12 +2,9 @@
 Common utilities for quark.
 """
 
-import logging
 from typing import Tuple
 
 import torch
-
-logger = logging.getLogger(__name__)
 
 
 def quantize_fp8_scale_tensorwise(w: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:

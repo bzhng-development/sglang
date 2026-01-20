@@ -42,9 +42,7 @@ from sglang.srt.mem_cache.utils import convert_to_bigram_key
 if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import Req
 
-import logging
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class TreeNode:

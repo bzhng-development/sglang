@@ -1,8 +1,9 @@
 import ast
 import json
-import logging
 import re
 from typing import Any, List, Optional
+
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import Tool
 from sglang.srt.function_call.base_format_detector import BaseFormatDetector
@@ -11,8 +12,6 @@ from sglang.srt.function_call.core_types import (
     ToolCallItem,
     _GetInfoFunc,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class Qwen3CoderDetector(BaseFormatDetector):

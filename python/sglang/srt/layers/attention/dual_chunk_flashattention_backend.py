@@ -2,13 +2,13 @@
 """Attention layer with Dual chunk flash attention and sparse attention.
 """
 import functools
-import logging
 import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from sgl_kernel.flash_attn import flash_attn_varlen_func, flash_attn_with_kvcache
 from sgl_kernel.sparse_flash_attn import (
     convert_vertical_slash_indexes,
@@ -24,9 +24,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch, ForwardMo
 if TYPE_CHECKING:
     from sglang.srt.layers.radix_attention import RadixAttention
     from sglang.srt.model_executor.model_runner import ModelRunner
-
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

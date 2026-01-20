@@ -17,7 +17,6 @@
 # https://github.com/huggingface/transformers/blob/main/src/transformers/models/glm4v/modular_glm4v.py
 """Inference-only GLM-4.1V model compatible with HuggingFace weights."""
 
-import logging
 from functools import lru_cache
 from typing import Iterable, List, Optional, Tuple
 
@@ -59,8 +58,6 @@ from sglang.srt.multimodal.mm_utils import run_dp_sharded_mrope_vision_model
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, is_npu
 from sglang.srt.utils.hf_transformers_utils import get_processor
-
-logger = logging.getLogger(__name__)
 
 cached_get_processor = lru_cache(get_processor)
 

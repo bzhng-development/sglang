@@ -1,4 +1,3 @@
-import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import torch
@@ -32,8 +31,6 @@ if _is_hip:
     from aiter.ops.shuffle import shuffle_weight
 
     ON_GFX950 = "gfx950" in torch.cuda.get_device_properties("cuda").gcnArchName
-
-logger = logging.getLogger(__name__)
 
 
 def tqdm_reset_no_print(tqdm_bar: tqdm, total=None):

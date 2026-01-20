@@ -5,14 +5,12 @@ This module implements the grpc.health.v1.Health service protocol, enabling
 native Kubernetes gRPC health probes for liveness and readiness checks.
 """
 
-import logging
 import time
 from typing import AsyncIterator
 
 import grpc
 from grpc_health.v1 import health_pb2, health_pb2_grpc
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class SGLangHealthServicer(health_pb2_grpc.HealthServicer):

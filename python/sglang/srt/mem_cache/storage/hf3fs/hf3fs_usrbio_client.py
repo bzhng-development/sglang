@@ -1,5 +1,4 @@
 import datetime
-import logging
 import multiprocessing
 import os
 import threading
@@ -14,8 +13,6 @@ from sglang.srt.mem_cache.storage.hf3fs.hf3fs_client import Hf3fsClient
 
 root = Path(__file__).parent.resolve()
 hf3fs_utils = load(name="hf3fs_utils", sources=[f"{root}/hf3fs_utils.cpp"])
-
-logger = logging.getLogger(__name__)
 
 HF3FS_AVAILABLE = True
 try:

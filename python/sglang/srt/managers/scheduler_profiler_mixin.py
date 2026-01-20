@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import logging
 import os
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.managers.io_struct import ProfileReq, ProfileReqOutput, ProfileReqType
@@ -30,8 +30,6 @@ if _is_npu:
         ["profiler.ProfilerActivity.CPU", torch_npu.profiler.ProfilerActivity.CPU],
     ]
     torch_npu._apply_patches(patches)
-
-logger = logging.getLogger(__name__)
 
 
 class SchedulerProfilerMixin:

@@ -1,14 +1,12 @@
-import logging
 from typing import Dict, Iterable, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.quantization.fp8_utils import (
     block_quant_dequant,
     inverse_transform_scale_ue8m0,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class WeightChecker:

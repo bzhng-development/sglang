@@ -1,13 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 import re
 from fractions import Fraction
 from typing import Any, Optional, Union
 
 import torch
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 from sglang.srt.layers.quantization.utils import get_scalar_types
 

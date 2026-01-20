@@ -1,5 +1,4 @@
 import fcntl
-import logging
 import threading
 import time
 from multiprocessing import shared_memory
@@ -7,11 +6,10 @@ from typing import Tuple
 
 import numpy as np
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.server_args import get_global_server_args
-
-logger = logging.getLogger(__name__)
 
 MM_FEATURE_CACHE_SIZE = envs.SGLANG_MM_FEATURE_CACHE_MB.get() * 1024 * 1024
 

@@ -13,7 +13,6 @@
 # ==============================================================================
 """Inference-only LoopCoder model compatible with HuggingFace weights."""
 
-import logging
 from typing import Iterable, Optional, Tuple
 
 import torch
@@ -39,8 +38,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.llama import LlamaMLP as LoopCoderMLP
 from sglang.srt.utils import add_prefix, make_layers
-
-logger = logging.getLogger(__name__)
 
 
 class LoopGateProjection(nn.Module):

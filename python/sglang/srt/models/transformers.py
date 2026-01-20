@@ -15,11 +15,11 @@
 # Adapted from
 # https://github.com/vllm-project/vllm/blob/a1a2aaadb9122f05667140e39cf67e5736c8b6d6/vllm/model_executor/models/transformers.py
 """Wrapper around `transformers` models"""
-import logging
 import re
 from typing import Iterable, Literal, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import AutoModel, PretrainedConfig, PreTrainedModel
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS
@@ -39,8 +39,6 @@ from sglang.srt.layers.vocab_parallel_embedding import (
 )
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
-
-logger = logging.getLogger(__name__)
 
 
 def maybe_prefix(prefix: str, name: str) -> str:

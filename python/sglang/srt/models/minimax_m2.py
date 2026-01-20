@@ -15,7 +15,6 @@
 # Adapted from DeepSeek and Mixtral implementation
 """Inference-only MiniMax M2 model compatible with HuggingFace weights."""
 
-import logging
 from typing import Iterable, Optional, Set, Tuple, Union
 
 import torch
@@ -71,8 +70,6 @@ from sglang.srt.utils import (
     is_non_idle_and_non_empty,
     make_layers,
 )
-
-logger = logging.getLogger(__name__)
 
 
 @triton.jit

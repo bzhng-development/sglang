@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import base64
 import json
-import logging
 import os
 import random
 import threading
@@ -26,13 +25,15 @@ import uuid
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
+from loguru import logger
+
 from sglang.srt.utils import get_int_env_var
 
 if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import Req
+
 from typing import Any, Dict, List, Mapping, Optional
 
-logger = logging.getLogger(__name__)
 opentelemetry_imported = False
 tracing_enabled = False
 _trace_context_propagator = None

@@ -20,7 +20,6 @@ This file implements python APIs for the inference engine.
 import asyncio
 import atexit
 import dataclasses
-import logging
 import multiprocessing as mp
 import os
 import random
@@ -28,6 +27,8 @@ import signal
 import threading
 import time
 from typing import AsyncIterator, Callable, Dict, Iterator, List, Optional, Tuple, Union
+
+from loguru import logger
 
 # Fix a bug of Python threading
 setattr(threading, "_register_atexit", lambda *args, **kwargs: None)
@@ -86,7 +87,6 @@ from sglang.srt.utils import (
 from sglang.srt.utils.torch_memory_saver_adapter import TorchMemorySaverAdapter
 from sglang.version import __version__
 
-logger = logging.getLogger(__name__)
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 _is_cuda = is_cuda()

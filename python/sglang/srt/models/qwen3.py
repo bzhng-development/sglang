@@ -1,8 +1,8 @@
 # Adapted from qwen2.py
-import logging
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 
 from sglang.srt.distributed import (
@@ -34,7 +34,6 @@ from sglang.srt.utils import add_prefix, is_cuda, is_npu
 
 Qwen3Config = None
 
-logger = logging.getLogger(__name__)
 _is_cuda = is_cuda()
 _is_npu = is_npu()
 

@@ -17,12 +17,12 @@ Reference: https://lmsys.org/blog/2024-02-05-compressed-fsm/
 """
 
 import dataclasses
-import logging
 from collections import defaultdict
 from typing import Optional
 
 import interegular
 from interegular import InvalidSyntax
+from loguru import logger
 from outlines.caching import cache
 
 from sglang.srt.utils import get_bool_env_var
@@ -39,8 +39,6 @@ IP_REGEX = r"((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)"
 
 # Env var was set in sglang.srt.server_args.ServerArgs.__post_init__
 DISABLE_DISK_CACHE = get_bool_env_var("SGLANG_DISABLE_OUTLINES_DISK_CACHE", "true")
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass

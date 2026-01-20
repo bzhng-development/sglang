@@ -18,7 +18,6 @@ KV caching events
 """
 
 import atexit
-import logging
 import queue
 import threading
 import time
@@ -30,9 +29,8 @@ from typing import Any, Callable, Optional, Union
 
 import msgspec
 import zmq
+from loguru import logger
 from pydantic import BaseModel
-
-logger = logging.getLogger(__name__)
 
 
 class EventBatch(

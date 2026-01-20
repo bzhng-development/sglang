@@ -13,12 +13,12 @@
 # ==============================================================================
 
 import concurrent.futures
-import logging
 from typing import Iterable, Optional, Tuple
 
 import torch
 import torch.nn as nn
 import tqdm
+from loguru import logger
 from transformers import PretrainedConfig
 
 from sglang.srt.distributed.parallel_state import GroupCoordinator
@@ -59,8 +59,6 @@ from sglang.srt.utils import bind_or_assign, get_bool_env_var, log_info_on_rank0
 
 if _use_aiter_gfx95:
     from sglang.srt.layers.quantization.quark.utils import quark_post_load_weights
-
-logger = logging.getLogger(__name__)
 
 # Optional quantization for DeepSeek nvfp4 checkpoint
 NVFP4_CKPT_FP8_ATTN_QUANT_MODULES = ["q_b_proj"]

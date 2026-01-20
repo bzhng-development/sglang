@@ -1,9 +1,9 @@
-import logging
 import math
 from math import sqrt
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 from torch.nn import LayerNorm
 from torch.nn import functional as F
@@ -60,9 +60,6 @@ from sglang.srt.managers.schedule_batch import (
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.utils import add_prefix, log_info_on_rank0, make_layers
-
-logger = logging.getLogger(__name__)
-
 
 """
 Text Model

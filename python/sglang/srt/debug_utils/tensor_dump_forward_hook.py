@@ -10,17 +10,15 @@ The file contains a series of key-value pairs, where the keys correspond to oper
 (similar to those in model.safetensors.index.json), and the values are the outputs produced by the respective operators.
 """
 
-import logging
 import os
 from pathlib import Path
 from typing import List, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.logits_processor import LogitsProcessorOutput
 from sglang.srt.model_executor.forward_batch_info import ForwardBatch, PPProxyTensors
-
-logger = logging.getLogger(__name__)
 
 
 class TensorDumper:

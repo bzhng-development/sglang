@@ -2,6 +2,7 @@ import logging
 import uuid
 
 import torch
+from loguru import logger
 from mooncake_store import MooncakeStore
 
 from sglang.srt.mem_cache.hicache_storage import HiCacheStorageConfig
@@ -9,7 +10,6 @@ from sglang.srt.mem_cache.hicache_storage import HiCacheStorageConfig
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger(__name__)
 
 
 def generate_batch_query_keys(kv_num: int, config: HiCacheStorageConfig):

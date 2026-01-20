@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass
 from fractions import Fraction
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.moe import (
     MoeRunner,
@@ -64,7 +64,6 @@ if _is_cuda:
     from sgl_kernel import gptq_gemm, gptq_marlin_repack, gptq_shuffle
 
 
-logger = logging.getLogger(__name__)
 ScalarType, scalar_types = get_scalar_types()
 
 

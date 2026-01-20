@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import torch
+from loguru import logger
 from torch.nn import Module
 
 from sglang.srt.distributed import get_tensor_model_parallel_world_size
@@ -30,8 +30,6 @@ if TYPE_CHECKING:
     )
 
 ACTIVATION_SCHEMES = ["static", "dynamic"]
-
-logger = logging.getLogger(__name__)
 
 
 class BlockInt8Config(QuantizationConfig):

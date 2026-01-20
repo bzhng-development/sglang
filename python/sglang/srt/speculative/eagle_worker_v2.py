@@ -1,9 +1,9 @@
 import contextlib
-import logging
 import time
 from typing import List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.hardware_backend.npu.graph_runner.eagle_draft_extend_npu_graph_runner import (
@@ -63,8 +63,6 @@ from sglang.srt.utils.patch_torch import monkey_patch_torch_reductions
 
 _is_npu = is_npu()
 _is_cuda = is_cuda()
-
-logger = logging.getLogger(__name__)
 
 
 def _get_plan_stream(

@@ -1,9 +1,6 @@
-import logging
 import re
 
 import torch
-
-logger = logging.getLogger(__name__)
 
 
 def get_layer_id(weight_name):

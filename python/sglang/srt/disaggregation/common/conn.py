@@ -12,6 +12,7 @@ import numpy.typing as npt
 import requests
 import zmq
 from aiohttp import web
+from loguru import logger
 
 from sglang.srt.disaggregation.base.conn import (
     BaseKVBootstrapServer,
@@ -37,8 +38,6 @@ from sglang.srt.utils import (
     is_valid_ipv6_address,
     maybe_wrap_ipv6_address,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class CommonKVManager(BaseKVManager):
@@ -636,7 +635,7 @@ class CommonKVBootstrapServer(BaseKVBootstrapServer):
             asyncio.set_event_loop(self._loop)
 
             access_log = None
-            if logging.getLogger(__name__).getEffectiveLevel() <= logging.DEBUG:
+            if logger.getEffectiveLevel() <= logging.DEBUG:
                 access_log = self.app.logger
 
             self._runner = web.AppRunner(self.app, access_log=access_log)

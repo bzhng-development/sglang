@@ -14,11 +14,11 @@
 """Constrained decoding with outlines backend."""
 
 import json
-import logging
 from typing import Dict, List, Optional, Tuple, Union
 
 import interegular
 import torch
+from loguru import logger
 from outlines.fsm.guide import RegexGuide
 from outlines.models.transformers import TransformerTokenizer
 from pydantic import BaseModel
@@ -34,9 +34,6 @@ try:
     from outlines.fsm.json_schema import build_regex_from_schema
 except ImportError:
     from outlines_core.fsm.json_schema import build_regex_from_schema
-
-
-logger = logging.getLogger(__name__)
 
 
 class OutlinesGrammar(BaseGrammarObject):

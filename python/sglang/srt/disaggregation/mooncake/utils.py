@@ -13,14 +13,12 @@
 # ==============================================================================
 """Mooncake-specific utilities for custom memory pool management."""
 
-import logging
 from typing import Any, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
-
-logger = logging.getLogger(__name__)
 
 # Global constants for custom memory pool types
 SUPPORTED_MOONCAKE_CUSTOM_MEM_POOL_TYPES = ["NVLINK", "BAREX"]

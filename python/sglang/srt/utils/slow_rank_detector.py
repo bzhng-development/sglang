@@ -1,11 +1,9 @@
-import logging
 from typing import Any, Dict, List
 
 import torch
 import torch.distributed as dist
 import triton
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 def execute():

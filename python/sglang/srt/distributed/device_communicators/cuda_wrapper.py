@@ -6,14 +6,11 @@ convenient for use when we just need to call a few functions.
 """
 
 import ctypes
-import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 # this line makes it possible to directly load `libcudart.so` using `ctypes`
 import torch  # noqa
-
-logger = logging.getLogger(__name__)
 
 # === export types and functions from cudart to Python ===
 # for the original cudart definition, please check

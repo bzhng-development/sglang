@@ -1,9 +1,7 @@
-import logging
+from loguru import logger
 
 from sglang.srt.server_args import ServerArgs, get_global_server_args
 from sglang.srt.utils.common import is_blackwell
-
-logger = logging.getLogger(__name__)
 
 
 class DraftBackendFactory:

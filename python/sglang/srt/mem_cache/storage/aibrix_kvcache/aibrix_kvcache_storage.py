@@ -12,6 +12,7 @@ from aibrix_kvcache import (
     ModelSpec,
 )
 from aibrix_kvcache.common.absl_logging import log_every_n_seconds
+from loguru import logger
 
 from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorage,
@@ -19,8 +20,6 @@ from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorageExtraInfo,
 )
 from sglang.srt.mem_cache.memory_pool_host import HostKVCache
-
-logger = logging.getLogger(__name__)
 
 
 class AibrixKVCacheStorage(HiCacheStorage):

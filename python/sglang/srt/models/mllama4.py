@@ -1,5 +1,4 @@
 import json as json_lib
-import logging
 import math
 import os
 import re
@@ -7,6 +6,7 @@ from collections.abc import Iterable
 from typing import List, Optional, Set, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import Llama4Config, Llama4VisionConfig
 from transformers.models.llama4.modeling_llama4 import (
@@ -43,8 +43,6 @@ from sglang.srt.model_loader.weight_utils import (
     maybe_remap_kv_scale_name,
 )
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class Llama4VisionMLP(nn.Module):

@@ -11,13 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-import logging
 from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 
 import einops
 import torch
 import torch.distributed
+from loguru import logger
 from torch.distributed import P2POp
 
 from sglang.srt.eplb.expert_location import (
@@ -26,9 +26,6 @@ from sglang.srt.eplb.expert_location import (
 )
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import get_bool_env_var
-
-logger = logging.getLogger(__name__)
-
 
 _LOG_INPUT = get_bool_env_var("SGLANG_EXPERT_LOCATION_UPDATER_LOG_INPUT")
 

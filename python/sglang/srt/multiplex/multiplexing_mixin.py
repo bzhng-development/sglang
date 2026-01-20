@@ -4,11 +4,11 @@ Mixin class providing multiplexing scheduling logic
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Optional
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.cuda.streams import ExternalStream
 
 from sglang.srt.distributed.parallel_state import set_pdmux_status
@@ -25,8 +25,6 @@ from sglang.srt.multiplex.pdmux_context import (
 if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import ScheduleBatch
     from sglang.srt.managers.scheduler import Scheduler
-
-logger = logging.getLogger(__name__)
 
 
 class SchedulerMultiplexMixin:

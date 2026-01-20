@@ -16,10 +16,10 @@
 # https://github.com/vllm-project/vllm/blob/c7f2cf2b7f67bce5842fedfdba508440fe257375/vllm/model_executor/models/llama.py#L1
 """Inference-only Granite model compatible with HuggingFace weights."""
 
-import logging
 from typing import Any, Dict, Iterable, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import GraniteConfig
 
@@ -44,8 +44,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.utils import add_prefix
 from sglang.utils import get_exception_traceback
-
-logger = logging.getLogger(__name__)
 
 
 class GraniteMLP(nn.Module):

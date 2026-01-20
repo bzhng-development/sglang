@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import signal
 import sys
 import threading
@@ -9,10 +8,9 @@ from contextlib import contextmanager
 from typing import Callable, Optional
 
 import psutil
+from loguru import logger
 
 from sglang.srt.utils.common import pyspy_dump_schedulers
-
-logger = logging.getLogger(__name__)
 
 
 class Watchdog:

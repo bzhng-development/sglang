@@ -16,13 +16,12 @@
 Eviction policies for LoRA adapter memory management.
 """
 
-import logging
 import time
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 from typing import Optional, Set
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class EvictionPolicy(ABC):

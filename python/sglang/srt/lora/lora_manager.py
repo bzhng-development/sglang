@@ -15,10 +15,10 @@
 # Integrates "S-LoRA: Serving Thousands of Concurrent LoRA Adapters"
 # and "Punica: Multi-Tenant LoRA Serving"
 
-import logging
 from typing import Dict, Iterable, List, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.configs.load_config import LoadConfig
 from sglang.srt.layers.utils import get_layer_id
@@ -43,8 +43,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import replace_submodule
 from sglang.srt.utils.hf_transformers_utils import AutoConfig
-
-logger = logging.getLogger(__name__)
 
 
 class LoRAManager:

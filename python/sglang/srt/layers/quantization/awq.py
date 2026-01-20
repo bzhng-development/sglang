@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import logging
 import warnings
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.hardware_backend.npu.quantization.fused_moe_method_npu import (
     npu_fused_experts,
@@ -74,9 +74,6 @@ elif _is_xpu:
     warnings.warn(f"XPU does not support fused_marlin_moe currently.")
 else:
     warnings.warn(f"Only CUDA, HIP and XPU support AWQ currently.")
-
-logger = logging.getLogger(__name__)
-
 
 ScalarType, scalar_types = get_scalar_types()
 

@@ -17,13 +17,13 @@
 
 from __future__ import annotations
 
-import logging
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
 import psutil
 import torch
 import tqdm
+from loguru import logger
 
 from sglang.srt.distributed import get_tensor_model_parallel_rank
 from sglang.srt.distributed.parallel_state import GroupCoordinator
@@ -43,8 +43,6 @@ from sglang.srt.utils import (
     require_mlp_tp_gather,
 )
 from sglang.srt.utils.patch_torch import monkey_patch_torch_compile
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.model_runner import ModelRunner

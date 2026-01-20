@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 import traceback
 from typing import TYPE_CHECKING, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.constants import (
     GPU_MEMORY_ALL_TYPES,
@@ -37,8 +37,6 @@ from sglang.srt.managers.io_struct import (
 
 if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import Scheduler
-
-logger = logging.getLogger(__name__)
 
 
 class SchedulerUpdateWeightsMixin:

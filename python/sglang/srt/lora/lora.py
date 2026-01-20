@@ -18,10 +18,10 @@
 # LoRA layers class inheritance adapted from:
 # https://github.com/vllm-project/vllm/blob/4abf6336ec65c270343eb895e7b18786e9274176/vllm/lora/layers.py
 
-import logging
 from typing import Dict, List
 
 import torch
+from loguru import logger
 from torch import nn
 
 from sglang.srt.configs.load_config import LoadConfig
@@ -31,8 +31,6 @@ from sglang.srt.lora.backend.lora_registry import LORA_SUPPORTED_BACKENDS
 from sglang.srt.lora.lora_config import LoRAConfig
 from sglang.srt.model_loader.loader import DefaultModelLoader
 from sglang.srt.utils.hf_transformers_utils import AutoConfig
-
-logger = logging.getLogger(__name__)
 
 
 class LoRALayer(nn.Module):

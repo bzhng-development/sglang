@@ -13,7 +13,6 @@
 # ==============================================================================
 
 """Inference-only Qwen3Next MTP Speculative Decoding."""
-import logging
 from typing import Iterable, Optional, Tuple
 
 import torch
@@ -29,8 +28,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.models.qwen3_next import Qwen3NextForCausalLM, Qwen3NextModel
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class Qwen3NextForCausalLMMTP(Qwen3NextForCausalLM):

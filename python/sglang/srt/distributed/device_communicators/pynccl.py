@@ -1,12 +1,12 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/distributed/device_communicators/pynccl.py
 
-import logging
 from contextlib import contextmanager
 from typing import Optional, Union
 
 # ===================== import region =====================
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.distributed import ProcessGroup, ReduceOp
 
 from sglang.srt.distributed.device_communicators.pynccl_wrapper import (
@@ -20,8 +20,6 @@ from sglang.srt.distributed.device_communicators.pynccl_wrapper import (
 )
 from sglang.srt.distributed.utils import StatelessProcessGroup
 from sglang.srt.utils.common import get_current_device_stream_fast
-
-logger = logging.getLogger(__name__)
 
 
 class PyNcclCommunicator:

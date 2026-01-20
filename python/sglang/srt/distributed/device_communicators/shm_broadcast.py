@@ -1,6 +1,5 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/distributed/device_communicators/shm_broadcast.py
 
-import logging
 import os
 import pickle
 import time
@@ -12,6 +11,7 @@ from unittest.mock import patch
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.distributed import ProcessGroup
 from zmq import IPV6  # type: ignore
 from zmq import SUB, SUBSCRIBE, XPUB, XPUB_VERBOSE, Context  # type: ignore
@@ -27,8 +27,6 @@ from sglang.srt.utils import (
 SGLANG_RINGBUFFER_WARNING_INTERVAL = int(
     os.environ.get("SGLANG_RINGBUFFER_WARNING_INTERVAL", "60")
 )
-
-logger = logging.getLogger(__name__)
 
 
 class ShmRingBuffer:

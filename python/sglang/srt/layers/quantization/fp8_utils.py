@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 from enum import Enum
 from functools import lru_cache
 from typing import TYPE_CHECKING, Callable, List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.layers import deep_gemm_wrapper
@@ -40,8 +40,6 @@ from sglang.srt.utils import (
     is_sm90_supported,
     offloader,
 )
-
-logger = logging.getLogger(__name__)
 
 _is_hip = is_hip()
 _is_cuda = is_cuda()

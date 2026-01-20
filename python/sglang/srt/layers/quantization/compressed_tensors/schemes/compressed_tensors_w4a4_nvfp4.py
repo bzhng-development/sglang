@@ -1,6 +1,5 @@
 # Adapted from https://github.com/vllm-project/vllm/tree/main/vllm/model_executor/layers/quantization/compressed_tensors
 # SPDX-License-Identifier: Apache-2.0
-import logging
 from collections.abc import Callable
 from typing import Optional
 
@@ -22,8 +21,6 @@ from sglang.srt.layers.quantization.modelopt_quant import (
     fp4_quantize,
 )
 from sglang.srt.layers.quantization.utils import swizzle_blockscale
-
-logger = logging.getLogger(__name__)
 
 __all__ = ["CompressedTensorsW4A4Fp4"]
 

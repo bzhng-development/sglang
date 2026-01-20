@@ -1,16 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 from typing import Generator, List, Optional, Tuple
 from urllib.parse import urlparse
 
 import torch
+from loguru import logger
 
 from sglang.srt.connector import BaseKVConnector
 from sglang.srt.connector.serde import create_serde
 from sglang.srt.connector.utils import pull_files_from_db
-
-logger = logging.getLogger(__name__)
 
 
 class RedisConnector(BaseKVConnector):

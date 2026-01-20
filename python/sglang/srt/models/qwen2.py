@@ -15,10 +15,10 @@
 # Adapted from llama2.py
 # Modify details for the adaptation of Qwen2 model.
 """Inference-only Qwen2 model compatible with HuggingFace weights."""
-import logging
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 from torch import nn
 
 from sglang.srt.distributed import (
@@ -53,9 +53,6 @@ from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, make_layers
 
 Qwen2Config = None
-
-
-logger = logging.getLogger(__name__)
 
 
 class Qwen2MLP(nn.Module):

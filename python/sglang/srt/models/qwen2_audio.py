@@ -22,7 +22,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Inference-only Qwen2-Audio model compatible with HuggingFace weights."""
-import logging
 from typing import Any, Iterable, List, Optional, Tuple
 
 import torch
@@ -48,8 +47,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen2 import Qwen2ForCausalLM
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class Qwen2AudioForConditionalGeneration(nn.Module):

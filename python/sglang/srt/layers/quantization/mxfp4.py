@@ -16,10 +16,10 @@
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, List, Optional
 
 import torch
+from loguru import logger
 from torch.nn.parameter import Parameter
 
 from sglang.srt.distributed import get_tp_group
@@ -65,8 +65,6 @@ if is_flashinfer_available():
         shuffle_matrix_sf_a,
         trtllm_fp4_block_scale_moe,
     )
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.layers.moe.token_dispatcher import (

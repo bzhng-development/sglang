@@ -1,5 +1,5 @@
-import logging
 from typing import Dict, List, Literal, Optional, Set, Tuple, Type, Union
+
 
 from sglang.srt.entrypoints.openai.protocol import (
     LegacyStructuralTagResponseFormat,
@@ -28,8 +28,6 @@ from sglang.srt.function_call.qwen3_coder_detector import Qwen3CoderDetector
 from sglang.srt.function_call.qwen25_detector import Qwen25Detector
 from sglang.srt.function_call.step3_detector import Step3Detector
 from sglang.srt.function_call.utils import get_json_schema_constraint
-
-logger = logging.getLogger(__name__)
 
 
 class FunctionCallParser:

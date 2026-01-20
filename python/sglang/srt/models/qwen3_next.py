@@ -1,8 +1,8 @@
 import enum
-import logging
 from typing import Any, Iterable, Optional, Set, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 
 from sglang.srt.compilation.compilation_config import register_split_op
@@ -52,7 +52,6 @@ from sglang.srt.utils import (
 )
 from sglang.srt.utils.custom_op import register_custom_op
 
-logger = logging.getLogger(__name__)
 _is_cuda = is_cuda()
 _is_npu = is_npu()
 

@@ -13,7 +13,6 @@
 # ==============================================================================
 """Inference-only Sarashina2Vision model compatible with HuggingFace weights."""
 
-import logging
 from typing import Iterable, List, Optional, Tuple
 
 import torch
@@ -34,8 +33,6 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.llama import LlamaForCausalLM
 from sglang.srt.models.qwen2_vl import Qwen2VisionTransformer
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class Sarashina2VisionForCausalLM(nn.Module):

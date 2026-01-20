@@ -1,15 +1,13 @@
 import hashlib
-import logging
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, List, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.memory_pool_host import HostKVCache
-
-logger = logging.getLogger(__name__)
 
 
 def get_hash_str(token_ids: List[int], prior_hash: str = None) -> str:

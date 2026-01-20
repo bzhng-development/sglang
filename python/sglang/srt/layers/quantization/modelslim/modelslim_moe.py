@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Dict
 
 import torch
+from loguru import logger
 
 from sglang.srt.hardware_backend.npu.quantization.fused_moe_method_npu import (
     NPUW4A8Int8DynamicMoEMethod,
@@ -21,9 +21,6 @@ if TYPE_CHECKING:
         StandardDispatchOutput,
     )
     from sglang.srt.layers.quantization.modelslim.modelslim import ModelSlimConfig
-
-logger = logging.getLogger(__name__)
-
 
 __all__ = [
     "ModelSlimMoEMethod",

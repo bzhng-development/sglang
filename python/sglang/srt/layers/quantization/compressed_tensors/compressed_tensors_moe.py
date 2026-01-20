@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import enum
-import logging
 from enum import Enum
 from typing import TYPE_CHECKING
 
 import torch
 from compressed_tensors import CompressionFormat
 from compressed_tensors.quantization import QuantizationStrategy
+from loguru import logger
 
 from sglang.srt.distributed import get_tensor_model_parallel_world_size, get_tp_group
 from sglang.srt.distributed.device_communicators.pynccl_allocator import (
@@ -73,9 +73,6 @@ if _use_aiter:
     from aiter import ActivationType, QuantType
     from aiter.fused_moe import fused_moe
     from aiter.ops.shuffle import shuffle_weight
-
-
-logger = logging.getLogger(__name__)
 
 
 class GPTQMarlinState(Enum):
@@ -461,7 +458,6 @@ class CompressedTensorsW4A4Nvfp4MoEMethod(CompressedTensorsMoEMethod):
         topk_output = dispatch_output.topk_output
 
         from flashinfer import fp4_quantize, trtllm_fp4_block_scale_moe
-
         from sglang.srt.layers.moe.utils import RoutingMethodType
 
         router_logits = topk_output.router_logits

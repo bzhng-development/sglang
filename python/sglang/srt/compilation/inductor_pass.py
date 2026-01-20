@@ -3,18 +3,16 @@
 import hashlib
 import inspect
 import json
-import logging
 import time
 import types
 from contextlib import contextmanager
 from typing import Any, Callable, Optional, Union
 
 import torch
+from loguru import logger
 from torch import fx
 from torch._dynamo.utils import lazy_format_graph_code
 from torch._inductor.custom_graph_pass import CustomGraphPass
-
-logger = logging.getLogger(__name__)
 
 _pass_context = None
 

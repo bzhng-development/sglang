@@ -15,10 +15,10 @@
 
 import dataclasses
 import json
-import logging
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 from xgrammar import (
     CompiledGrammar,
     GrammarCompiler,
@@ -46,7 +46,6 @@ else:
     )
 
 
-logger = logging.getLogger(__name__)
 MAX_ROLLBACK_TOKENS = 200
 
 

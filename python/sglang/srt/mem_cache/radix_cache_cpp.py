@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import time
 from typing import TYPE_CHECKING, List, Set
 
@@ -18,9 +17,6 @@ if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import Req
     from sglang.srt.mem_cache.cache_init_params import CacheInitParams
     from sglang.srt.server_args import ServerArgs
-
-
-logger = logging.getLogger(__name__)
 
 
 class RadixCacheCpp(BasePrefixCache):

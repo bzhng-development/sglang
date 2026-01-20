@@ -1,7 +1,6 @@
 # Adapted from https://github.com/vllm-project/vllm/tree/main/vllm/model_executor/layers/quantization/compressed_tensors
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 from typing import Callable, Optional
 
 import torch
@@ -47,8 +46,6 @@ if _is_cuda:
 
 
 ScalarType, scalar_types = get_scalar_types()
-
-logger = logging.getLogger(__name__)
 
 __all__ = ["CompressedTensorsWNA16"]
 WNA16_SUPPORTED_TYPES_MAP = {

@@ -1,9 +1,9 @@
 import json
-import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
 
 import orjson
+from loguru import logger
 from partial_json_parser.core.exceptions import MalformedJSON
 from partial_json_parser.core.options import Allow
 
@@ -19,8 +19,6 @@ from sglang.srt.function_call.utils import (
     _is_complete_json,
     _partial_json_loads,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class BaseFormatDetector(ABC):

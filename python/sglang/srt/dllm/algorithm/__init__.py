@@ -1,10 +1,9 @@
 import importlib
-import logging
 import pkgutil
 
-from sglang.srt.dllm.config import DllmConfig
+from loguru import logger
 
-logger = logging.getLogger(__name__)
+from sglang.srt.dllm.config import DllmConfig
 
 
 def import_algorithms():

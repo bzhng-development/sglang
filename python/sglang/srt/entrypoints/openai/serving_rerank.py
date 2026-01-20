@@ -1,8 +1,8 @@
-import logging
 from typing import Any, Dict, List, Optional, Union
 
 from fastapi import Request
 from fastapi.responses import ORJSONResponse
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import (
     ChatCompletionMessageContentImagePart,
@@ -15,8 +15,6 @@ from sglang.srt.entrypoints.openai.protocol import (
 )
 from sglang.srt.entrypoints.openai.serving_base import OpenAIServingBase
 from sglang.srt.managers.io_struct import EmbeddingReqInput, GenerateReqInput
-
-logger = logging.getLogger(__name__)
 
 
 def _get_yes_no_token_ids(tokenizer) -> tuple[int, int]:

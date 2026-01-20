@@ -1,12 +1,12 @@
 import collections
 import collections.abc
-import logging
 from collections.abc import Callable, Sequence
 from typing import Iterable, List, Optional, Tuple, TypeAlias, cast
 
 import torch
 import torch.nn as nn
 import torchaudio.functional as F
+from loguru import logger
 from transformers import PretrainedConfig
 
 from sglang.srt.layers.attention.vision import VisionAttention
@@ -26,7 +26,6 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.qwen2 import Qwen2ForCausalLM
 from sglang.srt.utils import add_prefix
 
-logger = logging.getLogger(__name__)
 _Tuple2: TypeAlias = int | tuple[int, int] | Sequence[int]
 
 

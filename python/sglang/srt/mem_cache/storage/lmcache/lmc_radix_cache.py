@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import logging
 import threading
 from typing import TYPE_CHECKING, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.base_prefix_cache import MatchResult
 from sglang.srt.mem_cache.radix_cache import RadixCache, RadixKey, TreeNode
@@ -25,8 +25,6 @@ if TYPE_CHECKING:
     from sglang.srt.configs.model_config import ModelConfig
     from sglang.srt.managers.schedule_batch import Req
     from sglang.srt.mem_cache.cache_init_params import CacheInitParams
-
-logger = logging.getLogger(__name__)
 
 
 class LayerTransferCounter:

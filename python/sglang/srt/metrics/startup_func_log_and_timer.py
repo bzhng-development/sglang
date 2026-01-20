@@ -2,13 +2,12 @@
 Records startup latency breakdown by context using gauge metrics in seconds
 """
 
-import logging
 import time
 from contextlib import contextmanager
 from functools import wraps
 from typing import Any, Callable, Dict, Generator, Optional
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 enable_startup_metrics = False
 STARTUP_LATENCY_SECONDS = None

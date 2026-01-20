@@ -1,7 +1,6 @@
 import atexit
 import concurrent.futures
 import json
-import logging
 import os
 import signal
 import threading
@@ -11,6 +10,7 @@ from functools import wraps
 from typing import Any, List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorage,
@@ -20,8 +20,6 @@ from sglang.srt.mem_cache.hicache_storage import (
 from sglang.srt.mem_cache.memory_pool_host import HostKVCache
 from sglang.srt.mem_cache.storage.hf3fs.hf3fs_client import Hf3fsClient
 from sglang.srt.metrics.collector import StorageMetrics
-
-logger = logging.getLogger(__name__)
 
 
 class Hf3fsMetadataInterface(ABC):

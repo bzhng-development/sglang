@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-import logging
 import threading
 from typing import TYPE_CHECKING, Dict, Union
 
@@ -33,8 +32,6 @@ if TYPE_CHECKING:
     from sglang.srt.speculative.eagle_worker import EAGLEWorker
 
 from sglang.srt.utils import is_npu
-
-logger = logging.getLogger(__name__)
 
 if is_npu():
     torch.cuda.CUDAGraph = torch.npu.NPUGraph

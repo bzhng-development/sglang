@@ -6,7 +6,6 @@ Uses GrpcRequestManager for orchestration without tokenization.
 import asyncio
 import dataclasses
 import json
-import logging
 import os
 import signal
 import threading
@@ -21,6 +20,7 @@ from google.protobuf.struct_pb2 import Struct
 from google.protobuf.timestamp_pb2 import Timestamp
 from grpc_health.v1 import health_pb2_grpc
 from grpc_reflection.v1alpha import reflection
+from loguru import logger
 
 import sglang
 from sglang.srt.configs.model_config import ModelConfig
@@ -40,7 +40,6 @@ from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import kill_process_tree
 from sglang.utils import get_exception_traceback
 
-logger = logging.getLogger(__name__)
 HEALTH_CHECK_TIMEOUT = int(os.getenv("SGLANG_HEALTH_CHECK_TIMEOUT", 20))
 
 

@@ -14,7 +14,6 @@
 """Logits processing."""
 
 import dataclasses
-import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -56,8 +55,6 @@ from sglang.srt.model_executor.forward_batch_info import (
 )
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import is_npu, use_intel_amx_backend
-
-logger = logging.getLogger(__name__)
 
 _is_npu = is_npu()
 

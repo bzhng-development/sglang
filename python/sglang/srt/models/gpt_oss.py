@@ -15,13 +15,13 @@
 
 """Inference-only GptOss model compatible with HuggingFace weights."""
 
-import logging
 import math
 from collections.abc import Iterable
 from functools import partial
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -86,9 +86,6 @@ class GptOssConfig(PretrainedConfig):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-
-logger = logging.getLogger(__name__)
 
 
 # Aligned with HF's implementation, using sliding window inclusive with the last token
@@ -938,7 +935,7 @@ class GptOssForCausalLM(nn.Module):
     ):
         tp_rank = get_tensor_model_parallel_rank()
         if is_nextn:
-            logging.warning(
+            logger.warning(
                 "Loading weights for nextn is currently not supported in GptOssForCausalLM. "
             )
             return

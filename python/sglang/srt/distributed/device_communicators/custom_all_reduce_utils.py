@@ -2,7 +2,6 @@
 
 import ctypes
 import json
-import logging
 import os
 import pickle
 import subprocess
@@ -15,12 +14,11 @@ from typing import Callable, Dict, List, Optional, Sequence, TypeVar
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
+from loguru import logger
 from typing_extensions import ParamSpec
 
 from sglang.srt.distributed.device_communicators.cuda_wrapper import CudaRTLibrary
 from sglang.srt.utils import is_cuda, is_hip
-
-logger = logging.getLogger(__name__)
 
 _is_cuda = is_cuda()
 _is_hip = is_hip()

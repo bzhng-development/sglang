@@ -1,17 +1,15 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/model_executor/models/registry.py
 
 import importlib
-import logging
 import pkgutil
 from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import AbstractSet, Dict, List, Optional, Tuple, Type, Union
 
 import torch.nn as nn
+from loguru import logger
 
 from sglang.srt.environ import envs
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

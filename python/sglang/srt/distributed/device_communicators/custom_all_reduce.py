@@ -1,13 +1,13 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.6.4.post1/vllm/distributed/device_communicators/custom_all_reduce.py
 
 import ctypes
-import logging
 import os
 from contextlib import contextmanager
 from typing import Any, List, Optional, Union
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.distributed import ProcessGroup
 
 import sglang.srt.distributed.device_communicators.custom_all_reduce_ops as ops
@@ -23,8 +23,6 @@ from sglang.srt.utils import get_bool_env_var, is_cuda, is_hip, log_info_on_rank
 
 _is_cuda = is_cuda()
 _is_hip = is_hip()
-
-logger = logging.getLogger(__name__)
 
 
 def _can_p2p(rank: int, world_size: int) -> bool:

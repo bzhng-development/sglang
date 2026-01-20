@@ -15,7 +15,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import random
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,6 +23,7 @@ from typing import TYPE_CHECKING, List, Optional
 import torch
 import torch.distributed
 import torch.nn.functional as F
+from loguru import logger
 
 from sglang.srt.eplb import eplb_algorithms
 from sglang.srt.model_loader import get_model_architecture
@@ -31,8 +31,6 @@ from sglang.srt.model_loader import get_model_architecture
 if TYPE_CHECKING:
     from sglang.srt.configs.model_config import ModelConfig
     from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

@@ -1,9 +1,9 @@
-import logging
 import os
 from abc import ABC, abstractmethod
 from typing import List
 
 import torch
+from loguru import logger
 
 
 class Hf3fsClient(ABC):
@@ -50,9 +50,6 @@ class Hf3fsClient(ABC):
     def flush(self) -> None:
         """Flush data to disk."""
         pass
-
-
-logger = logging.getLogger(__name__)
 
 
 class Hf3fsMockClient(Hf3fsClient):

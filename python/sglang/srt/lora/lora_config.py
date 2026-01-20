@@ -17,6 +17,7 @@ import os
 from typing import Dict, Optional
 
 from huggingface_hub import snapshot_download
+from loguru import logger
 
 
 class LoRAConfig:
@@ -83,8 +84,5 @@ class LoRAConfig:
                 return json.load(f)
         except json.JSONDecodeError as e:
             # Log warning but don't crash if JSON is malformed
-            import logging
-
-            logger = logging.getLogger(__name__)
             logger.warning(f"Failed to parse added_tokens.json: {e}")
             return None

@@ -16,12 +16,12 @@
 # https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/models/qwen2_moe.py
 """Inference-only Qwen2MoE model compatible with HuggingFace weights."""
 
-import logging
 from contextlib import nullcontext
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -82,8 +82,6 @@ from sglang.srt.utils import (
     make_layers,
     use_intel_amx_backend,
 )
-
-logger = logging.getLogger(__name__)
 
 _is_cuda = is_cuda()
 _is_cpu = is_cpu()

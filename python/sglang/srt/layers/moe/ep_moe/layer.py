@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 import torch
@@ -49,9 +48,6 @@ if _use_aiter:
     from aiter.fused_moe import fused_moe
 elif _is_npu:
     import torch_npu
-
-
-logger = logging.getLogger(__name__)
 
 
 if _is_npu:

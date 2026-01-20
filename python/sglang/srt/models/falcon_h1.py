@@ -1,4 +1,3 @@
-import logging
 from typing import Any, Iterable, List, Optional, Set, Tuple
 
 import torch
@@ -37,7 +36,6 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, is_cuda, make_layers
 
-logger = logging.getLogger(__name__)
 _is_cuda = is_cuda()
 
 

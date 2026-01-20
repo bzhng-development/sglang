@@ -3,18 +3,16 @@
 """Utilities for selecting and loading models."""
 import concurrent.futures
 import contextlib
-import logging
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Type
 
 import torch
 import transformers
+from loguru import logger
 from torch import nn
 from transformers.dynamic_module_utils import get_class_from_dynamic_module
 
 from sglang.srt.configs.model_config import ModelConfig, ModelImpl
 from sglang.srt.layers import deep_gemm_wrapper
-
-logger = logging.getLogger(__name__)
 
 
 @contextlib.contextmanager

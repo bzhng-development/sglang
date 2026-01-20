@@ -1,10 +1,10 @@
-import logging
 import os
 from contextlib import contextmanager
 from enum import IntEnum, auto
 from typing import Dict, List, Tuple
 
 import torch
+from loguru import logger
 from tqdm import tqdm
 
 from sglang.srt.distributed.device_communicators.pynccl_allocator import (
@@ -15,8 +15,6 @@ from sglang.srt.environ import envs
 from sglang.srt.layers.deep_gemm_wrapper.configurer import ENABLE_JIT_DEEPGEMM
 from sglang.srt.server_args import ServerArgs
 from sglang.srt.utils import ceil_div, get_available_gpu_memory
-
-logger = logging.getLogger(__name__)
 
 if ENABLE_JIT_DEEPGEMM:
     import deep_gemm

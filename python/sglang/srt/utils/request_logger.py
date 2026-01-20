@@ -18,6 +18,7 @@ import logging
 from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union
 
+
 from sglang.srt.environ import envs
 from sglang.srt.utils.common import get_bool_env_var
 from sglang.srt.utils.log_utils import create_log_targets, log_json
@@ -26,8 +27,6 @@ if TYPE_CHECKING:
     import fastapi
 
     from sglang.srt.managers.io_struct import EmbeddingReqInput, GenerateReqInput
-
-logger = logging.getLogger(__name__)
 
 WHITELISTED_HEADERS = ["x-smg-routing-key"]
 

@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 
 import torch
@@ -17,7 +16,6 @@ from sglang.srt.utils import empty_context, get_bool_env_var, is_cuda
 if is_cuda():
     from sgl_kernel import segment_packbits  # noqa: F401
 
-logger = logging.getLogger(__name__)
 SGLANG_RETURN_ORIGINAL_LOGPROB = get_bool_env_var("SGLANG_RETURN_ORIGINAL_LOGPROB")
 
 

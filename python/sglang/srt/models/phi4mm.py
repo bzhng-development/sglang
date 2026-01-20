@@ -15,7 +15,6 @@
 # https://github.com/vllm-project/vllm/blob/6071e989df1531b59ef35568f83f7351afb0b51e/vllm/model_executor/models/phi4mm.py
 # https://huggingface.co/microsoft/Phi-4-multimodal-instruct/blob/main/processing_phi4mm.py
 
-import logging
 import math
 import re
 from collections.abc import Iterable
@@ -23,6 +22,7 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 import torch
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -41,8 +41,6 @@ from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.idefics2 import Idefics2VisionTransformer
 from sglang.srt.models.llama import LlamaForCausalLM
 from sglang.srt.models.phi4mm_audio import AudioEmbedding
-
-logger = logging.getLogger(__name__)
 
 SIGLIP_NAME = "siglip-so400m-patch14-448"
 VISION_ENCODER_TO_PROCESSING_CONFIG = {

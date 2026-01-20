@@ -23,7 +23,6 @@ The radix tree data structure for managing the KV cache.
 """
 
 import heapq
-import logging
 import sys
 import time
 from collections import defaultdict
@@ -31,8 +30,6 @@ from functools import lru_cache, partial
 from typing import TYPE_CHECKING, Any, Iterator, List, Optional, Tuple, Union
 
 import torch
-
-logger = logging.getLogger(__name__)
 
 from sglang.srt.disaggregation.kv_events import (
     AllBlocksCleared,

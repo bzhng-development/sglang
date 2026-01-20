@@ -1,7 +1,7 @@
-import logging
 from typing import Callable, Dict, Iterable, List, Optional, Set, Tuple, Union
 
 import torch
+from loguru import logger
 
 from sglang.srt.distributed import divide
 from sglang.srt.lora.eviction_policy import get_eviction_policy
@@ -19,8 +19,6 @@ from sglang.srt.lora.utils import (
     get_target_module_name,
 )
 from sglang.srt.utils.hf_transformers_utils import AutoConfig
-
-logger = logging.getLogger(__name__)
 
 
 class EmptySlot:

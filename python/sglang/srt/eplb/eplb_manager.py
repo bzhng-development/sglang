@@ -1,16 +1,14 @@
-import logging
 import time
 from typing import TYPE_CHECKING, List
 
 import torch.cuda
+from loguru import logger
 
 from sglang.srt.eplb.expert_distribution import get_global_expert_distribution_recorder
 from sglang.srt.eplb.expert_location import ExpertLocationMetadata
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.model_runner import ModelRunner
-
-logger = logging.getLogger(__name__)
 
 
 class EPLBManager:

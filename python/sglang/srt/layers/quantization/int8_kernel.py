@@ -1,12 +1,12 @@
 import functools
 import json
-import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 import triton
 import triton.language as tl
+from loguru import logger
 
 from sglang.srt.utils import get_device_name, is_cuda
 
@@ -21,8 +21,6 @@ if _is_cuda:
         from sgl_kernel import sgl_per_token_group_quant_int8
 
         enable_sgl_per_token_group_quant_8bit = False
-
-logger = logging.getLogger(__name__)
 
 
 @triton.jit

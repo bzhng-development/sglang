@@ -1,6 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
 
-import logging
 import os
 from enum import Enum
 from functools import cache
@@ -8,6 +7,7 @@ from typing import Union
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch.distributed import ProcessGroup
 
 import sglang.srt.distributed.device_communicators.custom_all_reduce_ops as ops
@@ -17,8 +17,6 @@ from sglang.srt.distributed.device_communicators.custom_all_reduce_utils import 
 )
 from sglang.srt.distributed.parallel_state import in_the_same_node_as
 from sglang.srt.utils import is_cuda, is_hip
-
-logger = logging.getLogger(__name__)
 
 _is_cuda = is_cuda()
 _is_hip = is_hip()

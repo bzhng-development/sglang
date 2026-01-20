@@ -13,11 +13,11 @@
 # ==============================================================================
 
 """Inference-only OPT model compatible with HuggingFace weights."""
-import logging
 from collections.abc import Iterable
 from typing import Optional, Union
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import OPTConfig
 
@@ -48,8 +48,6 @@ from sglang.srt.model_loader.weight_utils import (
 )
 from sglang.srt.utils import add_prefix, make_layers
 from sglang.utils import get_exception_traceback
-
-logger = logging.getLogger(__name__)
 
 
 def get_activation(name="relu"):

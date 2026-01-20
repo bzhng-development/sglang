@@ -1,6 +1,5 @@
 import contextvars
 import inspect
-import logging
 import os
 import sys
 import types
@@ -12,8 +11,6 @@ import torch
 
 from sglang.srt.compilation.compilation_config import CompilationConfig
 from sglang.srt.utils.common import rank0_log
-
-logger = logging.getLogger(__name__)
 
 _COMPILE_ENABLED = contextvars.ContextVar("_COMPILE_ENABLED", default=False)
 

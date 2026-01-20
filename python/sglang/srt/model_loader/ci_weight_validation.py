@@ -17,7 +17,6 @@ gated by is_in_ci() checks in weight_utils.py.
 import glob as glob_module
 import hashlib
 import json
-import logging
 import os
 import re
 import shutil
@@ -25,10 +24,9 @@ import tempfile
 from typing import List, Optional, Tuple
 
 import safetensors
+from loguru import logger
 
 from sglang.srt.utils import log_info_on_rank0
-
-logger = logging.getLogger(__name__)
 
 # Validation marker version - increment when validation logic changes
 # v2: Added trust_remote_code module validation (modeling_*.py must exist in snapshot)

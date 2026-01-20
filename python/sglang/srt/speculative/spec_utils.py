@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 import time
 from contextlib import contextmanager
@@ -10,6 +9,7 @@ import torch
 import triton
 import triton.language as tl
 from huggingface_hub import snapshot_download
+from loguru import logger
 
 from sglang.srt.constrained.base_grammar_backend import BaseGrammarObject
 from sglang.srt.distributed.parallel_state import (
@@ -37,9 +37,6 @@ elif _is_hip:
     from sgl_kernel import fast_topk
 else:
     from sglang.srt.utils.common import fast_topk
-
-
-logger = logging.getLogger(__name__)
 
 
 # Simulate acceptance length for benchmarking purposes

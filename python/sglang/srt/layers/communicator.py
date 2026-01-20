@@ -11,7 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-import logging
 from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -19,6 +18,7 @@ from functools import partial
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.distributed import (
     get_tensor_model_parallel_rank,
@@ -169,11 +169,11 @@ class AttnTpContext:
         )
         if get_global_server_args().enable_attn_tp_input_scattered:
             if not self.allow_input_scattered:
-                logging.info(
+                logger.info(
                     "attn_tp_input_scattered is not enabled while other conditions are not met"
                 )
             else:
-                logging.info("attn_tp_input_scattered is enabled")
+                logger.info("attn_tp_input_scattered is enabled")
 
     def use_input_scattered(self, forward_batch: ForwardBatch):
         return (

@@ -7,15 +7,12 @@ min/max of keys and uses them to upper-bound attention scores without
 materializing full dot products.
 """
 
-import logging
-
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.sparsity.algorithms.base_algorithm import (
     BaseSparseAlgorithmImpl,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class QuestAlgorithm(BaseSparseAlgorithmImpl):

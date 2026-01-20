@@ -1,13 +1,12 @@
 # TODO: also move pad_input_ids into this module
 import importlib
 import inspect
-import logging
 import pkgutil
+
+from loguru import logger
 
 from sglang.srt.multimodal.processors.base_processor import BaseMultimodalProcessor
 from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 PROCESSOR_MAPPING = {}
 

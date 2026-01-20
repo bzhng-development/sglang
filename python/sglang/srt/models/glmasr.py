@@ -17,7 +17,6 @@
 # https://github.com/huggingface/transformers/blob/main/src/transformers/models/glmasr/modular_glmasr.py
 """Inference-only GLM-ASR-HF model compatible with HuggingFace weights."""
 
-import logging
 from typing import Any, Iterable, List, Optional, Tuple
 
 import torch
@@ -42,8 +41,6 @@ from sglang.srt.model_executor.forward_batch_info import ForwardBatch
 from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.llama import LlamaForCausalLM
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 class GlmAsrForConditionalGeneration(nn.Module):

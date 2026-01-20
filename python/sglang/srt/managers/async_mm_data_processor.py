@@ -1,10 +1,9 @@
 import asyncio
-import logging
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional, Union
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class AsyncMMDataProcessor:

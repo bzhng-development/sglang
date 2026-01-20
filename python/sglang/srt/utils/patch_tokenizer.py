@@ -1,8 +1,6 @@
-import logging
+from loguru import logger
 
 from sglang.srt.environ import envs
-
-logger = logging.getLogger(__name__)
 
 
 def patch_tokenizer(tokenizer):

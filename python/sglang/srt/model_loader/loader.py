@@ -9,7 +9,6 @@ import fnmatch
 import gc
 import glob
 import json
-import logging
 import math
 import os
 import socket
@@ -33,6 +32,7 @@ from typing import (
 import huggingface_hub
 import numpy as np
 import torch
+from loguru import logger
 
 from sglang.srt.model_loader.remote_instance_weight_loader_utils import (
     RemoteInstanceWeightLoaderBackend,
@@ -121,8 +121,6 @@ _is_npu = is_npu()
 # ModelOpt: QUANT_CFG_CHOICES is imported from modelopt_utils.py
 # which contains the complete mapping of quantization config choices
 
-logger = logging.getLogger(__name__)
-
 
 @contextmanager
 def device_loading_context(module: torch.nn.Module, target_device: torch.device):
@@ -182,9 +180,6 @@ def device_loading_context(module: torch.nn.Module, target_device: torch.device)
                 else:
                     p.data = p.data.to(original_device)
         # New parameters or parameters already on target device are untouched
-
-
-logger = logging.getLogger(__name__)
 
 
 def _get_quantization_config(

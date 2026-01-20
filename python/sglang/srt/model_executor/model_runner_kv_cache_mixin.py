@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING
 
 import torch
+from loguru import logger
 
 from sglang.srt.configs.model_config import get_nsa_index_head_dim, is_deepseek_nsa
 from sglang.srt.distributed.parallel_state import get_world_group
@@ -37,8 +37,6 @@ if TYPE_CHECKING:
 MAMBA_CACHE_SIZE_MAX_RUNNING_REQUESTS_RATIO = 3
 MAMBA_CACHE_V2_ADDITIONAL_RATIO_OVERLAP = 2
 MAMBA_CACHE_V2_ADDITIONAL_RATIO_NO_OVERLAP = 1
-
-logger = logging.getLogger(__name__)
 
 _is_npu = is_npu()
 
@@ -293,7 +291,7 @@ class ModelRunnerKVCacheMixin:
 
         if max_total_tokens is not None:
             if max_total_tokens > self.max_total_num_tokens:
-                logging.warning(
+                logger.warning(
                     f"max_total_tokens={max_total_tokens} is larger than the profiled value "
                     f"{self.max_total_num_tokens}. "
                     f"Use the profiled value instead."

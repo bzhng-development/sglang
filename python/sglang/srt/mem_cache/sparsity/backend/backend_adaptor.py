@@ -1,4 +1,3 @@
-import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -6,8 +5,6 @@ import torch
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.forward_batch_info import ForwardBatch
-
-logger = logging.getLogger(__name__)
 
 
 class BackendAdaptor(ABC):

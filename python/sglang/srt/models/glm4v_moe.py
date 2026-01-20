@@ -1,9 +1,9 @@
-import logging
 from functools import lru_cache
 from typing import Iterable, Optional, Tuple
 
 import torch
 import torch.nn as nn
+from loguru import logger
 from transformers.models.glm4v_moe.configuration_glm4v_moe import Glm4vMoeConfig
 
 from sglang.srt.distributed import (
@@ -28,8 +28,6 @@ from sglang.srt.utils.hf_transformers_utils import get_processor
 
 _is_cuda = is_cuda()
 _device_sm = get_device_sm()
-
-logger = logging.getLogger(__name__)
 
 cached_get_processor = lru_cache(get_processor)
 

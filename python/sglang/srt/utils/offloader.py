@@ -1,9 +1,9 @@
-import logging
 import os
 from abc import ABC
 from typing import Callable, Generator, List, Optional
 
 import torch
+from loguru import logger
 from torch.func import functional_call
 
 from sglang.srt.distributed.naive_distributed import (
@@ -19,8 +19,6 @@ from sglang.srt.utils.host_shared_memory import (
     get_host_shared_memory_manager,
     set_host_shared_memory_manager,
 )
-
-logger = logging.getLogger(__name__)
 
 _SubmoduleAccessor = Callable[[torch.nn.Module], torch.nn.Module]
 _WhitelistParamNamesCreator = Callable[[torch.nn.Module], List[str]]

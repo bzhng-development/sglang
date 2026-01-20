@@ -13,11 +13,12 @@
 # ==============================================================================
 """Utilities for Prometheus Metrics Collection."""
 import dataclasses
-import logging
 import os
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Union
+
+from loguru import logger
 
 from sglang.srt.disaggregation.utils import DisaggregationMode
 from sglang.srt.environ import envs
@@ -28,9 +29,6 @@ from sglang.srt.utils import get_bool_env_var
 from sglang.srt.utils.gauge_histogram import GaugeHistogram
 
 SGLANG_TEST_REQUEST_TIME_STATS = get_bool_env_var("SGLANG_TEST_REQUEST_TIME_STATS")
-
-
-logger = logging.getLogger(__name__)
 
 
 def get_histogram_conf_from_env(env_var_name: str) -> Optional[List[float]]:

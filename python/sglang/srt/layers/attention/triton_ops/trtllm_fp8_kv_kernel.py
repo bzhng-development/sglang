@@ -12,14 +12,11 @@ Performance benefits:
 - Better memory bandwidth utilization
 """
 
-import logging
 from typing import Optional
 
 import torch
 import triton
 import triton.language as tl
-
-logger = logging.getLogger(__name__)
 
 
 @triton.jit

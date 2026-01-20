@@ -2,10 +2,10 @@
 # SPDX-FileCopyrightText: Copyright contributors to the SGLang project
 from __future__ import annotations
 
-import logging
 from typing import Any, Iterable, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.distributed import (
     get_tensor_model_parallel_rank,
@@ -24,8 +24,6 @@ if _is_npu:
     import numpy as np
     import torch_npu
     from mindspore import Tensor, mint, mutable
-
-logger = logging.getLogger(__name__)
 
 
 def tensor_torch2ms(x: torch.Tensor):

@@ -19,13 +19,13 @@ Life cycle of a request in the prefill server
 
 from __future__ import annotations
 
-import logging
 import time
 from collections import deque
 from http import HTTPStatus
 from typing import TYPE_CHECKING, List, Optional, Type
 
 import torch
+from loguru import logger
 
 from sglang.srt.disaggregation.base import BaseKVManager, KVPoll
 from sglang.srt.disaggregation.utils import (
@@ -58,8 +58,6 @@ if TYPE_CHECKING:
 
     from sglang.srt.managers.scheduler import GenerationBatchResult, Scheduler
     from sglang.srt.mem_cache.memory_pool import KVCache
-
-logger = logging.getLogger(__name__)
 
 
 class PrefillBootstrapQueue:

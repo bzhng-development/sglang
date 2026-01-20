@@ -18,10 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """SGLang BailingMoENextN model."""
-import logging
 from typing import Iterable, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -40,7 +40,6 @@ from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix
 
 LoraConfig = None
-logger = logging.getLogger(__name__)
 
 
 class BailingMoEModelNextN(nn.Module):

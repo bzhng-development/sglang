@@ -1,9 +1,6 @@
-import logging
 from typing import Optional
 
 import torch
-
-logger = logging.getLogger(__name__)
 
 
 class DeviceConfig:

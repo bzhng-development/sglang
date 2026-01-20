@@ -4,7 +4,6 @@ from __future__ import annotations
 end to end attention solution with aiter kernels
 """
 
-import logging
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Optional
@@ -43,8 +42,6 @@ from sglang.srt.configs.model_config import AttentionArch
 from sglang.srt.layers.attention.utils import pad_sequence_with_mask
 from sglang.srt.layers.quantization.fp8_kernel import fp8_dtype
 from sglang.srt.utils import get_bool_env_var
-
-logger = logging.getLogger(__name__)
 
 # Use aiter mla persist design for fp8-kv cache
 _use_mla_ps_kernel = get_bool_env_var("SGLANG_AITER_MLA_PERSIST", "True")

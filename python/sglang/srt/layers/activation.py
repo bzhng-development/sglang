@@ -13,13 +13,13 @@
 # ==============================================================================
 """Fused operators for activation layers."""
 
-import logging
 import math
 from typing import Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from loguru import logger
 from transformers import PretrainedConfig
 
 from sglang.srt.distributed import (
@@ -55,8 +55,6 @@ elif _is_hip:
 
 if is_npu():
     import torch_npu
-
-logger = logging.getLogger(__name__)
 
 
 class SiluAndMul(MultiPlatformOp):

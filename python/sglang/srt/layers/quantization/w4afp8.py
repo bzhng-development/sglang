@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import torch
+from loguru import logger
 from torch.nn import Module
 from torch.nn.parameter import Parameter
 
@@ -29,8 +29,6 @@ if TYPE_CHECKING:
     )
 
 ACTIVATION_SCHEMES = ["static", "dynamic"]
-
-logger = logging.getLogger(__name__)
 
 
 class W4AFp8Config(QuantizationConfig):

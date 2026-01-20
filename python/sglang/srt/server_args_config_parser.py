@@ -4,13 +4,11 @@ Handles merging of YAML configuration files with command-line arguments.
 """
 
 import argparse
-import logging
 from pathlib import Path
 from typing import Any, Dict, List
 
 import yaml
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class ConfigArgumentMerger:

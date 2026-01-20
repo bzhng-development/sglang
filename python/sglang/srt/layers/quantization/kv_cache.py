@@ -1,7 +1,5 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/layers/quantization/kv_cache.py
 
-import logging
-
 import torch
 
 from sglang.srt.layers.quantization.base_config import (
@@ -9,8 +7,6 @@ from sglang.srt.layers.quantization.base_config import (
     QuantizeMethodBase,
 )
 from sglang.srt.layers.quantization.fp8_kernel import is_fp8_fnuz
-
-logger = logging.getLogger(__name__)
 
 
 class BaseKVCacheMethod(QuantizeMethodBase):

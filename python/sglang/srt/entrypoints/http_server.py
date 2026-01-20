@@ -19,7 +19,6 @@ This file implements HTTP APIs for the inference engine via fastapi.
 
 import asyncio
 import dataclasses
-import logging
 import os
 import tempfile
 import threading
@@ -36,6 +35,8 @@ from typing import (
     Optional,
     Union,
 )
+
+from loguru import logger
 
 # Fix a bug of Python threading
 setattr(threading, "_register_atexit", lambda *args, **kwargs: None)
@@ -152,7 +153,6 @@ from sglang.srt.utils.auth import AuthLevel, app_has_admin_force_endpoints, auth
 from sglang.utils import get_exception_traceback
 from sglang.version import __version__
 
-logger = logging.getLogger(__name__)
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 # Global constants

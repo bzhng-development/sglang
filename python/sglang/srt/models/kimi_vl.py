@@ -42,7 +42,6 @@
 # SOFTWARE.
 
 import copy
-import logging
 from dataclasses import dataclass
 from typing import Iterable, List, Optional, Tuple
 
@@ -74,8 +73,6 @@ from sglang.srt.model_loader.weight_utils import (
 from sglang.srt.models.deepseek_v2 import DeepseekV2ForCausalLM
 from sglang.srt.models.kimi_vl_moonvit import MoonVitPretrainedModel
 from sglang.srt.utils import add_prefix
-
-logger = logging.getLogger(__name__)
 
 
 # For dummy input only

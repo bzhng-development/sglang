@@ -1,16 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
-import logging
 import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
+
 
 from sglang.srt.utils import print_info_once, print_warning_once
 
 if TYPE_CHECKING:
     # Avoid circular import.
     from sglang.srt.entrypoints.context import ConversationContext
-
-logger = logging.getLogger(__name__)
 
 
 class Tool(ABC):

@@ -13,13 +13,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import logging
 import threading
 import time
 from queue import Empty, Full, Queue
 from typing import TYPE_CHECKING, List, NamedTuple, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.hicache_storage import (
     HiCacheStorageConfig,
@@ -42,8 +42,6 @@ from sglang.srt.layers.dp_attention import (
 )
 from sglang.srt.mem_cache.memory_pool import MLATokenToKVPool
 from sglang.srt.utils import get_device_module
-
-logger = logging.getLogger(__name__)
 
 device_module = get_device_module()
 

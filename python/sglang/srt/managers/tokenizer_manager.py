@@ -16,7 +16,6 @@
 import asyncio
 import copy
 import dataclasses
-import logging
 import os
 import pickle
 import signal
@@ -36,6 +35,7 @@ import uvloop
 import zmq
 import zmq.asyncio
 from fastapi import BackgroundTasks
+from loguru import logger
 
 from sglang.srt.configs.model_config import ModelConfig
 from sglang.srt.disaggregation.encode_receiver import MMReceiver
@@ -118,8 +118,6 @@ from sglang.utils import TypeBasedDispatcher, get_exception_traceback
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 _REQUEST_STATE_WAIT_TIMEOUT = envs.SGLANG_REQUEST_STATE_WAIT_TIMEOUT.get()
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -1410,7 +1408,7 @@ class TokenizerManager(TokenizerCommunicatorMixin, TokenizerManagerMultiItemMixi
             self.dump_requests_threshold = obj.dump_requests_threshold
         if obj.crash_dump_folder is not None:
             self.crash_dump_folder = obj.crash_dump_folder
-        logging.info(f"Config logging: {obj=}")
+        logger.info(f"Config logging: {obj=}")
 
     async def freeze_gc(self):
         """Send a freeze_gc message to the scheduler first, then freeze locally."""

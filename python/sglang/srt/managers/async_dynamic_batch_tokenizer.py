@@ -6,12 +6,11 @@ to reduce tokenization overhead when multiple requests arrive concurrently.
 """
 
 import asyncio
-import logging
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
 
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class AsyncDynamicbatchTokenizer:

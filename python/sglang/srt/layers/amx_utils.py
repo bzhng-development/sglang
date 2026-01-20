@@ -1,10 +1,7 @@
-import logging
-
 import torch
+from loguru import logger
 
 from sglang.srt.utils import cpu_has_amx_support
-
-logger = logging.getLogger(__name__)
 
 
 def amx_process_weight_after_loading(weight):

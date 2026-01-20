@@ -22,7 +22,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Inference-only Qwen2-VL model compatible with HuggingFace weights."""
-import logging
 from functools import lru_cache, partial
 from typing import Iterable, List, Optional, Tuple, Type, TypedDict
 
@@ -50,9 +49,6 @@ from sglang.srt.models.qwen2 import Qwen2Model
 from sglang.srt.models.utils import WeightsMapper, compute_cu_seqlens_from_grid_numpy
 from sglang.srt.utils import add_prefix, is_npu
 from sglang.srt.utils.hf_transformers_utils import get_processor
-
-logger = logging.getLogger(__name__)
-
 
 # === Vision Inputs === #
 

@@ -6,7 +6,6 @@ import fnmatch
 import glob
 import hashlib
 import json
-import logging
 import os
 import tempfile
 from collections import defaultdict
@@ -28,6 +27,7 @@ import numpy as np
 import safetensors.torch
 import torch
 from huggingface_hub import HfFileSystem, hf_hub_download, snapshot_download
+from loguru import logger
 from pydantic import BaseModel, ConfigDict, ValidationInfo, model_validator
 from tqdm.auto import tqdm
 
@@ -56,8 +56,6 @@ try:
     from fastsafetensors import SafeTensorsFileLoader, SingleGroup
 except ImportError as e:
     SafeTensorsFileLoader = SingleGroup = None
-
-logger = logging.getLogger(__name__)
 
 
 def enable_hf_transfer():

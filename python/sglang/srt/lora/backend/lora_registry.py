@@ -1,8 +1,4 @@
-import logging
-
 from sglang.srt.lora.backend.base_backend import BaseLoRABackend
-
-logger = logging.getLogger(__name__)
 
 LORA_SUPPORTED_BACKENDS = {}
 

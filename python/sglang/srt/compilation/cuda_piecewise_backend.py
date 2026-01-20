@@ -1,7 +1,6 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.10.0/vllm/compilation/cuda_piecewise_backend.py
 
 import dataclasses
-import logging
 from contextlib import ExitStack
 from typing import Any, Callable, Optional
 from unittest.mock import patch
@@ -16,8 +15,6 @@ from sglang.srt.compilation.piecewise_context_manager import (
     is_in_pcg_torch_compile,
 )
 from sglang.srt.compilation.weak_ref_tensor import weak_ref_tensors
-
-logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass

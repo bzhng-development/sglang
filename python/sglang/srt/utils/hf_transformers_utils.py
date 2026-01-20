@@ -24,6 +24,7 @@ from typing import Any, Dict, List, Optional, Type, Union
 
 import torch
 from huggingface_hub import snapshot_download
+from loguru import logger
 
 from sglang.srt.utils import get_bool_env_var
 

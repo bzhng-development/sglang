@@ -1,8 +1,8 @@
-import logging
 from typing import Callable, Dict, List, Optional, Tuple
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch import nn
 
 from sglang.srt.distributed import get_tp_group
@@ -27,8 +27,6 @@ if is_cuda():
 
 if is_npu():
     import torch_npu
-
-logger = logging.getLogger(__name__)
 
 SYNC_TOKEN_IDS_ACROSS_TP = get_bool_env_var("SYNC_TOKEN_IDS_ACROSS_TP")
 SGLANG_RETURN_ORIGINAL_LOGPROB = get_bool_env_var("SGLANG_RETURN_ORIGINAL_LOGPROB")

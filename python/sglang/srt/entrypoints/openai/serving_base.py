@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import time
 import uuid
 from abc import ABC, abstractmethod
@@ -10,6 +9,7 @@ from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 import orjson
 from fastapi import HTTPException, Request
 from fastapi.responses import ORJSONResponse, StreamingResponse
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.encoding_dsv32 import DS32EncodingError
 from sglang.srt.entrypoints.openai.protocol import ErrorResponse, OpenAIServingRequest
@@ -18,8 +18,6 @@ from sglang.srt.server_args import ServerArgs
 
 if TYPE_CHECKING:
     from sglang.srt.managers.tokenizer_manager import TokenizerManager
-
-logger = logging.getLogger(__name__)
 
 
 # Base class for specific endpoint handlers

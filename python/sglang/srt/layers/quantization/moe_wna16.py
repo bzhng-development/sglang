@@ -1,7 +1,6 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/layers/quantization/moe_wna16.py
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import numpy as np
@@ -20,8 +19,6 @@ from sglang.srt.layers.quantization.base_config import (
 from sglang.srt.layers.quantization.gptq import GPTQConfig, GPTQMarlinConfig
 from sglang.srt.layers.quantization.unquant import UnquantizedLinearMethod
 from sglang.srt.utils import get_device_capability, set_weight_attrs
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.layers.moe.token_dispatcher import (

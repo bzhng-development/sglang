@@ -1,13 +1,11 @@
-import logging
 from typing import Any, Dict, List, Optional, Union
+
 
 from sglang.srt.entrypoints.openai.protocol import (
     ChatCompletionRequest,
     CompletionRequest,
     LogProbs,
 )
-
-logger = logging.getLogger(__name__)
 
 
 def to_openai_style_logprobs(

@@ -1,7 +1,8 @@
 import json
-import logging
 import re
 from typing import List, Optional
+
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import Tool
 from sglang.srt.environ import envs
@@ -12,8 +13,6 @@ from sglang.srt.function_call.core_types import (
     _GetInfoFunc,
 )
 from sglang.srt.parser.harmony_parser import HarmonyParser
-
-logger = logging.getLogger(__name__)
 
 
 class GptOssDetector(BaseFormatDetector):

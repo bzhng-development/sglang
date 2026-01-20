@@ -18,7 +18,6 @@ from __future__ import annotations
 import bisect
 import gc
 import inspect
-import logging
 import os
 from contextlib import contextmanager
 from functools import partial
@@ -26,6 +25,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Union
 
 import torch
 import tqdm
+from loguru import logger
 from torch.profiler import ProfilerActivity, profile
 
 from sglang.srt.batch_overlap.two_batch_overlap import TboCudaGraphRunnerPlugin
@@ -83,8 +83,6 @@ except ImportError:
     KTRANSFORMERS_AVAILABLE = False
 
 _is_hip = is_hip()
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.model_executor.model_runner import ModelRunner

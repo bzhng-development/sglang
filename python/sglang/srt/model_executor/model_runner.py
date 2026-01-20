@@ -28,6 +28,7 @@ from typing import Callable, List, Optional, Tuple, Union
 
 import torch
 import torch.distributed as dist
+from loguru import logger
 from torch import nn
 
 from sglang.srt.configs import (
@@ -225,9 +226,6 @@ def add_chunked_prefix_cache_attention_backend(backend_name):
 
 # Detect stragger ranks in model loading
 UNBALANCED_MODEL_LOADING_TIMEOUT_S = 480  # leave more time for post data processing
-
-
-logger = logging.getLogger(__name__)
 
 
 def resolve_language_model(model: nn.Module) -> nn.Module:

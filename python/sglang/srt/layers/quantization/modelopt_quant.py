@@ -1,11 +1,11 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/layers/quantization/modelopt.py
 from __future__ import annotations
 
-import logging
 from enum import IntEnum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import torch
+from loguru import logger
 from torch.nn.parameter import Parameter
 
 from sglang.srt.distributed import get_tp_group
@@ -100,9 +100,6 @@ except ImportError:
 
 
 # Initialize logger for the module
-logger = logging.getLogger(__name__)
-
-
 def _sglang_fp4_gemm_fake(
     input: torch.Tensor,
     weight: torch.Tensor,

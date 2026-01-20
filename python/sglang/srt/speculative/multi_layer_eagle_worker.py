@@ -12,11 +12,11 @@
 # limitations under the License.
 # ==============================================================================
 
-import logging
 import time
 from typing import List, Optional, Tuple
 
 import torch
+from loguru import logger
 
 from sglang.srt.distributed import get_tp_group
 from sglang.srt.layers.dp_attention import get_attention_tp_group
@@ -60,8 +60,6 @@ _is_npu = is_npu()
 
 if is_cuda():
     from sgl_kernel import segment_packbits  # noqa: F401
-
-logger = logging.getLogger(__name__)
 
 
 class MultiLayerEagleWorker(TpModelWorker):

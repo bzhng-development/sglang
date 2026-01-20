@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-import logging
 import math
 import time
 from abc import ABC
@@ -27,6 +26,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Tuple, Typ
 import einops
 import torch
 import torch.distributed
+from loguru import logger
 
 from sglang.srt.environ import envs
 from sglang.srt.metrics.collector import ExpertDispatchCollector
@@ -36,8 +36,6 @@ from sglang.srt.utils import Withable, get_int_env_var
 
 if TYPE_CHECKING:
     from sglang.srt.eplb.expert_location import ExpertLocationMetadata
-
-logger = logging.getLogger(__name__)
 
 # --------------------------------------- Entrypoint -----------------------------------------
 

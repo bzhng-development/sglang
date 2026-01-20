@@ -1,12 +1,11 @@
 import json
-import logging
 import os
 from typing import List, Optional
 
+from loguru import logger
+
 from sglang.srt.environ import envs
 from sglang.srt.utils import get_free_port, maybe_wrap_ipv6_address
-
-logger = logging.getLogger(__name__)
 
 
 def get_ib_devices_for_gpu(ib_device_str: Optional[str], gpu_id: int) -> Optional[str]:

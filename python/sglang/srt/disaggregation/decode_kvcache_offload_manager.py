@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import logging
 import threading
 import time
 from typing import TYPE_CHECKING
 
 import torch
+from loguru import logger
 
 from sglang.srt.managers.cache_controller import HiCacheController
 from sglang.srt.mem_cache.allocator import BaseTokenToKVPoolAllocator
@@ -23,8 +23,6 @@ from sglang.srt.server_args import ServerArgs
 
 if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import Req
-
-logger = logging.getLogger(__name__)
 
 
 class DecodeKVCacheOffloadManager:

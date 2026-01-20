@@ -19,10 +19,11 @@ and code completion templates, eliminating global state and improving modularity
 """
 
 import json
-import logging
 import os
 import re
 from typing import Dict, Optional
+
+from loguru import logger
 
 from sglang.srt.managers.tokenizer_manager import TokenizerManager
 from sglang.srt.parser.code_completion_parser import (
@@ -39,8 +40,6 @@ from sglang.srt.parser.conversation import (
     register_conv_template,
 )
 from sglang.srt.parser.jinja_template_utils import detect_jinja_template_content_format
-
-logger = logging.getLogger(__name__)
 
 
 class TemplateManager:

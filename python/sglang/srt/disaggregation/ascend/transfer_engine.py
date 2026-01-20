@@ -1,8 +1,8 @@
-import logging
 import os
 from typing import List
 
 import torch
+from loguru import logger
 
 from sglang.srt.disaggregation.mooncake.transfer_engine import MooncakeTransferEngine
 from sglang.srt.disaggregation.utils import DisaggregationMode
@@ -14,8 +14,6 @@ try:
 except ImportError as e:
     import_error = e
     pass
-
-logger = logging.getLogger(__name__)
 
 
 class AscendTransferEngine(MooncakeTransferEngine):

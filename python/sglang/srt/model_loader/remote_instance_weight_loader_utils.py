@@ -3,13 +3,11 @@
 import enum
 import importlib
 import importlib.util
-import logging
 import time
 from typing import List
 
 import requests
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 class RemoteInstanceWeightLoaderBackend(str, enum.Enum):

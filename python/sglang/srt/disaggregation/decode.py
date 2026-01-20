@@ -20,7 +20,6 @@ Life cycle of a request in the decode server
 
 from __future__ import annotations
 
-import logging
 import time
 from collections import deque
 from dataclasses import dataclass
@@ -28,6 +27,7 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING, List, Optional, Tuple, Type, Union
 
 import torch
+from loguru import logger
 from torch.distributed import ProcessGroup
 
 from sglang.srt.configs.mamba_utils import Mamba2CacheParams
@@ -63,8 +63,6 @@ from sglang.srt.mem_cache.swa_memory_pool import SWAKVPool
 from sglang.srt.tracing.trace import trace_event_batch, trace_slice_end
 from sglang.srt.utils import get_int_env_var
 from sglang.srt.utils.torch_memory_saver_adapter import TorchMemorySaverAdapter
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import Req

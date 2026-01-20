@@ -1,16 +1,15 @@
 import asyncio
 import dataclasses
 import json
-import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List, Optional, Union
 
+from loguru import logger
+
 from sglang.srt.managers.io_struct import EmbeddingReqInput, GenerateReqInput
 from sglang.srt.server_args import ServerArgs
-
-logger = logging.getLogger(__name__)
 
 # Fields that should always be excluded from request parameters
 # because they contain non-JSON-serializable objects (e.g., ImageData, tensors)

@@ -4,7 +4,7 @@ It supports page size = 1.
 """
 
 import functools
-import logging
+import os
 
 from wave_lang.kernel.lang.global_symbols import *
 from wave_lang.kernel.wave.compile import WaveCompileOptions, wave_compile
@@ -16,9 +16,6 @@ from wave_lang.kernel.wave.templates.paged_decode_attention import (
 )
 from wave_lang.kernel.wave.utils.general_utils import get_default_scheduling_params
 from wave_lang.kernel.wave.utils.run_utils import set_default_run_config
-
-logger = logging.getLogger(__name__)
-import os
 
 dump_generated_mlir = int(os.environ.get("WAVE_DUMP_MLIR", 0))
 

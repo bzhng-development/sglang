@@ -17,13 +17,13 @@
 """Inference-only DeepseekV2 model."""
 from __future__ import annotations
 
-import logging
 import os
 from contextlib import nullcontext
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -194,9 +194,6 @@ else:
     pass
 
 _is_cublas_ge_129 = is_nvidia_cublas_cu12_version_ge_12_9()
-
-logger = logging.getLogger(__name__)
-
 
 FORWARD_ABSORB_CORE_ATTENTION_BACKENDS = [
     "fa3",

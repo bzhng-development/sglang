@@ -2,17 +2,16 @@ from __future__ import annotations
 
 import functools
 import json
-import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 import triton
+from loguru import logger
 
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import get_device_name, is_hip
 
-logger = logging.getLogger(__name__)
 _is_hip = is_hip()
 
 

@@ -1,12 +1,12 @@
 # Adapted from https://huggingface.co/OpenGVLab/InternVL2-4B/blob/main/modeling_intern_vit.py
 
-import logging
 from functools import lru_cache
 from typing import List
 
 import numpy as np
 import torch
 from decord import VideoReader, cpu, gpu
+from loguru import logger
 from PIL import Image
 
 from sglang.srt.managers.schedule_batch import Modality, MultimodalDataItem
@@ -16,8 +16,6 @@ from sglang.srt.multimodal.processors.base_processor import (
     BaseMultimodalProcessor,
     MultimodalSpecialTokens,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class InternVLProcessor(BaseMultimodalProcessor):

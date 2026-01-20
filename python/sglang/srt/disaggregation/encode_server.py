@@ -1,7 +1,6 @@
 import asyncio
 import concurrent.futures
 import ctypes
-import logging
 import multiprocessing as mp
 import os
 import pickle
@@ -17,6 +16,7 @@ import zmq
 import zmq.asyncio
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse, Response
+from loguru import logger
 from transformers import AutoImageProcessor
 
 from sglang.srt.configs.device_config import DeviceConfig
@@ -46,8 +46,6 @@ from sglang.srt.utils import (
     load_video,
     random_uuid,
 )
-
-logger = logging.getLogger(__name__)
 
 rid_lock = asyncio.Lock()
 rid_to_receive_endpoint: Dict[str, List[str]] = dict()

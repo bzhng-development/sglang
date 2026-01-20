@@ -11,15 +11,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-import logging
 from contextlib import contextmanager
 from enum import Enum, auto
 from typing import Any, List, Optional
 
+from loguru import logger
+
 from sglang.srt.managers.io_struct import BlockReqInput, BlockReqType
 from sglang.srt.utils.poll_based_barrier import PollBasedBarrier
-
-logger = logging.getLogger(__name__)
 
 
 class SchedulerInputBlocker:

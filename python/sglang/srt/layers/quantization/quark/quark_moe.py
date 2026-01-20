@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.moe import MoeRunner, MoeRunnerBackend, MoeRunnerConfig
 from sglang.srt.layers.moe.moe_runner.triton import TritonMoeQuantInfo
@@ -26,8 +26,6 @@ if TYPE_CHECKING:
         StandardDispatchOutput,
     )
     from sglang.srt.layers.quantization.quark.quark import QuarkConfig
-
-logger = logging.getLogger(__name__)
 
 _is_shuffle_moe_mxfp4 = is_gfx95_supported()
 

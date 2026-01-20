@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import math
 import time
 from collections import deque
@@ -10,6 +9,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 import numpy as np
 import torch
 import torch.distributed
+from loguru import logger
 from tqdm import tqdm
 
 from sglang.srt.disaggregation.base.conn import KVPoll
@@ -25,8 +25,6 @@ from sglang.srt.managers.utils import (
 from sglang.srt.model_executor.forward_batch_info import PPProxyTensors
 from sglang.srt.sampling.sampling_params import SamplingParams
 from sglang.srt.utils import DynamicGradMode, broadcast_pyobj, point_to_point_pyobj
-
-logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from sglang.srt.managers.scheduler import Scheduler

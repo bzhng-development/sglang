@@ -13,10 +13,10 @@
 # ==============================================================================
 """Inference-only Arcee Foundational Model (AFM) compatible with HuggingFace weights."""
 
-import logging
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import LlamaConfig
 
@@ -50,8 +50,6 @@ from sglang.srt.model_loader.weight_utils import (
 )
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import add_prefix, make_layers
-
-logger = logging.getLogger(__name__)
 
 
 class ArceeMLP(nn.Module):

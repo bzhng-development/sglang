@@ -1,8 +1,8 @@
-import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional
 
 import torch
+from loguru import logger
 
 from sglang.srt.mem_cache.memory_pool import KVCache, ReqToTokenPool
 from sglang.srt.mem_cache.sparsity.algorithms.base_algorithm import BaseSparseAlgorithm
@@ -12,8 +12,6 @@ if TYPE_CHECKING:
     from sglang.srt.layers.radix_attention import RadixAttention
     from sglang.srt.managers.schedule_batch import Req
     from sglang.srt.model_executor.forward_batch_info import ForwardBatch
-
-logger = logging.getLogger(__name__)
 
 
 class RequestTrackers:

@@ -1,7 +1,7 @@
 import json
-import logging
 import re
 
+from loguru import logger
 from partial_json_parser.core.options import Allow
 
 from sglang.srt.entrypoints.openai.protocol import Tool
@@ -13,8 +13,6 @@ from sglang.srt.function_call.core_types import (
     _GetInfoFunc,
 )
 from sglang.srt.function_call.utils import _find_common_prefix, _partial_json_loads
-
-logger = logging.getLogger(__name__)
 
 
 class DeepSeekV32Detector(BaseFormatDetector):

@@ -13,10 +13,10 @@
 # ==============================================================================
 
 """Inference-only DeepSeek NextN Speculative Decoding."""
-import logging
 from typing import Iterable, Optional, Tuple
 
 import torch
+from loguru import logger
 from torch import nn
 from transformers import PretrainedConfig
 
@@ -50,9 +50,6 @@ from sglang.srt.models.deepseek_common.utils import enable_nextn_moe_bf16_cast_t
 from sglang.srt.models.deepseek_v2 import DeepseekV2DecoderLayer, DeepseekV3ForCausalLM
 from sglang.srt.server_args import get_global_server_args
 from sglang.srt.utils import BumpAllocator, add_prefix, is_cuda, is_npu
-
-logger = logging.getLogger(__name__)
-
 
 _is_cuda = is_cuda()
 _is_npu = is_npu()

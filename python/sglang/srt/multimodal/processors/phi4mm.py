@@ -1,4 +1,3 @@
-import logging
 from typing import List, Union
 
 from transformers.processing_utils import ProcessorMixin
@@ -8,8 +7,6 @@ from sglang.srt.multimodal.processors.base_processor import (
     BaseMultimodalProcessor,
     MultimodalSpecialTokens,
 )
-
-logger = logging.getLogger(__name__)
 
 
 # It is an adapter of hf phi4 mm processor to make it work for sglang

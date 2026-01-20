@@ -13,8 +13,9 @@
 # ==============================================================================
 """Sampling parameters for text generation."""
 
-import logging
 from typing import Any, Dict, List, Optional, Union
+
+from loguru import logger
 
 # sre_parse is deprecated in Python 3.11+, use re._parser instead
 try:
@@ -24,8 +25,6 @@ except ImportError:
 
 _SAMPLING_EPS = 1e-6
 TOP_K_ALL = 1 << 30
-
-logger = logging.getLogger(__name__)
 
 
 class SamplingParams:

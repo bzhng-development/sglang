@@ -1,8 +1,8 @@
-import logging
 from http import HTTPStatus
 from typing import List, Union
 
 from fastapi import Request
+from loguru import logger
 
 from sglang.srt.entrypoints.openai.protocol import (
     DetokenizeRequest,
@@ -12,8 +12,6 @@ from sglang.srt.entrypoints.openai.protocol import (
     TokenizeResponse,
 )
 from sglang.srt.entrypoints.openai.serving_base import OpenAIServingBase
-
-logger = logging.getLogger(__name__)
 
 
 class OpenAIServingTokenize(OpenAIServingBase):

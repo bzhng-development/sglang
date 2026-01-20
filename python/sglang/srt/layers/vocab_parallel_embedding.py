@@ -1,6 +1,5 @@
 # Adapted from https://github.com/vllm-project/vllm/blob/v0.6.3.post1/vllm/model_executor/layers/vocab_parallel_embedding.py
 
-import logging
 from dataclasses import dataclass
 from typing import List, Optional, Sequence, Tuple
 
@@ -40,8 +39,6 @@ DEFAULT_VOCAB_PADDING_SIZE = 64
 _is_cpu_amx_available = cpu_has_amx_support()
 _is_cpu = is_cpu()
 _is_npu = is_npu()
-
-logger = logging.getLogger(__name__)
 
 
 def pad_vocab_size(vocab_size: int, pad_to: int = DEFAULT_VOCAB_PADDING_SIZE) -> int:

@@ -15,11 +15,11 @@
 from __future__ import annotations
 
 import bisect
-import logging
 import time
 from typing import TYPE_CHECKING, Callable
 
 import torch
+from loguru import logger
 
 from sglang.srt.layers.dp_attention import DpPaddingMode, set_dp_buffer_len
 from sglang.srt.model_executor.cuda_graph_runner import (
@@ -54,9 +54,6 @@ if TYPE_CHECKING:
     from sglang.srt.speculative.multi_layer_eagle_worker_v2 import (
         MultiLayerEagleDraftWorker,
     )
-
-
-logger = logging.getLogger(__name__)
 
 
 class MultiLayerEagleDraftExtendCudaGraphRunner:
