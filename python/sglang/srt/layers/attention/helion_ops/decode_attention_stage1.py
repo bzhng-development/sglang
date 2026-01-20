@@ -19,6 +19,47 @@ which computes partial attention outputs for each KV split.
 
 Stage 1: For each (batch, head, split), compute attention over a portion of the KV cache
 Stage 2: Reduce the partial outputs across splits (not implemented here)
+
+=============================================================================
+HELION COMMON ERRORS TO AVOID (lessons learned during implementation):
+=============================================================================
+
+1. DO NOT use `slice(None)` in hl.load():
+   WRONG:  hl.load(tensor, [idx, slice(None)])
+   RIGHT:  Flatten tensor to 1D, compute flat indices, use hl.load(flat_tensor, [flat_idx])
+
+2. DO NOT use hl.tile() for dimensions with varying bounds per element:
+   WRONG:  for tile_b in hl.tile(batch):
+               seq_len = get_seq_len(tile_b)  # seq_len has shape [tile_b]
+               for tile_n in hl.tile(seq_len):  # Shape mismatch!
+   RIGHT:  for batch_idx in hl.grid(batch):  # Scalar batch index
+               seq_len = get_seq_len(batch_idx)  # seq_len is scalar
+               for tile_n in hl.tile(seq_len):  # Works!
+
+3. DO NOT forget to specialize dynamic values used in allocations:
+   WRONG:  att_out = torch.zeros([batch, num_heads, ...])  # Error if batch not specialized
+   RIGHT:  batch = hl.specialize(batch)
+           att_out = torch.zeros([batch, num_heads, ...])
+
+4. DO NOT mix tile shapes in comparisons without matching dimensions:
+   WRONG:  mask = tile_n.index < split_len  # If split_len has shape [tile_b], mismatch!
+   RIGHT:  Use hl.grid() for outer loop to get scalar split_len, then comparison works
+
+5. DO NOT use direct tensor indexing with multiple indirect indices:
+   WRONG:  k_blk = k_buffer[kv_loc, head_idx, :]  # slice not supported
+   RIGHT:  k_flat = k_buffer.view(-1)
+           flat_idx = kv_loc * stride + head_idx * head_dim + hl.arange(head_dim)
+           k_blk = hl.load(k_flat, [flat_idx], extra_mask=mask)
+
+6. DO understand the difference between hl.tile() and hl.grid():
+   - hl.tile() returns Tile objects that process multiple elements (vectorized)
+   - hl.grid() returns scalar indices (one element at a time)
+   - Use hl.tile() for parallelizable dimensions with uniform bounds
+   - Use hl.grid() for dimensions with data-dependent bounds or when you need scalars
+
+7. DO use hl.arange() to create index offsets for multi-dimensional access:
+   head_offsets = hl.arange(head_dim)
+   flat_idx_2d = base_idx[:, None] + head_offsets[None, :]  # Broadcasting works
 """
 
 from __future__ import annotations
