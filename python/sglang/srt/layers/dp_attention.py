@@ -469,7 +469,7 @@ def _dp_gather_via_all_reduce(
     ):
         from sglang.srt.distributed.parallel_state import inplace_all_reduce
 
-        inplace_all_reduce(global_tokens, group_name=get_tp_group().unique_name)
+        inplace_all_reduce(global_tokens, group_index=get_tp_group().group_index)
 
     else:
         global_tokens[:] = tensor_model_parallel_all_reduce(global_tokens)

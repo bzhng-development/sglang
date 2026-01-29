@@ -121,52 +121,61 @@ def _get_unique_name(name: str) -> str:
 
 
 _groups: Dict[str, Callable[[], Optional["GroupCoordinator"]]] = {}
+_group_list: List[Callable[[], Optional["GroupCoordinator"]]] = []
+
+# Integer constants for outplace all-reduce methods (avoid strings in compiled graphs)
+OUTPLACE_ALL_REDUCE_CA = 0
+OUTPLACE_ALL_REDUCE_QR = 1
+OUTPLACE_ALL_REDUCE_PYMSCCLPP = 2
+OUTPLACE_ALL_REDUCE_TORCH_SYMM_MEM = 3
 
 
 def _register_group(group: "GroupCoordinator") -> None:
+    group.group_index = len(_group_list)
+    _group_list.append(weakref.ref(group))
     _groups[group.unique_name] = weakref.ref(group)
 
 
 @register_custom_op(mutates_args=["tensor"])
 @register_split_op()
-def inplace_all_reduce(tensor: torch.Tensor, group_name: str) -> None:
-    assert group_name in _groups, f"Group {group_name} is not found."
-    group = _groups[group_name]()
+def inplace_all_reduce(tensor: torch.Tensor, group_index: int) -> None:
+    assert group_index < len(_group_list), f"Group index {group_index} is out of range."
+    group = _group_list[group_index]()
     if group is None:
-        raise ValueError(f"Group {group_name} is destroyed.")
+        raise ValueError(f"Group at index {group_index} is destroyed.")
     group._all_reduce_in_place(tensor)
 
 
 @register_custom_op(out_shape="tensor")
 def outplace_all_reduce(
-    tensor: torch.Tensor, group_name: str, outplace_all_reduce_method: str
+    tensor: torch.Tensor, group_index: int, outplace_all_reduce_method: int
 ) -> torch.Tensor:
-    assert group_name in _groups, f"Group {group_name} is not found."
-    group = _groups[group_name]()
+    assert group_index < len(_group_list), f"Group index {group_index} is out of range."
+    group = _group_list[group_index]()
     if group is None:
-        raise ValueError(f"Group {group_name} is destroyed.")
+        raise ValueError(f"Group at index {group_index} is destroyed.")
     return group._all_reduce_out_place(tensor, outplace_all_reduce_method)
 
 
 @register_custom_op(mutates_args=["output"])
 def reg_all_gather_into_tensor(
-    output: torch.Tensor, input: torch.Tensor, group_name: str
+    output: torch.Tensor, input: torch.Tensor, group_index: int
 ) -> None:
-    assert group_name in _groups, f"Group {group_name} is not found."
-    group = _groups[group_name]()
+    assert group_index < len(_group_list), f"Group index {group_index} is out of range."
+    group = _group_list[group_index]()
     if group is None:
-        raise ValueError(f"Group {group_name} is destroyed.")
+        raise ValueError(f"Group at index {group_index} is destroyed.")
     group._all_gather_into_tensor(output, input)
 
 
 @register_custom_op(mutates_args=["output"])
 def reg_reduce_scatter_tensor(
-    output: torch.Tensor, input: torch.Tensor, group_name: str
+    output: torch.Tensor, input: torch.Tensor, group_index: int
 ) -> None:
-    assert group_name in _groups, f"Group {group_name} is not found."
-    group = _groups[group_name]()
+    assert group_index < len(_group_list), f"Group index {group_index} is out of range."
+    group = _group_list[group_index]()
     if group is None:
-        raise ValueError(f"Group {group_name} is destroyed.")
+        raise ValueError(f"Group at index {group_index} is destroyed.")
     group._reduce_scatter_tensor(output, input)
 
 
@@ -205,6 +214,7 @@ class GroupCoordinator:
     use_message_queue_broadcaster: (
         bool  # a hint of whether to use message queue broadcaster
     )
+    group_index: int  # index in _group_list for torch.compile-friendly lookup
     # communicators are only created for world size > 1
     pynccl_comm: Optional[Any]  # PyNccl communicator
     ca_comm: Optional[Any]  # Custom allreduce communicator
@@ -590,50 +600,50 @@ class GroupCoordinator:
             and not self.ca_comm.disabled
             and self.ca_comm.should_custom_ar(input_)
         ):
-            outplace_all_reduce_method = "ca"
+            outplace_all_reduce_method = OUTPLACE_ALL_REDUCE_CA
         elif (
             self.qr_comm is not None
             and not self.qr_comm.disabled
             and self.qr_comm.should_quick_allreduce(input_)
         ):
-            outplace_all_reduce_method = "qr"
+            outplace_all_reduce_method = OUTPLACE_ALL_REDUCE_QR
         elif (
             self.pymscclpp_comm is not None
             and not self.pymscclpp_comm.disabled
             and self.pymscclpp_comm.should_mscclpp_allreduce(input_)
         ):
-            outplace_all_reduce_method = "pymscclpp"
+            outplace_all_reduce_method = OUTPLACE_ALL_REDUCE_PYMSCCLPP
         elif (
             self.torch_symm_mem_comm is not None
             and not self.torch_symm_mem_comm.disabled
             and self.torch_symm_mem_comm.should_torch_symm_mem_allreduce(input_)
         ):
-            outplace_all_reduce_method = "torch_symm_mem"
+            outplace_all_reduce_method = OUTPLACE_ALL_REDUCE_TORCH_SYMM_MEM
         if outplace_all_reduce_method is not None:
             return outplace_all_reduce(
                 input_,
-                group_name=self.unique_name,
+                group_index=self.group_index,
                 outplace_all_reduce_method=outplace_all_reduce_method,
             )
         else:
-            inplace_all_reduce(input_, group_name=self.unique_name)
+            inplace_all_reduce(input_, group_index=self.group_index)
             return input_
 
     def _all_reduce_out_place(
-        self, input_: torch.Tensor, outplace_all_reduce_method: str
+        self, input_: torch.Tensor, outplace_all_reduce_method: int
     ) -> torch.Tensor:
         ca_comm = self.ca_comm
         qr_comm = self.qr_comm
         pymscclpp_comm = self.pymscclpp_comm
         torch_symm_mem_comm = self.torch_symm_mem_comm
         assert any([qr_comm, ca_comm, pymscclpp_comm, torch_symm_mem_comm])
-        if outplace_all_reduce_method == "ca":
+        if outplace_all_reduce_method == OUTPLACE_ALL_REDUCE_CA:
             assert not ca_comm.disabled
             out = ca_comm.custom_all_reduce(input_)
-        elif outplace_all_reduce_method == "qr":
+        elif outplace_all_reduce_method == OUTPLACE_ALL_REDUCE_QR:
             assert not qr_comm.disabled
             out = qr_comm.quick_all_reduce(input_)
-        elif outplace_all_reduce_method == "torch_symm_mem":
+        elif outplace_all_reduce_method == OUTPLACE_ALL_REDUCE_TORCH_SYMM_MEM:
             assert not torch_symm_mem_comm.disabled
             out = torch_symm_mem_comm.all_reduce(input_)
         else:
@@ -675,7 +685,7 @@ class GroupCoordinator:
         if _is_npu:
             self._reduce_scatter_tensor(output, input)
         else:
-            reg_reduce_scatter_tensor(output, input, group_name=self.unique_name)
+            reg_reduce_scatter_tensor(output, input, group_index=self.group_index)
 
     def reduce_scatter(
         self,
@@ -739,7 +749,7 @@ class GroupCoordinator:
         if _is_npu or _is_xpu:
             self._all_gather_into_tensor(output, input)
         else:
-            reg_all_gather_into_tensor(output, input, group_name=self.unique_name)
+            reg_all_gather_into_tensor(output, input, group_index=self.group_index)
 
     def cp_all_gather_into_tensor_async(
         self, output: torch.Tensor, input: torch.Tensor, stream=None
