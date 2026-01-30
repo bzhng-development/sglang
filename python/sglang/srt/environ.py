@@ -310,6 +310,9 @@ class Envs:
     # Default to the pick from flashinfer
     SGLANG_FLASHINFER_FP4_GEMM_BACKEND = EnvStr("")
     SGLANG_FLASHINFER_WORKSPACE_SIZE = EnvInt(384 * 1024 * 1024)
+    # Threshold for using 8x4 scale factor layout in FP4 GEMM (TRTLLM backend only).
+    # Set to 0 to disable this optimization. Default is 64 (enable for M <= 64).
+    SGLANG_FP4_GEMM_8X4_SCALE_LAYOUT_THRESHOLD = EnvInt(64)
 
     # Triton
     SGLANG_TRITON_DECODE_ATTN_STATIC_KV_SPLITS = EnvBool(False)

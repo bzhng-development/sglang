@@ -67,10 +67,15 @@ if TYPE_CHECKING:
     )
 
 fp4_quantize = None
+# Track whether we're using FlashInfer's fp4_quantize (supports 8x4 scale layout)
+# vs sgl_kernel's scaled_fp4_quant (only supports 128x4 scale layout)
+fp4_quantize_supports_8x4_layout = False
 try:
     if is_sm120_supported():
         try:
             from flashinfer import fp4_quantize
+
+            fp4_quantize_supports_8x4_layout = True
         except ImportError:
             from sgl_kernel import scaled_fp4_quant as fp4_quantize
     else:
@@ -115,6 +120,7 @@ def _sglang_fp4_gemm_fake(
     alpha: torch.Tensor,
     out_dtype: torch.dtype,
     out_features: int,
+    use_8x4_sf_layout: bool = False,
 ) -> torch.Tensor:
     M = input.shape[-2]
     N = int(out_features)
@@ -130,13 +136,21 @@ def fp4_gemm(
     alpha: torch.Tensor,
     out_dtype: torch.dtype,
     out_features: int,
+    use_8x4_sf_layout: bool = False,
 ) -> torch.Tensor:
     fp4_backend = get_fp4_gemm_runner_backend()
     if enable_flashinfer_fp4_gemm:
         # Use the remapping logic to convert SGLang backend names to FlashInfer API names
         backend = fp4_backend.get_flashinfer_backend()
         return flashinfer_fp4_gemm(
-            input, weight, input_sf, weight_sf, alpha, out_dtype, backend=backend
+            input,
+            weight,
+            input_sf,
+            weight_sf,
+            alpha,
+            out_dtype,
+            backend=backend,
+            use_8x4_sf_layout=use_8x4_sf_layout,
         )
     else:
         return cutlass_fp4_gemm(input, weight, input_sf, weight_sf, alpha, out_dtype)
@@ -154,6 +168,14 @@ if is_cuda() and (not is_sm120_supported()) and (fp4_quantize is not None):
 CUTEDSL_MOE_SCALAR_INPUT_SCALE = get_bool_env_var(
     "SGLANG_CUTEDSL_MOE_SCALAR_INPUT_SCALE", "true"
 )
+
+# Threshold for using 8x4 scale layout in FP4 GEMM for low concurrency scenarios.
+# When M (batch size * sequence length) is below this threshold and using the
+# flashinfer_trtllm backend, we use 8x4 scale layout instead of 128x4 for better
+# performance (typically 5-10% improvement for small batch sizes).
+# Controlled by SGLANG_FP4_GEMM_8X4_SCALE_LAYOUT_THRESHOLD env var (default: 64).
+# Set to 0 to disable this optimization.
+FP4_GEMM_8X4_SCALE_LAYOUT_THRESHOLD = envs.SGLANG_FP4_GEMM_8X4_SCALE_LAYOUT_THRESHOLD.get()
 
 # TODO make it true by default when the DeepEP PR is merged
 MOE_NVFP4_DISPATCH = envs.SGLANG_MOE_NVFP4_DISPATCH.get()
@@ -1214,8 +1236,24 @@ class ModelOptFp4LinearMethod(LinearMethodBase):
         w_n, _ = layer.weight.shape
         output_shape = [x_m, w_n]
 
+        # Determine if we should use 8x4 scale layout for better low-concurrency perf.
+        # This optimization is only for FlashInfer TRTLLM backend with small batch sizes,
+        # and requires FlashInfer's fp4_quantize (which supports the is_sf_8x4_layout param).
+        fp4_backend = get_fp4_gemm_runner_backend()
+        use_8x4_sf_layout = (
+            enable_flashinfer_fp4_gemm
+            and fp4_quantize_supports_8x4_layout
+            and fp4_backend.is_flashinfer_trtllm()
+            and x_m <= FP4_GEMM_8X4_SCALE_LAYOUT_THRESHOLD
+        )
+
         # Quantize BF16 or FP16 to (FP4 and interleaved block scale)
-        x_fp4, x_scale_interleaved = fp4_quantize(x, layer.input_scale_inv)
+        # When use_8x4_sf_layout is True, we're guaranteed to be using FlashInfer's
+        # fp4_quantize (checked above), which supports the is_sf_8x4_layout parameter.
+        quantize_kwargs = {}
+        if use_8x4_sf_layout:
+            quantize_kwargs["is_sf_8x4_layout"] = True
+        x_fp4, x_scale_interleaved = fp4_quantize(x, layer.input_scale_inv, **quantize_kwargs)
 
         assert x_fp4.dtype == torch.uint8
         assert layer.weight.dtype == torch.uint8
@@ -1235,6 +1273,7 @@ class ModelOptFp4LinearMethod(LinearMethodBase):
             layer.alpha,
             output_dtype,
             w_n,
+            use_8x4_sf_layout=use_8x4_sf_layout,
         )
         if bias is not None:
             out = out + bias
