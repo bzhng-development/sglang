@@ -479,39 +479,46 @@ class Mxfp4MoEMethod(FusedMoEMethodBase):
             w13_bias = swap_every_two_rows(w13_bias, -1)
 
             # Shuffle weights and scaling factors for transposed mma output
-            gemm1_weights_mxfp4_shuffled = []
-            gemm1_scales_mxfp4_shuffled = []
-            gemm2_weights_mxfp4_shuffled = []
-            gemm2_scales_mxfp4_shuffled = []
-            gemm1_bias_shuffled = []
-            gemm2_bias_shuffled = []
+            # Use multiple CUDA streams to overlap per-expert shuffle kernels
             epilogue_tile_m = 128  # FIXME: this depends on the kernel internals
-            for i in range(self.num_experts):
-                gemm1_weights_mxfp4_shuffled.append(
-                    shuffle_matrix_a(w13_weight[i].view(torch.uint8), epilogue_tile_m)
-                )
-                gemm1_scales_mxfp4_shuffled.append(
-                    shuffle_matrix_sf_a(
-                        w13_weight_scale[i].view(torch.uint8), epilogue_tile_m
-                    )
-                )
-                gemm1_bias_shuffled.append(
-                    shuffle_matrix_a(
-                        w13_bias[i].clone().reshape(-1, 1), epilogue_tile_m
-                    )
-                )
+            num_streams = min(self.num_experts, 8)
+            streams = [torch.cuda.Stream() for _ in range(num_streams)]
+            results = [None] * self.num_experts
 
-                gemm2_weights_mxfp4_shuffled.append(
-                    shuffle_matrix_a(w2_weight[i].view(torch.uint8), epilogue_tile_m)
-                )
-                gemm2_scales_mxfp4_shuffled.append(
-                    shuffle_matrix_sf_a(
-                        w2_weight_scale[i].view(torch.uint8), epilogue_tile_m
+            for i in range(self.num_experts):
+                s = streams[i % num_streams]
+                with torch.cuda.stream(s):
+                    results[i] = (
+                        shuffle_matrix_a(
+                            w13_weight[i].view(torch.uint8), epilogue_tile_m
+                        ),
+                        shuffle_matrix_sf_a(
+                            w13_weight_scale[i].view(torch.uint8), epilogue_tile_m
+                        ),
+                        shuffle_matrix_a(
+                            w13_bias[i].clone().reshape(-1, 1), epilogue_tile_m
+                        ),
+                        shuffle_matrix_a(
+                            w2_weight[i].view(torch.uint8), epilogue_tile_m
+                        ),
+                        shuffle_matrix_sf_a(
+                            w2_weight_scale[i].view(torch.uint8), epilogue_tile_m
+                        ),
+                        shuffle_matrix_a(
+                            w2_bias[i].clone().reshape(-1, 1), epilogue_tile_m
+                        ),
                     )
-                )
-                gemm2_bias_shuffled.append(
-                    shuffle_matrix_a(w2_bias[i].clone().reshape(-1, 1), epilogue_tile_m)
-                )
+
+            # Sync all streams before torch.stack on the default stream
+            for s in streams:
+                torch.cuda.current_stream().wait_stream(s)
+
+            gemm1_weights_mxfp4_shuffled = [r[0] for r in results]
+            gemm1_scales_mxfp4_shuffled = [r[1] for r in results]
+            gemm1_bias_shuffled = [r[2] for r in results]
+            gemm2_weights_mxfp4_shuffled = [r[3] for r in results]
+            gemm2_scales_mxfp4_shuffled = [r[4] for r in results]
+            gemm2_bias_shuffled = [r[5] for r in results]
 
             w13_weight = torch.stack(gemm1_weights_mxfp4_shuffled)
             w13_weight_scale = (
