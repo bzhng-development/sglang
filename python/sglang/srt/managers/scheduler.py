@@ -127,7 +127,11 @@ from sglang.srt.managers.io_struct import (
     UpdateWeightsFromIPCReqInput,
     UpdateWeightsFromTensorReqInput,
 )
-from sglang.srt.managers.mm_utils import init_mm_embedding_cache, unwrap_shm_features
+from sglang.srt.managers.mm_utils import (
+    clear_mm_embedding_cache,
+    init_mm_embedding_cache,
+    unwrap_shm_features,
+)
 from sglang.srt.managers.overlap_utils import FutureMap
 from sglang.srt.managers.prefill_delayer import (
     PrefillDelayer,
@@ -2573,6 +2577,7 @@ class Scheduler(
             self.req_to_token_pool.clear()
             self.token_to_kv_pool_allocator.clear()
             self.grammar_manager.clear()
+            clear_mm_embedding_cache()
             self.reset_metrics()
 
             if self.draft_worker:
