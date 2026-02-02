@@ -683,7 +683,7 @@ async def classify_request(obj: EmbeddingReqInput, request: Request):
 @app.api_route("/flush_cache", methods=["GET", "POST"])
 @auth_level(AuthLevel.ADMIN_OPTIONAL)
 async def flush_cache():
-    """Flush the radix cache and multimodal embedding cache."""
+    """Flush the radix cache and the multimodal embedding cache (chunked-prefill cache; does not require --enable-prefix-mm-cache)."""
     ret = await _global_state.tokenizer_manager.flush_cache()
     return Response(
         content="Cache flushed.\nPlease check backend logs for more details. "
