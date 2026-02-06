@@ -511,14 +511,15 @@ class TestMXFP8DenseLinear(CustomTestCase):
             weight_fp8_fi, weight_scale_fi = prepare_mxfp8_weight_for_flashinfer(
                 weight_q, weight_scale_u8
             )
+            weight_t_fi = weight_fp8_fi.t()
             out_flashinfer = flashinfer_mxfp8_blockscaled_linear(
                 input=input_fp16,
-                weight_fp8=weight_fp8_fi,
+                weight_t=weight_t_fi,
                 weight_scale_flashinfer=weight_scale_fi,
             )
             out_flashinfer_prequant = flashinfer_mxfp8_blockscaled_linear(
                 input=q_input,
-                weight_fp8=weight_fp8_fi,
+                weight_t=weight_t_fi,
                 weight_scale_flashinfer=weight_scale_fi,
                 input_scale=input_scale_u8,
                 output_dtype=dtype,

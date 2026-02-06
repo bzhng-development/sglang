@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from enum import Enum
 from functools import lru_cache
-from typing import TYPE_CHECKING, Callable, List, Optional, Tuple
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple
 
 import torch
 
@@ -851,9 +851,24 @@ def prepare_mxfp8_weight_for_flashinfer(
     return weight_fp8, weight_sf
 
 
+# Cached (32, K) buffers for M<32 padding — avoids allocation per decode call.
+# Keyed by K dimension since different layers have different K.
+_flashinfer_m_pad_buffers: Dict[int, torch.Tensor] = {}
+
+
+def _get_flashinfer_m_pad_buffer(
+    k: int, device: torch.device, dtype: torch.dtype
+) -> torch.Tensor:
+    buf = _flashinfer_m_pad_buffers.get(k)
+    if buf is None or buf.device != device or buf.dtype != dtype:
+        buf = torch.zeros((32, k), device=device, dtype=dtype)
+        _flashinfer_m_pad_buffers[k] = buf
+    return buf
+
+
 def flashinfer_mxfp8_blockscaled_linear(
     input: torch.Tensor,
-    weight_fp8: torch.Tensor,
+    weight_t: torch.Tensor,
     weight_scale_flashinfer: torch.Tensor,
     input_scale: Optional[torch.Tensor] = None,
     bias: Optional[torch.Tensor] = None,
@@ -861,8 +876,8 @@ def flashinfer_mxfp8_blockscaled_linear(
 ) -> torch.Tensor:
     """MXFP8 dense linear using FlashInfer mm_mxfp8 (CUTLASS backend).
 
-    Expects pre-computed weight_fp8 (N, K) and weight_scale_flashinfer (1D swizzled)
-    in uint8 format (from prepare_mxfp8_weight_for_flashinfer).
+    Expects pre-computed weight_t (K, N) column-major transpose view and
+    weight_scale_flashinfer (1D swizzled uint8) from prepare_mxfp8_weight_for_flashinfer.
     """
     if not (_is_cuda and is_sm100_supported()):
         raise RuntimeError("MXFP8 FlashInfer linear requires Blackwell GPUs (SM100+).")
@@ -880,12 +895,11 @@ def flashinfer_mxfp8_blockscaled_linear(
         ).view(input.shape)
         input_scale = None
 
-    input_2d = input.view(-1, input.shape[-1]).contiguous()
-    n, k = weight_fp8.shape
+    k, n = weight_t.shape
+    input_2d = input.view(-1, k).contiguous()
     output_shape = [*input.shape[:-1], n]
 
     m = input_2d.shape[0]
-    assert input_2d.shape[1] == k, f"K mismatch: input {input_2d.shape[1]} vs weight {k}"
 
     if output_dtype is None:
         if input_2d.dtype in (torch.float16, torch.bfloat16, torch.float32):
@@ -896,23 +910,16 @@ def flashinfer_mxfp8_blockscaled_linear(
     # FlashInfer requires M >= 32; pad bf16 input before quantization
     m_actual = m
     if m < 32:
-        pad_rows = 32 - m
-        input_2d = torch.cat(
-            [
-                input_2d,
-                torch.zeros(
-                    (pad_rows, k), device=input_2d.device, dtype=input_2d.dtype
-                ),
-            ],
-            dim=0,
-        )
+        # Use pre-allocated zero buffer to avoid allocation per call
+        buf = _get_flashinfer_m_pad_buffer(k, input_2d.device, input_2d.dtype)
+        buf[:m, :] = input_2d
+        buf[m:, :] = 0
+        input_2d = buf
 
     # Quantize input with FlashInfer (swizzled scales)
     q_input, x_sf = _flashinfer_mxfp8_quantize(
         input_2d, is_sf_swizzled_layout=True
     )
-
-    weight_t = weight_fp8.t()
 
     output = _flashinfer_mm_mxfp8(
         q_input,

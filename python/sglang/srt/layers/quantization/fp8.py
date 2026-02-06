@@ -499,6 +499,8 @@ class Fp8LinearMethod(LinearMethodBase):
             layer.weight.data, layer.weight_scale_inv.data
         )
         layer.weight_fp8_flashinfer = weight_fp8
+        # Pre-compute transpose view — mm_mxfp8 expects (K, N) column-major
+        layer.weight_t_flashinfer = weight_fp8.t()
         layer.weight_scale_flashinfer = weight_scale_flashinfer
         logger.debug(
             "MXFP8 FlashInfer: pre-computed weight %s and swizzled scale %s",
@@ -642,7 +644,7 @@ class Fp8LinearMethod(LinearMethodBase):
             if backend.is_flashinfer():
                 return flashinfer_mxfp8_blockscaled_linear(
                     input=input_data,
-                    weight_fp8=layer.weight_fp8_flashinfer,
+                    weight_t=layer.weight_t_flashinfer,
                     weight_scale_flashinfer=layer.weight_scale_flashinfer,
                     input_scale=input_scale,
                     bias=bias,
