@@ -507,7 +507,8 @@ class TestMXFP8DenseLinear(CustomTestCase):
                 output_dtype=dtype,
             )
 
-            # FlashInfer path
+            # FlashInfer path (no pre-quantized variant — FlashInfer always
+            # quantizes input itself to produce swizzled scales)
             weight_fp8_fi, weight_scale_fi = prepare_mxfp8_weight_for_flashinfer(
                 weight_q, weight_scale_u8
             )
@@ -517,13 +518,6 @@ class TestMXFP8DenseLinear(CustomTestCase):
                 weight_t=weight_t_fi,
                 weight_scale_flashinfer=weight_scale_fi,
             )
-            out_flashinfer_prequant = flashinfer_mxfp8_blockscaled_linear(
-                input=q_input,
-                weight_t=weight_t_fi,
-                weight_scale_flashinfer=weight_scale_fi,
-                input_scale=input_scale_u8,
-                output_dtype=dtype,
-            )
 
         for label, result in [
             ("triton", out),
@@ -531,7 +525,6 @@ class TestMXFP8DenseLinear(CustomTestCase):
             ("cublas", out_cublas),
             ("cublas_prequant", out_cublas_prequant),
             ("flashinfer", out_flashinfer),
-            ("flashinfer_prequant", out_flashinfer_prequant),
         ]:
             self.assertTrue(
                 torch.mean(

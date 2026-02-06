@@ -838,6 +838,17 @@ def prepare_mxfp8_weight_for_flashinfer(
     Dequantizes the checkpoint FP8 weight back to bf16, then re-quantizes via
     FlashInfer to obtain the swizzled 1D scale layout required for correct
     CUTLASS MXFP8 GEMM results.
+
+    Why dequant→requant instead of just converting scales?
+    The two quantizers (Triton mxfp8_group_quantize and flashinfer.mxfp8_quantize)
+    produce identical fp8 values and UE8M0 scales for the same input — both follow
+    the OCP MXFP8 spec. In principle we could keep the fp8 data and only permute
+    the (N, K//32) uint8 scales into FlashInfer's swizzled 1D layout. However:
+    (1) FlashInfer's swizzle is done inside a fused CUDA quantization kernel, not
+        exposed as a standalone op.
+    (2) The trtllm block_scale_interleave op could do this permutation but is not
+        available in our environment.
+    (3) This function runs once at model load, so the cost is negligible.
     """
     n, k = weight.shape
     assert n % 128 == 0, f"N={n} must be divisible by 128 for MXFP8"
@@ -870,14 +881,30 @@ def flashinfer_mxfp8_blockscaled_linear(
     input: torch.Tensor,
     weight_t: torch.Tensor,
     weight_scale_flashinfer: torch.Tensor,
-    input_scale: Optional[torch.Tensor] = None,
     bias: Optional[torch.Tensor] = None,
     output_dtype: Optional[torch.dtype] = None,
 ) -> torch.Tensor:
     """MXFP8 dense linear using FlashInfer mm_mxfp8 (CUTLASS backend).
 
-    Expects pre-computed weight_t (K, N) column-major transpose view and
-    weight_scale_flashinfer (1D swizzled uint8) from prepare_mxfp8_weight_for_flashinfer.
+    Expects bf16 input and pre-computed weight_t (K, N) column-major transpose
+    view with weight_scale_flashinfer (1D swizzled uint8) from
+    prepare_mxfp8_weight_for_flashinfer.
+
+    Input is quantized per-call with flashinfer.mxfp8_quantize (swizzled=True).
+    Pre-quantized (fp8, scale_u8) input is NOT supported because FlashInfer's
+    CUTLASS MXFP8 kernel requires swizzled 1D scales, and there is no cheap
+    conversion from the natural 2D uint8 layout that mxfp8_group_quantize
+    produces. (The fp8 values themselves are identical between the two
+    quantizers, but the scale layout is not.)
+
+    Note on the swizzled scale requirement: FlashInfer's mm_mxfp8 also accepts
+    non-swizzled 2D scales (M, K//32), but that CUTLASS code path has a bug —
+    it produces ~0.35 relative error and ~0.94 cosine similarity vs the
+    reference, even when using FlashInfer's own quantizer for both operands.
+    The swizzled 1D path gives ~0.0000 relative error. Performance between the
+    two paths is identical, so we always use swizzled. This was observed on
+    B200 (SM100) with FlashInfer 0.6.3 / CUTLASS 3.x and may be fixed in a
+    future release.
     """
     if not (_is_cuda and is_sm100_supported()):
         raise RuntimeError("MXFP8 FlashInfer linear requires Blackwell GPUs (SM100+).")
@@ -885,15 +912,6 @@ def flashinfer_mxfp8_blockscaled_linear(
     if not hasattr(flashinfer_mxfp8_blockscaled_linear, "_logged"):
         logger.info("Using FlashInfer MXFP8 dense linear (mm_mxfp8)")
         flashinfer_mxfp8_blockscaled_linear._logged = True
-
-    # If pre-quantized input (tuple path), dequant back to bf16 so FlashInfer
-    # can re-quantize with swizzled scales for correctness.
-    if input_scale is not None:
-        input = _mxfp8_dequantize(
-            input.view(-1, input.shape[-1]),
-            input_scale.view(-1, input_scale.shape[-1]),
-        ).view(input.shape)
-        input_scale = None
 
     k, n = weight_t.shape
     input_2d = input.view(-1, k).contiguous()

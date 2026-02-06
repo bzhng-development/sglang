@@ -45,6 +45,7 @@ from sglang.srt.layers.quantization.fp8_kernel import (
     scaled_fp8_quant,
 )
 from sglang.srt.layers.quantization.fp8_utils import (
+    _mxfp8_dequantize,
     apply_fp8_linear,
     can_auto_enable_marlin_fp8,
     cublas_mxfp8_blockscaled_linear,
@@ -642,11 +643,17 @@ class Fp8LinearMethod(LinearMethodBase):
             input_scale = x[1] if isinstance(x, tuple) else None
             backend = get_mxfp8_gemm_backend()
             if backend.is_flashinfer():
+                # FlashInfer path always quantizes input itself (needs swizzled
+                # scales). If input arrives pre-quantized, dequant first.
+                if input_scale is not None:
+                    input_data = _mxfp8_dequantize(
+                        input_data.view(-1, input_data.shape[-1]),
+                        input_scale.view(-1, input_scale.shape[-1]),
+                    ).view(input_data.shape)
                 return flashinfer_mxfp8_blockscaled_linear(
                     input=input_data,
                     weight_t=layer.weight_t_flashinfer,
                     weight_scale_flashinfer=layer.weight_scale_flashinfer,
-                    input_scale=input_scale,
                     bias=bias,
                 )
             return cublas_mxfp8_blockscaled_linear(
