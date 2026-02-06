@@ -50,10 +50,13 @@ from sglang.srt.layers.quantization.fp8_utils import (
     cublas_mxfp8_blockscaled_linear,
     cutlass_fp8_supported,
     dispatch_w8a8_block_fp8_linear,
+    flashinfer_mxfp8_blockscaled_linear,
+    get_mxfp8_gemm_backend,
     input_to_float8,
     mxfp8_group_quantize,
     normalize_e4m3fn_to_e4m3fnuz,
     prepare_mxfp8_weight_for_cublas,
+    prepare_mxfp8_weight_for_flashinfer,
     requant_weight_ue8m0_inplace,
     triton_mxfp8_blockscaled_linear,
 )
@@ -419,8 +422,12 @@ class Fp8LinearMethod(LinearMethodBase):
                 # Keep parameter object to preserve weight_loader attrs for hot reload.
                 layer.weight_scale_inv.requires_grad_(False)
                 layer.weight_scale_inv.format_ue8m0 = True
-            # Pre-compute weight transpose + interleaved scales for cuBLAS
-            self._prepare_mxfp8_cublas(layer)
+            # Pre-compute weight transpose + scales in backend-appropriate format
+            backend = get_mxfp8_gemm_backend()
+            if backend.is_flashinfer():
+                self._prepare_mxfp8_flashinfer(layer)
+            else:
+                self._prepare_mxfp8_cublas(layer)
             return
         else:
             # For fp8 linear weights run with deepgemm, the weights and scales need be requantized to ue8m0
@@ -483,6 +490,20 @@ class Fp8LinearMethod(LinearMethodBase):
             "MXFP8 cuBLAS: pre-computed weight_t %s and scale %s",
             tuple(weight_t.shape),
             tuple(weight_scale_cublas.shape),
+        )
+
+    @staticmethod
+    def _prepare_mxfp8_flashinfer(layer: Module) -> None:
+        """Re-quantize weight with FlashInfer to get swizzled scales."""
+        weight_fp8, weight_scale_flashinfer = prepare_mxfp8_weight_for_flashinfer(
+            layer.weight.data, layer.weight_scale_inv.data
+        )
+        layer.weight_fp8_flashinfer = weight_fp8
+        layer.weight_scale_flashinfer = weight_scale_flashinfer
+        logger.debug(
+            "MXFP8 FlashInfer: pre-computed weight %s and swizzled scale %s",
+            tuple(weight_fp8.shape),
+            tuple(weight_scale_flashinfer.shape),
         )
 
     def process_weights_after_loading(self, layer: Module) -> None:
@@ -615,19 +636,22 @@ class Fp8LinearMethod(LinearMethodBase):
             )
 
         if self.use_mxfp8:
-            if isinstance(x, tuple):
-                return cublas_mxfp8_blockscaled_linear(
-                    input=x[0],
-                    weight_t=layer.weight_t,
-                    weight_scale_cublas=layer.weight_scale_cublas,
-                    input_scale=x[1],
+            input_data = x[0] if isinstance(x, tuple) else x
+            input_scale = x[1] if isinstance(x, tuple) else None
+            backend = get_mxfp8_gemm_backend()
+            if backend.is_flashinfer():
+                return flashinfer_mxfp8_blockscaled_linear(
+                    input=input_data,
+                    weight_fp8=layer.weight_fp8_flashinfer,
+                    weight_scale_flashinfer=layer.weight_scale_flashinfer,
+                    input_scale=input_scale,
                     bias=bias,
                 )
             return cublas_mxfp8_blockscaled_linear(
-                input=x,
+                input=input_data,
                 weight_t=layer.weight_t,
                 weight_scale_cublas=layer.weight_scale_cublas,
-                input_scale=None,
+                input_scale=input_scale,
                 bias=bias,
             )
 

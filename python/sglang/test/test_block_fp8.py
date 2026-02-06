@@ -16,9 +16,11 @@ from sglang.srt.layers.quantization.fp8_kernel import (
 )
 from sglang.srt.layers.quantization.fp8_utils import (
     cublas_mxfp8_blockscaled_linear,
+    flashinfer_mxfp8_blockscaled_linear,
     input_to_float8,
     mxfp8_group_quantize,
     prepare_mxfp8_weight_for_cublas,
+    prepare_mxfp8_weight_for_flashinfer,
     triton_mxfp8_blockscaled_linear,
 )
 from sglang.srt.utils import is_sm100_supported
@@ -505,11 +507,30 @@ class TestMXFP8DenseLinear(CustomTestCase):
                 output_dtype=dtype,
             )
 
+            # FlashInfer path
+            weight_fp8_fi, weight_scale_fi = prepare_mxfp8_weight_for_flashinfer(
+                weight_q, weight_scale_u8
+            )
+            out_flashinfer = flashinfer_mxfp8_blockscaled_linear(
+                input=input_fp16,
+                weight_fp8=weight_fp8_fi,
+                weight_scale_flashinfer=weight_scale_fi,
+            )
+            out_flashinfer_prequant = flashinfer_mxfp8_blockscaled_linear(
+                input=q_input,
+                weight_fp8=weight_fp8_fi,
+                weight_scale_flashinfer=weight_scale_fi,
+                input_scale=input_scale_u8,
+                output_dtype=dtype,
+            )
+
         for label, result in [
             ("triton", out),
             ("triton_prequant", out_prequant),
             ("cublas", out_cublas),
             ("cublas_prequant", out_cublas_prequant),
+            ("flashinfer", out_flashinfer),
+            ("flashinfer_prequant", out_flashinfer_prequant),
         ]:
             self.assertTrue(
                 torch.mean(

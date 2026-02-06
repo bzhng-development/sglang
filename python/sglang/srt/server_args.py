@@ -211,6 +211,11 @@ FP4_GEMM_RUNNER_BACKEND_CHOICES = [
     "flashinfer_trtllm",
 ]
 
+MXFP8_GEMM_BACKEND_CHOICES = [
+    "cublas",
+    "flashinfer",
+]
+
 MAMBA_SSM_DTYPE_CHOICES = ["float32", "bfloat16"]
 
 MAMBA_SCHEDULER_STRATEGY_CHOICES = ["auto", "no_buffer", "extra_buffer"]
@@ -449,6 +454,7 @@ class ServerArgs:
     mm_attention_backend: Optional[str] = None
     fp8_gemm_runner_backend: str = "auto"
     fp4_gemm_runner_backend: str = "auto"
+    mxfp8_gemm_backend: str = "cublas"
     nsa_prefill_backend: Optional[str] = (
         None  # None = auto-detect based on hardware/kv_cache_dtype
     )
@@ -3795,6 +3801,17 @@ class ServerArgs:
             "'flashinfer_trtllm' (FlashInfer TensorRT-LLM backend, requires different weight preparation with shuffling). "
             "NOTE: This replaces the deprecated environment variable "
             "SGLANG_FLASHINFER_FP4_GEMM_BACKEND.",
+        )
+        parser.add_argument(
+            "--mxfp8-gemm-backend",
+            type=str,
+            choices=MXFP8_GEMM_BACKEND_CHOICES,
+            default=ServerArgs.mxfp8_gemm_backend,
+            dest="mxfp8_gemm_backend",
+            help="Choose the backend for MXFP8 dense GEMM operations. "
+            "Options: 'cublas' (default, uses torch._scaled_mm), "
+            "'flashinfer' (uses flashinfer.mm_mxfp8 CUTLASS kernel). "
+            "Requires Blackwell GPUs (SM100+).",
         )
         parser.add_argument(
             "--disable-flashinfer-autotune",

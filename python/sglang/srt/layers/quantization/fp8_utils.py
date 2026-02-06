@@ -166,6 +166,22 @@ class Fp8GemmRunnerBackend(Enum):
 FP8_GEMM_RUNNER_BACKEND: Fp8GemmRunnerBackend | None = None
 
 
+class Mxfp8GemmBackend(Enum):
+    """Enum for MXFP8 GEMM backend selection."""
+
+    CUBLAS = "cublas"
+    FLASHINFER = "flashinfer"
+
+    def is_cublas(self) -> bool:
+        return self == Mxfp8GemmBackend.CUBLAS
+
+    def is_flashinfer(self) -> bool:
+        return self == Mxfp8GemmBackend.FLASHINFER
+
+
+MXFP8_GEMM_BACKEND: Mxfp8GemmBackend | None = None
+
+
 def _check_cutlass_block_fp8_hardware_support() -> bool:
     """Return True if CUTLASS block FP8 is supported (Hopper or newer with CUDA 12.0+)."""
     return is_sm90_supported() or is_blackwell_supported()
@@ -173,6 +189,8 @@ def _check_cutlass_block_fp8_hardware_support() -> bool:
 
 if is_blackwell_supported() and is_flashinfer_available():
     from flashinfer.gemm import gemm_fp8_nt_groupwise
+    from flashinfer.gemm import mm_mxfp8 as _flashinfer_mm_mxfp8
+    from flashinfer import mxfp8_quantize as _flashinfer_mxfp8_quantize
 
 if is_sm90_supported() and is_flashinfer_available():
     # FlashInfer SM90 DeepGEMM with automatic swapAB optimization for small M
@@ -305,6 +323,20 @@ def get_fp8_gemm_runner_backend() -> Fp8GemmRunnerBackend:
     if FP8_GEMM_RUNNER_BACKEND is None:
         FP8_GEMM_RUNNER_BACKEND = Fp8GemmRunnerBackend.AUTO
     return FP8_GEMM_RUNNER_BACKEND
+
+
+def initialize_mxfp8_gemm_config(server_args: ServerArgs) -> None:
+    """Initialize MXFP8 GEMM configuration from server_args."""
+    global MXFP8_GEMM_BACKEND
+    MXFP8_GEMM_BACKEND = Mxfp8GemmBackend(server_args.mxfp8_gemm_backend)
+
+
+def get_mxfp8_gemm_backend() -> Mxfp8GemmBackend:
+    """Get the current MXFP8 GEMM backend."""
+    global MXFP8_GEMM_BACKEND
+    if MXFP8_GEMM_BACKEND is None:
+        MXFP8_GEMM_BACKEND = Mxfp8GemmBackend.CUBLAS
+    return MXFP8_GEMM_BACKEND
 
 
 def flashinfer_gemm_w8a8_block_fp8_linear_with_fallback(
@@ -772,6 +804,125 @@ def cublas_mxfp8_blockscaled_linear(
     )
 
     output = output[:m, :]
+    if bias is not None:
+        output += bias
+    return output.view(*output_shape)
+
+
+def _mxfp8_dequantize(fp8_data: torch.Tensor, scale_u8: torch.Tensor) -> torch.Tensor:
+    """Dequantize MXFP8 data back to bf16.
+
+    fp8_data: (M, K) float8_e4m3fn — raw FP8 values (scaled down by group exponent)
+    scale_u8: (M, K//32) uint8 — UE8M0 shared exponents per group of 32
+    Returns: (M, K) bfloat16 — reconstructed values
+    """
+    group_size = 32
+    m, k = fp8_data.shape
+    n_groups = k // group_size
+    # UE8M0: value = 2^(exponent - 127)
+    scales_f32 = torch.pow(
+        2.0, scale_u8.to(dtype=torch.float32, device=fp8_data.device) - 127.0
+    )
+    fp32_data = fp8_data.to(torch.float32).view(m, n_groups, group_size)
+    scales_exp = scales_f32.view(m, n_groups, 1)
+    return (fp32_data * scales_exp).view(m, k).to(torch.bfloat16)
+
+
+def prepare_mxfp8_weight_for_flashinfer(
+    weight: torch.Tensor,
+    weight_scale: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Pre-compute weight data and swizzled scales for FlashInfer MXFP8.
+
+    Called once at model load time.  Returns (weight_fp8, weight_scale_swizzled).
+    Dequantizes the checkpoint FP8 weight back to bf16, then re-quantizes via
+    FlashInfer to obtain the swizzled 1D scale layout required for correct
+    CUTLASS MXFP8 GEMM results.
+    """
+    n, k = weight.shape
+    assert n % 128 == 0, f"N={n} must be divisible by 128 for MXFP8"
+    assert k % 128 == 0, f"K={k} must be divisible by 128 for MXFP8"
+    # Properly dequantize: fp8_val * 2^(scale-127) → bf16
+    weight_bf16 = _mxfp8_dequantize(weight, weight_scale)
+    # Re-quantize with FlashInfer to get swizzled scales
+    weight_fp8, weight_sf = _flashinfer_mxfp8_quantize(
+        weight_bf16, is_sf_swizzled_layout=True
+    )
+    return weight_fp8, weight_sf
+
+
+def flashinfer_mxfp8_blockscaled_linear(
+    input: torch.Tensor,
+    weight_fp8: torch.Tensor,
+    weight_scale_flashinfer: torch.Tensor,
+    input_scale: Optional[torch.Tensor] = None,
+    bias: Optional[torch.Tensor] = None,
+    output_dtype: Optional[torch.dtype] = None,
+) -> torch.Tensor:
+    """MXFP8 dense linear using FlashInfer mm_mxfp8 (CUTLASS backend).
+
+    Expects pre-computed weight_fp8 (N, K) and weight_scale_flashinfer (1D swizzled)
+    in uint8 format (from prepare_mxfp8_weight_for_flashinfer).
+    """
+    if not (_is_cuda and is_sm100_supported()):
+        raise RuntimeError("MXFP8 FlashInfer linear requires Blackwell GPUs (SM100+).")
+
+    if not hasattr(flashinfer_mxfp8_blockscaled_linear, "_logged"):
+        logger.info("Using FlashInfer MXFP8 dense linear (mm_mxfp8)")
+        flashinfer_mxfp8_blockscaled_linear._logged = True
+
+    # If pre-quantized input (tuple path), dequant back to bf16 so FlashInfer
+    # can re-quantize with swizzled scales for correctness.
+    if input_scale is not None:
+        input = _mxfp8_dequantize(
+            input.view(-1, input.shape[-1]),
+            input_scale.view(-1, input_scale.shape[-1]),
+        ).view(input.shape)
+        input_scale = None
+
+    input_2d = input.view(-1, input.shape[-1]).contiguous()
+    n, k = weight_fp8.shape
+    output_shape = [*input.shape[:-1], n]
+
+    m = input_2d.shape[0]
+    assert input_2d.shape[1] == k, f"K mismatch: input {input_2d.shape[1]} vs weight {k}"
+
+    if output_dtype is None:
+        if input_2d.dtype in (torch.float16, torch.bfloat16, torch.float32):
+            output_dtype = input_2d.dtype
+        else:
+            output_dtype = torch.bfloat16
+
+    # FlashInfer requires M >= 32; pad bf16 input before quantization
+    m_actual = m
+    if m < 32:
+        pad_rows = 32 - m
+        input_2d = torch.cat(
+            [
+                input_2d,
+                torch.zeros(
+                    (pad_rows, k), device=input_2d.device, dtype=input_2d.dtype
+                ),
+            ],
+            dim=0,
+        )
+
+    # Quantize input with FlashInfer (swizzled scales)
+    q_input, x_sf = _flashinfer_mxfp8_quantize(
+        input_2d, is_sf_swizzled_layout=True
+    )
+
+    weight_t = weight_fp8.t()
+
+    output = _flashinfer_mm_mxfp8(
+        q_input,
+        weight_t,
+        x_sf,
+        weight_scale_flashinfer,
+        out_dtype=output_dtype,
+    )
+
+    output = output[:m_actual, :]
     if bias is not None:
         output += bias
     return output.view(*output_shape)

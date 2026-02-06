@@ -17,9 +17,16 @@ Benchmark for MXFP8 block-scaled matrix multiplication.
 Strategies tested:
   - Baseline: Tutorial kernel from sglang (simple linear pid mapping)
   - Split-K: Split K dimension across blocks for increased SM occupancy
+  - cuBLAS: torch._scaled_mm with MXFP8 (production path)
+  - FlashInfer: flashinfer.mm_mxfp8 CUTLASS MXFP8 GEMM
 
 Usage:
-    python bench_mxfp8_gemm.py
+    python bench_mxfp8_gemm.py                   # Full Triton split-K sweep
+    python bench_mxfp8_gemm.py --cublas-fused     # cuBLAS vs Triton vs BF16
+    python bench_mxfp8_gemm.py --torch-only       # torch._scaled_mm only
+    python bench_mxfp8_gemm.py --flashinfer-only  # FlashInfer mm_mxfp8 only
+    python bench_mxfp8_gemm.py --cublas-only      # cuBLAS only
+    python bench_mxfp8_gemm.py --compare          # cuBLAS vs FlashInfer head-to-head
 """
 
 import sys
@@ -350,6 +357,111 @@ def bench_cublas_fused(M, N, K):
     return ms, tflops
 
 
+def bench_flashinfer_mm_mxfp8(M, N, K):
+    """Benchmark FlashInfer mm_mxfp8 (CUTLASS MXFP8 GEMM).
+
+    Uses flashinfer.mxfp8_quantize for quantization and flashinfer.mm_mxfp8
+    for the GEMM, with swizzled 1D scale layout.
+    """
+    import flashinfer
+
+    x = torch.randn((M, K), device="cuda", dtype=torch.bfloat16)
+    w = torch.randn((N, K), device="cuda", dtype=torch.bfloat16)
+
+    # Quantize using FlashInfer's native quantization
+    a_mx, a_sf = flashinfer.mxfp8_quantize(x, is_sf_swizzled_layout=True)
+    w_mx, w_sf = flashinfer.mxfp8_quantize(w, is_sf_swizzled_layout=True)
+    w_mx_t = w_mx.t()  # column-major view (k, n)
+
+    # Warmup to trigger JIT compilation
+    flashinfer.mm_mxfp8(a_mx, w_mx_t, a_sf, w_sf, out_dtype=torch.bfloat16)
+
+    def run(a_mx, w_mx_t, a_sf, w_sf):
+        return flashinfer.mm_mxfp8(
+            a_mx, w_mx_t, a_sf, w_sf, out_dtype=torch.bfloat16,
+        )
+
+    measurements = bench_gpu_time(
+        run, input_args=(a_mx, w_mx_t, a_sf, w_sf), use_cuda_graph=True,
+    )
+    ms = np.median(measurements)
+    tflops = 2 * M * N * K * 1e-9 / ms
+    return ms, tflops
+
+
+def bench_cublas_only(M, N, K):
+    """Benchmark cuBLAS MXFP8 via torch._scaled_mm (GEMM-only, no quantization).
+
+    Pre-quantizes both inputs and measures only the GEMM kernel time.
+    Uses the same scale format as the production cublas_mxfp8_blockscaled_linear.
+    """
+    (_, _pack_mxfp8_scales, mxfp8_group_quantize,
+     _interleave_mxfp8_scales_for_cublas, _, _) = get_mxfp8_functions()
+
+    x = torch.randn((M, K), device="cuda", dtype=torch.bfloat16)
+    w = torch.randn((N, K), device="cuda", dtype=torch.bfloat16)
+    x_fp8, x_scale = mxfp8_group_quantize(x)
+    w_fp8, w_scale = mxfp8_group_quantize(w)
+
+    # Prepare scales in cuBLAS interleaved format
+    m_padded = ceil_div(M, 128) * 128
+    if M % 128 != 0:
+        pad_rows = m_padded - M
+        x_fp8 = torch.cat(
+            [x_fp8, torch.zeros((pad_rows, K), device="cuda", dtype=x_fp8.dtype)],
+            dim=0,
+        )
+        x_scale = torch.cat(
+            [x_scale, torch.full((pad_rows, K // 32), 127, device="cuda", dtype=x_scale.dtype)],
+            dim=0,
+        )
+    sa = _interleave_mxfp8_scales_for_cublas(x_scale, m_padded, K)
+    sb = _interleave_mxfp8_scales_for_cublas(w_scale, N, K)
+    w_fp8_t = w_fp8.t()  # column-major for cuBLAS
+
+    def run(x_fp8, w_fp8_t, sa, sb):
+        return torch._scaled_mm(
+            x_fp8, w_fp8_t, scale_a=sa, scale_b=sb, out_dtype=torch.bfloat16,
+        )
+
+    measurements = bench_gpu_time(
+        run, input_args=(x_fp8, w_fp8_t, sa, sb), use_cuda_graph=True,
+    )
+    ms = np.median(measurements)
+    tflops = 2 * M * N * K * 1e-9 / ms
+    return ms, tflops
+
+
+def bench_flashinfer_only(M, N, K):
+    """Benchmark FlashInfer mm_mxfp8 (GEMM-only, no quantization).
+
+    Pre-quantizes both inputs and measures only the GEMM kernel time.
+    """
+    import flashinfer
+
+    x = torch.randn((M, K), device="cuda", dtype=torch.bfloat16)
+    w = torch.randn((N, K), device="cuda", dtype=torch.bfloat16)
+
+    a_mx, a_sf = flashinfer.mxfp8_quantize(x, is_sf_swizzled_layout=True)
+    w_mx, w_sf = flashinfer.mxfp8_quantize(w, is_sf_swizzled_layout=True)
+    w_mx_t = w_mx.t()
+
+    # Warmup
+    flashinfer.mm_mxfp8(a_mx, w_mx_t, a_sf, w_sf, out_dtype=torch.bfloat16)
+
+    def run(a_mx, w_mx_t, a_sf, w_sf):
+        return flashinfer.mm_mxfp8(
+            a_mx, w_mx_t, a_sf, w_sf, out_dtype=torch.bfloat16,
+        )
+
+    measurements = bench_gpu_time(
+        run, input_args=(a_mx, w_mx_t, a_sf, w_sf), use_cuda_graph=True,
+    )
+    ms = np.median(measurements)
+    tflops = 2 * M * N * K * 1e-9 / ms
+    return ms, tflops
+
+
 def test_accuracy_cublas_fused():
     """Test accuracy of cuBLAS fused MXFP8 path vs Triton baseline."""
     (mxfp8_block_scaled_matmul_triton, _pack_mxfp8_scales, mxfp8_group_quantize,
@@ -507,6 +619,9 @@ if __name__ == "__main__":
 
     torch_only = "--torch-only" in sys.argv
     cublas_fused = "--cublas-fused" in sys.argv
+    flashinfer_only = "--flashinfer-only" in sys.argv
+    cublas_only_flag = "--cublas-only" in sys.argv
+    compare_flag = "--compare" in sys.argv
 
     if cublas_fused:
         # Benchmark cuBLAS fused MXFP8 (pre-computed weights) vs Triton baseline vs BF16
@@ -557,6 +672,86 @@ if __name__ == "__main__":
                         f"{ms_torch*1000:.2f},{tflops_torch:.2f},"
                         f"{ms_bf16*1000:.2f},{tflops_bf16:.2f},"
                         f"{torch_vs_bf16:.3f}"
+                    )
+                print(f"  K={K},N={N} done", file=sys.stderr)
+        exit(0)
+
+    if flashinfer_only:
+        # Only benchmark FlashInfer mm_mxfp8 (CUTLASS MXFP8 GEMM)
+        print("# FlashInfer mm_mxfp8 MXFP8 benchmark (CUTLASS)", file=sys.stderr)
+        print(
+            "M,N,K,flashinfer_us,flashinfer_tflops,bf16_us,bf16_tflops,"
+            "flashinfer_vs_bf16"
+        )
+        for K in Ks:
+            for N in Ns:
+                if N < 128:
+                    print(f"  K={K},N={N} skipped (N<128 unsupported)", file=sys.stderr)
+                    continue
+                for M in Ms:
+                    if M < 32:
+                        continue
+                    ms_fi, tflops_fi = bench_flashinfer_only(M, N, K)
+                    ms_bf16, tflops_bf16 = bench_bf16(M, N, K)
+                    fi_vs_bf16 = ms_bf16 / ms_fi
+                    print(
+                        f"{M},{N},{K},"
+                        f"{ms_fi*1000:.2f},{tflops_fi:.2f},"
+                        f"{ms_bf16*1000:.2f},{tflops_bf16:.2f},"
+                        f"{fi_vs_bf16:.3f}"
+                    )
+                print(f"  K={K},N={N} done", file=sys.stderr)
+        exit(0)
+
+    if cublas_only_flag:
+        # Only benchmark cuBLAS MXFP8 (torch._scaled_mm)
+        print("# cuBLAS MXFP8 benchmark (torch._scaled_mm)", file=sys.stderr)
+        print(
+            "M,N,K,cublas_us,cublas_tflops,bf16_us,bf16_tflops,"
+            "cublas_vs_bf16"
+        )
+        for K in Ks:
+            for N in Ns:
+                for M in Ms:
+                    ms_cb, tflops_cb = bench_cublas_only(M, N, K)
+                    ms_bf16, tflops_bf16 = bench_bf16(M, N, K)
+                    cb_vs_bf16 = ms_bf16 / ms_cb
+                    print(
+                        f"{M},{N},{K},"
+                        f"{ms_cb*1000:.2f},{tflops_cb:.2f},"
+                        f"{ms_bf16*1000:.2f},{tflops_bf16:.2f},"
+                        f"{cb_vs_bf16:.3f}"
+                    )
+                print(f"  K={K},N={N} done", file=sys.stderr)
+        exit(0)
+
+    if compare_flag:
+        # Head-to-head: cuBLAS vs FlashInfer vs BF16
+        print("# cuBLAS vs FlashInfer MXFP8 GEMM comparison", file=sys.stderr)
+        print(
+            "M,N,K,cublas_us,flashinfer_us,bf16_us,"
+            "cublas_tflops,flashinfer_tflops,bf16_tflops,"
+            "fi_vs_cublas,cublas_vs_bf16,fi_vs_bf16"
+        )
+        for K in Ks:
+            for N in Ns:
+                if N < 128:
+                    print(f"  K={K},N={N} skipped (N<128 unsupported by FlashInfer)", file=sys.stderr)
+                    continue
+                for M in Ms:
+                    if M < 32:
+                        continue
+                    ms_cb, tflops_cb = bench_cublas_only(M, N, K)
+                    ms_fi, tflops_fi = bench_flashinfer_only(M, N, K)
+                    ms_bf16, tflops_bf16 = bench_bf16(M, N, K)
+                    fi_vs_cublas = ms_cb / ms_fi
+                    cublas_vs_bf16 = ms_bf16 / ms_cb
+                    fi_vs_bf16 = ms_bf16 / ms_fi
+                    print(
+                        f"{M},{N},{K},"
+                        f"{ms_cb*1000:.2f},{ms_fi*1000:.2f},{ms_bf16*1000:.2f},"
+                        f"{tflops_cb:.2f},{tflops_fi:.2f},{tflops_bf16:.2f},"
+                        f"{fi_vs_cublas:.3f},{cublas_vs_bf16:.3f},{fi_vs_bf16:.3f}"
                     )
                 print(f"  K={K},N={N} done", file=sys.stderr)
         exit(0)
