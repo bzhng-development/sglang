@@ -613,16 +613,24 @@ class MultiLayerEagleWorker(TpModelWorker):
         )
         forward_batch.return_logprob = False
         forward_batch.return_hidden_states_before_norm = True
+        forward_batch.mtp_topk = self.topk
         topk_p_list = []
         topk_index_list = []
         for step in range(self.speculative_num_steps):
             logits_output = (
                 self.mtp_model_runner(step).forward(forward_batch).logits_output
             )
-            if self.enable_nan_detection:
-                detect_nan(logits_output)
-            probs = torch.softmax(logits_output.next_token_logits, dim=-1)
-            topk_p, topk_index = fast_topk(probs, self.topk, dim=-1)
+            if logits_output.topk_probs is not None:
+                if self.enable_nan_detection and torch.any(
+                    torch.isnan(logits_output.topk_probs)
+                ):
+                    raise ValueError("NaN in sharded topk probs during MTP draft.")
+                topk_p, topk_index = logits_output.topk_probs, logits_output.topk_indices
+            else:
+                if self.enable_nan_detection:
+                    detect_nan(logits_output)
+                probs = torch.softmax(logits_output.next_token_logits, dim=-1)
+                topk_p, topk_index = fast_topk(probs, self.topk, dim=-1)
             topk_p_list.append(topk_p)
             topk_index_list.append(topk_index)
             pt = 0
@@ -700,6 +708,7 @@ class MultiLayerEagleWorker(TpModelWorker):
             model_worker_batch, self.mtp_model_runner(0)
         )
         forward_batch.return_hidden_states_before_norm = True
+        forward_batch.mtp_topk = self.topk
         if forward_batch.seq_lens_cpu is not None:
             forward_batch.seq_lens_sum = forward_batch.seq_lens_cpu.sum().item()
         else:
@@ -729,10 +738,17 @@ class MultiLayerEagleWorker(TpModelWorker):
                     .logits_output
                 )
 
-            if self.enable_nan_detection:
-                detect_nan(logits_output)
-            probs = torch.softmax(logits_output.next_token_logits, dim=-1)
-            topk_p, topk_index = fast_topk(probs, self.topk, dim=-1)
+            if logits_output.topk_probs is not None:
+                if self.enable_nan_detection and torch.any(
+                    torch.isnan(logits_output.topk_probs)
+                ):
+                    raise ValueError("NaN in sharded topk probs during MTP draft.")
+                topk_p, topk_index = logits_output.topk_probs, logits_output.topk_indices
+            else:
+                if self.enable_nan_detection:
+                    detect_nan(logits_output)
+                probs = torch.softmax(logits_output.next_token_logits, dim=-1)
+                topk_p, topk_index = fast_topk(probs, self.topk, dim=-1)
             topk_p_list.append(topk_p)
             topk_index_list.append(topk_index)
             pt = 0

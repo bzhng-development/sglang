@@ -23,7 +23,9 @@ import triton.language as tl
 from torch import nn
 
 from sglang.srt.distributed import (
+    get_tensor_model_parallel_rank,
     get_tensor_model_parallel_world_size,
+    get_tp_group,
     tensor_model_parallel_all_gather,
 )
 from sglang.srt.environ import envs
@@ -35,6 +37,8 @@ from sglang.srt.layers.dp_attention import (
     dp_scatter,
     get_attention_dp_rank,
     get_attention_dp_size,
+    get_attention_tp_group,
+    get_attention_tp_rank,
     get_attention_tp_size,
     get_dp_device,
     get_dp_dtype,
@@ -106,6 +110,11 @@ class LogitsProcessorOutput:
 
     mm_input_embeds: Optional[torch.Tensor] = None
 
+    ## Part 6: MTP LM Head optimization — sharded top-k without full AllGather
+    # When populated, callers can use these directly instead of next_token_logits + softmax + topk
+    topk_probs: Optional[torch.Tensor] = None
+    topk_indices: Optional[torch.Tensor] = None
+
 
 @dataclasses.dataclass
 class LogitsMetadata:
@@ -149,6 +158,9 @@ class LogitsMetadata:
     is_prefill_only: bool = False
 
     mm_input_embeds: Optional[torch.Tensor] = None
+
+    # MTP LM Head optimization: when set, use sharded top-k instead of full AllGather
+    mtp_topk: Optional[int] = None
 
     @classmethod
     def from_forward_batch(cls, forward_batch: ForwardBatch):
@@ -201,6 +213,7 @@ class LogitsMetadata:
             global_num_tokens_for_logprob_gpu=forward_batch.global_num_tokens_for_logprob_gpu,
             dp_padding_mode=DpPaddingMode.SUM_LEN,
             mm_input_embeds=forward_batch.mm_input_embeds,
+            mtp_topk=getattr(forward_batch, "mtp_topk", None),
         )
 
     def compute_dp_attention_metadata(self):
@@ -335,6 +348,38 @@ class LogitsProcessor(nn.Module):
             logits_metadata,
         )
         del hidden_states
+
+        # MTP LM Head optimization: sharded top-k without full AllGather.
+        # Only for decode/draft when no logprobs are needed and caller only needs top-k.
+        if (
+            logits_metadata.mtp_topk is not None
+            and not logits_metadata.extend_return_logprob
+            and self.do_tensor_parallel_all_gather
+            and not self.do_tensor_parallel_all_gather_dp_attn
+        ):
+            if not getattr(self, "_logged_sharded_topk", False):
+                logger.info(
+                    "MTP LM Head: using sharded top-k fast path "
+                    f"(topk={logits_metadata.mtp_topk}, "
+                    f"tp_size={get_tensor_model_parallel_world_size()}, "
+                    f"vocab_size={self.vocab_size})"
+                )
+                self._logged_sharded_topk = True
+            states_for_topk = (
+                pruned_states[sample_indices]
+                if sample_indices is not None
+                else pruned_states
+            )
+            topk_probs, topk_indices = self._get_topk_from_sharded_logits(
+                states_for_topk, lm_head, logits_metadata, logits_metadata.mtp_topk
+            )
+            return LogitsProcessorOutput(
+                next_token_logits=None,
+                hidden_states=hidden_states_to_store,
+                mm_input_embeds=logits_metadata.mm_input_embeds,
+                topk_probs=topk_probs,
+                topk_indices=topk_indices,
+            )
 
         if not logits_metadata.extend_return_logprob:
             # Compute logits for both input and sampled tokens.
@@ -849,6 +894,143 @@ class LogitsProcessor(nn.Module):
                 )
 
         return logits
+
+    def _get_topk_from_sharded_logits(
+        self,
+        hidden_states: torch.Tensor,
+        lm_head: VocabParallelEmbedding,
+        logits_metadata: LogitsMetadata,
+        topk: int,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Compute top-k tokens without materializing full [batch, vocab_size] logits.
+
+        Instead of AllGather on the full vocabulary dimension, this method:
+        1. Computes local logits shard on each TP rank
+        2. Uses 2 AllReduces (max + sum_exp) for softmax normalization
+        3. Finds local top-k candidates per rank
+        4. AllGathers only the top-k candidates (much smaller)
+        5. Resolves the global top-k from gathered candidates
+
+        Communication savings: O(batch * vocab_size) -> O(batch * topk * tp_size)
+        For DeepSeek V3 (vocab=129280, tp=8, topk=8): ~660x reduction.
+
+        Returns:
+            topk_probs: [batch, topk] softmax probabilities
+            topk_indices: [batch, topk] global vocabulary indices
+        """
+        # Step 1: Compute local logits shard [batch, vocab_shard_size]
+        local_logits = self._compute_lm_head(hidden_states, lm_head, None)
+
+        if self.logit_scale is not None:
+            local_logits.mul_(self.logit_scale)
+
+        if self.final_logit_softcapping:
+            if not _is_npu:
+                fused_softcap(local_logits, self.final_logit_softcapping)
+            else:
+                local_logits = self.final_logit_softcapping * torch.tanh(
+                    local_logits / self.final_logit_softcapping
+                )
+
+        # No TP: just do regular softmax + topk
+        if not self.do_tensor_parallel_all_gather:
+            logits_f32 = local_logits[:, : self.vocab_size].float()
+            probs = torch.softmax(logits_f32, dim=-1)
+            topk_probs, topk_indices = torch.topk(probs, topk, dim=-1)
+            return topk_probs, topk_indices
+
+        # Determine which TP group coordinator and rank to use
+        if self.use_attn_tp_group:
+            tp_coordinator = get_attention_tp_group()
+            tp_rank = get_attention_tp_rank()
+            tp_size = self.attn_tp_size
+        else:
+            tp_coordinator = get_tp_group()
+            tp_rank = get_tensor_model_parallel_rank()
+            tp_size = get_tensor_model_parallel_world_size()
+
+        # Work in float32 for numerical stability
+        local_logits_f32 = local_logits.float()
+
+        # Mask padding columns (ParallelLMHead pads vocab to be TP-divisible).
+        # Without this, padding logits could win the local top-k incorrectly.
+        shard_size = local_logits_f32.shape[-1]
+        valid_cols = min(shard_size, max(0, self.vocab_size - tp_rank * shard_size))
+        if valid_cols < shard_size:
+            local_logits_f32[:, valid_cols:] = float("-inf")
+
+        # Step 2: Distributed log-sum-exp for softmax normalization
+        # 2a: AllReduce(max) across TP ranks — no custom fast path for MAX,
+        #     use raw torch.distributed (tensor is tiny: [batch, 1])
+        local_max = local_logits_f32.max(dim=-1, keepdim=True).values  # [batch, 1]
+        global_max = local_max.clone()
+        torch.distributed.all_reduce(
+            global_max,
+            op=torch.distributed.ReduceOp.MAX,
+            group=tp_coordinator.device_group,
+        )
+
+        # 2b: Compute local sum(exp(logits - global_max))
+        local_sum_exp = torch.sum(
+            torch.exp(local_logits_f32 - global_max), dim=-1, keepdim=True
+        )  # [batch, 1]
+
+        # 2c: AllReduce(sum) — use custom fast all-reduce (ca_comm/pynccl/etc.)
+        global_sum_exp = tp_coordinator.all_reduce(local_sum_exp)
+
+        # global logsumexp = log(global_sum_exp) + global_max
+        global_logsumexp = torch.log(global_sum_exp) + global_max  # [batch, 1]
+
+        # Step 3: Local top-k candidates
+        local_topk_values, local_topk_local_indices = torch.topk(
+            local_logits_f32, topk, dim=-1
+        )  # [batch, topk]
+
+        # Convert local shard indices to global vocabulary indices
+        local_topk_global_indices = local_topk_local_indices + tp_rank * shard_size
+
+        # Step 4: AllGather top-k candidates across TP ranks
+        # gathered_values: [batch, topk * tp_size]
+        # gathered_indices: [batch, topk * tp_size]
+        if self.use_attn_tp_group:
+            gathered_values = torch.empty(
+                (local_topk_values.shape[0], topk * tp_size),
+                dtype=local_topk_values.dtype,
+                device=local_topk_values.device,
+            )
+            gathered_indices = torch.empty(
+                (local_topk_global_indices.shape[0], topk * tp_size),
+                dtype=local_topk_global_indices.dtype,
+                device=local_topk_global_indices.device,
+            )
+            attn_tp_all_gather(
+                list(gathered_values.tensor_split(tp_size, dim=-1)),
+                local_topk_values,
+            )
+            attn_tp_all_gather(
+                list(gathered_indices.tensor_split(tp_size, dim=-1)),
+                local_topk_global_indices,
+            )
+        else:
+            gathered_values = tensor_model_parallel_all_gather(
+                local_topk_values, dim=-1
+            )
+            gathered_indices = tensor_model_parallel_all_gather(
+                local_topk_global_indices, dim=-1
+            )
+
+        # Step 5: Resolve global top-k from the gathered candidates
+        global_topk_values, selection = torch.topk(
+            gathered_values, topk, dim=-1
+        )  # [batch, topk]
+        global_topk_indices = torch.gather(
+            gathered_indices, dim=-1, index=selection
+        )  # [batch, topk]
+
+        # Step 6: Compute proper softmax probabilities
+        global_topk_probs = torch.exp(global_topk_values - global_logsumexp)
+
+        return global_topk_probs, global_topk_indices
 
     def _compute_lm_head(
         self,

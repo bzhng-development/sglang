@@ -274,6 +274,8 @@ class ForwardBatch(ForwardBatchDeepSeekMHAMixin):
     # For logits and logprobs post processing
     next_token_logits_buffer: torch.Tensor = None
     temp_scaled_logprobs: bool = False
+    # MTP LM Head optimization: when set, use sharded top-k instead of full AllGather
+    mtp_topk: Optional[int] = None
     temperature: torch.Tensor = None
     top_p_normalized_logprobs: bool = False
     top_p: torch.Tensor = None

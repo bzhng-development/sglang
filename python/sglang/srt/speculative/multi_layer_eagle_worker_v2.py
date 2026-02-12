@@ -362,6 +362,7 @@ class MultiLayerEagleDraftWorker(BaseDraftWorker):
         # Run forward
         forward_batch = ForwardBatch.init_new(batch, self.draft_runner_list[0])
         forward_batch.return_hidden_states_before_norm = True
+        forward_batch.mtp_topk = self.topk
 
         # Construct input_ids
         if not batch.forward_mode.is_idle():
@@ -378,8 +379,12 @@ class MultiLayerEagleDraftWorker(BaseDraftWorker):
             output: ModelRunnerOutput = self.draft_runner_list[step].forward(
                 forward_batch
             )
-            probs = torch.softmax(output.logits_output.next_token_logits, dim=-1)
-            topk_p, topk_index = fast_topk(probs, self.topk, dim=-1)
+            logits_output = output.logits_output
+            if logits_output.topk_probs is not None:
+                topk_p, topk_index = logits_output.topk_probs, logits_output.topk_indices
+            else:
+                probs = torch.softmax(logits_output.next_token_logits, dim=-1)
+                topk_p, topk_index = fast_topk(probs, self.topk, dim=-1)
             topk_p_list.append(topk_p)
             topk_index_list.append(topk_index)
             if forward_batch.extend_seq_lens is not None:
