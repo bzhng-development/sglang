@@ -246,14 +246,16 @@ class TestExecuteAlignerPlanWithTokenDim:
         assert result.tensors.x.shape == (3, 3, 8)
         assert result.tensors.y.shape == (3, 3, 8)
 
+        plain_x: torch.Tensor = tensor_x.rename(None)
+        plain_y: torch.Tensor = tensor_y.rename(None)
         for i in range(3):
             assert torch.equal(
                 result.tensors.x.select(dim=1, index=i),
-                tensor_x.select(dim=1, index=i),
+                plain_x.select(dim=1, index=i),
             )
             assert torch.equal(
                 result.tensors.y.select(dim=1, index=i),
-                tensor_y.select(dim=1, index=i),
+                plain_y.select(dim=1, index=i),
             )
 
 
