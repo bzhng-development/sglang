@@ -1346,7 +1346,7 @@ class TestEntrypointScalarValues:
     def test_scalar_string_value(self, tmp_path: Path, capsys) -> None:
         """String scalar values are compared and displayed correctly."""
         baseline_path, target_path = _create_scalar_dumps(
-            tmp_path, name="qkv_format", baseline_value="thd", target_value="thd"
+            tmp_path, name="attn_backend", baseline_value="flash_attn", target_value="flash_attn"
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
