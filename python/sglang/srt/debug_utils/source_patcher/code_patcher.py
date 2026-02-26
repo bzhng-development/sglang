@@ -128,25 +128,31 @@ def _inject_preamble(*, config: PatchConfig, extra_imports: list[str]) -> PatchC
 
 
 def _insert_preamble(*, source: str, preamble: str) -> str:
-    """Insert preamble lines right after the function def line (and optional docstring)."""
+    """Insert preamble lines right after the function signature (and optional docstring)."""
     lines: list[str] = source.splitlines()
-    body_indent: str = ""
 
-    insert_idx: int = 1
-    for i, line in enumerate(lines):
-        if i == 0:
-            continue
-        stripped: str = line.strip()
-        if not stripped:
-            continue
-        body_indent = " " * (len(line) - len(line.lstrip()))
-        insert_idx = i
-        break
+    signature_end: int = _find_signature_end(lines)
+
+    body_start: int = signature_end + 1
+    body_indent: str = ""
+    for i in range(body_start, len(lines)):
+        if lines[i].strip():
+            body_indent = " " * (len(lines[i]) - len(lines[i].lstrip()))
+            body_start = i
+            break
 
     preamble_lines: list[str] = [
         body_indent + pl for pl in preamble.strip().splitlines()
     ]
-    return "\n".join(lines[:insert_idx] + preamble_lines + lines[insert_idx:])
+    return "\n".join(lines[:body_start] + preamble_lines + lines[body_start:])
+
+
+def _find_signature_end(lines: list[str]) -> int:
+    """Find the line index where the function signature ends (the line with trailing colon)."""
+    for i, line in enumerate(lines):
+        if line.rstrip().endswith(":"):
+            return i
+    return 0
 
 
 def _resolve_target(qualified_name: str) -> Callable[..., Any]:
