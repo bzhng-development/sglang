@@ -116,8 +116,8 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
         return body
 
 
-class ScalarRecord(_OutputRecord):
-    type: Literal["scalar"] = "scalar"
+class NonTensorRecord(_OutputRecord):
+    type: Literal["non_tensor"] = "non_tensor"
     name: str
     baseline_value: str
     target_value: str
@@ -133,9 +133,9 @@ class ScalarRecord(_OutputRecord):
 
     def _format_body(self) -> str:
         if self.values_equal:
-            return f"Scalar: {self.name} = {self.baseline_value} ({self.baseline_type}) [equal]"
+            return f"NonTensor: {self.name} = {self.baseline_value} ({self.baseline_type}) [equal]"
         return (
-            f"Scalar: {self.name}\n"
+            f"NonTensor: {self.name}\n"
             f"  baseline = {self.baseline_value} ({self.baseline_type})\n"
             f"  target   = {self.target_value} ({self.target_type})"
         )
@@ -206,7 +206,7 @@ AnyRecord = Annotated[
         ConfigRecord,
         SkipRecord,
         ComparisonRecord,
-        ScalarRecord,
+        NonTensorRecord,
         SummaryRecord,
         WarningRecord,
     ],

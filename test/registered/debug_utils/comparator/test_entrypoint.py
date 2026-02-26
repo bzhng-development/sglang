@@ -12,7 +12,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
     GeneralWarning,
-    ScalarRecord,
+    NonTensorRecord,
     SkipRecord,
     SummaryRecord,
     WarningRecord,
@@ -1304,61 +1304,61 @@ class TestEntrypointAlignment:
         assert summary.passed == 2
 
 
-class TestEntrypointScalarValues:
-    """Test non-tensor (scalar) value comparison through the full entrypoint pipeline."""
+class TestEntrypointNonTensorValues:
+    """Test non-tensor value comparison through the full entrypoint pipeline."""
 
-    def test_scalar_float_same_value(self, tmp_path: Path, capsys) -> None:
-        """Two sides dump the same float → ScalarRecord with values_equal=True, category=passed."""
-        baseline_path, target_path = _create_scalar_dumps(
+    def test_non_tensor_float_same_value(self, tmp_path: Path, capsys) -> None:
+        """Two sides dump the same float → NonTensorRecord with values_equal=True, category=passed."""
+        baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
-        scalars = _get_scalars(records)
-        assert len(scalars) == 1
-        assert scalars[0].name == "sm_scale"
-        assert scalars[0].values_equal is True
-        assert scalars[0].category == "passed"
+        non_tensors = _get_non_tensors(records)
+        assert len(non_tensors) == 1
+        assert non_tensors[0].name == "sm_scale"
+        assert non_tensors[0].values_equal is True
+        assert non_tensors[0].category == "passed"
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.passed == 1
         assert summary.failed == 0
 
-    def test_scalar_float_different_value(self, tmp_path: Path, capsys) -> None:
-        """Two sides dump different floats → ScalarRecord with values_equal=False, category=failed."""
-        baseline_path, target_path = _create_scalar_dumps(
+    def test_non_tensor_float_different_value(self, tmp_path: Path, capsys) -> None:
+        """Two sides dump different floats → NonTensorRecord with values_equal=False, category=failed."""
+        baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.25
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
-        scalars = _get_scalars(records)
-        assert len(scalars) == 1
-        assert scalars[0].values_equal is False
-        assert scalars[0].category == "failed"
+        non_tensors = _get_non_tensors(records)
+        assert len(non_tensors) == 1
+        assert non_tensors[0].values_equal is False
+        assert non_tensors[0].category == "failed"
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.failed == 1
 
-    def test_scalar_string_value(self, tmp_path: Path, capsys) -> None:
-        """String scalar values are compared and displayed correctly."""
-        baseline_path, target_path = _create_scalar_dumps(
+    def test_non_tensor_string_value(self, tmp_path: Path, capsys) -> None:
+        """String non-tensor values are compared and displayed correctly."""
+        baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="attn_backend", baseline_value="flash_attn", target_value="flash_attn"
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
-        scalars = _get_scalars(records)
-        assert len(scalars) == 1
-        assert scalars[0].values_equal is True
-        assert scalars[0].baseline_type == "str"
-        assert scalars[0].target_type == "str"
+        non_tensors = _get_non_tensors(records)
+        assert len(non_tensors) == 1
+        assert non_tensors[0].values_equal is True
+        assert non_tensors[0].baseline_type == "str"
+        assert non_tensors[0].target_type == "str"
 
-    def test_scalar_mixed_with_tensor(self, tmp_path: Path, capsys) -> None:
-        """Tensors and scalars in the same dump are each handled correctly."""
+    def test_non_tensor_mixed_with_tensor(self, tmp_path: Path, capsys) -> None:
+        """Tensors and non_tensors in the same dump are each handled correctly."""
         torch.manual_seed(42)
         tensor = torch.randn(4, 4)
 
@@ -1366,7 +1366,7 @@ class TestEntrypointScalarValues:
         target_dir = tmp_path / "target"
 
         for side_dir in [baseline_dir, target_dir]:
-            _create_scalar_rank_dump(
+            _create_non_tensor_rank_dump(
                 side_dir, rank=0, name="sm_scale", value=0.125,
                 extra_tensor_dumps=[("hidden", tensor)],
             )
@@ -1379,31 +1379,31 @@ class TestEntrypointScalarValues:
         records = _run_and_parse(args, capsys)
 
         comparisons = _get_comparisons(records)
-        scalars = _get_scalars(records)
+        non_tensors = _get_non_tensors(records)
         assert len(comparisons) == 1
         assert comparisons[0].name == "hidden"
-        assert len(scalars) == 1
-        assert scalars[0].name == "sm_scale"
-        assert scalars[0].values_equal is True
+        assert len(non_tensors) == 1
+        assert non_tensors[0].name == "sm_scale"
+        assert non_tensors[0].values_equal is True
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.passed == 2
 
-    def test_scalar_json_roundtrip(self, tmp_path: Path, capsys) -> None:
-        """ScalarRecord JSON output can be parsed back correctly."""
-        baseline_path, target_path = _create_scalar_dumps(
+    def test_non_tensor_json_roundtrip(self, tmp_path: Path, capsys) -> None:
+        """NonTensorRecord JSON output can be parsed back correctly."""
+        baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
-        scalars = _get_scalars(records)
-        assert len(scalars) == 1
+        non_tensors = _get_non_tensors(records)
+        assert len(non_tensors) == 1
 
-        json_str: str = scalars[0].model_dump_json()
+        json_str: str = non_tensors[0].model_dump_json()
         roundtripped = parse_record_json(json_str)
-        assert isinstance(roundtripped, ScalarRecord)
+        assert isinstance(roundtripped, NonTensorRecord)
         assert roundtripped.name == "sm_scale"
         assert roundtripped.values_equal is True
 
@@ -1415,8 +1415,8 @@ def _get_comparisons(records: list[AnyRecord]) -> list[ComparisonRecord]:
     return [r for r in records if isinstance(r, ComparisonRecord)]
 
 
-def _get_scalars(records: list[AnyRecord]) -> list[ScalarRecord]:
-    return [r for r in records if isinstance(r, ScalarRecord)]
+def _get_non_tensors(records: list[AnyRecord]) -> list[NonTensorRecord]:
+    return [r for r in records if isinstance(r, NonTensorRecord)]
 
 
 def _assert_single_comparison_passed(records: list[AnyRecord]) -> ComparisonRecord:
@@ -1475,7 +1475,7 @@ def _create_dumps(
     return exp_paths[0], exp_paths[1]
 
 
-def _create_scalar_rank_dump(
+def _create_non_tensor_rank_dump(
     directory: Path,
     *,
     rank: int,
@@ -1504,7 +1504,7 @@ def _create_scalar_rank_dump(
     return directory / _FIXED_EXP_NAME
 
 
-def _create_scalar_dumps(
+def _create_non_tensor_dumps(
     tmp_path: Path,
     *,
     name: str,
@@ -1516,10 +1516,10 @@ def _create_scalar_dumps(
     baseline_dir.mkdir()
     target_dir.mkdir()
 
-    baseline_path = _create_scalar_rank_dump(
+    baseline_path = _create_non_tensor_rank_dump(
         baseline_dir, rank=0, name=name, value=baseline_value
     )
-    target_path = _create_scalar_rank_dump(
+    target_path = _create_non_tensor_rank_dump(
         target_dir, rank=0, name=name, value=target_value
     )
     return baseline_path, target_path

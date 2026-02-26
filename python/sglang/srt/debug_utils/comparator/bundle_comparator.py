@@ -21,7 +21,7 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
 from sglang.srt.debug_utils.comparator.dims import apply_dim_names, parse_dim_names
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
-    ScalarRecord,
+    NonTensorRecord,
     SkipRecord,
 )
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
@@ -45,7 +45,7 @@ def compare_bundle_pair(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
         x=None, y=None
     ),
-) -> Union[ComparisonRecord, SkipRecord, ScalarRecord]:
+) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     with warning_sink.context() as collected_warnings:
         result = _compare_bundle_pair_raw(
             name=name,
@@ -71,7 +71,7 @@ def _compare_bundle_pair_raw(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
         x=None, y=None
     ),
-) -> Union[ComparisonRecord, SkipRecord, ScalarRecord]:
+) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     # 1. Load all non-None values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
         x=_load_all_values(filenames=filenames_pair.x, base_path=baseline_path),
@@ -86,15 +86,15 @@ def _compare_bundle_pair_raw(
     tensor_pair: Pair[list[ValueWithMeta]] = all_pair.map(
         lambda items: [it for it in items if isinstance(it.value, torch.Tensor)]
     )
-    scalar_pair: Pair[list[ValueWithMeta]] = all_pair.map(
+    non_tensor_pair: Pair[list[ValueWithMeta]] = all_pair.map(
         lambda items: [it for it in items if not isinstance(it.value, torch.Tensor)]
     )
 
     has_tensors: bool = bool(tensor_pair.x) or bool(tensor_pair.y)
-    has_scalars: bool = bool(scalar_pair.x) or bool(scalar_pair.y)
+    has_non_tensors: bool = bool(non_tensor_pair.x) or bool(non_tensor_pair.y)
 
     # 3. Both sides have tensors → existing tensor comparison path
-    if has_tensors and not has_scalars:
+    if has_tensors and not has_non_tensors:
         return _compare_tensor_pair(
             name=name,
             valid_pair=tensor_pair,
@@ -103,9 +103,9 @@ def _compare_bundle_pair_raw(
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
         )
 
-    # 4. Both sides have scalars (no tensors) → scalar comparison
-    if has_scalars and not has_tensors:
-        return _compare_scalar_pair(name=name, scalar_pair=scalar_pair)
+    # 4. Both sides have non-tensors (no tensors) → non-tensor comparison
+    if has_non_tensors and not has_tensors:
+        return _compare_non_tensor_pair(name=name, non_tensor_pair=non_tensor_pair)
 
     # 5. Mixed: one side tensor, other side non-tensor → type mismatch
     return SkipRecord(name=name, reason="type_mismatch")
@@ -166,20 +166,20 @@ def _compare_tensor_pair(
     return ComparisonRecord(**info.model_dump(), aligner_plan=plan)
 
 
-def _compare_scalar_pair(
+def _compare_non_tensor_pair(
     *,
     name: str,
-    scalar_pair: Pair[list[ValueWithMeta]],
-) -> ScalarRecord:
-    baseline_value: Any = scalar_pair.x[0].value
-    target_value: Any = scalar_pair.y[0].value
+    non_tensor_pair: Pair[list[ValueWithMeta]],
+) -> NonTensorRecord:
+    baseline_value: Any = non_tensor_pair.x[0].value
+    target_value: Any = non_tensor_pair.y[0].value
 
     try:
         values_equal: bool = bool(baseline_value == target_value)
     except Exception:
         values_equal = False
 
-    return ScalarRecord(
+    return NonTensorRecord(
         name=name,
         baseline_value=repr(baseline_value),
         target_value=repr(target_value),

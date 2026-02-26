@@ -24,7 +24,7 @@ from sglang.srt.debug_utils.comparator.dims import ParallelAxis, TokenLayout
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     GeneralWarning,
-    ScalarRecord,
+    NonTensorRecord,
     SkipRecord,
     SummaryRecord,
     parse_record_json,
@@ -251,8 +251,8 @@ class TestOutputRecordCategories:
         )
         assert record.category == "passed"
 
-    def test_scalar_record_equal_is_passed(self) -> None:
-        record = ScalarRecord(
+    def test_non_tensor_record_equal_is_passed(self) -> None:
+        record = NonTensorRecord(
             name="sm_scale",
             baseline_value="0.125",
             target_value="0.125",
@@ -262,8 +262,8 @@ class TestOutputRecordCategories:
         )
         assert record.category == "passed"
 
-    def test_scalar_record_different_is_failed(self) -> None:
-        record = ScalarRecord(
+    def test_non_tensor_record_different_is_failed(self) -> None:
+        record = NonTensorRecord(
             name="sm_scale",
             baseline_value="0.125",
             target_value="0.25",
@@ -273,8 +273,8 @@ class TestOutputRecordCategories:
         )
         assert record.category == "failed"
 
-    def test_scalar_record_with_warnings_is_failed(self) -> None:
-        record = ScalarRecord(
+    def test_non_tensor_record_with_warnings_is_failed(self) -> None:
+        record = NonTensorRecord(
             name="sm_scale",
             baseline_value="0.125",
             target_value="0.125",
@@ -285,8 +285,8 @@ class TestOutputRecordCategories:
         )
         assert record.category == "failed"
 
-    def test_scalar_record_json_roundtrip(self) -> None:
-        record = ScalarRecord(
+    def test_non_tensor_record_json_roundtrip(self) -> None:
+        record = NonTensorRecord(
             name="sm_scale",
             baseline_value="0.125",
             target_value="0.25",
@@ -296,14 +296,14 @@ class TestOutputRecordCategories:
         )
         json_str: str = record.model_dump_json()
         roundtripped = parse_record_json(json_str)
-        assert isinstance(roundtripped, ScalarRecord)
+        assert isinstance(roundtripped, NonTensorRecord)
         assert roundtripped.name == "sm_scale"
         assert roundtripped.values_equal is False
         assert roundtripped.baseline_value == "0.125"
         assert roundtripped.target_value == "0.25"
 
-    def test_scalar_record_text_format_equal(self) -> None:
-        record = ScalarRecord(
+    def test_non_tensor_record_text_format_equal(self) -> None:
+        record = NonTensorRecord(
             name="sm_scale",
             baseline_value="0.125",
             target_value="0.125",
@@ -315,8 +315,8 @@ class TestOutputRecordCategories:
         assert "sm_scale" in text
         assert "[equal]" in text
 
-    def test_scalar_record_text_format_different(self) -> None:
-        record = ScalarRecord(
+    def test_non_tensor_record_text_format_different(self) -> None:
+        record = NonTensorRecord(
             name="sm_scale",
             baseline_value="0.125",
             target_value="0.25",
