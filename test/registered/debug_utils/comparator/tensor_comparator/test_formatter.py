@@ -28,8 +28,15 @@ def _make_stats(
     p99: float | None = 1.8,
 ) -> TensorStats:
     return TensorStats(
-        mean=mean, abs_mean=abs_mean, std=std, min=min, max=max,
-        p1=p1, p5=p5, p95=p95, p99=p99,
+        mean=mean,
+        abs_mean=abs_mean,
+        std=std,
+        min=min,
+        max=max,
+        p1=p1,
+        p5=p5,
+        p95=p95,
+        p99=p99,
     )
 
 
