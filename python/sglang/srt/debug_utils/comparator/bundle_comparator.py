@@ -47,7 +47,7 @@ def compare_bundle_pair(
     ),
 ) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     with warning_sink.context() as collected_warnings:
-        result = _compare_bundle_pair_raw(
+        result = _compare_bundle_pair_inner(
             name=name,
             filenames_pair=filenames_pair,
             baseline_path=baseline_path,
@@ -60,7 +60,7 @@ def compare_bundle_pair(
     return result.model_copy(update={"warnings": collected_warnings})
 
 
-def _compare_bundle_pair_raw(
+def _compare_bundle_pair_inner(
     *,
     name: str,
     filenames_pair: Pair[list[str]],
@@ -89,10 +89,10 @@ def _compare_bundle_pair_raw(
     )
 
     if has_non_tensor:
-        return _compare_non_tensor_pair(name=name, value_pair=all_pair)
+        return _compare_bundle_pair_non_tensor_type(name=name, value_pair=all_pair)
 
     # 3. All values are tensors → tensor comparison path
-    return _compare_tensor_pair(
+    return _compare_bundle_pair_tensor_type(
         name=name,
         valid_pair=all_pair,
         token_aligner_plan=token_aligner_plan,
@@ -101,7 +101,7 @@ def _compare_bundle_pair_raw(
     )
 
 
-def _compare_tensor_pair(
+def _compare_bundle_pair_tensor_type(
     *,
     name: str,
     valid_pair: Pair[list[ValueWithMeta]],
@@ -156,7 +156,7 @@ def _compare_tensor_pair(
     return ComparisonRecord(**info.model_dump(), aligner_plan=plan)
 
 
-def _compare_non_tensor_pair(
+def _compare_bundle_pair_non_tensor_type(
     *,
     name: str,
     value_pair: Pair[list[ValueWithMeta]],
