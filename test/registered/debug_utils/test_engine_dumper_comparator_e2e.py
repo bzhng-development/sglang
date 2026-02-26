@@ -12,7 +12,6 @@ so the YAML only needs ``dumper.dump(...)`` calls.
 import json
 import os
 import subprocess
-import tempfile
 from pathlib import Path
 
 import pytest

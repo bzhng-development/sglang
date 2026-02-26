@@ -124,7 +124,7 @@ class TestPatchFunction:
             edits=[
                 EditSpec(
                     match='greeting = f"hello {name}"',
-                    replacement='greeting = HelperClass.format_value(name)',
+                    replacement="greeting = HelperClass.format_value(name)",
                 )
             ],
         )
@@ -197,9 +197,7 @@ class TestCodePatcher:
 
         assert obj.greet("world") == "hello world"
 
-    def test_context_manager_multiple_patches(
-        self, sample_module: ModuleType
-    ) -> None:
+    def test_context_manager_multiple_patches(self, sample_module: ModuleType) -> None:
         cls = sample_module.SampleClass
         obj = cls()
 
