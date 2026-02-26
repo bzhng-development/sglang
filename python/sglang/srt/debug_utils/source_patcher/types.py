@@ -5,6 +5,10 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict
 
 
+class PatchApplicationError(Exception):
+    """match text not found or not unique in source."""
+
+
 class _StrictBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -17,6 +21,10 @@ class EditSpec(_StrictBase):
 class PatchSpec(_StrictBase):
     target: str
     edits: list[EditSpec]
+
+
+class PatchConfig(_StrictBase):
+    patches: list[PatchSpec]
 
 
 class PatchState:

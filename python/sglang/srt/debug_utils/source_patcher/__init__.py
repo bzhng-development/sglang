@@ -4,4 +4,10 @@ from sglang.srt.debug_utils.source_patcher.code_patcher import (
     patch_function,
 )
 from sglang.srt.debug_utils.source_patcher.subprocess_patcher import SubprocessPatcher
-from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchSpec, PatchState
+from sglang.srt.debug_utils.source_patcher.types import (
+    EditSpec,
+    PatchApplicationError,
+    PatchConfig,
+    PatchSpec,
+    PatchState,
+)

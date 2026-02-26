@@ -9,7 +9,12 @@ from typing import Any, Optional
 import yaml
 
 from sglang.srt.debug_utils.source_patcher.source_editor import apply_edits
-from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchSpec, PatchState
+from sglang.srt.debug_utils.source_patcher.types import (
+    EditSpec,
+    PatchConfig,
+    PatchSpec,
+    PatchState,
+)
 
 
 def _resolve_target(qualified_name: str) -> Callable[..., Any]:
@@ -112,9 +117,10 @@ def apply_patches_from_config(config_path: Path) -> list[PatchState]:
     with open(config_path) as f:
         raw: dict[str, Any] = yaml.safe_load(f)
 
+    config: PatchConfig = PatchConfig(**raw)
+
     states: list[PatchState] = []
-    for patch_raw in raw["patches"]:
-        spec = PatchSpec(**patch_raw)
+    for spec in config.patches:
         target_fn: Callable[..., Any] = _resolve_target(spec.target)
         print(f"[source_patcher] patching {spec.target}")
         state: PatchState = patch_function(target=target_fn, edits=spec.edits)

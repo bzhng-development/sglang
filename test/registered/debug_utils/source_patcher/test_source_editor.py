@@ -1,6 +1,6 @@
 import pytest
 
-from sglang.srt.debug_utils.source_patcher.errors import PatchApplicationError
+from sglang.srt.debug_utils.source_patcher.types import PatchApplicationError
 from sglang.srt.debug_utils.source_patcher.source_editor import apply_edits
 from sglang.srt.debug_utils.source_patcher.types import EditSpec
 

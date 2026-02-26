@@ -1,4 +1,4 @@
-from sglang.srt.debug_utils.source_patcher.errors import PatchApplicationError
+from sglang.srt.debug_utils.source_patcher.types import PatchApplicationError
 from sglang.srt.debug_utils.source_patcher.types import EditSpec
 
 
