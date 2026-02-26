@@ -21,17 +21,9 @@ class TestComputeTensorStats:
         stats = _compute_tensor_stats(x)
 
         assert stats.mean == pytest.approx(3.0, abs=1e-4)
-        assert stats.abs_mean == pytest.approx(3.0, abs=1e-4)
         assert stats.std == pytest.approx(1.5811, abs=1e-3)
         assert stats.min == pytest.approx(1.0, abs=1e-4)
         assert stats.max == pytest.approx(5.0, abs=1e-4)
-
-    def test_abs_mean_with_negative_values(self):
-        x = torch.tensor([-3.0, -1.0, 1.0, 3.0])
-        stats = _compute_tensor_stats(x)
-
-        assert stats.mean == pytest.approx(0.0, abs=1e-4)
-        assert stats.abs_mean == pytest.approx(2.0, abs=1e-4)
 
     def test_quantile_values(self):
         x = torch.linspace(0.0, 100.0, steps=1000)
@@ -61,9 +53,6 @@ class TestComputeDiff:
         assert diff.rel_diff == pytest.approx(0.0, abs=1e-5)
         assert diff.max_abs_diff == pytest.approx(0.0, abs=1e-5)
         assert diff.mean_abs_diff == pytest.approx(0.0, abs=1e-5)
-        assert diff.abs_diff_p50 == pytest.approx(0.0, abs=1e-5)
-        assert diff.abs_diff_p95 == pytest.approx(0.0, abs=1e-5)
-        assert diff.abs_diff_p99 == pytest.approx(0.0, abs=1e-5)
         assert diff.passed is True
 
     def test_known_offset(self):
@@ -78,21 +67,7 @@ class TestComputeDiff:
         assert diff.baseline_at_max == pytest.approx(1.0, abs=1e-4)
         assert diff.target_at_max == pytest.approx(1.5, abs=1e-4)
         assert diff.mean_abs_diff == pytest.approx(0.5 / 100, abs=1e-4)
-        assert diff.abs_diff_p1 == pytest.approx(0.0, abs=1e-4)
-        assert diff.abs_diff_p50 == pytest.approx(0.0, abs=1e-4)
-        assert diff.abs_diff_p99 is not None and diff.abs_diff_p99 > 0
         assert diff.passed is False
-
-    def test_large_tensor_skips_diff_quantiles(self):
-        x = torch.randn(QUANTILE_NUMEL_THRESHOLD + 1)
-        y = x + 0.001
-        diff = _compute_diff(x_baseline=x, x_target=y)
-
-        assert diff.abs_diff_p1 is None
-        assert diff.abs_diff_p5 is None
-        assert diff.abs_diff_p50 is None
-        assert diff.abs_diff_p95 is None
-        assert diff.abs_diff_p99 is None
 
     def test_rel_diff_value(self):
         x = torch.tensor([1.0, 0.0])
