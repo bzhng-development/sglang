@@ -104,7 +104,7 @@ def _compute_tensor_stats(x: torch.Tensor) -> TensorStats:
 
 
 def _quantile_or_none(x: torch.Tensor, *, q: float, include: bool) -> Optional[float]:
-    return torch.quantile(x, q).item() if include else None
+    return torch.quantile(x.float(), q).item() if include else None
 
 
 def _compute_diff(
