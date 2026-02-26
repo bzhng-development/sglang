@@ -1,5 +1,6 @@
+import importlib.util
 import os
-import tempfile
+import sys
 from pathlib import Path
 
 import pytest
@@ -13,25 +14,35 @@ from sglang.srt.debug_utils.source_patcher.code_patcher import (
 )
 from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchSpec
 
-_FIXTURE_MODULE = (
-    "test.registered.debug_utils.source_patcher._fixtures.sample_module"
-)
+_FIXTURES_DIR = Path(__file__).parent / "_fixtures"
+_SAMPLE_MODULE_PATH = _FIXTURES_DIR / "sample_module.py"
+_SAMPLE_MODULE_NAME = "_source_patcher_fixtures.sample_module"
+
+
+def _load_fixture_module():
+    """Load sample_module.py by file path and register it in sys.modules."""
+    if _SAMPLE_MODULE_NAME in sys.modules:
+        return sys.modules[_SAMPLE_MODULE_NAME]
+
+    spec = importlib.util.spec_from_file_location(
+        _SAMPLE_MODULE_NAME, _SAMPLE_MODULE_PATH
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[_SAMPLE_MODULE_NAME] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 def _get_sample_class():
-    from test.registered.debug_utils.source_patcher._fixtures.sample_module import (
-        SampleClass,
-    )
-
-    return SampleClass
+    module = _load_fixture_module()
+    return module.SampleClass
 
 
 def _get_standalone_fn():
-    from test.registered.debug_utils.source_patcher._fixtures.sample_module import (
-        standalone_function,
-    )
-
-    return standalone_function
+    module = _load_fixture_module()
+    return module.standalone_function
 
 
 class TestPatchFunction:
@@ -116,29 +127,33 @@ class TestPatchFunction:
 
 class TestResolveTarget:
     def test_resolve_class_method(self) -> None:
-        target = _resolve_target(f"{_FIXTURE_MODULE}.SampleClass.greet")
+        _load_fixture_module()
+        target = _resolve_target(f"{_SAMPLE_MODULE_NAME}.SampleClass.greet")
         cls = _get_sample_class()
         assert target is cls.greet
 
     def test_resolve_standalone_function(self) -> None:
-        target = _resolve_target(f"{_FIXTURE_MODULE}.standalone_function")
+        _load_fixture_module()
+        target = _resolve_target(f"{_SAMPLE_MODULE_NAME}.standalone_function")
         fn = _get_standalone_fn()
         assert target is fn
 
     def test_resolve_nonexistent_raises(self) -> None:
+        _load_fixture_module()
         with pytest.raises((ImportError, AttributeError)):
-            _resolve_target(f"{_FIXTURE_MODULE}.NonexistentClass.method")
+            _resolve_target(f"{_SAMPLE_MODULE_NAME}.NonexistentClass.method")
 
 
 class TestCodePatcher:
     def test_context_manager_patches_and_restores(self) -> None:
+        _load_fixture_module()
         cls = _get_sample_class()
         obj = cls()
         assert obj.greet("world") == "hello world"
 
         patches = [
             PatchSpec(
-                target=f"{_FIXTURE_MODULE}.SampleClass.greet",
+                target=f"{_SAMPLE_MODULE_NAME}.SampleClass.greet",
                 edits=[
                     EditSpec(
                         match='greeting = f"hello {name}"',
@@ -154,12 +169,13 @@ class TestCodePatcher:
         assert obj.greet("world") == "hello world"
 
     def test_context_manager_multiple_patches(self) -> None:
+        _load_fixture_module()
         cls = _get_sample_class()
         obj = cls()
 
         patches = [
             PatchSpec(
-                target=f"{_FIXTURE_MODULE}.SampleClass.greet",
+                target=f"{_SAMPLE_MODULE_NAME}.SampleClass.greet",
                 edits=[
                     EditSpec(
                         match='greeting = f"hello {name}"',
@@ -168,7 +184,7 @@ class TestCodePatcher:
                 ],
             ),
             PatchSpec(
-                target=f"{_FIXTURE_MODULE}.SampleClass.compute",
+                target=f"{_SAMPLE_MODULE_NAME}.SampleClass.compute",
                 edits=[
                     EditSpec(
                         match="result = x * 2 + 1",
@@ -186,12 +202,13 @@ class TestCodePatcher:
         assert obj.compute(5) == 11
 
     def test_restores_on_exception(self) -> None:
+        _load_fixture_module()
         cls = _get_sample_class()
         obj = cls()
 
         patches = [
             PatchSpec(
-                target=f"{_FIXTURE_MODULE}.SampleClass.greet",
+                target=f"{_SAMPLE_MODULE_NAME}.SampleClass.greet",
                 edits=[
                     EditSpec(
                         match='greeting = f"hello {name}"',
@@ -219,6 +236,7 @@ class TestApplyPatchesFromEnv:
                 os.environ["SOURCE_PATCHER_CONFIG"] = old
 
     def test_patches_applied_from_yaml(self, tmp_path: Path) -> None:
+        _load_fixture_module()
         cls = _get_sample_class()
         obj = cls()
         assert obj.greet("world") == "hello world"
@@ -226,7 +244,7 @@ class TestApplyPatchesFromEnv:
         config = {
             "patches": [
                 {
-                    "target": f"{_FIXTURE_MODULE}.SampleClass.greet",
+                    "target": f"{_SAMPLE_MODULE_NAME}.SampleClass.greet",
                     "edits": [
                         {
                             "match": 'greeting = f"hello {name}"',

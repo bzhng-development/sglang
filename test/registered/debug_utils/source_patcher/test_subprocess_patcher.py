@@ -59,9 +59,7 @@ class TestSubprocessPatcher:
             config_path = Path(sp.env_vars["SOURCE_PATCHER_CONFIG"])
             raw = yaml.safe_load(config_path.read_text())
 
-            loaded_patches = [
-                PatchSpec(**patch_raw) for patch_raw in raw["patches"]
-            ]
+            loaded_patches = [PatchSpec(**patch_raw) for patch_raw in raw["patches"]]
             assert len(loaded_patches) == 2
             assert loaded_patches[0].target == patches[0].target
             assert loaded_patches[0].edits[0].match == "x = 1"

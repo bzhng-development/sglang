@@ -32,9 +32,7 @@ def _resolve_target(qualified_name: str) -> Callable[..., Any]:
         except ImportError:
             continue
     else:
-        raise ImportError(
-            f"could not import any module prefix of '{qualified_name}'"
-        )
+        raise ImportError(f"could not import any module prefix of '{qualified_name}'")
 
     for attr_name in attr_parts:
         target = getattr(target, attr_name)
@@ -49,9 +47,7 @@ def _resolve_target(qualified_name: str) -> Callable[..., Any]:
     return target
 
 
-def patch_function(
-    *, target: Callable[..., Any], edits: list[EditSpec]
-) -> PatchState:
+def patch_function(*, target: Callable[..., Any], edits: list[EditSpec]) -> PatchState:
     """Patch a function by modifying its source and replacing __code__.
 
     1. inspect.getsource → get original source
@@ -68,9 +64,7 @@ def patch_function(
 
     modified_source = textwrap.dedent(modified_source)
 
-    code: types.CodeType = compile(
-        modified_source, inspect.getfile(target), "exec"
-    )
+    code: types.CodeType = compile(modified_source, inspect.getfile(target), "exec")
     temp_namespace: dict[str, Any] = {}
     exec(code, target.__globals__, temp_namespace)
 
@@ -90,9 +84,7 @@ class CodePatcher:
     def __enter__(self) -> "CodePatcher":
         for spec in self._patches:
             target_fn: Callable[..., Any] = _resolve_target(spec.target)
-            state: PatchState = patch_function(
-                target=target_fn, edits=spec.edits
-            )
+            state: PatchState = patch_function(target=target_fn, edits=spec.edits)
             self._states.append(state)
         return self
 

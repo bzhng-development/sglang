@@ -9,11 +9,7 @@ class TestApplyEdits:
     """Tests for the apply_edits() source text transformation function."""
 
     def test_single_line_match_to_multiline_replacement(self) -> None:
-        source = (
-            "def foo():\n"
-            "    x = compute()\n"
-            "    return x\n"
-        )
+        source = "def foo():\n" "    x = compute()\n" "    return x\n"
         edits = [
             EditSpec(
                 match="x = compute()",
@@ -22,18 +18,11 @@ class TestApplyEdits:
         ]
         result = apply_edits(source=source, edits=edits)
         assert result == (
-            "def foo():\n"
-            "    x = compute()\n"
-            "    print(x)\n"
-            "    return x\n"
+            "def foo():\n" "    x = compute()\n" "    print(x)\n" "    return x\n"
         )
 
     def test_pure_insertion(self) -> None:
-        source = (
-            "def foo():\n"
-            "    a = 1\n"
-            "    b = 2\n"
-        )
+        source = "def foo():\n" "    a = 1\n" "    b = 2\n"
         edits = [
             EditSpec(
                 match="a = 1",
@@ -41,19 +30,10 @@ class TestApplyEdits:
             )
         ]
         result = apply_edits(source=source, edits=edits)
-        assert result == (
-            "def foo():\n"
-            "    a = 1\n"
-            "    print(a)\n"
-            "    b = 2\n"
-        )
+        assert result == ("def foo():\n" "    a = 1\n" "    print(a)\n" "    b = 2\n")
 
     def test_pure_deletion_via_empty_replacement(self) -> None:
-        source = (
-            "def foo():\n"
-            "    debug_log()\n"
-            "    return 42\n"
-        )
+        source = "def foo():\n" "    debug_log()\n" "    return 42\n"
         edits = [
             EditSpec(
                 match="debug_log()",
@@ -61,18 +41,10 @@ class TestApplyEdits:
             )
         ]
         result = apply_edits(source=source, edits=edits)
-        assert result == (
-            "def foo():\n"
-            "    return 42\n"
-        )
+        assert result == ("def foo():\n" "    return 42\n")
 
     def test_deletion_fewer_lines(self) -> None:
-        source = (
-            "def foo():\n"
-            "    a = 1\n"
-            "    b = 2\n"
-            "    c = 3\n"
-        )
+        source = "def foo():\n" "    a = 1\n" "    b = 2\n" "    c = 3\n"
         edits = [
             EditSpec(
                 match="a = 1\nb = 2",
@@ -80,11 +52,7 @@ class TestApplyEdits:
             )
         ]
         result = apply_edits(source=source, edits=edits)
-        assert result == (
-            "def foo():\n"
-            "    ab = 3\n"
-            "    c = 3\n"
-        )
+        assert result == ("def foo():\n" "    ab = 3\n" "    c = 3\n")
 
     def test_multiline_match_to_multiline_replacement(self) -> None:
         source = (
@@ -138,49 +106,29 @@ class TestApplyEdits:
 
     def test_match_not_found_raises(self) -> None:
         source = "def foo():\n    return 1\n"
-        edits = [
-            EditSpec(match="nonexistent_call()", replacement="replaced()")
-        ]
+        edits = [EditSpec(match="nonexistent_call()", replacement="replaced()")]
         with pytest.raises(PatchApplicationError, match="not found"):
             apply_edits(source=source, edits=edits)
 
     def test_match_found_multiple_times_raises(self) -> None:
-        source = (
-            "def foo():\n"
-            "    print(1)\n"
-            "    print(1)\n"
-        )
-        edits = [
-            EditSpec(match="print(1)", replacement="print(2)")
-        ]
+        source = "def foo():\n" "    print(1)\n" "    print(1)\n"
+        edits = [EditSpec(match="print(1)", replacement="print(2)")]
         with pytest.raises(PatchApplicationError, match="multiple"):
             apply_edits(source=source, edits=edits)
 
     def test_multiple_edits_applied_sequentially(self) -> None:
-        source = (
-            "def foo():\n"
-            "    a = 1\n"
-            "    b = 2\n"
-            "    return a + b\n"
-        )
+        source = "def foo():\n" "    a = 1\n" "    b = 2\n" "    return a + b\n"
         edits = [
             EditSpec(match="a = 1", replacement="a = 10"),
             EditSpec(match="b = 2", replacement="b = 20"),
         ]
         result = apply_edits(source=source, edits=edits)
         assert result == (
-            "def foo():\n"
-            "    a = 10\n"
-            "    b = 20\n"
-            "    return a + b\n"
+            "def foo():\n" "    a = 10\n" "    b = 20\n" "    return a + b\n"
         )
 
     def test_strip_matching_ignores_leading_trailing_whitespace(self) -> None:
-        source = (
-            "def foo():\n"
-            "    x = compute()\n"
-            "    return x\n"
-        )
+        source = "def foo():\n" "    x = compute()\n" "    return x\n"
         edits = [
             EditSpec(
                 match="  x = compute()  ",
@@ -188,19 +136,11 @@ class TestApplyEdits:
             )
         ]
         result = apply_edits(source=source, edits=edits)
-        assert result == (
-            "def foo():\n"
-            "    x = replaced()\n"
-            "    return x\n"
-        )
+        assert result == ("def foo():\n" "    x = replaced()\n" "    return x\n")
 
     def test_replacement_indented_text_realigned(self) -> None:
         """replacement text with its own indentation gets realigned to match source."""
-        source = (
-            "def foo():\n"
-            "        x = compute()\n"
-            "        return x\n"
-        )
+        source = "def foo():\n" "        x = compute()\n" "        return x\n"
         edits = [
             EditSpec(
                 match="x = compute()",
@@ -217,12 +157,7 @@ class TestApplyEdits:
 
     def test_replacement_with_existing_indent_realigned(self) -> None:
         """replacement text already has indentation that should be rebased."""
-        source = (
-            "def foo():\n"
-            "    if True:\n"
-            "        x = 1\n"
-            "        return x\n"
-        )
+        source = "def foo():\n" "    if True:\n" "        x = 1\n" "        return x\n"
         edits = [
             EditSpec(
                 match="x = 1",
@@ -241,19 +176,10 @@ class TestApplyEdits:
 
     def test_second_edit_sees_result_of_first(self) -> None:
         """Edits are applied sequentially; second edit matches modified source."""
-        source = (
-            "def foo():\n"
-            "    x = 1\n"
-            "    return x\n"
-        )
+        source = "def foo():\n" "    x = 1\n" "    return x\n"
         edits = [
             EditSpec(match="x = 1", replacement="x = 1\ny = 2"),
             EditSpec(match="y = 2", replacement="y = 20"),
         ]
         result = apply_edits(source=source, edits=edits)
-        assert result == (
-            "def foo():\n"
-            "    x = 1\n"
-            "    y = 20\n"
-            "    return x\n"
-        )
+        assert result == ("def foo():\n" "    x = 1\n" "    y = 20\n" "    return x\n")

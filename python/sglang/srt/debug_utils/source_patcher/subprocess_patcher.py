@@ -22,16 +22,12 @@ class SubprocessPatcher:
         self._tmpdir: Optional[tempfile.TemporaryDirectory[str]] = None
 
     def __enter__(self) -> "SubprocessPatcher":
-        self._tmpdir = tempfile.TemporaryDirectory(
-            prefix="source_patcher_config_"
-        )
+        self._tmpdir = tempfile.TemporaryDirectory(prefix="source_patcher_config_")
         config_dir = Path(self._tmpdir.name)
         self._config_path = config_dir / "patch_config.yaml"
 
         config: dict[str, Any] = {
-            "patches": [
-                spec.model_dump() for spec in self._patches
-            ]
+            "patches": [spec.model_dump() for spec in self._patches]
         }
         self._config_path.write_text(yaml.dump(config, default_flow_style=False))
         return self
@@ -50,7 +46,5 @@ class SubprocessPatcher:
     @property
     def env_vars(self) -> dict[str, str]:
         if self._config_path is None:
-            raise RuntimeError(
-                "SubprocessPatcher must be used as a context manager"
-            )
+            raise RuntimeError("SubprocessPatcher must be used as a context manager")
         return {"SOURCE_PATCHER_CONFIG": str(self._config_path)}

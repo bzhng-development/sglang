@@ -17,17 +17,13 @@ def _find_match(*, source_lines: list[str], match_lines: list[str]) -> int:
     found_indices: list[int] = []
 
     for i in range(len(source_lines) - match_len + 1):
-        candidate: list[str] = [
-            source_lines[i + j].strip() for j in range(match_len)
-        ]
+        candidate: list[str] = [source_lines[i + j].strip() for j in range(match_len)]
         if candidate == stripped_match:
             found_indices.append(i)
 
     if len(found_indices) == 0:
         preview = "\n".join(match_lines)
-        raise PatchApplicationError(
-            f"match text not found in source:\n{preview}"
-        )
+        raise PatchApplicationError(f"match text not found in source:\n{preview}")
     if len(found_indices) > 1:
         preview = "\n".join(match_lines)
         raise PatchApplicationError(
@@ -72,9 +68,7 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
     source_lines: list[str] = source.splitlines()
     match_lines: list[str] = match_text.splitlines()
 
-    start_idx: int = _find_match(
-        source_lines=source_lines, match_lines=match_lines
-    )
+    start_idx: int = _find_match(source_lines=source_lines, match_lines=match_lines)
     match_len: int = len(match_lines)
 
     original_indent: int = _leading_spaces(source_lines[start_idx])
@@ -90,9 +84,7 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
             replacement_lines=replacement_lines, original_indent=original_indent
         )
         new_lines = (
-            source_lines[:start_idx]
-            + aligned
-            + source_lines[start_idx + match_len :]
+            source_lines[:start_idx] + aligned + source_lines[start_idx + match_len :]
         )
 
     trailing_newline: str = "\n" if source.endswith("\n") else ""
