@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import torch
+from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
     TokenAlignerPlan,
@@ -56,8 +57,9 @@ def _collapse_bs_to_t(
     tensor_of_step: dict[int, torch.Tensor],
     layout: TokenLayout,
 ) -> dict[int, torch.Tensor]:
-    """Collapse adjacent B+S dims into a single flat token dim.
+    """Collapse B and S dims into a single flat token dim (always batch-major).
 
+    Handles both ``b s`` and ``s b`` orderings correctly via einops rearrange.
     Returns the original tensors unchanged if layout is T.
     """
     if layout != TokenLayout.BS:
@@ -74,20 +76,49 @@ def _collapse_bs_to_t(
             f"{SEQ_DIM_NAME}={seq_dim}"
         )
 
-    lo: int = min(batch_dim, seq_dim)
-    hi: int = max(batch_dim, seq_dim)
-
-    old_names: list[str | None] = list(some_tensor.names)
-    new_names: list[str | None] = old_names[:lo] + [TOKEN_DIM_NAME] + old_names[hi + 1 :]
+    lhs_pattern, rhs_pattern, new_names = _build_bs_collapse_pattern(
+        names=list(some_tensor.names),
+        batch_dim=batch_dim,
+        seq_dim=seq_dim,
+    )
 
     result: dict[int, torch.Tensor] = {}
     for step, tensor in tensor_of_step.items():
         plain: torch.Tensor = strip_dim_names(tensor)
-        shape: list[int] = list(plain.shape)
-        new_shape: list[int] = shape[:lo] + [shape[lo] * shape[hi]] + shape[hi + 1 :]
-        result[step] = plain.reshape(new_shape).refine_names(*new_names)
+        collapsed: torch.Tensor = rearrange(plain, f"{lhs_pattern} -> {rhs_pattern}")
+        result[step] = collapsed.refine_names(*new_names)
 
     return result
+
+
+def _build_bs_collapse_pattern(
+    *,
+    names: list[str | None],
+    batch_dim: int,
+    seq_dim: int,
+) -> tuple[str, str, list[str | None]]:
+    """Build einops lhs/rhs patterns and output dim names for BS→T collapse.
+
+    Always produces batch-major order ``(b s)`` regardless of input ordering.
+    """
+    lo: int = min(batch_dim, seq_dim)
+    hi: int = max(batch_dim, seq_dim)
+
+    prefix: list[str] = [f"d{i}" for i in range(lo)]
+    suffix: list[str] = [f"d{i}" for i in range(hi + 1, len(names))]
+    lo_name: str = names[lo]  # type: ignore[assignment]
+    hi_name: str = names[hi]  # type: ignore[assignment]
+
+    lhs_parts: list[str] = prefix + [lo_name, hi_name] + suffix
+    rhs_parts: list[str] = prefix + [f"({BATCH_DIM_NAME} {SEQ_DIM_NAME})"] + suffix
+
+    new_names: list[str | None] = (
+        [names[i] for i in range(lo)]
+        + [TOKEN_DIM_NAME]
+        + [names[i] for i in range(hi + 1, len(names))]
+    )
+
+    return " ".join(lhs_parts), " ".join(rhs_parts), new_names
 
 
 # ── core logic (T layout only) ───────────────────────────────────

@@ -378,6 +378,35 @@ class TestBSHDExecutor:
         assert torch.equal(aligned.y[0], flat_bshd[0])
         assert torch.equal(aligned.y[2], flat_bshd[5])
 
+    def test_bshd_reversed_sb_order(self):
+        """Reversed "s b h": S=dim0, B=dim1. Collapse is batch-major: (b s)."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = _named(torch.randn(3, 2, 4), ["s", "b", "h"])
+        # batch-major flatten: rearrange("s b h -> (b s) h")
+        from einops import rearrange
+
+        flat: torch.Tensor = rearrange(tensor.rename(None), "s b h -> (b s) h")
+
+        locator = TokenLocator(
+            steps=[0, 0, 0],
+            token_index_in_step=[0, 2, 5],
+        )
+        plan = TokenAlignerPlan(
+            locators=Pair(x=locator, y=locator),
+            layouts=Pair(x=TokenLayout.BS, y=TokenLayout.BS),
+        )
+
+        tensors: dict[int, torch.Tensor] = {0: tensor}
+        aligned: Pair[torch.Tensor] = execute_token_aligner(
+            plan=plan,
+            tensor_of_step_pair=Pair(x=tensors, y=tensors),
+        )
+
+        assert aligned.x.shape == (3, 4)
+        assert torch.equal(aligned.x[0], flat[0])
+        assert torch.equal(aligned.x[1], flat[2])
+        assert torch.equal(aligned.x[2], flat[5])
+
     def test_bshd_empty_plan_bs_not_at_front(self):
         """Empty plan with non-leading B,S: "h b s d". [4, 2, 3, 5] -> collapse -> [4, 0, 5]."""
         plan = TokenAlignerPlan(
