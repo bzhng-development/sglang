@@ -27,18 +27,13 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
     original_indent: int = _leading_spaces(source_lines[start_idx])
 
     replacement_text: str = edit.replacement.strip()
-    if not replacement_text:
-        new_lines: list[str] = (
-            source_lines[:start_idx] + source_lines[start_idx + match_len :]
-        )
-    else:
-        replacement_lines: list[str] = replacement_text.splitlines()
-        aligned: list[str] = _realign_replacement(
-            replacement_lines=replacement_lines, original_indent=original_indent
-        )
-        new_lines = (
-            source_lines[:start_idx] + aligned + source_lines[start_idx + match_len :]
-        )
+    replacement_lines: list[str] = replacement_text.splitlines() if replacement_text else []
+    aligned: list[str] = _realign_replacement(
+        replacement_lines=replacement_lines, original_indent=original_indent
+    )
+    new_lines: list[str] = (
+        source_lines[:start_idx] + aligned + source_lines[start_idx + match_len :]
+    )
 
     trailing_newline: str = "\n" if source.endswith("\n") else ""
     return "\n".join(new_lines) + trailing_newline
@@ -50,17 +45,18 @@ def _find_match(*, source_lines: list[str], match_lines: list[str]) -> int:
     Returns the index of the first matching line.
     Raises PatchApplicationError if not found or found multiple times.
     """
+    stripped_source: list[str] = [line.strip() for line in source_lines]
     stripped_match: list[str] = [line.strip() for line in match_lines]
     match_len: int = len(stripped_match)
-    found_indices: list[int] = []
 
-    for i in range(len(source_lines) - match_len + 1):
-        candidate: list[str] = [source_lines[i + j].strip() for j in range(match_len)]
-        if candidate == stripped_match:
-            found_indices.append(i)
+    found_indices: list[int] = [
+        i
+        for i in range(len(stripped_source) - match_len + 1)
+        if stripped_source[i : i + match_len] == stripped_match
+    ]
 
     if len(found_indices) == 0:
-        preview = "\n".join(match_lines)
+        preview: str = "\n".join(match_lines)
         raise PatchApplicationError(f"match text not found in source:\n{preview}")
     if len(found_indices) > 1:
         preview = "\n".join(match_lines)

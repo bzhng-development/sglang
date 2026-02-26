@@ -21,6 +21,7 @@ class EditSpec(_StrictBase):
 class PatchSpec(_StrictBase):
     target: str
     edits: list[EditSpec]
+    preamble: str = ""
 
 
 class PatchConfig(_StrictBase):

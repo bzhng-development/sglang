@@ -25,15 +25,15 @@ def apply_patches_from_config(
 
     Args:
         yaml_content: YAML string with patch specifications.
-        extra_imports: Import lines to prepend to every replacement block
-            (e.g. ["from pkg import foo"]).  The caller (dumper) uses this
-            so users don't have to write boilerplate in YAML.
+        extra_imports: Import lines inserted once at the top of each patched
+            function body (e.g. ["from pkg import foo"]).  The caller (dumper)
+            uses this so users don't have to write boilerplate in YAML.
     """
     raw: dict[str, Any] = yaml.safe_load(yaml_content)
     config: PatchConfig = PatchConfig(**raw)
 
     if extra_imports:
-        config = _inject_extra_imports(config=config, extra_imports=extra_imports)
+        config = _inject_preamble(config=config, extra_imports=extra_imports)
 
     return _apply_specs(config.patches)
 
@@ -60,13 +60,19 @@ class CodePatcher:
         self._states.clear()
 
 
-def patch_function(*, target: Callable[..., Any], edits: list[EditSpec]) -> PatchState:
+def patch_function(
+    *,
+    target: Callable[..., Any],
+    edits: list[EditSpec],
+    preamble: str = "",
+) -> PatchState:
     """Patch a function by modifying its source and replacing __code__.
 
     1. inspect.getsource -> get original source
     2. apply_edits -> modify source text
-    3. compile + exec -> get new code object
-    4. replace target.__code__
+    3. optionally prepend preamble (e.g. import lines) inside the function body
+    4. compile + exec -> get new code object
+    5. replace target.__code__
 
     Returns PatchState that can restore the original code.
     """
@@ -74,8 +80,12 @@ def patch_function(*, target: Callable[..., Any], edits: list[EditSpec]) -> Patc
 
     source: str = inspect.getsource(target)
     modified_source: str = apply_edits(source=source, edits=edits)
-
     modified_source = textwrap.dedent(modified_source)
+
+    if preamble.strip():
+        modified_source = _insert_preamble(
+            source=modified_source, preamble=preamble
+        )
 
     code: types.CodeType = compile(modified_source, inspect.getfile(target), "exec")
     temp_namespace: dict[str, Any] = {}
@@ -95,26 +105,52 @@ def _apply_specs(specs: list[PatchSpec]) -> list[PatchState]:
     for spec in specs:
         target_fn: Callable[..., Any] = _resolve_target(spec.target)
         print(f"[source_patcher] patching {spec.target}")
-        state: PatchState = patch_function(target=target_fn, edits=spec.edits)
+        state: PatchState = patch_function(
+            target=target_fn, edits=spec.edits, preamble=spec.preamble
+        )
         states.append(state)
     return states
 
 
-def _inject_extra_imports(
+def _inject_preamble(
     *, config: PatchConfig, extra_imports: list[str]
 ) -> PatchConfig:
-    """Prepend extra import lines to every replacement in the config."""
+    """Set preamble on every PatchSpec so imports are inserted once at function top."""
     import_block: str = "\n".join(extra_imports)
     new_patches: list[PatchSpec] = []
 
     for spec in config.patches:
-        new_edits: list[EditSpec] = []
-        for edit in spec.edits:
-            new_replacement: str = import_block + "\n" + edit.replacement
-            new_edits.append(EditSpec(match=edit.match, replacement=new_replacement))
-        new_patches.append(PatchSpec(target=spec.target, edits=new_edits))
+        existing: str = spec.preamble
+        combined: str = (
+            existing + "\n" + import_block if existing.strip() else import_block
+        )
+        new_patches.append(
+            PatchSpec(target=spec.target, edits=spec.edits, preamble=combined)
+        )
 
     return PatchConfig(patches=new_patches)
+
+
+def _insert_preamble(*, source: str, preamble: str) -> str:
+    """Insert preamble lines right after the function def line (and optional docstring)."""
+    lines: list[str] = source.splitlines()
+    body_indent: str = ""
+
+    insert_idx: int = 1
+    for i, line in enumerate(lines):
+        if i == 0:
+            continue
+        stripped: str = line.strip()
+        if not stripped:
+            continue
+        body_indent = " " * (len(line) - len(line.lstrip()))
+        insert_idx = i
+        break
+
+    preamble_lines: list[str] = [
+        body_indent + pl for pl in preamble.strip().splitlines()
+    ]
+    return "\n".join(lines[:insert_idx] + preamble_lines + lines[insert_idx:])
 
 
 def _resolve_target(qualified_name: str) -> Callable[..., Any]:
