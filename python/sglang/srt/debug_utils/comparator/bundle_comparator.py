@@ -119,7 +119,7 @@ def _compare_bundle_pair_raw(
         name=name,
         diff_threshold=diff_threshold,
     )
-    return ComparisonRecord(**info.model_dump())
+    return ComparisonRecord(**info.model_dump(), aligner_plan=plan)
 
 
 def _apply_dim_names_from_meta(
