@@ -12,6 +12,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
     GeneralWarning,
+    ScalarRecord,
     SkipRecord,
     SummaryRecord,
     WarningRecord,
@@ -1303,11 +1304,158 @@ class TestEntrypointAlignment:
         assert summary.passed == 2
 
 
+class TestEntrypointScalarValues:
+    """Test non-tensor (scalar) value comparison through the full entrypoint pipeline."""
+
+    def test_scalar_float_same_value(self, tmp_path: Path, capsys) -> None:
+        """Two sides dump the same float → ScalarRecord with values_equal=True, category=passed."""
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir in [baseline_dir, target_dir]:
+            dumper = _make_dumper(side_dir)
+            dumper.dump("sm_scale", 0.125)
+            dumper.step()
+
+        args = _make_args(
+            baseline_dir / dumper._config.exp_name,
+            target_dir / dumper._config.exp_name,
+            grouping="raw",
+        )
+        records = _run_and_parse(args, capsys)
+
+        scalars = _get_scalars(records)
+        assert len(scalars) == 1
+        assert scalars[0].name == "sm_scale"
+        assert scalars[0].values_equal is True
+        assert scalars[0].category == "passed"
+
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.passed == 1
+        assert summary.failed == 0
+
+    def test_scalar_float_different_value(self, tmp_path: Path, capsys) -> None:
+        """Two sides dump different floats → ScalarRecord with values_equal=False, category=failed."""
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        dumper_b = _make_dumper(baseline_dir)
+        dumper_b.dump("sm_scale", 0.125)
+        dumper_b.step()
+
+        dumper_t = _make_dumper(target_dir)
+        dumper_t.dump("sm_scale", 0.25)
+        dumper_t.step()
+
+        args = _make_args(
+            baseline_dir / dumper_b._config.exp_name,
+            target_dir / dumper_t._config.exp_name,
+            grouping="raw",
+        )
+        records = _run_and_parse(args, capsys)
+
+        scalars = _get_scalars(records)
+        assert len(scalars) == 1
+        assert scalars[0].values_equal is False
+        assert scalars[0].category == "failed"
+
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.failed == 1
+
+    def test_scalar_string_value(self, tmp_path: Path, capsys) -> None:
+        """String scalar values are compared and displayed correctly."""
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir in [baseline_dir, target_dir]:
+            dumper = _make_dumper(side_dir)
+            dumper.dump("qkv_format", "thd")
+            dumper.step()
+
+        args = _make_args(
+            baseline_dir / dumper._config.exp_name,
+            target_dir / dumper._config.exp_name,
+            grouping="raw",
+        )
+        records = _run_and_parse(args, capsys)
+
+        scalars = _get_scalars(records)
+        assert len(scalars) == 1
+        assert scalars[0].values_equal is True
+        assert scalars[0].baseline_type == "str"
+        assert scalars[0].target_type == "str"
+
+    def test_scalar_mixed_with_tensor(self, tmp_path: Path, capsys) -> None:
+        """Tensors and scalars in the same dump are each handled correctly."""
+        torch.manual_seed(42)
+        tensor = torch.randn(4, 4)
+
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir in [baseline_dir, target_dir]:
+            dumper = _make_dumper(side_dir)
+            dumper.dump("hidden", tensor)
+            dumper.dump("sm_scale", 0.125)
+            dumper.step()
+
+        args = _make_args(
+            baseline_dir / dumper._config.exp_name,
+            target_dir / dumper._config.exp_name,
+            grouping="raw",
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        scalars = _get_scalars(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].name == "hidden"
+        assert len(scalars) == 1
+        assert scalars[0].name == "sm_scale"
+        assert scalars[0].values_equal is True
+
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.passed == 2
+
+    def test_scalar_json_roundtrip(self, tmp_path: Path, capsys) -> None:
+        """ScalarRecord JSON output can be parsed back correctly."""
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir in [baseline_dir, target_dir]:
+            dumper = _make_dumper(side_dir)
+            dumper.dump("sm_scale", 0.125)
+            dumper.step()
+
+        args = _make_args(
+            baseline_dir / dumper._config.exp_name,
+            target_dir / dumper._config.exp_name,
+            grouping="raw",
+        )
+        records = _run_and_parse(args, capsys)
+
+        scalars = _get_scalars(records)
+        assert len(scalars) == 1
+
+        json_str: str = scalars[0].model_dump_json()
+        roundtripped = parse_record_json(json_str)
+        assert isinstance(roundtripped, ScalarRecord)
+        assert roundtripped.name == "sm_scale"
+        assert roundtripped.values_equal is True
+
+
 # --------------------------- Assertion helpers -------------------
 
 
 def _get_comparisons(records: list[AnyRecord]) -> list[ComparisonRecord]:
     return [r for r in records if isinstance(r, ComparisonRecord)]
+
+
+def _get_scalars(records: list[AnyRecord]) -> list[ScalarRecord]:
+    return [r for r in records if isinstance(r, ScalarRecord)]
 
 
 def _assert_single_comparison_passed(records: list[AnyRecord]) -> ComparisonRecord:
