@@ -316,7 +316,7 @@ class _Dumper:
             @functools.wraps(fn)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 ctx_dict: dict = (
-                    _extractor(*args, **kwargs) if _extractor else static_ctx
+                    _extractor(args[0]) if _extractor else static_ctx
                 )
                 self.set_ctx(**ctx_dict)
                 try:
