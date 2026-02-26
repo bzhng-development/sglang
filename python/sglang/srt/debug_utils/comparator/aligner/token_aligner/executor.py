@@ -100,25 +100,21 @@ def _build_bs_collapse_pattern(
     """Build einops lhs/rhs patterns and output dim names for BS→T collapse.
 
     Always produces batch-major order ``(b s)`` regardless of input ordering.
+    Uses the tensor's own dim names as einops axis names.
     """
     lo: int = min(batch_dim, seq_dim)
     hi: int = max(batch_dim, seq_dim)
 
-    prefix: list[str] = [f"d{i}" for i in range(lo)]
-    suffix: list[str] = [f"d{i}" for i in range(hi + 1, len(names))]
-    lo_name: str = names[lo]  # type: ignore[assignment]
-    hi_name: str = names[hi]  # type: ignore[assignment]
+    lhs: str = " ".join(names)  # type: ignore[arg-type]
 
-    lhs_parts: list[str] = prefix + [lo_name, hi_name] + suffix
-    rhs_parts: list[str] = prefix + [f"({BATCH_DIM_NAME} {SEQ_DIM_NAME})"] + suffix
+    rhs_names: list[str] = list(names[:lo]) + [f"({BATCH_DIM_NAME} {SEQ_DIM_NAME})"] + list(names[hi + 1 :])  # type: ignore[misc]
+    rhs: str = " ".join(rhs_names)
 
     new_names: list[str | None] = (
-        [names[i] for i in range(lo)]
-        + [TOKEN_DIM_NAME]
-        + [names[i] for i in range(hi + 1, len(names))]
+        list(names[:lo]) + [TOKEN_DIM_NAME] + list(names[hi + 1 :])
     )
 
-    return " ".join(lhs_parts), " ".join(rhs_parts), new_names
+    return lhs, rhs, new_names
 
 
 # ── core logic (T layout only) ───────────────────────────────────
