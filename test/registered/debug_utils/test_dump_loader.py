@@ -5,6 +5,7 @@ import pytest
 import torch
 
 from sglang.srt.debug_utils.dump_loader import (
+    LOAD_FAILED,
     ValueWithMeta,
     _add_duplicate_index,
     _cast_to_polars_dtype,
@@ -94,7 +95,7 @@ class TestValueWithMeta:
         path.write_text("not a valid pt file")
 
         loaded = ValueWithMeta.load(path)
-        assert loaded.value is None
+        assert loaded.value is LOAD_FAILED
         assert loaded.meta["name"] == "bad"
 
 
