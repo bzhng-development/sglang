@@ -7,7 +7,10 @@ full ``comparator/`` package: ``python -m sglang.srt.debug_utils.comparator``.
 
 import argparse
 import functools
+import re
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable, List, Optional
 
 import torch
 
@@ -31,8 +34,20 @@ def main(args):
     print("df_target", df_target)
     print("df_baseline", df_baseline)
 
+    tensor_dim_descs: List[TensorDimDesc] = _get_tensor_dim_descs()
+
     for row in df_target.iter_rows(named=True):
         path_target = Path(args.target_path) / row["filename"]
+
+        tensor_dim_desc: Optional[TensorDimDesc] = None
+        if tensor_dim_descs:
+            matched: list[TensorDimDesc] = [
+                desc
+                for desc in tensor_dim_descs
+                if re.search(desc.pattern, row["filename"]) is not None
+            ]
+            if matched:
+                tensor_dim_desc = matched[0]
 
         row_baseline = find_row(
             df_baseline,
@@ -64,6 +79,7 @@ def main(args):
             path_target=path_target,
             diff_threshold=args.diff_threshold,
             name=row["name"],
+            tensor_dim_desc=tensor_dim_desc,
         )
         print()
 
@@ -73,6 +89,7 @@ def check_tensor_pair(
     path_target,
     diff_threshold: float = 1e-3,
     name="",
+    tensor_dim_desc: Optional["TensorDimDesc"] = None,
 ):
     x_baseline = _load_object(path_baseline)
     x_target = _load_object(path_target)
@@ -89,10 +106,22 @@ def check_tensor_pair(
         f"[{'' if x_baseline.dtype == x_target.dtype else '🟠'}dtype] {x_baseline.dtype} vs {x_target.dtype}"
     )
 
+    if tensor_dim_desc is not None:
+        import einops
+
+        x_baseline = einops.rearrange(
+            x_baseline,
+            tensor_dim_desc.baseline_desc + " -> " + tensor_dim_desc.target_desc,
+        )
+        if tensor_dim_desc.baseline_cropper is not None:
+            print("Apply baseline_cropper")
+            x_baseline = tensor_dim_desc.baseline_cropper(x_baseline)
+
+    x_baseline, x_target = _comparison_preprocessor(x_baseline, x_target, name=name)
     x_baseline = _try_unify_shape(x_baseline, target_shape=x_target.shape)
 
     print(
-        f"After unify "
+        f"After preprocessor "
         f"[shape] {x_baseline.shape} vs {x_target.shape}\t"
         f"[dtype] {x_baseline.dtype} vs {x_target.dtype}"
     )
@@ -235,6 +264,26 @@ def _load_object(path):
         print(f"Skip load {path} since {type(x)=} is not a Tensor ({x=})")
         return None
     return x.cuda()
+
+
+# TODO may make customization endpoints configurable via args pointing to code file
+def _comparison_preprocessor(x_baseline, x_target, name):
+    """Customization endpoint. Can insert arbitrary adhoc postprocessing logic here."""
+    return x_baseline, x_target
+
+
+@dataclass
+class TensorDimDesc:
+    pattern: str
+    baseline_desc: str
+    target_desc: str
+    baseline_cropper: Optional[Callable[[torch.Tensor], torch.Tensor]] = None
+
+
+def _get_tensor_dim_descs() -> List[TensorDimDesc]:
+    """Customization endpoint. Return a list of TensorDimDesc to rearrange baseline
+    dimensions to match target layout via einops before comparison."""
+    return []
 
 
 if __name__ == "__main__":
