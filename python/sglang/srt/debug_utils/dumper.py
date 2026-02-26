@@ -418,6 +418,8 @@ class _Dumper:
             return
 
         tags = dict(name=name, **extra_kwargs, **self._state.global_ctx)
+        tags["is_recompute"] = _detect_is_recompute()
+
         if (f := self._config.filter) is not None and re.search(
             f, _format_tags(tags)
         ) is None:
@@ -474,7 +476,9 @@ class _Dumper:
             return
 
         captured_step = self._state.step
-        captured_tags = dict(name=f"grad__{name}", **deepcopy(extra_kwargs))
+        captured_tags = dict(
+            name=f"grad__{name}", is_recompute=False, **deepcopy(extra_kwargs)
+        )
         captured_meta_only = meta_only_fields or {}
 
         def grad_hook(grad: torch.Tensor) -> None:
@@ -1168,6 +1172,9 @@ class _FrameworkPlugin(ABC):
     def get_tokenizer_path(self) -> Optional[str]:
         return None
 
+    def detect_is_recompute(self) -> bool:
+        return False
+
 
 class _SGLangPlugin(_FrameworkPlugin):
     _available = True
@@ -1328,6 +1335,17 @@ class _MegatronPlugin(_FrameworkPlugin):
         except (ImportError, AssertionError, AttributeError):
             pass
 
+        # Recompute axis: model checkpointed forward vs recompute forward as virtual
+        # parallel axis. Only injected when inside a checkpoint region.
+        try:
+            from megatron.core.tensor_parallel.random import is_checkpointing
+
+            if is_checkpointing():
+                info["recompute_rank"] = 1 if torch.is_grad_enabled() else 0
+                info["recompute_size"] = 2
+        except (ImportError, AttributeError):
+            pass
+
         return info
 
     def convert_value(
@@ -1353,8 +1371,22 @@ class _MegatronPlugin(_FrameworkPlugin):
             {"input_ids", "position_ids", "cu_seqlens_q", "cu_seqlens_kv", "qkv_format"}
         )
 
+    def detect_is_recompute(self) -> bool:
+        if not self._available:
+            return False
+        try:
+            from megatron.core.tensor_parallel.random import is_checkpointing
+
+            return is_checkpointing() and torch.is_grad_enabled()
+        except (ImportError, AttributeError):
+            return False
+
 
 _plugins: list[_FrameworkPlugin] = [_SGLangPlugin(), _MegatronPlugin()]
+
+
+def _detect_is_recompute() -> bool:
+    return any(p.detect_is_recompute() for p in _plugins)
 
 
 # -------------------------------------- singleton ------------------------------------------

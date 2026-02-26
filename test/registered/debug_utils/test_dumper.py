@@ -16,6 +16,7 @@ from sglang.srt.debug_utils.dumper import (
     DumperConfig,
     _collective_with_timeout,
     _deepcopy_or_clone,
+    _detect_is_recompute,
     _Dumper,
     _format_tags,
     _get_default_exp_name,
@@ -2391,6 +2392,79 @@ class TestCtxDecorator:
 
         with pytest.raises(ValueError, match="must provide"):
             d.ctx()
+
+
+class TestIsRecompute:
+    def test_is_recompute_false_by_default(self, tmp_path: Path) -> None:
+        d = _make_test_dumper(tmp_path)
+        tensor = torch.randn(3, 3)
+        d.dump("test_tensor", tensor)
+
+        filenames = _get_filenames(tmp_path)
+        _assert_files(filenames, exist=["is_recompute=False"])
+
+    def test_is_recompute_in_embedded_meta(self, tmp_path: Path) -> None:
+        d = _make_test_dumper(tmp_path)
+        tensor = torch.randn(3, 3)
+        d.dump("test_tensor", tensor)
+
+        path = _find_dump_file(tmp_path, rank=0, name="test_tensor")
+        raw = _load_dump(path)
+        assert "is_recompute" in raw["meta"]
+        assert raw["meta"]["is_recompute"] is False
+
+    def test_is_recompute_with_mock(self, tmp_path: Path, monkeypatch) -> None:
+        import sglang.srt.debug_utils.dumper as dumper_mod
+
+        monkeypatch.setattr(dumper_mod, "_detect_is_recompute", lambda: True)
+
+        d = _make_test_dumper(tmp_path)
+        tensor = torch.randn(3, 3)
+        d.dump("test_tensor", tensor)
+
+        filenames = _get_filenames(tmp_path)
+        _assert_files(filenames, exist=["is_recompute=True"])
+
+        path = _find_dump_file(tmp_path, rank=0, name="test_tensor")
+        raw = _load_dump(path)
+        assert raw["meta"]["is_recompute"] is True
+
+    def test_grad_hook_has_is_recompute_false(self, tmp_path: Path) -> None:
+        d = _make_test_dumper(tmp_path, enable_grad=True)
+        x = torch.randn(3, 3, requires_grad=True)
+        y = (x * 2).sum()
+
+        d.dump("test_tensor", x)
+        y.backward()
+
+        grad_files = [
+            f for f in _get_filenames(tmp_path) if "grad__test_tensor" in f
+        ]
+        assert len(grad_files) == 1
+        assert "is_recompute=False" in grad_files[0]
+
+    def test_non_intrusive_hooks_have_is_recompute(self, tmp_path: Path) -> None:
+        class Simple(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.linear = torch.nn.Linear(4, 4)
+
+            def forward(self, x: torch.Tensor) -> torch.Tensor:
+                return self.linear(x)
+
+        model = Simple()
+        d = _make_test_dumper(tmp_path, non_intrusive_mode="all")
+        d.register_non_intrusive_dumper(model)
+
+        with d.capture_output() as captured:
+            model(torch.randn(2, 4))
+
+        for key, data in captured.items():
+            assert "is_recompute" in data["meta"], f"missing is_recompute in {key}"
+            assert data["meta"]["is_recompute"] is False
+
+    def test_detect_is_recompute_default(self) -> None:
+        assert _detect_is_recompute() is False
 
 
 if __name__ == "__main__":

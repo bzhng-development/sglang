@@ -8,7 +8,9 @@ from sglang.srt.debug_utils.dump_loader import (
     ValueWithMeta,
     _add_duplicate_index,
     _cast_to_polars_dtype,
+    _parse_bool,
     find_row,
+    parse_meta_from_filename,
     read_meta,
 )
 from sglang.test.ci.ci_register import register_cpu_ci
@@ -94,6 +96,42 @@ class TestValueWithMeta:
         loaded = ValueWithMeta.load(path)
         assert loaded.value is None
         assert loaded.meta["name"] == "bad"
+
+
+class TestParseBool:
+    def test_true_values(self) -> None:
+        assert _parse_bool("True") is True
+        assert _parse_bool("true") is True
+        assert _parse_bool("1") is True
+
+    def test_false_values(self) -> None:
+        assert _parse_bool("False") is False
+        assert _parse_bool("false") is False
+        assert _parse_bool("0") is False
+
+
+class TestIsRecomputeParsing:
+    def test_parse_is_recompute_from_filename(self, tmp_path) -> None:
+        from pathlib import Path
+
+        meta_true = parse_meta_from_filename(
+            Path("step=0___rank=0___dump_index=1___name=x___is_recompute=True.pt")
+        )
+        assert meta_true["is_recompute"] is True
+
+        meta_false = parse_meta_from_filename(
+            Path("step=0___rank=0___dump_index=1___name=x___is_recompute=False.pt")
+        )
+        assert meta_false["is_recompute"] is False
+
+    def test_backward_compat_no_is_recompute(self, tmp_path) -> None:
+        for fn in [
+            "step=1___rank=0___dump_index=1___name=a.pt",
+        ]:
+            torch.save(torch.randn(5), tmp_path / fn)
+
+        df = read_meta(str(tmp_path))
+        assert "is_recompute" not in df.columns
 
 
 if __name__ == "__main__":

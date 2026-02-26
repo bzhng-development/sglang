@@ -2,12 +2,19 @@ import functools
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import polars as pl
 import torch
 
-_TYPED_FIELDS: list[tuple[str, type]] = [("rank", int)]
+def _parse_bool(value: str) -> bool:
+    return value.lower() in ("true", "1")
+
+
+_TYPED_FIELDS: list[tuple[str, Callable[[str], Any]]] = [
+    ("rank", int),
+    ("is_recompute", _parse_bool),
+]
 
 LOAD_FAILED: object = object()
 
