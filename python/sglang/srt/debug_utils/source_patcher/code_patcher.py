@@ -1,17 +1,12 @@
 import importlib
 import inspect
-import logging
-import os
 import textwrap
 import types
 from collections.abc import Callable
-from pathlib import Path
 from typing import Any, Optional
 
 from sglang.srt.debug_utils.source_patcher.source_editor import apply_edits
 from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchSpec, PatchState
-
-logger = logging.getLogger(__name__)
 
 
 def _resolve_target(qualified_name: str) -> Callable[..., Any]:
@@ -99,25 +94,4 @@ class CodePatcher:
         self._states.clear()
 
 
-def apply_patches_from_env() -> None:
-    """Read SOURCE_PATCHER_CONFIG env var, load YAML config, apply all patches.
 
-    No-op if the env var is not set.
-    """
-    config_path_str: Optional[str] = os.environ.get("SOURCE_PATCHER_CONFIG")
-    if not config_path_str:
-        return
-
-    import yaml
-
-    config_path: Path = Path(config_path_str)
-    logger.info("source_patcher: loading config from %s", config_path)
-
-    with open(config_path) as f:
-        raw: dict[str, Any] = yaml.safe_load(f)
-
-    for patch_raw in raw["patches"]:
-        spec = PatchSpec(**patch_raw)
-        target_fn: Callable[..., Any] = _resolve_target(spec.target)
-        logger.info("source_patcher: patching %s", spec.target)
-        patch_function(target=target_fn, edits=spec.edits)

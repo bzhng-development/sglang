@@ -47,4 +47,4 @@ class SubprocessPatcher:
     def env_vars(self) -> dict[str, str]:
         if self._config_path is None:
             raise RuntimeError("SubprocessPatcher must be used as a context manager")
-        return {"SOURCE_PATCHER_CONFIG": str(self._config_path)}
+        return {"DUMPER_SOURCE_PATCHER_CONFIG": str(self._config_path)}

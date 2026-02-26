@@ -1,6 +1,5 @@
 from sglang.srt.debug_utils.source_patcher.code_patcher import (
     CodePatcher,
-    apply_patches_from_env,
     patch_function,
 )
 from sglang.srt.debug_utils.source_patcher.subprocess_patcher import SubprocessPatcher
@@ -12,6 +11,5 @@ __all__ = [
     "PatchSpec",
     "PatchState",
     "SubprocessPatcher",
-    "apply_patches_from_env",
     "patch_function",
 ]

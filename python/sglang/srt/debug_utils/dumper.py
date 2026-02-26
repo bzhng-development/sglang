@@ -138,6 +138,7 @@ class DumperConfig(_BaseConfig):
     collective_timeout: int = 60
     server_port: str = "-1"
     non_intrusive_mode: str = "core"
+    source_patcher_config: Optional[str] = None
 
     @classmethod
     def _env_prefix(cls) -> str:
@@ -326,6 +327,30 @@ class _Dumper:
             return wrapper
 
         return decorator
+
+    def apply_source_patches(self) -> None:
+        """Apply source patches from DUMPER_SOURCE_PATCHER_CONFIG if set."""
+        config_path = self._config.source_patcher_config
+        if not config_path:
+            return
+
+        from sglang.srt.debug_utils.source_patcher.code_patcher import (
+            _resolve_target,
+            patch_function,
+        )
+        from sglang.srt.debug_utils.source_patcher.types import PatchSpec
+
+        import yaml
+
+        print(f"[Dumper] source_patcher: loading config from {config_path}")
+        with open(config_path) as f:
+            raw: dict = yaml.safe_load(f)
+
+        for patch_raw in raw["patches"]:
+            spec = PatchSpec(**patch_raw)
+            target_fn = _resolve_target(spec.target)
+            print(f"[Dumper] source_patcher: patching {spec.target}")
+            patch_function(target=target_fn, edits=spec.edits)
 
     def register_non_intrusive_dumper(
         self,

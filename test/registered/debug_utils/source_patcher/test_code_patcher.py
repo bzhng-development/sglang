@@ -1,15 +1,12 @@
 import importlib.util
-import os
 import sys
 from pathlib import Path
 
 import pytest
-import yaml
 
 from sglang.srt.debug_utils.source_patcher.code_patcher import (
     CodePatcher,
     _resolve_target,
-    apply_patches_from_env,
     patch_function,
 )
 from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchSpec
@@ -226,49 +223,3 @@ class TestCodePatcher:
         assert obj.greet("world") == "hello world"
 
 
-class TestApplyPatchesFromEnv:
-    def test_no_env_var_is_noop(self) -> None:
-        old = os.environ.pop("SOURCE_PATCHER_CONFIG", None)
-        try:
-            apply_patches_from_env()
-        finally:
-            if old is not None:
-                os.environ["SOURCE_PATCHER_CONFIG"] = old
-
-    def test_patches_applied_from_yaml(self, tmp_path: Path) -> None:
-        _load_fixture_module()
-        cls = _get_sample_class()
-        obj = cls()
-        assert obj.greet("world") == "hello world"
-
-        original_code = cls.greet.__code__
-
-        config = {
-            "patches": [
-                {
-                    "target": f"{_SAMPLE_MODULE_NAME}.SampleClass.greet",
-                    "edits": [
-                        {
-                            "match": 'greeting = f"hello {name}"',
-                            "replacement": 'greeting = f"yaml_patched {name}"',
-                        }
-                    ],
-                }
-            ]
-        }
-
-        config_path = tmp_path / "patch_config.yaml"
-        config_path.write_text(yaml.dump(config))
-
-        old = os.environ.get("SOURCE_PATCHER_CONFIG")
-        os.environ["SOURCE_PATCHER_CONFIG"] = str(config_path)
-        try:
-            apply_patches_from_env()
-            assert obj.greet("world") == "yaml_patched world"
-        finally:
-            if old is not None:
-                os.environ["SOURCE_PATCHER_CONFIG"] = old
-            else:
-                del os.environ["SOURCE_PATCHER_CONFIG"]
-
-            cls.greet.__code__ = original_code

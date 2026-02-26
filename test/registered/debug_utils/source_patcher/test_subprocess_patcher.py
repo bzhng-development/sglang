@@ -30,7 +30,7 @@ class TestSubprocessPatcher:
     def test_creates_yaml_config_on_enter(self) -> None:
         patches = _make_patches()
         with SubprocessPatcher(patches=patches) as sp:
-            config_path = Path(sp.env_vars["SOURCE_PATCHER_CONFIG"])
+            config_path = Path(sp.env_vars["DUMPER_SOURCE_PATCHER_CONFIG"])
             assert config_path.exists()
 
             raw = yaml.safe_load(config_path.read_text())
@@ -42,13 +42,13 @@ class TestSubprocessPatcher:
         patches = _make_patches()
         with SubprocessPatcher(patches=patches) as sp:
             env = sp.env_vars
-            assert "SOURCE_PATCHER_CONFIG" in env
-            assert Path(env["SOURCE_PATCHER_CONFIG"]).exists()
+            assert "DUMPER_SOURCE_PATCHER_CONFIG" in env
+            assert Path(env["DUMPER_SOURCE_PATCHER_CONFIG"]).exists()
 
     def test_cleanup_on_exit(self) -> None:
         patches = _make_patches()
         with SubprocessPatcher(patches=patches) as sp:
-            config_path = Path(sp.env_vars["SOURCE_PATCHER_CONFIG"])
+            config_path = Path(sp.env_vars["DUMPER_SOURCE_PATCHER_CONFIG"])
             assert config_path.exists()
 
         assert not config_path.exists()
@@ -56,7 +56,7 @@ class TestSubprocessPatcher:
     def test_roundtrip_yaml_to_patchspec(self) -> None:
         patches = _make_patches()
         with SubprocessPatcher(patches=patches) as sp:
-            config_path = Path(sp.env_vars["SOURCE_PATCHER_CONFIG"])
+            config_path = Path(sp.env_vars["DUMPER_SOURCE_PATCHER_CONFIG"])
             raw = yaml.safe_load(config_path.read_text())
 
             loaded_patches = [PatchSpec(**patch_raw) for patch_raw in raw["patches"]]
@@ -71,7 +71,7 @@ class TestSubprocessPatcher:
 
         try:
             with SubprocessPatcher(patches=patches) as sp:
-                config_path = Path(sp.env_vars["SOURCE_PATCHER_CONFIG"])
+                config_path = Path(sp.env_vars["DUMPER_SOURCE_PATCHER_CONFIG"])
                 raise RuntimeError("test error")
         except RuntimeError:
             pass
