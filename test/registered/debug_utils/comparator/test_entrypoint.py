@@ -1309,19 +1309,10 @@ class TestEntrypointScalarValues:
 
     def test_scalar_float_same_value(self, tmp_path: Path, capsys) -> None:
         """Two sides dump the same float → ScalarRecord with values_equal=True, category=passed."""
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-
-        for side_dir in [baseline_dir, target_dir]:
-            dumper = _make_dumper(side_dir)
-            dumper.dump("sm_scale", 0.125)
-            dumper.step()
-
-        args = _make_args(
-            baseline_dir / dumper._config.exp_name,
-            target_dir / dumper._config.exp_name,
-            grouping="raw",
+        baseline_path, target_path = _create_scalar_dumps(
+            tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
+        args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
         scalars = _get_scalars(records)
@@ -1337,22 +1328,10 @@ class TestEntrypointScalarValues:
 
     def test_scalar_float_different_value(self, tmp_path: Path, capsys) -> None:
         """Two sides dump different floats → ScalarRecord with values_equal=False, category=failed."""
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-
-        dumper_b = _make_dumper(baseline_dir)
-        dumper_b.dump("sm_scale", 0.125)
-        dumper_b.step()
-
-        dumper_t = _make_dumper(target_dir)
-        dumper_t.dump("sm_scale", 0.25)
-        dumper_t.step()
-
-        args = _make_args(
-            baseline_dir / dumper_b._config.exp_name,
-            target_dir / dumper_t._config.exp_name,
-            grouping="raw",
+        baseline_path, target_path = _create_scalar_dumps(
+            tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.25
         )
+        args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
         scalars = _get_scalars(records)
@@ -1366,19 +1345,10 @@ class TestEntrypointScalarValues:
 
     def test_scalar_string_value(self, tmp_path: Path, capsys) -> None:
         """String scalar values are compared and displayed correctly."""
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-
-        for side_dir in [baseline_dir, target_dir]:
-            dumper = _make_dumper(side_dir)
-            dumper.dump("qkv_format", "thd")
-            dumper.step()
-
-        args = _make_args(
-            baseline_dir / dumper._config.exp_name,
-            target_dir / dumper._config.exp_name,
-            grouping="raw",
+        baseline_path, target_path = _create_scalar_dumps(
+            tmp_path, name="qkv_format", baseline_value="thd", target_value="thd"
         )
+        args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
         scalars = _get_scalars(records)
@@ -1396,14 +1366,14 @@ class TestEntrypointScalarValues:
         target_dir = tmp_path / "target"
 
         for side_dir in [baseline_dir, target_dir]:
-            dumper = _make_dumper(side_dir)
-            dumper.dump("hidden", tensor)
-            dumper.dump("sm_scale", 0.125)
-            dumper.step()
+            _create_scalar_rank_dump(
+                side_dir, rank=0, name="sm_scale", value=0.125,
+                extra_tensor_dumps=[("hidden", tensor)],
+            )
 
         args = _make_args(
-            baseline_dir / dumper._config.exp_name,
-            target_dir / dumper._config.exp_name,
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
             grouping="raw",
         )
         records = _run_and_parse(args, capsys)
@@ -1422,19 +1392,10 @@ class TestEntrypointScalarValues:
 
     def test_scalar_json_roundtrip(self, tmp_path: Path, capsys) -> None:
         """ScalarRecord JSON output can be parsed back correctly."""
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-
-        for side_dir in [baseline_dir, target_dir]:
-            dumper = _make_dumper(side_dir)
-            dumper.dump("sm_scale", 0.125)
-            dumper.step()
-
-        args = _make_args(
-            baseline_dir / dumper._config.exp_name,
-            target_dir / dumper._config.exp_name,
-            grouping="raw",
+        baseline_path, target_path = _create_scalar_dumps(
+            tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
+        args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
 
         scalars = _get_scalars(records)
@@ -1512,6 +1473,56 @@ def _create_dumps(
         exp_paths.append(d / dumper._config.exp_name)
 
     return exp_paths[0], exp_paths[1]
+
+
+def _create_scalar_rank_dump(
+    directory: Path,
+    *,
+    rank: int,
+    name: str,
+    value: object,
+    extra_tensor_dumps: list[tuple[str, torch.Tensor]] | None = None,
+) -> Path:
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(_dumper_module, "_get_rank", lambda: rank)
+
+        dumper = _Dumper(
+            config=DumperConfig(
+                enable=True,
+                dir=str(directory),
+                exp_name=_FIXED_EXP_NAME,
+                enable_http_server=False,
+            )
+        )
+        dumper.__dict__["_static_meta"] = {"world_rank": rank, "world_size": 1}
+
+        dumper.dump(name, value)
+        for extra_name, extra_tensor in extra_tensor_dumps or []:
+            dumper.dump(extra_name, extra_tensor)
+        dumper.step()
+
+    return directory / _FIXED_EXP_NAME
+
+
+def _create_scalar_dumps(
+    tmp_path: Path,
+    *,
+    name: str,
+    baseline_value: object,
+    target_value: object,
+) -> tuple[Path, Path]:
+    baseline_dir = tmp_path / "baseline"
+    target_dir = tmp_path / "target"
+    baseline_dir.mkdir()
+    target_dir.mkdir()
+
+    baseline_path = _create_scalar_rank_dump(
+        baseline_dir, rank=0, name=name, value=baseline_value
+    )
+    target_path = _create_scalar_rank_dump(
+        target_dir, rank=0, name=name, value=target_value
+    )
+    return baseline_path, target_path
 
 
 def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace:
