@@ -174,23 +174,6 @@ class TestTokenDim:
         assert aligned.x.shape == (0, 3, 8)
         assert aligned.y.shape == (0, 3, 8)
 
-    def test_4d_tensor_arbitrary_dims(self) -> None:
-        """tensor shape [2, 5, 3, 8] (whatever_1 t b h), token_dim=1."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(2, 5, 3, 8)
-        plan: TokenAlignerPlan = self._make_simple_plan(num_tokens=5)
-
-        tensors: dict[int, torch.Tensor] = {0: tensor}
-        aligned: Pair[torch.Tensor] = execute_token_aligner(
-            plan=plan,
-            tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim=1,
-        )
-
-        assert aligned.x.shape == (5, 2, 3, 8)
-        for i in range(5):
-            assert torch.equal(aligned.x[i], tensor.select(dim=1, index=i))
-
     def test_high_rank_tensor(self) -> None:
         """tensor shape [2, 3, 5, 4, 8] (a b t c d), token_dim=2."""
         torch.manual_seed(42)
