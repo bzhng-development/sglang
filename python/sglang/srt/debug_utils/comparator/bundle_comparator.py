@@ -72,7 +72,7 @@ def _compare_bundle_pair_inner(
         x=None, y=None
     ),
 ) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
-    # 1. Load all non-None values
+    # 1. Load all successfully loaded values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
         x=_load_all_values(filenames=filenames_pair.x, base_path=baseline_path),
         y=_load_all_values(filenames=filenames_pair.y, base_path=target_path),
