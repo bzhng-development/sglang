@@ -134,49 +134,22 @@ class TestTokenDim:
         for i in range(5):
             assert torch.equal(aligned.x[i], tensor.select(dim=2, index=i))
 
-    def test_token_dim_zero_backward_compat(self) -> None:
-        """Explicit token_dim=0 matches default behavior."""
+    def test_token_dim_zero(self) -> None:
+        """token_dim=0 selects along first dimension (standard t-h-d layout)."""
         torch.manual_seed(42)
-        hidden_step0: torch.Tensor = torch.randn(5, 8)
-        hidden_step1: torch.Tensor = torch.randn(2, 8)
+        tensor: torch.Tensor = torch.randn(5, 8)
+        plan: TokenAlignerPlan = self._make_simple_plan(num_tokens=5)
 
-        aux = TokenAlignerStepAux(
-            input_ids=[10, 20, 30, 40, 50],
-            positions=[0, 1, 2, 0, 1],
-            seq_lens=[3, 2],
-            seq_ids=[SGLangSeqId(rid="A"), SGLangSeqId(rid="B")],
-        )
-        aux_step1 = TokenAlignerStepAux(
-            input_ids=[31, 51],
-            positions=[3, 2],
-            seq_lens=[1, 1],
-            seq_ids=[SGLangSeqId(rid="A"), SGLangSeqId(rid="B")],
-        )
-
-        side_aux = TokenAlignerGlobalAux(
-            step_auxs={0: aux, 1: aux_step1},
-            framework="sglang",
-            layout="thd",
-        )
-
-        index = build_seqs_info(side_aux)
-        plan: TokenAlignerPlan = compute_token_aligner_plan(
-            seqs_info_pair=Pair(x=index, y=index)
-        )
-
-        tensors: dict[int, torch.Tensor] = {0: hidden_step0, 1: hidden_step1}
-
-        aligned_default: Pair[torch.Tensor] = execute_token_aligner(
-            plan=plan, tensor_of_step_pair=Pair(x=tensors, y=tensors)
-        )
-        aligned_explicit: Pair[torch.Tensor] = execute_token_aligner(
+        tensors: dict[int, torch.Tensor] = {0: tensor}
+        aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
             token_dim=0,
         )
 
-        assert torch.equal(aligned_default.x, aligned_explicit.x)
-        assert torch.equal(aligned_default.y, aligned_explicit.y)
+        assert aligned.x.shape == (5, 8)
+        for i in range(5):
+            assert torch.equal(aligned.x[i], tensor.select(dim=0, index=i))
 
     def test_zero_matched_tokens_nonzero_token_dim(self) -> None:
         """Empty plan with token_dim=1 produces correct empty shape."""
