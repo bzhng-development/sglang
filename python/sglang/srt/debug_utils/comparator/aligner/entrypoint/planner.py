@@ -25,10 +25,14 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
 )
 from sglang.srt.debug_utils.comparator.dims import (
     TOKEN_DIM_NAME,
+    DimSpec,
+    TokenDimInfo,
     find_dim_index,
     parse_dims,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
+
+_FALLBACK_TOKEN_DIM_INFO: TokenDimInfo = TokenDimInfo(token_dim_name=TOKEN_DIM_NAME)
 
 
 def compute_aligner_plan(
@@ -36,7 +40,8 @@ def compute_aligner_plan(
     metas_pair: Pair[list[dict[str, Any]]],
     token_aligner_plan: Optional[TokenAlignerPlan],
 ) -> AlignerPlan:
-    token_dims: Pair[int] = metas_pair.map(_compute_token_dim)
+    token_dim_info: Pair[TokenDimInfo] = metas_pair.map(_compute_token_dim_info)
+    dim_names: Pair[Optional[list[str]]] = metas_pair.map(_compute_dim_names)
 
     dims_str_pair: Pair[Optional[str]] = metas_pair.map(
         lambda metas: metas[0].get("dims") if metas else None
@@ -50,26 +55,40 @@ def compute_aligner_plan(
             lambda metas: _compute_per_step_plans(metas=metas)
         ),
         token_aligner_plan=token_aligner_plan,
-        token_dims=token_dims,
+        token_dim_info=token_dim_info,
+        dim_names=dim_names,
         axis_swapper_plan=axis_swapper_plan,
     )
 
 
-def _compute_token_dim(metas: list[dict[str, Any]]) -> int:
-    fallback_dim = 0
-
+def _compute_token_dim_info(metas: list[dict[str, Any]]) -> TokenDimInfo:
     if not metas:
-        return fallback_dim
+        return _FALLBACK_TOKEN_DIM_INFO
 
     dims_str: Optional[str] = metas[0].get("dims")
     if dims_str is None:
-        return fallback_dim
+        return _FALLBACK_TOKEN_DIM_INFO
 
-    idx: Optional[int] = find_dim_index(parse_dims(dims_str), TOKEN_DIM_NAME)
-    if idx is None:
-        return fallback_dim
+    dim_specs: list[DimSpec] = parse_dims(dims_str)
 
-    return idx
+    # T layout: look for "t" dim
+    token_idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
+    if token_idx is not None:
+        return TokenDimInfo(token_dim_name=TOKEN_DIM_NAME)
+
+    return _FALLBACK_TOKEN_DIM_INFO
+
+
+def _compute_dim_names(metas: list[dict[str, Any]]) -> Optional[list[str]]:
+    if not metas:
+        return None
+
+    dims_str: Optional[str] = metas[0].get("dims")
+    if dims_str is None:
+        return None
+
+    dim_specs: list[DimSpec] = parse_dims(dims_str)
+    return [spec.name for spec in dim_specs]
 
 
 def _compute_per_step_plans(metas: list[dict[str, Any]]) -> list[AlignerPerStepPlan]:
