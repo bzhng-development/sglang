@@ -212,10 +212,8 @@ class TestTokenDim:
 class TestBSHDExecutor:
     """BSHD tensor collapse: B+S dims -> flat token dim for alignment."""
 
-    # -- Case 1: standard "b s h d" -- B=dim0, S=dim1 --
-
     def test_bshd_standard_bs_at_front(self):
-        """dims="b s h d": shape [2, 3, 4, 5] -> collapse -> [6, 4, 5]."""
+        """Standard "b s h d": B=dim0, S=dim1. [2, 3, 4, 5] -> collapse -> [6, 4, 5]."""
         torch.manual_seed(42)
         tensor: torch.Tensor = _named(torch.randn(2, 3, 4, 5), ["b", "s", "h", "d"])
         flat: torch.Tensor = tensor.rename(None).reshape(6, 4, 5)
@@ -240,10 +238,8 @@ class TestBSHDExecutor:
         assert torch.equal(aligned.x[1], flat[3])
         assert torch.equal(aligned.x[2], flat[5])
 
-    # -- Case 2: "b s h" -- minimal 3D, B=dim0, S=dim1 --
-
     def test_bshd_3d_bs_at_front(self):
-        """dims="b s h": shape [2, 3, 4] -> collapse -> [6, 4]."""
+        """Minimal 3D "b s h": B=dim0, S=dim1. [2, 3, 4] -> collapse -> [6, 4]."""
         torch.manual_seed(42)
         tensor: torch.Tensor = _named(torch.randn(2, 3, 4), ["b", "s", "h"])
         flat: torch.Tensor = tensor.rename(None).reshape(6, 4)
@@ -269,10 +265,8 @@ class TestBSHDExecutor:
         assert torch.equal(aligned.x[2], flat[3])
         assert torch.equal(aligned.x[3], flat[5])
 
-    # -- Case 3: "h b s d" -- B=dim1, S=dim2, non-leading --
-
     def test_bshd_bs_not_at_front(self):
-        """dims="h b s d": shape [4, 2, 3, 5] -> collapse -> [4, 6, 5]."""
+        """Non-leading "h b s d": B=dim1, S=dim2. [4, 2, 3, 5] -> collapse -> [4, 6, 5]."""
         torch.manual_seed(42)
         tensor: torch.Tensor = _named(torch.randn(4, 2, 3, 5), ["h", "b", "s", "d"])
         flat: torch.Tensor = tensor.rename(None).reshape(4, 6, 5)
@@ -299,10 +293,8 @@ class TestBSHDExecutor:
                 flat.select(dim=1, index=flat_idx),
             )
 
-    # -- Case 4: "e b s h d" -- expert dim before B, B=dim1, S=dim2 --
-
     def test_bshd_expert_before_bs(self):
-        """dims="e b s h d": shape [2, 3, 4, 5, 6] -> collapse -> [2, 12, 5, 6]."""
+        """Expert dim before B: "e b s h d". [2, 3, 4, 5, 6] -> collapse -> [2, 12, 5, 6]."""
         torch.manual_seed(42)
         tensor: torch.Tensor = _named(
             torch.randn(2, 3, 4, 5, 6), ["e", "b", "s", "h", "d"]
@@ -331,10 +323,8 @@ class TestBSHDExecutor:
                 flat.select(dim=1, index=flat_idx),
             )
 
-    # -- Case 5: "h d b s" -- B and S at the end --
-
     def test_bshd_bs_at_end(self):
-        """dims="h d b s": shape [4, 5, 2, 3] -> collapse -> [4, 5, 6]."""
+        """B and S at end: "h d b s". [4, 5, 2, 3] -> collapse -> [4, 5, 6]."""
         torch.manual_seed(42)
         tensor: torch.Tensor = _named(torch.randn(4, 5, 2, 3), ["h", "d", "b", "s"])
         flat: torch.Tensor = tensor.rename(None).reshape(4, 5, 6)
@@ -361,10 +351,8 @@ class TestBSHDExecutor:
                 flat.select(dim=2, index=flat_idx),
             )
 
-    # -- Case 6: cross-layout THD vs BSHD --
-
     def test_cross_layout_thd_vs_bshd(self):
-        """x=THD [6, 8], y=BSHD [2, 3, 8] -> y collapse -> [6, 8]."""
+        """Cross-layout: x=THD [6, 8], y=BSHD [2, 3, 8] -> y collapse -> [6, 8]."""
         torch.manual_seed(42)
         tensor_thd: torch.Tensor = _named(torch.randn(6, 8), ["t", "h"])
         tensor_bshd: torch.Tensor = _named(torch.randn(2, 3, 8), ["b", "s", "h"])
@@ -390,10 +378,8 @@ class TestBSHDExecutor:
         assert torch.equal(aligned.y[0], flat_bshd[0])
         assert torch.equal(aligned.y[2], flat_bshd[5])
 
-    # -- Case 7: empty plan with non-leading B,S --
-
     def test_bshd_empty_plan_bs_not_at_front(self):
-        """Empty plan, dims="h b s d": [4, 2, 3, 5] -> collapse -> [4, 0, 5]."""
+        """Empty plan with non-leading B,S: "h b s d". [4, 2, 3, 5] -> collapse -> [4, 0, 5]."""
         plan = TokenAlignerPlan(
             locators=Pair(
                 x=TokenLocator(steps=[], token_index_in_step=[]),
@@ -413,10 +399,8 @@ class TestBSHDExecutor:
         assert aligned.x.shape == (4, 0, 5)
         assert aligned.y.shape == (4, 0, 5)
 
-    # -- Case 8: empty plan standard BSHD --
-
     def test_bshd_empty_plan_bs_at_front(self):
-        """Empty plan, dims="b s h": [2, 3, 4] -> collapse -> [0, 4]."""
+        """Empty plan with standard BSHD: "b s h". [2, 3, 4] -> collapse -> [0, 4]."""
         plan = TokenAlignerPlan(
             locators=Pair(
                 x=TokenLocator(steps=[], token_index_in_step=[]),
