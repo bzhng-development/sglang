@@ -116,6 +116,31 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
         return body
 
 
+class ScalarRecord(_OutputRecord):
+    type: Literal["scalar"] = "scalar"
+    name: str
+    baseline_value: str
+    target_value: str
+    baseline_type: str
+    target_type: str
+    values_equal: bool
+
+    @property
+    def category(self) -> str:
+        if self.warnings:
+            return "failed"
+        return "passed" if self.values_equal else "failed"
+
+    def _format_body(self) -> str:
+        if self.values_equal:
+            return f"Scalar: {self.name} = {self.baseline_value} ({self.baseline_type}) [equal]"
+        return (
+            f"Scalar: {self.name}\n"
+            f"  baseline = {self.baseline_value} ({self.baseline_type})\n"
+            f"  target   = {self.target_value} ({self.target_type})"
+        )
+
+
 class SummaryRecord(_OutputRecord):
     type: Literal["summary"] = "summary"
     total: int
@@ -177,7 +202,14 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
 
 
 AnyRecord = Annotated[
-    Union[ConfigRecord, SkipRecord, ComparisonRecord, SummaryRecord, WarningRecord],
+    Union[
+        ConfigRecord,
+        SkipRecord,
+        ComparisonRecord,
+        ScalarRecord,
+        SummaryRecord,
+        WarningRecord,
+    ],
     Discriminator("type"),
 ]
 
