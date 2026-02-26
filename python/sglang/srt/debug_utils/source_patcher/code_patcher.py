@@ -83,9 +83,7 @@ def patch_function(
     modified_source = textwrap.dedent(modified_source)
 
     if preamble.strip():
-        modified_source = _insert_preamble(
-            source=modified_source, preamble=preamble
-        )
+        modified_source = _insert_preamble(source=modified_source, preamble=preamble)
 
     code: types.CodeType = compile(modified_source, inspect.getfile(target), "exec")
     temp_namespace: dict[str, Any] = {}
@@ -112,9 +110,7 @@ def _apply_specs(specs: list[PatchSpec]) -> list[PatchState]:
     return states
 
 
-def _inject_preamble(
-    *, config: PatchConfig, extra_imports: list[str]
-) -> PatchConfig:
+def _inject_preamble(*, config: PatchConfig, extra_imports: list[str]) -> PatchConfig:
     """Set preamble on every PatchSpec so imports are inserted once at function top."""
     import_block: str = "\n".join(extra_imports)
     new_patches: list[PatchSpec] = []

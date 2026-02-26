@@ -27,7 +27,9 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
     original_indent: int = _leading_spaces(source_lines[start_idx])
 
     replacement_text: str = edit.replacement.strip()
-    replacement_lines: list[str] = replacement_text.splitlines() if replacement_text else []
+    replacement_lines: list[str] = (
+        replacement_text.splitlines() if replacement_text else []
+    )
     aligned: list[str] = _realign_replacement(
         replacement_lines=replacement_lines, original_indent=original_indent
     )
