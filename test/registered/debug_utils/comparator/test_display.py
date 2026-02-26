@@ -7,10 +7,10 @@ import pytest
 import torch
 
 from sglang.srt.debug_utils.comparator.display import (
+    _collect_input_ids_and_positions,
+    _collect_rank_info,
     _extract_parallel_info,
-    collect_input_ids_and_positions,
-    collect_rank_info,
-    render_polars_as_text,
+    _render_polars_as_text,
 )
 from sglang.srt.debug_utils.comparator.output_types import (
     InputIdsRecord,
@@ -49,7 +49,7 @@ def _make_df(rows: list[dict]) -> pl.DataFrame:
 class TestRenderPolarsAsText:
     def test_renders_table(self) -> None:
         df = pl.DataFrame({"col_a": [1, 2], "col_b": ["x", "y"]})
-        text: str = render_polars_as_text(df, title="test table")
+        text: str = _render_polars_as_text(df, title="test table")
 
         assert "test table" in text
         assert "col_a" in text
@@ -57,7 +57,7 @@ class TestRenderPolarsAsText:
 
     def test_renders_empty_dataframe(self) -> None:
         df = pl.DataFrame({"a": [], "b": []})
-        text: str = render_polars_as_text(df, title="empty")
+        text: str = _render_polars_as_text(df, title="empty")
         assert "empty" in text
 
 
@@ -71,7 +71,7 @@ class TestCollectRankInfo:
         }
         filename: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -82,7 +82,7 @@ class TestCollectRankInfo:
             [
                 {
                     "filename": filename,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
@@ -90,8 +90,8 @@ class TestCollectRankInfo:
             ]
         )
 
-        rows: Optional[list[dict[str, Any]]] = collect_rank_info(
-            df, dump_dir=tmp_path, label="baseline"
+        rows: Optional[list[dict[str, Any]]] = _collect_rank_info(
+            df, dump_dir=tmp_path
         )
 
         assert rows is not None
@@ -112,14 +112,14 @@ class TestCollectRankInfo:
                 }
             ]
         )
-        result = collect_rank_info(df, dump_dir=tmp_path, label="test")
+        result = _collect_rank_info(df, dump_dir=tmp_path)
         assert result is None
 
     def test_deduplicates_ranks(self, tmp_path: Path) -> None:
         meta = {"sglang_parallel_info": {"tp_rank": 0, "tp_size": 1}}
         f1: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -128,7 +128,7 @@ class TestCollectRankInfo:
         )
         f2: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=1,
             rank=0,
             dump_index=1,
@@ -139,14 +139,14 @@ class TestCollectRankInfo:
             [
                 {
                     "filename": f1,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
                 },
                 {
                     "filename": f2,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 1,
                     "rank": 0,
                     "dump_index": 1,
@@ -154,7 +154,7 @@ class TestCollectRankInfo:
             ]
         )
 
-        rows = collect_rank_info(df, dump_dir=tmp_path, label="test")
+        rows = _collect_rank_info(df, dump_dir=tmp_path)
 
         assert rows is not None
         assert len(rows) == 1
@@ -164,7 +164,7 @@ class TestCollectInputIdsAndPositions:
     def test_collects_ids_and_positions(self, tmp_path: Path) -> None:
         f_ids: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -173,7 +173,7 @@ class TestCollectInputIdsAndPositions:
         )
         f_pos: str = _save_dump_file(
             tmp_path,
-            name="model_positions",
+            name="positions",
             step=0,
             rank=0,
             dump_index=1,
@@ -184,14 +184,14 @@ class TestCollectInputIdsAndPositions:
             [
                 {
                     "filename": f_ids,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
                 },
                 {
                     "filename": f_pos,
-                    "name": "model_positions",
+                    "name": "positions",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 1,
@@ -199,7 +199,7 @@ class TestCollectInputIdsAndPositions:
             ]
         )
 
-        rows = collect_input_ids_and_positions(df, dump_dir=tmp_path, label="target")
+        rows = _collect_input_ids_and_positions(df, dump_dir=tmp_path)
 
         assert rows is not None
         assert len(rows) == 1
@@ -221,13 +221,13 @@ class TestCollectInputIdsAndPositions:
                 }
             ]
         )
-        result = collect_input_ids_and_positions(df, dump_dir=tmp_path, label="test")
+        result = _collect_input_ids_and_positions(df, dump_dir=tmp_path)
         assert result is None
 
     def test_with_mock_tokenizer(self, tmp_path: Path) -> None:
         f_ids: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -238,7 +238,7 @@ class TestCollectInputIdsAndPositions:
             [
                 {
                     "filename": f_ids,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
@@ -250,8 +250,8 @@ class TestCollectInputIdsAndPositions:
             def decode(self, ids: list[int], skip_special_tokens: bool = False) -> str:
                 return f"decoded:{ids}"
 
-        rows = collect_input_ids_and_positions(
-            df, dump_dir=tmp_path, label="test", tokenizer=_MockTokenizer()
+        rows = _collect_input_ids_and_positions(
+            df, dump_dir=tmp_path, tokenizer=_MockTokenizer()
         )
 
         assert rows is not None

@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Annotated, Any, Literal, Optional, Union
 
+import polars as pl
 from pydantic import ConfigDict, Discriminator, Field, TypeAdapter, model_validator
 
 from sglang.srt.debug_utils.comparator.tensor_comparator.formatter import (
@@ -91,34 +92,33 @@ class SkipRecord(_OutputRecord):
         return f"Skip: {self.name} ({self.reason})"
 
 
-class RankInfoRecord(_OutputRecord):
+class _TableRecord(_OutputRecord):
+    label: str
+    rows: list[dict[str, Any]]
+
+    @abstractmethod
+    def _table_title(self) -> str: ...
+
+    def _format_body(self) -> str:
+        from sglang.srt.debug_utils.comparator.display import _render_polars_as_text
+
+        return _render_polars_as_text(
+            pl.DataFrame(self.rows), title=self._table_title()
+        )
+
+
+class RankInfoRecord(_TableRecord):
     type: Literal["rank_info"] = "rank_info"
-    label: str
-    rows: list[dict[str, Any]]
 
-    def _format_body(self) -> str:
-        import polars as pl
-
-        from sglang.srt.debug_utils.comparator.display import render_polars_as_text
-
-        return render_polars_as_text(
-            pl.DataFrame(self.rows), title=f"{self.label} ranks"
-        )
+    def _table_title(self) -> str:
+        return f"{self.label} ranks"
 
 
-class InputIdsRecord(_OutputRecord):
+class InputIdsRecord(_TableRecord):
     type: Literal["input_ids"] = "input_ids"
-    label: str
-    rows: list[dict[str, Any]]
 
-    def _format_body(self) -> str:
-        import polars as pl
-
-        from sglang.srt.debug_utils.comparator.display import render_polars_as_text
-
-        return render_polars_as_text(
-            pl.DataFrame(self.rows), title=f"{self.label} input_ids & positions"
-        )
+    def _table_title(self) -> str:
+        return f"{self.label} input_ids & positions"
 
 
 class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
