@@ -134,7 +134,6 @@ class DumperConfig(_BaseConfig):
     enable_model_value: bool = False
     enable_model_grad: bool = False
     exp_name: Optional[str] = None
-    enable_http_server: bool = True
     cleanup_previous: bool = False
     collective_timeout: int = 60
     server_port: str = "-1"

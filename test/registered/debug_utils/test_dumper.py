@@ -451,7 +451,7 @@ class TestDumperDistributed:
             config=DumperConfig(
                 enable=True,
                 collective_timeout=3,
-                enable_http_server=False,
+
             ),
         )
 
@@ -663,12 +663,11 @@ class TestDumpDictFormat:
 
 
 def _make_test_dumper(tmp_path, **overrides) -> _Dumper:
-    """Create a _Dumper for CPU testing without HTTP server or distributed."""
+    """Create a _Dumper for CPU testing without distributed."""
     defaults = dict(
         enable=True,
         dir=str(tmp_path),
         exp_name="test",
-        enable_http_server=False,
     )
     defaults.update(overrides)
     config = DumperConfig(**defaults)
@@ -2293,7 +2292,7 @@ class TestDumperDims:
             config=DumperConfig(
                 enable=True,
                 dir=str(tmp_path),
-                enable_http_server=False,
+
                 enable_grad=True,
             )
         )
@@ -2323,7 +2322,7 @@ class TestDumperDims:
             config=DumperConfig(
                 enable=True,
                 dir=str(tmp_path),
-                enable_http_server=False,
+
                 enable_grad=True,
             )
         )

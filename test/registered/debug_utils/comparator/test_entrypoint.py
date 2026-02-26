@@ -332,7 +332,7 @@ class TestEntrypointGroupingRaw:
                         enable=True,
                         dir=str(side_dir),
                         exp_name=_FIXED_EXP_NAME,
-                        enable_http_server=False,
+
                     )
                 )
                 dumper.__dict__["_static_meta"] = {"world_rank": 0, "world_size": 1}
@@ -1110,7 +1110,7 @@ class TestEntrypointAlignment:
                     enable=True,
                     dir=str(d),
                     exp_name=_FIXED_EXP_NAME,
-                    enable_http_server=False,
+
                 )
             )
 
@@ -1167,7 +1167,7 @@ class TestEntrypointAlignment:
                 enable=True,
                 dir=str(sglang_dir),
                 exp_name=_FIXED_EXP_NAME,
-                enable_http_server=False,
+
             )
         )
 
@@ -1226,7 +1226,7 @@ class TestEntrypointAlignment:
                 enable=True,
                 dir=str(megatron_dir),
                 exp_name=_FIXED_EXP_NAME,
-                enable_http_server=False,
+
             )
         )
 
@@ -1469,7 +1469,7 @@ def _assert_single_comparison_passed(records: list[AnyRecord]) -> ComparisonReco
 
 def _make_dumper(directory: Path) -> _Dumper:
     return _Dumper(
-        config=DumperConfig(enable=True, dir=str(directory), enable_http_server=False)
+        config=DumperConfig(enable=True, dir=str(directory))
     )
 
 
@@ -1528,7 +1528,7 @@ def _create_non_tensor_rank_dump(
                 enable=True,
                 dir=str(directory),
                 exp_name=_FIXED_EXP_NAME,
-                enable_http_server=False,
+
             )
         )
         dumper.__dict__["_static_meta"] = {"world_rank": rank, "world_size": 1}
@@ -1611,7 +1611,7 @@ def _create_rank_dump(
                 enable=True,
                 dir=str(directory),
                 exp_name=_FIXED_EXP_NAME,
-                enable_http_server=False,
+
             )
         )
 
@@ -1951,7 +1951,7 @@ class TestEntrypointThdCpZigzag:
                 enable=True,
                 dir=str(sglang_dir),
                 exp_name=_FIXED_EXP_NAME,
-                enable_http_server=False,
+
             )
         )
 
