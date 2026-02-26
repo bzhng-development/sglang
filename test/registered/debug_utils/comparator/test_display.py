@@ -79,7 +79,15 @@ class TestPrintRankInfo:
             meta={"sglang_parallel_info": sglang_info},
         )
         df = _make_df(
-            [{"filename": filename, "name": "model_input_ids", "step": 0, "rank": 0, "dump_index": 0}]
+            [
+                {
+                    "filename": filename,
+                    "name": "model_input_ids",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 0,
+                }
+            ]
         )
 
         print_rank_info(df, dump_dir=tmp_path, label="baseline")
@@ -92,7 +100,15 @@ class TestPrintRankInfo:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         df = _make_df(
-            [{"filename": "f.pt", "name": "some_other", "step": 0, "rank": 0, "dump_index": 0}]
+            [
+                {
+                    "filename": "f.pt",
+                    "name": "some_other",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 0,
+                }
+            ]
         )
         print_rank_info(df, dump_dir=tmp_path, label="test")
         assert capsys.readouterr().out == ""
@@ -102,17 +118,41 @@ class TestPrintRankInfo:
     ) -> None:
         meta = {"sglang_parallel_info": {"tp_rank": 0, "tp_size": 1}}
         f1: str = _save_dump_file(
-            tmp_path, name="model_input_ids", step=0, rank=0, dump_index=0,
-            value=torch.tensor([1]), meta=meta,
+            tmp_path,
+            name="model_input_ids",
+            step=0,
+            rank=0,
+            dump_index=0,
+            value=torch.tensor([1]),
+            meta=meta,
         )
         f2: str = _save_dump_file(
-            tmp_path, name="model_input_ids", step=1, rank=0, dump_index=1,
-            value=torch.tensor([2]), meta=meta,
+            tmp_path,
+            name="model_input_ids",
+            step=1,
+            rank=0,
+            dump_index=1,
+            value=torch.tensor([2]),
+            meta=meta,
         )
-        df = _make_df([
-            {"filename": f1, "name": "model_input_ids", "step": 0, "rank": 0, "dump_index": 0},
-            {"filename": f2, "name": "model_input_ids", "step": 1, "rank": 0, "dump_index": 1},
-        ])
+        df = _make_df(
+            [
+                {
+                    "filename": f1,
+                    "name": "model_input_ids",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 0,
+                },
+                {
+                    "filename": f2,
+                    "name": "model_input_ids",
+                    "step": 1,
+                    "rank": 0,
+                    "dump_index": 1,
+                },
+            ]
+        )
 
         print_rank_info(df, dump_dir=tmp_path, label="test")
 
@@ -126,17 +166,41 @@ class TestPrintInputIdsAndPositions:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         f_ids: str = _save_dump_file(
-            tmp_path, name="model_input_ids", step=0, rank=0, dump_index=0,
-            value=torch.tensor([10, 20, 30]), meta={},
+            tmp_path,
+            name="model_input_ids",
+            step=0,
+            rank=0,
+            dump_index=0,
+            value=torch.tensor([10, 20, 30]),
+            meta={},
         )
         f_pos: str = _save_dump_file(
-            tmp_path, name="model_positions", step=0, rank=0, dump_index=1,
-            value=torch.tensor([0, 1, 2]), meta={},
+            tmp_path,
+            name="model_positions",
+            step=0,
+            rank=0,
+            dump_index=1,
+            value=torch.tensor([0, 1, 2]),
+            meta={},
         )
-        df = _make_df([
-            {"filename": f_ids, "name": "model_input_ids", "step": 0, "rank": 0, "dump_index": 0},
-            {"filename": f_pos, "name": "model_positions", "step": 0, "rank": 0, "dump_index": 1},
-        ])
+        df = _make_df(
+            [
+                {
+                    "filename": f_ids,
+                    "name": "model_input_ids",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 0,
+                },
+                {
+                    "filename": f_pos,
+                    "name": "model_positions",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 1,
+                },
+            ]
+        )
 
         print_input_ids_and_positions(df, dump_dir=tmp_path, label="target")
 
@@ -149,7 +213,15 @@ class TestPrintInputIdsAndPositions:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         df = _make_df(
-            [{"filename": "f.pt", "name": "weight", "step": 0, "rank": 0, "dump_index": 0}]
+            [
+                {
+                    "filename": "f.pt",
+                    "name": "weight",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 0,
+                }
+            ]
         )
         print_input_ids_and_positions(df, dump_dir=tmp_path, label="test")
         assert capsys.readouterr().out == ""
@@ -158,11 +230,24 @@ class TestPrintInputIdsAndPositions:
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
     ) -> None:
         f_ids: str = _save_dump_file(
-            tmp_path, name="model_input_ids", step=0, rank=0, dump_index=0,
-            value=torch.tensor([1, 2]), meta={},
+            tmp_path,
+            name="model_input_ids",
+            step=0,
+            rank=0,
+            dump_index=0,
+            value=torch.tensor([1, 2]),
+            meta={},
         )
         df = _make_df(
-            [{"filename": f_ids, "name": "model_input_ids", "step": 0, "rank": 0, "dump_index": 0}]
+            [
+                {
+                    "filename": f_ids,
+                    "name": "model_input_ids",
+                    "step": 0,
+                    "rank": 0,
+                    "dump_index": 0,
+                }
+            ]
         )
 
         class _MockTokenizer:
@@ -194,7 +279,9 @@ class TestExtractParallelInfo:
 
     def test_skips_error_info(self) -> None:
         row_data: dict = {}
-        _extract_parallel_info(row_data=row_data, info={"error": True, "tp_rank": 0, "tp_size": 1})
+        _extract_parallel_info(
+            row_data=row_data, info={"error": True, "tp_rank": 0, "tp_size": 1}
+        )
         assert row_data == {}
 
     def test_skips_empty_info(self) -> None:

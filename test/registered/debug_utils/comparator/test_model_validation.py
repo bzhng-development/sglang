@@ -259,8 +259,16 @@ def _make_aligner_plan() -> AlignerPlan:
     )
     return AlignerPlan(
         per_step_plans=Pair(
-            x=[AlignerPerStepPlan(step=0, input_object_indices=[0, 1], sub_plans=[unsharder])],
-            y=[AlignerPerStepPlan(step=0, input_object_indices=[0, 1], sub_plans=[unsharder])],
+            x=[
+                AlignerPerStepPlan(
+                    step=0, input_object_indices=[0, 1], sub_plans=[unsharder]
+                )
+            ],
+            y=[
+                AlignerPerStepPlan(
+                    step=0, input_object_indices=[0, 1], sub_plans=[unsharder]
+                )
+            ],
         ),
     )
 
@@ -285,11 +293,17 @@ class TestAlignerPlanInComparisonRecord:
         json_str: str = record_with_plan.model_dump_json()
         parsed = json.loads(json_str)
         assert "aligner_plan" in parsed
-        assert parsed["aligner_plan"]["per_step_plans"]["x"][0]["sub_plans"][0]["type"] == "unsharder"
+        assert (
+            parsed["aligner_plan"]["per_step_plans"]["x"][0]["sub_plans"][0]["type"]
+            == "unsharder"
+        )
 
         roundtripped: ComparisonRecord = parse_record_json(json_str)
         assert roundtripped.aligner_plan is not None
-        assert roundtripped.aligner_plan.per_step_plans.x[0].sub_plans[0].type == "unsharder"
+        assert (
+            roundtripped.aligner_plan.per_step_plans.x[0].sub_plans[0].type
+            == "unsharder"
+        )
 
     def test_comparison_record_without_aligner_plan(self) -> None:
         record: ComparisonRecord = _make_comparison_record(

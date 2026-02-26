@@ -10,7 +10,9 @@ from sglang.test.ci.ci_register import register_cpu_ci
 register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 
-def _save_pt(directory: Path, filename: str, *, value: torch.Tensor, meta: dict) -> None:
+def _save_pt(
+    directory: Path, filename: str, *, value: torch.Tensor, meta: dict
+) -> None:
     torch.save({"value": value, "meta": meta}, directory / filename)
 
 

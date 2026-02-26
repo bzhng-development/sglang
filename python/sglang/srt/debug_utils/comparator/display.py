@@ -41,8 +41,12 @@ def print_rank_info(df: pl.DataFrame, dump_dir: Path, label: str) -> None:
         meta: dict[str, Any] = item.meta
 
         row_data: dict[str, Any] = {"rank": row["rank"]}
-        _extract_parallel_info(row_data=row_data, info=meta.get("sglang_parallel_info", {}))
-        _extract_parallel_info(row_data=row_data, info=meta.get("megatron_parallel_info", {}))
+        _extract_parallel_info(
+            row_data=row_data, info=meta.get("sglang_parallel_info", {})
+        )
+        _extract_parallel_info(
+            row_data=row_data, info=meta.get("megatron_parallel_info", {})
+        )
         table_rows.append(row_data)
 
     if table_rows:
@@ -101,9 +105,7 @@ def print_input_ids_and_positions(
         )
 
 
-def _extract_parallel_info(
-    row_data: dict[str, Any], info: dict[str, Any]
-) -> None:
+def _extract_parallel_info(row_data: dict[str, Any], info: dict[str, Any]) -> None:
     if not info or info.get("error"):
         return
 
