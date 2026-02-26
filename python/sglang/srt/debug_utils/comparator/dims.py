@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
+TOKEN_DIM_NAME: str = "t"
+BATCH_DIM_NAME: str = "b"
+SEQ_DIM_NAME: str = "s"
+
 
 class ParallelAxis(Enum):
     TP = "tp"
@@ -78,3 +82,10 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
     return result
+
+
+def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
+    for i, spec in enumerate(dim_specs):
+        if spec.name == name:
+            return i
+    return None

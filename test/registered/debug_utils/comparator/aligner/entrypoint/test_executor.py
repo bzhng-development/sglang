@@ -15,6 +15,10 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
     AlignerPerStepPlan,
     AlignerPlan,
 )
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
+    TokenAlignerPlan,
+    TokenLocator,
+)
 from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
     ConcatParams,
     UnsharderPlan,
@@ -197,6 +201,55 @@ class TestExecuteAlignerPlan:
 
         assert result.failed_side_xy is None
         assert result.tensors is not None
+
+
+class TestExecuteAlignerPlanWithTokenDim:
+    """End-to-end tests for AlignerPlan with non-zero token_dim."""
+
+    def _make_step_plan(self, *, step: int, indices: list[int]) -> AlignerPerStepPlan:
+        return AlignerPerStepPlan(step=step, input_object_indices=indices, sub_plans=[])
+
+    def test_token_dim_nonzero_e2e(self) -> None:
+        """AlignerPlan with token_dim=1 passes through to token aligner correctly."""
+        torch.manual_seed(42)
+
+        # shape [3, 4, 8]: dim0=batch, dim1=token(4 tokens), dim2=hidden
+        tensor_x: torch.Tensor = torch.randn(3, 4, 8)
+        tensor_y: torch.Tensor = torch.randn(3, 4, 8)
+
+        locator_x = TokenLocator(
+            steps=[0, 0, 0],
+            token_index_in_step=[0, 1, 2],
+        )
+        locator_y = TokenLocator(
+            steps=[0, 0, 0],
+            token_index_in_step=[0, 1, 2],
+        )
+        token_plan = TokenAlignerPlan(locators=Pair(x=locator_x, y=locator_y))
+
+        plan = AlignerPlan(
+            per_step_plans=Pair(
+                x=[self._make_step_plan(step=0, indices=[0])],
+                y=[self._make_step_plan(step=0, indices=[0])],
+            ),
+            token_aligner_plan=token_plan,
+            token_dim=1,
+        )
+
+        tensors_pair: Pair[list[torch.Tensor]] = Pair(x=[tensor_x], y=[tensor_y])
+        result: AlignerResult = execute_aligner_plan(
+            tensors_pair=tensors_pair, plan=plan
+        )
+
+        assert result.tensors is not None
+        assert result.failed_side_xy is None
+        # select on dim=1 removes that dim -> [3, 8], stack on dim=0 -> [3, 3, 8]
+        assert result.tensors.x.shape == (3, 3, 8)
+        assert result.tensors.y.shape == (3, 3, 8)
+
+        for i in range(3):
+            assert torch.equal(result.tensors.x[i], tensor_x.select(dim=1, index=i))
+            assert torch.equal(result.tensors.y[i], tensor_y.select(dim=1, index=i))
 
 
 if __name__ == "__main__":
