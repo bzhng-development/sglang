@@ -3,7 +3,10 @@ import inspect
 import textwrap
 import types
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any, Optional
+
+import yaml
 
 from sglang.srt.debug_utils.source_patcher.source_editor import apply_edits
 from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchSpec, PatchState
@@ -92,3 +95,29 @@ class CodePatcher:
         for state in reversed(self._states):
             state.restore()
         self._states.clear()
+
+
+def apply_patches_from_config(config_path: Path) -> list[PatchState]:
+    """Load a YAML patch config and apply all patches.
+
+    This is the main entry point for applying source patches.
+    The YAML file should have the format:
+        patches:
+          - target: "pkg.mod.Class.method"
+            edits:
+              - match: "original code"
+                replacement: "patched code"
+    """
+    print(f"[source_patcher] loading config from {config_path}")
+    with open(config_path) as f:
+        raw: dict[str, Any] = yaml.safe_load(f)
+
+    states: list[PatchState] = []
+    for patch_raw in raw["patches"]:
+        spec = PatchSpec(**patch_raw)
+        target_fn: Callable[..., Any] = _resolve_target(spec.target)
+        print(f"[source_patcher] patching {spec.target}")
+        state: PatchState = patch_function(target=target_fn, edits=spec.edits)
+        states.append(state)
+
+    return states

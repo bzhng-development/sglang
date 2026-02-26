@@ -334,23 +334,9 @@ class _Dumper:
         if not config_path:
             return
 
-        import yaml
+        from sglang.srt.debug_utils.source_patcher import apply_patches_from_config
 
-        from sglang.srt.debug_utils.source_patcher.code_patcher import (
-            _resolve_target,
-            patch_function,
-        )
-        from sglang.srt.debug_utils.source_patcher.types import PatchSpec
-
-        print(f"[Dumper] source_patcher: loading config from {config_path}")
-        with open(config_path) as f:
-            raw: dict = yaml.safe_load(f)
-
-        for patch_raw in raw["patches"]:
-            spec = PatchSpec(**patch_raw)
-            target_fn = _resolve_target(spec.target)
-            print(f"[Dumper] source_patcher: patching {spec.target}")
-            patch_function(target=target_fn, edits=spec.edits)
+        apply_patches_from_config(Path(config_path))
 
     def register_non_intrusive_dumper(
         self,
