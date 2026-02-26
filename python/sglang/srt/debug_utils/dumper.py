@@ -1201,11 +1201,15 @@ class _SGLangPlugin(_FrameworkPlugin):
     def get_tokenizer_path(self) -> Optional[str]:
         if not self._available:
             return None
+
         try:
             from sglang.srt.server_args import get_global_server_args
 
             args = get_global_server_args()
-            return args.tokenizer_path if args is not None else None
+            if args is None:
+                return None
+
+            return args.tokenizer_path
         except Exception:
             return None
 
