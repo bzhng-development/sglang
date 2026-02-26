@@ -9,6 +9,7 @@ from sglang.srt.debug_utils.comparator.aligner.axis_swapper import (
     compute_axis_swapper_plan,
     execute_axis_swapper_plan,
 )
+from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 from sglang.test.ci.ci_register import register_cpu_ci
 
@@ -17,19 +18,19 @@ register_cpu_ci(est_time=15, suite="default", nightly=True)
 
 class TestComputeAxisSwapperPlan:
     def test_no_dims_returns_none(self) -> None:
-        assert compute_axis_swapper_plan(x_dims_str=None, y_dims_str=None) is None
-        assert compute_axis_swapper_plan(x_dims_str="t h d", y_dims_str=None) is None
-        assert compute_axis_swapper_plan(x_dims_str=None, y_dims_str="t h d") is None
+        assert compute_axis_swapper_plan(Pair(x=None, y=None)) is None
+        assert compute_axis_swapper_plan(Pair(x="t h d", y=None)) is None
+        assert compute_axis_swapper_plan(Pair(x=None, y="t h d")) is None
 
     def test_same_order_returns_none(self) -> None:
         result: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
-            x_dims_str="t h d", y_dims_str="t h d"
+            Pair(x="t h d", y="t h d")
         )
         assert result is None
 
     def test_different_order(self) -> None:
         result: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
-            x_dims_str="t h d", y_dims_str="t d h"
+            Pair(x="t h d", y="t d h")
         )
         assert result is not None
         assert result.pattern == "t h d -> t d h"
@@ -37,7 +38,7 @@ class TestComputeAxisSwapperPlan:
     def test_name_mismatch_returns_none_with_warning(self) -> None:
         with warning_sink.context() as warnings:
             result: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
-                x_dims_str="t h d", y_dims_str="t h e"
+                Pair(x="t h d", y="t h e")
             )
 
         assert result is None
@@ -47,7 +48,7 @@ class TestComputeAxisSwapperPlan:
 
     def test_modifiers_ignored_for_name_extraction(self) -> None:
         result: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
-            x_dims_str="t h(tp) d", y_dims_str="t d h(tp)"
+            Pair(x="t h(tp) d", y="t d h(tp)")
         )
         assert result is not None
         assert result.pattern == "t h d -> t d h"

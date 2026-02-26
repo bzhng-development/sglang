@@ -67,9 +67,9 @@ def execute_aligner_plan(
         )
 
     # Cross-side: axis swap (rearrange x to match y's dim order)
-    if plan.axis_swapper_plan is not None:
+    if (swap_plan := plan.axis_swapper_plan) is not None:
         combined = Pair(
-            x=execute_axis_swapper_plan(tensor=combined.x, plan=plan.axis_swapper_plan),
+            x=execute_axis_swapper_plan(tensor=combined.x, plan=swap_plan),
             y=combined.y,
         )
 

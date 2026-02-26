@@ -7,7 +7,7 @@ from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import parse_dims
 from sglang.srt.debug_utils.comparator.output_types import GeneralWarning
-from sglang.srt.debug_utils.comparator.utils import _FrozenBase
+from sglang.srt.debug_utils.comparator.utils import Pair, _FrozenBase
 from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 
 # --- types ---
@@ -21,14 +21,13 @@ class AxisSwapperPlan(_FrozenBase):
 
 
 def compute_axis_swapper_plan(
-    x_dims_str: Optional[str],
-    y_dims_str: Optional[str],
+    dims_str_pair: Pair[Optional[str]],
 ) -> Optional[AxisSwapperPlan]:
-    if x_dims_str is None or y_dims_str is None:
+    if dims_str_pair.x is None or dims_str_pair.y is None:
         return None
 
-    x_names: list[str] = [spec.name for spec in parse_dims(x_dims_str)]
-    y_names: list[str] = [spec.name for spec in parse_dims(y_dims_str)]
+    x_names: list[str] = [spec.name for spec in parse_dims(dims_str_pair.x)]
+    y_names: list[str] = [spec.name for spec in parse_dims(dims_str_pair.y)]
 
     if x_names == y_names:
         return None

@@ -38,10 +38,11 @@ def compute_aligner_plan(
 ) -> AlignerPlan:
     token_dims: Pair[int] = metas_pair.map(_compute_token_dim)
 
-    x_dims_str: Optional[str] = metas_pair.x[0].get("dims") if metas_pair.x else None
-    y_dims_str: Optional[str] = metas_pair.y[0].get("dims") if metas_pair.y else None
+    dims_str_pair: Pair[Optional[str]] = metas_pair.map(
+        lambda metas: metas[0].get("dims") if metas else None
+    )
     axis_swapper_plan: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
-        x_dims_str=x_dims_str, y_dims_str=y_dims_str
+        dims_str_pair=dims_str_pair
     )
 
     return AlignerPlan(
