@@ -2,7 +2,7 @@ import functools
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import polars as pl
 import torch
@@ -54,6 +54,16 @@ def _unwrap_dict_format(obj: Any) -> Tuple[Any, Dict[str, Any]]:
         assert isinstance(meta, dict), f"Expected meta to be dict, got {type(meta)}"
         return obj["value"], meta
     return obj, {}
+
+
+def read_tokenizer_path(directory: Path) -> Optional[str]:
+    """Read tokenizer_path from any .pt file's embedded metadata in a dump directory."""
+    for p in directory.glob("*.pt"):
+        item: ValueWithMeta = ValueWithMeta.load(p)
+        tokenizer_path: Optional[str] = item.meta.get("tokenizer_path")
+        if tokenizer_path is not None:
+            return str(tokenizer_path)
+    return None
 
 
 class DumpLoader:
