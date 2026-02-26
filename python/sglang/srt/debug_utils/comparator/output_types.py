@@ -168,11 +168,20 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
     return "\n".join(lines)
 
 
-def _rebuild_models() -> None:
-    """Rebuild Pydantic models to resolve forward references (AlignerPlan).
+AnyRecord = Annotated[
+    Union[ConfigRecord, SkipRecord, ComparisonRecord, SummaryRecord, WarningRecord],
+    Discriminator("type"),
+]
 
-    Must be called after aligner.entrypoint.types is importable.
-    """
+_models_rebuilt: bool = False
+
+
+def _ensure_models_rebuilt() -> None:
+    global _models_rebuilt
+    if _models_rebuilt:
+        return
+    _models_rebuilt = True
+
     from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (  # noqa: F401
         AlignerPlan,
     )
@@ -180,23 +189,18 @@ def _rebuild_models() -> None:
     ComparisonRecord.model_rebuild()
 
 
-_rebuild_models()
-
-AnyRecord = Annotated[
-    Union[ConfigRecord, SkipRecord, ComparisonRecord, SummaryRecord, WarningRecord],
-    Discriminator("type"),
-]
-
-
-_any_record_adapter = TypeAdapter(AnyRecord)
+def _get_any_record_adapter() -> TypeAdapter:
+    _ensure_models_rebuilt()
+    return TypeAdapter(AnyRecord)
 
 
 def parse_record_json(json_str: str | bytes) -> AnyRecord:
-    return _any_record_adapter.validate_json(json_str)
+    return _get_any_record_adapter().validate_json(json_str)
 
 
 def print_record(record: _OutputRecord, output_format: str) -> None:
     if output_format == "json":
+        _ensure_models_rebuilt()
         print(record.model_dump_json())
     else:
         print(record.to_text())
