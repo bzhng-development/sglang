@@ -95,7 +95,7 @@ def _compare_bundle_pair_raw(
         reason = f"{side_name}_load_failed"
         return SkipRecord(name=name, reason=reason)
 
-    # 4. Compare (strip named-tensor metadata — comparator doesn't need it)
+    # 4. Compare
     info = compare_tensor_pair(
         x_baseline=aligner_result.tensors.x.rename(None),
         x_target=aligner_result.tensors.y.rename(None),
