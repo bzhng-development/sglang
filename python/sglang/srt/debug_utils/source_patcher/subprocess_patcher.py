@@ -24,14 +24,14 @@ class SubprocessPatcher:
 
     def __enter__(self) -> "SubprocessPatcher":
         self._tmpdir = tempfile.TemporaryDirectory(prefix="source_patcher_")
-        config_dict: dict = {
-            "patches": [spec.model_dump() for spec in self._patches]
-        }
+        config_dict: dict = {"patches": [spec.model_dump() for spec in self._patches]}
         self._config_path = Path(self._tmpdir.name) / "patch_config.yaml"
         self._config_path.write_text(yaml.dump(config_dict))
         return self
 
-    def __exit__(self, exc_type: Optional[type], exc_val: Optional[BaseException], exc_tb: object) -> None:
+    def __exit__(
+        self, exc_type: Optional[type], exc_val: Optional[BaseException], exc_tb: object
+    ) -> None:
         if self._tmpdir is not None:
             self._tmpdir.cleanup()
             self._tmpdir = None

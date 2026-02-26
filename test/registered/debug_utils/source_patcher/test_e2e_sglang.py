@@ -93,7 +93,10 @@ def _run_server_and_generate(
 
         resp = requests.post(
             f"{base_url}/generate",
-            json={"text": "The capital of France is", "sampling_params": {"max_new_tokens": 8}},
+            json={
+                "text": "The capital of France is",
+                "sampling_params": {"max_new_tokens": 8},
+            },
         )
         assert resp.status_code == 200, f"Generate failed: {resp.text}"
     finally:
@@ -105,7 +108,9 @@ def _run_server_and_generate(
 def _find_exp_dir(dump_dir: Path) -> Path:
     """Find the experiment directory (dump_*) under the dump base dir."""
     candidates = list(dump_dir.glob("dump_*"))
-    assert len(candidates) >= 1, f"No dump_* dir found in {dump_dir}, contents: {list(dump_dir.iterdir())}"
+    assert (
+        len(candidates) >= 1
+    ), f"No dump_* dir found in {dump_dir}, contents: {list(dump_dir.iterdir())}"
     return candidates[0]
 
 
@@ -155,18 +160,24 @@ class TestSourcePatcherE2ESGLang:
         # Compare baseline vs target
         result = subprocess.run(
             [
-                "python", "-m", "sglang.srt.debug_utils.comparator",
-                "--baseline-path", str(baseline_exp),
-                "--target-path", str(target_exp),
-                "--output-format", "json",
-                "--grouping", "logical",
+                "python",
+                "-m",
+                "sglang.srt.debug_utils.comparator",
+                "--baseline-path",
+                str(baseline_exp),
+                "--target-path",
+                str(target_exp),
+                "--output-format",
+                "json",
+                "--grouping",
+                "logical",
             ],
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0, (
-            f"Comparator failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
-        )
+        assert (
+            result.returncode == 0
+        ), f"Comparator failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
 
         records: list[dict] = [
             json.loads(line)
@@ -179,15 +190,13 @@ class TestSourcePatcherE2ESGLang:
             (r for r in records if r.get("record_type") == "summary"),
             None,
         )
-        assert summary is not None, (
-            f"No summary record found. Records: {[r.get('record_type') for r in records]}"
-        )
+        assert (
+            summary is not None
+        ), f"No summary record found. Records: {[r.get('record_type') for r in records]}"
         assert summary["total"] > 0, "No comparisons were made"
 
         comparison_names: set[str] = {
-            r.get("name", "")
-            for r in records
-            if r.get("record_type") == "comparison"
+            r.get("name", "") for r in records if r.get("record_type") == "comparison"
         }
         for field in patched_fields:
             assert any(field in name for name in comparison_names), (
