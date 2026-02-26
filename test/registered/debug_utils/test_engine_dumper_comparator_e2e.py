@@ -4,17 +4,21 @@ Patches Qwen3DecoderLayer.forward to insert dumper.dump() calls,
 launches 1-GPU baseline and 2-GPU TP=2 target servers, runs inference,
 verifies patched dump fields exist, then runs comparator to verify
 numerical consistency.
+
+The dumper.apply_source_patches() auto-injects ``from ... import dumper``
+so the YAML only needs ``dumper.dump(...)`` calls.
 """
 
 import json
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 
 import pytest
 import requests
+import yaml
 
-from sglang.srt.debug_utils.source_patcher import EditSpec, PatchSpec, SubprocessPatcher
 from sglang.srt.utils import kill_process_tree
 from sglang.test.ci.ci_register import register_cuda_ci
 from sglang.test.test_utils import (
@@ -27,62 +31,60 @@ register_cuda_ci(est_time=120, suite="nightly-2-gpu", nightly=True)
 
 MODEL = "Qwen/Qwen3-0.6B"
 
-PATCH_SPECS: list[PatchSpec] = [
-    PatchSpec(
-        target="sglang.srt.models.qwen3.Qwen3DecoderLayer.forward",
-        edits=[
-            EditSpec(
-                match=(
-                    "hidden_states = self.self_attn(\n"
-                    "    positions=positions,\n"
-                    "    hidden_states=hidden_states,\n"
-                    "    forward_batch=forward_batch,\n"
-                    ")"
-                ),
-                replacement=(
-                    "hidden_states = self.self_attn(\n"
-                    "    positions=positions,\n"
-                    "    hidden_states=hidden_states,\n"
-                    "    forward_batch=forward_batch,\n"
-                    ")\n"
-                    "from sglang.srt.debug_utils.dumper import dumper\n"
-                    "dumper.dump('patched_attn_output', hidden_states)"
-                ),
-            ),
-            EditSpec(
-                match="hidden_states = self.mlp(hidden_states)",
-                replacement=(
-                    "hidden_states = self.mlp(hidden_states)\n"
-                    "from sglang.srt.debug_utils.dumper import dumper\n"
-                    "dumper.dump('patched_mlp_output', hidden_states)"
-                ),
-            ),
-        ],
-    ),
-]
+PATCH_CONFIG: dict = {
+    "patches": [
+        {
+            "target": "sglang.srt.models.qwen3.Qwen3DecoderLayer.forward",
+            "edits": [
+                {
+                    "match": (
+                        "hidden_states = self.self_attn(\n"
+                        "    positions=positions,\n"
+                        "    hidden_states=hidden_states,\n"
+                        "    forward_batch=forward_batch,\n"
+                        ")"
+                    ),
+                    "replacement": (
+                        "hidden_states = self.self_attn(\n"
+                        "    positions=positions,\n"
+                        "    hidden_states=hidden_states,\n"
+                        "    forward_batch=forward_batch,\n"
+                        ")\n"
+                        "dumper.dump('patched_attn_output', hidden_states)"
+                    ),
+                },
+                {
+                    "match": "hidden_states = self.mlp(hidden_states)",
+                    "replacement": (
+                        "hidden_states = self.mlp(hidden_states)\n"
+                        "dumper.dump('patched_mlp_output', hidden_states)"
+                    ),
+                },
+            ],
+        }
+    ]
+}
 
 
 def _run_server_and_generate(
     *,
     dump_dir: Path,
-    patch_env: dict[str, str],
+    config_path: Path,
     tp: int,
     base_url: str,
-) -> subprocess.Popen:
+) -> None:
     """Launch SGLang server with source patcher + dumper, send a generate request."""
     env = {
         **os.environ,
-        **patch_env,
+        "DUMPER_SOURCE_PATCHER_CONFIG": str(config_path),
         "DUMPER_SERVER_PORT": "reuse",
     }
-
-    other_args = ["--tp", str(tp), "--max-total-tokens", "128"]
 
     proc = popen_launch_server(
         MODEL,
         base_url,
         timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-        other_args=other_args,
+        other_args=["--tp", str(tp), "--max-total-tokens", "128"],
         env=env,
     )
     try:
@@ -101,8 +103,6 @@ def _run_server_and_generate(
         assert resp.status_code == 200, f"Generate failed: {resp.text}"
     finally:
         kill_process_tree(proc.pid)
-
-    return proc
 
 
 def _find_exp_dir(dump_dir: Path) -> Path:
@@ -125,39 +125,42 @@ def _verify_patched_fields(dump_dir: Path, field_names: list[str]) -> None:
 
 
 class TestSourcePatcherE2ESGLang:
-    """E2E: patch Qwen3 forward → dump → compare 1gpu vs 2gpu-tp2."""
+    """E2E: patch Qwen3 forward -> dump -> compare 1gpu vs 2gpu-tp2."""
 
     @pytest.mark.timeout(300)
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
         patched_fields = ["patched_attn_output", "patched_mlp_output"]
         base_url = DEFAULT_URL_FOR_TEST
 
-        with SubprocessPatcher(patches=PATCH_SPECS) as sp:
-            # Run 1: baseline (1 GPU)
-            baseline_dir = tmp_path / "baseline"
-            _run_server_and_generate(
-                dump_dir=baseline_dir,
-                patch_env=sp.env_vars,
-                tp=1,
-                base_url=base_url,
-            )
+        config_path = tmp_path / "patch_config.yaml"
+        config_path.write_text(yaml.dump(PATCH_CONFIG))
 
-            baseline_exp = _find_exp_dir(baseline_dir)
-            _verify_patched_fields(baseline_dir, patched_fields)
+        # Run 1: baseline (1 GPU)
+        baseline_dir = tmp_path / "baseline"
+        _run_server_and_generate(
+            dump_dir=baseline_dir,
+            config_path=config_path,
+            tp=1,
+            base_url=base_url,
+        )
 
-            # Run 2: target (2 GPU TP=2)
-            target_dir = tmp_path / "target"
-            _run_server_and_generate(
-                dump_dir=target_dir,
-                patch_env=sp.env_vars,
-                tp=2,
-                base_url=base_url,
-            )
+        baseline_exp = _find_exp_dir(baseline_dir)
+        _verify_patched_fields(baseline_dir, patched_fields)
 
-            target_exp = _find_exp_dir(target_dir)
-            _verify_patched_fields(target_dir, patched_fields)
+        # Run 2: target (2 GPU TP=2)
+        target_dir = tmp_path / "target"
+        _run_server_and_generate(
+            dump_dir=target_dir,
+            config_path=config_path,
+            tp=2,
+            base_url=base_url,
+        )
 
-        # Compare baseline vs target
+        target_exp = _find_exp_dir(target_dir)
+        _verify_patched_fields(target_dir, patched_fields)
+
+        # Compare baseline vs target (raw grouping to avoid token aligner issues,
+        # filter to only compare our patched fields)
         result = subprocess.run(
             [
                 "python",
@@ -170,7 +173,9 @@ class TestSourcePatcherE2ESGLang:
                 "--output-format",
                 "json",
                 "--grouping",
-                "logical",
+                "raw",
+                "--filter",
+                "patched_",
             ],
             capture_output=True,
             text=True,
@@ -187,16 +192,16 @@ class TestSourcePatcherE2ESGLang:
         assert len(records) > 0, "Comparator produced no output records"
 
         summary = next(
-            (r for r in records if r.get("record_type") == "summary"),
+            (r for r in records if r.get("type") == "summary"),
             None,
         )
         assert (
             summary is not None
-        ), f"No summary record found. Records: {[r.get('record_type') for r in records]}"
+        ), f"No summary record found. Records: {[r.get('type') for r in records]}"
         assert summary["total"] > 0, "No comparisons were made"
 
         comparison_names: set[str] = {
-            r.get("name", "") for r in records if r.get("record_type") == "comparison"
+            r.get("name", "") for r in records if r.get("type") == "comparison"
         }
         for field in patched_fields:
             assert any(field in name for name in comparison_names), (
