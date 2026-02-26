@@ -100,9 +100,9 @@ class _TableRecord(_OutputRecord):
     def _table_title(self) -> str: ...
 
     def _format_body(self) -> str:
-        from sglang.srt.debug_utils.comparator.display import render_polars_as_text
+        from sglang.srt.debug_utils.comparator.display import _render_polars_as_text
 
-        return render_polars_as_text(
+        return _render_polars_as_text(
             pl.DataFrame(self.rows), title=self._table_title()
         )
 

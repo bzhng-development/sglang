@@ -25,7 +25,7 @@ def emit_display_records(
     tokenizer: Any,
     output_format: str,
 ) -> None:
-    rank_rows: Optional[list[dict[str, Any]]] = collect_rank_info(
+    rank_rows: Optional[list[dict[str, Any]]] = _collect_rank_info(
         df, dump_dir=dump_dir
     )
     if rank_rows is not None:
@@ -34,7 +34,7 @@ def emit_display_records(
             output_format=output_format,
         )
 
-    input_ids_rows: Optional[list[dict[str, Any]]] = collect_input_ids_and_positions(
+    input_ids_rows: Optional[list[dict[str, Any]]] = _collect_input_ids_and_positions(
         df, dump_dir=dump_dir, tokenizer=tokenizer
     )
     if input_ids_rows is not None:
@@ -44,7 +44,7 @@ def emit_display_records(
         )
 
 
-def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> str:
+def _render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> str:
     from rich.console import Console
     from rich.table import Table
 
@@ -59,7 +59,7 @@ def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> s
     return buf.getvalue().rstrip("\n")
 
 
-def collect_rank_info(
+def _collect_rank_info(
     df: pl.DataFrame, dump_dir: Path
 ) -> Optional[list[dict[str, Any]]]:
     unique_rows: pl.DataFrame = (
@@ -82,7 +82,7 @@ def collect_rank_info(
     return table_rows or None
 
 
-def collect_input_ids_and_positions(
+def _collect_input_ids_and_positions(
     df: pl.DataFrame,
     dump_dir: Path,
     *,
