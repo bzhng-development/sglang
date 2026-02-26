@@ -50,7 +50,7 @@ def compute_token_aligner_plan(
 
     return TokenAlignerPlan(
         locators=Pair(x=locator_x, y=locator_y),
-        layouts=Pair(x=seqs_info_pair.x.layout, y=seqs_info_pair.y.layout),
+        layouts=seqs_info_pair.map(lambda s: s.layout),
     )
 
 
