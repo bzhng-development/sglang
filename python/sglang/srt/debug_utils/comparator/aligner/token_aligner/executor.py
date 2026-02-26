@@ -77,12 +77,15 @@ def _collapse_bs_to_t(
     lo: int = min(batch_dim, seq_dim)
     hi: int = max(batch_dim, seq_dim)
 
+    old_names: list[str | None] = list(some_tensor.names)
+    new_names: list[str | None] = old_names[:lo] + [TOKEN_DIM_NAME] + old_names[hi + 1 :]
+
     result: dict[int, torch.Tensor] = {}
     for step, tensor in tensor_of_step.items():
         plain: torch.Tensor = strip_dim_names(tensor)
         shape: list[int] = list(plain.shape)
         new_shape: list[int] = shape[:lo] + [shape[lo] * shape[hi]] + shape[hi + 1 :]
-        result[step] = plain.reshape(new_shape)
+        result[step] = plain.reshape(new_shape).refine_names(*new_names)
 
     return result
 
