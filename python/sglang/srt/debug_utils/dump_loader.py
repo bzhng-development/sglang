@@ -56,16 +56,6 @@ def _unwrap_dict_format(obj: Any) -> Tuple[Any, Dict[str, Any]]:
     return obj, {}
 
 
-def read_tokenizer_path(directory: Path) -> Optional[str]:
-    """Read tokenizer_path from any .pt file's embedded metadata in a dump directory."""
-    for p in directory.glob("*.pt"):
-        item: ValueWithMeta = ValueWithMeta.load(p)
-        tokenizer_path: Optional[str] = item.meta.get("tokenizer_path")
-        if tokenizer_path is not None:
-            return str(tokenizer_path)
-    return None
-
-
 class DumpLoader:
     def __init__(self):
         directory = os.environ.get("SGLANG_DUMP_LOADER_DIR")
@@ -173,6 +163,16 @@ def _cast_to_polars_dtype(value, target_dtype):
         return str(value)
     else:
         return value
+
+
+def read_tokenizer_path(directory: Path) -> Optional[str]:
+    """Read tokenizer_path from any .pt file's embedded metadata in a dump directory."""
+    for p in directory.glob("*.pt"):
+        item: ValueWithMeta = ValueWithMeta.load(p)
+        tokenizer_path: Optional[str] = item.meta.get("tokenizer_path")
+        if tokenizer_path is not None:
+            return str(tokenizer_path)
+    return None
 
 
 dump_loader = DumpLoader()

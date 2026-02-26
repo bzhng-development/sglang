@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Annotated, Any, Literal, Optional, Union
 
 from pydantic import ConfigDict, Discriminator, Field, TypeAdapter, model_validator
 
+from sglang.srt.debug_utils.comparator.display import render_polars_as_text
 from sglang.srt.debug_utils.comparator.tensor_comparator.formatter import (
     format_comparison,
 )
@@ -91,17 +92,37 @@ class SkipRecord(_OutputRecord):
         return f"Skip: {self.name} ({self.reason})"
 
 
+class RankInfoRecord(_OutputRecord):
+    type: Literal["rank_info"] = "rank_info"
+    label: str
+    rows: list[dict[str, Any]]
+
+    def _format_body(self) -> str:
+        import polars as pl
+
+        return render_polars_as_text(
+            pl.DataFrame(self.rows), title=f"{self.label} ranks"
+        )
+
+
+class InputIdsRecord(_OutputRecord):
+    type: Literal["input_ids"] = "input_ids"
+    label: str
+    rows: list[dict[str, Any]]
+
+    def _format_body(self) -> str:
+        import polars as pl
+
+        return render_polars_as_text(
+            pl.DataFrame(self.rows), title=f"{self.label} input_ids & positions"
+        )
+
+
 class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
-    # defer_build avoids resolving the AlignerPlan forward ref at class creation,
-    # breaking the circular import chain. _ensure_models_rebuilt() calls model_rebuild().
     model_config = ConfigDict(extra="forbid", defer_build=True)
 
     type: Literal["comparison"] = "comparison"
     aligner_plan: Optional[AlignerPlan] = None
-
-    def __init__(self, **data: Any) -> None:
-        _ensure_models_rebuilt()
-        super().__init__(**data)
 
     @property
     def category(self) -> str:
@@ -177,28 +198,20 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
 
 
 AnyRecord = Annotated[
-    Union[ConfigRecord, SkipRecord, ComparisonRecord, SummaryRecord, WarningRecord],
+    Union[
+        ConfigRecord,
+        RankInfoRecord,
+        InputIdsRecord,
+        SkipRecord,
+        ComparisonRecord,
+        SummaryRecord,
+        WarningRecord,
+    ],
     Discriminator("type"),
 ]
 
-_models_rebuilt: bool = False
-
-
-def _ensure_models_rebuilt() -> None:
-    global _models_rebuilt
-    if _models_rebuilt:
-        return
-    _models_rebuilt = True
-
-    from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (  # noqa: F401
-        AlignerPlan,
-    )
-
-    ComparisonRecord.model_rebuild()
-
 
 def _get_any_record_adapter() -> TypeAdapter:
-    _ensure_models_rebuilt()
     return TypeAdapter(AnyRecord)
 
 
@@ -208,7 +221,6 @@ def parse_record_json(json_str: str | bytes) -> AnyRecord:
 
 def print_record(record: _OutputRecord, output_format: str) -> None:
     if output_format == "json":
-        _ensure_models_rebuilt()
         print(record.model_dump_json())
     else:
         print(record.to_text())
