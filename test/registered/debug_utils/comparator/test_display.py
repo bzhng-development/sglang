@@ -71,7 +71,7 @@ class TestCollectRankInfo:
         }
         filename: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -82,7 +82,7 @@ class TestCollectRankInfo:
             [
                 {
                     "filename": filename,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
@@ -119,7 +119,7 @@ class TestCollectRankInfo:
         meta = {"sglang_parallel_info": {"tp_rank": 0, "tp_size": 1}}
         f1: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -128,7 +128,7 @@ class TestCollectRankInfo:
         )
         f2: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=1,
             rank=0,
             dump_index=1,
@@ -139,14 +139,14 @@ class TestCollectRankInfo:
             [
                 {
                     "filename": f1,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
                 },
                 {
                     "filename": f2,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 1,
                     "rank": 0,
                     "dump_index": 1,
@@ -164,7 +164,7 @@ class TestCollectInputIdsAndPositions:
     def test_collects_ids_and_positions(self, tmp_path: Path) -> None:
         f_ids: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -173,7 +173,7 @@ class TestCollectInputIdsAndPositions:
         )
         f_pos: str = _save_dump_file(
             tmp_path,
-            name="model_positions",
+            name="positions",
             step=0,
             rank=0,
             dump_index=1,
@@ -184,14 +184,14 @@ class TestCollectInputIdsAndPositions:
             [
                 {
                     "filename": f_ids,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,
                 },
                 {
                     "filename": f_pos,
-                    "name": "model_positions",
+                    "name": "positions",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 1,
@@ -227,7 +227,7 @@ class TestCollectInputIdsAndPositions:
     def test_with_mock_tokenizer(self, tmp_path: Path) -> None:
         f_ids: str = _save_dump_file(
             tmp_path,
-            name="model_input_ids",
+            name="input_ids",
             step=0,
             rank=0,
             dump_index=0,
@@ -238,7 +238,7 @@ class TestCollectInputIdsAndPositions:
             [
                 {
                     "filename": f_ids,
-                    "name": "model_input_ids",
+                    "name": "input_ids",
                     "step": 0,
                     "rank": 0,
                     "dump_index": 0,

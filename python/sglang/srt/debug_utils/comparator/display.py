@@ -31,7 +31,7 @@ def collect_rank_info(
     df: pl.DataFrame, dump_dir: Path
 ) -> Optional[list[dict[str, Any]]]:
     unique_rows: pl.DataFrame = (
-        df.filter(pl.col("name") == "model_input_ids")
+        df.filter(pl.col("name") == "input_ids")
         .sort("rank")
         .unique(subset=["rank"], keep="first")
     )
@@ -57,7 +57,7 @@ def collect_input_ids_and_positions(
     tokenizer: Any = None,
 ) -> Optional[list[dict[str, Any]]]:
     filtered: pl.DataFrame = df.filter(
-        pl.col("name").is_in(["model_input_ids", "model_positions"])
+        pl.col("name").is_in(["input_ids", "positions"])
     )
     if filtered.is_empty():
         return None
@@ -71,8 +71,8 @@ def collect_input_ids_and_positions(
 
     table_rows: list[dict[str, Any]] = []
     for (step, rank), data in sorted(data_by_step_rank.items()):
-        ids = data.get("model_input_ids")
-        pos = data.get("model_positions")
+        ids = data.get("input_ids")
+        pos = data.get("positions")
 
         ids_list: Optional[list[int]] = ids.flatten().tolist() if ids is not None else None
 
