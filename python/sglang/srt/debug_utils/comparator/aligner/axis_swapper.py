@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import logging
 from typing import Optional
 
 import torch
 from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import parse_dims
+from sglang.srt.debug_utils.comparator.output_types import GeneralWarning
 from sglang.srt.debug_utils.comparator.utils import _FrozenBase
-
-logger = logging.getLogger(__name__)
+from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 
 # --- types ---
 
@@ -35,10 +34,14 @@ def compute_axis_swapper_plan(
         return None
 
     if set(x_names) != set(y_names):
-        logger.warning(
-            "AxisSwapper: dim name sets differ (x=%s, y=%s), skipping",
-            x_names,
-            y_names,
+        warning_sink.add(
+            GeneralWarning(
+                category="axis_swapper_dim_mismatch",
+                message=(
+                    f"AxisSwapper: dim name sets differ (x={x_names}, y={y_names}), "
+                    f"skipping axis swap"
+                ),
+            )
         )
         return None
 
