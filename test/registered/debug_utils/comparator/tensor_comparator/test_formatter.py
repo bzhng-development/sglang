@@ -18,6 +18,7 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 def _make_stats(
     mean: float = 0.0,
+    abs_mean: float = 0.8,
     std: float = 1.0,
     min: float = -2.0,
     max: float = 2.0,
@@ -27,7 +28,15 @@ def _make_stats(
     p99: float | None = 1.8,
 ) -> TensorStats:
     return TensorStats(
-        mean=mean, std=std, min=min, max=max, p1=p1, p5=p5, p95=p95, p99=p99
+        mean=mean,
+        abs_mean=abs_mean,
+        std=std,
+        min=min,
+        max=max,
+        p1=p1,
+        p5=p5,
+        p95=p95,
+        p99=p99,
     )
 
 
@@ -35,6 +44,11 @@ def _make_diff(
     rel_diff: float = 0.0001,
     max_abs_diff: float = 0.0005,
     mean_abs_diff: float = 0.0002,
+    abs_diff_p1: float | None = 0.0001,
+    abs_diff_p5: float | None = 0.0001,
+    abs_diff_p50: float | None = 0.0002,
+    abs_diff_p95: float | None = 0.0004,
+    abs_diff_p99: float | None = 0.0005,
     diff_threshold: float = 1e-3,
     passed: bool = True,
 ) -> DiffInfo:
@@ -42,6 +56,11 @@ def _make_diff(
         rel_diff=rel_diff,
         max_abs_diff=max_abs_diff,
         mean_abs_diff=mean_abs_diff,
+        abs_diff_p1=abs_diff_p1,
+        abs_diff_p5=abs_diff_p5,
+        abs_diff_p50=abs_diff_p50,
+        abs_diff_p95=abs_diff_p95,
+        abs_diff_p99=abs_diff_p99,
         max_diff_coord=[2, 3],
         baseline_at_max=1.0,
         target_at_max=1.0005,
@@ -89,6 +108,7 @@ class TestFormatComparison:
             "After unify [shape] [4, 8] vs [4, 8]\t"
             "[dtype] torch.float32 vs torch.float32\n"
             "[mean] 0.1000 vs 0.1001 (diff: 0.0001)\n"
+            "[abs_mean] 0.8000 vs 0.8000 (diff: 0.0000)\n"
             "[std] 1.0000 vs 1.0001 (diff: 0.0001)\n"
             "[min] -2.0000 vs -2.0001 (diff: -0.0001)\n"
             "[max] 2.0000 vs 2.0001 (diff: 0.0001)\n"
@@ -98,7 +118,8 @@ class TestFormatComparison:
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
             "max_abs_diff happens at coord=[2, 3] with "
-            "baseline=1.0 target=1.0005"
+            "baseline=1.0 target=1.0005\n"
+            "[abs_diff] p1=0.0001 p5=0.0001 p50=0.0002 p95=0.0004 p99=0.0005"
         )
 
     def test_shape_mismatch(self):
@@ -116,6 +137,7 @@ class TestFormatComparison:
             "After unify [shape] [3, 4] vs [5, 6]\t"
             "[dtype] torch.float32 vs torch.float32\n"
             "[mean] 0.0000 vs 0.0000 (diff: 0.0000)\n"
+            "[abs_mean] 0.8000 vs 0.8000 (diff: 0.0000)\n"
             "[std] 1.0000 vs 1.0000 (diff: 0.0000)\n"
             "[min] -2.0000 vs -2.0000 (diff: 0.0000)\n"
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
@@ -148,6 +170,7 @@ class TestFormatComparison:
             "After unify [shape] [4, 8] vs [4, 8]\t"
             "[dtype] torch.float32 vs torch.bfloat16\n"
             "[mean] 0.0000 vs 0.0000 (diff: 0.0000)\n"
+            "[abs_mean] 0.8000 vs 0.8000 (diff: 0.0000)\n"
             "[std] 1.0000 vs 1.0000 (diff: 0.0000)\n"
             "[min] -2.0000 vs -2.0000 (diff: 0.0000)\n"
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
@@ -158,10 +181,12 @@ class TestFormatComparison:
             "❌ rel_diff=0.002\t❌ max_abs_diff=0.005\t✅ mean_abs_diff=0.001\n"
             "max_abs_diff happens at coord=[2, 3] with "
             "baseline=1.0 target=1.0005\n"
+            "[abs_diff] p1=0.0001 p5=0.0001 p50=0.0002 p95=0.0004 p99=0.0005\n"
             "When downcast to torch.bfloat16: "
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
             "max_abs_diff happens at coord=[2, 3] with "
-            "baseline=1.0 target=1.0005"
+            "baseline=1.0 target=1.0005\n"
+            "[abs_diff] p1=0.0001 p5=0.0001 p50=0.0002 p95=0.0004 p99=0.0005"
         )
 
     def test_with_shape_unification(self):
@@ -182,6 +207,7 @@ class TestFormatComparison:
             "After unify [shape] [4, 8] vs [4, 8]\t"
             "[dtype] torch.float32 vs torch.float32\n"
             "[mean] 0.0000 vs 0.0000 (diff: 0.0000)\n"
+            "[abs_mean] 0.8000 vs 0.8000 (diff: 0.0000)\n"
             "[std] 1.0000 vs 1.0000 (diff: 0.0000)\n"
             "[min] -2.0000 vs -2.0000 (diff: 0.0000)\n"
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
@@ -191,7 +217,8 @@ class TestFormatComparison:
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
             "max_abs_diff happens at coord=[2, 3] with "
-            "baseline=1.0 target=1.0005"
+            "baseline=1.0 target=1.0005\n"
+            "[abs_diff] p1=0.0001 p5=0.0001 p50=0.0002 p95=0.0004 p99=0.0005"
         )
 
     def test_with_samples(self):
@@ -210,6 +237,7 @@ class TestFormatComparison:
             "After unify [shape] [4, 8] vs [4, 8]\t"
             "[dtype] torch.float32 vs torch.float32\n"
             "[mean] 0.0000 vs 0.0000 (diff: 0.0000)\n"
+            "[abs_mean] 0.8000 vs 0.8000 (diff: 0.0000)\n"
             "[std] 1.0000 vs 1.0000 (diff: 0.0000)\n"
             "[min] -2.0000 vs -2.0000 (diff: 0.0000)\n"
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
@@ -220,6 +248,7 @@ class TestFormatComparison:
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
             "max_abs_diff happens at coord=[2, 3] with "
             "baseline=1.0 target=1.0005\n"
+            "[abs_diff] p1=0.0001 p5=0.0001 p50=0.0002 p95=0.0004 p99=0.0005\n"
             "x_baseline(sample)=tensor([0.1, 0.2, ...])\n"
             "x_target(sample)=tensor([0.1, 0.3, ...])"
         )
@@ -233,7 +262,13 @@ class TestFormatComparison:
             target=_make_tensor_info(stats=stats_no_quantiles),
             unified_shape=[4, 8],
             shape_mismatch=False,
-            diff=_make_diff(),
+            diff=_make_diff(
+                abs_diff_p1=None,
+                abs_diff_p5=None,
+                abs_diff_p50=None,
+                abs_diff_p95=None,
+                abs_diff_p99=None,
+            ),
         )
 
         assert format_comparison(info) == (
@@ -242,6 +277,7 @@ class TestFormatComparison:
             "After unify [shape] [4, 8] vs [4, 8]\t"
             "[dtype] torch.float32 vs torch.float32\n"
             "[mean] 0.0000 vs 0.0000 (diff: 0.0000)\n"
+            "[abs_mean] 0.8000 vs 0.8000 (diff: 0.0000)\n"
             "[std] 1.0000 vs 1.0000 (diff: 0.0000)\n"
             "[min] -2.0000 vs -2.0000 (diff: 0.0000)\n"
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"

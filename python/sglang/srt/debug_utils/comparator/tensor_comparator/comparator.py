@@ -92,6 +92,7 @@ def _compute_tensor_stats(x: torch.Tensor) -> TensorStats:
     include_quantiles = x.numel() < QUANTILE_NUMEL_THRESHOLD
     return TensorStats(
         mean=torch.mean(x).item(),
+        abs_mean=torch.mean(x.abs()).item(),
         std=torch.std(x).item(),
         min=torch.min(x).item(),
         max=torch.max(x).item(),
@@ -103,7 +104,7 @@ def _compute_tensor_stats(x: torch.Tensor) -> TensorStats:
 
 
 def _quantile_or_none(x: torch.Tensor, *, q: float, include: bool) -> Optional[float]:
-    return torch.quantile(x, q).item() if include else None
+    return torch.quantile(x.float(), q).item() if include else None
 
 
 def _compute_diff(
@@ -118,10 +119,17 @@ def _compute_diff(
     max_abs_diff = raw_abs_diff.max().item()
     mean_abs_diff = raw_abs_diff.mean().item()
 
+    include_quantiles = raw_abs_diff.numel() < QUANTILE_NUMEL_THRESHOLD
+
     return DiffInfo(
         rel_diff=rel_diff,
         max_abs_diff=max_abs_diff,
         mean_abs_diff=mean_abs_diff,
+        abs_diff_p1=_quantile_or_none(raw_abs_diff, q=0.01, include=include_quantiles),
+        abs_diff_p5=_quantile_or_none(raw_abs_diff, q=0.05, include=include_quantiles),
+        abs_diff_p50=_quantile_or_none(raw_abs_diff, q=0.50, include=include_quantiles),
+        abs_diff_p95=_quantile_or_none(raw_abs_diff, q=0.95, include=include_quantiles),
+        abs_diff_p99=_quantile_or_none(raw_abs_diff, q=0.99, include=include_quantiles),
         max_diff_coord=list(max_diff_coord),
         baseline_at_max=x_baseline[max_diff_coord].item(),
         target_at_max=x_target[max_diff_coord].item(),
