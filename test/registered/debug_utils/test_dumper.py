@@ -451,7 +451,6 @@ class TestDumperDistributed:
             config=DumperConfig(
                 enable=True,
                 collective_timeout=3,
-
             ),
         )
 
@@ -2292,7 +2291,6 @@ class TestDumperDims:
             config=DumperConfig(
                 enable=True,
                 dir=str(tmp_path),
-
                 enable_grad=True,
             )
         )
@@ -2322,7 +2320,6 @@ class TestDumperDims:
             config=DumperConfig(
                 enable=True,
                 dir=str(tmp_path),
-
                 enable_grad=True,
             )
         )

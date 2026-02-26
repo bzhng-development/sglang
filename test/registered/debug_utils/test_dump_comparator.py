@@ -120,7 +120,9 @@ def _make_args(
 
 
 class TestMainBasic:
-    def test_matching_tensors(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    def test_matching_tensors(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture
+    ) -> None:
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
         args: Namespace = _make_args(baseline_path, target_path)
 
@@ -130,10 +132,10 @@ class TestMainBasic:
         assert "✅" in captured
 
     def test_with_filter(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
-        baseline_path, target_path = _create_dumps(
-            tmp_path, ["tensor_a", "tensor_b"]
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
+        args: Namespace = _make_args(
+            baseline_path, target_path, filter_pattern="tensor_a"
         )
-        args: Namespace = _make_args(baseline_path, target_path, filter_pattern="tensor_a")
 
         main(args)
 
@@ -141,7 +143,9 @@ class TestMainBasic:
         assert "tensor_a" in captured
         assert "Check:" in captured
 
-    def test_no_match_skips(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    def test_no_match_skips(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture
+    ) -> None:
         baseline_path, target_path = _create_dumps(
             tmp_path,
             ["only_in_target"],
