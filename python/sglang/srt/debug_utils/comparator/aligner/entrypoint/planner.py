@@ -44,14 +44,15 @@ def compute_aligner_plan(
 
 
 def _compute_token_dim(metas: list[dict[str, Any]]) -> int:
-    for meta in metas:
-        dims_str: Optional[str] = meta.get("dims")
-        if dims_str is not None:
-            dim_specs: list[DimSpec] = parse_dims(dims_str)
-            idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
-            if idx is not None:
-                return idx
-    return 0
+    if not metas:
+        return 0
+
+    dims_str: Optional[str] = metas[0].get("dims")
+    if dims_str is None:
+        return 0
+
+    idx: Optional[int] = find_dim_index(parse_dims(dims_str), TOKEN_DIM_NAME)
+    return idx if idx is not None else 0
 
 
 def _compute_per_step_plans(metas: list[dict[str, Any]]) -> list[AlignerPerStepPlan]:
