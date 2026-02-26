@@ -6,7 +6,7 @@ from typing import Any, Optional
 
 import polars as pl
 
-from sglang.srt.debug_utils.dump_loader import ValueWithMeta
+from sglang.srt.debug_utils.dump_loader import LOAD_FAILED, ValueWithMeta
 
 
 def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> str:
@@ -71,7 +71,7 @@ def collect_input_ids_and_positions(
         if key not in data_by_step_rank:
             data_by_step_rank[key] = {}
         item: ValueWithMeta = ValueWithMeta.load(dump_dir / row["filename"])
-        if item.value is not None:
+        if item.value is not LOAD_FAILED:
             data_by_step_rank[key][row["name"]] = item.value
 
     table_rows: list[dict[str, Any]] = []

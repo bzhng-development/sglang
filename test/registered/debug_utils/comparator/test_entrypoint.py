@@ -1405,6 +1405,22 @@ class TestEntrypointNonTensorValues:
         assert non_tensors[0].baseline_type == "dict"
         assert non_tensors[0].target_type == "dict"
 
+    def test_non_tensor_none_value(self, tmp_path: Path, capsys) -> None:
+        """Dumping None is displayed as NonTensorRecord, not skipped as load failure."""
+        baseline_path, target_path = _create_non_tensor_dumps(
+            tmp_path, name="optional_param", baseline_value=None, target_value=None
+        )
+        args = _make_args(baseline_path, target_path, grouping="raw")
+        records = _run_and_parse(args, capsys)
+
+        non_tensors = _get_non_tensors(records)
+        assert len(non_tensors) == 1
+        assert non_tensors[0].name == "optional_param"
+        assert non_tensors[0].values_equal is True
+        assert non_tensors[0].baseline_value == "None"
+        assert non_tensors[0].baseline_type == "NoneType"
+        assert non_tensors[0].category == "passed"
+
     def test_non_tensor_json_roundtrip(self, tmp_path: Path, capsys) -> None:
         """NonTensorRecord JSON output can be parsed back correctly."""
         baseline_path, target_path = _create_non_tensor_dumps(

@@ -29,7 +29,7 @@ from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
-from sglang.srt.debug_utils.dump_loader import ValueWithMeta
+from sglang.srt.debug_utils.dump_loader import LOAD_FAILED, ValueWithMeta
 
 _FAILED_SIDE_MAP: dict[str, str] = {"x": "baseline", "y": "target"}
 
@@ -199,5 +199,5 @@ def _load_all_values(filenames: list[str], base_path: Path) -> list[ValueWithMet
     return [
         item
         for f in filenames
-        if (item := ValueWithMeta.load(base_path / f)).value is not None
+        if (item := ValueWithMeta.load(base_path / f)).value is not LOAD_FAILED
     ]
