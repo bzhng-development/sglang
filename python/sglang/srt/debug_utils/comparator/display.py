@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from io import StringIO
 from pathlib import Path
 from typing import Any, Optional
@@ -7,6 +8,8 @@ from typing import Any, Optional
 import polars as pl
 
 from sglang.srt.debug_utils.dump_loader import ValueWithMeta
+
+_PARALLEL_INFO_KEYS: list[str] = ["sglang_parallel_info", "megatron_parallel_info"]
 
 
 def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> str:
@@ -25,7 +28,7 @@ def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> s
 
 
 def collect_rank_info(
-    df: pl.DataFrame, dump_dir: Path, label: str
+    df: pl.DataFrame, dump_dir: Path
 ) -> Optional[list[dict[str, Any]]]:
     unique_rows: pl.DataFrame = (
         df.filter(pl.col("name") == "model_input_ids")
@@ -37,39 +40,31 @@ def collect_rank_info(
 
     table_rows: list[dict[str, Any]] = []
     for row in unique_rows.to_dicts():
-        item: ValueWithMeta = ValueWithMeta.load(dump_dir / row["filename"])
-        meta: dict[str, Any] = item.meta
+        meta: dict[str, Any] = ValueWithMeta.load(dump_dir / row["filename"]).meta
 
         row_data: dict[str, Any] = {"rank": row["rank"]}
-        _extract_parallel_info(
-            row_data=row_data, info=meta.get("sglang_parallel_info", {})
-        )
-        _extract_parallel_info(
-            row_data=row_data, info=meta.get("megatron_parallel_info", {})
-        )
+        for key in _PARALLEL_INFO_KEYS:
+            _extract_parallel_info(row_data=row_data, info=meta.get(key, {}))
         table_rows.append(row_data)
 
-    return table_rows if table_rows else None
+    return table_rows or None
 
 
 def collect_input_ids_and_positions(
     df: pl.DataFrame,
     dump_dir: Path,
-    label: str,
     *,
     tokenizer: Any = None,
 ) -> Optional[list[dict[str, Any]]]:
-    rows: list[dict[str, Any]] = df.filter(
+    filtered: pl.DataFrame = df.filter(
         pl.col("name").is_in(["model_input_ids", "model_positions"])
-    ).to_dicts()
-    if not rows:
+    )
+    if filtered.is_empty():
         return None
 
-    data_by_step_rank: dict[tuple[int, int], dict[str, Any]] = {}
-    for row in rows:
+    data_by_step_rank: dict[tuple[int, int], dict[str, Any]] = defaultdict(dict)
+    for row in filtered.to_dicts():
         key: tuple[int, int] = (row["step"], row["rank"])
-        if key not in data_by_step_rank:
-            data_by_step_rank[key] = {}
         item: ValueWithMeta = ValueWithMeta.load(dump_dir / row["filename"])
         if item.value is not None:
             data_by_step_rank[key][row["name"]] = item.value
@@ -79,26 +74,24 @@ def collect_input_ids_and_positions(
         ids = data.get("model_input_ids")
         pos = data.get("model_positions")
 
-        ids_str: str = str(ids.flatten().tolist()) if ids is not None else "N/A"
-        pos_str: str = str(pos.flatten().tolist()) if pos is not None else "N/A"
+        ids_list: Optional[list[int]] = ids.flatten().tolist() if ids is not None else None
 
         row_data: dict[str, Any] = {
             "step": step,
             "rank": rank,
-            "num_tokens": ids.numel() if ids is not None else None,
-            "input_ids": ids_str,
-            "positions": pos_str,
+            "num_tokens": len(ids_list) if ids_list is not None else None,
+            "input_ids": str(ids_list) if ids_list is not None else "N/A",
+            "positions": str(pos.flatten().tolist()) if pos is not None else "N/A",
         }
 
-        if tokenizer is not None and ids is not None:
-            decoded: str = tokenizer.decode(
-                ids.flatten().tolist(), skip_special_tokens=False
+        if tokenizer is not None and ids_list is not None:
+            row_data["decoded_text"] = repr(
+                tokenizer.decode(ids_list, skip_special_tokens=False)
             )
-            row_data["decoded_text"] = repr(decoded)
 
         table_rows.append(row_data)
 
-    return table_rows if table_rows else None
+    return table_rows or None
 
 
 def _extract_parallel_info(row_data: dict[str, Any], info: dict[str, Any]) -> None:

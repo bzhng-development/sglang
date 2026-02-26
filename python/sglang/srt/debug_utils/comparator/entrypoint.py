@@ -120,7 +120,7 @@ def _emit_display_records(
     output_format: str,
 ) -> None:
     rank_rows: Optional[list[dict[str, Any]]] = collect_rank_info(
-        df, dump_dir=dump_dir, label=label
+        df, dump_dir=dump_dir
     )
     if rank_rows is not None:
         print_record(
@@ -129,7 +129,7 @@ def _emit_display_records(
         )
 
     input_ids_rows: Optional[list[dict[str, Any]]] = collect_input_ids_and_positions(
-        df, dump_dir=dump_dir, label=label, tokenizer=tokenizer
+        df, dump_dir=dump_dir, tokenizer=tokenizer
     )
     if input_ids_rows is not None:
         print_record(

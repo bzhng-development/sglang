@@ -91,7 +91,7 @@ class TestCollectRankInfo:
         )
 
         rows: Optional[list[dict[str, Any]]] = collect_rank_info(
-            df, dump_dir=tmp_path, label="baseline"
+            df, dump_dir=tmp_path
         )
 
         assert rows is not None
@@ -112,7 +112,7 @@ class TestCollectRankInfo:
                 }
             ]
         )
-        result = collect_rank_info(df, dump_dir=tmp_path, label="test")
+        result = collect_rank_info(df, dump_dir=tmp_path)
         assert result is None
 
     def test_deduplicates_ranks(self, tmp_path: Path) -> None:
@@ -154,7 +154,7 @@ class TestCollectRankInfo:
             ]
         )
 
-        rows = collect_rank_info(df, dump_dir=tmp_path, label="test")
+        rows = collect_rank_info(df, dump_dir=tmp_path)
 
         assert rows is not None
         assert len(rows) == 1
@@ -199,7 +199,7 @@ class TestCollectInputIdsAndPositions:
             ]
         )
 
-        rows = collect_input_ids_and_positions(df, dump_dir=tmp_path, label="target")
+        rows = collect_input_ids_and_positions(df, dump_dir=tmp_path)
 
         assert rows is not None
         assert len(rows) == 1
@@ -221,7 +221,7 @@ class TestCollectInputIdsAndPositions:
                 }
             ]
         )
-        result = collect_input_ids_and_positions(df, dump_dir=tmp_path, label="test")
+        result = collect_input_ids_and_positions(df, dump_dir=tmp_path)
         assert result is None
 
     def test_with_mock_tokenizer(self, tmp_path: Path) -> None:
@@ -251,7 +251,7 @@ class TestCollectInputIdsAndPositions:
                 return f"decoded:{ids}"
 
         rows = collect_input_ids_and_positions(
-            df, dump_dir=tmp_path, label="test", tokenizer=_MockTokenizer()
+            df, dump_dir=tmp_path, tokenizer=_MockTokenizer()
         )
 
         assert rows is not None
