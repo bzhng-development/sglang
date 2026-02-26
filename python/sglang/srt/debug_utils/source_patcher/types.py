@@ -28,9 +28,7 @@ class EditSpec(_StrictBase):
     @model_validator(mode="after")
     def _check_replacement_and_append_exclusive(self) -> "EditSpec":
         if self.replacement.strip() and self.append.strip():
-            raise ValueError(
-                "'replacement' and 'append' are mutually exclusive"
-            )
+            raise ValueError("'replacement' and 'append' are mutually exclusive")
         return self
 
 
