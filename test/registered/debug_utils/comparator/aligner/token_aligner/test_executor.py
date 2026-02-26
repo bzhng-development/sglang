@@ -108,7 +108,7 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim=1,
+            token_dims=Pair(x=1, y=1),
         )
 
         assert aligned.x.shape == (3, 5, 8)
@@ -128,7 +128,7 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim=2,
+            token_dims=Pair(x=2, y=2),
         )
 
         assert aligned.x.shape == (3, 8, 5)
@@ -147,7 +147,7 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim=0,
+            token_dims=Pair(x=0, y=0),
         )
 
         assert aligned.x.shape == (5, 8)
@@ -170,7 +170,7 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim=1,
+            token_dims=Pair(x=1, y=1),
         )
 
         # token dim (dim 1) set to 0, other dims preserved -> [3, 0, 8]
@@ -187,7 +187,7 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim=2,
+            token_dims=Pair(x=2, y=2),
         )
 
         assert aligned.x.shape == (2, 3, 5, 4, 8)

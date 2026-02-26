@@ -24,4 +24,4 @@ class AlignerPerStepPlan:
 class AlignerPlan:
     per_step_plans: Pair[list[AlignerPerStepPlan]]
     token_aligner_plan: Optional[TokenAlignerPlan]
-    token_dim: int = 0
+    token_dims: Pair[int] = Pair(x=0, y=0)

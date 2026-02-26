@@ -33,32 +33,25 @@ def compute_aligner_plan(
     metas_pair: Pair[list[dict[str, Any]]],
     token_aligner_plan: Optional[TokenAlignerPlan],
 ) -> AlignerPlan:
-    dim_specs: Optional[list[DimSpec]] = _extract_dim_specs(metas_pair=metas_pair)
-    token_dim: int = _compute_token_dim(dim_specs=dim_specs)
+    token_dims: Pair[int] = metas_pair.map(_compute_token_dim)
     return AlignerPlan(
         per_step_plans=metas_pair.map(
             lambda metas: _compute_per_step_plans(metas=metas)
         ),
         token_aligner_plan=token_aligner_plan,
-        token_dim=token_dim,
+        token_dims=token_dims,
     )
 
 
-def _extract_dim_specs(
-    metas_pair: Pair[list[dict[str, Any]]],
-) -> Optional[list[DimSpec]]:
-    for meta in metas_pair.x + metas_pair.y:
+def _compute_token_dim(metas: list[dict[str, Any]]) -> int:
+    for meta in metas:
         dims_str: Optional[str] = meta.get("dims")
         if dims_str is not None:
-            return parse_dims(dims_str)
-    return None
-
-
-def _compute_token_dim(dim_specs: Optional[list[DimSpec]]) -> int:
-    if dim_specs is None:
-        return 0
-    idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
-    return idx if idx is not None else 0
+            dim_specs: list[DimSpec] = parse_dims(dims_str)
+            idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
+            if idx is not None:
+                return idx
+    return 0
 
 
 def _compute_per_step_plans(metas: list[dict[str, Any]]) -> list[AlignerPerStepPlan]:
