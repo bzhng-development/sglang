@@ -46,9 +46,9 @@ patches:
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        append: "dumper.dump('patched_attn_output', hidden_states)"
+        append: "dumper.dump('patched_attn_output', hidden_states, layer_id=self.self_attn.attn.layer_id)"
       - match: "hidden_states = self.mlp(hidden_states)"
-        append: "dumper.dump('patched_mlp_output', hidden_states)"
+        append: "dumper.dump('patched_mlp_output', hidden_states, layer_id=self.self_attn.attn.layer_id)"
 """
 
 
