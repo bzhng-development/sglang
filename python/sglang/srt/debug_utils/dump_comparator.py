@@ -1,3 +1,10 @@
+"""Simplified dump comparator — a self-contained single-file script for comparing
+two dump directories tensor-by-tensor.
+
+For advanced features (unshard, token alignment, per-dimension annotations), see the
+full ``comparator/`` package: ``python -m sglang.srt.debug_utils.comparator``.
+"""
+
 import argparse
 import functools
 from pathlib import Path
@@ -14,7 +21,7 @@ def main(args):
 
     df_target = read_meta(args.target_path)
     df_target = df_target.filter(
-        (pl.col("step") >= args.start_id) & (pl.col("step") <= args.end_id)
+        (pl.col("step") >= args.start_step) & (pl.col("step") <= args.end_step)
     )
     if args.filter:
         df_target = df_target.filter(pl.col("filename").str.contains(args.filter))
@@ -26,12 +33,11 @@ def main(args):
 
     for row in df_target.iter_rows(named=True):
         path_target = Path(args.target_path) / row["filename"]
-        baseline_step = row["step"] - args.start_id + args.baseline_start_id
 
         row_baseline = find_row(
             df_baseline,
             conditions=dict(
-                step=baseline_step,
+                step=row["step"],
                 **{
                     k: v
                     for k, v in row.items()
@@ -236,9 +242,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline-path", type=str)
     parser.add_argument("--target-path", type=str)
-    parser.add_argument("--start-id", type=int, default=0)
-    parser.add_argument("--end-id", type=int, default=1000000)
-    parser.add_argument("--baseline-start-id", type=int, default=0)
+    parser.add_argument("--start-step", type=int, default=0)
+    parser.add_argument("--end-step", type=int, default=1000000)
     parser.add_argument("--diff-threshold", type=float, default=1e-3)
     parser.add_argument(
         "--filter", type=str, default=None, help="Regex to filter filenames"
