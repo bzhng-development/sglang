@@ -7,7 +7,7 @@ import yaml
 
 from sglang.srt.debug_utils.dumper import DumperConfig, _Dumper
 
-from .conftest import SAMPLE_MODULE_NAME
+SAMPLE_MODULE_NAME = "_source_patcher_test_fixtures.sample_module"
 
 
 class TestDumperApplySourcePatches:

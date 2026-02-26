@@ -16,7 +16,6 @@ from pathlib import Path
 
 import pytest
 import requests
-import yaml
 
 from sglang.srt.utils import kill_process_tree
 from sglang.test.ci.ci_register import register_cuda_ci
@@ -30,39 +29,28 @@ register_cuda_ci(est_time=120, suite="nightly-2-gpu", nightly=True)
 
 MODEL = "Qwen/Qwen3-0.6B"
 
-PATCH_CONFIG: dict = {
-    "patches": [
-        {
-            "target": "sglang.srt.models.qwen3.Qwen3DecoderLayer.forward",
-            "edits": [
-                {
-                    "match": (
-                        "hidden_states = self.self_attn(\n"
-                        "    positions=positions,\n"
-                        "    hidden_states=hidden_states,\n"
-                        "    forward_batch=forward_batch,\n"
-                        ")"
-                    ),
-                    "replacement": (
-                        "hidden_states = self.self_attn(\n"
-                        "    positions=positions,\n"
-                        "    hidden_states=hidden_states,\n"
-                        "    forward_batch=forward_batch,\n"
-                        ")\n"
-                        "dumper.dump('patched_attn_output', hidden_states)"
-                    ),
-                },
-                {
-                    "match": "hidden_states = self.mlp(hidden_states)",
-                    "replacement": (
-                        "hidden_states = self.mlp(hidden_states)\n"
-                        "dumper.dump('patched_mlp_output', hidden_states)"
-                    ),
-                },
-            ],
-        }
-    ]
-}
+PATCH_CONFIG_YAML: str = """\
+patches:
+  - target: sglang.srt.models.qwen3.Qwen3DecoderLayer.forward
+    edits:
+      - match: |
+          hidden_states = self.self_attn(
+              positions=positions,
+              hidden_states=hidden_states,
+              forward_batch=forward_batch,
+          )
+        replacement: |
+          hidden_states = self.self_attn(
+              positions=positions,
+              hidden_states=hidden_states,
+              forward_batch=forward_batch,
+          )
+          dumper.dump('patched_attn_output', hidden_states)
+      - match: "hidden_states = self.mlp(hidden_states)"
+        replacement: |
+          hidden_states = self.mlp(hidden_states)
+          dumper.dump('patched_mlp_output', hidden_states)
+"""
 
 
 def _run_server_and_generate(
@@ -132,7 +120,7 @@ class TestSourcePatcherE2ESGLang:
         base_url = DEFAULT_URL_FOR_TEST
 
         config_path = tmp_path / "patch_config.yaml"
-        config_path.write_text(yaml.dump(PATCH_CONFIG))
+        config_path.write_text(PATCH_CONFIG_YAML)
 
         # Run 1: baseline (1 GPU)
         baseline_dir = tmp_path / "baseline"
@@ -207,3 +195,7 @@ class TestSourcePatcherE2ESGLang:
                 f"Patched field '{field}' not in comparison records. "
                 f"Got: {sorted(comparison_names)}"
             )
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
