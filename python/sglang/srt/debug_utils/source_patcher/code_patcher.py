@@ -3,7 +3,6 @@ import inspect
 import textwrap
 import types
 from collections.abc import Callable
-from pathlib import Path
 from typing import Any, Optional
 
 import yaml
@@ -17,31 +16,26 @@ from sglang.srt.debug_utils.source_patcher.types import (
 )
 
 
-def apply_patches_from_config(config_path: Path) -> list[PatchState]:
-    """Load a YAML patch config and apply all patches.
+def apply_patches_from_config(
+    yaml_content: str,
+    *,
+    extra_imports: Optional[list[str]] = None,
+) -> list[PatchState]:
+    """Parse a YAML config string and apply all patches.
 
-    This is the main entry point for applying source patches.
-    The YAML file should have the format:
-        patches:
-          - target: "pkg.mod.Class.method"
-            edits:
-              - match: "original code"
-                replacement: "patched code"
+    Args:
+        yaml_content: YAML string with patch specifications.
+        extra_imports: Import lines to prepend to every replacement block
+            (e.g. ["from pkg import foo"]).  The caller (dumper) uses this
+            so users don't have to write boilerplate in YAML.
     """
-    print(f"[source_patcher] loading config from {config_path}")
-    with open(config_path) as f:
-        raw: dict[str, Any] = yaml.safe_load(f)
-
+    raw: dict[str, Any] = yaml.safe_load(yaml_content)
     config: PatchConfig = PatchConfig(**raw)
 
-    states: list[PatchState] = []
-    for spec in config.patches:
-        target_fn: Callable[..., Any] = _resolve_target(spec.target)
-        print(f"[source_patcher] patching {spec.target}")
-        state: PatchState = patch_function(target=target_fn, edits=spec.edits)
-        states.append(state)
+    if extra_imports:
+        config = _inject_extra_imports(config=config, extra_imports=extra_imports)
 
-    return states
+    return _apply_specs(config.patches)
 
 
 class CodePatcher:
@@ -52,10 +46,7 @@ class CodePatcher:
         self._states: list[PatchState] = []
 
     def __enter__(self) -> "CodePatcher":
-        for spec in self._patches:
-            target_fn: Callable[..., Any] = _resolve_target(spec.target)
-            state: PatchState = patch_function(target=target_fn, edits=spec.edits)
-            self._states.append(state)
+        self._states = _apply_specs(self._patches)
         return self
 
     def __exit__(
@@ -94,6 +85,36 @@ def patch_function(*, target: Callable[..., Any], edits: list[EditSpec]) -> Patc
     target.__code__ = new_fn.__code__
 
     return PatchState(target_fn=target, original_code=original_code)
+
+
+# --------------------------------- private ---------------------------------
+
+
+def _apply_specs(specs: list[PatchSpec]) -> list[PatchState]:
+    states: list[PatchState] = []
+    for spec in specs:
+        target_fn: Callable[..., Any] = _resolve_target(spec.target)
+        print(f"[source_patcher] patching {spec.target}")
+        state: PatchState = patch_function(target=target_fn, edits=spec.edits)
+        states.append(state)
+    return states
+
+
+def _inject_extra_imports(
+    *, config: PatchConfig, extra_imports: list[str]
+) -> PatchConfig:
+    """Prepend extra import lines to every replacement in the config."""
+    import_block: str = "\n".join(extra_imports)
+    new_patches: list[PatchSpec] = []
+
+    for spec in config.patches:
+        new_edits: list[EditSpec] = []
+        for edit in spec.edits:
+            new_replacement: str = import_block + "\n" + edit.replacement
+            new_edits.append(EditSpec(match=edit.match, replacement=new_replacement))
+        new_patches.append(PatchSpec(target=spec.target, edits=new_edits))
+
+    return PatchConfig(patches=new_patches)
 
 
 def _resolve_target(qualified_name: str) -> Callable[..., Any]:

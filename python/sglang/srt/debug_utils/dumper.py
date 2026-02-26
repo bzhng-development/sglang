@@ -329,14 +329,23 @@ class _Dumper:
         return decorator
 
     def apply_source_patches(self) -> None:
-        """Apply source patches from DUMPER_SOURCE_PATCHER_CONFIG if set."""
+        """Apply source patches from DUMPER_SOURCE_PATCHER_CONFIG if set.
+
+        Automatically injects ``from sglang.srt.debug_utils.dumper import dumper``
+        into every replacement block so users don't need to write it in YAML.
+        """
         config_path = self._config.source_patcher_config
         if not config_path:
             return
 
         from sglang.srt.debug_utils.source_patcher import apply_patches_from_config
 
-        apply_patches_from_config(Path(config_path))
+        yaml_content: str = Path(config_path).read_text()
+        print(f"[source_patcher] loading config from {config_path}")
+        apply_patches_from_config(
+            yaml_content,
+            extra_imports=["from sglang.srt.debug_utils.dumper import dumper"],
+        )
 
     def register_non_intrusive_dumper(
         self,
