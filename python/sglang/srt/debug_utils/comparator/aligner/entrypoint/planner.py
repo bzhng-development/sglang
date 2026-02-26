@@ -21,7 +21,6 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
 )
 from sglang.srt.debug_utils.comparator.dims import (
     TOKEN_DIM_NAME,
-    DimSpec,
     find_dim_index,
     parse_dims,
 )
