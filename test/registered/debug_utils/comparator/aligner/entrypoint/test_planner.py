@@ -6,7 +6,6 @@ import pytest
 from sglang.srt.debug_utils.comparator.aligner.entrypoint.planner import (
     _compute_dim_names,
     _compute_per_step_plans,
-    _compute_token_dim_info,
     compute_aligner_plan,
     compute_per_step_sub_plans,
 )
@@ -17,7 +16,6 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
 )
 from sglang.srt.debug_utils.comparator.aligner.reorderer.types import ReordererPlan
 from sglang.srt.debug_utils.comparator.aligner.unsharder.types import UnsharderPlan
-from sglang.srt.debug_utils.comparator.dims import TokenDimInfo
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
@@ -165,30 +163,6 @@ class TestComputeAlignerPlan:
         )
 
         assert plan.token_aligner_plan is ta_plan
-
-
-class TestComputeTokenDimInfo:
-    def test_t_layout(self) -> None:
-        metas: list[dict[str, Any]] = [_make_meta(dims="t h d")]
-        info: TokenDimInfo = _compute_token_dim_info(metas)
-        assert info.token_dim_name == "t"
-        assert info.seq_dim_name is None
-
-    def test_fallback_no_metas(self) -> None:
-        info: TokenDimInfo = _compute_token_dim_info([])
-        assert info.token_dim_name == "t"
-        assert info.seq_dim_name is None
-
-    def test_fallback_no_dims(self) -> None:
-        metas: list[dict[str, Any]] = [_make_meta()]
-        info: TokenDimInfo = _compute_token_dim_info(metas)
-        assert info.token_dim_name == "t"
-
-    def test_unknown_dims_fallback(self) -> None:
-        metas: list[dict[str, Any]] = [_make_meta(dims="x y z")]
-        info: TokenDimInfo = _compute_token_dim_info(metas)
-        assert info.token_dim_name == "t"
-        assert info.seq_dim_name is None
 
 
 class TestComputeDimNames:

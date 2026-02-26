@@ -23,16 +23,11 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
     ConcatParams,
     UnsharderPlan,
 )
-from sglang.srt.debug_utils.comparator.dims import (
-    ParallelAxis,
-    TokenDimInfo,
-)
+from sglang.srt.debug_utils.comparator.dims import ParallelAxis
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)
-
-_T_INFO: TokenDimInfo = TokenDimInfo(token_dim_name="t")
 
 
 class TestExecuteSubPlans:
@@ -129,7 +124,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
             dim_names=Pair(x=None, y=None),
         )
 
@@ -152,7 +146,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0, 1])],
             ),
             token_aligner_plan=None,
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
             dim_names=Pair(x=None, y=None),
         )
 
@@ -175,7 +168,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
             dim_names=Pair(x=None, y=None),
         )
 
@@ -199,7 +191,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
             dim_names=Pair(x=None, y=None),
         )
 
@@ -246,7 +237,6 @@ class TestExecuteAlignerPlanWithTokenDim:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=token_plan,
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
             dim_names=Pair(x=["a", "t", "h"], y=["a", "t", "h"]),
         )
 

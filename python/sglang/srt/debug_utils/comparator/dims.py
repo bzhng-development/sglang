@@ -96,12 +96,6 @@ def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
     return names.index(name) if name in names else None
 
 
-@dataclass(frozen=True)
-class TokenDimInfo:
-    token_dim_name: str
-    seq_dim_name: Optional[str] = None
-
-
 def resolve_dim_by_name(tensor: torch.Tensor, name: str) -> int:
     if tensor.names[0] is None:
         raise ValueError(f"Tensor has no names, cannot resolve {name!r}")

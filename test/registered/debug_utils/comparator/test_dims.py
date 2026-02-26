@@ -11,7 +11,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     Ordering,
     ParallelAxis,
     Reduction,
-    TokenDimInfo,
     apply_dim_names,
     find_dim_index,
     parse_dim,
@@ -140,23 +139,6 @@ class TestFindDimIndex:
 
     def test_empty_list(self) -> None:
         assert find_dim_index([], "t") is None
-
-
-class TestTokenDimInfo:
-    def test_t_layout(self) -> None:
-        info = TokenDimInfo(token_dim_name="t")
-        assert info.token_dim_name == "t"
-        assert info.seq_dim_name is None
-
-    def test_bs_layout(self) -> None:
-        info = TokenDimInfo(token_dim_name="b", seq_dim_name="s")
-        assert info.token_dim_name == "b"
-        assert info.seq_dim_name == "s"
-
-    def test_frozen(self) -> None:
-        info = TokenDimInfo(token_dim_name="t")
-        with pytest.raises(AttributeError):
-            info.token_dim_name = "b"  # type: ignore[misc]
 
 
 class TestResolveDimByName:

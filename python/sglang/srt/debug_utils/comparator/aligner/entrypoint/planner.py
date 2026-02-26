@@ -24,15 +24,10 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
     compute_unsharder_plan,
 )
 from sglang.srt.debug_utils.comparator.dims import (
-    TOKEN_DIM_NAME,
     DimSpec,
-    TokenDimInfo,
-    find_dim_index,
     parse_dims,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
-
-_FALLBACK_TOKEN_DIM_INFO: TokenDimInfo = TokenDimInfo(token_dim_name=TOKEN_DIM_NAME)
 
 
 def compute_aligner_plan(
@@ -40,7 +35,6 @@ def compute_aligner_plan(
     metas_pair: Pair[list[dict[str, Any]]],
     token_aligner_plan: Optional[TokenAlignerPlan],
 ) -> AlignerPlan:
-    token_dim_info: Pair[TokenDimInfo] = metas_pair.map(_compute_token_dim_info)
     dim_names: Pair[Optional[list[str]]] = metas_pair.map(_compute_dim_names)
 
     dims_str_pair: Pair[Optional[str]] = metas_pair.map(
@@ -55,28 +49,9 @@ def compute_aligner_plan(
             lambda metas: _compute_per_step_plans(metas=metas)
         ),
         token_aligner_plan=token_aligner_plan,
-        token_dim_info=token_dim_info,
         dim_names=dim_names,
         axis_swapper_plan=axis_swapper_plan,
     )
-
-
-def _compute_token_dim_info(metas: list[dict[str, Any]]) -> TokenDimInfo:
-    if not metas:
-        return _FALLBACK_TOKEN_DIM_INFO
-
-    dims_str: Optional[str] = metas[0].get("dims")
-    if dims_str is None:
-        return _FALLBACK_TOKEN_DIM_INFO
-
-    dim_specs: list[DimSpec] = parse_dims(dims_str)
-
-    # T layout: look for "t" dim
-    token_idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
-    if token_idx is not None:
-        return TokenDimInfo(token_dim_name=TOKEN_DIM_NAME)
-
-    return _FALLBACK_TOKEN_DIM_INFO
 
 
 def _compute_dim_names(metas: list[dict[str, Any]]) -> Optional[list[str]]:

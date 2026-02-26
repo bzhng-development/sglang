@@ -21,13 +21,11 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
     TokenAlignerStepAux,
     TokenLocator,
 )
-from sglang.srt.debug_utils.comparator.dims import TokenDimInfo, TokenLayout
+from sglang.srt.debug_utils.comparator.dims import TokenLayout
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)
-
-_T_INFO: TokenDimInfo = TokenDimInfo(token_dim_name="t")
 
 
 def _named(tensor: torch.Tensor, names: list[str]) -> torch.Tensor:
@@ -115,7 +113,6 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
         )
 
         assert aligned.x.shape == (3, 5, 8)
@@ -136,7 +133,6 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
         )
 
         assert aligned.x.shape == (3, 8, 5)
@@ -156,7 +152,6 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
         )
 
         assert aligned.x.shape == (5, 8)
@@ -181,7 +176,6 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
         )
 
         # token dim (dim 1) set to 0, other dims preserved -> [3, 0, 8]
@@ -200,7 +194,6 @@ class TestTokenDim:
         aligned: Pair[torch.Tensor] = execute_token_aligner(
             plan=plan,
             tensor_of_step_pair=Pair(x=tensors, y=tensors),
-            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
         )
 
         assert aligned.x.shape == (2, 3, 5, 4, 8)
