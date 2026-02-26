@@ -23,10 +23,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.parallel_info import (
 from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
     compute_unsharder_plan,
 )
-from sglang.srt.debug_utils.comparator.dims import (
-    DimSpec,
-    parse_dims,
-)
+from sglang.srt.debug_utils.comparator.dims import parse_dims
 from sglang.srt.debug_utils.comparator.utils import Pair
 
 
@@ -35,8 +32,6 @@ def compute_aligner_plan(
     metas_pair: Pair[list[dict[str, Any]]],
     token_aligner_plan: Optional[TokenAlignerPlan],
 ) -> AlignerPlan:
-    dim_names: Pair[Optional[list[str]]] = metas_pair.map(_compute_dim_names)
-
     dims_str_pair: Pair[Optional[str]] = metas_pair.map(
         lambda metas: metas[0].get("dims") if metas else None
     )
@@ -49,21 +44,8 @@ def compute_aligner_plan(
             lambda metas: _compute_per_step_plans(metas=metas)
         ),
         token_aligner_plan=token_aligner_plan,
-        dim_names=dim_names,
         axis_swapper_plan=axis_swapper_plan,
     )
-
-
-def _compute_dim_names(metas: list[dict[str, Any]]) -> Optional[list[str]]:
-    if not metas:
-        return None
-
-    dims_str: Optional[str] = metas[0].get("dims")
-    if dims_str is None:
-        return None
-
-    dim_specs: list[DimSpec] = parse_dims(dims_str)
-    return [spec.name for spec in dim_specs]
 
 
 def _compute_per_step_plans(metas: list[dict[str, Any]]) -> list[AlignerPerStepPlan]:

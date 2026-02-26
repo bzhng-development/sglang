@@ -91,6 +91,10 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
     return result
 
 
+def parse_dim_names(dims_str: str) -> list[str]:
+    return [spec.name for spec in parse_dims(dims_str)]
+
+
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
     names: list[str] = [spec.name for spec in dim_specs]
     return names.index(name) if name in names else None

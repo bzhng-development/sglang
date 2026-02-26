@@ -25,5 +25,4 @@ class AlignerPerStepPlan:
 class AlignerPlan:
     per_step_plans: Pair[list[AlignerPerStepPlan]]
     token_aligner_plan: Optional[TokenAlignerPlan]
-    dim_names: Pair[Optional[list[str]]]
     axis_swapper_plan: Optional[AxisSwapperPlan] = None

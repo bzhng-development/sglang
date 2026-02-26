@@ -124,7 +124,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            dim_names=Pair(x=None, y=None),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(
@@ -146,7 +145,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0, 1])],
             ),
             token_aligner_plan=None,
-            dim_names=Pair(x=None, y=None),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(
@@ -168,7 +166,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            dim_names=Pair(x=None, y=None),
         )
 
         t_x: torch.Tensor = torch.tensor([1.0, 2.0])
@@ -191,7 +188,6 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            dim_names=Pair(x=None, y=None),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(
@@ -218,8 +214,8 @@ class TestExecuteAlignerPlanWithTokenDim:
         torch.manual_seed(42)
 
         # shape [3, 4, 8]: dim0=a, dim1=token(4 tokens), dim2=hidden
-        tensor_x: torch.Tensor = torch.randn(3, 4, 8)
-        tensor_y: torch.Tensor = torch.randn(3, 4, 8)
+        tensor_x: torch.Tensor = torch.randn(3, 4, 8).refine_names("a", "t", "h")
+        tensor_y: torch.Tensor = torch.randn(3, 4, 8).refine_names("a", "t", "h")
 
         locator_x = TokenLocator(
             steps=[0, 0, 0],
@@ -237,7 +233,6 @@ class TestExecuteAlignerPlanWithTokenDim:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=token_plan,
-            dim_names=Pair(x=["a", "t", "h"], y=["a", "t", "h"]),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(x=[tensor_x], y=[tensor_y])

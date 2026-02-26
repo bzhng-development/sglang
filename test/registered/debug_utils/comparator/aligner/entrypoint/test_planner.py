@@ -4,7 +4,6 @@ from typing import Any, Optional
 import pytest
 
 from sglang.srt.debug_utils.comparator.aligner.entrypoint.planner import (
-    _compute_dim_names,
     _compute_per_step_plans,
     compute_aligner_plan,
     compute_per_step_sub_plans,
@@ -163,25 +162,6 @@ class TestComputeAlignerPlan:
         )
 
         assert plan.token_aligner_plan is ta_plan
-
-
-class TestComputeDimNames:
-    def test_with_dims(self) -> None:
-        metas: list[dict[str, Any]] = [_make_meta(dims="b s h d")]
-        names: Optional[list[str]] = _compute_dim_names(metas)
-        assert names == ["b", "s", "h", "d"]
-
-    def test_no_dims(self) -> None:
-        metas: list[dict[str, Any]] = [_make_meta()]
-        assert _compute_dim_names(metas) is None
-
-    def test_empty_metas(self) -> None:
-        assert _compute_dim_names([]) is None
-
-    def test_with_modifiers(self) -> None:
-        metas: list[dict[str, Any]] = [_make_meta(dims="b s(cp,zigzag) h(tp) d")]
-        names: Optional[list[str]] = _compute_dim_names(metas)
-        assert names == ["b", "s", "h", "d"]
 
 
 if __name__ == "__main__":

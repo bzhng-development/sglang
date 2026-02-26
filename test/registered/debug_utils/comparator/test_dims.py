@@ -14,6 +14,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     apply_dim_names,
     find_dim_index,
     parse_dim,
+    parse_dim_names,
     parse_dims,
     resolve_dim_by_name,
     strip_dim_names,
@@ -103,6 +104,14 @@ class TestParseDims:
     def test_duplicate_name_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate"):
             parse_dims("h h")
+
+
+class TestParseDimNames:
+    def test_plain(self) -> None:
+        assert parse_dim_names("b s h d") == ["b", "s", "h", "d"]
+
+    def test_strips_modifiers(self) -> None:
+        assert parse_dim_names("b s(cp,zigzag) h(tp) d") == ["b", "s", "h", "d"]
 
 
 class TestDimConstants:
