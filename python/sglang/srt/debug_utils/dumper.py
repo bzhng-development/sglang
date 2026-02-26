@@ -293,6 +293,39 @@ class _Dumper:
             k: v for k, v in (self._state.global_ctx | kwargs).items() if v is not None
         }
 
+    def ctx(
+        self,
+        _extractor: Optional[Callable[..., dict]] = None,
+        **static_ctx: Any,
+    ) -> Callable:
+        """Decorator that sets context before calling the wrapped function and clears it after.
+
+        Two forms:
+            @dumper.ctx(lambda self: dict(layer_id=self.layer_id))
+            def forward(self, x): ...
+
+            @dumper.ctx(phase="decode")
+            def decode_step(self, x): ...
+        """
+        if _extractor is not None and static_ctx:
+            raise ValueError("cannot mix lambda extractor with static kwargs")
+        if _extractor is None and not static_ctx:
+            raise ValueError("must provide either a lambda or static kwargs")
+
+        def decorator(fn: Callable) -> Callable:
+            @functools.wraps(fn)
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
+                ctx_dict: dict = _extractor(*args, **kwargs) if _extractor else static_ctx
+                self.set_ctx(**ctx_dict)
+                try:
+                    return fn(*args, **kwargs)
+                finally:
+                    self.set_ctx(**{k: None for k in ctx_dict})
+
+            return wrapper
+
+        return decorator
+
     def register_non_intrusive_dumper(
         self,
         model: "torch.nn.Module",

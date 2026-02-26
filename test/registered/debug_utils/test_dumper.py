@@ -2340,5 +2340,62 @@ class TestDumperDims:
         assert grad_data["meta"]["dims"] == "b h(tp)"
 
 
+class TestCtxDecorator:
+    def test_ctx_dynamic_lambda(self, tmp_path: Path) -> None:
+        d = _make_test_dumper(tmp_path)
+
+        class FakeLayer:
+            def __init__(self, layer_id: int) -> None:
+                self.layer_id = layer_id
+
+            @d.ctx(lambda self: dict(layer_id=self.layer_id))
+            def forward(self, x: torch.Tensor) -> torch.Tensor:
+                d.dump("hidden", x)
+                return x
+
+        layer = FakeLayer(layer_id=42)
+        layer.forward(torch.randn(3))
+
+        filenames = _get_filenames(tmp_path)
+        _assert_files(filenames, exist=["layer_id=42"])
+
+    def test_ctx_static_kwargs(self, tmp_path: Path) -> None:
+        d = _make_test_dumper(tmp_path)
+
+        @d.ctx(phase="decode")
+        def decode_step(x: torch.Tensor) -> torch.Tensor:
+            d.dump("step_out", x)
+            return x
+
+        decode_step(torch.randn(3))
+
+        filenames = _get_filenames(tmp_path)
+        _assert_files(filenames, exist=["phase=decode"])
+
+    def test_ctx_clears_on_exception(self, tmp_path: Path) -> None:
+        d = _make_test_dumper(tmp_path)
+
+        @d.ctx(phase="train")
+        def buggy_fn() -> None:
+            raise RuntimeError("boom")
+
+        with pytest.raises(RuntimeError, match="boom"):
+            buggy_fn()
+
+        assert d._state.global_ctx == {}
+
+    def test_ctx_rejects_mixed_args(self) -> None:
+        d = _make_test_dumper("/tmp")
+
+        with pytest.raises(ValueError, match="cannot mix"):
+            d.ctx(lambda self: dict(a=1), phase="x")
+
+    def test_ctx_rejects_empty_args(self) -> None:
+        d = _make_test_dumper("/tmp")
+
+        with pytest.raises(ValueError, match="must provide"):
+            d.ctx()
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))
