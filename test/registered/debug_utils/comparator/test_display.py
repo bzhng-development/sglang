@@ -199,9 +199,7 @@ class TestCollectInputIdsAndPositions:
             ]
         )
 
-        rows = collect_input_ids_and_positions(
-            df, dump_dir=tmp_path, label="target"
-        )
+        rows = collect_input_ids_and_positions(df, dump_dir=tmp_path, label="target")
 
         assert rows is not None
         assert len(rows) == 1
@@ -223,9 +221,7 @@ class TestCollectInputIdsAndPositions:
                 }
             ]
         )
-        result = collect_input_ids_and_positions(
-            df, dump_dir=tmp_path, label="test"
-        )
+        result = collect_input_ids_and_positions(df, dump_dir=tmp_path, label="test")
         assert result is None
 
     def test_with_mock_tokenizer(self, tmp_path: Path) -> None:
