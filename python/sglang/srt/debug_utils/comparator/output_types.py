@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import Annotated, Any, Literal, Optional, Union
+from typing import TYPE_CHECKING, Annotated, Any, Literal, Optional, Union
 
 from pydantic import Discriminator, Field, TypeAdapter, model_validator
 
-from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import AlignerPlan
 from sglang.srt.debug_utils.comparator.tensor_comparator.formatter import (
     format_comparison,
 )
@@ -13,6 +12,11 @@ from sglang.srt.debug_utils.comparator.tensor_comparator.types import (
     TensorComparisonInfo,
 )
 from sglang.srt.debug_utils.comparator.utils import _StrictBase
+
+if TYPE_CHECKING:
+    from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
+        AlignerPlan,
+    )
 
 
 class ReplicatedMismatchWarning(_StrictBase):
@@ -163,6 +167,20 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
 
     return "\n".join(lines)
 
+
+def _rebuild_models() -> None:
+    """Rebuild Pydantic models to resolve forward references (AlignerPlan).
+
+    Must be called after aligner.entrypoint.types is importable.
+    """
+    from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (  # noqa: F401
+        AlignerPlan,
+    )
+
+    ComparisonRecord.model_rebuild()
+
+
+_rebuild_models()
 
 AnyRecord = Annotated[
     Union[ConfigRecord, SkipRecord, ComparisonRecord, SummaryRecord, WarningRecord],
