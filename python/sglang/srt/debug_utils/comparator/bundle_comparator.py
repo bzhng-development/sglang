@@ -87,7 +87,6 @@ def _compare_bundle_pair_inner(
         not isinstance(it.value, torch.Tensor)
         for it in [*all_pair.x, *all_pair.y]
     )
-
     if has_non_tensor:
         return _compare_bundle_pair_non_tensor_type(name=name, value_pair=all_pair)
 
