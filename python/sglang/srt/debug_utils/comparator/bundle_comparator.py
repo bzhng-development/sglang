@@ -82,33 +82,23 @@ def _compare_bundle_pair_raw(
         reason = "baseline_load_failed" if not all_pair.x else "target_load_failed"
         return SkipRecord(name=name, reason=reason)
 
-    # 2. Classify into tensor vs non-tensor
-    tensor_pair: Pair[list[ValueWithMeta]] = all_pair.map(
-        lambda items: [it for it in items if isinstance(it.value, torch.Tensor)]
-    )
-    non_tensor_pair: Pair[list[ValueWithMeta]] = all_pair.map(
-        lambda items: [it for it in items if not isinstance(it.value, torch.Tensor)]
+    # 2. Check if any side has non-tensor values → non-tensor display path
+    has_non_tensor: bool = any(
+        not isinstance(it.value, torch.Tensor)
+        for it in [*all_pair.x, *all_pair.y]
     )
 
-    has_tensors: bool = bool(tensor_pair.x) or bool(tensor_pair.y)
-    has_non_tensors: bool = bool(non_tensor_pair.x) or bool(non_tensor_pair.y)
+    if has_non_tensor:
+        return _compare_non_tensor_pair(name=name, value_pair=all_pair)
 
-    # 3. Both sides have tensors → existing tensor comparison path
-    if has_tensors and not has_non_tensors:
-        return _compare_tensor_pair(
-            name=name,
-            valid_pair=tensor_pair,
-            token_aligner_plan=token_aligner_plan,
-            diff_threshold=diff_threshold,
-            thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
-        )
-
-    # 4. Both sides have non-tensors (no tensors) → non-tensor comparison
-    if has_non_tensors and not has_tensors:
-        return _compare_non_tensor_pair(name=name, non_tensor_pair=non_tensor_pair)
-
-    # 5. Mixed: one side tensor, other side non-tensor → type mismatch
-    return SkipRecord(name=name, reason="type_mismatch")
+    # 3. All values are tensors → tensor comparison path
+    return _compare_tensor_pair(
+        name=name,
+        valid_pair=all_pair,
+        token_aligner_plan=token_aligner_plan,
+        diff_threshold=diff_threshold,
+        thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
+    )
 
 
 def _compare_tensor_pair(
@@ -169,10 +159,10 @@ def _compare_tensor_pair(
 def _compare_non_tensor_pair(
     *,
     name: str,
-    non_tensor_pair: Pair[list[ValueWithMeta]],
+    value_pair: Pair[list[ValueWithMeta]],
 ) -> NonTensorRecord:
-    baseline_value: Any = non_tensor_pair.x[0].value
-    target_value: Any = non_tensor_pair.y[0].value
+    baseline_value: Any = value_pair.x[0].value
+    target_value: Any = value_pair.y[0].value
 
     try:
         values_equal: bool = bool(baseline_value == target_value)

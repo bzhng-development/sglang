@@ -1390,6 +1390,21 @@ class TestEntrypointNonTensorValues:
         assert isinstance(summary, SummaryRecord)
         assert summary.passed == 2
 
+    def test_non_tensor_complex_object(self, tmp_path: Path, capsys) -> None:
+        """Complex objects (e.g. dict containing a tensor) are displayed via repr, not skipped."""
+        value = {"a": 1, "b": "hello", "c": torch.tensor([1.0, 2.0])}
+        baseline_path, target_path = _create_non_tensor_dumps(
+            tmp_path, name="debug_info", baseline_value=value, target_value=value
+        )
+        args = _make_args(baseline_path, target_path, grouping="raw")
+        records = _run_and_parse(args, capsys)
+
+        non_tensors = _get_non_tensors(records)
+        assert len(non_tensors) == 1
+        assert non_tensors[0].name == "debug_info"
+        assert non_tensors[0].baseline_type == "dict"
+        assert non_tensors[0].target_type == "dict"
+
     def test_non_tensor_json_roundtrip(self, tmp_path: Path, capsys) -> None:
         """NonTensorRecord JSON output can be parsed back correctly."""
         baseline_path, target_path = _create_non_tensor_dumps(
