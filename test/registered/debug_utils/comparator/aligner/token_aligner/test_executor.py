@@ -99,7 +99,7 @@ class TestTokenDim:
         return TokenAlignerPlan(locators=Pair(x=locator, y=locator))
 
     def test_token_dim_nonzero(self) -> None:
-        """tensor shape [3, 5, 8], token_dim=1 -> result shape [5, 3, 8]."""
+        """tensor shape [3, 5, 8], token_dim=1 -> token dim stays at dim 1."""
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(3, 5, 8)
         plan: TokenAlignerPlan = self._make_simple_plan(num_tokens=5)
@@ -111,14 +111,15 @@ class TestTokenDim:
             token_dim=1,
         )
 
-        assert aligned.x.shape == (5, 3, 8)
+        assert aligned.x.shape == (3, 5, 8)
         assert torch.equal(aligned.x, aligned.y)
-        # Verify each token was selected correctly
         for i in range(5):
-            assert torch.equal(aligned.x[i], tensor.select(dim=1, index=i))
+            assert torch.equal(
+                aligned.x.select(dim=1, index=i), tensor.select(dim=1, index=i)
+            )
 
     def test_token_dim_last(self) -> None:
-        """tensor shape [3, 8, 5], token_dim=2 -> result shape [5, 3, 8]."""
+        """tensor shape [3, 8, 5], token_dim=2 -> token dim stays at dim 2."""
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(3, 8, 5)
         plan: TokenAlignerPlan = self._make_simple_plan(num_tokens=5)
@@ -130,9 +131,11 @@ class TestTokenDim:
             token_dim=2,
         )
 
-        assert aligned.x.shape == (5, 3, 8)
+        assert aligned.x.shape == (3, 8, 5)
         for i in range(5):
-            assert torch.equal(aligned.x[i], tensor.select(dim=2, index=i))
+            assert torch.equal(
+                aligned.x.select(dim=2, index=i), tensor.select(dim=2, index=i)
+            )
 
     def test_token_dim_zero(self) -> None:
         """token_dim=0 selects along first dimension (standard t-h-d layout)."""
@@ -170,12 +173,12 @@ class TestTokenDim:
             token_dim=1,
         )
 
-        # select removes dim 1 -> [3, 8], stack adds dim 0 -> [0, 3, 8]
-        assert aligned.x.shape == (0, 3, 8)
-        assert aligned.y.shape == (0, 3, 8)
+        # token dim (dim 1) set to 0, other dims preserved -> [3, 0, 8]
+        assert aligned.x.shape == (3, 0, 8)
+        assert aligned.y.shape == (3, 0, 8)
 
     def test_high_rank_tensor(self) -> None:
-        """tensor shape [2, 3, 5, 4, 8] (a b t c d), token_dim=2."""
+        """tensor shape [2, 3, 5, 4, 8] (a b t c d), token_dim=2 -> stays at dim 2."""
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(2, 3, 5, 4, 8)
         plan: TokenAlignerPlan = self._make_simple_plan(num_tokens=5)
@@ -187,9 +190,11 @@ class TestTokenDim:
             token_dim=2,
         )
 
-        assert aligned.x.shape == (5, 2, 3, 4, 8)
+        assert aligned.x.shape == (2, 3, 5, 4, 8)
         for i in range(5):
-            assert torch.equal(aligned.x[i], tensor.select(dim=2, index=i))
+            assert torch.equal(
+                aligned.x.select(dim=2, index=i), tensor.select(dim=2, index=i)
+            )
 
 
 if __name__ == "__main__":

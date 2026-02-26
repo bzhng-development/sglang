@@ -243,13 +243,19 @@ class TestExecuteAlignerPlanWithTokenDim:
 
         assert result.tensors is not None
         assert result.failed_side_xy is None
-        # select on dim=1 removes that dim -> [3, 8], stack on dim=0 -> [3, 3, 8]
+        # token dim stays at dim 1 -> shape [3, 3, 8] (3 tokens selected from 4)
         assert result.tensors.x.shape == (3, 3, 8)
         assert result.tensors.y.shape == (3, 3, 8)
 
         for i in range(3):
-            assert torch.equal(result.tensors.x[i], tensor_x.select(dim=1, index=i))
-            assert torch.equal(result.tensors.y[i], tensor_y.select(dim=1, index=i))
+            assert torch.equal(
+                result.tensors.x.select(dim=1, index=i),
+                tensor_x.select(dim=1, index=i),
+            )
+            assert torch.equal(
+                result.tensors.y.select(dim=1, index=i),
+                tensor_y.select(dim=1, index=i),
+            )
 
 
 if __name__ == "__main__":

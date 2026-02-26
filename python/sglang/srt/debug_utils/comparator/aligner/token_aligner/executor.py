@@ -18,8 +18,7 @@ def execute_token_aligner(
     if not plan.locators.x.steps:
         dummy: torch.Tensor = next(iter(tensor_of_step_pair.x.values()))
         shape: list[int] = list(dummy.shape)
-        del shape[token_dim]  # select removes token_dim
-        shape = [0] + shape  # stack adds dim 0
+        shape[token_dim] = 0
         empty: torch.Tensor = torch.empty(shape, dtype=dummy.dtype)
         return Pair(x=empty, y=empty.clone())
 
@@ -47,4 +46,4 @@ def _extract_and_stack_tokens(
         tensor_of_step[s].select(dim=token_dim, index=i)
         for s, i in zip(locator.steps, locator.token_index_in_step)
     ]
-    return torch.stack(tokens)
+    return torch.stack(tokens, dim=token_dim)
