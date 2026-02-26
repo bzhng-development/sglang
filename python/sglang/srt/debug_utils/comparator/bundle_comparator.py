@@ -84,8 +84,7 @@ def _compare_bundle_pair_inner(
 
     # 2. Check if any side has non-tensor values → non-tensor display path
     has_non_tensor: bool = any(
-        not isinstance(it.value, torch.Tensor)
-        for it in [*all_pair.x, *all_pair.y]
+        not isinstance(it.value, torch.Tensor) for it in [*all_pair.x, *all_pair.y]
     )
     if has_non_tensor:
         return _compare_bundle_pair_non_tensor_type(name=name, value_pair=all_pair)

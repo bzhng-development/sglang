@@ -1346,7 +1346,10 @@ class TestEntrypointNonTensorValues:
     def test_non_tensor_string_value(self, tmp_path: Path, capsys) -> None:
         """String non-tensor values are compared and displayed correctly."""
         baseline_path, target_path = _create_non_tensor_dumps(
-            tmp_path, name="attn_backend", baseline_value="flash_attn", target_value="flash_attn"
+            tmp_path,
+            name="attn_backend",
+            baseline_value="flash_attn",
+            target_value="flash_attn",
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
         records = _run_and_parse(args, capsys)
@@ -1367,7 +1370,10 @@ class TestEntrypointNonTensorValues:
 
         for side_dir in [baseline_dir, target_dir]:
             _create_non_tensor_rank_dump(
-                side_dir, rank=0, name="sm_scale", value=0.125,
+                side_dir,
+                rank=0,
+                name="sm_scale",
+                value=0.125,
                 extra_tensor_dumps=[("hidden", tensor)],
             )
 
