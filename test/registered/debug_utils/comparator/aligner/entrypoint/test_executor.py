@@ -23,11 +23,16 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
     ConcatParams,
     UnsharderPlan,
 )
-from sglang.srt.debug_utils.comparator.dims import ParallelAxis
+from sglang.srt.debug_utils.comparator.dims import (
+    ParallelAxis,
+    TokenDimInfo,
+)
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)
+
+_T_INFO: TokenDimInfo = TokenDimInfo(token_dim_name="t")
 
 
 class TestExecuteSubPlans:
@@ -50,12 +55,12 @@ class TestExecuteSubPlans:
         assert result is None
 
     def test_with_unsharder_plan(self) -> None:
-        t0: torch.Tensor = torch.tensor([[1.0, 2.0]])
-        t1: torch.Tensor = torch.tensor([[3.0, 4.0]])
+        t0: torch.Tensor = torch.tensor([[1.0, 2.0]]).refine_names("b", "h")
+        t1: torch.Tensor = torch.tensor([[3.0, 4.0]]).refine_names("b", "h")
 
         plan = UnsharderPlan(
             axis=ParallelAxis.TP,
-            params=ConcatParams(dim=1),
+            params=ConcatParams(dim_name="h"),
             groups=[[0, 1]],
         )
 
@@ -65,7 +70,7 @@ class TestExecuteSubPlans:
 
         assert result is not None
         expected: torch.Tensor = torch.tensor([[1.0, 2.0, 3.0, 4.0]])
-        assert torch.equal(result, expected)
+        assert torch.equal(result.rename(None), expected)
 
 
 class TestExecuteSubPlan:
@@ -124,7 +129,8 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            token_dims=Pair(x=0, y=0),
+            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
+            dim_names=Pair(x=None, y=None),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(
@@ -146,7 +152,8 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0, 1])],
             ),
             token_aligner_plan=None,
-            token_dims=Pair(x=0, y=0),
+            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
+            dim_names=Pair(x=None, y=None),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(
@@ -168,7 +175,8 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            token_dims=Pair(x=0, y=0),
+            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
+            dim_names=Pair(x=None, y=None),
         )
 
         t_x: torch.Tensor = torch.tensor([1.0, 2.0])
@@ -191,7 +199,8 @@ class TestExecuteAlignerPlan:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=None,
-            token_dims=Pair(x=0, y=0),
+            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
+            dim_names=Pair(x=None, y=None),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(
@@ -214,10 +223,10 @@ class TestExecuteAlignerPlanWithTokenDim:
         return AlignerPerStepPlan(step=step, input_object_indices=indices, sub_plans=[])
 
     def test_token_dim_nonzero_e2e(self) -> None:
-        """AlignerPlan with token_dim=1 passes through to token aligner correctly."""
+        """AlignerPlan with token at dim 1 passes through to token aligner correctly."""
         torch.manual_seed(42)
 
-        # shape [3, 4, 8]: dim0=batch, dim1=token(4 tokens), dim2=hidden
+        # shape [3, 4, 8]: dim0=a, dim1=token(4 tokens), dim2=hidden
         tensor_x: torch.Tensor = torch.randn(3, 4, 8)
         tensor_y: torch.Tensor = torch.randn(3, 4, 8)
 
@@ -237,7 +246,8 @@ class TestExecuteAlignerPlanWithTokenDim:
                 y=[self._make_step_plan(step=0, indices=[0])],
             ),
             token_aligner_plan=token_plan,
-            token_dims=Pair(x=1, y=1),
+            token_dim_info=Pair(x=_T_INFO, y=_T_INFO),
+            dim_names=Pair(x=["a", "t", "h"], y=["a", "t", "h"]),
         )
 
         tensors_pair: Pair[list[torch.Tensor]] = Pair(x=[tensor_x], y=[tensor_y])
