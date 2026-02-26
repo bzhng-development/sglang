@@ -1046,6 +1046,11 @@ class ModelRunner(ModelRunnerKVCacheMixin):
             )
 
         if dumper.may_enable:
+            from sglang.srt.debug_utils.source_patcher import (
+                apply_patches_from_env,
+            )
+
+            apply_patches_from_env()
             dumper.register_non_intrusive_dumper(self.model)
 
         # Pre-expand RoPE cache before CUDA Graph capture
