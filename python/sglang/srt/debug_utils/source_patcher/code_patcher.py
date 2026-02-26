@@ -17,6 +17,85 @@ from sglang.srt.debug_utils.source_patcher.types import (
 )
 
 
+def apply_patches_from_config(config_path: Path) -> list[PatchState]:
+    """Load a YAML patch config and apply all patches.
+
+    This is the main entry point for applying source patches.
+    The YAML file should have the format:
+        patches:
+          - target: "pkg.mod.Class.method"
+            edits:
+              - match: "original code"
+                replacement: "patched code"
+    """
+    print(f"[source_patcher] loading config from {config_path}")
+    with open(config_path) as f:
+        raw: dict[str, Any] = yaml.safe_load(f)
+
+    config: PatchConfig = PatchConfig(**raw)
+
+    states: list[PatchState] = []
+    for spec in config.patches:
+        target_fn: Callable[..., Any] = _resolve_target(spec.target)
+        print(f"[source_patcher] patching {spec.target}")
+        state: PatchState = patch_function(target=target_fn, edits=spec.edits)
+        states.append(state)
+
+    return states
+
+
+class CodePatcher:
+    """Context manager that patches functions on enter and restores on exit."""
+
+    def __init__(self, *, patches: list[PatchSpec]) -> None:
+        self._patches = patches
+        self._states: list[PatchState] = []
+
+    def __enter__(self) -> "CodePatcher":
+        for spec in self._patches:
+            target_fn: Callable[..., Any] = _resolve_target(spec.target)
+            state: PatchState = patch_function(target=target_fn, edits=spec.edits)
+            self._states.append(state)
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[type],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[Any],
+    ) -> None:
+        for state in reversed(self._states):
+            state.restore()
+        self._states.clear()
+
+
+def patch_function(*, target: Callable[..., Any], edits: list[EditSpec]) -> PatchState:
+    """Patch a function by modifying its source and replacing __code__.
+
+    1. inspect.getsource -> get original source
+    2. apply_edits -> modify source text
+    3. compile + exec -> get new code object
+    4. replace target.__code__
+
+    Returns PatchState that can restore the original code.
+    """
+    original_code: types.CodeType = target.__code__
+
+    source: str = inspect.getsource(target)
+    modified_source: str = apply_edits(source=source, edits=edits)
+
+    modified_source = textwrap.dedent(modified_source)
+
+    code: types.CodeType = compile(modified_source, inspect.getfile(target), "exec")
+    temp_namespace: dict[str, Any] = {}
+    exec(code, target.__globals__, temp_namespace)
+
+    new_fn: Any = temp_namespace[target.__name__]
+    target.__code__ = new_fn.__code__
+
+    return PatchState(target_fn=target, original_code=original_code)
+
+
 def _resolve_target(qualified_name: str) -> Callable[..., Any]:
     """Resolve 'pkg.mod.Class.method' to the actual function object.
 
@@ -48,82 +127,3 @@ def _resolve_target(qualified_name: str) -> Callable[..., Any]:
         )
 
     return target
-
-
-def patch_function(*, target: Callable[..., Any], edits: list[EditSpec]) -> PatchState:
-    """Patch a function by modifying its source and replacing __code__.
-
-    1. inspect.getsource → get original source
-    2. apply_edits → modify source text
-    3. compile + exec → get new code object
-    4. replace target.__code__
-
-    Returns PatchState that can restore the original code.
-    """
-    original_code: types.CodeType = target.__code__
-
-    source: str = inspect.getsource(target)
-    modified_source: str = apply_edits(source=source, edits=edits)
-
-    modified_source = textwrap.dedent(modified_source)
-
-    code: types.CodeType = compile(modified_source, inspect.getfile(target), "exec")
-    temp_namespace: dict[str, Any] = {}
-    exec(code, target.__globals__, temp_namespace)
-
-    new_fn: Any = temp_namespace[target.__name__]
-    target.__code__ = new_fn.__code__
-
-    return PatchState(target_fn=target, original_code=original_code)
-
-
-class CodePatcher:
-    """Context manager that patches functions on enter and restores on exit."""
-
-    def __init__(self, *, patches: list[PatchSpec]) -> None:
-        self._patches = patches
-        self._states: list[PatchState] = []
-
-    def __enter__(self) -> "CodePatcher":
-        for spec in self._patches:
-            target_fn: Callable[..., Any] = _resolve_target(spec.target)
-            state: PatchState = patch_function(target=target_fn, edits=spec.edits)
-            self._states.append(state)
-        return self
-
-    def __exit__(
-        self,
-        exc_type: Optional[type],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[Any],
-    ) -> None:
-        for state in reversed(self._states):
-            state.restore()
-        self._states.clear()
-
-
-def apply_patches_from_config(config_path: Path) -> list[PatchState]:
-    """Load a YAML patch config and apply all patches.
-
-    This is the main entry point for applying source patches.
-    The YAML file should have the format:
-        patches:
-          - target: "pkg.mod.Class.method"
-            edits:
-              - match: "original code"
-                replacement: "patched code"
-    """
-    print(f"[source_patcher] loading config from {config_path}")
-    with open(config_path) as f:
-        raw: dict[str, Any] = yaml.safe_load(f)
-
-    config: PatchConfig = PatchConfig(**raw)
-
-    states: list[PatchState] = []
-    for spec in config.patches:
-        target_fn: Callable[..., Any] = _resolve_target(spec.target)
-        print(f"[source_patcher] patching {spec.target}")
-        state: PatchState = patch_function(target=target_fn, edits=spec.edits)
-        states.append(state)
-
-    return states

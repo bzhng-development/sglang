@@ -1,9 +1,47 @@
-from sglang.srt.debug_utils.source_patcher.types import PatchApplicationError
-from sglang.srt.debug_utils.source_patcher.types import EditSpec
+from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchApplicationError
 
 
-def _leading_spaces(line: str) -> int:
-    return len(line) - len(line.lstrip(" "))
+def apply_edits(*, source: str, edits: list[EditSpec]) -> str:
+    """Apply a sequence of match/replacement edits to source text.
+
+    Each edit is applied sequentially so later edits see the result of earlier ones.
+    """
+    result: str = source
+    for edit in edits:
+        result = _apply_single_edit(source=result, edit=edit)
+    return result
+
+
+def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
+    """Apply a single match/replacement edit to the source text."""
+    match_text: str = edit.match.strip()
+    if not match_text:
+        raise PatchApplicationError("empty match text")
+
+    source_lines: list[str] = source.splitlines()
+    match_lines: list[str] = match_text.splitlines()
+
+    start_idx: int = _find_match(source_lines=source_lines, match_lines=match_lines)
+    match_len: int = len(match_lines)
+
+    original_indent: int = _leading_spaces(source_lines[start_idx])
+
+    replacement_text: str = edit.replacement.strip()
+    if not replacement_text:
+        new_lines: list[str] = (
+            source_lines[:start_idx] + source_lines[start_idx + match_len :]
+        )
+    else:
+        replacement_lines: list[str] = replacement_text.splitlines()
+        aligned: list[str] = _realign_replacement(
+            replacement_lines=replacement_lines, original_indent=original_indent
+        )
+        new_lines = (
+            source_lines[:start_idx] + aligned + source_lines[start_idx + match_len :]
+        )
+
+    trailing_newline: str = "\n" if source.endswith("\n") else ""
+    return "\n".join(new_lines) + trailing_newline
 
 
 def _find_match(*, source_lines: list[str], match_lines: list[str]) -> int:
@@ -59,44 +97,5 @@ def _realign_replacement(
     return result
 
 
-def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
-    """Apply a single match/replacement edit to the source text."""
-    match_text: str = edit.match.strip()
-    if not match_text:
-        raise PatchApplicationError("empty match text")
-
-    source_lines: list[str] = source.splitlines()
-    match_lines: list[str] = match_text.splitlines()
-
-    start_idx: int = _find_match(source_lines=source_lines, match_lines=match_lines)
-    match_len: int = len(match_lines)
-
-    original_indent: int = _leading_spaces(source_lines[start_idx])
-
-    replacement_text: str = edit.replacement.strip()
-    if not replacement_text:
-        new_lines: list[str] = (
-            source_lines[:start_idx] + source_lines[start_idx + match_len :]
-        )
-    else:
-        replacement_lines: list[str] = replacement_text.splitlines()
-        aligned: list[str] = _realign_replacement(
-            replacement_lines=replacement_lines, original_indent=original_indent
-        )
-        new_lines = (
-            source_lines[:start_idx] + aligned + source_lines[start_idx + match_len :]
-        )
-
-    trailing_newline: str = "\n" if source.endswith("\n") else ""
-    return "\n".join(new_lines) + trailing_newline
-
-
-def apply_edits(*, source: str, edits: list[EditSpec]) -> str:
-    """Apply a sequence of match/replacement edits to source text.
-
-    Each edit is applied sequentially so later edits see the result of earlier ones.
-    """
-    result: str = source
-    for edit in edits:
-        result = _apply_single_edit(source=result, edit=edit)
-    return result
+def _leading_spaces(line: str) -> int:
+    return len(line) - len(line.lstrip(" "))
