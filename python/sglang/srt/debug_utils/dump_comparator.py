@@ -266,7 +266,6 @@ def _load_object(path):
     return x.cuda()
 
 
-# TODO may make customization endpoints configurable via args pointing to code file
 def _comparison_preprocessor(x_baseline, x_target, name):
     """Customization endpoint. Can insert arbitrary adhoc postprocessing logic here."""
     return x_baseline, x_target
