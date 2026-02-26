@@ -1,7 +1,6 @@
-"""Display utilities for dump metadata: rank topology, input tokens, and DataFrame rendering."""
-
 from __future__ import annotations
 
+from io import StringIO
 from pathlib import Path
 from typing import Any, Optional
 
@@ -10,7 +9,7 @@ import polars as pl
 from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 
-def render_polars_by_rich(df: pl.DataFrame, *, title: Optional[str] = None) -> None:
+def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> str:
     from rich.console import Console
     from rich.table import Table
 
@@ -20,23 +19,24 @@ def render_polars_by_rich(df: pl.DataFrame, *, title: Optional[str] = None) -> N
     for row in df.iter_rows():
         table.add_row(*[str(v) for v in row])
 
-    Console().print(table)
+    buf = StringIO()
+    Console(file=buf, force_terminal=False, width=200).print(table)
+    return buf.getvalue().rstrip("\n")
 
 
-def print_rank_info(df: pl.DataFrame, dump_dir: Path, label: str) -> None:
-    rows: list[dict[str, Any]] = df.filter(
-        pl.col("name") == "model_input_ids"
-    ).to_dicts()
-    if not rows:
-        return
+def collect_rank_info(
+    df: pl.DataFrame, dump_dir: Path, label: str
+) -> Optional[list[dict[str, Any]]]:
+    unique_rows: pl.DataFrame = (
+        df.filter(pl.col("name") == "model_input_ids")
+        .sort("rank")
+        .unique(subset=["rank"], keep="first")
+    )
+    if unique_rows.is_empty():
+        return None
 
-    seen_ranks: set[int] = set()
     table_rows: list[dict[str, Any]] = []
-    for row in sorted(rows, key=lambda r: r["rank"]):
-        if row["rank"] in seen_ranks:
-            continue
-        seen_ranks.add(row["rank"])
-
+    for row in unique_rows.to_dicts():
         item: ValueWithMeta = ValueWithMeta.load(dump_dir / row["filename"])
         meta: dict[str, Any] = item.meta
 
@@ -49,22 +49,21 @@ def print_rank_info(df: pl.DataFrame, dump_dir: Path, label: str) -> None:
         )
         table_rows.append(row_data)
 
-    if table_rows:
-        render_polars_by_rich(pl.DataFrame(table_rows), title=f"{label} ranks")
+    return table_rows if table_rows else None
 
 
-def print_input_ids_and_positions(
+def collect_input_ids_and_positions(
     df: pl.DataFrame,
     dump_dir: Path,
     label: str,
     *,
     tokenizer: Any = None,
-) -> None:
+) -> Optional[list[dict[str, Any]]]:
     rows: list[dict[str, Any]] = df.filter(
         pl.col("name").is_in(["model_input_ids", "model_positions"])
     ).to_dicts()
     if not rows:
-        return
+        return None
 
     data_by_step_rank: dict[tuple[int, int], dict[str, Any]] = {}
     for row in rows:
@@ -99,10 +98,7 @@ def print_input_ids_and_positions(
 
         table_rows.append(row_data)
 
-    if table_rows:
-        render_polars_by_rich(
-            pl.DataFrame(table_rows), title=f"{label} input_ids & positions"
-        )
+    return table_rows if table_rows else None
 
 
 def _extract_parallel_info(row_data: dict[str, Any], info: dict[str, Any]) -> None:
