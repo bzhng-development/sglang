@@ -241,6 +241,8 @@ class TestApplyPatchesFromEnv:
         obj = cls()
         assert obj.greet("world") == "hello world"
 
+        original_code = cls.greet.__code__
+
         config = {
             "patches": [
                 {
@@ -269,12 +271,4 @@ class TestApplyPatchesFromEnv:
             else:
                 del os.environ["SOURCE_PATCHER_CONFIG"]
 
-            state = patch_function(
-                target=cls.greet,
-                edits=[
-                    EditSpec(
-                        match='greeting = f"yaml_patched {name}"',
-                        replacement='greeting = f"hello {name}"',
-                    )
-                ],
-            )
+            cls.greet.__code__ = original_code
