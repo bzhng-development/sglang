@@ -5,6 +5,7 @@ from sglang.srt.debug_utils.comparator.utils import _StrictBase
 
 class TensorStats(_StrictBase):
     mean: float
+    abs_mean: float
     std: float
     min: float
     max: float
@@ -25,6 +26,11 @@ class DiffInfo(_StrictBase):
     rel_diff: float
     max_abs_diff: float
     mean_abs_diff: float
+    abs_diff_p1: Optional[float] = None
+    abs_diff_p5: Optional[float] = None
+    abs_diff_p50: Optional[float] = None
+    abs_diff_p95: Optional[float] = None
+    abs_diff_p99: Optional[float] = None
     max_diff_coord: list[int]
     baseline_at_max: float
     target_at_max: float

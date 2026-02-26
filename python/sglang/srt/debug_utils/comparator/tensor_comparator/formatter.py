@@ -69,7 +69,7 @@ def _format_stats_comparison(baseline: TensorStats, target: TensorStats) -> list
 
 
 def _format_diff(diff: DiffInfo, prefix_text: str = "") -> list[str]:
-    return [
+    lines: list[str] = [
         prefix_text
         + "\t".join(
             f"{'❌' if value > diff.diff_threshold else '✅'} {name}={value}"
@@ -83,3 +83,18 @@ def _format_diff(diff: DiffInfo, prefix_text: str = "") -> list[str]:
         f"baseline={diff.baseline_at_max} "
         f"target={diff.target_at_max}",
     ]
+
+    quantile_pairs: list[tuple[str, float | None]] = [
+        ("p1", diff.abs_diff_p1),
+        ("p5", diff.abs_diff_p5),
+        ("p50", diff.abs_diff_p50),
+        ("p95", diff.abs_diff_p95),
+        ("p99", diff.abs_diff_p99),
+    ]
+    quantile_parts: list[str] = [
+        f"{name}={value:.4f}" for name, value in quantile_pairs if value is not None
+    ]
+    if quantile_parts:
+        lines.append("[abs_diff] " + " ".join(quantile_parts))
+
+    return lines
