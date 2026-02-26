@@ -7,8 +7,6 @@ from pathlib import Path
 import yaml
 
 from sglang.srt.debug_utils.dumper import DumperConfig, _Dumper
-from sglang.srt.debug_utils.source_patcher.code_patcher import patch_function
-from sglang.srt.debug_utils.source_patcher.types import EditSpec
 
 _FIXTURES_DIR = Path(__file__).parent / "_fixtures"
 _SAMPLE_MODULE_PATH = _FIXTURES_DIR / "sample_module.py"

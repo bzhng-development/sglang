@@ -221,5 +221,3 @@ class TestCodePatcher:
                 raise RuntimeError("test error")
 
         assert obj.greet("world") == "hello world"
-
-

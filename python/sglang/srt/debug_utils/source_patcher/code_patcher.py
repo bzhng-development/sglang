@@ -92,6 +92,3 @@ class CodePatcher:
         for state in reversed(self._states):
             state.restore()
         self._states.clear()
-
-
-

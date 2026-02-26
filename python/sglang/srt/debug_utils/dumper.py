@@ -334,13 +334,13 @@ class _Dumper:
         if not config_path:
             return
 
+        import yaml
+
         from sglang.srt.debug_utils.source_patcher.code_patcher import (
             _resolve_target,
             patch_function,
         )
         from sglang.srt.debug_utils.source_patcher.types import PatchSpec
-
-        import yaml
 
         print(f"[Dumper] source_patcher: loading config from {config_path}")
         with open(config_path) as f:
