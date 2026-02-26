@@ -42,7 +42,9 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
 
 
 def _resolve_replacement(*, edit: EditSpec, match_text: str) -> str:
-    """Return the effective replacement text, handling both replacement and append modes."""
+    """Return the effective replacement text, handling replacement, prepend, and append modes."""
+    if edit.prepend.strip():
+        return edit.prepend.strip() + "\n" + match_text
     if edit.append.strip():
         return match_text + "\n" + edit.append.strip()
     return edit.replacement.strip()

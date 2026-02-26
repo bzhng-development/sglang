@@ -14,21 +14,31 @@ class _StrictBase(BaseModel):
 
 
 class EditSpec(_StrictBase):
-    """Specify one edit: either replace the matched text or append lines after it.
+    """Specify one edit: replace, prepend before, or append after the matched text.
 
     Use ``replacement`` to substitute the matched text (empty string = delete).
+    Use ``prepend`` to keep the matched text and add lines before it.
     Use ``append`` to keep the matched text and add lines after it.
-    These two fields are mutually exclusive.
+    Only one of ``replacement``, ``prepend``, and ``append`` may be set.
     """
 
     match: str
     replacement: str = ""
+    prepend: str = ""
     append: str = ""
 
     @model_validator(mode="after")
-    def _check_replacement_and_append_exclusive(self) -> "EditSpec":
-        if self.replacement.strip() and self.append.strip():
-            raise ValueError("'replacement' and 'append' are mutually exclusive")
+    def _check_modes_mutually_exclusive(self) -> "EditSpec":
+        active: list[str] = [
+            name
+            for name in ("replacement", "prepend", "append")
+            if getattr(self, name).strip()
+        ]
+        if len(active) > 1:
+            raise ValueError(
+                f"only one of 'replacement', 'prepend', 'append' may be set, "
+                f"got: {', '.join(active)}"
+            )
         return self
 
 
