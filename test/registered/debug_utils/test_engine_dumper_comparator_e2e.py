@@ -40,15 +40,10 @@ PATCH_CONFIG_YAML: str = """\
 patches:
   - target: sglang.srt.models.qwen3.Qwen3DecoderLayer.forward
     edits:
-      - match: |
-          hidden_states = self.self_attn(
-              positions=positions,
-              hidden_states=hidden_states,
-              forward_batch=forward_batch,
-          )
-        append: "dumper.dump('patched_attn_output', hidden_states, layer_id=self.self_attn.attn.layer_id, dims='t h')"
       - match: "hidden_states = self.mlp(hidden_states)"
-        append: "dumper.dump('patched_mlp_output', hidden_states, layer_id=self.self_attn.attn.layer_id, dims='t h')"
+        prepend: "dumper.dump('patched_attn_output', hidden_states, layer_id=self.self_attn.attn.layer_id, dims='t h')"
+      - match: "return hidden_states, residual"
+        prepend: "dumper.dump('patched_mlp_output', hidden_states, layer_id=self.self_attn.attn.layer_id, dims='t h')"
 """
 
 
