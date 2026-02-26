@@ -26,9 +26,9 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
 
     original_indent: int = _leading_spaces(source_lines[start_idx])
 
-    replacement_text: str = edit.replacement.strip()
+    effective_replacement: str = _resolve_replacement(edit=edit, match_text=match_text)
     replacement_lines: list[str] = (
-        replacement_text.splitlines() if replacement_text else []
+        effective_replacement.splitlines() if effective_replacement else []
     )
     aligned: list[str] = _realign_replacement(
         replacement_lines=replacement_lines, original_indent=original_indent
@@ -39,6 +39,13 @@ def _apply_single_edit(*, source: str, edit: EditSpec) -> str:
 
     trailing_newline: str = "\n" if source.endswith("\n") else ""
     return "\n".join(new_lines) + trailing_newline
+
+
+def _resolve_replacement(*, edit: EditSpec, match_text: str) -> str:
+    """Return the effective replacement text, handling both replacement and append modes."""
+    if edit.append.strip():
+        return match_text + "\n" + edit.append.strip()
+    return edit.replacement.strip()
 
 
 def _find_match(*, source_lines: list[str], match_lines: list[str]) -> int:

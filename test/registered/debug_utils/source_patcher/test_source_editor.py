@@ -173,6 +173,44 @@ class TestApplyEdits:
             "        return x\n"
         )
 
+    def test_append_keeps_match_and_adds_after(self) -> None:
+        source = "def foo():\n" "    x = compute()\n" "    return x\n"
+        edits = [EditSpec(match="x = compute()", append="print(x)")]
+        result = apply_edits(source=source, edits=edits)
+        assert result == (
+            "def foo():\n" "    x = compute()\n" "    print(x)\n" "    return x\n"
+        )
+
+    def test_append_multiline_match(self) -> None:
+        source = (
+            "def foo():\n"
+            "    result = call(\n"
+            "        a=1,\n"
+            "        b=2,\n"
+            "    )\n"
+            "    return result\n"
+        )
+        edits = [
+            EditSpec(
+                match="result = call(\n    a=1,\n    b=2,\n)",
+                append="dumper.dump('result', result)",
+            )
+        ]
+        result = apply_edits(source=source, edits=edits)
+        assert result == (
+            "def foo():\n"
+            "    result = call(\n"
+            "        a=1,\n"
+            "        b=2,\n"
+            "    )\n"
+            "    dumper.dump('result', result)\n"
+            "    return result\n"
+        )
+
+    def test_replacement_and_append_mutually_exclusive(self) -> None:
+        with pytest.raises(ValueError, match="mutually exclusive"):
+            EditSpec(match="x = 1", replacement="x = 2", append="print(x)")
+
     def test_second_edit_sees_result_of_first(self) -> None:
         """Edits are applied sequentially; second edit matches modified source."""
         source = "def foo():\n" "    x = 1\n" "    return x\n"

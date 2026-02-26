@@ -39,76 +39,10 @@ patches:
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        replacement: |
-          hidden_states = self.self_attn(
-              positions=positions,
-              hidden_states=hidden_states,
-              forward_batch=forward_batch,
-          )
-          dumper.dump('patched_attn_output', hidden_states)
+        append: "dumper.dump('patched_attn_output', hidden_states)"
       - match: "hidden_states = self.mlp(hidden_states)"
-        replacement: |
-          hidden_states = self.mlp(hidden_states)
-          dumper.dump('patched_mlp_output', hidden_states)
+        append: "dumper.dump('patched_mlp_output', hidden_states)"
 """
-
-
-def _run_server_and_generate(
-    *,
-    dump_dir: Path,
-    config_path: Path,
-    tp: int,
-    base_url: str,
-) -> None:
-    """Launch SGLang server with source patcher + dumper, send a generate request."""
-    env = {
-        **os.environ,
-        "DUMPER_SOURCE_PATCHER_CONFIG": str(config_path),
-        "DUMPER_SERVER_PORT": "reuse",
-    }
-
-    proc = popen_launch_server(
-        MODEL,
-        base_url,
-        timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-        other_args=["--tp", str(tp), "--max-total-tokens", "128"],
-        env=env,
-    )
-    try:
-        requests.post(
-            f"{base_url}/dumper/configure",
-            json={"enable": True, "dir": str(dump_dir)},
-        ).raise_for_status()
-
-        resp = requests.post(
-            f"{base_url}/generate",
-            json={
-                "text": "The capital of France is",
-                "sampling_params": {"max_new_tokens": 8},
-            },
-        )
-        assert resp.status_code == 200, f"Generate failed: {resp.text}"
-    finally:
-        kill_process_tree(proc.pid)
-
-
-def _find_exp_dir(dump_dir: Path) -> Path:
-    """Find the experiment directory (dump_*) under the dump base dir."""
-    candidates = list(dump_dir.glob("dump_*"))
-    assert (
-        len(candidates) >= 1
-    ), f"No dump_* dir found in {dump_dir}, contents: {list(dump_dir.iterdir())}"
-    return candidates[0]
-
-
-def _verify_patched_fields(dump_dir: Path, field_names: list[str]) -> None:
-    """Verify that patched dump fields exist as .pt files."""
-    for field in field_names:
-        matches = list(dump_dir.rglob(f"*name={field}*.pt"))
-        assert len(matches) > 0, (
-            f"Expected patched field '{field}' not found under {dump_dir}. "
-            f"Available files: {sorted(f.name for f in dump_dir.rglob('*.pt'))[:20]}"
-        )
 
 
 class TestSourcePatcherE2ESGLang:
@@ -195,6 +129,67 @@ class TestSourcePatcherE2ESGLang:
                 f"Patched field '{field}' not in comparison records. "
                 f"Got: {sorted(comparison_names)}"
             )
+
+
+# --------------------------------- helpers ---------------------------------
+
+
+def _run_server_and_generate(
+    *,
+    dump_dir: Path,
+    config_path: Path,
+    tp: int,
+    base_url: str,
+) -> None:
+    """Launch SGLang server with source patcher + dumper, send a generate request."""
+    env = {
+        **os.environ,
+        "DUMPER_SOURCE_PATCHER_CONFIG": str(config_path),
+        "DUMPER_SERVER_PORT": "reuse",
+    }
+
+    proc = popen_launch_server(
+        MODEL,
+        base_url,
+        timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+        other_args=["--tp", str(tp), "--max-total-tokens", "128"],
+        env=env,
+    )
+    try:
+        requests.post(
+            f"{base_url}/dumper/configure",
+            json={"enable": True, "dir": str(dump_dir)},
+        ).raise_for_status()
+
+        resp = requests.post(
+            f"{base_url}/generate",
+            json={
+                "text": "The capital of France is",
+                "sampling_params": {"max_new_tokens": 8},
+            },
+        )
+        assert resp.status_code == 200, f"Generate failed: {resp.text}"
+    finally:
+        kill_process_tree(proc.pid)
+
+
+def _find_exp_dir(dump_dir: Path) -> Path:
+    """Find the experiment directory (dump_*) under the dump base dir."""
+    candidates = list(dump_dir.glob("dump_*"))
+    assert (
+        len(candidates) >= 1
+    ), f"No dump_* dir found in {dump_dir}, contents: {list(dump_dir.iterdir())}"
+    return candidates[0]
+
+
+def _verify_patched_fields(dump_dir: Path, field_names: list[str]) -> None:
+    """Verify that patched dump fields exist as .pt files."""
+    for field in field_names:
+        matches = list(dump_dir.rglob(f"*name={field}*.pt"))
+        assert len(matches) > 0, (
+            f"Expected patched field '{field}' not found under {dump_dir}. "
+            f"Available files: {sorted(f.name for f in dump_dir.rglob('*.pt'))[:20]}"
+        )
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import types
 from collections.abc import Callable
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class PatchApplicationError(Exception):
@@ -14,8 +14,24 @@ class _StrictBase(BaseModel):
 
 
 class EditSpec(_StrictBase):
+    """Specify one edit: either replace the matched text or append lines after it.
+
+    Use ``replacement`` to substitute the matched text (empty string = delete).
+    Use ``append`` to keep the matched text and add lines after it.
+    These two fields are mutually exclusive.
+    """
+
     match: str
-    replacement: str
+    replacement: str = ""
+    append: str = ""
+
+    @model_validator(mode="after")
+    def _check_replacement_and_append_exclusive(self) -> "EditSpec":
+        if self.replacement.strip() and self.append.strip():
+            raise ValueError(
+                "'replacement' and 'append' are mutually exclusive"
+            )
+        return self
 
 
 class PatchSpec(_StrictBase):
