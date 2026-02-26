@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Annotated, Any, Literal, Optional, Union
 
-from pydantic import Discriminator, Field, TypeAdapter, model_validator
+from pydantic import ConfigDict, Discriminator, Field, TypeAdapter, model_validator
 
 from sglang.srt.debug_utils.comparator.tensor_comparator.formatter import (
     format_comparison,
@@ -92,8 +92,16 @@ class SkipRecord(_OutputRecord):
 
 
 class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
+    # defer_build avoids resolving the AlignerPlan forward ref at class creation,
+    # breaking the circular import chain. _ensure_models_rebuilt() calls model_rebuild().
+    model_config = ConfigDict(extra="forbid", defer_build=True)
+
     type: Literal["comparison"] = "comparison"
     aligner_plan: Optional[AlignerPlan] = None
+
+    def __init__(self, **data: Any) -> None:
+        _ensure_models_rebuilt()
+        super().__init__(**data)
 
     @property
     def category(self) -> str:
