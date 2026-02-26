@@ -16,16 +16,22 @@ from sglang.test.ci.ci_register import register_cpu_ci
 register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 
+_DEFAULT_PERCENTILES: dict[int, float] = {
+    1: -1.8,
+    5: -1.5,
+    50: 0.0,
+    95: 1.5,
+    99: 1.8,
+}
+
+
 def _make_stats(
     mean: float = 0.0,
     abs_mean: float = 0.8,
     std: float = 1.0,
     min: float = -2.0,
     max: float = 2.0,
-    p1: float | None = -1.8,
-    p5: float | None = -1.5,
-    p95: float | None = 1.5,
-    p99: float | None = 1.8,
+    percentiles: dict[int, float] | None = None,
 ) -> TensorStats:
     return TensorStats(
         mean=mean,
@@ -33,22 +39,24 @@ def _make_stats(
         std=std,
         min=min,
         max=max,
-        p1=p1,
-        p5=p5,
-        p95=p95,
-        p99=p99,
+        percentiles=percentiles if percentiles is not None else _DEFAULT_PERCENTILES,
     )
+
+
+_DEFAULT_ABS_DIFF_PERCENTILES: dict[int, float] = {
+    1: 0.0001,
+    5: 0.0001,
+    50: 0.0002,
+    95: 0.0004,
+    99: 0.0005,
+}
 
 
 def _make_diff(
     rel_diff: float = 0.0001,
     max_abs_diff: float = 0.0005,
     mean_abs_diff: float = 0.0002,
-    abs_diff_p1: float | None = 0.0001,
-    abs_diff_p5: float | None = 0.0001,
-    abs_diff_p50: float | None = 0.0002,
-    abs_diff_p95: float | None = 0.0004,
-    abs_diff_p99: float | None = 0.0005,
+    abs_diff_percentiles: dict[int, float] | None = None,
     diff_threshold: float = 1e-3,
     passed: bool = True,
 ) -> DiffInfo:
@@ -56,11 +64,11 @@ def _make_diff(
         rel_diff=rel_diff,
         max_abs_diff=max_abs_diff,
         mean_abs_diff=mean_abs_diff,
-        abs_diff_p1=abs_diff_p1,
-        abs_diff_p5=abs_diff_p5,
-        abs_diff_p50=abs_diff_p50,
-        abs_diff_p95=abs_diff_p95,
-        abs_diff_p99=abs_diff_p99,
+        abs_diff_percentiles=(
+            abs_diff_percentiles
+            if abs_diff_percentiles is not None
+            else _DEFAULT_ABS_DIFF_PERCENTILES
+        ),
         max_diff_coord=[2, 3],
         baseline_at_max=1.0,
         target_at_max=1.0005,
@@ -114,6 +122,7 @@ class TestFormatComparison:
             "[max] 2.0000 vs 2.0001 (diff: 0.0001)\n"
             "[p1] -1.8000 vs -1.8000 (diff: 0.0000)\n"
             "[p5] -1.5000 vs -1.5000 (diff: 0.0000)\n"
+            "[p50] 0.0000 vs 0.0000 (diff: 0.0000)\n"
             "[p95] 1.5000 vs 1.5000 (diff: 0.0000)\n"
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
@@ -143,6 +152,7 @@ class TestFormatComparison:
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
             "[p1] -1.8000 vs -1.8000 (diff: 0.0000)\n"
             "[p5] -1.5000 vs -1.5000 (diff: 0.0000)\n"
+            "[p50] 0.0000 vs 0.0000 (diff: 0.0000)\n"
             "[p95] 1.5000 vs 1.5000 (diff: 0.0000)\n"
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "⚠️ Shape mismatch"
@@ -176,6 +186,7 @@ class TestFormatComparison:
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
             "[p1] -1.8000 vs -1.8000 (diff: 0.0000)\n"
             "[p5] -1.5000 vs -1.5000 (diff: 0.0000)\n"
+            "[p50] 0.0000 vs 0.0000 (diff: 0.0000)\n"
             "[p95] 1.5000 vs 1.5000 (diff: 0.0000)\n"
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "❌ rel_diff=0.002\t❌ max_abs_diff=0.005\t✅ mean_abs_diff=0.001\n"
@@ -213,6 +224,7 @@ class TestFormatComparison:
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
             "[p1] -1.8000 vs -1.8000 (diff: 0.0000)\n"
             "[p5] -1.5000 vs -1.5000 (diff: 0.0000)\n"
+            "[p50] 0.0000 vs 0.0000 (diff: 0.0000)\n"
             "[p95] 1.5000 vs 1.5000 (diff: 0.0000)\n"
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
@@ -243,6 +255,7 @@ class TestFormatComparison:
             "[max] 2.0000 vs 2.0000 (diff: 0.0000)\n"
             "[p1] -1.8000 vs -1.8000 (diff: 0.0000)\n"
             "[p5] -1.5000 vs -1.5000 (diff: 0.0000)\n"
+            "[p50] 0.0000 vs 0.0000 (diff: 0.0000)\n"
             "[p95] 1.5000 vs 1.5000 (diff: 0.0000)\n"
             "[p99] 1.8000 vs 1.8000 (diff: 0.0000)\n"
             "✅ rel_diff=0.0001\t✅ max_abs_diff=0.0005\t✅ mean_abs_diff=0.0002\n"
@@ -253,8 +266,8 @@ class TestFormatComparison:
             "x_target(sample)=tensor([0.1, 0.3, ...])"
         )
 
-    def test_none_quantiles(self):
-        stats_no_quantiles = _make_stats(p1=None, p5=None, p95=None, p99=None)
+    def test_empty_percentiles(self):
+        stats_no_quantiles = _make_stats(percentiles={})
 
         info = TensorComparisonInfo(
             name="no_quantiles",
@@ -262,13 +275,7 @@ class TestFormatComparison:
             target=_make_tensor_info(stats=stats_no_quantiles),
             unified_shape=[4, 8],
             shape_mismatch=False,
-            diff=_make_diff(
-                abs_diff_p1=None,
-                abs_diff_p5=None,
-                abs_diff_p50=None,
-                abs_diff_p95=None,
-                abs_diff_p99=None,
-            ),
+            diff=_make_diff(abs_diff_percentiles={}),
         )
 
         assert format_comparison(info) == (

@@ -23,17 +23,14 @@ from sglang.test.ci.ci_register import register_cpu_ci
 register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 
-def _make_stats(**overrides: float) -> TensorStats:
-    defaults = dict(
+def _make_stats(**overrides) -> TensorStats:
+    defaults: dict = dict(
         mean=0.5,
         abs_mean=1.2,
         std=1.0,
         min=-2.0,
         max=3.0,
-        p1=-1.8,
-        p5=-1.5,
-        p95=2.5,
-        p99=2.8,
+        percentiles={1: -1.8, 5: -1.5, 50: 0.0, 95: 2.5, 99: 2.8},
     )
     defaults.update(overrides)
     return TensorStats(**defaults)
