@@ -120,12 +120,14 @@ class TestSourcePatcherE2ESGLang:
             for line in result.stdout.strip().splitlines()
             if line.strip()
         ]
-        assert len(records) > 0, f"Comparator produced no output records. Debug: {debug_file}"
+        assert (
+            len(records) > 0
+        ), f"Comparator produced no output records. Debug: {debug_file}"
 
         summary: SummaryRecord = _find_summary(records=records, debug_file=debug_file)
-        assert summary.passed > 0, (
-            f"No comparisons passed (total={summary.total}). Debug: {debug_file}"
-        )
+        assert (
+            summary.passed > 0
+        ), f"No comparisons passed (total={summary.total}). Debug: {debug_file}"
         assert summary.failed == 0, (
             f"{summary.failed} comparisons failed "
             f"(passed={summary.passed}, skipped={summary.skipped}). "
@@ -206,9 +208,7 @@ def _find_summary(*, records: list[AnyRecord], debug_file: Path) -> SummaryRecor
 
 def _save_comparator_output(*, stdout: str, stderr: str) -> Path:
     """Save comparator stdout+stderr to a temp file that persists for debugging."""
-    fd, path_str = tempfile.mkstemp(
-        prefix="comparator_e2e_", suffix=".log", dir="/tmp"
-    )
+    fd, path_str = tempfile.mkstemp(prefix="comparator_e2e_", suffix=".log", dir="/tmp")
     with os.fdopen(fd, "w") as f:
         f.write("=== STDOUT ===\n")
         f.write(stdout)
