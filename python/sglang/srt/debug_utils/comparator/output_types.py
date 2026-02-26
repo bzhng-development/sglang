@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Annotated, Any, Literal, Optional, Union
 
 from pydantic import ConfigDict, Discriminator, Field, TypeAdapter, model_validator
 
-from sglang.srt.debug_utils.comparator.display import render_polars_as_text
 from sglang.srt.debug_utils.comparator.tensor_comparator.formatter import (
     format_comparison,
 )
@@ -100,6 +99,8 @@ class RankInfoRecord(_OutputRecord):
     def _format_body(self) -> str:
         import polars as pl
 
+        from sglang.srt.debug_utils.comparator.display import render_polars_as_text
+
         return render_polars_as_text(
             pl.DataFrame(self.rows), title=f"{self.label} ranks"
         )
@@ -112,6 +113,8 @@ class InputIdsRecord(_OutputRecord):
 
     def _format_body(self) -> str:
         import polars as pl
+
+        from sglang.srt.debug_utils.comparator.display import render_polars_as_text
 
         return render_polars_as_text(
             pl.DataFrame(self.rows), title=f"{self.label} input_ids & positions"
