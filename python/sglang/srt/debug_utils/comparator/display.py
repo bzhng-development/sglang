@@ -7,9 +7,41 @@ from typing import Any, Optional
 
 import polars as pl
 
+from sglang.srt.debug_utils.comparator.output_types import (
+    InputIdsRecord,
+    RankInfoRecord,
+    print_record,
+)
 from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 _PARALLEL_INFO_KEYS: list[str] = ["sglang_parallel_info", "megatron_parallel_info"]
+
+
+def emit_display_records(
+    *,
+    df: pl.DataFrame,
+    dump_dir: Path,
+    label: str,
+    tokenizer: Any,
+    output_format: str,
+) -> None:
+    rank_rows: Optional[list[dict[str, Any]]] = collect_rank_info(
+        df, dump_dir=dump_dir
+    )
+    if rank_rows is not None:
+        print_record(
+            RankInfoRecord(label=label, rows=rank_rows),
+            output_format=output_format,
+        )
+
+    input_ids_rows: Optional[list[dict[str, Any]]] = collect_input_ids_and_positions(
+        df, dump_dir=dump_dir, tokenizer=tokenizer
+    )
+    if input_ids_rows is not None:
+        print_record(
+            InputIdsRecord(label=label, rows=input_ids_rows),
+            output_format=output_format,
+        )
 
 
 def render_polars_as_text(df: pl.DataFrame, *, title: Optional[str] = None) -> str:

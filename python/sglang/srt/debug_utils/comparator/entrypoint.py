@@ -21,15 +21,10 @@ from sglang.srt.debug_utils.comparator.bundle_matcher import (
     TensorBundleInfo,
     match_bundles,
 )
-from sglang.srt.debug_utils.comparator.display import (
-    collect_input_ids_and_positions,
-    collect_rank_info,
-)
+from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
-    InputIdsRecord,
-    RankInfoRecord,
     SkipRecord,
     SummaryRecord,
     print_record,
@@ -55,14 +50,14 @@ def run(args: argparse.Namespace) -> None:
     dfs: Pair[pl.DataFrame] = _read_df(args)
 
     tokenizer: Any = _maybe_load_tokenizer(args)
-    for side_label, df, dump_path in [
+    for label, df, dump_dir in [
         ("baseline", dfs.x, Path(args.baseline_path)),
         ("target", dfs.y, Path(args.target_path)),
     ]:
-        _emit_display_records(
+        emit_display_records(
             df=df,
-            dump_dir=dump_path,
-            label=side_label,
+            dump_dir=dump_dir,
+            label=label,
             tokenizer=tokenizer,
             output_format=args.output_format,
         )
@@ -109,33 +104,6 @@ def _maybe_load_tokenizer(args: argparse.Namespace) -> Any:
         return AutoTokenizer.from_pretrained(tokenizer_path)
     except Exception:
         return None
-
-
-def _emit_display_records(
-    *,
-    df: pl.DataFrame,
-    dump_dir: Path,
-    label: str,
-    tokenizer: Any,
-    output_format: str,
-) -> None:
-    rank_rows: Optional[list[dict[str, Any]]] = collect_rank_info(
-        df, dump_dir=dump_dir
-    )
-    if rank_rows is not None:
-        print_record(
-            RankInfoRecord(label=label, rows=rank_rows),
-            output_format=output_format,
-        )
-
-    input_ids_rows: Optional[list[dict[str, Any]]] = collect_input_ids_and_positions(
-        df, dump_dir=dump_dir, tokenizer=tokenizer
-    )
-    if input_ids_rows is not None:
-        print_record(
-            InputIdsRecord(label=label, rows=input_ids_rows),
-            output_format=output_format,
-        )
 
 
 def _read_df(args: argparse.Namespace) -> Pair[pl.DataFrame]:
