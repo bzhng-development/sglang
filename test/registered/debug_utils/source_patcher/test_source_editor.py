@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from sglang.srt.debug_utils.source_patcher.source_editor import apply_edits
 from sglang.srt.debug_utils.source_patcher.types import EditSpec, PatchApplicationError
@@ -268,15 +269,15 @@ class TestApplyEdits:
         )
 
     def test_replacement_and_append_mutually_exclusive(self) -> None:
-        with pytest.raises(ValueError, match="mutually exclusive"):
+        with pytest.raises(ValidationError, match="mutually exclusive"):
             EditSpec(match="x = 1", replacement="x = 2", append="print(x)")
 
     def test_replacement_and_prepend_mutually_exclusive(self) -> None:
-        with pytest.raises(ValueError, match="mutually exclusive"):
+        with pytest.raises(ValidationError, match="mutually exclusive"):
             EditSpec(match="x = 1", replacement="x = 2", prepend="print(x)")
 
     def test_prepend_and_append_mutually_exclusive(self) -> None:
-        with pytest.raises(ValueError, match="mutually exclusive"):
+        with pytest.raises(ValidationError, match="mutually exclusive"):
             EditSpec(match="x = 1", prepend="a()", append="b()")
 
     def test_second_edit_sees_result_of_first(self) -> None:
