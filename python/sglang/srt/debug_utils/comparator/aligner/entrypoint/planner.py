@@ -21,6 +21,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
 )
 from sglang.srt.debug_utils.comparator.dims import (
     TOKEN_DIM_NAME,
+    DimSpec,
     find_dim_index,
     parse_dims,
 )
@@ -32,7 +33,8 @@ def compute_aligner_plan(
     metas_pair: Pair[list[dict[str, Any]]],
     token_aligner_plan: Optional[TokenAlignerPlan],
 ) -> AlignerPlan:
-    token_dim: int = _compute_token_dim(metas_pair=metas_pair)
+    dim_specs: Optional[list[DimSpec]] = _extract_dim_specs(metas_pair=metas_pair)
+    token_dim: int = _compute_token_dim(dim_specs=dim_specs)
     return AlignerPlan(
         per_step_plans=metas_pair.map(
             lambda metas: _compute_per_step_plans(metas=metas)
@@ -42,17 +44,21 @@ def compute_aligner_plan(
     )
 
 
-def _compute_token_dim(metas_pair: Pair[list[dict[str, Any]]]) -> int:
-    all_metas: list[dict[str, Any]] = metas_pair.x + metas_pair.y
-    for meta in all_metas:
+def _extract_dim_specs(
+    metas_pair: Pair[list[dict[str, Any]]],
+) -> Optional[list[DimSpec]]:
+    for meta in metas_pair.x + metas_pair.y:
         dims_str: Optional[str] = meta.get("dims")
         if dims_str is not None:
-            dim_specs = parse_dims(dims_str)
-            idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
-            if idx is not None:
-                return idx
+            return parse_dims(dims_str)
+    return None
 
-    return 0
+
+def _compute_token_dim(dim_specs: Optional[list[DimSpec]]) -> int:
+    if dim_specs is None:
+        return 0
+    idx: Optional[int] = find_dim_index(dim_specs, TOKEN_DIM_NAME)
+    return idx if idx is not None else 0
 
 
 def _compute_per_step_plans(metas: list[dict[str, Any]]) -> list[AlignerPerStepPlan]:
