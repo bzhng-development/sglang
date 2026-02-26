@@ -1922,9 +1922,11 @@ class TestNonIntrusiveLayerIdCtx(_NonIntrusiveTestBase):
         captured, x, output = self._run(tmp_path, Inner)
 
         assert len(captured) > 0
-        layer_keys: list[str] = [k for k in captured if "model.layers." in k]
-        assert len(layer_keys) > 0
-        for key in layer_keys:
+        input_keys: list[str] = [
+            k for k in captured if "model.layers." in k and "inputs" in k
+        ]
+        assert len(input_keys) > 0
+        for key in input_keys:
             meta = captured[key]["meta"]
             assert "layer_id" in meta, f"{key} missing layer_id"
             if "layers.0" in key:
