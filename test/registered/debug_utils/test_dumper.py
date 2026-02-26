@@ -1904,8 +1904,8 @@ class TestNonIntrusiveLayerIdCtx(_NonIntrusiveTestBase):
         assert layer_key in captured
         assert captured[layer_key]["meta"]["layer_id"] == 5
 
-    def test_no_layer_id_when_no_attr(self, tmp_path):
-        """layers.N modules without layer_number/layer_id -> no layer_id injected."""
+    def test_layer_id_fallback_from_module_name(self, tmp_path):
+        """layers.N modules without layer_number/layer_id -> layer_id from module name."""
 
         class Inner(torch.nn.Module):
             def __init__(self):
@@ -1922,8 +1922,15 @@ class TestNonIntrusiveLayerIdCtx(_NonIntrusiveTestBase):
         captured, x, output = self._run(tmp_path, Inner)
 
         assert len(captured) > 0
-        for key, entry in captured.items():
-            assert "layer_id" not in entry["meta"], f"{key} has unexpected layer_id"
+        layer_keys: list[str] = [k for k in captured if "model.layers." in k]
+        assert len(layer_keys) > 0
+        for key in layer_keys:
+            meta = captured[key]["meta"]
+            assert "layer_id" in meta, f"{key} missing layer_id"
+            if "layers.0" in key:
+                assert meta["layer_id"] == 0
+            elif "layers.1" in key:
+                assert meta["layer_id"] == 1
 
     def test_filter_by_layer_id(self, tmp_path):
         """filter='layer_id=0' keeps only layer 0 dumps."""
