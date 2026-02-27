@@ -2591,9 +2591,7 @@ class TestEntrypointDpFilter:
             for dp_rank in range(2):
                 for tp_rank in range(2):
                     tensor: torch.Tensor = (
-                        chunks[tp_rank]
-                        if dp_rank == 0
-                        else torch.empty(0, 4)
+                        chunks[tp_rank] if dp_rank == 0 else torch.empty(0, 4)
                     )
                     _create_rank_dump(
                         side_dir,
