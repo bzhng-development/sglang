@@ -2620,6 +2620,45 @@ class TestEntrypointDpFilter:
         comparison: ComparisonRecord = _assert_single_comparison_passed(records)
         assert comparison.name == "hidden"
 
+    def test_dp2_both_nonempty_raises(self, tmp_path: Path, capsys) -> None:
+        """DP=2 sglang: both dp_rank=0 and dp_rank=1 have non-empty tensors => AssertionError."""
+        torch.manual_seed(42)
+        tensor_data: torch.Tensor = torch.randn(10, 8)
+        target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
+
+        for side, side_dir_name, data in [
+            ("baseline", "baseline", tensor_data),
+            ("target", "target", target_data),
+        ]:
+            side_dir: Path = tmp_path / side_dir_name
+            side_dir.mkdir()
+
+            for dp_rank in range(2):
+                _create_rank_dump(
+                    side_dir,
+                    rank=dp_rank,
+                    name="hidden",
+                    tensor=data,
+                    dims="t h",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "dp_rank": dp_rank,
+                        "dp_size": 2,
+                    },
+                    framework="sglang",
+                )
+
+        args: Namespace = _make_args(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            grouping="logical",
+            diff_threshold=1e-3,
+        )
+
+        with pytest.raises(AssertionError, match="Expected exactly 1 non-empty dp_rank"):
+            _run_and_parse(args, capsys)
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))
