@@ -1,4 +1,4 @@
-"""Tests for override_config — unit + integration."""
+"""Tests for meta_overrider — unit + integration."""
 
 from __future__ import annotations
 
@@ -19,8 +19,8 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SummaryRecord,
     parse_record_json,
 )
-from sglang.srt.debug_utils.comparator.override_config import (
-    DimsOverrider,
+from sglang.srt.debug_utils.comparator.meta_overrider import (
+    MetaOverrider,
     MetaOverrideRule,
     _load_yaml_rules,
     _merge_per_side_cli_rules,
@@ -166,15 +166,15 @@ class TestMergePerSideCliRules:
         assert rules[0].target_dims is None
 
 
-# ──────────────────── Unit: DimsOverrider ────────────────────
+# ──────────────────── Unit: MetaOverrider ────────────────────
 
 
-class TestDimsOverrider:
-    """DimsOverrider logic: matching, priority, apply_to_metas."""
+class TestMetaOverrider:
+    """MetaOverrider logic: matching, priority, apply_to_metas."""
 
     def test_first_match_wins(self) -> None:
         """First matching rule takes effect; later rules ignored."""
-        overrider = DimsOverrider(
+        overrider = MetaOverrider(
             rules=[
                 MetaOverrideRule(match="hidden", dims="FIRST"),
                 MetaOverrideRule(match="hidden", dims="SECOND"),
@@ -190,7 +190,7 @@ class TestDimsOverrider:
 
     def test_regex_contains_match(self) -> None:
         """match is a regex contains search, not exact match."""
-        overrider = DimsOverrider(
+        overrider = MetaOverrider(
             rules=[MetaOverrideRule(match=r"\.q_proj\.", dims="h d")]
         )
         result = overrider.apply_to_metas(
@@ -202,7 +202,7 @@ class TestDimsOverrider:
 
     def test_no_match_preserves_original(self) -> None:
         """No matching rule leaves metas untouched."""
-        overrider = DimsOverrider(
+        overrider = MetaOverrider(
             rules=[MetaOverrideRule(match="logits", dims="b s v")]
         )
         original_meta: dict = {"dims": "original"}
@@ -216,7 +216,7 @@ class TestDimsOverrider:
 
     def test_per_side_override(self) -> None:
         """baseline_dims / target_dims override independently."""
-        overrider = DimsOverrider(
+        overrider = MetaOverrider(
             rules=[
                 MetaOverrideRule(
                     match="logits",
@@ -235,7 +235,7 @@ class TestDimsOverrider:
 
     def test_partial_per_side_preserves_other(self) -> None:
         """Only baseline_dims specified → target meta unchanged."""
-        overrider = DimsOverrider(
+        overrider = MetaOverrider(
             rules=[MetaOverrideRule(match="logits", baseline_dims="b s v(tp)")]
         )
         result = overrider.apply_to_metas(
@@ -248,12 +248,12 @@ class TestDimsOverrider:
 
     def test_is_empty(self) -> None:
         """Empty overrider reports is_empty=True."""
-        assert DimsOverrider(rules=[]).is_empty
-        assert not DimsOverrider(rules=[MetaOverrideRule(match="x", dims="d")]).is_empty
+        assert MetaOverrider(rules=[]).is_empty
+        assert not MetaOverrider(rules=[MetaOverrideRule(match="x", dims="d")]).is_empty
 
     def test_multiple_metas(self) -> None:
         """All metas in the list are updated when a rule matches."""
-        overrider = DimsOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
+        overrider = MetaOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"dims": "a"}, {"dims": "b"}],
@@ -265,7 +265,7 @@ class TestDimsOverrider:
 
     def test_meta_without_dims_key(self) -> None:
         """Override adds 'dims' even if original meta lacks it."""
-        overrider = DimsOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
+        overrider = MetaOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"other": "val"}],
@@ -279,7 +279,7 @@ class TestDimsOverrider:
 
 
 class TestFromArgsAndConfig:
-    """DimsOverrider.from_args_and_config merges CLI + YAML rules."""
+    """MetaOverrider.from_args_and_config merges CLI + YAML rules."""
 
     def test_cli_before_yaml(self, tmp_path: Path) -> None:
         """CLI rules are ordered before YAML rules (CLI wins on conflict)."""
@@ -290,7 +290,7 @@ class TestFromArgsAndConfig:
                 dims: "FROM_YAML"
         """))
 
-        overrider = DimsOverrider.from_args_and_config(
+        overrider = MetaOverrider.from_args_and_config(
             override_dims=["hidden:FROM_CLI"],
             override_baseline_dims=[],
             override_target_dims=[],
@@ -306,7 +306,7 @@ class TestFromArgsAndConfig:
 
     def test_no_config_no_cli(self) -> None:
         """Empty CLI + no YAML yields empty overrider."""
-        overrider = DimsOverrider.from_args_and_config(
+        overrider = MetaOverrider.from_args_and_config(
             override_dims=[],
             override_baseline_dims=[],
             override_target_dims=[],
@@ -316,7 +316,7 @@ class TestFromArgsAndConfig:
 
     def test_per_side_same_pattern_merged(self) -> None:
         """--override-baseline-dims and --override-target-dims with same pattern merge into one rule."""
-        overrider = DimsOverrider.from_args_and_config(
+        overrider = MetaOverrider.from_args_and_config(
             override_dims=[],
             override_baseline_dims=["hidden:b s h(tp)"],
             override_target_dims=["hidden:b s h(ep)"],

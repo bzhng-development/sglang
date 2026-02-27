@@ -1,4 +1,4 @@
-"""Override config: replace metadata fields (e.g. dims) without re-running dumps."""
+"""Meta overrider: replace metadata fields (e.g. dims) without re-running dumps."""
 
 from __future__ import annotations
 
@@ -48,13 +48,13 @@ class MetaOverrideRule(_StrictBase):
         return self.dims if self.dims is not None else self.target_dims
 
 
-class OverrideConfig(_StrictBase):
+class MetaOverrideConfig(_StrictBase):
     """YAML top-level config for overriding comparator behavior."""
 
     dims: list[MetaOverrideRule] = []
 
 
-class DimsOverrider:
+class MetaOverrider:
     """Holds compiled override rules and applies first-match-wins replacement."""
 
     def __init__(self, rules: list[MetaOverrideRule]) -> None:
@@ -75,7 +75,7 @@ class DimsOverrider:
         override_baseline_dims: list[str],
         override_target_dims: list[str],
         override_config: Optional[Path],
-    ) -> "DimsOverrider":
+    ) -> "MetaOverrider":
         cli_rules: list[MetaOverrideRule] = [
             MetaOverrideRule(match=name, dims=dims_str)
             for name, dims_str in _parse_cli_override_args(override_dims)
@@ -172,7 +172,7 @@ def _load_yaml_rules(path: Path) -> list[MetaOverrideRule]:
     if raw_data is None:
         return []
 
-    config: OverrideConfig = OverrideConfig.model_validate(raw_data)
+    config: MetaOverrideConfig = MetaOverrideConfig.model_validate(raw_data)
     return config.dims
 
 

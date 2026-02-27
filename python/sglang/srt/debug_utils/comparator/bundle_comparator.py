@@ -31,7 +31,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     NonTensorRecord,
     SkipRecord,
 )
-from sglang.srt.debug_utils.comparator.override_config import DimsOverrider
+from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )
@@ -55,7 +55,7 @@ def compare_bundle_pair(
     ),
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
-    dims_overrider: Optional[DimsOverrider] = None,
+    meta_overrider: Optional[MetaOverrider] = None,
 ) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     with warning_sink.context() as collected_warnings:
         result = _compare_bundle_pair_inner(
@@ -68,7 +68,7 @@ def compare_bundle_pair(
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
             viz_output_dir=viz_output_dir,
             compute_per_token=compute_per_token,
-            dims_overrider=dims_overrider,
+            meta_overrider=meta_overrider,
         )
 
     return result.model_copy(update={"warnings": collected_warnings})
@@ -87,7 +87,7 @@ def _compare_bundle_pair_inner(
     ),
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
-    dims_overrider: Optional[DimsOverrider] = None,
+    meta_overrider: Optional[MetaOverrider] = None,
 ) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     # 1. Load all successfully loaded values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
@@ -106,8 +106,8 @@ def _compare_bundle_pair_inner(
     )
 
     # 1c. Dims override: patch meta["dims"] before downstream reads it
-    if dims_overrider is not None and not dims_overrider.is_empty:
-        overridden: Pair[list[dict[str, Any]]] = dims_overrider.apply_to_metas(
+    if meta_overrider is not None and not meta_overrider.is_empty:
+        overridden: Pair[list[dict[str, Any]]] = meta_overrider.apply_to_metas(
             name=name,
             baseline_metas=[it.meta for it in all_pair.x],
             target_metas=[it.meta for it in all_pair.y],

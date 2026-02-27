@@ -30,7 +30,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SummaryRecord,
     print_record,
 )
-from sglang.srt.debug_utils.comparator.override_config import DimsOverrider
+from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
@@ -86,7 +86,7 @@ def run(args: argparse.Namespace) -> None:
         Path(args.visualize_per_token) if args.visualize_per_token else None
     )
 
-    dims_overrider: DimsOverrider = DimsOverrider.from_args_and_config(
+    meta_overrider: MetaOverrider = MetaOverrider.from_args_and_config(
         override_dims=args.override_dims,
         override_baseline_dims=args.override_baseline_dims,
         override_target_dims=args.override_target_dims,
@@ -102,7 +102,7 @@ def run(args: argparse.Namespace) -> None:
         thd_seq_lens_by_step_pair=ta_result.thd_seq_lens_by_step_pair,
         viz_output_dir=viz_output_dir,
         compute_per_token=visualize_per_token is not None,
-        dims_overrider=dims_overrider,
+        meta_overrider=meta_overrider,
     )
     _consume_comparison_records(
         comparison_records=comparison_records,
@@ -164,7 +164,7 @@ def _compare_bundle_pairs(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
-    dims_overrider: Optional[DimsOverrider] = None,
+    meta_overrider: Optional[MetaOverrider] = None,
 ) -> Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]]:
     for bundle_info_pair in bundle_info_pairs:
         if not bundle_info_pair.y:
@@ -184,7 +184,7 @@ def _compare_bundle_pairs(
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
             viz_output_dir=viz_output_dir,
             compute_per_token=compute_per_token,
-            dims_overrider=dims_overrider,
+            meta_overrider=meta_overrider,
         )
 
 
