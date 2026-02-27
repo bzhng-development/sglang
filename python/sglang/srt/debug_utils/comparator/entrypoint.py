@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional, Union
 
@@ -199,12 +198,10 @@ def _consume_comparison_records(
     )
 
     if visualize_per_token is not None and collected_comparisons:
-        result: Optional[Path] = generate_per_token_heatmap(
+        generate_per_token_heatmap(
             records=collected_comparisons,
             output_path=visualize_per_token,
         )
-        if result is not None:
-            print(f"Per-token heatmap saved to {result}", file=sys.stderr)
 
 
 def _parse_args() -> argparse.Namespace:
