@@ -9,7 +9,6 @@ from sglang.srt.debug_utils.dump_loader import (
     ValueWithMeta,
     _add_duplicate_index,
     _cast_to_polars_dtype,
-    _parse_bool,
     find_row,
     parse_meta_from_filename,
     read_meta,
@@ -99,31 +98,24 @@ class TestValueWithMeta:
         assert loaded.meta["name"] == "bad"
 
 
-class TestParseBool:
-    def test_true_values(self) -> None:
-        assert _parse_bool("True") is True
-        assert _parse_bool("true") is True
-        assert _parse_bool("1") is True
-
-    def test_false_values(self) -> None:
-        assert _parse_bool("False") is False
-        assert _parse_bool("false") is False
-        assert _parse_bool("0") is False
-
-
-class TestIsRecomputeParsing:
-    def test_parse_is_recompute_from_filename(self, tmp_path) -> None:
+class TestRecomputeStatusParsing:
+    def test_parse_recompute_status_from_filename(self) -> None:
         from pathlib import Path
 
-        meta_true = parse_meta_from_filename(
-            Path("step=0___rank=0___dump_index=1___name=x___is_recompute=True.pt")
+        meta_disabled = parse_meta_from_filename(
+            Path("step=0___rank=0___dump_index=1___name=x___recompute_status=disabled.pt")
         )
-        assert meta_true["is_recompute"] is True
+        assert meta_disabled["recompute_status"] == "disabled"
 
-        meta_false = parse_meta_from_filename(
-            Path("step=0___rank=0___dump_index=1___name=x___is_recompute=False.pt")
+        meta_recompute = parse_meta_from_filename(
+            Path("step=0___rank=0___dump_index=1___name=x___recompute_status=recompute.pt")
         )
-        assert meta_false["is_recompute"] is False
+        assert meta_recompute["recompute_status"] == "recompute"
+
+        meta_original = parse_meta_from_filename(
+            Path("step=0___rank=0___dump_index=1___name=x___recompute_status=original.pt")
+        )
+        assert meta_original["recompute_status"] == "original"
 
 
 

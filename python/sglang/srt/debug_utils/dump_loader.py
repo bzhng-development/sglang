@@ -175,13 +175,8 @@ def read_tokenizer_path(directory: Path) -> Optional[str]:
     return None
 
 
-def _parse_bool(value: str) -> bool:
-    return value.lower() in ("true", "1")
-
-
 _TYPED_FIELDS: list[tuple[str, Callable[[str], Any]]] = [
     ("rank", int),
-    ("is_recompute", _parse_bool),
 ]
 
 
