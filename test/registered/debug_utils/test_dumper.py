@@ -2474,7 +2474,7 @@ class TestRecomputeStatus:
         assert "recompute_pseudo_rank" not in raw["meta"]
         assert "recompute_pseudo_size" not in raw["meta"]
 
-    def test_grad_hook_has_recompute_status_disabled(self, tmp_path: Path) -> None:
+    def test_grad_hook_has_no_recompute_status(self, tmp_path: Path) -> None:
         d = _make_test_dumper(tmp_path, enable_grad=True)
         x = torch.randn(3, 3, requires_grad=True)
         y = (x * 2).sum()
@@ -2486,7 +2486,7 @@ class TestRecomputeStatus:
             f for f in _get_filenames(tmp_path) if "grad__test_tensor" in f
         ]
         assert len(grad_files) == 1
-        assert "recompute_status=disabled" in grad_files[0]
+        assert "recompute_status" not in grad_files[0]
 
     def test_non_intrusive_hooks_have_recompute_status(self, tmp_path: Path) -> None:
         class Simple(torch.nn.Module):

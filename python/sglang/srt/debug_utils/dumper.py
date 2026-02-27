@@ -485,7 +485,6 @@ class _Dumper:
         captured_step = self._state.step
         captured_tags = dict(
             name=f"grad__{name}",
-            recompute_status=_RecomputeStatus.DISABLED.value,
             **deepcopy(extra_kwargs),
         )
         captured_meta_only = meta_only_fields or {}
