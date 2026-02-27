@@ -31,7 +31,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     NonTensorRecord,
     SkipRecord,
 )
-from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
+from sglang.srt.debug_utils.comparator.override_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )

@@ -1,4 +1,4 @@
-"""Tests for dims override (patch_config) — unit + integration."""
+"""Tests for override_config — unit + integration."""
 
 from __future__ import annotations
 
@@ -19,10 +19,11 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SummaryRecord,
     parse_record_json,
 )
-from sglang.srt.debug_utils.comparator.patch_config import (
+from sglang.srt.debug_utils.comparator.override_config import (
     DimsOverrider,
-    DimsOverrideRule,
+    MetaOverrideRule,
     _load_yaml_rules,
+    _merge_per_side_cli_rules,
     _parse_cli_override_arg,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
@@ -34,21 +35,21 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 _FIXED_EXP_NAME = "my_exp_name"
 
 
-# ───────────────────── Unit: DimsOverrideRule ─────────────────────
+# ───────────────────── Unit: MetaOverrideRule ─────────────────────
 
 
-class TestDimsOverrideRule:
-    """Pydantic validation for DimsOverrideRule."""
+class TestMetaOverrideRule:
+    """Pydantic validation for MetaOverrideRule."""
 
     def test_shared_dims_only(self) -> None:
         """Shared 'dims' field is accepted alone."""
-        rule = DimsOverrideRule(match="hidden", dims="b s h d")
+        rule = MetaOverrideRule(match="hidden", dims="b s h d")
         assert rule.effective_baseline_dims() == "b s h d"
         assert rule.effective_target_dims() == "b s h d"
 
     def test_per_side_dims(self) -> None:
         """baseline_dims / target_dims accepted without shared dims."""
-        rule = DimsOverrideRule(
+        rule = MetaOverrideRule(
             match="logits", baseline_dims="b s v(tp)", target_dims="b s v(ep)"
         )
         assert rule.effective_baseline_dims() == "b s v(tp)"
@@ -56,29 +57,29 @@ class TestDimsOverrideRule:
 
     def test_per_side_partial(self) -> None:
         """Only baseline_dims without target_dims is valid."""
-        rule = DimsOverrideRule(match="logits", baseline_dims="b s v(tp)")
+        rule = MetaOverrideRule(match="logits", baseline_dims="b s v(tp)")
         assert rule.effective_baseline_dims() == "b s v(tp)"
         assert rule.effective_target_dims() is None
 
     def test_mutual_exclusion(self) -> None:
         """Cannot specify both 'dims' and 'baseline_dims'."""
         with pytest.raises(ValueError, match="Cannot specify both"):
-            DimsOverrideRule(match="x", dims="b s", baseline_dims="b s")
+            MetaOverrideRule(match="x", dims="b s", baseline_dims="b s")
 
     def test_mutual_exclusion_target(self) -> None:
         """Cannot specify both 'dims' and 'target_dims'."""
         with pytest.raises(ValueError, match="Cannot specify both"):
-            DimsOverrideRule(match="x", dims="b s", target_dims="b s")
+            MetaOverrideRule(match="x", dims="b s", target_dims="b s")
 
     def test_none_rejected(self) -> None:
         """Must specify at least one dims field."""
         with pytest.raises(ValueError, match="Must specify"):
-            DimsOverrideRule(match="x")
+            MetaOverrideRule(match="x")
 
     def test_extra_field_rejected(self) -> None:
         """Extra fields are rejected by _StrictBase."""
         with pytest.raises(Exception):
-            DimsOverrideRule(match="x", dims="b s", bogus="y")
+            MetaOverrideRule(match="x", dims="b s", bogus="y")
 
 
 # ──────────────────── Unit: _parse_cli_override_arg ────────────────────
@@ -121,6 +122,50 @@ class TestParseCLIOverrideArg:
             _parse_cli_override_arg("foo:")
 
 
+# ──────────────────── Unit: _merge_per_side_cli_rules ────────────────────
+
+
+class TestMergePerSideCliRules:
+    """Merging --override-baseline-dims and --override-target-dims."""
+
+    def test_same_pattern_merged(self) -> None:
+        """Same match pattern from both flags produces one merged rule."""
+        rules = _merge_per_side_cli_rules(
+            override_baseline_dims=["hidden:b s h(tp)"],
+            override_target_dims=["hidden:b s h(ep)"],
+        )
+        assert len(rules) == 1
+        assert rules[0].baseline_dims == "b s h(tp)"
+        assert rules[0].target_dims == "b s h(ep)"
+
+    def test_different_patterns_stay_separate(self) -> None:
+        """Different match patterns produce separate rules."""
+        rules = _merge_per_side_cli_rules(
+            override_baseline_dims=["hidden:b s h"],
+            override_target_dims=["logits:b s v"],
+        )
+        assert len(rules) == 2
+
+    def test_order_preserved(self) -> None:
+        """First-seen pattern determines order."""
+        rules = _merge_per_side_cli_rules(
+            override_baseline_dims=["b_first:x", "second:y"],
+            override_target_dims=["second:z", "t_only:w"],
+        )
+        names: list[str] = [r.match for r in rules]
+        assert names == ["b_first", "second", "t_only"]
+
+    def test_baseline_only(self) -> None:
+        """Only baseline dims specified → target_dims is None."""
+        rules = _merge_per_side_cli_rules(
+            override_baseline_dims=["hidden:b s h"],
+            override_target_dims=[],
+        )
+        assert len(rules) == 1
+        assert rules[0].baseline_dims == "b s h"
+        assert rules[0].target_dims is None
+
+
 # ──────────────────── Unit: DimsOverrider ────────────────────
 
 
@@ -131,8 +176,8 @@ class TestDimsOverrider:
         """First matching rule takes effect; later rules ignored."""
         overrider = DimsOverrider(
             rules=[
-                DimsOverrideRule(match="hidden", dims="FIRST"),
-                DimsOverrideRule(match="hidden", dims="SECOND"),
+                MetaOverrideRule(match="hidden", dims="FIRST"),
+                MetaOverrideRule(match="hidden", dims="SECOND"),
             ]
         )
         result: Pair[list[dict]] = overrider.apply_to_metas(
@@ -146,7 +191,7 @@ class TestDimsOverrider:
     def test_regex_contains_match(self) -> None:
         """match is a regex contains search, not exact match."""
         overrider = DimsOverrider(
-            rules=[DimsOverrideRule(match=r"\.q_proj\.", dims="h d")]
+            rules=[MetaOverrideRule(match=r"\.q_proj\.", dims="h d")]
         )
         result = overrider.apply_to_metas(
             name="layers.0.q_proj.weight",
@@ -158,7 +203,7 @@ class TestDimsOverrider:
     def test_no_match_preserves_original(self) -> None:
         """No matching rule leaves metas untouched."""
         overrider = DimsOverrider(
-            rules=[DimsOverrideRule(match="logits", dims="b s v")]
+            rules=[MetaOverrideRule(match="logits", dims="b s v")]
         )
         original_meta: dict = {"dims": "original"}
         result = overrider.apply_to_metas(
@@ -173,7 +218,7 @@ class TestDimsOverrider:
         """baseline_dims / target_dims override independently."""
         overrider = DimsOverrider(
             rules=[
-                DimsOverrideRule(
+                MetaOverrideRule(
                     match="logits",
                     baseline_dims="b s v(tp)",
                     target_dims="b s v(ep)",
@@ -191,7 +236,7 @@ class TestDimsOverrider:
     def test_partial_per_side_preserves_other(self) -> None:
         """Only baseline_dims specified → target meta unchanged."""
         overrider = DimsOverrider(
-            rules=[DimsOverrideRule(match="logits", baseline_dims="b s v(tp)")]
+            rules=[MetaOverrideRule(match="logits", baseline_dims="b s v(tp)")]
         )
         result = overrider.apply_to_metas(
             name="logits",
@@ -204,11 +249,13 @@ class TestDimsOverrider:
     def test_is_empty(self) -> None:
         """Empty overrider reports is_empty=True."""
         assert DimsOverrider(rules=[]).is_empty
-        assert not DimsOverrider(rules=[DimsOverrideRule(match="x", dims="d")]).is_empty
+        assert not DimsOverrider(rules=[MetaOverrideRule(match="x", dims="d")]).is_empty
 
     def test_multiple_metas(self) -> None:
         """All metas in the list are updated when a rule matches."""
-        overrider = DimsOverrider(rules=[DimsOverrideRule(match="hidden", dims="NEW")])
+        overrider = DimsOverrider(
+            rules=[MetaOverrideRule(match="hidden", dims="NEW")]
+        )
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"dims": "a"}, {"dims": "b"}],
@@ -220,7 +267,9 @@ class TestDimsOverrider:
 
     def test_meta_without_dims_key(self) -> None:
         """Override adds 'dims' even if original meta lacks it."""
-        overrider = DimsOverrider(rules=[DimsOverrideRule(match="hidden", dims="NEW")])
+        overrider = DimsOverrider(
+            rules=[MetaOverrideRule(match="hidden", dims="NEW")]
+        )
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"other": "val"}],
@@ -238,18 +287,18 @@ class TestFromArgsAndConfig:
 
     def test_cli_before_yaml(self, tmp_path: Path) -> None:
         """CLI rules are ordered before YAML rules (CLI wins on conflict)."""
-        yaml_path = tmp_path / "patch.yaml"
+        yaml_path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-                dims:
-                  - match: "hidden"
-                    dims: "FROM_YAML"
-            """))
+            dims:
+              - match: "hidden"
+                dims: "FROM_YAML"
+        """))
 
         overrider = DimsOverrider.from_args_and_config(
             override_dims=["hidden:FROM_CLI"],
             override_baseline_dims=[],
             override_target_dims=[],
-            patch_config=yaml_path,
+            override_config=yaml_path,
         )
 
         result = overrider.apply_to_metas(
@@ -265,9 +314,26 @@ class TestFromArgsAndConfig:
             override_dims=[],
             override_baseline_dims=[],
             override_target_dims=[],
-            patch_config=None,
+            override_config=None,
         )
         assert overrider.is_empty
+
+    def test_per_side_same_pattern_merged(self) -> None:
+        """--override-baseline-dims and --override-target-dims with same pattern merge into one rule."""
+        overrider = DimsOverrider.from_args_and_config(
+            override_dims=[],
+            override_baseline_dims=["hidden:b s h(tp)"],
+            override_target_dims=["hidden:b s h(ep)"],
+            override_config=None,
+        )
+
+        result = overrider.apply_to_metas(
+            name="hidden",
+            baseline_metas=[{"dims": "old"}],
+            target_metas=[{"dims": "old"}],
+        )
+        assert result.x[0]["dims"] == "b s h(tp)"
+        assert result.y[0]["dims"] == "b s h(ep)"
 
 
 # ──────────────────── Unit: _load_yaml_rules ────────────────────
@@ -278,15 +344,15 @@ class TestLoadYamlRules:
 
     def test_valid_yaml(self, tmp_path: Path) -> None:
         """Valid YAML with dims rules loads correctly."""
-        yaml_path = tmp_path / "patch.yaml"
+        yaml_path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-                dims:
-                  - match: "hidden"
-                    dims: "b s h d"
-                  - match: "logits"
-                    baseline_dims: "b s v(tp)"
-                    target_dims: "b s v(ep)"
-            """))
+            dims:
+              - match: "hidden"
+                dims: "b s h d"
+              - match: "logits"
+                baseline_dims: "b s v(tp)"
+                target_dims: "b s v(ep)"
+        """))
         rules = _load_yaml_rules(yaml_path)
         assert len(rules) == 2
         assert rules[0].dims == "b s h d"
@@ -300,7 +366,7 @@ class TestLoadYamlRules:
         assert rules == []
 
     def test_unknown_top_key_rejected(self, tmp_path: Path) -> None:
-        """Unknown top-level key is rejected by PatchConfig."""
+        """Unknown top-level key is rejected by OverrideConfig."""
         yaml_path = tmp_path / "bad.yaml"
         yaml_path.write_text("unknown_key: 42\n")
         with pytest.raises(Exception):
@@ -354,8 +420,6 @@ class TestEntrypointDimsOverride:
                 parallel_info={"tp_rank": tp_rank, "tp_size": 2},
             )
 
-        # Without override, "h d" would not trigger TP unshard on dim 1.
-        # With override to "t h(tp)", the comparison should pass.
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
@@ -381,18 +445,10 @@ class TestEntrypointDimsOverride:
         target_dir.mkdir()
 
         _create_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensor=tensor,
-            dims="WRONG",
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
         _create_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensor=target,
-            dims="t h",
+            target_dir, rank=0, name="hidden", tensor=target, dims="t h"
         )
 
         args = _make_args(
@@ -420,18 +476,10 @@ class TestEntrypointDimsOverride:
         target_dir.mkdir()
 
         _create_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensor=tensor,
-            dims="t h",
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="t h"
         )
         _create_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensor=target,
-            dims="WRONG",
+            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
         )
 
         args = _make_args(
@@ -447,8 +495,8 @@ class TestEntrypointDimsOverride:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.passed
 
-    def test_patch_config_yaml(self, tmp_path: Path, capsys) -> None:
-        """--patch-config YAML overrides dims."""
+    def test_override_config_yaml(self, tmp_path: Path, capsys) -> None:
+        """--override-config YAML overrides dims."""
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(10, 8)
         target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
@@ -459,32 +507,24 @@ class TestEntrypointDimsOverride:
         target_dir.mkdir()
 
         _create_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensor=tensor,
-            dims="WRONG",
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
         _create_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensor=target,
-            dims="WRONG",
+            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
         )
 
-        yaml_path: Path = tmp_path / "patch.yaml"
+        yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-                dims:
-                  - match: "hidden"
-                    dims: "t h"
-            """))
+            dims:
+              - match: "hidden"
+                dims: "t h"
+        """))
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
             grouping="raw",
-            patch_config=str(yaml_path),
+            override_config=str(yaml_path),
         )
         records = _run_and_parse(args, capsys)
 
@@ -505,18 +545,10 @@ class TestEntrypointDimsOverride:
         target_dir.mkdir()
 
         _create_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensor=tensor,
-            dims="t h",
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="t h"
         )
         _create_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensor=target,
-            dims="t h",
+            target_dir, rank=0, name="hidden", tensor=target, dims="t h"
         )
 
         args = _make_args(
@@ -548,7 +580,7 @@ class TestEntrypointDimsOverride:
 
         for name, b_tensor, t_tensor, dims in [
             ("hidden", hidden_b, hidden_t, "t h"),
-            ("logits", logits_b, logits_t, "WRONG"),
+            ("logits", logits_b, logits_t, "x y"),
         ]:
             _create_rank_dump(
                 baseline_dir, rank=0, name=name, tensor=b_tensor, dims=dims
@@ -588,10 +620,10 @@ class TestEntrypointDimsOverride:
             ("logits", logits_b, logits_t),
         ]:
             _create_rank_dump(
-                baseline_dir, rank=0, name=name, tensor=b_tensor, dims="WRONG"
+                baseline_dir, rank=0, name=name, tensor=b_tensor, dims="x y"
             )
             _create_rank_dump(
-                target_dir, rank=0, name=name, tensor=t_tensor, dims="WRONG"
+                target_dir, rank=0, name=name, tensor=t_tensor, dims="x y"
             )
 
         args = _make_args(
@@ -619,7 +651,6 @@ class TestEntrypointDimsOverride:
         baseline_dir.mkdir()
         target_dir.mkdir()
 
-        # Baseline: TP=2, sharded on dim 1, but dumped with wrong dims
         b_chunks: list[torch.Tensor] = list(full_tensor.chunk(2, dim=1))
         for tp_rank in range(2):
             _create_rank_dump(
@@ -627,11 +658,10 @@ class TestEntrypointDimsOverride:
                 rank=tp_rank,
                 name="hidden",
                 tensor=b_chunks[tp_rank],
-                dims="WRONG",
+                dims="x y",
                 parallel_info={"tp_rank": tp_rank, "tp_size": 2},
             )
 
-        # Target: EP=2, sharded on dim 1, but dumped with wrong dims
         t_chunks: list[torch.Tensor] = list(target_full.chunk(2, dim=1))
         for ep_rank in range(2):
             _create_rank_dump(
@@ -639,7 +669,7 @@ class TestEntrypointDimsOverride:
                 rank=ep_rank,
                 name="hidden",
                 tensor=t_chunks[ep_rank],
-                dims="WRONG",
+                dims="x y",
                 parallel_info={"ep_rank": ep_rank, "ep_size": 2},
             )
 
@@ -669,26 +699,26 @@ class TestEntrypointDimsOverride:
         target_dir.mkdir()
 
         _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="WRONG"
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
         _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="WRONG"
+            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
         )
 
-        yaml_path: Path = tmp_path / "patch.yaml"
+        yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
             dims:
               - match: "hidden"
                 dims: "t h"
               - match: "hidden"
-                dims: "ALSO_WRONG"
+                dims: "a b"
         """))
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
             grouping="raw",
-            patch_config=str(yaml_path),
+            override_config=str(yaml_path),
         )
         records = _run_and_parse(args, capsys)
 
@@ -709,17 +739,17 @@ class TestEntrypointDimsOverride:
         target_dir.mkdir()
 
         _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="WRONG"
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
         _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="WRONG"
+            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
         )
 
-        yaml_path: Path = tmp_path / "patch.yaml"
+        yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
             dims:
               - match: "hidden"
-                dims: "YAML_WRONG"
+                dims: "a b"
         """))
 
         args = _make_args(
@@ -727,7 +757,7 @@ class TestEntrypointDimsOverride:
             target_dir / _FIXED_EXP_NAME,
             grouping="raw",
             override_dims=["hidden:t h"],
-            patch_config=str(yaml_path),
+            override_config=str(yaml_path),
         )
         records = _run_and_parse(args, capsys)
 
@@ -749,7 +779,6 @@ class TestEntrypointDimsOverride:
         baseline_dir.mkdir()
         target_dir.mkdir()
 
-        # Dump WITHOUT dims
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims=None
         )
@@ -829,7 +858,7 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         override_dims=[],
         override_baseline_dims=[],
         override_target_dims=[],
-        patch_config=None,
+        override_config=None,
     )
     defaults.update(overrides)
     return Namespace(**defaults)
@@ -839,7 +868,8 @@ def _run_and_parse(args: Namespace, capsys: pytest.CaptureFixture) -> list[AnyRe
     capsys.readouterr()
     run(args)
     return [
-        parse_record_json(line) for line in capsys.readouterr().out.strip().splitlines()
+        parse_record_json(line)
+        for line in capsys.readouterr().out.strip().splitlines()
     ]
 
 

@@ -1,8 +1,9 @@
-"""Dims override: patch dims strings in .pt metadata without re-running dumps."""
+"""Override config: replace metadata fields (e.g. dims) without re-running dumps."""
 
 from __future__ import annotations
 
 import re
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Optional
 
@@ -12,8 +13,8 @@ from pydantic import model_validator
 from sglang.srt.debug_utils.comparator.utils import Pair, _StrictBase
 
 
-class DimsOverrideRule(_StrictBase):
-    """Single dims override rule: regex match → replacement dims string(s)."""
+class MetaOverrideRule(_StrictBase):
+    """Single override rule: regex match → replacement dims string(s)."""
 
     match: str
     dims: Optional[str] = None
@@ -21,7 +22,7 @@ class DimsOverrideRule(_StrictBase):
     target_dims: Optional[str] = None
 
     @model_validator(mode="after")
-    def _validate_dims_fields(self) -> "DimsOverrideRule":
+    def _validate_dims_fields(self) -> "MetaOverrideRule":
         has_shared: bool = self.dims is not None
         has_per_side: bool = (
             self.baseline_dims is not None or self.target_dims is not None
@@ -47,18 +48,18 @@ class DimsOverrideRule(_StrictBase):
         return self.dims if self.dims is not None else self.target_dims
 
 
-class PatchConfig(_StrictBase):
-    """YAML top-level config for patching comparator behavior."""
+class OverrideConfig(_StrictBase):
+    """YAML top-level config for overriding comparator behavior."""
 
-    dims: list[DimsOverrideRule] = []
+    dims: list[MetaOverrideRule] = []
 
 
 class DimsOverrider:
     """Holds compiled override rules and applies first-match-wins replacement."""
 
-    def __init__(self, rules: list[DimsOverrideRule]) -> None:
-        self._rules: list[DimsOverrideRule] = rules
-        self._compiled: list[tuple[re.Pattern[str], DimsOverrideRule]] = [
+    def __init__(self, rules: list[MetaOverrideRule]) -> None:
+        self._rules: list[MetaOverrideRule] = rules
+        self._compiled: list[tuple[re.Pattern[str], MetaOverrideRule]] = [
             (re.compile(rule.match), rule) for rule in rules
         ]
 
@@ -73,24 +74,22 @@ class DimsOverrider:
         override_dims: list[str],
         override_baseline_dims: list[str],
         override_target_dims: list[str],
-        patch_config: Optional[Path],
+        override_config: Optional[Path],
     ) -> "DimsOverrider":
-        cli_rules: list[DimsOverrideRule] = []
+        cli_rules: list[MetaOverrideRule] = [
+            MetaOverrideRule(match=name, dims=dims_str)
+            for name, dims_str in _parse_cli_override_args(override_dims)
+        ]
 
-        for raw in override_dims:
-            name, dims_str = _parse_cli_override_arg(raw)
-            cli_rules.append(DimsOverrideRule(match=name, dims=dims_str))
+        cli_rules.extend(
+            _merge_per_side_cli_rules(
+                override_baseline_dims=override_baseline_dims,
+                override_target_dims=override_target_dims,
+            )
+        )
 
-        for raw in override_baseline_dims:
-            name, dims_str = _parse_cli_override_arg(raw)
-            cli_rules.append(DimsOverrideRule(match=name, baseline_dims=dims_str))
-
-        for raw in override_target_dims:
-            name, dims_str = _parse_cli_override_arg(raw)
-            cli_rules.append(DimsOverrideRule(match=name, target_dims=dims_str))
-
-        yaml_rules: list[DimsOverrideRule] = (
-            _load_yaml_rules(patch_config) if patch_config is not None else []
+        yaml_rules: list[MetaOverrideRule] = (
+            _load_yaml_rules(override_config) if override_config is not None else []
         )
 
         return cls(rules=cli_rules + yaml_rules)
@@ -128,15 +127,52 @@ def _parse_cli_override_arg(raw: str) -> tuple[str, str]:
     return parts[0].strip(), parts[1].strip()
 
 
-def _load_yaml_rules(path: Path) -> list[DimsOverrideRule]:
-    """Load dims override rules from a YAML patch config file."""
+def _parse_cli_override_args(raw_args: list[str]) -> list[tuple[str, str]]:
+    """Parse multiple CLI override arguments."""
+    return [_parse_cli_override_arg(raw) for raw in raw_args]
+
+
+def _merge_per_side_cli_rules(
+    *,
+    override_baseline_dims: list[str],
+    override_target_dims: list[str],
+) -> list[MetaOverrideRule]:
+    """Merge --override-baseline-dims and --override-target-dims into unified rules.
+
+    Same match pattern from both flags → one rule with both baseline_dims and target_dims.
+    Uses OrderedDict to preserve CLI order (first appearance wins).
+    """
+    merged: OrderedDict[str, dict[str, Optional[str]]] = OrderedDict()
+
+    for name, dims_str in _parse_cli_override_args(override_baseline_dims):
+        if name not in merged:
+            merged[name] = {"baseline_dims": None, "target_dims": None}
+        merged[name]["baseline_dims"] = dims_str
+
+    for name, dims_str in _parse_cli_override_args(override_target_dims):
+        if name not in merged:
+            merged[name] = {"baseline_dims": None, "target_dims": None}
+        merged[name]["target_dims"] = dims_str
+
+    return [
+        MetaOverrideRule(
+            match=name,
+            baseline_dims=sides["baseline_dims"],
+            target_dims=sides["target_dims"],
+        )
+        for name, sides in merged.items()
+    ]
+
+
+def _load_yaml_rules(path: Path) -> list[MetaOverrideRule]:
+    """Load override rules from a YAML config file."""
     with open(path) as f:
         raw_data: Any = yaml.safe_load(f)
 
     if raw_data is None:
         return []
 
-    config: PatchConfig = PatchConfig.model_validate(raw_data)
+    config: OverrideConfig = OverrideConfig.model_validate(raw_data)
     return config.dims
 
 

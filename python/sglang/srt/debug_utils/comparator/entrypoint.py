@@ -30,7 +30,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SummaryRecord,
     print_record,
 )
-from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
+from sglang.srt.debug_utils.comparator.override_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
@@ -90,7 +90,7 @@ def run(args: argparse.Namespace) -> None:
         override_dims=args.override_dims,
         override_baseline_dims=args.override_baseline_dims,
         override_target_dims=args.override_target_dims,
-        patch_config=Path(args.patch_config) if args.patch_config else None,
+        override_config=Path(args.override_config) if args.override_config else None,
     )
 
     comparison_records = _compare_bundle_pairs(
@@ -284,10 +284,10 @@ def _parse_args() -> argparse.Namespace:
         help="Override dims for target only: 'name:dims_string' (repeatable)",
     )
     parser.add_argument(
-        "--patch-config",
+        "--override-config",
         type=str,
         default=None,
-        help="Path to YAML patch config file with dims overrides",
+        help="Path to YAML override config file (dims overrides, etc.)",
     )
 
     return parser.parse_args()
