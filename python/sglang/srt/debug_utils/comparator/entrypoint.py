@@ -87,12 +87,10 @@ def run(args: argparse.Namespace) -> None:
     )
 
     dims_overrider: DimsOverrider = DimsOverrider.from_args_and_config(
-        override_dims=getattr(args, "override_dims", None) or [],
-        override_baseline_dims=getattr(args, "override_baseline_dims", None) or [],
-        override_target_dims=getattr(args, "override_target_dims", None) or [],
-        patch_config=(
-            Path(args.patch_config) if getattr(args, "patch_config", None) else None
-        ),
+        override_dims=args.override_dims,
+        override_baseline_dims=args.override_baseline_dims,
+        override_target_dims=args.override_target_dims,
+        patch_config=Path(args.patch_config) if args.patch_config else None,
     )
 
     comparison_records = _compare_bundle_pairs(

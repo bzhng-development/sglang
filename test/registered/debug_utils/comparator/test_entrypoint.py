@@ -1813,6 +1813,10 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         viz_bundle_details=False,
         viz_output_dir="/tmp/comparator_viz/",
         visualize_per_token=None,
+        override_dims=[],
+        override_baseline_dims=[],
+        override_target_dims=[],
+        patch_config=None,
     )
     defaults.update(overrides)
     return Namespace(**defaults)
