@@ -23,7 +23,11 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.parallel_info import (
 from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
     compute_unsharder_plan,
 )
-from sglang.srt.debug_utils.comparator.dims import DimSpec, parse_dims
+from sglang.srt.debug_utils.comparator.dims import (
+    DimSpec,
+    filter_squeeze_dims,
+    parse_dims,
+)
 from sglang.srt.debug_utils.comparator.utils import Pair
 
 
@@ -100,7 +104,7 @@ def compute_per_step_sub_plans(
     if dims_str is None:
         return []
 
-    dim_specs: list[DimSpec] = parse_dims(dims_str)
+    dim_specs: list[DimSpec] = filter_squeeze_dims(parse_dims(dims_str))
     parallel_infos = [normalize_parallel_info(meta) for meta in metas]
 
     unsharder_plans = compute_unsharder_plan(
