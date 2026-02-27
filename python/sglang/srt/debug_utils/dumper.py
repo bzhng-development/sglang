@@ -902,11 +902,7 @@ class _DefaultNoneDict(dict):
         return None
 
 
-_FILTER_GLOBALS: dict[str, Any] = {
-    "__builtins__": {},
-    "search": re.search,
-    "match": re.match,
-}
+_FILTER_BUILTINS: dict[str, Any] = {"search": re.search, "match": re.match}
 
 
 def _evaluate_filter(filter_expr: str, tags: dict[str, Any]) -> bool:
@@ -915,7 +911,9 @@ def _evaluate_filter(filter_expr: str, tags: dict[str, Any]) -> bool:
     Unknown tag keys resolve to None, so `layer_id is None` works when layer_id is absent.
     `re.search` and `re.match` are available as `search()` and `match()`.
     """
-    return bool(eval(filter_expr, _FILTER_GLOBALS, _DefaultNoneDict(tags)))
+    namespace = _DefaultNoneDict(tags)
+    namespace.update(_FILTER_BUILTINS)
+    return bool(eval(filter_expr, {"__builtins__": {}}, namespace))
 
 
 def _deepcopy_or_clone(x):
