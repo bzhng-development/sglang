@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from sglang.srt.debug_utils.comparator.aligner.axis_swapper import (
-    AxisSwapperPlan,
-    compute_axis_swapper_plan,
+from sglang.srt.debug_utils.comparator.aligner.axis_aligner import (
+    AxisAlignerPlan,
+    compute_axis_aligner_plan,
 )
 from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
     AlignerPerStepPlan,
@@ -38,7 +38,7 @@ def compute_aligner_plan(
     dims_str_pair: Pair[Optional[str]] = metas_pair.map(
         lambda metas: metas[0].get("dims") if metas else None
     )
-    axis_swapper_plan: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
+    axis_aligner_plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
         dims_str_pair=dims_str_pair
     )
 
@@ -54,7 +54,7 @@ def compute_aligner_plan(
             ),
         ),
         token_aligner_plan=token_aligner_plan,
-        axis_swapper_plan=axis_swapper_plan,
+        axis_aligner_plan=axis_aligner_plan,
     )
 
 

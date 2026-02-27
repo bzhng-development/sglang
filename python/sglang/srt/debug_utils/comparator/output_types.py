@@ -219,8 +219,15 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
         num_tokens: int = len(plan.token_aligner_plan.locators.x.steps)
         lines.append(f"  token_aligner: {num_tokens} tokens aligned")
 
-    if plan.axis_swapper_plan is not None:
-        lines.append(f"  axis_swapper: {plan.axis_swapper_plan.pattern}")
+    if plan.axis_aligner_plan is not None:
+        parts: list[str] = []
+        if plan.axis_aligner_plan.squeeze_x:
+            parts.append(f"squeeze_x={plan.axis_aligner_plan.squeeze_x}")
+        if plan.axis_aligner_plan.squeeze_y:
+            parts.append(f"squeeze_y={plan.axis_aligner_plan.squeeze_y}")
+        if plan.axis_aligner_plan.swap_pattern:
+            parts.append(f"swap={plan.axis_aligner_plan.swap_pattern}")
+        lines.append(f"  axis_aligner: {', '.join(parts)}")
 
     return "\n".join(lines)
 
