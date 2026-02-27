@@ -40,9 +40,7 @@ def _draw_diff_heatmap(
     axes: np.ndarray, row_idx: int, ctx: _PanelContext
 ) -> Optional[str]:
     assert ctx.diff is not None
-    _draw_heatmap_pair(
-        axes, row_idx=row_idx, t=ctx.diff, title=f"{ctx.name} Abs Diff"
-    )
+    _draw_heatmap_pair(axes, row_idx=row_idx, t=ctx.diff, title=f"{ctx.name} Abs Diff")
     return _format_stats("Abs Diff", ctx.diff)
 
 
@@ -56,9 +54,7 @@ def _draw_diff_histogram(
     return None
 
 
-def _draw_hist2d(
-    axes: np.ndarray, row_idx: int, ctx: _PanelContext
-) -> Optional[str]:
+def _draw_hist2d(axes: np.ndarray, row_idx: int, ctx: _PanelContext) -> Optional[str]:
     _draw_scatter_hist2d(
         axes,
         row_idx=row_idx,
@@ -69,9 +65,7 @@ def _draw_hist2d(
     return None
 
 
-def _draw_sampled(
-    axes: np.ndarray, row_idx: int, ctx: _PanelContext
-) -> Optional[str]:
+def _draw_sampled(axes: np.ndarray, row_idx: int, ctx: _PanelContext) -> Optional[str]:
     _draw_scatter_sampled(
         axes,
         row_idx=row_idx,

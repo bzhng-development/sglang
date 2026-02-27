@@ -10,7 +10,6 @@ import numpy as np
 import torch
 
 from sglang.srt.debug_utils.comparator.visualizer.preprocessing import (
-    _format_stats,
     _preprocess_tensor,
 )
 
@@ -44,7 +43,9 @@ def _build_panels() -> list[_Panel]:
     )
 
     return [
-        _Panel(label="Baseline Heatmap", requires_diff=False, draw=_draw_baseline_heatmap),
+        _Panel(
+            label="Baseline Heatmap", requires_diff=False, draw=_draw_baseline_heatmap
+        ),
         _Panel(label="Target Heatmap", requires_diff=False, draw=_draw_target_heatmap),
         _Panel(label="Abs Diff Heatmap", requires_diff=True, draw=_draw_diff_heatmap),
         _Panel(label="Abs Diff Hist", requires_diff=True, draw=_draw_diff_histogram),

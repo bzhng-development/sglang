@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 import torch
 
@@ -161,9 +161,7 @@ def _compare_bundle_pair_tensor_type(
         name=name,
         diff_threshold=diff_threshold,
     )
-    record: ComparisonRecord = ComparisonRecord(
-        **info.model_dump(), aligner_plan=plan
-    )
+    record: ComparisonRecord = ComparisonRecord(**info.model_dump(), aligner_plan=plan)
 
     if viz_output_dir is not None:
         _try_generate_viz(
