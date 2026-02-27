@@ -13,7 +13,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     ConfigRecord,
     GeneralWarning,
     NonTensorRecord,
-    ReplicatedMismatchWarning,
+    ReplicatedCheckResult,
     SkipRecord,
     SummaryRecord,
     WarningRecord,
@@ -910,7 +910,7 @@ class TestEntrypointGroupingLogical:
         assert comp.name == "hidden"
 
     def test_recompute_pseudo_mismatch_warning(self, tmp_path, capsys):
-        """Recompute pseudo-axis with differing original/recompute → ReplicatedMismatchWarning."""
+        """Recompute pseudo-axis with differing original/recompute → failed replicated_checks."""
         torch.manual_seed(42)
         tensor = torch.randn(4, 8)
         mismatched_tensor = tensor + torch.randn(4, 8) * 10.0
@@ -937,12 +937,13 @@ class TestEntrypointGroupingLogical:
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
 
-        recompute_warnings = [
-            w
-            for w in comparisons[0].warnings
-            if isinstance(w, ReplicatedMismatchWarning) and w.axis == "recompute_pseudo"
+        recompute_checks: list[ReplicatedCheckResult] = [
+            c
+            for c in comparisons[0].replicated_checks
+            if c.axis == "recompute_pseudo"
         ]
-        assert len(recompute_warnings) > 0
+        assert len(recompute_checks) > 0
+        assert any(not c.passed for c in recompute_checks)
 
     def test_tp_partial_reduction_unshard(self, tmp_path, capsys):
         """TP=2 with partial reduction: element-wise sum reconstructs full tensor."""
@@ -1159,7 +1160,7 @@ class TestEntrypointReplicatedAxis:
     """Test replicated-axis scenarios through the full entrypoint pipeline."""
 
     def test_replicated_axis_identical_replicas_passed(self, tmp_path, capsys):
-        """CP2 TP2, TP replicated and identical → passed, no warnings."""
+        """CP2 TP2, TP replicated and identical → passed, replicated_checks all passed."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1190,13 +1191,14 @@ class TestEntrypointReplicatedAxis:
         records = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.warnings == []
+        assert all(c.passed for c in comp.replicated_checks)
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.passed == 1
 
     def test_replicated_mismatch_fails(self, tmp_path, capsys):
-        """CP2 TP2, TP replicas differ (> atol) → failed with warnings."""
+        """CP2 TP2, TP replicas differ (> atol) → failed with replicated_checks."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1229,14 +1231,14 @@ class TestEntrypointReplicatedAxis:
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].category == "failed"
-        assert len(comparisons[0].warnings) > 0
+        assert any(not c.passed for c in comparisons[0].replicated_checks)
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.failed == 1
 
-    def test_summary_counts_failed_from_warnings_only(self, tmp_path, capsys):
-        """Diff itself passes but TP replicas differ → summary.failed=1 from warnings."""
+    def test_summary_counts_failed_from_replicated_checks_only(self, tmp_path, capsys):
+        """Diff itself passes but TP replicas differ → summary.failed=1 from replicated_checks."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1278,7 +1280,7 @@ class TestEntrypointReplicatedAxis:
         comp = comparisons[0]
         assert comp.diff is not None
         assert comp.diff.passed
-        assert len(comp.warnings) > 0
+        assert any(not c.passed for c in comp.replicated_checks)
         assert comp.category == "failed"
 
         summary = records[-1]
