@@ -77,6 +77,12 @@ def calc_per_token_rel_diff(
     """
     x, y = x.double(), y.double()
     other_dims: list[int] = [d for d in range(x.dim()) if d != seq_dim]
-    denominator: torch.Tensor = (x * x + y * y).sum(dim=other_dims)
-    sim: torch.Tensor = 2 * (x * y).sum(dim=other_dims) / (denominator + 1e-10)
+
+    if other_dims:
+        denominator: torch.Tensor = (x * x + y * y).sum(dim=other_dims)
+        sim: torch.Tensor = 2 * (x * y).sum(dim=other_dims) / (denominator + 1e-10)
+    else:
+        denominator = x * x + y * y
+        sim = 2 * (x * y) / (denominator + 1e-10)
+
     return (1 - sim).float()
