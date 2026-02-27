@@ -1523,7 +1523,7 @@ class TestEntrypointVisualize:
             target_path,
             grouping="raw",
             filter="tensor_a",
-            visualize_bundle_details=True,
+            viz_bundle_details=True,
             viz_output_dir=str(viz_dir),
             viz_max_tensors=10,
         )
@@ -1545,7 +1545,7 @@ class TestEntrypointVisualize:
             baseline_path,
             target_path,
             grouping="raw",
-            visualize_bundle_details=True,
+            viz_bundle_details=True,
             viz_output_dir=str(viz_dir),
             viz_max_tensors=1,
         )
@@ -1562,7 +1562,7 @@ class TestEntrypointVisualize:
             baseline_path,
             target_path,
             grouping="raw",
-            visualize_bundle_details=False,
+            viz_bundle_details=False,
             viz_output_dir=str(viz_dir),
             viz_max_tensors=10,
         )
@@ -1695,7 +1695,7 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         filter=None,
         output_format="json",
         grouping="logical",
-        visualize_bundle_details=False,
+        viz_bundle_details=False,
         viz_output_dir="/tmp/comparator_viz/",
         viz_max_tensors=10,
     )

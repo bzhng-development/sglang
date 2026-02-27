@@ -77,7 +77,7 @@ def run(args: argparse.Namespace) -> None:
         ),
     )
 
-    visualize: bool = getattr(args, "visualize_bundle_details", False)
+    visualize: bool = getattr(args, "viz_bundle_details", False)
 
     comparison_results = _compare_bundle_pairs(
         bundle_info_pairs=bundle_info_pairs,
@@ -268,7 +268,7 @@ def _parse_args() -> argparse.Namespace:
         help="Tokenizer path for decoding input_ids (auto-discovered from dump metadata if not set)",
     )
     parser.add_argument(
-        "--visualize-bundle-details",
+        "--viz-bundle-details",
         action="store_true",
         default=False,
         help="Generate comparison heatmap/histogram PNG for each compared tensor",
