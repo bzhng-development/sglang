@@ -296,7 +296,9 @@ def _format_stats(name: str, t: torch.Tensor) -> str:
     )
 
 
-def _safe_hist(ax: object, data: np.ndarray, *, bins: int = 100, **kwargs: object) -> None:
+def _safe_hist(
+    ax: object, data: np.ndarray, *, bins: int = 100, **kwargs: object
+) -> None:
     data_f64: np.ndarray = data.astype(np.float64)
     try:
         ax.hist(data_f64, bins=bins, **kwargs)
