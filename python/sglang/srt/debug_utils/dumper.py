@@ -98,12 +98,11 @@ class _BaseConfig(ABC):
         if not pairs:
             return {}
 
-        merged: list[str] = cls._merge_quoted_tokens(pairs)
         missing = object()
         defaults = {f.name: f.default for f in fields(cls)}
         result: dict = {}
 
-        for pair in merged:
+        for pair in pairs:
             key, sep, value = pair.partition("=")
             if not sep:
                 raise ValueError(f"Invalid config pair (missing '='): {pair!r}")
@@ -117,50 +116,6 @@ class _BaseConfig(ABC):
             except (ValueError, TypeError) as exc:
                 field_type = type(default).__name__
                 raise TypeError(f"{key}: expected {field_type}, got {value!r}") from exc
-
-        return result
-
-    @staticmethod
-    def _merge_quoted_tokens(tokens: list[str]) -> list[str]:
-        """Rejoin tokens that were split by the shell but belong to a quoted value.
-
-        Supports ``key='value with spaces'`` and ``key="value with spaces"``.
-        When argparse ``nargs="*"`` receives shell-split tokens like
-        ``["filter='layer_id", "is", "None'"]``, this method merges them back
-        into ``["filter=layer_id is None"]``.
-        """
-        result: list[str] = []
-        accumulator: list[str] = []
-        quote_char: Optional[str] = None
-
-        for token in tokens:
-            if quote_char is None:
-                eq_idx: int = token.find("=")
-                if eq_idx == -1:
-                    result.append(token)
-                    continue
-                value_part: str = token[eq_idx + 1 :]
-                if value_part and value_part[0] in ("'", '"'):
-                    quote_char = value_part[0]
-                    stripped: str = value_part[1:]
-                    if stripped.endswith(quote_char):
-                        result.append(token[: eq_idx + 1] + stripped[:-1])
-                        quote_char = None
-                    else:
-                        accumulator = [token[: eq_idx + 1] + stripped]
-                else:
-                    result.append(token)
-            else:
-                if token.endswith(quote_char):
-                    accumulator.append(token[:-1])
-                    result.append(" ".join(accumulator))
-                    accumulator = []
-                    quote_char = None
-                else:
-                    accumulator.append(token)
-
-        if accumulator:
-            result.append(" ".join(accumulator))
 
         return result
 
