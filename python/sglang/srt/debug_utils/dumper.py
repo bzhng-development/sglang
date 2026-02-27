@@ -623,11 +623,13 @@ class _NonIntrusiveDumper:
     def _detect_module_ctx(
         cls, module_name: str, module: "torch.nn.Module"
     ) -> Optional[dict]:
-        if cls._LAYER_NAME_RE.fullmatch(module_name):
+        match = cls._LAYER_NAME_RE.fullmatch(module_name)
+        if match:
             for plugin in _plugins:
                 layer_id = plugin.detect_layer_id(module)
                 if layer_id is not None:
                     return {"layer_id": layer_id}
+            return {"layer_id": int(match.group(1))}
         return None
 
     def _register_ctx_hooks(self, module: "torch.nn.Module", *, ctx: dict) -> None:
