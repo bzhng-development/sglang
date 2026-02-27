@@ -945,7 +945,7 @@ class TestEntrypointGroupingLogical:
         assert len(recompute_warnings) > 0
 
 
-class TestEntrypointAxisSwapper:
+class TestEntrypointAxisAligner:
     """Test cross-framework dim reordering through the full entrypoint pipeline."""
 
     def test_axis_swap_different_dim_order(self, tmp_path, capsys):
