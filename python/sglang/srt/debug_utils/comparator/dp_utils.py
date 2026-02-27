@@ -36,9 +36,7 @@ def filter_to_non_empty_dp_rank(items: list[ValueWithMeta]) -> list[ValueWithMet
     if dp_size <= 1:
         return items
 
-    has_any_tensor: bool = any(
-        isinstance(item.value, torch.Tensor) for item in items
-    )
+    has_any_tensor: bool = any(isinstance(item.value, torch.Tensor) for item in items)
     if not has_any_tensor:
         return items
 

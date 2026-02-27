@@ -121,15 +121,11 @@ class TestExtractDpInfo:
 
 class TestGroupHasData:
     def test_non_empty_tensor(self) -> None:
-        item: ValueWithMeta = _make_item(
-            value=torch.tensor([1, 2, 3]), meta={}
-        )
+        item: ValueWithMeta = _make_item(value=torch.tensor([1, 2, 3]), meta={})
         assert _group_has_data([item]) is True
 
     def test_empty_tensor(self) -> None:
-        item: ValueWithMeta = _make_item(
-            value=torch.tensor([]), meta={}
-        )
+        item: ValueWithMeta = _make_item(value=torch.tensor([]), meta={})
         assert _group_has_data([item]) is False
 
     def test_non_tensor_value(self) -> None:
@@ -233,7 +229,9 @@ class TestFilterToNonEmptyDpRank:
             ),
         ]
 
-        with pytest.raises(AssertionError, match="Expected exactly 1 non-empty dp_rank"):
+        with pytest.raises(
+            AssertionError, match="Expected exactly 1 non-empty dp_rank"
+        ):
             filter_to_non_empty_dp_rank(items)
 
     def test_dp2_with_tp2_filters_correctly(self) -> None:
