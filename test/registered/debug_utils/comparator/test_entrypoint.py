@@ -222,7 +222,7 @@ class TestEntrypointGroupingRaw:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="logical",
+            grouping="raw",
             diff_threshold=1e-3,
         )
 
@@ -266,7 +266,7 @@ class TestEntrypointGroupingRaw:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="logical",
+            grouping="raw",
             diff_threshold=0.01,
         )
 
@@ -344,7 +344,7 @@ class TestEntrypointGroupingRaw:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="logical",
+            grouping="raw",
         )
 
         records = _run_and_parse(args, capsys)
@@ -1235,8 +1235,8 @@ class TestEntrypointReplicatedAxis:
         assert isinstance(summary, SummaryRecord)
         assert summary.failed == 1
 
-    def test_summary_counts_with_replicated_mismatch_warnings(self, tmp_path, capsys):
-        """Diff passes and replicated_mismatch warnings are informational (not failures)."""
+    def test_summary_counts_failed_from_warnings_only(self, tmp_path, capsys):
+        """Diff itself passes but TP replicas differ → summary.failed=1 from warnings."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1279,13 +1279,12 @@ class TestEntrypointReplicatedAxis:
         assert comp.diff is not None
         assert comp.diff.passed
         assert len(comp.warnings) > 0
-        assert all(isinstance(w, ReplicatedMismatchWarning) for w in comp.warnings)
-        assert comp.category == "passed"
+        assert comp.category == "failed"
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
-        assert summary.passed == 1
-        assert summary.failed == 0
+        assert summary.failed == 1
+        assert summary.passed == 0
 
 
 class TestEntrypointAlignment:
@@ -1576,7 +1575,7 @@ class TestEntrypointNonTensorValues:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="logical",
+            grouping="raw",
         )
         records = _run_and_parse(args, capsys)
 
@@ -1658,7 +1657,7 @@ class TestEntrypointVisualize:
         args = _make_args(
             baseline_path,
             target_path,
-            grouping="logical",
+            grouping="raw",
             filter="tensor_a",
             viz_bundle_details=True,
             viz_output_dir=str(viz_dir),
@@ -1678,7 +1677,7 @@ class TestEntrypointVisualize:
         args = _make_args(
             baseline_path,
             target_path,
-            grouping="logical",
+            grouping="raw",
             viz_bundle_details=False,
             viz_output_dir=str(viz_dir),
         )
@@ -2275,7 +2274,7 @@ class TestEntrypointPerTokenVisualization:
         args = _make_args(
             baseline_path,
             target_path,
-            grouping="logical",
+            grouping="raw",
             visualize_per_token=str(output_png),
         )
         records = _run_and_parse(args, capsys)
