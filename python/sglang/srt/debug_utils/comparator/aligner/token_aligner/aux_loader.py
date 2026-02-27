@@ -28,7 +28,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     ParallelAxis,
     TokenLayout,
     apply_dim_names,
-    parse_dims,
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.output_types import GeneralWarning
@@ -231,9 +230,7 @@ def _load_and_align_aux_tensor(
     if sub_plans:
         dims_str: Optional[str] = metas[0].get("dims")
         if dims_str is not None:
-            dim_names: list[str] = resolve_dim_names(
-                parse_dims(dims_str)
-            )
+            dim_names: list[str] = resolve_dim_names(dims_str)
             tensors = [apply_dim_names(t, dim_names) for t in tensors]
 
         result = execute_sub_plans(tensors=tensors, plans=sub_plans)

@@ -26,24 +26,6 @@ class AxisAlignerPlan(_FrozenBase):
 # --- planner ---
 
 
-def _extract_squeeze_and_names(
-    dim_specs: list[DimSpec],
-) -> tuple[list[str], list[str]]:
-    """Split dim_specs into (singleton_names_for_squeeze, non_squeeze_dim_names)."""
-    squeeze_names: list[str] = []
-    dim_names: list[str] = []
-    sq_idx: int = 0
-
-    for spec in dim_specs:
-        if is_squeeze_dim(spec):
-            squeeze_names.append(make_singleton_name(sq_idx))
-            sq_idx += 1
-        else:
-            dim_names.append(spec.name)
-
-    return squeeze_names, dim_names
-
-
 def compute_axis_aligner_plan(
     dims_str_pair: Pair[Optional[str]],
 ) -> Optional[AxisAlignerPlan]:
@@ -63,6 +45,24 @@ def compute_axis_aligner_plan(
         squeeze_y=squeeze_y,
         swap_pattern=swap_pattern,
     )
+
+
+def _extract_squeeze_and_names(
+    dim_specs: list[DimSpec],
+) -> tuple[list[str], list[str]]:
+    """Split dim_specs into (singleton_names_for_squeeze, non_squeeze_dim_names)."""
+    squeeze_names: list[str] = []
+    dim_names: list[str] = []
+    sq_idx: int = 0
+
+    for spec in dim_specs:
+        if is_squeeze_dim(spec):
+            squeeze_names.append(make_singleton_name(sq_idx))
+            sq_idx += 1
+        else:
+            dim_names.append(spec.name)
+
+    return squeeze_names, dim_names
 
 
 def _compute_swap_pattern(

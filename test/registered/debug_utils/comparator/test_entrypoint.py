@@ -1018,6 +1018,41 @@ class TestEntrypointAxisAligner:
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
+    def test_squeeze_dim_one_side(self, tmp_path, capsys):
+        """SGLang dims 't h' vs Megatron dims 't 1 h': axis aligner squeezes the singleton dim."""
+        torch.manual_seed(42)
+        full_tensor = torch.randn(4, 8)
+
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        _create_rank_dump(
+            baseline_dir,
+            rank=0,
+            name="hidden",
+            tensor=full_tensor,
+            dims="t h",
+        )
+        _create_rank_dump(
+            target_dir,
+            rank=0,
+            name="hidden",
+            tensor=full_tensor.unsqueeze(1),
+            dims="t 1 h",
+        )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            diff_threshold=1e-3,
+        )
+
+        records = _run_and_parse(args, capsys)
+        comp = _assert_single_comparison_passed(records)
+        assert comp.name == "hidden"
+        assert comp.baseline.shape == [4, 8]
+        assert comp.target.shape == [4, 8]
+
 
 class TestEntrypointReplicatedAxis:
     """Test replicated-axis scenarios through the full entrypoint pipeline."""

@@ -220,16 +220,13 @@ class TestStripDimNames:
 
 class TestResolveDimNames:
     def test_no_squeeze(self) -> None:
-        specs: list[DimSpec] = parse_dims("t h d")
-        assert resolve_dim_names(specs) == ["t", "h", "d"]
+        assert resolve_dim_names("t h d") == ["t", "h", "d"]
 
     def test_single_squeeze(self) -> None:
-        specs: list[DimSpec] = parse_dims("t 1 h")
-        assert resolve_dim_names(specs) == ["t", "singleton0", "h"]
+        assert resolve_dim_names("t 1 h") == ["t", "singleton0", "h"]
 
     def test_multiple_squeeze(self) -> None:
-        specs: list[DimSpec] = parse_dims("1 t 1 h")
-        assert resolve_dim_names(specs) == [
+        assert resolve_dim_names("1 t 1 h") == [
             "singleton0",
             "t",
             "singleton1",

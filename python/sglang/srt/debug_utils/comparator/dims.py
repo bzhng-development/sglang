@@ -107,6 +107,21 @@ def parse_dim_names(dims_str: str) -> list[str]:
     return [spec.name for spec in parse_dims(dims_str)]
 
 
+def resolve_dim_names(dims_str: str) -> list[str]:
+    """Like parse_dim_names, but replaces '1' with 'singleton0', 'singleton1', ..."""
+    dim_names: list[str] = []
+    sq_idx: int = 0
+
+    for spec in parse_dims(dims_str):
+        if is_squeeze_dim(spec):
+            dim_names.append(make_singleton_name(sq_idx))
+            sq_idx += 1
+        else:
+            dim_names.append(spec.name)
+
+    return dim_names
+
+
 def is_squeeze_dim(spec: DimSpec) -> bool:
     return spec.name == SQUEEZE_DIM_NAME
 
@@ -115,27 +130,15 @@ def filter_squeeze_dims(dim_specs: list[DimSpec]) -> list[DimSpec]:
     return [s for s in dim_specs if not is_squeeze_dim(s)]
 
 
+_SINGLETON_PREFIX: str = "singleton"
+
+
 def make_singleton_name(index: int) -> str:
-    return f"singleton{index}"
+    return f"{_SINGLETON_PREFIX}{index}"
 
 
 def is_singleton_name(name: str) -> bool:
-    return name.startswith("singleton") and name[9:].isdigit()
-
-
-def resolve_dim_names(dim_specs: list[DimSpec]) -> list[str]:
-    """Convert DimSpec list to dim names, replacing '1' with 'singleton0', 'singleton1', ..."""
-    dim_names: list[str] = []
-    sq_idx: int = 0
-
-    for spec in dim_specs:
-        if is_squeeze_dim(spec):
-            dim_names.append(make_singleton_name(sq_idx))
-            sq_idx += 1
-        else:
-            dim_names.append(spec.name)
-
-    return dim_names
+    return name.startswith(_SINGLETON_PREFIX) and name[len(_SINGLETON_PREFIX) :].isdigit()
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
