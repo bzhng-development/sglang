@@ -253,9 +253,7 @@ class TestDimsOverrider:
 
     def test_multiple_metas(self) -> None:
         """All metas in the list are updated when a rule matches."""
-        overrider = DimsOverrider(
-            rules=[MetaOverrideRule(match="hidden", dims="NEW")]
-        )
+        overrider = DimsOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"dims": "a"}, {"dims": "b"}],
@@ -267,9 +265,7 @@ class TestDimsOverrider:
 
     def test_meta_without_dims_key(self) -> None:
         """Override adds 'dims' even if original meta lacks it."""
-        overrider = DimsOverrider(
-            rules=[MetaOverrideRule(match="hidden", dims="NEW")]
-        )
+        overrider = DimsOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"other": "val"}],
@@ -447,9 +443,7 @@ class TestEntrypointDimsOverride:
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="t h"
-        )
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="t h")
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
@@ -478,9 +472,7 @@ class TestEntrypointDimsOverride:
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims="t h"
         )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
-        )
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
@@ -509,9 +501,7 @@ class TestEntrypointDimsOverride:
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
-        )
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
@@ -547,9 +537,7 @@ class TestEntrypointDimsOverride:
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims="t h"
         )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="t h"
-        )
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="t h")
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
@@ -585,9 +573,7 @@ class TestEntrypointDimsOverride:
             _create_rank_dump(
                 baseline_dir, rank=0, name=name, tensor=b_tensor, dims=dims
             )
-            _create_rank_dump(
-                target_dir, rank=0, name=name, tensor=t_tensor, dims=dims
-            )
+            _create_rank_dump(target_dir, rank=0, name=name, tensor=t_tensor, dims=dims)
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
@@ -638,9 +624,7 @@ class TestEntrypointDimsOverride:
         assert len(comparisons) == 2
         assert all(c.diff is not None and c.diff.passed for c in comparisons)
 
-    def test_per_side_dims_different_parallelism(
-        self, tmp_path: Path, capsys
-    ) -> None:
+    def test_per_side_dims_different_parallelism(self, tmp_path: Path, capsys) -> None:
         """baseline TP-sharded, target EP-sharded — per-side override fixes both."""
         torch.manual_seed(42)
         full_tensor: torch.Tensor = torch.randn(10, 8)
@@ -701,9 +685,7 @@ class TestEntrypointDimsOverride:
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
-        )
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
@@ -741,9 +723,7 @@ class TestEntrypointDimsOverride:
         _create_rank_dump(
             baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
         )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims="x y"
-        )
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
@@ -766,9 +746,7 @@ class TestEntrypointDimsOverride:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.passed
 
-    def test_override_injects_dims_when_absent(
-        self, tmp_path: Path, capsys
-    ) -> None:
+    def test_override_injects_dims_when_absent(self, tmp_path: Path, capsys) -> None:
         """Override injects dims into meta even when dump had no dims annotation."""
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(10, 8)
@@ -779,12 +757,8 @@ class TestEntrypointDimsOverride:
         baseline_dir.mkdir()
         target_dir.mkdir()
 
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims=None
-        )
-        _create_rank_dump(
-            target_dir, rank=0, name="hidden", tensor=target, dims=None
-        )
+        _create_rank_dump(baseline_dir, rank=0, name="hidden", tensor=tensor, dims=None)
+        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims=None)
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
@@ -799,9 +773,7 @@ class TestEntrypointDimsOverride:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.passed
 
-    def test_non_tensor_unaffected_by_override(
-        self, tmp_path: Path, capsys
-    ) -> None:
+    def test_non_tensor_unaffected_by_override(self, tmp_path: Path, capsys) -> None:
         """Non-tensor values pass through without error even with active override."""
         baseline_dir: Path = tmp_path / "baseline"
         target_dir: Path = tmp_path / "target"
@@ -829,9 +801,7 @@ class TestEntrypointDimsOverride:
         assert len(non_tensors) == 1
         assert non_tensors[0].values_equal
 
-        summary: SummaryRecord = [
-            r for r in records if isinstance(r, SummaryRecord)
-        ][0]
+        summary: SummaryRecord = [r for r in records if isinstance(r, SummaryRecord)][0]
         assert summary.failed == 0
 
 
@@ -868,8 +838,7 @@ def _run_and_parse(args: Namespace, capsys: pytest.CaptureFixture) -> list[AnyRe
     capsys.readouterr()
     run(args)
     return [
-        parse_record_json(line)
-        for line in capsys.readouterr().out.strip().splitlines()
+        parse_record_json(line) for line in capsys.readouterr().out.strip().splitlines()
     ]
 
 
