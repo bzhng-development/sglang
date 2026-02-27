@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional
 
@@ -193,7 +194,8 @@ def _consume_comparison_results(
             if viz_count >= viz_max_tensors:
                 print(
                     f"[visualizer] Skipping visualization for {record.name}: "
-                    f"reached max ({viz_max_tensors})"
+                    f"reached max ({viz_max_tensors})",
+                    file=sys.stderr,
                 )
                 continue
 
@@ -212,9 +214,12 @@ def _consume_comparison_results(
                     output_path=output_path,
                 )
                 viz_count += 1
-                print(f"[visualizer] Saved: {output_path}")
+                print(f"[visualizer] Saved: {output_path}", file=sys.stderr)
             except Exception as exc:
-                print(f"[visualizer] Failed for {record.name}: {exc}")
+                print(
+                    f"[visualizer] Failed for {record.name}: {exc}",
+                    file=sys.stderr,
+                )
 
     print_record(
         SummaryRecord(total=sum(counts.values()), **counts),
@@ -222,7 +227,10 @@ def _consume_comparison_results(
     )
 
     if visualize and viz_count > 0:
-        print(f"[visualizer] Generated {viz_count} PNG(s) in {viz_output_dir}")
+        print(
+            f"[visualizer] Generated {viz_count} PNG(s) in {viz_output_dir}",
+            file=sys.stderr,
+        )
 
 
 def _sanitize_filename(name: str) -> str:
