@@ -6,17 +6,22 @@ import torch
 from sglang.srt.debug_utils.comparator.dims import (
     BATCH_DIM_NAME,
     SEQ_DIM_NAME,
+    SQUEEZE_DIM_NAME,
     TOKEN_DIM_NAME,
     DimSpec,
     Ordering,
     ParallelAxis,
     Reduction,
     apply_dim_names,
+    filter_squeeze_dims,
     find_dim_index,
+    is_squeeze_dim,
+    make_singleton_name,
     parse_dim,
     parse_dim_names,
     parse_dims,
     resolve_dim_by_name,
+    resolve_dim_names_with_singletons,
     strip_dim_names,
 )
 from sglang.test.ci.ci_register import register_cpu_ci
@@ -72,6 +77,13 @@ class TestParseDim:
         with pytest.raises(ValueError, match="Multiple reduction"):
             parse_dim("h(tp,partial,partial)")
 
+    def test_squeeze_dim(self) -> None:
+        assert parse_dim("1") == DimSpec(name="1")
+
+    def test_squeeze_dim_rejects_modifiers(self) -> None:
+        with pytest.raises(ValueError, match="does not support modifiers"):
+            parse_dim("1(tp)")
+
 
 class TestParseDims:
     def test_multi_dims(self) -> None:
@@ -104,6 +116,19 @@ class TestParseDims:
     def test_duplicate_name_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate"):
             parse_dims("h h")
+
+    def test_with_squeeze_dims(self) -> None:
+        result: list[DimSpec] = parse_dims("t 1 h")
+        assert len(result) == 3
+        assert result[0] == DimSpec(name="t")
+        assert result[1] == DimSpec(name="1")
+        assert result[2] == DimSpec(name="h")
+
+    def test_multiple_squeeze_dims_no_duplicate_error(self) -> None:
+        result: list[DimSpec] = parse_dims("t 1 h 1 d")
+        assert len(result) == 5
+        assert result[1] == DimSpec(name="1")
+        assert result[3] == DimSpec(name="1")
 
 
 class TestParseDimNames:
@@ -191,6 +216,57 @@ class TestStripDimNames:
         tensor: torch.Tensor = torch.randn(2, 3)
         stripped: torch.Tensor = strip_dim_names(tensor)
         assert stripped.names == (None, None)
+
+
+class TestResolveDimNamesWithSingletons:
+    def test_no_squeeze(self) -> None:
+        specs: list[DimSpec] = parse_dims("t h d")
+        assert resolve_dim_names_with_singletons(specs) == ["t", "h", "d"]
+
+    def test_single_squeeze(self) -> None:
+        specs: list[DimSpec] = parse_dims("t 1 h")
+        assert resolve_dim_names_with_singletons(specs) == ["t", "singleton0", "h"]
+
+    def test_multiple_squeeze(self) -> None:
+        specs: list[DimSpec] = parse_dims("1 t 1 h")
+        assert resolve_dim_names_with_singletons(specs) == [
+            "singleton0",
+            "t",
+            "singleton1",
+            "h",
+        ]
+
+
+class TestFilterSqueezeDims:
+    def test_no_squeeze(self) -> None:
+        specs: list[DimSpec] = parse_dims("t h d")
+        assert filter_squeeze_dims(specs) == specs
+
+    def test_with_squeeze(self) -> None:
+        specs: list[DimSpec] = parse_dims("t 1 h")
+        filtered: list[DimSpec] = filter_squeeze_dims(specs)
+        assert len(filtered) == 2
+        assert filtered[0].name == "t"
+        assert filtered[1].name == "h"
+
+    def test_all_squeeze(self) -> None:
+        specs: list[DimSpec] = parse_dims("1 1")
+        assert filter_squeeze_dims(specs) == []
+
+
+class TestIsSqueezeDim:
+    def test_squeeze(self) -> None:
+        assert is_squeeze_dim(DimSpec(name=SQUEEZE_DIM_NAME)) is True
+
+    def test_non_squeeze(self) -> None:
+        assert is_squeeze_dim(DimSpec(name="t")) is False
+
+
+class TestMakeSingletonName:
+    def test_indices(self) -> None:
+        assert make_singleton_name(0) == "singleton0"
+        assert make_singleton_name(1) == "singleton1"
+        assert make_singleton_name(99) == "singleton99"
 
 
 if __name__ == "__main__":
