@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Any, Iterator, Optional
+from typing import Any, Iterator, Optional, Union
 
 import polars as pl
 
@@ -23,8 +23,10 @@ from sglang.srt.debug_utils.comparator.bundle_matcher import (
 )
 from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.output_types import (
-    AnyComparisonRecord,
+    ComparisonRecord,
     ConfigRecord,
+    NonTensorRecord,
+    SkipRecord,
     SummaryRecord,
     print_record,
 )
@@ -76,7 +78,7 @@ def run(args: argparse.Namespace) -> None:
         Path(args.viz_output_dir) if args.viz_bundle_details else None
     )
 
-    comparison_results: Iterator[AnyComparisonRecord] = _compare_bundle_pairs(
+    comparison_records = _compare_bundle_pairs(
         bundle_info_pairs=bundle_info_pairs,
         baseline_path=Path(args.baseline_path),
         target_path=Path(args.target_path),
@@ -85,9 +87,8 @@ def run(args: argparse.Namespace) -> None:
         thd_seq_lens_by_step_pair=ta_result.thd_seq_lens_by_step_pair,
         viz_output_dir=viz_output_dir,
     )
-    _consume_comparison_results(
-        comparison_results=comparison_results,
-        output_format=args.output_format,
+    _consume_comparison_records(
+        comparison_records=comparison_records, output_format=args.output_format
     )
 
 
@@ -143,7 +144,7 @@ def _compare_bundle_pairs(
     diff_threshold: float,
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
     viz_output_dir: Optional[Path] = None,
-) -> Iterator[AnyComparisonRecord]:
+) -> Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]]:
     for bundle_info_pair in bundle_info_pairs:
         if not bundle_info_pair.y:
             continue
@@ -164,14 +165,14 @@ def _compare_bundle_pairs(
         )
 
 
-def _consume_comparison_results(
+def _consume_comparison_records(
     *,
-    comparison_results: Iterator[AnyComparisonRecord],
+    comparison_records: Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]],
     output_format: str,
 ) -> None:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
 
-    for record in comparison_results:
+    for record in comparison_records:
         counts[record.category] += 1
         print_record(record, output_format=output_format)
 

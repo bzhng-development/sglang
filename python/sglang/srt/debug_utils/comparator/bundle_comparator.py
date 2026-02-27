@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import torch
 
@@ -21,7 +21,6 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
 )
 from sglang.srt.debug_utils.comparator.dims import apply_dim_names, parse_dim_names
 from sglang.srt.debug_utils.comparator.output_types import (
-    AnyComparisonRecord,
     ComparisonRecord,
     NonTensorRecord,
     SkipRecord,
@@ -48,9 +47,9 @@ def compare_bundle_pair(
         x=None, y=None
     ),
     viz_output_dir: Optional[Path] = None,
-) -> AnyComparisonRecord:
+) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     with warning_sink.context() as collected_warnings:
-        record: AnyComparisonRecord = _compare_bundle_pair_inner(
+        result = _compare_bundle_pair_inner(
             name=name,
             filenames_pair=filenames_pair,
             baseline_path=baseline_path,
@@ -61,7 +60,7 @@ def compare_bundle_pair(
             viz_output_dir=viz_output_dir,
         )
 
-    return record.model_copy(update={"warnings": collected_warnings})
+    return result.model_copy(update={"warnings": collected_warnings})
 
 
 def _compare_bundle_pair_inner(
@@ -76,7 +75,7 @@ def _compare_bundle_pair_inner(
         x=None, y=None
     ),
     viz_output_dir: Optional[Path] = None,
-) -> AnyComparisonRecord:
+) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     # 1. Load all successfully loaded values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
         x=_load_all_values(filenames=filenames_pair.x, base_path=baseline_path),
@@ -115,7 +114,7 @@ def _compare_bundle_pair_tensor_type(
         x=None, y=None
     ),
     viz_output_dir: Optional[Path] = None,
-) -> AnyComparisonRecord:
+) -> Union[ComparisonRecord, SkipRecord]:
     if not valid_pair.x or not valid_pair.y:
         reason = "baseline_load_failed" if not valid_pair.x else "target_load_failed"
         return SkipRecord(name=name, reason=reason)
@@ -161,7 +160,7 @@ def _compare_bundle_pair_tensor_type(
         name=name,
         diff_threshold=diff_threshold,
     )
-    record: ComparisonRecord = ComparisonRecord(**info.model_dump(), aligner_plan=plan)
+    record = ComparisonRecord(**info.model_dump(), aligner_plan=plan)
 
     if viz_output_dir is not None:
         _try_generate_viz(

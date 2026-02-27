@@ -225,9 +225,6 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
     return "\n".join(lines)
 
 
-AnyComparisonRecord = Union[ComparisonRecord, SkipRecord, NonTensorRecord]
-
-
 AnyRecord = Annotated[
     Union[
         ConfigRecord,
