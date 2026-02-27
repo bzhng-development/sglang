@@ -2173,6 +2173,7 @@ class TestEntrypointPerTokenVisualization:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.per_token_rel_diff is None
 
+
 class TestEntrypointThdCpZigzag:
     """E2E entrypoint tests for THD CP zigzag format.
 
