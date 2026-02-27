@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional, Union
 
@@ -203,7 +204,7 @@ def _consume_comparison_records(
             output_path=visualize_per_token,
         )
         if result is not None:
-            print(f"Per-token heatmap saved to {result}")
+            print(f"Per-token heatmap saved to {result}", file=sys.stderr)
 
 
 def _parse_args() -> argparse.Namespace:
