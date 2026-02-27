@@ -159,6 +159,36 @@ def _load_step_data(
     return result, thd_global_seq_lens
 
 
+def _filter_to_first_pp_stage(
+    loaded: list[ValueWithMeta], *, name: str
+) -> list[ValueWithMeta]:
+    """If loaded items span multiple PP ranks, keep only pp_rank=0.
+
+    Aux tensors like input_ids should only come from the first PP stage.
+    In practice non-first PP stages don't dump them, but this is a
+    defensive check.
+    """
+    pp_ranks: set[int] = set()
+    for item in loaded:
+        pp_rank = item.meta.get("pp_rank")
+        if pp_rank is not None:
+            pp_ranks.add(int(pp_rank))
+
+    if len(pp_ranks) <= 1:
+        return loaded
+
+    warning_sink.add(
+        GeneralWarning(
+            category="aux_multi_pp_rank",
+            message=(
+                f"aux '{name}' found across pp_ranks {sorted(pp_ranks)}, "
+                f"keeping only pp_rank=0"
+            ),
+        )
+    )
+    return [item for item in loaded if int(item.meta.get("pp_rank", 0)) == 0]
+
+
 def _load_non_tensor_aux(
     *, name: str, step: int, df: pl.DataFrame, dump_path: Path
 ) -> Optional[object]:
@@ -170,6 +200,7 @@ def _load_non_tensor_aux(
     loaded: list[ValueWithMeta] = [
         ValueWithMeta.load(dump_path / r["filename"]) for r in rows
     ]
+    loaded = _filter_to_first_pp_stage(loaded, name=name)
 
     if len(loaded) > 1:
         first_value = loaded[0].value
@@ -206,6 +237,7 @@ def _load_and_align_aux_tensor(
     loaded: list[ValueWithMeta] = [
         ValueWithMeta.load(dump_path / r["filename"]) for r in rows
     ]
+    loaded = _filter_to_first_pp_stage(loaded, name=name)
 
     tensors: list[torch.Tensor] = [
         item.value for item in loaded if isinstance(item.value, torch.Tensor)
