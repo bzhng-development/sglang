@@ -68,12 +68,8 @@ def execute_aligner_plan(
     # Cross-side: axis alignment (squeeze singletons + rearrange dim order)
     if (aligner_plan := plan.axis_aligner_plan) is not None:
         combined = Pair(
-            x=execute_axis_aligner_plan(
-                tensor=combined.x, plan=aligner_plan, side="x"
-            ),
-            y=execute_axis_aligner_plan(
-                tensor=combined.y, plan=aligner_plan, side="y"
-            ),
+            x=execute_axis_aligner_plan(tensor=combined.x, plan=aligner_plan, side="x"),
+            y=execute_axis_aligner_plan(tensor=combined.y, plan=aligner_plan, side="y"),
         )
 
     return AlignerResult(tensors=combined, failed_side_xy=None)

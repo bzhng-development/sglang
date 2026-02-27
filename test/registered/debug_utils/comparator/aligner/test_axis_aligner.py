@@ -113,9 +113,7 @@ class TestExecuteAxisAlignerPlan:
 
     def test_execute_squeeze(self) -> None:
         torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names(
-            "t", "singleton0", "h"
-        )
+        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
         plan = AxisAlignerPlan(
             squeeze_x=["singleton0"], squeeze_y=[], swap_pattern=None
         )
@@ -143,9 +141,7 @@ class TestExecuteAxisAlignerPlan:
 
     def test_execute_y_side_no_swap(self) -> None:
         torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names(
-            "t", "singleton0", "h"
-        )
+        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
         plan = AxisAlignerPlan(
             squeeze_x=[], squeeze_y=["singleton0"], swap_pattern="t h -> t h"
         )

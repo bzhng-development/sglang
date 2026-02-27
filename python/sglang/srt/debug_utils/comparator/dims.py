@@ -60,9 +60,7 @@ def parse_dim(token: str) -> DimSpec:
         return DimSpec(name=SQUEEZE_DIM_NAME)
 
     if token.startswith(SQUEEZE_DIM_NAME + "("):
-        raise ValueError(
-            f"Squeeze dim '1' does not support modifiers: {token!r}"
-        )
+        raise ValueError(f"Squeeze dim '1' does not support modifiers: {token!r}")
 
     match = _DIM_PATTERN.match(token)
     if match is None:
