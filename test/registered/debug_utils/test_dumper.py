@@ -193,7 +193,9 @@ class TestKvPairsParsing:
         assert type(cfg.server_port) is str
 
     def test_from_kv_pairs_optional_str_field(self):
-        cfg = DumperConfig.from_kv_pairs(["filter=layer_id is not None and layer_id < 3"])
+        cfg = DumperConfig.from_kv_pairs(
+            ["filter=layer_id is not None and layer_id < 3"]
+        )
         assert cfg.filter == "layer_id is not None and layer_id < 3"
 
     def test_from_kv_pairs_optional_str_exp_name(self):
@@ -892,9 +894,7 @@ class TestKvFilter:
         _assert_files(filenames, exist=["keep_this"], not_exist=["skip_this"])
 
     def test_filter_expr_range(self, tmp_path):
-        d = _make_test_dumper(
-            tmp_path, filter="layer_id is not None and layer_id < 3"
-        )
+        d = _make_test_dumper(tmp_path, filter="layer_id is not None and layer_id < 3")
         d.dump("t0", torch.randn(3), layer_id=0)
         d.dump("t1", torch.randn(3), layer_id=1)
         d.dump("t5", torch.randn(3), layer_id=5)
@@ -903,9 +903,7 @@ class TestKvFilter:
         _assert_files(filenames, exist=["name=t0", "name=t1"], not_exist=["name=t5"])
 
     def test_filter_expr_with_none(self, tmp_path):
-        d = _make_test_dumper(
-            tmp_path, filter="layer_id is None or layer_id < 3"
-        )
+        d = _make_test_dumper(tmp_path, filter="layer_id is None or layer_id < 3")
         d.dump("no_layer", torch.randn(3))
         d.dump("layer0", torch.randn(3), layer_id=0)
         d.dump("layer5", torch.randn(3), layer_id=5)
@@ -987,7 +985,10 @@ class TestDumpModel:
 
     def test_filter(self, tmp_path):
         d = _make_test_dumper(
-            tmp_path, enable_model_value=True, enable_model_grad=True, filter="'weight' in name"
+            tmp_path,
+            enable_model_value=True,
+            enable_model_grad=True,
+            filter="'weight' in name",
         )
         model = torch.nn.Linear(4, 2)
         x = torch.randn(3, 4)
@@ -1412,10 +1413,17 @@ class TestDumperHttp:
         self._assert_all_ranks(states, "step", 0)
 
     def test_get_state(self, dumper_http_url: str):
-        self._post(dumper_http_url, "configure", enable=True, filter="layer_id is not None and layer_id < 3")
+        self._post(
+            dumper_http_url,
+            "configure",
+            enable=True,
+            filter="layer_id is not None and layer_id < 3",
+        )
         states = self._post(dumper_http_url, "get_state")
         self._assert_all_ranks(states, "config.enable", True)
-        self._assert_all_ranks(states, "config.filter", "layer_id is not None and layer_id < 3")
+        self._assert_all_ranks(
+            states, "config.filter", "layer_id is not None and layer_id < 3"
+        )
         for state in states:
             assert "dump_index" in state
             assert "step" in state
