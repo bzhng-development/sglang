@@ -30,8 +30,6 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
 )
 from sglang.srt.debug_utils.comparator.bundle_comparator import (
     _any_side_has_dp,
-)
-from sglang.srt.debug_utils.comparator.bundle_comparator import (
     _extract_dp_size_from_meta,
     _group_by_dp_rank,
 )
