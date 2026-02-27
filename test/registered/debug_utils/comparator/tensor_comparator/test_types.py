@@ -139,8 +139,8 @@ def _make_warning(**overrides) -> ReplicatedMismatchWarning:
 
 
 class TestWarnings:
-    def test_comparison_record_failed_when_diff_passed_but_warnings(self):
-        """ComparisonRecord with diff.passed=True but warnings → category=='failed'."""
+    def test_comparison_record_passed_with_replicated_mismatch_warnings(self):
+        """ComparisonRecord with diff.passed=True and replicated_mismatch → category=='passed'."""
         record = ComparisonRecord(
             name="hidden",
             baseline=_make_tensor_info(),
@@ -150,16 +150,29 @@ class TestWarnings:
             diff=_make_diff(passed=True),
             warnings=[_make_warning()],
         )
+        assert record.category == "passed"
+
+    def test_comparison_record_failed_with_general_warning(self):
+        """ComparisonRecord with non-replicated-mismatch warning → category=='failed'."""
+        record = ComparisonRecord(
+            name="hidden",
+            baseline=_make_tensor_info(),
+            target=_make_tensor_info(),
+            unified_shape=[4, 8],
+            shape_mismatch=False,
+            diff=_make_diff(passed=True),
+            warnings=[GeneralWarning(category="error", message="something went wrong")],
+        )
         assert record.category == "failed"
 
-    def test_skip_record_failed_when_warnings(self):
-        """SkipRecord with warnings → category=='failed' instead of 'skipped'."""
+    def test_skip_record_skipped_with_replicated_mismatch_warnings(self):
+        """SkipRecord with replicated_mismatch warnings → category=='skipped'."""
         record = SkipRecord(
             name="x",
             reason="no_baseline",
             warnings=[_make_warning()],
         )
-        assert record.category == "failed"
+        assert record.category == "skipped"
 
     def test_warnings_json_round_trip(self):
         """warnings survive model_dump_json → parse_record_json round-trip."""
