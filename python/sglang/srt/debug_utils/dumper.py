@@ -43,7 +43,8 @@ class _BaseConfig(ABC):
 
     @classmethod
     @abstractmethod
-    def _env_prefix(cls) -> str: ...
+    def _env_prefix(cls) -> str:
+        ...
 
     @classmethod
     def _env_name(cls, field_name: str) -> str:
@@ -138,6 +139,7 @@ class DumperConfig(_BaseConfig):
     collective_timeout: int = 60
     server_port: str = "-1"
     non_intrusive_mode: str = "core"
+    source_patcher_config: Optional[str] = None
 
     @classmethod
     def _env_prefix(cls) -> str:
@@ -314,9 +316,7 @@ class _Dumper:
         def decorator(fn: Callable) -> Callable:
             @functools.wraps(fn)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
-                ctx_dict: dict = (
-                    _extractor(args[0]) if _extractor else static_ctx
-                )
+                ctx_dict: dict = _extractor(args[0]) if _extractor else static_ctx
                 self.set_ctx(**ctx_dict)
                 try:
                     return fn(*args, **kwargs)
@@ -326,6 +326,25 @@ class _Dumper:
             return wrapper
 
         return decorator
+
+    def apply_source_patches(self) -> None:
+        """Apply source patches from DUMPER_SOURCE_PATCHER_CONFIG if set.
+
+        Automatically injects ``from sglang.srt.debug_utils.dumper import dumper``
+        into every replacement block so users don't need to write it in YAML.
+        """
+        config_path = self._config.source_patcher_config
+        if not config_path:
+            return
+
+        from sglang.srt.debug_utils.source_patcher import apply_patches_from_config
+
+        yaml_content: str = Path(config_path).read_text()
+        print(f"[source_patcher] loading config from {config_path}")
+        apply_patches_from_config(
+            yaml_content,
+            extra_imports=["from sglang.srt.debug_utils.dumper import dumper"],
+        )
 
     def register_non_intrusive_dumper(
         self,
@@ -590,11 +609,13 @@ class _NonIntrusiveDumper:
     def _detect_module_ctx(
         cls, module_name: str, module: "torch.nn.Module"
     ) -> Optional[dict]:
-        if cls._LAYER_NAME_RE.fullmatch(module_name):
+        match = cls._LAYER_NAME_RE.fullmatch(module_name)
+        if match:
             for plugin in _plugins:
                 layer_id = plugin.detect_layer_id(module)
                 if layer_id is not None:
                     return {"layer_id": layer_id}
+            return {"layer_id": int(match.group(1))}
         return None
 
     def _register_ctx_hooks(self, module: "torch.nn.Module", *, ctx: dict) -> None:
@@ -1125,10 +1146,12 @@ def _get_local_ip_by_remote() -> Optional[str]:
 class _FrameworkPlugin(ABC):
     @property
     @abstractmethod
-    def name(self) -> str: ...
+    def name(self) -> str:
+        ...
 
     @abstractmethod
-    def collect_parallel_info(self) -> dict: ...
+    def collect_parallel_info(self) -> dict:
+        ...
 
     @abstractmethod
     def convert_value(
@@ -1275,9 +1298,9 @@ class _MegatronPlugin(_FrameworkPlugin):
             info["cp_rank"] = self._mpu.get_context_parallel_rank()
             info["cp_size"] = self._mpu.get_context_parallel_world_size()
             info["vpp_rank"] = self._mpu.get_virtual_pipeline_model_parallel_rank()
-            info["vpp_size"] = (
-                self._mpu.get_virtual_pipeline_model_parallel_world_size()
-            )
+            info[
+                "vpp_size"
+            ] = self._mpu.get_virtual_pipeline_model_parallel_world_size()
             info["ep_rank"] = self._mpu.get_expert_model_parallel_rank()
             info["ep_size"] = self._mpu.get_expert_model_parallel_world_size()
             info["etp_rank"] = self._mpu.get_expert_tensor_parallel_rank()
@@ -1287,9 +1310,9 @@ class _MegatronPlugin(_FrameworkPlugin):
             info["tcp_rank"] = self._mpu.get_tensor_and_context_parallel_rank()
             info["tcp_size"] = self._mpu.get_tensor_and_context_parallel_world_size()
             info["etmp_rank"] = self._mpu.get_expert_tensor_and_model_parallel_rank()
-            info["etmp_size"] = (
-                self._mpu.get_expert_tensor_and_model_parallel_world_size()
-            )
+            info[
+                "etmp_size"
+            ] = self._mpu.get_expert_tensor_and_model_parallel_world_size()
             info["tp_src_rank"] = self._mpu.get_tensor_model_parallel_src_rank()
             info["mp_src_rank"] = self._mpu.get_model_parallel_src_rank()
             info["dp_src_rank"] = self._mpu.get_data_parallel_src_rank()
