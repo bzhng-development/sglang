@@ -17,6 +17,7 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
     TokenAlignerPlan,
 )
 from sglang.srt.debug_utils.comparator.bundle_comparator import compare_bundle_pair
+from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.bundle_matcher import (
     TensorBundleInfo,
     match_bundles,
@@ -85,6 +86,17 @@ def run(args: argparse.Namespace) -> None:
         Path(args.visualize_per_token) if args.visualize_per_token else None
     )
 
+    dims_overrider: DimsOverrider = DimsOverrider.from_args_and_config(
+        override_dims=getattr(args, "override_dims", None) or [],
+        override_baseline_dims=getattr(args, "override_baseline_dims", None) or [],
+        override_target_dims=getattr(args, "override_target_dims", None) or [],
+        patch_config=(
+            Path(args.patch_config)
+            if getattr(args, "patch_config", None)
+            else None
+        ),
+    )
+
     comparison_records = _compare_bundle_pairs(
         bundle_info_pairs=bundle_info_pairs,
         baseline_path=Path(args.baseline_path),
@@ -94,6 +106,7 @@ def run(args: argparse.Namespace) -> None:
         thd_seq_lens_by_step_pair=ta_result.thd_seq_lens_by_step_pair,
         viz_output_dir=viz_output_dir,
         compute_per_token=visualize_per_token is not None,
+        dims_overrider=dims_overrider,
     )
     _consume_comparison_records(
         comparison_records=comparison_records,
@@ -155,6 +168,7 @@ def _compare_bundle_pairs(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
+    dims_overrider: Optional[DimsOverrider] = None,
 ) -> Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]]:
     for bundle_info_pair in bundle_info_pairs:
         if not bundle_info_pair.y:
@@ -174,6 +188,7 @@ def _compare_bundle_pairs(
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
             viz_output_dir=viz_output_dir,
             compute_per_token=compute_per_token,
+            dims_overrider=dims_overrider,
         )
 
 
@@ -252,4 +267,31 @@ def _parse_args() -> argparse.Namespace:
         default=None,
         help="Output path for per-token relative difference heatmap PNG",
     )
+
+    # Dims override
+    parser.add_argument(
+        "--override-dims",
+        action="append",
+        default=[],
+        help="Override dims for both sides: 'name:dims_string' (repeatable)",
+    )
+    parser.add_argument(
+        "--override-baseline-dims",
+        action="append",
+        default=[],
+        help="Override dims for baseline only: 'name:dims_string' (repeatable)",
+    )
+    parser.add_argument(
+        "--override-target-dims",
+        action="append",
+        default=[],
+        help="Override dims for target only: 'name:dims_string' (repeatable)",
+    )
+    parser.add_argument(
+        "--patch-config",
+        type=str,
+        default=None,
+        help="Path to YAML patch config file with dims overrides",
+    )
+
     return parser.parse_args()
