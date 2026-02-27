@@ -43,8 +43,7 @@ class _BaseConfig(ABC):
 
     @classmethod
     @abstractmethod
-    def _env_prefix(cls) -> str:
-        ...
+    def _env_prefix(cls) -> str: ...
 
     @classmethod
     def _env_name(cls, field_name: str) -> str:
@@ -1146,12 +1145,10 @@ def _get_local_ip_by_remote() -> Optional[str]:
 class _FrameworkPlugin(ABC):
     @property
     @abstractmethod
-    def name(self) -> str:
-        ...
+    def name(self) -> str: ...
 
     @abstractmethod
-    def collect_parallel_info(self) -> dict:
-        ...
+    def collect_parallel_info(self) -> dict: ...
 
     @abstractmethod
     def convert_value(
@@ -1298,9 +1295,9 @@ class _MegatronPlugin(_FrameworkPlugin):
             info["cp_rank"] = self._mpu.get_context_parallel_rank()
             info["cp_size"] = self._mpu.get_context_parallel_world_size()
             info["vpp_rank"] = self._mpu.get_virtual_pipeline_model_parallel_rank()
-            info[
-                "vpp_size"
-            ] = self._mpu.get_virtual_pipeline_model_parallel_world_size()
+            info["vpp_size"] = (
+                self._mpu.get_virtual_pipeline_model_parallel_world_size()
+            )
             info["ep_rank"] = self._mpu.get_expert_model_parallel_rank()
             info["ep_size"] = self._mpu.get_expert_model_parallel_world_size()
             info["etp_rank"] = self._mpu.get_expert_tensor_parallel_rank()
@@ -1310,9 +1307,9 @@ class _MegatronPlugin(_FrameworkPlugin):
             info["tcp_rank"] = self._mpu.get_tensor_and_context_parallel_rank()
             info["tcp_size"] = self._mpu.get_tensor_and_context_parallel_world_size()
             info["etmp_rank"] = self._mpu.get_expert_tensor_and_model_parallel_rank()
-            info[
-                "etmp_size"
-            ] = self._mpu.get_expert_tensor_and_model_parallel_world_size()
+            info["etmp_size"] = (
+                self._mpu.get_expert_tensor_and_model_parallel_world_size()
+            )
             info["tp_src_rank"] = self._mpu.get_tensor_model_parallel_src_rank()
             info["mp_src_rank"] = self._mpu.get_model_parallel_src_rank()
             info["dp_src_rank"] = self._mpu.get_data_parallel_src_rank()
