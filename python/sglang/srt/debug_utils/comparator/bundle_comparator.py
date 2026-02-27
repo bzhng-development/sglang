@@ -25,6 +25,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
+from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     GeneralWarning,
@@ -54,6 +55,7 @@ def compare_bundle_pair(
     ),
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
+    dims_overrider: Optional[DimsOverrider] = None,
 ) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     with warning_sink.context() as collected_warnings:
         result = _compare_bundle_pair_inner(
@@ -66,6 +68,7 @@ def compare_bundle_pair(
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
             viz_output_dir=viz_output_dir,
             compute_per_token=compute_per_token,
+            dims_overrider=dims_overrider,
         )
 
     return result.model_copy(update={"warnings": collected_warnings})
@@ -84,6 +87,7 @@ def _compare_bundle_pair_inner(
     ),
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
+    dims_overrider: Optional[DimsOverrider] = None,
 ) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
     # 1. Load all successfully loaded values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
@@ -100,6 +104,18 @@ def _compare_bundle_pair_inner(
         x=filter_to_non_empty_dp_rank(all_pair.x),
         y=filter_to_non_empty_dp_rank(all_pair.y),
     )
+
+    # 1c. Dims override: patch meta["dims"] before downstream reads it
+    if dims_overrider is not None and not dims_overrider.is_empty:
+        overridden: Pair[list[dict[str, Any]]] = dims_overrider.apply_to_metas(
+            name=name,
+            baseline_metas=[it.meta for it in all_pair.x],
+            target_metas=[it.meta for it in all_pair.y],
+        )
+        all_pair = Pair(
+            x=_replace_metas(values=all_pair.x, new_metas=overridden.x),
+            y=_replace_metas(values=all_pair.y, new_metas=overridden.y),
+        )
 
     # 2. Check if any side has non-tensor values → non-tensor display path
     has_non_tensor: bool = any(
@@ -284,6 +300,17 @@ def _apply_dim_names_from_meta(
 
     dim_names: list[str] = resolve_dim_names(dims_str)
     return [apply_dim_names(t, dim_names) for t in tensors]
+
+
+def _replace_metas(
+    *,
+    values: list[ValueWithMeta],
+    new_metas: list[dict[str, Any]],
+) -> list[ValueWithMeta]:
+    """Return new ValueWithMeta list with replaced meta dicts."""
+    return [
+        ValueWithMeta(value=v.value, meta=m) for v, m in zip(values, new_metas)
+    ]
 
 
 def _load_all_values(filenames: list[str], base_path: Path) -> list[ValueWithMeta]:
