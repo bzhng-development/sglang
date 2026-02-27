@@ -106,8 +106,13 @@ class DeepEPMoE(FusedMoE):
         )
         if _use_aiter or _is_npu:
             self.deprecate_flag = False
-        elif deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM and isinstance(
-            quant_config, Fp8Config
+        elif (
+            deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM
+            and isinstance(quant_config, Fp8Config)
+        ) or (
+            get_moe_runner_backend().is_flashinfer_cutedsl()
+            and quant_config is not None
+            and quant_config.get_name() == "modelopt_fp4"
         ):
             self.deprecate_flag = True
         else:
@@ -224,16 +229,6 @@ class DeepEPMoE(FusedMoE):
             )
 
         from sglang.srt.layers.moe.token_dispatcher import DispatchOutputChecker
-
-        if DispatchOutputChecker.format_is_deepep_ll(dispatch_output) and (
-            get_moe_runner_backend().is_flashinfer_cutedsl()
-            and self.quant_config is not None
-            and self.quant_config.get_name() == "modelopt_fp4"
-        ):
-            # Route through the unified MoeRunner framework (Stage 3 adoption):
-            # ModelOpt NVFP4 + FlashInfer CuteDSL owns its forward implementation
-            # in `moe_runner/flashinfer_cutedsl.py`.
-            return super().run_moe_core(dispatch_output)
 
         if _use_aiter:
             assert DispatchOutputChecker.format_is_deepep(dispatch_output)
