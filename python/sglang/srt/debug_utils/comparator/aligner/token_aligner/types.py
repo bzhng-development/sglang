@@ -20,6 +20,7 @@ class SGLangSeqId(NamedTuple):
 class PositionalSeqId(NamedTuple):
     step: int
     seq_index: int
+    dp_rank: int = 0
 
 
 SeqId = Union[SGLangSeqId, PositionalSeqId]

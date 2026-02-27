@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Optional
 
@@ -37,6 +38,11 @@ from sglang.srt.debug_utils.dump_loader import ValueWithMeta, filter_rows
 # re-export for existing callers
 __all__ = ["AUX_NAMES", "has_aux_tensors", "load_and_normalize_aux"]
 
+_PARALLEL_INFO_KEYS: tuple[str, ...] = (
+    "sglang_parallel_info",
+    "megatron_parallel_info",
+)
+
 
 def load_and_normalize_aux(
     dump_path: Path, df: pl.DataFrame
@@ -46,39 +52,22 @@ def load_and_normalize_aux(
     if plugin is None:
         return None
 
-    available_names: set[str] = set(df["name"].unique().to_list()) & plugin.all_names
-    steps: list[int] = sorted(df["step"].unique().to_list())
-    tensor_names: set[str] = available_names & plugin.tensor_names
-    non_tensor_names: set[str] = available_names & plugin.non_tensor_names
+    rank_to_dp_rank: dict[int, int] = _build_rank_to_dp_rank(
+        df=df, dump_path=dump_path, plugin=plugin
+    )
+    dp_ranks: list[int] = sorted(set(rank_to_dp_rank.values()))
 
-    steps_data: dict[int, dict[str, object]] = {}
-    thd_seq_lens_by_step: dict[int, list[int]] = {}
-    for step in steps:
-        step_data, thd_seq_lens = _load_step_data(
-            step=step,
-            tensor_names=tensor_names,
-            non_tensor_names=non_tensor_names,
-            df=df,
-            dump_path=dump_path,
-            plugin=plugin,
+    if len(dp_ranks) <= 1:
+        return _load_single_dp_group(
+            dump_path=dump_path, df=df, plugin=plugin, dp_rank=dp_ranks[0] if dp_ranks else 0
         )
-        if step_data:
-            steps_data[step] = step_data
-        if thd_seq_lens is not None:
-            thd_seq_lens_by_step[step] = thd_seq_lens
 
-    layout: TokenLayout = plugin.detect_layout(steps_data)
-
-    step_auxs: dict[int, TokenAlignerStepAux] = {
-        step: plugin.compute_step_aux(step_data, layout=layout, step=step)
-        for step, step_data in steps_data.items()
-    }
-
-    return TokenAlignerGlobalAux(
-        step_auxs=step_auxs,
-        framework=plugin.name,
-        layout=layout,
-        thd_seq_lens_by_step=thd_seq_lens_by_step or None,
+    return _load_multi_dp_groups(
+        dump_path=dump_path,
+        df=df,
+        plugin=plugin,
+        dp_ranks=dp_ranks,
+        rank_to_dp_rank=rank_to_dp_rank,
     )
 
 
@@ -103,6 +92,215 @@ def _detect_plugin(df: pl.DataFrame, dump_path: Path) -> Optional[_AuxFrameworkP
             return plugin
 
     return None
+
+
+# ── DP rank discovery ─────────────────────────────────────────────
+
+
+def _extract_dp_rank_from_meta(meta: dict[str, Any], plugin_name: str) -> int:
+    """Extract dp_rank from embedded metadata. Returns 0 if not found."""
+    pi_key: str = f"{plugin_name}_parallel_info"
+    parallel_info: dict[str, Any] = meta.get(pi_key, {})
+    if not isinstance(parallel_info, dict):
+        return 0
+
+    if plugin_name == "megatron":
+        return int(parallel_info.get("dp_rank", 0))
+    elif plugin_name == "sglang":
+        return int(parallel_info.get("attn_dp_rank", 0))
+
+    return 0
+
+
+def _build_rank_to_dp_rank(
+    *,
+    df: pl.DataFrame,
+    dump_path: Path,
+    plugin: _AuxFrameworkPlugin,
+) -> dict[int, int]:
+    """Build a mapping from global rank → dp_rank by loading one file per rank."""
+    unique_ranks: list[int] = sorted(df["rank"].unique().to_list())
+    rank_to_dp_rank: dict[int, int] = {}
+
+    for rank in unique_ranks:
+        rank_rows: list[dict[str, Any]] = filter_rows(df, conditions={"rank": rank})
+        if not rank_rows:
+            continue
+
+        value: ValueWithMeta = ValueWithMeta.load(dump_path / rank_rows[0]["filename"])
+        dp_rank: int = _extract_dp_rank_from_meta(
+            meta=value.meta, plugin_name=plugin.name
+        )
+        rank_to_dp_rank[rank] = dp_rank
+
+    return rank_to_dp_rank
+
+
+# ── single DP group (no DP or DP=1) ──────────────────────────────
+
+
+def _load_single_dp_group(
+    *,
+    dump_path: Path,
+    df: pl.DataFrame,
+    plugin: _AuxFrameworkPlugin,
+    dp_rank: int,
+) -> Optional[TokenAlignerGlobalAux]:
+    """Load aux for a single DP group (original non-DP path)."""
+    available_names: set[str] = set(df["name"].unique().to_list()) & plugin.all_names
+    steps: list[int] = sorted(df["step"].unique().to_list())
+    tensor_names: set[str] = available_names & plugin.tensor_names
+    non_tensor_names: set[str] = available_names & plugin.non_tensor_names
+
+    steps_data: dict[int, dict[str, object]] = {}
+    thd_seq_lens_by_step: dict[int, list[int]] = {}
+    for step in steps:
+        step_data, thd_seq_lens = _load_step_data(
+            step=step,
+            tensor_names=tensor_names,
+            non_tensor_names=non_tensor_names,
+            df=df,
+            dump_path=dump_path,
+            plugin=plugin,
+        )
+        if step_data:
+            steps_data[step] = step_data
+        if thd_seq_lens is not None:
+            thd_seq_lens_by_step[step] = thd_seq_lens
+
+    layout: TokenLayout = plugin.detect_layout(steps_data)
+
+    step_auxs: dict[int, TokenAlignerStepAux] = {
+        step: plugin.compute_step_aux(
+            step_data, layout=layout, step=step, dp_rank=dp_rank
+        )
+        for step, step_data in steps_data.items()
+    }
+
+    return TokenAlignerGlobalAux(
+        step_auxs=step_auxs,
+        framework=plugin.name,
+        layout=layout,
+        thd_seq_lens_by_step=thd_seq_lens_by_step or None,
+    )
+
+
+# ── multi DP groups ──────────────────────────────────────────────
+
+
+def _load_multi_dp_groups(
+    *,
+    dump_path: Path,
+    df: pl.DataFrame,
+    plugin: _AuxFrameworkPlugin,
+    dp_ranks: list[int],
+    rank_to_dp_rank: dict[int, int],
+) -> Optional[TokenAlignerGlobalAux]:
+    """Load aux for multiple DP groups, merge by concatenating per step."""
+    dp_rank_to_global_ranks: dict[int, list[int]] = defaultdict(list)
+    for global_rank, dp_rank in rank_to_dp_rank.items():
+        dp_rank_to_global_ranks[dp_rank].append(global_rank)
+
+    per_dp: list[tuple[int, TokenAlignerGlobalAux]] = []
+    for dp_rank in dp_ranks:
+        global_ranks: list[int] = dp_rank_to_global_ranks[dp_rank]
+        dp_df: pl.DataFrame = df.filter(pl.col("rank").is_in(global_ranks))
+
+        result: Optional[TokenAlignerGlobalAux] = _load_single_dp_group(
+            dump_path=dump_path, df=dp_df, plugin=plugin, dp_rank=dp_rank
+        )
+        if result is None:
+            continue
+        per_dp.append((dp_rank, result))
+
+    if not per_dp:
+        return None
+
+    if len(per_dp) == 1:
+        return per_dp[0][1]
+
+    return _merge_dp_global_auxs(per_dp)
+
+
+def _merge_dp_global_auxs(
+    per_dp: list[tuple[int, TokenAlignerGlobalAux]],
+) -> TokenAlignerGlobalAux:
+    """Merge multiple DP groups' GlobalAux into one by concatenating step auxs."""
+    first: TokenAlignerGlobalAux = per_dp[0][1]
+    framework: str = first.framework
+    layout: TokenLayout = first.layout
+
+    all_steps: set[int] = set()
+    for _, aux in per_dp:
+        all_steps.update(aux.step_auxs.keys())
+
+    merged_step_auxs: dict[int, TokenAlignerStepAux] = {}
+    for step in sorted(all_steps):
+        step_parts: list[TokenAlignerStepAux] = []
+        for _, aux in per_dp:
+            if step in aux.step_auxs:
+                step_parts.append(aux.step_auxs[step])
+        merged_step_auxs[step] = _concat_step_auxs(step_parts)
+
+    merged_thd: Optional[dict[int, list[int]]] = _merge_thd_seq_lens(per_dp)
+
+    return TokenAlignerGlobalAux(
+        step_auxs=merged_step_auxs,
+        framework=framework,
+        layout=layout,
+        thd_seq_lens_by_step=merged_thd,
+    )
+
+
+def _concat_step_auxs(parts: list[TokenAlignerStepAux]) -> TokenAlignerStepAux:
+    """Concatenate multiple TokenAlignerStepAux (from different dp_ranks)."""
+    if len(parts) == 1:
+        return parts[0]
+
+    input_ids: list[int] = []
+    positions: list[int] = []
+    seq_lens: list[int] = []
+    seq_ids = []
+
+    for part in parts:
+        input_ids.extend(part.input_ids)
+        positions.extend(part.positions)
+        seq_lens.extend(part.seq_lens)
+        seq_ids.extend(part.seq_ids)
+
+    return TokenAlignerStepAux(
+        input_ids=input_ids,
+        positions=positions,
+        seq_lens=seq_lens,
+        seq_ids=seq_ids,
+    )
+
+
+def _merge_thd_seq_lens(
+    per_dp: list[tuple[int, TokenAlignerGlobalAux]],
+) -> Optional[dict[int, list[int]]]:
+    """Merge thd_seq_lens_by_step across DP groups."""
+    has_any: bool = any(aux.thd_seq_lens_by_step is not None for _, aux in per_dp)
+    if not has_any:
+        return None
+
+    all_steps: set[int] = set()
+    for _, aux in per_dp:
+        if aux.thd_seq_lens_by_step is not None:
+            all_steps.update(aux.thd_seq_lens_by_step.keys())
+
+    merged: dict[int, list[int]] = {}
+    for step in sorted(all_steps):
+        combined: list[int] = []
+        for _, aux in per_dp:
+            if aux.thd_seq_lens_by_step is not None and step in aux.thd_seq_lens_by_step:
+                combined.extend(aux.thd_seq_lens_by_step[step])
+        merged[step] = combined
+
+    return merged or None
+
+
+# ── per-step loading (unchanged core logic) ──────────────────────
 
 
 def _load_step_data(
