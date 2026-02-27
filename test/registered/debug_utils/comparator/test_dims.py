@@ -16,7 +16,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     apply_dim_names,
     find_dim_index,
     parse_dim,
-    parse_dim_names,
     parse_dims,
     resolve_dim_by_name,
     resolve_dim_names,
@@ -127,14 +126,6 @@ class TestParseDims:
         assert len(result) == 5
         assert result[1] == DimSpec(name="1")
         assert result[3] == DimSpec(name="1")
-
-
-class TestParseDimNames:
-    def test_plain(self) -> None:
-        assert parse_dim_names("b s h d") == ["b", "s", "h", "d"]
-
-    def test_strips_modifiers(self) -> None:
-        assert parse_dim_names("b s(cp,zigzag) h(tp) d") == ["b", "s", "h", "d"]
 
 
 class TestDimConstants:
@@ -262,6 +253,29 @@ class TestSingletonDimUtilMakeName:
         assert _SingletonDimUtil.make_name(0) == "singleton0"
         assert _SingletonDimUtil.make_name(1) == "singleton1"
         assert _SingletonDimUtil.make_name(99) == "singleton99"
+
+
+class TestSingletonDimUtilSanitizeNames:
+    def test_no_squeeze(self) -> None:
+        assert _SingletonDimUtil.sanitize_names(["t", "h", "d"]) == ["t", "h", "d"]
+
+    def test_single_squeeze(self) -> None:
+        assert _SingletonDimUtil.sanitize_names(["t", "1", "h"]) == [
+            "t",
+            "singleton0",
+            "h",
+        ]
+
+    def test_multiple_squeeze(self) -> None:
+        assert _SingletonDimUtil.sanitize_names(["1", "t", "1", "h"]) == [
+            "singleton0",
+            "t",
+            "singleton1",
+            "h",
+        ]
+
+    def test_empty(self) -> None:
+        assert _SingletonDimUtil.sanitize_names([]) == []
 
 
 if __name__ == "__main__":

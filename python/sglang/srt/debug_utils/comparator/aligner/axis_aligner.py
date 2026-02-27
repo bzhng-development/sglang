@@ -28,27 +28,30 @@ def compute_axis_aligner_plan(
     if dims_str_pair.x is None or dims_str_pair.y is None:
         return None
 
-    x_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.x)]
-    y_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.y)]
+    # Pair[str] after None check
+    dims_pair: Pair[str] = Pair(x=dims_str_pair.x, y=dims_str_pair.y)
 
-    x_filtered: list[str] = [
-        s.name for s in _SingletonDimUtil.filter_out(parse_dims(dims_str_pair.x))
-    ]
-    y_filtered: list[str] = [
-        s.name for s in _SingletonDimUtil.filter_out(parse_dims(dims_str_pair.y))
-    ]
+    raw_names: Pair[list[str]] = dims_pair.map(
+        lambda s: [spec.name for spec in parse_dims(s)]
+    )
+    filtered_names: Pair[list[str]] = dims_pair.map(
+        lambda s: [spec.name for spec in _SingletonDimUtil.filter_out(parse_dims(s))]
+    )
 
-    target_order: Optional[list[str]] = _resolve_target_order(x_filtered, y_filtered)
+    target_order: Optional[list[str]] = _resolve_target_order(
+        x_names=filtered_names.x, y_names=filtered_names.y
+    )
     if target_order is None:
         return None
 
-    pattern_x: Optional[str] = _build_pattern(source=x_raw, target=target_order)
-    pattern_y: Optional[str] = _build_pattern(source=y_raw, target=target_order)
+    pattern: Pair[Optional[str]] = raw_names.map(
+        lambda names: _build_pattern(source=names, target=target_order)
+    )
 
-    if pattern_x is None and pattern_y is None:
+    if pattern.x is None and pattern.y is None:
         return None
 
-    return AxisAlignerPlan(pattern=Pair(x=pattern_x, y=pattern_y))
+    return AxisAlignerPlan(pattern=pattern)
 
 
 def _resolve_target_order(

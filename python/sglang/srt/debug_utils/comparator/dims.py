@@ -65,6 +65,21 @@ class _SingletonDimUtil:
             and name[len(_SingletonDimUtil.PREFIX) :].isdigit()
         )
 
+    @staticmethod
+    def sanitize_names(names: list[str]) -> list[str]:
+        """Replace '1' with 'singleton0', 'singleton1', ... for named tensor compatibility."""
+        result: list[str] = []
+        sq_idx: int = 0
+
+        for name in names:
+            if name == SQUEEZE_DIM_NAME:
+                result.append(_SingletonDimUtil.make_name(sq_idx))
+                sq_idx += 1
+            else:
+                result.append(name)
+
+        return result
+
 
 _DIM_PATTERN = re.compile(r"^(?P<name>[a-zA-Z_]\w*)(?:\((?P<modifiers>[^)]+)\))?$")
 
@@ -125,23 +140,10 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
     return result
 
 
-def parse_dim_names(dims_str: str) -> list[str]:
-    return [spec.name for spec in parse_dims(dims_str)]
-
-
 def resolve_dim_names(dims_str: str) -> list[str]:
-    """Like parse_dim_names, but replaces '1' with 'singleton0', 'singleton1', ..."""
-    dim_names: list[str] = []
-    sq_idx: int = 0
-
-    for spec in parse_dims(dims_str):
-        if _SingletonDimUtil.is_squeeze(spec):
-            dim_names.append(_SingletonDimUtil.make_name(sq_idx))
-            sq_idx += 1
-        else:
-            dim_names.append(spec.name)
-
-    return dim_names
+    """Parse dims string and return tensor-compatible names ('1' → 'singleton0', ...)."""
+    names: list[str] = [spec.name for spec in parse_dims(dims_str)]
+    return _SingletonDimUtil.sanitize_names(names)
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
