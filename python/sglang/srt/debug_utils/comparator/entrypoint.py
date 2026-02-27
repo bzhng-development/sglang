@@ -25,7 +25,6 @@ from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
-    GeneralWarning,
     NonTensorRecord,
     SkipRecord,
     SummaryRecord,
@@ -77,8 +76,6 @@ def run(args: argparse.Namespace) -> None:
             args, has_token_aligner_plan=ta_result.plan is not None
         ),
     )
-
-    _warn_unmatched_bundles(bundle_info_pairs)
 
     viz_output_dir: Optional[Path] = (
         Path(args.viz_output_dir) if args.viz_bundle_details else None
@@ -146,30 +143,6 @@ def _compute_skip_keys(args, *, has_token_aligner_plan: bool):
         if has_token_aligner_plan:
             skip_keys |= {"step"}
     return skip_keys
-
-
-def _warn_unmatched_bundles(
-    bundle_info_pairs: list[Pair[TensorBundleInfo]],
-) -> None:
-    """Emit warnings for bundles that exist on only one side (target-only or baseline-empty)."""
-    target_only: list[str] = []
-    for pair in bundle_info_pairs:
-        if not pair.y:
-            continue
-        if not pair.x:
-            info = pair.y[0]
-            target_only.append(info.name)
-
-    if target_only:
-        warning_sink.add(
-            GeneralWarning(
-                category="unmatched_bundles",
-                message=(
-                    f"{len(target_only)} tensor(s) found in target but not in baseline: "
-                    f"{', '.join(sorted(set(target_only)))}"
-                ),
-            )
-        )
 
 
 def _compare_bundle_pairs(
