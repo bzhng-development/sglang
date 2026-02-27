@@ -276,6 +276,45 @@ class TestKvPairsParsing:
         result: dict = DumperConfig._kv_pairs_to_dict(pairs)
         assert result == {"enable": True, "filter": "layer_id is None or layer_id < 3"}
 
+    def test_merge_quoted_unclosed_flushes_accumulator(self):
+        tokens: list[str] = ["filter='layer_id", "is", "None"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter=layer_id is None"]
+
+    def test_merge_quoted_empty_quotes(self):
+        tokens: list[str] = ["filter=''"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter="]
+
+    def test_merge_quoted_equals_inside_multi_token(self):
+        tokens: list[str] = ["filter='name", "==", "foo'"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter=name == foo"]
+
+    def test_merge_quoted_consecutive_quoted_values(self):
+        tokens: list[str] = ["filter='a", "b'", "source_patcher_config='x", "y'"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter=a b", "source_patcher_config=x y"]
+
+    def test_from_kv_pairs_user_scenario_shell_not_expanded(self):
+        pairs: list[str] = [
+            "enable_model_value=0",
+            "enable_model_grad=0",
+            "filter='layer_id", "is", "None", "or", "layer_id", "<", "3'",
+        ]
+        cfg: DumperConfig = DumperConfig.from_kv_pairs(pairs)
+        assert cfg.enable_model_value is False
+        assert cfg.enable_model_grad is False
+        assert cfg.filter == "layer_id is None or layer_id < 3"
+
+    def test_from_kv_pairs_empty_quoted_value_returns_default(self):
+        cfg: DumperConfig = DumperConfig.from_kv_pairs(["filter=''"])
+        assert cfg.filter is None
+
+    def test_from_kv_pairs_bare_token_raises(self):
+        with pytest.raises(ValueError, match="missing '='"):
+            DumperConfig.from_kv_pairs(["enable", "true"])
+
 
 class TestDumperPureFunctions:
     def test_get_truncated_value(self):
