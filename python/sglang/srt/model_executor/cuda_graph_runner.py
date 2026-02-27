@@ -113,6 +113,11 @@ class DecodeInputBuffers(ForwardInputBuffers):
     global_num_tokens_for_logprob_gpu: torch.Tensor
     encoder_lens: Optional[torch.Tensor]
     pp_proxy_tensors: Optional[Dict[str, torch.Tensor]]
+    ne_token_table: Optional[torch.Tensor]
+    ne_column_starts: Optional[torch.Tensor]
+    ne_req_lens: Optional[torch.Tensor]
+    ne_out_column_starts: Optional[torch.Tensor]
+    ne_out_req_lens: Optional[torch.Tensor]
 
     @classmethod
     def create(
@@ -133,6 +138,7 @@ class DecodeInputBuffers(ForwardInputBuffers):
         num_tokens_per_bs: int,
         cache_loc_dtype: torch.dtype,
         enable_mamba_track: bool,
+        ne_token_table: Optional[torch.Tensor] = None,
     ) -> "DecodeInputBuffers":
         with torch.device(device):
             input_ids = torch.zeros((max_num_token,), dtype=torch.int64)
@@ -184,6 +190,11 @@ class DecodeInputBuffers(ForwardInputBuffers):
                 global_num_tokens_gpu = torch.zeros((1,), dtype=torch.int32)
                 global_num_tokens_for_logprob_gpu = torch.zeros((1,), dtype=torch.int32)
 
+            ne_column_starts = torch.zeros([max_bs], dtype=torch.int32) if ne_token_table is not None else None
+            ne_req_lens = torch.ones([max_bs], dtype=torch.int32) if ne_token_table is not None else None
+            ne_out_column_starts = torch.zeros([max_bs], dtype=torch.int32) if ne_token_table is not None else None
+            ne_out_req_lens = torch.ones([max_bs], dtype=torch.int32) if ne_token_table is not None else None
+
         # Keep seq_lens_cpu as a true CPU tensor, like the old implementation.
         seq_lens_cpu = torch.full(
             (max_bs,),
@@ -210,6 +221,11 @@ class DecodeInputBuffers(ForwardInputBuffers):
             global_num_tokens_gpu=global_num_tokens_gpu,
             global_num_tokens_for_logprob_gpu=global_num_tokens_for_logprob_gpu,
             pp_proxy_tensors=pp_proxy_tensors,
+            ne_token_table=ne_token_table,
+            ne_column_starts=ne_column_starts,
+            ne_req_lens=ne_req_lens,
+            ne_out_column_starts=ne_out_column_starts,
+            ne_out_req_lens=ne_out_req_lens,
         )
 
     def populate_from_forward_batch(
@@ -240,6 +256,9 @@ class DecodeInputBuffers(ForwardInputBuffers):
         self.seq_lens[:raw_bs].copy_(forward_batch.seq_lens)
         self.out_cache_loc[:raw_num_token].copy_(forward_batch.out_cache_loc)
         self.positions[:raw_num_token].copy_(forward_batch.positions)
+        if self.ne_token_table is not None:
+            self.ne_column_starts[:raw_bs].copy_(forward_batch.ne_column_starts)
+            self.ne_req_lens[:raw_bs].copy_(forward_batch.ne_req_lens)
 
         if (
             self.mamba_track_indices is not None
@@ -451,6 +470,11 @@ class CudaGraphRunner:
         self.enable_two_batch_overlap = (
             model_runner.server_args.enable_two_batch_overlap
         )
+        self.use_ngram_embedding = model_runner.use_ngram_embedding
+        if self.use_ngram_embedding:
+            hf_config = model_runner.model_config.hf_config
+            self.ngram_embedding_n = hf_config.ngram_embedding_n
+            self.ngram_embedding_k = hf_config.ngram_embedding_k
         self.speculative_algorithm = model_runner.server_args.speculative_algorithm
         self.enable_profile_cuda_graph = (
             model_runner.server_args.enable_profile_cuda_graph
@@ -549,6 +573,7 @@ class CudaGraphRunner:
             num_tokens_per_bs=self.num_tokens_per_bs,
             cache_loc_dtype=self._cache_loc_dtype(),
             enable_mamba_track=enable_mamba_track,
+            ne_token_table=model_runner.token_table if self.use_ngram_embedding else None
         )
         self.buffers.share_buffers()
 
@@ -763,6 +788,11 @@ class CudaGraphRunner:
         req_pool_indices = buffers.req_pool_indices[:bs]
         seq_lens = buffers.seq_lens[:bs]
         seq_lens_cpu = buffers.seq_lens_cpu[:bs]
+        ne_token_table = buffers.ne_token_table
+        ne_column_starts = buffers.ne_column_starts[:bs] if ne_token_table is not None else None
+        ne_req_lens = buffers.ne_req_lens[:bs] if ne_token_table is not None else None
+        ne_out_column_starts = buffers.ne_out_column_starts[:bs] if ne_token_table is not None else None
+        ne_out_req_lens = buffers.ne_out_req_lens[:bs] if ne_token_table is not None else None
         out_cache_loc = buffers.out_cache_loc[:num_tokens]
         positions = buffers.positions[:num_tokens]
         if self.is_encoder_decoder:
@@ -852,6 +882,11 @@ class CudaGraphRunner:
             req_pool_indices=req_pool_indices,
             seq_lens=seq_lens,
             seq_lens_cpu=seq_lens_cpu,
+            ne_token_table=ne_token_table,
+            ne_column_starts=ne_column_starts,
+            ne_req_lens=ne_req_lens,
+            ne_out_column_starts=ne_out_column_starts,
+            ne_out_req_lens=ne_out_req_lens,
             next_token_logits_buffer=next_token_logits_buffer,
             orig_seq_lens=seq_lens,
             req_to_token_pool=self.model_runner.req_to_token_pool,
