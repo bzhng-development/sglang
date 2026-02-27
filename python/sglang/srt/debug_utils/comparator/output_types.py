@@ -31,11 +31,9 @@ class GeneralWarning(_StrictBase):
         return self.message
 
 
-# Keep as Union + Discriminator for future extensibility
-AnyWarning = Annotated[
-    Union[GeneralWarning],
-    Discriminator("kind"),
-]
+# Type alias — currently only GeneralWarning exists.
+# When adding new warning types, convert back to Union + Discriminator("kind").
+AnyWarning = GeneralWarning
 
 
 class ReplicatedCheckResult(_StrictBase):
