@@ -1504,6 +1504,75 @@ class TestEntrypointNonTensorValues:
         assert roundtripped.values_equal is True
 
 
+# ───────────────────── Visualization integration tests ─────────────────────
+
+
+class TestEntrypointVisualize:
+    """Test --visualize-bundle-details integration."""
+
+    @pytest.fixture(autouse=True)
+    def _skip_if_no_matplotlib(self) -> None:
+        pytest.importorskip("matplotlib")
+
+    def test_visualize_creates_pngs(self, tmp_path, capsys):
+        """--visualize-bundle-details with --filter produces PNG files."""
+        baseline_path, target_path = _create_dumps(
+            tmp_path, ["tensor_a", "tensor_b"]
+        )
+        viz_dir = tmp_path / "viz_out"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            filter="tensor_a",
+            visualize_bundle_details=True,
+            viz_output_dir=str(viz_dir),
+            viz_max_tensors=10,
+        )
+
+        records = _run_and_parse(args, capsys)
+        assert len(_get_comparisons(records)) == 1
+
+        png_files = list(viz_dir.glob("*.png"))
+        assert len(png_files) == 1
+        assert png_files[0].stat().st_size > 0
+
+    def test_visualize_max_tensors_guard(self, tmp_path, capsys):
+        """Exceeding --viz-max-tensors skips extra visualizations."""
+        baseline_path, target_path = _create_dumps(
+            tmp_path, ["tensor_a", "tensor_b", "tensor_c"]
+        )
+        viz_dir = tmp_path / "viz_out"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            visualize_bundle_details=True,
+            viz_output_dir=str(viz_dir),
+            viz_max_tensors=1,
+        )
+
+        _run_and_parse(args, capsys)
+        png_files = list(viz_dir.glob("*.png"))
+        assert len(png_files) == 1
+
+    def test_no_visualize_no_png(self, tmp_path, capsys):
+        """Without --visualize-bundle-details, no PNGs are created."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        viz_dir = tmp_path / "viz_out"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            visualize_bundle_details=False,
+            viz_output_dir=str(viz_dir),
+            viz_max_tensors=10,
+        )
+
+        _run_and_parse(args, capsys)
+        assert not viz_dir.exists() or len(list(viz_dir.glob("*.png"))) == 0
+
+
 # --------------------------- Assertion helpers -------------------
 
 
@@ -1628,6 +1697,9 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         filter=None,
         output_format="json",
         grouping="logical",
+        visualize_bundle_details=False,
+        viz_output_dir="/tmp/comparator_viz/",
+        viz_max_tensors=10,
     )
     defaults.update(overrides)
     return Namespace(**defaults)
