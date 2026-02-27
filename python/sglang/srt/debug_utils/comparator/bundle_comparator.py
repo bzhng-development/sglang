@@ -25,13 +25,13 @@ from sglang.srt.debug_utils.comparator.dims import (
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
-from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     GeneralWarning,
     NonTensorRecord,
     SkipRecord,
 )
+from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )
@@ -308,9 +308,7 @@ def _replace_metas(
     new_metas: list[dict[str, Any]],
 ) -> list[ValueWithMeta]:
     """Return new ValueWithMeta list with replaced meta dicts."""
-    return [
-        ValueWithMeta(value=v.value, meta=m) for v, m in zip(values, new_metas)
-    ]
+    return [ValueWithMeta(value=v.value, meta=m) for v, m in zip(values, new_metas)]
 
 
 def _load_all_values(filenames: list[str], base_path: Path) -> list[ValueWithMeta]:

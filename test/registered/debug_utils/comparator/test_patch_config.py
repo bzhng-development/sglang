@@ -20,7 +20,6 @@ from sglang.srt.debug_utils.comparator.output_types import (
 from sglang.srt.debug_utils.comparator.patch_config import (
     DimsOverrider,
     DimsOverrideRule,
-    PatchConfig,
     _load_yaml_rules,
     _parse_cli_override_arg,
 )
@@ -190,9 +189,7 @@ class TestDimsOverrider:
     def test_partial_per_side_preserves_other(self) -> None:
         """Only baseline_dims specified → target meta unchanged."""
         overrider = DimsOverrider(
-            rules=[
-                DimsOverrideRule(match="logits", baseline_dims="b s v(tp)")
-            ]
+            rules=[DimsOverrideRule(match="logits", baseline_dims="b s v(tp)")]
         )
         result = overrider.apply_to_metas(
             name="logits",
@@ -205,15 +202,11 @@ class TestDimsOverrider:
     def test_is_empty(self) -> None:
         """Empty overrider reports is_empty=True."""
         assert DimsOverrider(rules=[]).is_empty
-        assert not DimsOverrider(
-            rules=[DimsOverrideRule(match="x", dims="d")]
-        ).is_empty
+        assert not DimsOverrider(rules=[DimsOverrideRule(match="x", dims="d")]).is_empty
 
     def test_multiple_metas(self) -> None:
         """All metas in the list are updated when a rule matches."""
-        overrider = DimsOverrider(
-            rules=[DimsOverrideRule(match="hidden", dims="NEW")]
-        )
+        overrider = DimsOverrider(rules=[DimsOverrideRule(match="hidden", dims="NEW")])
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"dims": "a"}, {"dims": "b"}],
@@ -225,9 +218,7 @@ class TestDimsOverrider:
 
     def test_meta_without_dims_key(self) -> None:
         """Override adds 'dims' even if original meta lacks it."""
-        overrider = DimsOverrider(
-            rules=[DimsOverrideRule(match="hidden", dims="NEW")]
-        )
+        overrider = DimsOverrider(rules=[DimsOverrideRule(match="hidden", dims="NEW")])
         result = overrider.apply_to_metas(
             name="hidden",
             baseline_metas=[{"other": "val"}],
@@ -246,13 +237,11 @@ class TestFromArgsAndConfig:
     def test_cli_before_yaml(self, tmp_path: Path) -> None:
         """CLI rules are ordered before YAML rules (CLI wins on conflict)."""
         yaml_path = tmp_path / "patch.yaml"
-        yaml_path.write_text(
-            textwrap.dedent("""\
+        yaml_path.write_text(textwrap.dedent("""\
                 dims:
                   - match: "hidden"
                     dims: "FROM_YAML"
-            """)
-        )
+            """))
 
         overrider = DimsOverrider.from_args_and_config(
             override_dims=["hidden:FROM_CLI"],
@@ -288,16 +277,14 @@ class TestLoadYamlRules:
     def test_valid_yaml(self, tmp_path: Path) -> None:
         """Valid YAML with dims rules loads correctly."""
         yaml_path = tmp_path / "patch.yaml"
-        yaml_path.write_text(
-            textwrap.dedent("""\
+        yaml_path.write_text(textwrap.dedent("""\
                 dims:
                   - match: "hidden"
                     dims: "b s h d"
                   - match: "logits"
                     baseline_dims: "b s v(tp)"
                     target_dims: "b s v(ep)"
-            """)
-        )
+            """))
         rules = _load_yaml_rules(yaml_path)
         assert len(rules) == 2
         assert rules[0].dims == "b s h d"
@@ -485,13 +472,11 @@ class TestEntrypointDimsOverride:
         )
 
         yaml_path: Path = tmp_path / "patch.yaml"
-        yaml_path.write_text(
-            textwrap.dedent("""\
+        yaml_path.write_text(textwrap.dedent("""\
                 dims:
                   - match: "hidden"
                     dims: "t h"
-            """)
-        )
+            """))
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
@@ -578,7 +563,9 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
 def _run_and_parse(args: Namespace, capsys: pytest.CaptureFixture) -> list[AnyRecord]:
     capsys.readouterr()
     run(args)
-    return [parse_record_json(line) for line in capsys.readouterr().out.strip().splitlines()]
+    return [
+        parse_record_json(line) for line in capsys.readouterr().out.strip().splitlines()
+    ]
 
 
 def _create_rank_dump(

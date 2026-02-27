@@ -17,7 +17,6 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
     TokenAlignerPlan,
 )
 from sglang.srt.debug_utils.comparator.bundle_comparator import compare_bundle_pair
-from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.bundle_matcher import (
     TensorBundleInfo,
     match_bundles,
@@ -31,6 +30,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SummaryRecord,
     print_record,
 )
+from sglang.srt.debug_utils.comparator.patch_config import DimsOverrider
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
@@ -91,9 +91,7 @@ def run(args: argparse.Namespace) -> None:
         override_baseline_dims=getattr(args, "override_baseline_dims", None) or [],
         override_target_dims=getattr(args, "override_target_dims", None) or [],
         patch_config=(
-            Path(args.patch_config)
-            if getattr(args, "patch_config", None)
-            else None
+            Path(args.patch_config) if getattr(args, "patch_config", None) else None
         ),
     )
 
