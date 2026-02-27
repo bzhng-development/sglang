@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 from typing import Any, Optional
+from unittest.mock import patch
 
 import polars as pl
 import pytest
@@ -17,6 +18,7 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.aux_loader import (
 )
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.aux_plugins import (
     _MegatronPlugin,
+    _SGLangPlugin,
 )
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.seq_info_builder import (
     build_seqs_info,
@@ -30,8 +32,7 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
 )
 from sglang.srt.debug_utils.comparator.bundle_comparator import (
     _any_side_has_dp,
-)
-from sglang.srt.debug_utils.comparator.bundle_comparator import (
+    _extract_dp_rank_from_meta as bc_extract_dp_rank,
     _extract_dp_size_from_meta,
     _group_by_dp_rank,
 )
