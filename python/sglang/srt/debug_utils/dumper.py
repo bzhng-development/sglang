@@ -15,12 +15,19 @@ from dataclasses import asdict, dataclass, field, fields, replace
 from functools import cached_property
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from typing import Any, List, Literal, Optional, Union, get_args, get_type_hints
+from typing import Any, List, Literal, NamedTuple, Optional, Union, get_args, get_type_hints
 
 import torch
 import torch.distributed as dist
 
 # -------------------------------------- config base ------------------------------------------
+
+
+class _QuoteParseResult(NamedTuple):
+    key_prefix: str  # "key=" part (including the '=')
+    quote_char: str  # the quote character (' or ")
+    inner_value: str  # content after stripping the opening quote
+    closed: bool  # whether the closing quote was found in this same token
 
 
 @dataclass(frozen=True)
@@ -121,6 +128,37 @@ class _BaseConfig(ABC):
         return result
 
     @staticmethod
+    def _try_parse_quote_start(token: str) -> Optional[_QuoteParseResult]:
+        """Check if *token* is ``key='value...`` or ``key="value...``.
+
+        Returns None when the token has no ``=`` or the value doesn't start
+        with a quote character.
+        """
+        eq_idx: int = token.find("=")
+        if eq_idx == -1:
+            return None
+
+        key_prefix: str = token[: eq_idx + 1]
+        value_part: str = token[eq_idx + 1 :]
+
+        if not value_part or value_part[0] not in ("'", '"'):
+            return None
+
+        quote_char: str = value_part[0]
+        inner_value: str = value_part[1:]
+        closed: bool = inner_value.endswith(quote_char)
+
+        if closed:
+            inner_value = inner_value[:-1]
+
+        return _QuoteParseResult(
+            key_prefix=key_prefix,
+            quote_char=quote_char,
+            inner_value=inner_value,
+            closed=closed,
+        )
+
+    @staticmethod
     def _merge_quoted_tokens(tokens: list[str]) -> list[str]:
         """Rejoin tokens that were split by the shell but belong to a quoted value.
 
@@ -134,23 +172,8 @@ class _BaseConfig(ABC):
         quote_char: Optional[str] = None
 
         for token in tokens:
-            if quote_char is None:
-                eq_idx: int = token.find("=")
-                if eq_idx == -1:
-                    result.append(token)
-                    continue
-                value_part: str = token[eq_idx + 1 :]
-                if value_part and value_part[0] in ("'", '"'):
-                    quote_char = value_part[0]
-                    stripped: str = value_part[1:]
-                    if stripped.endswith(quote_char):
-                        result.append(token[: eq_idx + 1] + stripped[:-1])
-                        quote_char = None
-                    else:
-                        accumulator = [token[: eq_idx + 1] + stripped]
-                else:
-                    result.append(token)
-            else:
+            # --- Collecting mode: waiting for the closing quote ---
+            if quote_char is not None:
                 if token.endswith(quote_char):
                     accumulator.append(token[:-1])
                     result.append(" ".join(accumulator))
@@ -158,6 +181,20 @@ class _BaseConfig(ABC):
                     quote_char = None
                 else:
                     accumulator.append(token)
+                continue
+
+            # --- Normal mode: check if this token opens a quoted value ---
+            parsed: Optional[_QuoteParseResult] = _BaseConfig._try_parse_quote_start(token)
+
+            if parsed is None:
+                result.append(token)
+                continue
+
+            if parsed.closed:
+                result.append(parsed.key_prefix + parsed.inner_value)
+            else:
+                quote_char = parsed.quote_char
+                accumulator = [parsed.key_prefix + parsed.inner_value]
 
         if accumulator:
             result.append(" ".join(accumulator))
