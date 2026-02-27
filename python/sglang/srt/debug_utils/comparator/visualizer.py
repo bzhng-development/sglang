@@ -157,13 +157,13 @@ def _draw_histogram_pair(
 
     diff_flat: np.ndarray = _maybe_downsample_numpy(diff.flatten())
 
-    ax_normal.hist(diff_flat, bins=100, edgecolor="none")
+    _safe_hist(ax_normal, diff_flat, bins=100, edgecolor="none")
     ax_normal.set_title(f"{label} Histogram")
     ax_normal.set_xlabel("Abs Diff")
     ax_normal.set_ylabel("Count")
 
     log_flat: np.ndarray = np.log10(np.abs(diff_flat) + 1e-10)
-    ax_log.hist(log_flat, bins=100, edgecolor="none")
+    _safe_hist(ax_log, log_flat, bins=100, edgecolor="none")
     ax_log.set_title(f"{label} Histogram (Log10)")
     ax_log.set_xlabel("Abs Diff")
     ax_log.set_ylabel("Count")
@@ -294,6 +294,13 @@ def _format_stats(name: str, t: torch.Tensor) -> str:
         f"min={t.min().item():.4g}, max={t.max().item():.4g}, "
         f"mean={t.mean().item():.4g}, std={t.std().item():.4g}"
     )
+
+
+def _safe_hist(ax: object, data: np.ndarray, *, bins: int = 100, **kwargs: object) -> None:
+    try:
+        ax.hist(data, bins=bins, **kwargs)
+    except ValueError:
+        ax.hist(data, bins="auto", **kwargs)
 
 
 def _maybe_downsample_numpy(
