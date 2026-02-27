@@ -1195,8 +1195,8 @@ class TestEntrypointReplicatedAxis:
         assert isinstance(summary, SummaryRecord)
         assert summary.passed == 1
 
-    def test_replicated_mismatch_emits_warnings(self, tmp_path, capsys):
-        """CP2 TP2, TP replicas differ (> atol) → passed with replicated mismatch warnings."""
+    def test_replicated_mismatch_fails(self, tmp_path, capsys):
+        """CP2 TP2, TP replicas differ (> atol) → failed with warnings."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1228,19 +1228,15 @@ class TestEntrypointReplicatedAxis:
         records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
-        assert comparisons[0].category == "passed"
+        assert comparisons[0].category == "failed"
         assert len(comparisons[0].warnings) > 0
-        assert all(
-            isinstance(w, ReplicatedMismatchWarning)
-            for w in comparisons[0].warnings
-        )
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
-        assert summary.passed == 1
+        assert summary.failed == 1
 
-    def test_summary_counts_passed_with_replicated_warnings(self, tmp_path, capsys):
-        """Diff passes and TP replicas differ → summary.passed=1 (replicated warnings are informational)."""
+    def test_summary_counts_failed_from_warnings_only(self, tmp_path, capsys):
+        """Diff itself passes but TP replicas differ → summary.failed=1 from warnings."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1283,12 +1279,12 @@ class TestEntrypointReplicatedAxis:
         assert comp.diff is not None
         assert comp.diff.passed
         assert len(comp.warnings) > 0
-        assert comp.category == "passed"
+        assert comp.category == "failed"
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
-        assert summary.passed == 1
-        assert summary.failed == 0
+        assert summary.failed == 1
+        assert summary.passed == 0
 
 
 class TestEntrypointAlignment:
