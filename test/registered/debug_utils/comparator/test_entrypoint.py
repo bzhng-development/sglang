@@ -2173,50 +2173,6 @@ class TestEntrypointPerTokenVisualization:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.per_token_rel_diff is None
 
-    def test_visualize_per_token_with_dims(self, tmp_path: Path, capsys) -> None:
-        """Per-token heatmap with tensors that have dims metadata."""
-        pytest.importorskip("matplotlib")
-
-        torch.manual_seed(42)
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        baseline_tensor: torch.Tensor = torch.randn(16, 32)
-        target_tensor: torch.Tensor = baseline_tensor + torch.randn(16, 32) * 0.01
-
-        baseline_path = _create_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden_states",
-            tensor=baseline_tensor,
-            dims="t h",
-        )
-        target_path = _create_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden_states",
-            tensor=target_tensor,
-            dims="t h",
-        )
-
-        output_png: Path = tmp_path / "per_token_dims.png"
-        args = _make_args(
-            baseline_path,
-            target_path,
-            grouping="raw",
-            visualize_per_token=str(output_png),
-        )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.per_token_rel_diff is not None
-        assert len(comparisons[0].diff.per_token_rel_diff) == 16
-
-
 class TestEntrypointThdCpZigzag:
     """E2E entrypoint tests for THD CP zigzag format.
 

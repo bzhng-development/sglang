@@ -76,7 +76,7 @@ def _skip_if_no_matplotlib() -> None:
     pytest.importorskip("matplotlib")
 
 
-class TestManuallyVerify:
+class TestBundleDetailsManualVerify:
     def test_normal_small_diff(self, tmp_path: Path, publish_dir: Path) -> None:
         """Two nearly-identical tensors (randn + 0.01 noise).
 
@@ -198,17 +198,14 @@ class TestManuallyVerify:
             publish_dir=publish_dir,
         )
 
-    def test_per_token_heatmap_increasing_diff(
-        self, tmp_path: Path, publish_dir: Path
-    ) -> None:
+class TestPerTokenHeatmapManualVerify:
+    def test_increasing_diff(self, tmp_path: Path, publish_dir: Path) -> None:
         """Per-token heatmap with linearly increasing diff across token positions.
 
         Expected: Heatmap shows a clear left-to-right gradient — dark/cold on
         the left (small diff), bright/hot on the right (large diff). Multiple
         rows for different tensor names. Colorbar shows log10 scale.
         """
-        import shutil
-
         from sglang.srt.debug_utils.comparator.output_types import ComparisonRecord
         from sglang.srt.debug_utils.comparator.per_token_visualizer import (
             generate_per_token_heatmap,
@@ -246,16 +243,12 @@ class TestManuallyVerify:
         _assert_valid_png(output_path)
         shutil.copy2(src=output_path, dst=publish_dir / output_path.name)
 
-    def test_per_token_heatmap_single_spike(
-        self, tmp_path: Path, publish_dir: Path
-    ) -> None:
+    def test_single_spike(self, tmp_path: Path, publish_dir: Path) -> None:
         """Per-token heatmap where only one token position has large diff.
 
         Expected: Heatmap shows one bright vertical stripe at the spike position,
         rest is dark/cold.
         """
-        import shutil
-
         from sglang.srt.debug_utils.comparator.output_types import ComparisonRecord
         from sglang.srt.debug_utils.comparator.per_token_visualizer import (
             generate_per_token_heatmap,
