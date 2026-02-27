@@ -41,6 +41,28 @@ class DimSpec:
     reduction: Optional[Reduction] = None
 
 
+_SINGLETON_PREFIX: str = "singleton"
+
+
+def is_squeeze_dim(spec: DimSpec) -> bool:
+    return spec.name == SQUEEZE_DIM_NAME
+
+
+def filter_squeeze_dims(dim_specs: list[DimSpec]) -> list[DimSpec]:
+    return [s for s in dim_specs if not is_squeeze_dim(s)]
+
+
+def make_singleton_name(index: int) -> str:
+    return f"{_SINGLETON_PREFIX}{index}"
+
+
+def is_singleton_name(name: str) -> bool:
+    return (
+        name.startswith(_SINGLETON_PREFIX)
+        and name[len(_SINGLETON_PREFIX) :].isdigit()
+    )
+
+
 _DIM_PATTERN = re.compile(r"^(?P<name>[a-zA-Z_]\w*)(?:\((?P<modifiers>[^)]+)\))?$")
 
 _MODIFIER_FIELDS: list[tuple[type[Enum], str]] = [
@@ -120,27 +142,6 @@ def resolve_dim_names(dims_str: str) -> list[str]:
             dim_names.append(spec.name)
 
     return dim_names
-
-
-def is_squeeze_dim(spec: DimSpec) -> bool:
-    return spec.name == SQUEEZE_DIM_NAME
-
-
-def filter_squeeze_dims(dim_specs: list[DimSpec]) -> list[DimSpec]:
-    return [s for s in dim_specs if not is_squeeze_dim(s)]
-
-
-_SINGLETON_PREFIX: str = "singleton"
-
-
-def make_singleton_name(index: int) -> str:
-    return f"{_SINGLETON_PREFIX}{index}"
-
-
-def is_singleton_name(name: str) -> bool:
-    return (
-        name.startswith(_SINGLETON_PREFIX) and name[len(_SINGLETON_PREFIX) :].isdigit()
-    )
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
