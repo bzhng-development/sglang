@@ -8,6 +8,7 @@ import torch
 TOKEN_DIM_NAME: str = "t"
 BATCH_DIM_NAME: str = "b"
 SEQ_DIM_NAME: str = "s"
+SQUEEZE_DIM_NAME: str = "1"
 
 
 class TokenLayout(Enum):
@@ -55,6 +56,14 @@ for _enum_cls, _field in _MODIFIER_FIELDS:
 
 
 def parse_dim(token: str) -> DimSpec:
+    if token == SQUEEZE_DIM_NAME:
+        return DimSpec(name=SQUEEZE_DIM_NAME)
+
+    if token.startswith(SQUEEZE_DIM_NAME + "("):
+        raise ValueError(
+            f"Squeeze dim '1' does not support modifiers: {token!r}"
+        )
+
     match = _DIM_PATTERN.match(token)
     if match is None:
         raise ValueError(f"Invalid dim token: {token!r}")
@@ -84,9 +93,13 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
 
     result = [parse_dim(token) for token in dims_str.strip().split()]
 
-    names = [spec.name for spec in result]
-    if len(names) != len(set(names)):
-        duplicates = sorted({n for n in names if names.count(n) > 1})
+    non_squeeze_names: list[str] = [
+        spec.name for spec in result if not is_squeeze_dim(spec)
+    ]
+    if len(non_squeeze_names) != len(set(non_squeeze_names)):
+        duplicates = sorted(
+            {n for n in non_squeeze_names if non_squeeze_names.count(n) > 1}
+        )
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
     return result
@@ -94,6 +107,37 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
 
 def parse_dim_names(dims_str: str) -> list[str]:
     return [spec.name for spec in parse_dims(dims_str)]
+
+
+def is_squeeze_dim(spec: DimSpec) -> bool:
+    return spec.name == SQUEEZE_DIM_NAME
+
+
+def filter_squeeze_dims(dim_specs: list[DimSpec]) -> list[DimSpec]:
+    return [s for s in dim_specs if not is_squeeze_dim(s)]
+
+
+def make_singleton_name(index: int) -> str:
+    return f"singleton{index}"
+
+
+def is_singleton_name(name: str) -> bool:
+    return name.startswith("singleton") and name[9:].isdigit()
+
+
+def resolve_dim_names_with_singletons(dim_specs: list[DimSpec]) -> list[str]:
+    """Convert DimSpec list to dim names, replacing '1' with 'singleton0', 'singleton1', ..."""
+    dim_names: list[str] = []
+    sq_idx: int = 0
+
+    for spec in dim_specs:
+        if is_squeeze_dim(spec):
+            dim_names.append(make_singleton_name(sq_idx))
+            sq_idx += 1
+        else:
+            dim_names.append(spec.name)
+
+    return dim_names
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
