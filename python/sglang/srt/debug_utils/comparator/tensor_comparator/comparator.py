@@ -92,8 +92,12 @@ def compare_tensor_pair(
 def _compute_tensor_stats(x: torch.Tensor) -> TensorStats:
     if x.numel() == 0:
         return TensorStats(
-            mean=0.0, abs_mean=0.0, std=0.0,
-            min=0.0, max=0.0, percentiles={},
+            mean=0.0,
+            abs_mean=0.0,
+            std=0.0,
+            min=0.0,
+            max=0.0,
+            percentiles={},
         )
 
     include_quantiles: bool = x.numel() < QUANTILE_NUMEL_THRESHOLD
@@ -121,10 +125,15 @@ def _compute_diff(
 ) -> DiffInfo:
     if x_baseline.numel() == 0:
         return DiffInfo(
-            rel_diff=0.0, max_abs_diff=0.0, mean_abs_diff=0.0,
-            abs_diff_percentiles={}, max_diff_coord=[],
-            baseline_at_max=0.0, target_at_max=0.0,
-            diff_threshold=diff_threshold, passed=True,
+            rel_diff=0.0,
+            max_abs_diff=0.0,
+            mean_abs_diff=0.0,
+            abs_diff_percentiles={},
+            max_diff_coord=[],
+            baseline_at_max=0.0,
+            target_at_max=0.0,
+            diff_threshold=diff_threshold,
+            passed=True,
         )
 
     raw_abs_diff = (x_target - x_baseline).abs()
