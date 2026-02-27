@@ -24,6 +24,7 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
 from sglang.srt.debug_utils.comparator.aligner.unsharder.parallel_info import (
     normalize_parallel_info,
 )
+from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
 from sglang.srt.debug_utils.comparator.dims import (
     ParallelAxis,
     TokenLayout,
@@ -170,6 +171,7 @@ def _load_non_tensor_aux(
     loaded: list[ValueWithMeta] = [
         ValueWithMeta.load(dump_path / r["filename"]) for r in rows
     ]
+    loaded = filter_to_non_empty_dp_rank(loaded)
 
     if len(loaded) > 1:
         first_value = loaded[0].value
@@ -206,6 +208,7 @@ def _load_and_align_aux_tensor(
     loaded: list[ValueWithMeta] = [
         ValueWithMeta.load(dump_path / r["filename"]) for r in rows
     ]
+    loaded = filter_to_non_empty_dp_rank(loaded)
 
     tensors: list[torch.Tensor] = [
         item.value for item in loaded if isinstance(item.value, torch.Tensor)
