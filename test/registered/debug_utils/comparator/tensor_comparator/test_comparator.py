@@ -6,9 +6,9 @@ import torch
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     QUANTILE_NUMEL_THRESHOLD,
     SAMPLE_DIFF_THRESHOLD,
-    compute_diff,
     _compute_tensor_stats,
     compare_tensor_pair,
+    compute_diff,
 )
 from sglang.srt.debug_utils.comparator.tensor_comparator.types import DiffInfo
 from sglang.test.ci.ci_register import register_cpu_ci

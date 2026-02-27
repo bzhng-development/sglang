@@ -69,11 +69,14 @@ def _apply_unshard(
 
     if isinstance(params, CpThdConcatParams):
         thd_dim: int = resolve_dim_by_name(ordered_tensors[0], params.dim_name)
-        return _thd_concat(
-            ordered_tensors,
-            dim=thd_dim,
-            seq_lens_per_rank=params.seq_lens_per_rank,
-        ), []
+        return (
+            _thd_concat(
+                ordered_tensors,
+                dim=thd_dim,
+                seq_lens_per_rank=params.seq_lens_per_rank,
+            ),
+            [],
+        )
 
     if isinstance(params, ReduceSumParams):
         stripped: list[torch.Tensor] = [t.rename(None) for t in ordered_tensors]

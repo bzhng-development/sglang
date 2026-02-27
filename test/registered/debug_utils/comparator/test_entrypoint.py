@@ -938,9 +938,7 @@ class TestEntrypointGroupingLogical:
         assert len(comparisons) == 1
 
         recompute_checks: list[ReplicatedCheckResult] = [
-            c
-            for c in comparisons[0].replicated_checks
-            if c.axis == "recompute_pseudo"
+            c for c in comparisons[0].replicated_checks if c.axis == "recompute_pseudo"
         ]
         assert len(recompute_checks) > 0
         assert any(not c.passed for c in recompute_checks)
@@ -2658,7 +2656,9 @@ class TestEntrypointDpFilter:
             diff_threshold=1e-3,
         )
 
-        with pytest.raises(AssertionError, match="Expected exactly 1 non-empty dp_rank"):
+        with pytest.raises(
+            AssertionError, match="Expected exactly 1 non-empty dp_rank"
+        ):
             _run_and_parse(args, capsys)
 
 

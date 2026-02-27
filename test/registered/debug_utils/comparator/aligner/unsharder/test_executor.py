@@ -50,7 +50,9 @@ class TestExecuteUnsharderPlan:
         assert len(plans) == 1
 
         named_shards: list[torch.Tensor] = _name_tensors(shards, dim_specs)
-        unsharder_result: UnsharderResult = execute_unsharder_plan(plans[0], named_shards)
+        unsharder_result: UnsharderResult = execute_unsharder_plan(
+            plans[0], named_shards
+        )
         assert len(unsharder_result.tensors) == 1
         assert torch.allclose(unsharder_result.tensors[0].rename(None), full_tensor)
         assert unsharder_result.replicated_checks == []

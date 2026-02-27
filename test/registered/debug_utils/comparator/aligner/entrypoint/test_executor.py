@@ -1,5 +1,4 @@
 import sys
-from typing import Optional
 
 import pytest
 import torch
@@ -92,9 +91,7 @@ class TestExecuteStepPlans:
             sub_plans=[],
         )
 
-        result, checks = _execute_step_plans(
-            tensors=tensors, step_plans=[step_plan]
-        )
+        result, checks = _execute_step_plans(tensors=tensors, step_plans=[step_plan])
 
         assert result == {}
         assert checks == []
@@ -108,9 +105,7 @@ class TestExecuteStepPlans:
             sub_plans=[],
         )
 
-        result, checks = _execute_step_plans(
-            tensors=[tensor], step_plans=[step_plan]
-        )
+        result, checks = _execute_step_plans(tensors=[tensor], step_plans=[step_plan])
 
         assert 5 in result
         assert torch.equal(result[5], tensor)
