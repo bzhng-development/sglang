@@ -7,15 +7,6 @@ from typing import Any, Callable, Dict, Optional, Tuple
 import polars as pl
 import torch
 
-def _parse_bool(value: str) -> bool:
-    return value.lower() in ("true", "1")
-
-
-_TYPED_FIELDS: list[tuple[str, Callable[[str], Any]]] = [
-    ("rank", int),
-    ("is_recompute", _parse_bool),
-]
-
 LOAD_FAILED: object = object()
 
 
@@ -26,9 +17,9 @@ def parse_meta_from_filename(path: Path) -> Dict[str, Any]:
         if "=" in kv:
             k, v = kv.split("=", 1)
             result[k] = v
-    for field, converter in _TYPED_FIELDS:
-        if field in result:
-            result[field] = converter(result[field])
+    for field_name, converter in _TYPED_FIELDS:
+        if field_name in result:
+            result[field_name] = converter(result[field_name])
     return result
 
 
@@ -182,6 +173,16 @@ def read_tokenizer_path(directory: Path) -> Optional[str]:
         if tokenizer_path is not None:
             return str(tokenizer_path)
     return None
+
+
+def _parse_bool(value: str) -> bool:
+    return value.lower() in ("true", "1")
+
+
+_TYPED_FIELDS: list[tuple[str, Callable[[str], Any]]] = [
+    ("rank", int),
+    ("is_recompute", _parse_bool),
+]
 
 
 dump_loader = DumpLoader()

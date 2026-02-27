@@ -20,7 +20,7 @@ class ParallelAxis(Enum):
     CP = "cp"
     EP = "ep"
     SP = "sp"
-    RECOMPUTE = "recompute"
+    RECOMPUTE_PSEUDO = "recompute_pseudo"
 
 
 class Ordering(Enum):

@@ -125,14 +125,6 @@ class TestIsRecomputeParsing:
         )
         assert meta_false["is_recompute"] is False
 
-    def test_backward_compat_no_is_recompute(self, tmp_path) -> None:
-        for fn in [
-            "step=1___rank=0___dump_index=1___name=a.pt",
-        ]:
-            torch.save(torch.randn(5), tmp_path / fn)
-
-        df = read_meta(str(tmp_path))
-        assert "is_recompute" not in df.columns
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+import enum
 import functools
 import json
 import os
@@ -316,7 +317,7 @@ class _Dumper:
             @functools.wraps(fn)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 ctx_dict: dict = (
-                    _extractor(*args, **kwargs) if _extractor else static_ctx
+                    _extractor(args[0]) if _extractor else static_ctx
                 )
                 self.set_ctx(**ctx_dict)
                 try:
@@ -417,8 +418,11 @@ class _Dumper:
         if not self._config.enable:
             return
 
-        tags = dict(name=name, **extra_kwargs, **self._state.global_ctx)
-        tags["is_recompute"] = _detect_is_recompute()
+        recompute_info = _detect_recompute_info()
+        is_recompute = recompute_info == _RecomputeInfo.ENABLED_ACTIVE
+        tags = dict(
+            name=name, is_recompute=is_recompute, **extra_kwargs, **self._state.global_ctx
+        )
 
         if (f := self._config.filter) is not None and re.search(
             f, _format_tags(tags)
@@ -428,6 +432,11 @@ class _Dumper:
         if not (enable_value or enable_curr_grad or enable_future_grad):
             return
 
+        recompute_meta: dict[str, Any] = {}
+        if recompute_info != _RecomputeInfo.DISABLED:
+            recompute_meta["recompute_pseudo_rank"] = 1 if is_recompute else 0
+            recompute_meta["recompute_pseudo_size"] = 2
+
         value = _materialize_value(value)
 
         if enable_value:
@@ -436,7 +445,7 @@ class _Dumper:
                 tags=tags,
                 value=value,
                 save=save,
-                meta_only_fields=value_meta_only_fields or {},
+                meta_only_fields={**(value_meta_only_fields or {}), **recompute_meta},
             )
 
         if (
@@ -449,7 +458,7 @@ class _Dumper:
                 tags={**tags, "name": f"grad__{name}"},
                 value=g,
                 save=save,
-                meta_only_fields=grad_meta_only_fields or {},
+                meta_only_fields={**(grad_meta_only_fields or {}), **recompute_meta},
             )
 
         if enable_future_grad:
@@ -1146,6 +1155,12 @@ def _get_local_ip_by_remote() -> Optional[str]:
 # -------------------------------------- framework plugins ------------------------------------------
 
 
+class _RecomputeInfo(enum.Enum):
+    DISABLED = "disabled"
+    ENABLED_INACTIVE = "enabled_inactive"  # inside checkpoint, original forward
+    ENABLED_ACTIVE = "enabled_active"  # inside checkpoint, recompute forward
+
+
 class _FrameworkPlugin(ABC):
     @property
     @abstractmethod
@@ -1172,8 +1187,8 @@ class _FrameworkPlugin(ABC):
     def get_tokenizer_path(self) -> Optional[str]:
         return None
 
-    def detect_is_recompute(self) -> bool:
-        return False
+    def detect_recompute_info(self) -> _RecomputeInfo:
+        return _RecomputeInfo.DISABLED
 
 
 class _SGLangPlugin(_FrameworkPlugin):
@@ -1335,17 +1350,6 @@ class _MegatronPlugin(_FrameworkPlugin):
         except (ImportError, AssertionError, AttributeError):
             pass
 
-        # Recompute axis: model checkpointed forward vs recompute forward as virtual
-        # parallel axis. Only injected when inside a checkpoint region.
-        try:
-            from megatron.core.tensor_parallel.random import is_checkpointing
-
-            if is_checkpointing():
-                info["recompute_rank"] = 1 if torch.is_grad_enabled() else 0
-                info["recompute_size"] = 2
-        except (ImportError, AttributeError):
-            pass
-
         return info
 
     def convert_value(
@@ -1371,22 +1375,30 @@ class _MegatronPlugin(_FrameworkPlugin):
             {"input_ids", "position_ids", "cu_seqlens_q", "cu_seqlens_kv", "qkv_format"}
         )
 
-    def detect_is_recompute(self) -> bool:
+    def detect_recompute_info(self) -> _RecomputeInfo:
         if not self._available:
-            return False
+            return _RecomputeInfo.DISABLED
         try:
             from megatron.core.tensor_parallel.random import is_checkpointing
 
-            return is_checkpointing() and torch.is_grad_enabled()
+            if not is_checkpointing():
+                return _RecomputeInfo.DISABLED
+            if torch.is_grad_enabled():
+                return _RecomputeInfo.ENABLED_ACTIVE
+            return _RecomputeInfo.ENABLED_INACTIVE
         except (ImportError, AttributeError):
-            return False
+            return _RecomputeInfo.DISABLED
 
 
 _plugins: list[_FrameworkPlugin] = [_SGLangPlugin(), _MegatronPlugin()]
 
 
-def _detect_is_recompute() -> bool:
-    return any(p.detect_is_recompute() for p in _plugins)
+def _detect_recompute_info() -> _RecomputeInfo:
+    for plugin in _plugins:
+        info = plugin.detect_recompute_info()
+        if info != _RecomputeInfo.DISABLED:
+            return info
+    return _RecomputeInfo.DISABLED
 
 
 # -------------------------------------- singleton ------------------------------------------
