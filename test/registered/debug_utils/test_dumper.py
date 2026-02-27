@@ -1757,7 +1757,6 @@ def _make_forward_batch():
 
 
 class TestNonIntrusiveDumperConfigMode(_NonIntrusiveTestBase):
-
     @staticmethod
     def _build_model() -> torch.nn.Module:
         class SubLayer(torch.nn.Module):
@@ -2182,7 +2181,6 @@ class TestMegatronConvertValue:
 
 
 class TestNonIntrusiveKwargsModel(_NonIntrusiveTestBase):
-
     def test_kwargs_core_fields(self, tmp_path):
         class KwargsModel(torch.nn.Module):
             def forward(self, *, input_ids, position_ids):

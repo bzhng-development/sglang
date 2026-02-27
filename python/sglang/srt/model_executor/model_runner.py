@@ -1742,9 +1742,10 @@ class ModelRunner(ModelRunnerKVCacheMixin):
                 init_new_workspace=init_new_workspace,
             )
 
-        self.prefill_attention_backend_str, self.decode_attention_backend_str = (
-            self.server_args.get_attention_backends()
-        )
+        (
+            self.prefill_attention_backend_str,
+            self.decode_attention_backend_str,
+        ) = self.server_args.get_attention_backends()
 
         if self.decode_attention_backend_str != self.prefill_attention_backend_str:
             from sglang.srt.layers.attention.hybrid_attn_backend import (

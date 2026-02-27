@@ -164,6 +164,10 @@ def _resolve_unshard_params(
         and spec.parallel == ParallelAxis.CP
         and thd_global_seq_lens is not None
     ):
+        if spec.parallel is None:
+            raise ValueError(
+                f"THD unshard requires a parallel axis on dim '{spec.name}', but got None"
+            )
         axis_size: int = parallel_infos[0][spec.parallel].axis_size
         for s in thd_global_seq_lens:
             if s % axis_size != 0:
