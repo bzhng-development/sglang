@@ -41,25 +41,35 @@ class DimSpec:
     reduction: Optional[Reduction] = None
 
 
-_SINGLETON_PREFIX: str = "singleton"
+class _SingletonDimUtil:
+    """Utilities for squeeze dims (name="1") and their singleton tensor-name mapping."""
+
+    PREFIX: str = "singleton"
+
+    @staticmethod
+    def is_squeeze(spec: DimSpec) -> bool:
+        return spec.name == SQUEEZE_DIM_NAME
+
+    @staticmethod
+    def filter_out(dim_specs: list[DimSpec]) -> list[DimSpec]:
+        return [s for s in dim_specs if not _SingletonDimUtil.is_squeeze(s)]
+
+    @staticmethod
+    def make_name(index: int) -> str:
+        return f"{_SingletonDimUtil.PREFIX}{index}"
+
+    @staticmethod
+    def is_singleton_name(name: str) -> bool:
+        return (
+            name.startswith(_SingletonDimUtil.PREFIX)
+            and name[len(_SingletonDimUtil.PREFIX) :].isdigit()
+        )
 
 
-def is_squeeze_dim(spec: DimSpec) -> bool:
-    return spec.name == SQUEEZE_DIM_NAME
-
-
-def filter_squeeze_dims(dim_specs: list[DimSpec]) -> list[DimSpec]:
-    return [s for s in dim_specs if not is_squeeze_dim(s)]
-
-
-def make_singleton_name(index: int) -> str:
-    return f"{_SINGLETON_PREFIX}{index}"
-
-
-def is_singleton_name(name: str) -> bool:
-    return (
-        name.startswith(_SINGLETON_PREFIX) and name[len(_SINGLETON_PREFIX) :].isdigit()
-    )
+is_squeeze_dim = _SingletonDimUtil.is_squeeze
+filter_squeeze_dims = _SingletonDimUtil.filter_out
+make_singleton_name = _SingletonDimUtil.make_name
+is_singleton_name = _SingletonDimUtil.is_singleton_name
 
 
 _DIM_PATTERN = re.compile(r"^(?P<name>[a-zA-Z_]\w*)(?:\((?P<modifiers>[^)]+)\))?$")
@@ -79,9 +89,6 @@ for _enum_cls, _field in _MODIFIER_FIELDS:
 def parse_dim(token: str) -> DimSpec:
     if token == SQUEEZE_DIM_NAME:
         return DimSpec(name=SQUEEZE_DIM_NAME)
-
-    if token.startswith(SQUEEZE_DIM_NAME + "("):
-        raise ValueError(f"Squeeze dim '1' does not support modifiers: {token!r}")
 
     match = _DIM_PATTERN.match(token)
     if match is None:
