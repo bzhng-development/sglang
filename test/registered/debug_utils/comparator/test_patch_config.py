@@ -15,6 +15,8 @@ from sglang.srt.debug_utils.comparator.entrypoint import run
 from sglang.srt.debug_utils.comparator.output_types import (
     AnyRecord,
     ComparisonRecord,
+    NonTensorRecord,
+    SummaryRecord,
     parse_record_json,
 )
 from sglang.srt.debug_utils.comparator.patch_config import (
@@ -530,6 +532,279 @@ class TestEntrypointDimsOverride:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.passed
 
+    def test_selective_match_multi_tensor(self, tmp_path: Path, capsys) -> None:
+        """Override matches only 'logits'; 'hidden' uses original dims."""
+        torch.manual_seed(42)
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        hidden_b: torch.Tensor = torch.randn(10, 8)
+        hidden_t: torch.Tensor = hidden_b + torch.randn(10, 8) * 0.001
+        logits_b: torch.Tensor = torch.randn(10, 4)
+        logits_t: torch.Tensor = logits_b + torch.randn(10, 4) * 0.001
+
+        for name, b_tensor, t_tensor, dims in [
+            ("hidden", hidden_b, hidden_t, "t h"),
+            ("logits", logits_b, logits_t, "WRONG"),
+        ]:
+            _create_rank_dump(
+                baseline_dir, rank=0, name=name, tensor=b_tensor, dims=dims
+            )
+            _create_rank_dump(
+                target_dir, rank=0, name=name, tensor=t_tensor, dims=dims
+            )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            grouping="raw",
+            override_dims=["logits:t v"],
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 2
+        assert all(c.diff is not None and c.diff.passed for c in comparisons)
+
+    def test_multiple_cli_override_dims(self, tmp_path: Path, capsys) -> None:
+        """Multiple --override-dims for different tensors."""
+        torch.manual_seed(42)
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        hidden_b: torch.Tensor = torch.randn(10, 8)
+        hidden_t: torch.Tensor = hidden_b + torch.randn(10, 8) * 0.001
+        logits_b: torch.Tensor = torch.randn(10, 4)
+        logits_t: torch.Tensor = logits_b + torch.randn(10, 4) * 0.001
+
+        for name, b_tensor, t_tensor in [
+            ("hidden", hidden_b, hidden_t),
+            ("logits", logits_b, logits_t),
+        ]:
+            _create_rank_dump(
+                baseline_dir, rank=0, name=name, tensor=b_tensor, dims="WRONG"
+            )
+            _create_rank_dump(
+                target_dir, rank=0, name=name, tensor=t_tensor, dims="WRONG"
+            )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            grouping="raw",
+            override_dims=["hidden:t h", "logits:t v"],
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 2
+        assert all(c.diff is not None and c.diff.passed for c in comparisons)
+
+    def test_per_side_dims_different_parallelism(
+        self, tmp_path: Path, capsys
+    ) -> None:
+        """baseline TP-sharded, target EP-sharded — per-side override fixes both."""
+        torch.manual_seed(42)
+        full_tensor: torch.Tensor = torch.randn(10, 8)
+        target_full: torch.Tensor = full_tensor + torch.randn(10, 8) * 0.001
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        # Baseline: TP=2, sharded on dim 1, but dumped with wrong dims
+        b_chunks: list[torch.Tensor] = list(full_tensor.chunk(2, dim=1))
+        for tp_rank in range(2):
+            _create_rank_dump(
+                baseline_dir,
+                rank=tp_rank,
+                name="hidden",
+                tensor=b_chunks[tp_rank],
+                dims="WRONG",
+                parallel_info={"tp_rank": tp_rank, "tp_size": 2},
+            )
+
+        # Target: EP=2, sharded on dim 1, but dumped with wrong dims
+        t_chunks: list[torch.Tensor] = list(target_full.chunk(2, dim=1))
+        for ep_rank in range(2):
+            _create_rank_dump(
+                target_dir,
+                rank=ep_rank,
+                name="hidden",
+                tensor=t_chunks[ep_rank],
+                dims="WRONG",
+                parallel_info={"ep_rank": ep_rank, "ep_size": 2},
+            )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            grouping="logical",
+            override_baseline_dims=["hidden:t h(tp)"],
+            override_target_dims=["hidden:t h(ep)"],
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].diff is not None
+        assert comparisons[0].diff.passed
+
+    def test_yaml_first_match_wins_e2e(self, tmp_path: Path, capsys) -> None:
+        """YAML with two matching rules: first rule wins in real pipeline."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(10, 8)
+        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        _create_rank_dump(
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="WRONG"
+        )
+        _create_rank_dump(
+            target_dir, rank=0, name="hidden", tensor=target, dims="WRONG"
+        )
+
+        yaml_path: Path = tmp_path / "patch.yaml"
+        yaml_path.write_text(textwrap.dedent("""\
+            dims:
+              - match: "hidden"
+                dims: "t h"
+              - match: "hidden"
+                dims: "ALSO_WRONG"
+        """))
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            grouping="raw",
+            patch_config=str(yaml_path),
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].diff is not None
+        assert comparisons[0].diff.passed
+
+    def test_cli_overrides_yaml_e2e(self, tmp_path: Path, capsys) -> None:
+        """CLI --override-dims wins over YAML rule for the same tensor."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(10, 8)
+        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        _create_rank_dump(
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="WRONG"
+        )
+        _create_rank_dump(
+            target_dir, rank=0, name="hidden", tensor=target, dims="WRONG"
+        )
+
+        yaml_path: Path = tmp_path / "patch.yaml"
+        yaml_path.write_text(textwrap.dedent("""\
+            dims:
+              - match: "hidden"
+                dims: "YAML_WRONG"
+        """))
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            grouping="raw",
+            override_dims=["hidden:t h"],
+            patch_config=str(yaml_path),
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].diff is not None
+        assert comparisons[0].diff.passed
+
+    def test_override_injects_dims_when_absent(
+        self, tmp_path: Path, capsys
+    ) -> None:
+        """Override injects dims into meta even when dump had no dims annotation."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(10, 8)
+        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        # Dump WITHOUT dims
+        _create_rank_dump(
+            baseline_dir, rank=0, name="hidden", tensor=tensor, dims=None
+        )
+        _create_rank_dump(
+            target_dir, rank=0, name="hidden", tensor=target, dims=None
+        )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            grouping="raw",
+            override_dims=["hidden:t h"],
+        )
+        records = _run_and_parse(args, capsys)
+
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].diff is not None
+        assert comparisons[0].diff.passed
+
+    def test_non_tensor_unaffected_by_override(
+        self, tmp_path: Path, capsys
+    ) -> None:
+        """Non-tensor values pass through without error even with active override."""
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        baseline_path: Path = _create_non_tensor_rank_dump(
+            baseline_dir, rank=0, name="rids", value=["A", "B"]
+        )
+        target_path: Path = _create_non_tensor_rank_dump(
+            target_dir, rank=0, name="rids", value=["A", "B"]
+        )
+
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            override_dims=["rids:b s"],
+        )
+        records = _run_and_parse(args, capsys)
+
+        non_tensors: list[NonTensorRecord] = [
+            r for r in records if isinstance(r, NonTensorRecord)
+        ]
+        assert len(non_tensors) == 1
+        assert non_tensors[0].values_equal
+
+        summary: SummaryRecord = [
+            r for r in records if isinstance(r, SummaryRecord)
+        ][0]
+        assert summary.failed == 0
+
 
 # ──────────────────── Test helpers ────────────────────
 
@@ -595,6 +870,32 @@ def _create_rank_dump(
         dumper.__dict__["_static_meta"] = static_meta
 
         dumper.dump(name, tensor, dims=dims)
+        dumper.step()
+
+    return directory / _FIXED_EXP_NAME
+
+
+def _create_non_tensor_rank_dump(
+    directory: Path,
+    *,
+    rank: int,
+    name: str,
+    value: object,
+) -> Path:
+    """Create a dump with a non-tensor value via the real dumper."""
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(_dumper_module, "_get_rank", lambda: rank)
+
+        dumper = _Dumper(
+            config=DumperConfig(
+                enable=True,
+                dir=str(directory),
+                exp_name=_FIXED_EXP_NAME,
+            )
+        )
+        dumper.__dict__["_static_meta"] = {"world_rank": rank, "world_size": 1}
+
+        dumper.dump(name, value)
         dumper.step()
 
     return directory / _FIXED_EXP_NAME
