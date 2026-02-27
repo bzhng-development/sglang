@@ -11,11 +11,8 @@ from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 _PARALLEL_INFO_KEYS = ("sglang_parallel_info", "megatron_parallel_info")
 
-# (dp_rank_field, dp_size_field) ordered by priority
-_DP_FIELD_PAIRS: list[tuple[str, str]] = [
-    ("dp_rank", "dp_size"),
-    ("attn_dp_rank", "attn_dp_size"),
-]
+_DP_RANK_FIELD = "dp_rank"
+_DP_SIZE_FIELD = "dp_size"
 
 
 def filter_to_non_empty_dp_rank(items: list[ValueWithMeta]) -> list[ValueWithMeta]:
@@ -65,11 +62,10 @@ def _extract_dp_info(meta: dict) -> Optional[tuple[int, int]]:
         if not isinstance(info, dict) or not info:
             continue
 
-        for rank_field, size_field in _DP_FIELD_PAIRS:
-            dp_rank = info.get(rank_field)
-            dp_size = info.get(size_field)
-            if dp_rank is not None and dp_size is not None:
-                return (int(dp_rank), int(dp_size))
+        dp_rank = info.get(_DP_RANK_FIELD)
+        dp_size = info.get(_DP_SIZE_FIELD)
+        if dp_rank is not None and dp_size is not None:
+            return (int(dp_rank), int(dp_size))
 
     return None
 

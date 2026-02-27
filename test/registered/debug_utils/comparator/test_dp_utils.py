@@ -21,8 +21,8 @@ def _make_sglang_meta(
         "sglang_parallel_info": {
             "tp_rank": tp_rank,
             "tp_size": tp_size,
-            "attn_dp_rank": dp_rank,
-            "attn_dp_size": dp_size,
+            "dp_rank": dp_rank,
+            "dp_size": dp_size,
         }
     }
 
@@ -50,7 +50,7 @@ def _make_item(value: object, meta: dict) -> ValueWithMeta:
 
 
 class TestExtractDpInfo:
-    def test_sglang_attn_dp(self) -> None:
+    def test_sglang_dp(self) -> None:
         meta: dict = _make_sglang_meta(dp_rank=1, dp_size=4)
         assert _extract_dp_info(meta) == (1, 4)
 

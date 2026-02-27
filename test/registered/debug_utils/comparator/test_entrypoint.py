@@ -2486,8 +2486,8 @@ class TestEntrypointDpFilter:
                 parallel_info={
                     "tp_rank": 0,
                     "tp_size": 1,
-                    "attn_dp_rank": 0,
-                    "attn_dp_size": 2,
+                    "dp_rank": 0,
+                    "dp_size": 2,
                 },
                 framework="sglang",
             )
@@ -2502,8 +2502,8 @@ class TestEntrypointDpFilter:
                 parallel_info={
                     "tp_rank": 0,
                     "tp_size": 1,
-                    "attn_dp_rank": 1,
-                    "attn_dp_size": 2,
+                    "dp_rank": 1,
+                    "dp_size": 2,
                 },
                 framework="sglang",
             )
@@ -2606,8 +2606,8 @@ class TestEntrypointDpFilter:
                         parallel_info={
                             "tp_rank": tp_rank,
                             "tp_size": 2,
-                            "attn_dp_rank": dp_rank,
-                            "attn_dp_size": 2,
+                            "dp_rank": dp_rank,
+                            "dp_size": 2,
                         },
                         framework="sglang",
                     )

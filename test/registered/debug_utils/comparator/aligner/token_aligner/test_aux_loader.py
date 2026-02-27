@@ -304,8 +304,8 @@ class TestLoadNonTensorAuxDp:
             value=["req_A"],
             meta={
                 "sglang_parallel_info": {
-                    "attn_dp_rank": 0,
-                    "attn_dp_size": 2,
+                    "dp_rank": 0,
+                    "dp_size": 2,
                 }
             },
         )
@@ -317,8 +317,8 @@ class TestLoadNonTensorAuxDp:
             value=["req_A"],
             meta={
                 "sglang_parallel_info": {
-                    "attn_dp_rank": 1,
-                    "attn_dp_size": 2,
+                    "dp_rank": 1,
+                    "dp_size": 2,
                 }
             },
         )
@@ -352,8 +352,8 @@ class TestLoadAndAlignAuxTensorDp:
             value=torch.tensor([10, 20, 30]),
             meta={
                 "sglang_parallel_info": {
-                    "attn_dp_rank": 0,
-                    "attn_dp_size": 2,
+                    "dp_rank": 0,
+                    "dp_size": 2,
                 }
             },
         )
@@ -365,8 +365,8 @@ class TestLoadAndAlignAuxTensorDp:
             value=torch.tensor([]),
             meta={
                 "sglang_parallel_info": {
-                    "attn_dp_rank": 1,
-                    "attn_dp_size": 2,
+                    "dp_rank": 1,
+                    "dp_size": 2,
                 }
             },
         )
