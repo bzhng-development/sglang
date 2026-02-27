@@ -6,9 +6,7 @@ import torch
 from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import (
-    DimSpec,
-    is_squeeze_dim,
-    make_singleton_name,
+    filter_squeeze_dims,
     parse_dims,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair, _FrozenBase
@@ -18,9 +16,7 @@ from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 
 
 class AxisAlignerPlan(_FrozenBase):
-    squeeze_x: list[str]  # singleton dim names to squeeze on x side
-    squeeze_y: list[str]  # singleton dim names to squeeze on y side
-    swap_pattern: Optional[str]  # einops pattern, None if no swap needed
+    pattern: Pair[Optional[str]]  # einops pattern per side, None = no-op
 
 
 # --- planner ---
@@ -32,42 +28,35 @@ def compute_axis_aligner_plan(
     if dims_str_pair.x is None or dims_str_pair.y is None:
         return None
 
-    squeeze_x, x_names = _extract_squeeze_and_names(parse_dims(dims_str_pair.x))
-    squeeze_y, y_names = _extract_squeeze_and_names(parse_dims(dims_str_pair.y))
+    x_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.x)]
+    y_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.y)]
 
-    swap_pattern: Optional[str] = _compute_swap_pattern(x_names, y_names)
+    x_filtered: list[str] = [s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.x))]
+    y_filtered: list[str] = [s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.y))]
 
-    if not squeeze_x and not squeeze_y and swap_pattern is None:
+    target_order: Optional[list[str]] = _resolve_target_order(x_filtered, y_filtered)
+    if target_order is None:
         return None
 
-    return AxisAlignerPlan(
-        squeeze_x=squeeze_x,
-        squeeze_y=squeeze_y,
-        swap_pattern=swap_pattern,
-    )
+    pattern_x: Optional[str] = _build_pattern(source=x_raw, target=target_order)
+    pattern_y: Optional[str] = _build_pattern(source=y_raw, target=target_order)
+
+    if pattern_x is None and pattern_y is None:
+        return None
+
+    return AxisAlignerPlan(pattern=Pair(x=pattern_x, y=pattern_y))
 
 
-def _extract_squeeze_and_names(
-    dim_specs: list[DimSpec],
-) -> tuple[list[str], list[str]]:
-    """Split dim_specs into (singleton_names_for_squeeze, non_squeeze_dim_names)."""
-    squeeze_names: list[str] = []
-    dim_names: list[str] = []
-    sq_idx: int = 0
+def _resolve_target_order(
+    x_names: list[str], y_names: list[str]
+) -> Optional[list[str]]:
+    """Determine the canonical dim order both sides should align to.
 
-    for spec in dim_specs:
-        if is_squeeze_dim(spec):
-            squeeze_names.append(make_singleton_name(sq_idx))
-            sq_idx += 1
-        else:
-            dim_names.append(spec.name)
-
-    return squeeze_names, dim_names
-
-
-def _compute_swap_pattern(x_names: list[str], y_names: list[str]) -> Optional[str]:
+    Returns y_names (the target ordering) if name sets match, or None on mismatch.
+    If both sides are identical, returns the shared order.
+    """
     if x_names == y_names:
-        return None
+        return y_names
 
     if set(x_names) != set(y_names):
         # Local import to avoid circular dependency:
@@ -85,7 +74,20 @@ def _compute_swap_pattern(x_names: list[str], y_names: list[str]) -> Optional[st
         )
         return None
 
-    return f"{' '.join(x_names)} -> {' '.join(y_names)}"
+    return y_names
+
+
+def _build_pattern(
+    *, source: list[str], target: list[str]
+) -> Optional[str]:
+    """Build an einops rearrange pattern from source dim names to target dim names.
+
+    Returns None if source already matches target (no rearrange needed).
+    """
+    if source == target:
+        return None
+
+    return f"{' '.join(source)} -> {' '.join(target)}"
 
 
 # --- executor ---
@@ -94,13 +96,9 @@ def _compute_swap_pattern(x_names: list[str], y_names: list[str]) -> Optional[st
 def execute_axis_aligner_plan(
     tensor: torch.Tensor, plan: AxisAlignerPlan, *, side: str
 ) -> torch.Tensor:
-    squeeze_names: list[str] = plan.squeeze_x if side == "x" else plan.squeeze_y
+    pattern: Optional[str] = plan.pattern.x if side == "x" else plan.pattern.y
 
-    for name in squeeze_names:
-        dim_idx: int = list(tensor.names).index(name)
-        tensor = tensor.squeeze(dim_idx)
-
-    if plan.swap_pattern is not None and side == "x":
-        tensor = rearrange(tensor.rename(None), plan.swap_pattern)
+    if pattern is not None:
+        tensor = rearrange(tensor.rename(None), pattern)
 
     return tensor

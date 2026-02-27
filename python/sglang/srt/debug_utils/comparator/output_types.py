@@ -221,12 +221,10 @@ def _format_aligner_plan(plan: AlignerPlan) -> str:
 
     if plan.axis_aligner_plan is not None:
         parts: list[str] = []
-        if plan.axis_aligner_plan.squeeze_x:
-            parts.append(f"squeeze_x={plan.axis_aligner_plan.squeeze_x}")
-        if plan.axis_aligner_plan.squeeze_y:
-            parts.append(f"squeeze_y={plan.axis_aligner_plan.squeeze_y}")
-        if plan.axis_aligner_plan.swap_pattern:
-            parts.append(f"swap={plan.axis_aligner_plan.swap_pattern}")
+        if plan.axis_aligner_plan.pattern.x:
+            parts.append(f"x: {plan.axis_aligner_plan.pattern.x}")
+        if plan.axis_aligner_plan.pattern.y:
+            parts.append(f"y: {plan.axis_aligner_plan.pattern.y}")
         lines.append(f"  axis_aligner: {', '.join(parts)}")
 
     return "\n".join(lines)

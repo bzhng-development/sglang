@@ -33,9 +33,8 @@ class TestComputeAxisAlignerPlan:
             Pair(x="t h d", y="t d h")
         )
         assert result is not None
-        assert result.swap_pattern == "t h d -> t d h"
-        assert result.squeeze_x == []
-        assert result.squeeze_y == []
+        assert result.pattern.x == "t h d -> t d h"
+        assert result.pattern.y is None
 
     def test_name_mismatch_returns_none_with_warning(self) -> None:
         with warning_sink.context() as warnings:
@@ -53,43 +52,39 @@ class TestComputeAxisAlignerPlan:
             Pair(x="t h(tp) d", y="t d h(tp)")
         )
         assert result is not None
-        assert result.swap_pattern == "t h d -> t d h"
+        assert result.pattern.x == "t h d -> t d h"
 
     def test_squeeze_only_no_swap(self) -> None:
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t 1 h", y="t h")
         )
         assert result is not None
-        assert result.squeeze_x == ["singleton0"]
-        assert result.squeeze_y == []
-        assert result.swap_pattern is None
+        assert result.pattern.x == "t 1 h -> t h"
+        assert result.pattern.y is None
 
     def test_squeeze_both_sides(self) -> None:
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t 1 h", y="1 t h")
         )
         assert result is not None
-        assert result.squeeze_x == ["singleton0"]
-        assert result.squeeze_y == ["singleton0"]
-        assert result.swap_pattern is None
+        assert result.pattern.x == "t 1 h -> t h"
+        assert result.pattern.y == "1 t h -> t h"
 
     def test_squeeze_plus_swap(self) -> None:
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t 1 h d", y="t d h")
         )
         assert result is not None
-        assert result.squeeze_x == ["singleton0"]
-        assert result.squeeze_y == []
-        assert result.swap_pattern == "t h d -> t d h"
+        assert result.pattern.x == "t 1 h d -> t d h"
+        assert result.pattern.y is None
 
     def test_squeeze_y_only(self) -> None:
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t h", y="t 1 h")
         )
         assert result is not None
-        assert result.squeeze_x == []
-        assert result.squeeze_y == ["singleton0"]
-        assert result.swap_pattern is None
+        assert result.pattern.x is None
+        assert result.pattern.y == "t 1 h -> t h"
 
 
 class TestExecuteAxisAlignerPlan:
@@ -97,7 +92,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
         plan = AxisAlignerPlan(
-            squeeze_x=[], squeeze_y=[], swap_pattern="t h d -> t d h"
+            pattern=Pair(x="t h d -> t d h", y=None),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
@@ -113,9 +108,11 @@ class TestExecuteAxisAlignerPlan:
 
     def test_execute_squeeze(self) -> None:
         torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
+        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names(
+            "t", "singleton0", "h"
+        )
         plan = AxisAlignerPlan(
-            squeeze_x=["singleton0"], squeeze_y=[], swap_pattern=None
+            pattern=Pair(x="t 1 h -> t h", y=None),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
@@ -130,7 +127,7 @@ class TestExecuteAxisAlignerPlan:
             "t", "singleton0", "h", "d"
         )
         plan = AxisAlignerPlan(
-            squeeze_x=["singleton0"], squeeze_y=[], swap_pattern="t h d -> t d h"
+            pattern=Pair(x="t 1 h d -> t d h", y=None),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
@@ -139,11 +136,13 @@ class TestExecuteAxisAlignerPlan:
 
         assert result.shape == (4, 16, 8)
 
-    def test_execute_y_side_no_swap(self) -> None:
+    def test_execute_y_side(self) -> None:
         torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
+        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names(
+            "t", "singleton0", "h"
+        )
         plan = AxisAlignerPlan(
-            squeeze_x=[], squeeze_y=["singleton0"], swap_pattern="t h -> t h"
+            pattern=Pair(x=None, y="t 1 h -> t h"),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
@@ -152,11 +151,11 @@ class TestExecuteAxisAlignerPlan:
 
         assert result.shape == (4, 8)
 
-    def test_swap_only_applies_to_x_side(self) -> None:
+    def test_noop_side(self) -> None:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
         plan = AxisAlignerPlan(
-            squeeze_x=[], squeeze_y=[], swap_pattern="t h d -> t d h"
+            pattern=Pair(x="t h d -> t d h", y=None),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
