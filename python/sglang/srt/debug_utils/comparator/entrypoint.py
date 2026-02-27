@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import re
-import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional
 
@@ -18,17 +16,14 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.entrypoint import (
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
     TokenAlignerPlan,
 )
-from sglang.srt.debug_utils.comparator.bundle_comparator import (
-    BundleComparisonResult,
-    compare_bundle_pair,
-)
+from sglang.srt.debug_utils.comparator.bundle_comparator import compare_bundle_pair
 from sglang.srt.debug_utils.comparator.bundle_matcher import (
     TensorBundleInfo,
     match_bundles,
 )
 from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.output_types import (
-    ComparisonRecord,
+    AnyComparisonRecord,
     ConfigRecord,
     SummaryRecord,
     print_record,
@@ -77,23 +72,22 @@ def run(args: argparse.Namespace) -> None:
         ),
     )
 
-    visualize: bool = getattr(args, "viz_bundle_details", False)
+    viz_output_dir: Optional[Path] = (
+        Path(args.viz_output_dir) if args.viz_bundle_details else None
+    )
 
-    comparison_results = _compare_bundle_pairs(
+    comparison_results: Iterator[AnyComparisonRecord] = _compare_bundle_pairs(
         bundle_info_pairs=bundle_info_pairs,
         baseline_path=Path(args.baseline_path),
         target_path=Path(args.target_path),
         token_aligner_plan=ta_result.plan,
         diff_threshold=args.diff_threshold,
         thd_seq_lens_by_step_pair=ta_result.thd_seq_lens_by_step_pair,
-        retain_tensors=visualize,
+        viz_output_dir=viz_output_dir,
     )
     _consume_comparison_results(
         comparison_results=comparison_results,
         output_format=args.output_format,
-        visualize=visualize,
-        viz_output_dir=Path(getattr(args, "viz_output_dir", "/tmp/comparator_viz/")),
-        viz_max_tensors=getattr(args, "viz_max_tensors", 10),
     )
 
 
@@ -148,8 +142,8 @@ def _compare_bundle_pairs(
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
-    retain_tensors: bool = False,
-) -> Iterator[BundleComparisonResult]:
+    viz_output_dir: Optional[Path] = None,
+) -> Iterator[AnyComparisonRecord]:
     for bundle_info_pair in bundle_info_pairs:
         if not bundle_info_pair.y:
             continue
@@ -166,75 +160,25 @@ def _compare_bundle_pairs(
             token_aligner_plan=token_aligner_plan,
             diff_threshold=diff_threshold,
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
-            retain_tensors=retain_tensors,
+            viz_output_dir=viz_output_dir,
         )
 
 
 def _consume_comparison_results(
     *,
-    comparison_results: Iterator[BundleComparisonResult],
+    comparison_results: Iterator[AnyComparisonRecord],
     output_format: str,
-    visualize: bool = False,
-    viz_output_dir: Path = Path("/tmp/comparator_viz/"),
-    viz_max_tensors: int = 10,
 ) -> None:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
-    viz_count: int = 0
 
-    for bundle_result in comparison_results:
-        record = bundle_result.record
+    for record in comparison_results:
         counts[record.category] += 1
         print_record(record, output_format=output_format)
-
-        if (
-            visualize
-            and bundle_result.aligned_tensors is not None
-            and isinstance(record, ComparisonRecord)
-        ):
-            if viz_count >= viz_max_tensors:
-                print(
-                    f"[visualizer] Skipping visualization for {record.name}: "
-                    f"reached max ({viz_max_tensors})",
-                    file=sys.stderr,
-                )
-                continue
-
-            from sglang.srt.debug_utils.comparator.visualizer import (
-                generate_comparison_figure,
-            )
-
-            filename: str = _sanitize_filename(record.name) + ".png"
-            output_path: Path = viz_output_dir / filename
-
-            try:
-                generate_comparison_figure(
-                    baseline=bundle_result.aligned_tensors.x,
-                    target=bundle_result.aligned_tensors.y,
-                    name=record.name,
-                    output_path=output_path,
-                )
-                viz_count += 1
-                print(f"[visualizer] Saved: {output_path}", file=sys.stderr)
-            except Exception as exc:
-                print(
-                    f"[visualizer] Failed for {record.name}: {exc}",
-                    file=sys.stderr,
-                )
 
     print_record(
         SummaryRecord(total=sum(counts.values()), **counts),
         output_format=output_format,
     )
-
-    if visualize and viz_count > 0:
-        print(
-            f"[visualizer] Generated {viz_count} PNG(s) in {viz_output_dir}",
-            file=sys.stderr,
-        )
-
-
-def _sanitize_filename(name: str) -> str:
-    return re.sub(r"[/\.\s]+", "_", name).strip("_")
 
 
 def _parse_args() -> argparse.Namespace:
@@ -278,11 +222,5 @@ def _parse_args() -> argparse.Namespace:
         type=str,
         default="/tmp/comparator_viz/",
         help="Output directory for visualization PNGs (default: /tmp/comparator_viz/)",
-    )
-    parser.add_argument(
-        "--viz-max-tensors",
-        type=int,
-        default=10,
-        help="Max number of visualization PNGs to generate (default: 10)",
     )
     return parser.parse_args()
