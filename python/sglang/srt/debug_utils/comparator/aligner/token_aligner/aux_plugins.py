@@ -45,12 +45,7 @@ class _AuxFrameworkPlugin(ABC):
 
     @abstractmethod
     def compute_step_aux(
-        self,
-        step_data: dict[str, object],
-        *,
-        layout: TokenLayout,
-        step: int,
-        dp_rank: int = 0,
+        self, step_data: dict[str, object], *, layout: TokenLayout, step: int
     ) -> TokenAlignerStepAux: ...
 
     @abstractmethod
@@ -133,12 +128,7 @@ class _SGLangPlugin(_AuxFrameworkPlugin):
         )
 
     def compute_step_aux(
-        self,
-        step_data: dict[str, object],
-        *,
-        layout: TokenLayout,
-        step: int,
-        dp_rank: int = 0,
+        self, step_data: dict[str, object], *, layout: TokenLayout, step: int
     ) -> TokenAlignerStepAux:
         input_ids = step_data["input_ids"]
         positions = step_data["positions"]
@@ -162,10 +152,7 @@ class _SGLangPlugin(_AuxFrameworkPlugin):
         if rids_raw is not None and isinstance(rids_raw, (list, tuple)):
             seq_ids = [SGLangSeqId(rid=str(r)) for r in rids_raw]
         else:
-            seq_ids = [
-                PositionalSeqId(step=step, seq_index=i, dp_rank=dp_rank)
-                for i in range(num_seqs)
-            ]
+            seq_ids = [PositionalSeqId(step=step, seq_index=i) for i in range(num_seqs)]
 
         return TokenAlignerStepAux(
             input_ids=input_ids.tolist(),
@@ -252,12 +239,7 @@ class _MegatronPlugin(_AuxFrameworkPlugin):
         return TokenLayout.T
 
     def compute_step_aux(
-        self,
-        step_data: dict[str, object],
-        *,
-        layout: TokenLayout,
-        step: int,
-        dp_rank: int = 0,
+        self, step_data: dict[str, object], *, layout: TokenLayout, step: int
     ) -> TokenAlignerStepAux:
         input_ids: torch.Tensor = step_data["input_ids"]
         is_bshd: bool = layout == TokenLayout.BS
@@ -283,7 +265,7 @@ class _MegatronPlugin(_AuxFrameworkPlugin):
 
         num_seqs: int = len(seq_lens_list)
         seq_ids: list[SeqId] = [
-            PositionalSeqId(step=step, seq_index=seq_index, dp_rank=dp_rank)
+            PositionalSeqId(step=step, seq_index=seq_index)
             for seq_index in range(num_seqs)
         ]
 
