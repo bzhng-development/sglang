@@ -33,6 +33,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )
+from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 from sglang.srt.debug_utils.dump_loader import LOAD_FAILED, ValueWithMeta
@@ -93,6 +94,12 @@ def _compare_bundle_pair_inner(
     if not all_pair.x or not all_pair.y:
         reason = "baseline_load_failed" if not all_pair.x else "target_load_failed"
         return SkipRecord(name=name, reason=reason)
+
+    # 1b. DP filter: keep only the non-empty dp_rank
+    all_pair = Pair(
+        x=filter_to_non_empty_dp_rank(all_pair.x),
+        y=filter_to_non_empty_dp_rank(all_pair.y),
+    )
 
     # 2. Check if any side has non-tensor values → non-tensor display path
     has_non_tensor: bool = any(
