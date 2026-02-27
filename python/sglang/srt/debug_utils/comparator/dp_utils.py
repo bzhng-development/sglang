@@ -36,6 +36,12 @@ def filter_to_non_empty_dp_rank(items: list[ValueWithMeta]) -> list[ValueWithMet
     if dp_size <= 1:
         return items
 
+    has_any_tensor: bool = any(
+        isinstance(item.value, torch.Tensor) for item in items
+    )
+    if not has_any_tensor:
+        return items
+
     groups: dict[int, list[ValueWithMeta]] = defaultdict(list)
     for item in items:
         item_dp: Optional[tuple[int, int]] = _extract_dp_info(item.meta)
@@ -71,10 +77,8 @@ def _extract_dp_info(meta: dict) -> Optional[tuple[int, int]]:
 
 
 def _group_has_data(group: list[ValueWithMeta]) -> bool:
-    """Check if any item in the group has a non-empty tensor."""
-    for item in group:
-        if isinstance(item.value, torch.Tensor) and item.value.numel() > 0:
-            return True
-        if not isinstance(item.value, torch.Tensor):
-            return True
-    return False
+    """Check if any tensor in the group is non-empty (numel > 0)."""
+    return any(
+        isinstance(item.value, torch.Tensor) and item.value.numel() > 0
+        for item in group
+    )

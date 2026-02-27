@@ -134,7 +134,7 @@ class TestGroupHasData:
 
     def test_non_tensor_value(self) -> None:
         item: ValueWithMeta = _make_item(value="hello", meta={})
-        assert _group_has_data([item]) is True
+        assert _group_has_data([item]) is False
 
     def test_empty_group(self) -> None:
         assert _group_has_data([]) is False
@@ -166,6 +166,23 @@ class TestFilterToNonEmptyDpRank:
     def test_empty_list_returns_empty(self) -> None:
         result: list[ValueWithMeta] = filter_to_non_empty_dp_rank([])
         assert result == []
+
+    def test_dp2_all_non_tensor_returns_unchanged(self) -> None:
+        """DP=2 with non-tensor values → skip filtering, return unchanged."""
+        items: list[ValueWithMeta] = [
+            _make_item(
+                value=["req_A"],
+                meta=_make_sglang_meta(dp_rank=0, dp_size=2),
+            ),
+            _make_item(
+                value=["req_A"],
+                meta=_make_sglang_meta(dp_rank=1, dp_size=2),
+            ),
+        ]
+
+        result: list[ValueWithMeta] = filter_to_non_empty_dp_rank(items)
+
+        assert result is items
 
     def test_dp2_one_empty_one_nonempty_sglang(self) -> None:
         """DP=2, rank 0 has data, rank 1 has empty tensor."""
