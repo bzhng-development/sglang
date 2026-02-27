@@ -202,12 +202,8 @@ class TestMatchBundlesPipelineParallel:
     def test_layer_id_none_non_layer_tensors_match(self) -> None:
         """Non-layer tensors (embedding, lm_head) have no layer_id.
         They should match across different PP ranks."""
-        target_df: pl.DataFrame = _make_df(
-            [_make_row(name="embed_tokens", rank=0)]
-        )
-        baseline_df: pl.DataFrame = _make_df(
-            [_make_row(name="embed_tokens", rank=0)]
-        )
+        target_df: pl.DataFrame = _make_df([_make_row(name="embed_tokens", rank=0)])
+        baseline_df: pl.DataFrame = _make_df([_make_row(name="embed_tokens", rank=0)])
 
         results: list[Pair[TensorBundleInfo]] = match_bundles(
             dfs=Pair(x=baseline_df, y=target_df),
