@@ -21,7 +21,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     parse_dim_names,
     parse_dims,
     resolve_dim_by_name,
-    resolve_dim_names_with_singletons,
+    resolve_dim_names,
     strip_dim_names,
 )
 from sglang.test.ci.ci_register import register_cpu_ci
@@ -218,18 +218,18 @@ class TestStripDimNames:
         assert stripped.names == (None, None)
 
 
-class TestResolveDimNamesWithSingletons:
+class TestResolveDimNames:
     def test_no_squeeze(self) -> None:
         specs: list[DimSpec] = parse_dims("t h d")
-        assert resolve_dim_names_with_singletons(specs) == ["t", "h", "d"]
+        assert resolve_dim_names(specs) == ["t", "h", "d"]
 
     def test_single_squeeze(self) -> None:
         specs: list[DimSpec] = parse_dims("t 1 h")
-        assert resolve_dim_names_with_singletons(specs) == ["t", "singleton0", "h"]
+        assert resolve_dim_names(specs) == ["t", "singleton0", "h"]
 
     def test_multiple_squeeze(self) -> None:
         specs: list[DimSpec] = parse_dims("1 t 1 h")
-        assert resolve_dim_names_with_singletons(specs) == [
+        assert resolve_dim_names(specs) == [
             "singleton0",
             "t",
             "singleton1",

@@ -123,7 +123,7 @@ def is_singleton_name(name: str) -> bool:
     return name.startswith("singleton") and name[9:].isdigit()
 
 
-def resolve_dim_names_with_singletons(dim_specs: list[DimSpec]) -> list[str]:
+def resolve_dim_names(dim_specs: list[DimSpec]) -> list[str]:
     """Convert DimSpec list to dim names, replacing '1' with 'singleton0', 'singleton1', ..."""
     dim_names: list[str] = []
     sq_idx: int = 0
