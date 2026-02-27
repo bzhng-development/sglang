@@ -59,7 +59,10 @@ def load_and_normalize_aux(
 
     if len(dp_ranks) <= 1:
         return _load_single_dp_group(
-            dump_path=dump_path, df=df, plugin=plugin, dp_rank=dp_ranks[0] if dp_ranks else 0
+            dump_path=dump_path,
+            df=df,
+            plugin=plugin,
+            dp_rank=dp_ranks[0] if dp_ranks else 0,
         )
 
     return _load_multi_dp_groups(
@@ -293,7 +296,10 @@ def _merge_thd_seq_lens(
     for step in sorted(all_steps):
         combined: list[int] = []
         for _, aux in per_dp:
-            if aux.thd_seq_lens_by_step is not None and step in aux.thd_seq_lens_by_step:
+            if (
+                aux.thd_seq_lens_by_step is not None
+                and step in aux.thd_seq_lens_by_step
+            ):
                 combined.extend(aux.thd_seq_lens_by_step[step])
         merged[step] = combined
 

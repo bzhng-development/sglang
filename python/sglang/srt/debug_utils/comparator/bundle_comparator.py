@@ -346,9 +346,7 @@ def _compare_bundle_pair_tensor_type_dp(
     )
 
     # Resolve seq_dim for per-token computation
-    seq_dim: Optional[int] = (
-        _resolve_seq_dim(combined.y) if compute_per_token else None
-    )
+    seq_dim: Optional[int] = _resolve_seq_dim(combined.y) if compute_per_token else None
 
     # Compare
     aligned_baseline: torch.Tensor = combined.x.rename(None)
