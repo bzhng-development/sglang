@@ -171,12 +171,7 @@ class TestMatchBundles:
 
 
 class TestMatchBundlesPipelineParallel:
-    """Tests verifying that PP works correctly with the existing matching logic.
-
-    Key insight: layer_id is a filename-level column, and rank is skipped in
-    logical grouping. So tensors from different PP ranks (different world ranks)
-    but the same layer_id naturally form a single bundle.
-    """
+    """Tests verifying that PP works correctly with the existing matching logic."""
 
     LOGICAL_SKIP_KEYS: set[str] = {"filename", "rank", "dump_index", "recompute_status"}
 
