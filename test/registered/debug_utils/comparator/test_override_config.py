@@ -775,23 +775,28 @@ class TestEntrypointDimsOverride:
 
     def test_non_tensor_unaffected_by_override(self, tmp_path: Path, capsys) -> None:
         """Non-tensor values pass through without error even with active override."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(4, 4)
+
         baseline_dir: Path = tmp_path / "baseline"
         target_dir: Path = tmp_path / "target"
         baseline_dir.mkdir()
         target_dir.mkdir()
 
-        baseline_path: Path = _create_non_tensor_rank_dump(
-            baseline_dir, rank=0, name="rids", value=["A", "B"]
-        )
-        target_path: Path = _create_non_tensor_rank_dump(
-            target_dir, rank=0, name="rids", value=["A", "B"]
-        )
+        for side_dir in [baseline_dir, target_dir]:
+            _create_non_tensor_rank_dump(
+                side_dir,
+                rank=0,
+                name="sm_scale",
+                value=0.125,
+                extra_tensor_dumps=[("hidden", tensor)],
+            )
 
         args = _make_args(
-            baseline_path,
-            target_path,
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
             grouping="raw",
-            override_dims=["rids:b s"],
+            override_dims=["hidden:x y"],
         )
         records = _run_and_parse(args, capsys)
 
@@ -799,7 +804,12 @@ class TestEntrypointDimsOverride:
             r for r in records if isinstance(r, NonTensorRecord)
         ]
         assert len(non_tensors) == 1
+        assert non_tensors[0].name == "sm_scale"
         assert non_tensors[0].values_equal
+
+        comparisons: list[ComparisonRecord] = _get_comparisons(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].name == "hidden"
 
         summary: SummaryRecord = [r for r in records if isinstance(r, SummaryRecord)][0]
         assert summary.failed == 0
@@ -880,6 +890,7 @@ def _create_non_tensor_rank_dump(
     rank: int,
     name: str,
     value: object,
+    extra_tensor_dumps: list[tuple[str, torch.Tensor]] | None = None,
 ) -> Path:
     """Create a dump with a non-tensor value via the real dumper."""
     with pytest.MonkeyPatch.context() as mp:
@@ -895,6 +906,8 @@ def _create_non_tensor_rank_dump(
         dumper.__dict__["_static_meta"] = {"world_rank": rank, "world_size": 1}
 
         dumper.dump(name, value)
+        for extra_name, extra_tensor in extra_tensor_dumps or []:
+            dumper.dump(extra_name, extra_tensor)
         dumper.step()
 
     return directory / _FIXED_EXP_NAME
