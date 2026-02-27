@@ -138,7 +138,9 @@ def make_singleton_name(index: int) -> str:
 
 
 def is_singleton_name(name: str) -> bool:
-    return name.startswith(_SINGLETON_PREFIX) and name[len(_SINGLETON_PREFIX) :].isdigit()
+    return (
+        name.startswith(_SINGLETON_PREFIX) and name[len(_SINGLETON_PREFIX) :].isdigit()
+    )
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:

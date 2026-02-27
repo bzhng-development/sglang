@@ -65,9 +65,7 @@ def _extract_squeeze_and_names(
     return squeeze_names, dim_names
 
 
-def _compute_swap_pattern(
-    x_names: list[str], y_names: list[str]
-) -> Optional[str]:
+def _compute_swap_pattern(x_names: list[str], y_names: list[str]) -> Optional[str]:
     if x_names == y_names:
         return None
 
