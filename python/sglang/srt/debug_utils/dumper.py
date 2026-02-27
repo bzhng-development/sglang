@@ -316,9 +316,7 @@ class _Dumper:
         def decorator(fn: Callable) -> Callable:
             @functools.wraps(fn)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
-                ctx_dict: dict = (
-                    _extractor(args[0]) if _extractor else static_ctx
-                )
+                ctx_dict: dict = _extractor(args[0]) if _extractor else static_ctx
                 self.set_ctx(**ctx_dict)
                 try:
                     return fn(*args, **kwargs)

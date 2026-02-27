@@ -103,20 +103,25 @@ class TestRecomputeStatusParsing:
         from pathlib import Path
 
         meta_disabled = parse_meta_from_filename(
-            Path("step=0___rank=0___dump_index=1___name=x___recompute_status=disabled.pt")
+            Path(
+                "step=0___rank=0___dump_index=1___name=x___recompute_status=disabled.pt"
+            )
         )
         assert meta_disabled["recompute_status"] == "disabled"
 
         meta_recompute = parse_meta_from_filename(
-            Path("step=0___rank=0___dump_index=1___name=x___recompute_status=recompute.pt")
+            Path(
+                "step=0___rank=0___dump_index=1___name=x___recompute_status=recompute.pt"
+            )
         )
         assert meta_recompute["recompute_status"] == "recompute"
 
         meta_original = parse_meta_from_filename(
-            Path("step=0___rank=0___dump_index=1___name=x___recompute_status=original.pt")
+            Path(
+                "step=0___rank=0___dump_index=1___name=x___recompute_status=original.pt"
+            )
         )
         assert meta_original["recompute_status"] == "original"
-
 
 
 if __name__ == "__main__":

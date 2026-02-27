@@ -2482,9 +2482,7 @@ class TestRecomputeStatus:
         d.dump("test_tensor", x)
         y.backward()
 
-        grad_files = [
-            f for f in _get_filenames(tmp_path) if "grad__test_tensor" in f
-        ]
+        grad_files = [f for f in _get_filenames(tmp_path) if "grad__test_tensor" in f]
         assert len(grad_files) == 1
         assert "recompute_status" not in grad_files[0]
 
@@ -2505,7 +2503,9 @@ class TestRecomputeStatus:
             model(torch.randn(2, 4))
 
         for key, data in captured.items():
-            assert "recompute_status" in data["meta"], f"missing recompute_status in {key}"
+            assert (
+                "recompute_status" in data["meta"]
+            ), f"missing recompute_status in {key}"
             assert data["meta"]["recompute_status"] == "disabled"
 
     def test_detect_recompute_status_default(self) -> None:

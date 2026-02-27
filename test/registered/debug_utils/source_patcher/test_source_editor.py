@@ -223,9 +223,7 @@ class TestApplyEdits:
         source = "def foo():\n" "    return x\n"
         edits = [EditSpec(match="return x", prepend="a = 1\nb = 2")]
         result = apply_edits(source=source, edits=edits)
-        assert result == (
-            "def foo():\n" "    a = 1\n" "    b = 2\n" "    return x\n"
-        )
+        assert result == ("def foo():\n" "    a = 1\n" "    b = 2\n" "    return x\n")
 
     def test_prepend_deep_indent(self) -> None:
         source = (
