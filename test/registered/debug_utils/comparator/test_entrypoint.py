@@ -940,8 +940,7 @@ class TestEntrypointGroupingLogical:
         recompute_warnings = [
             w
             for w in comparisons[0].warnings
-            if isinstance(w, ReplicatedMismatchWarning)
-            and w.axis == "recompute_pseudo"
+            if isinstance(w, ReplicatedMismatchWarning) and w.axis == "recompute_pseudo"
         ]
         assert len(recompute_warnings) > 0
 
