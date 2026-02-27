@@ -22,7 +22,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     SEQ_DIM_NAME,
     TOKEN_DIM_NAME,
     apply_dim_names,
-    parse_dims,
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.output_types import (
@@ -163,12 +162,7 @@ def _compare_bundle_pair_tensor_type(
 
     # Resolve seq_dim for per-token computation
     seq_dim: Optional[int] = (
-        _resolve_seq_dim(
-            tensor=aligner_result.tensors.y,
-            metas_pair=metas_pair,
-        )
-        if compute_per_token
-        else None
+        _resolve_seq_dim(aligner_result.tensors.y) if compute_per_token else None
     )
 
     # Compare
@@ -228,40 +222,15 @@ def _try_generate_viz(
         )
 
 
-def _resolve_seq_dim(
-    *,
-    tensor: torch.Tensor,
-    metas_pair: Pair[list[dict[str, Any]]],
-) -> Optional[int]:
-    """Resolve the sequence/token dimension index for per-token computation.
-
-    Strategy:
-    1. Check named dims on the tensor for TOKEN_DIM_NAME ("t") or SEQ_DIM_NAME ("s").
-    2. Fall back to parsing the dims string from metadata.
-    """
-    # 1. Try named tensor dims
-    if tensor.names[0] is not None:
-        for target_name in (TOKEN_DIM_NAME, SEQ_DIM_NAME):
-            if target_name in tensor.names:
-                return list(tensor.names).index(target_name)
-
-    # 2. Fall back to metadata dims string
-    metas: list[dict[str, Any]] = metas_pair.y if metas_pair.y else metas_pair.x
-    if not metas:
+def _resolve_seq_dim(tensor: torch.Tensor) -> Optional[int]:
+    """Find the token/seq dimension index from the tensor's named dims."""
+    if tensor.names[0] is None:
         return None
 
-    dims_str: Optional[str] = metas[0].get("dims")
-    if dims_str is None:
-        return None
-
-    try:
-        dim_specs = parse_dims(dims_str)
-    except ValueError:
-        return None
-
-    for idx, spec in enumerate(dim_specs):
-        if spec.name in (TOKEN_DIM_NAME, SEQ_DIM_NAME):
-            return idx
+    names: tuple[Optional[str], ...] = tensor.names
+    for target_name in (TOKEN_DIM_NAME, SEQ_DIM_NAME):
+        if target_name in names:
+            return list(names).index(target_name)
 
     return None
 
