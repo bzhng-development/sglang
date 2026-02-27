@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import torch
@@ -152,7 +151,6 @@ def _draw_histogram_pair(
     diff: torch.Tensor,
     label: str,
 ) -> None:
-    import matplotlib.pyplot as plt
 
     ax_normal = axes[row_idx, 0]
     ax_log = axes[row_idx, 1]

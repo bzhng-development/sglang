@@ -1516,9 +1516,7 @@ class TestEntrypointVisualize:
 
     def test_visualize_creates_pngs(self, tmp_path, capsys):
         """--visualize-bundle-details with --filter produces PNG files."""
-        baseline_path, target_path = _create_dumps(
-            tmp_path, ["tensor_a", "tensor_b"]
-        )
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
         viz_dir = tmp_path / "viz_out"
         args = _make_args(
             baseline_path,

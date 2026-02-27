@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import re
 from pathlib import Path
-from typing import Any, Iterator, Optional, Union
+from typing import Any, Iterator, Optional
 
 import polars as pl
 
@@ -29,8 +29,6 @@ from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
-    NonTensorRecord,
-    SkipRecord,
     SummaryRecord,
     print_record,
 )
