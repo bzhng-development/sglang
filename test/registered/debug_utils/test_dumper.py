@@ -246,6 +246,36 @@ class TestKvPairsParsing:
         with pytest.raises(TypeError, match="collective_timeout.*expected int"):
             DumperConfig.from_kv_pairs(["collective_timeout=not_a_number"])
 
+    def test_merge_quoted_single_quotes(self):
+        tokens: list[str] = ["filter='layer_id", "is", "None", "or", "layer_id", "<", "3'"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter=layer_id is None or layer_id < 3"]
+
+    def test_merge_quoted_double_quotes(self):
+        tokens: list[str] = ['filter="layer_id', "is", "not", 'None"']
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter=layer_id is not None"]
+
+    def test_merge_quoted_single_token_quoted(self):
+        tokens: list[str] = ["filter='layer_id<3'"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["filter=layer_id<3"]
+
+    def test_merge_quoted_no_quotes_passthrough(self):
+        tokens: list[str] = ["enable=true", "dir=/tmp"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["enable=true", "dir=/tmp"]
+
+    def test_merge_quoted_mixed(self):
+        tokens: list[str] = ["enable=true", "filter='a", "or", "b'", "dir=/tmp"]
+        result: list[str] = DumperConfig._merge_quoted_tokens(tokens)
+        assert result == ["enable=true", "filter=a or b", "dir=/tmp"]
+
+    def test_kv_pairs_to_dict_quoted_filter(self):
+        pairs: list[str] = ["enable=true", "filter='layer_id", "is", "None", "or", "layer_id", "<", "3'"]
+        result: dict = DumperConfig._kv_pairs_to_dict(pairs)
+        assert result == {"enable": True, "filter": "layer_id is None or layer_id < 3"}
+
 
 class TestDumperPureFunctions:
     def test_get_truncated_value(self):
