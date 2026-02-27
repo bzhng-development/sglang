@@ -21,9 +21,7 @@ def generate_per_token_heatmap(
 
     Returns the output path if a file was written, or None if no data was available.
     """
-    rows_data: list[tuple[str, list[float]]] = _collect_per_token_data(
-        records=records
-    )
+    rows_data: list[tuple[str, list[float]]] = _collect_per_token_data(records=records)
     if not rows_data:
         return None
 
@@ -57,9 +55,7 @@ def _render_heatmap(
     max_len: int = max(len(vals) for _, vals in rows_data)
     labels: list[str] = [label for label, _ in rows_data]
 
-    matrix: np.ndarray = np.full(
-        (len(rows_data), max_len), np.nan, dtype=np.float64
-    )
+    matrix: np.ndarray = np.full((len(rows_data), max_len), np.nan, dtype=np.float64)
     for i, (_, vals) in enumerate(rows_data):
         matrix[i, : len(vals)] = vals
 

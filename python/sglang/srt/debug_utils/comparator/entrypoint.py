@@ -17,9 +17,6 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
     TokenAlignerPlan,
 )
 from sglang.srt.debug_utils.comparator.bundle_comparator import compare_bundle_pair
-from sglang.srt.debug_utils.comparator.per_token_visualizer import (
-    generate_per_token_heatmap,
-)
 from sglang.srt.debug_utils.comparator.bundle_matcher import (
     TensorBundleInfo,
     match_bundles,
@@ -32,6 +29,9 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SkipRecord,
     SummaryRecord,
     print_record,
+)
+from sglang.srt.debug_utils.comparator.per_token_visualizer import (
+    generate_per_token_heatmap,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.comparator.warning_sink import warning_sink

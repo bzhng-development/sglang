@@ -91,9 +91,7 @@ class TestComputeDiffWithSeqDim:
         x: torch.Tensor = torch.randn(8, 16)
         y: torch.Tensor = x + torch.randn_like(x) * 0.01
 
-        diff: DiffInfo = _compute_diff(
-            x_baseline=x, x_target=y, diff_threshold=1e-3
-        )
+        diff: DiffInfo = _compute_diff(x_baseline=x, x_target=y, diff_threshold=1e-3)
 
         assert diff.per_token_rel_diff is None
 

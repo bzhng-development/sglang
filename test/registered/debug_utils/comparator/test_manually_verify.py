@@ -240,9 +240,7 @@ class TestManuallyVerify:
             records.append(ComparisonRecord(**info.model_dump()))
 
         output_path: Path = tmp_path / "per_token_increasing_diff.png"
-        result = generate_per_token_heatmap(
-            records=records, output_path=output_path
-        )
+        result = generate_per_token_heatmap(records=records, output_path=output_path)
 
         assert result is not None
         _assert_valid_png(output_path)
@@ -288,9 +286,7 @@ class TestManuallyVerify:
             records.append(ComparisonRecord(**info.model_dump()))
 
         output_path: Path = tmp_path / "per_token_single_spike.png"
-        result = generate_per_token_heatmap(
-            records=records, output_path=output_path
-        )
+        result = generate_per_token_heatmap(records=records, output_path=output_path)
 
         assert result is not None
         _assert_valid_png(output_path)
