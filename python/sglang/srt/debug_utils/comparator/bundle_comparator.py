@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -22,6 +21,7 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
 from sglang.srt.debug_utils.comparator.dims import apply_dim_names, parse_dim_names
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
+    GeneralWarning,
     NonTensorRecord,
     SkipRecord,
 )
@@ -197,9 +197,13 @@ def _try_generate_viz(
             name=name,
             output_path=output_path,
         )
-        print(f"[visualizer] Saved: {output_path}", file=sys.stderr)
     except Exception as exc:
-        print(f"[visualizer] Failed for {name}: {exc}", file=sys.stderr)
+        warning_sink.add(
+            GeneralWarning(
+                category="visualizer",
+                message=f"Visualization failed for {name}: {exc}",
+            )
+        )
 
 
 def _compare_bundle_pair_non_tensor_type(
