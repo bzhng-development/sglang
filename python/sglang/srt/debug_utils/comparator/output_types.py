@@ -84,7 +84,7 @@ class SkipRecord(_OutputRecord):
 
     @property
     def category(self) -> str:
-        if self.warnings:
+        if any(not isinstance(w, ReplicatedMismatchWarning) for w in self.warnings):
             return "failed"
         return "skipped"
 
@@ -129,7 +129,7 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
 
     @property
     def category(self) -> str:
-        if self.warnings:
+        if any(not isinstance(w, ReplicatedMismatchWarning) for w in self.warnings):
             return "failed"
         return "passed" if self.diff is not None and self.diff.passed else "failed"
 
@@ -151,7 +151,7 @@ class NonTensorRecord(_OutputRecord):
 
     @property
     def category(self) -> str:
-        if self.warnings:
+        if any(not isinstance(w, ReplicatedMismatchWarning) for w in self.warnings):
             return "failed"
         return "passed" if self.values_equal else "failed"
 
