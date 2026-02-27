@@ -6,7 +6,7 @@ import torch
 from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import (
-    filter_squeeze_dims,
+    _SingletonDimUtil,
     parse_dims,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair, _FrozenBase
@@ -32,10 +32,10 @@ def compute_axis_aligner_plan(
     y_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.y)]
 
     x_filtered: list[str] = [
-        s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.x))
+        s.name for s in _SingletonDimUtil.filter_out(parse_dims(dims_str_pair.x))
     ]
     y_filtered: list[str] = [
-        s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.y))
+        s.name for s in _SingletonDimUtil.filter_out(parse_dims(dims_str_pair.y))
     ]
 
     target_order: Optional[list[str]] = _resolve_target_order(x_filtered, y_filtered)

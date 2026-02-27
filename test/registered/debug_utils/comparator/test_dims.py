@@ -12,11 +12,9 @@ from sglang.srt.debug_utils.comparator.dims import (
     Ordering,
     ParallelAxis,
     Reduction,
+    _SingletonDimUtil,
     apply_dim_names,
-    filter_squeeze_dims,
     find_dim_index,
-    is_squeeze_dim,
-    make_singleton_name,
     parse_dim,
     parse_dim_names,
     parse_dims,
@@ -234,36 +232,36 @@ class TestResolveDimNames:
         ]
 
 
-class TestFilterSqueezeDims:
+class TestSingletonDimUtilFilterOut:
     def test_no_squeeze(self) -> None:
         specs: list[DimSpec] = parse_dims("t h d")
-        assert filter_squeeze_dims(specs) == specs
+        assert _SingletonDimUtil.filter_out(specs) == specs
 
     def test_with_squeeze(self) -> None:
         specs: list[DimSpec] = parse_dims("t 1 h")
-        filtered: list[DimSpec] = filter_squeeze_dims(specs)
+        filtered: list[DimSpec] = _SingletonDimUtil.filter_out(specs)
         assert len(filtered) == 2
         assert filtered[0].name == "t"
         assert filtered[1].name == "h"
 
     def test_all_squeeze(self) -> None:
         specs: list[DimSpec] = parse_dims("1 1")
-        assert filter_squeeze_dims(specs) == []
+        assert _SingletonDimUtil.filter_out(specs) == []
 
 
-class TestIsSqueezeDim:
+class TestSingletonDimUtilIsSqueeze:
     def test_squeeze(self) -> None:
-        assert is_squeeze_dim(DimSpec(name=SQUEEZE_DIM_NAME)) is True
+        assert _SingletonDimUtil.is_squeeze(DimSpec(name=SQUEEZE_DIM_NAME)) is True
 
     def test_non_squeeze(self) -> None:
-        assert is_squeeze_dim(DimSpec(name="t")) is False
+        assert _SingletonDimUtil.is_squeeze(DimSpec(name="t")) is False
 
 
-class TestMakeSingletonName:
+class TestSingletonDimUtilMakeName:
     def test_indices(self) -> None:
-        assert make_singleton_name(0) == "singleton0"
-        assert make_singleton_name(1) == "singleton1"
-        assert make_singleton_name(99) == "singleton99"
+        assert _SingletonDimUtil.make_name(0) == "singleton0"
+        assert _SingletonDimUtil.make_name(1) == "singleton1"
+        assert _SingletonDimUtil.make_name(99) == "singleton99"
 
 
 if __name__ == "__main__":

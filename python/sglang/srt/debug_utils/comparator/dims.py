@@ -66,12 +66,6 @@ class _SingletonDimUtil:
         )
 
 
-is_squeeze_dim = _SingletonDimUtil.is_squeeze
-filter_squeeze_dims = _SingletonDimUtil.filter_out
-make_singleton_name = _SingletonDimUtil.make_name
-is_singleton_name = _SingletonDimUtil.is_singleton_name
-
-
 _DIM_PATTERN = re.compile(r"^(?P<name>[a-zA-Z_]\w*)(?:\((?P<modifiers>[^)]+)\))?$")
 
 _MODIFIER_FIELDS: list[tuple[type[Enum], str]] = [
@@ -120,7 +114,7 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
     result = [parse_dim(token) for token in dims_str.strip().split()]
 
     non_squeeze_names: list[str] = [
-        spec.name for spec in result if not is_squeeze_dim(spec)
+        spec.name for spec in result if not _SingletonDimUtil.is_squeeze(spec)
     ]
     if len(non_squeeze_names) != len(set(non_squeeze_names)):
         duplicates = sorted(
@@ -141,8 +135,8 @@ def resolve_dim_names(dims_str: str) -> list[str]:
     sq_idx: int = 0
 
     for spec in parse_dims(dims_str):
-        if is_squeeze_dim(spec):
-            dim_names.append(make_singleton_name(sq_idx))
+        if _SingletonDimUtil.is_squeeze(spec):
+            dim_names.append(_SingletonDimUtil.make_name(sq_idx))
             sq_idx += 1
         else:
             dim_names.append(spec.name)
