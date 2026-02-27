@@ -7,12 +7,10 @@ This file serves two purposes:
    so they can be pulled back to a local machine for visual inspection.
 
 Run:
-    msc exec --flavor sglang_default --server sci-h200-n02 \
-        'python -m pytest test/registered/debug_utils/comparator/test_manually_verify.py -x -v'
+    python -m pytest test/registered/debug_utils/comparator/test_manually_verify.py -x -v
 
 Human verification:
     After running, images are at /tmp/comparator_manual_verify/.
-    Pull them back to your local machine and visually inspect.
     Each test's docstring describes the expected visual appearance.
 """
 
