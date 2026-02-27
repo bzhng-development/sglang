@@ -222,7 +222,7 @@ class TestEntrypointGroupingRaw:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
             diff_threshold=1e-3,
         )
 
@@ -266,7 +266,7 @@ class TestEntrypointGroupingRaw:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
             diff_threshold=0.01,
         )
 
@@ -344,7 +344,7 @@ class TestEntrypointGroupingRaw:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
         )
 
         records = _run_and_parse(args, capsys)
@@ -1576,7 +1576,7 @@ class TestEntrypointNonTensorValues:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
         )
         records = _run_and_parse(args, capsys)
 
@@ -1658,7 +1658,7 @@ class TestEntrypointVisualize:
         args = _make_args(
             baseline_path,
             target_path,
-            grouping="raw",
+            grouping="logical",
             filter="tensor_a",
             viz_bundle_details=True,
             viz_output_dir=str(viz_dir),
@@ -1678,7 +1678,7 @@ class TestEntrypointVisualize:
         args = _make_args(
             baseline_path,
             target_path,
-            grouping="raw",
+            grouping="logical",
             viz_bundle_details=False,
             viz_output_dir=str(viz_dir),
         )
@@ -2275,7 +2275,7 @@ class TestEntrypointPerTokenVisualization:
         args = _make_args(
             baseline_path,
             target_path,
-            grouping="raw",
+            grouping="logical",
             visualize_per_token=str(output_png),
         )
         records = _run_and_parse(args, capsys)
@@ -2508,7 +2508,7 @@ class TestEntrypointDpFilter:
         args: Namespace = _make_args(
             tmp_path / "baseline" / _FIXED_EXP_NAME,
             tmp_path / "target" / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
             diff_threshold=1e-3,
         )
         records: list[AnyRecord] = _run_and_parse(args, capsys)
@@ -2564,7 +2564,7 @@ class TestEntrypointDpFilter:
         args: Namespace = _make_args(
             tmp_path / "baseline" / _FIXED_EXP_NAME,
             tmp_path / "target" / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
             diff_threshold=1e-3,
         )
         records: list[AnyRecord] = _run_and_parse(args, capsys)
@@ -2615,7 +2615,7 @@ class TestEntrypointDpFilter:
         args: Namespace = _make_args(
             tmp_path / "baseline" / _FIXED_EXP_NAME,
             tmp_path / "target" / _FIXED_EXP_NAME,
-            grouping="raw",
+            grouping="logical",
             diff_threshold=1e-3,
         )
         records: list[AnyRecord] = _run_and_parse(args, capsys)
