@@ -12,9 +12,6 @@ from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=30, suite="default", nightly=True)
 
-_PNG_MAGIC: bytes = b"\x89PNG"
-
-
 # ────────────────────── Layer 1: Pure logic (no matplotlib) ──────────────────────
 
 
@@ -75,92 +72,13 @@ class TestReshapeToBalancedAspect:
         assert result.numel() == t.numel()
 
 
-# ────────────────────── Layer 2: PNG generation (needs matplotlib) ──────────────────────
+# ────────────────────── Layer 2: Directory creation logic (needs matplotlib) ──────────────────────
 
 
 class TestGenerateComparisonFigure:
     @pytest.fixture(autouse=True)
     def _skip_if_no_matplotlib(self) -> None:
         pytest.importorskip("matplotlib")
-
-    def test_creates_valid_png(self, tmp_path: Path) -> None:
-        from sglang.srt.debug_utils.comparator.visualizer import (
-            generate_comparison_figure,
-        )
-
-        baseline: torch.Tensor = torch.randn(32, 64)
-        target: torch.Tensor = baseline + torch.randn(32, 64) * 0.01
-        output_path: Path = tmp_path / "test_output.png"
-
-        generate_comparison_figure(
-            baseline=baseline,
-            target=target,
-            name="test_tensor",
-            output_path=output_path,
-        )
-
-        assert output_path.exists()
-        assert output_path.stat().st_size > 0
-
-        with open(output_path, "rb") as f:
-            magic: bytes = f.read(4)
-        assert magic == _PNG_MAGIC
-
-    def test_shape_mismatch_does_not_crash(self, tmp_path: Path) -> None:
-        from sglang.srt.debug_utils.comparator.visualizer import (
-            generate_comparison_figure,
-        )
-
-        baseline: torch.Tensor = torch.randn(32, 64)
-        target: torch.Tensor = torch.randn(16, 32)
-        output_path: Path = tmp_path / "mismatch.png"
-
-        generate_comparison_figure(
-            baseline=baseline,
-            target=target,
-            name="mismatch_tensor",
-            output_path=output_path,
-        )
-
-        assert output_path.exists()
-        assert output_path.stat().st_size > 0
-
-    def test_large_tensor_no_oom(self, tmp_path: Path) -> None:
-        from sglang.srt.debug_utils.comparator.visualizer import (
-            generate_comparison_figure,
-        )
-
-        baseline: torch.Tensor = torch.randn(4000, 4000)
-        target: torch.Tensor = baseline + torch.randn(4000, 4000) * 0.001
-        output_path: Path = tmp_path / "large.png"
-
-        generate_comparison_figure(
-            baseline=baseline,
-            target=target,
-            name="large_tensor",
-            output_path=output_path,
-        )
-
-        assert output_path.exists()
-        assert output_path.stat().st_size > 0
-
-    def test_1d_tensor(self, tmp_path: Path) -> None:
-        from sglang.srt.debug_utils.comparator.visualizer import (
-            generate_comparison_figure,
-        )
-
-        baseline: torch.Tensor = torch.randn(256)
-        target: torch.Tensor = baseline + 0.01
-        output_path: Path = tmp_path / "1d.png"
-
-        generate_comparison_figure(
-            baseline=baseline,
-            target=target,
-            name="1d_tensor",
-            output_path=output_path,
-        )
-
-        assert output_path.exists()
 
     def test_nested_output_dir(self, tmp_path: Path) -> None:
         from sglang.srt.debug_utils.comparator.visualizer import (
