@@ -31,8 +31,12 @@ def compute_axis_aligner_plan(
     x_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.x)]
     y_raw: list[str] = [s.name for s in parse_dims(dims_str_pair.y)]
 
-    x_filtered: list[str] = [s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.x))]
-    y_filtered: list[str] = [s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.y))]
+    x_filtered: list[str] = [
+        s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.x))
+    ]
+    y_filtered: list[str] = [
+        s.name for s in filter_squeeze_dims(parse_dims(dims_str_pair.y))
+    ]
 
     target_order: Optional[list[str]] = _resolve_target_order(x_filtered, y_filtered)
     if target_order is None:
@@ -77,9 +81,7 @@ def _resolve_target_order(
     return y_names
 
 
-def _build_pattern(
-    *, source: list[str], target: list[str]
-) -> Optional[str]:
+def _build_pattern(*, source: list[str], target: list[str]) -> Optional[str]:
     """Build an einops rearrange pattern from source dim names to target dim names.
 
     Returns None if source already matches target (no rearrange needed).

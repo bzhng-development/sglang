@@ -58,8 +58,7 @@ def make_singleton_name(index: int) -> str:
 
 def is_singleton_name(name: str) -> bool:
     return (
-        name.startswith(_SINGLETON_PREFIX)
-        and name[len(_SINGLETON_PREFIX) :].isdigit()
+        name.startswith(_SINGLETON_PREFIX) and name[len(_SINGLETON_PREFIX) :].isdigit()
     )
 
 
