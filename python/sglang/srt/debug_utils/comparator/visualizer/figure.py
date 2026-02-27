@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import Callable, Optional
 
 import numpy as np
 import torch
@@ -12,9 +12,6 @@ import torch
 from sglang.srt.debug_utils.comparator.visualizer.preprocessing import (
     _preprocess_tensor,
 )
-
-if TYPE_CHECKING:
-    pass
 
 
 @dataclass(frozen=True)
