@@ -1235,8 +1235,8 @@ class TestEntrypointReplicatedAxis:
         assert isinstance(summary, SummaryRecord)
         assert summary.failed == 1
 
-    def test_summary_counts_failed_from_warnings_only(self, tmp_path, capsys):
-        """Diff itself passes but TP replicas differ → summary.failed=1 from warnings."""
+    def test_summary_counts_with_replicated_mismatch_warnings(self, tmp_path, capsys):
+        """Diff passes and replicated_mismatch warnings are informational (not failures)."""
         torch.manual_seed(42)
         full_baseline = torch.randn(4, 8, 6)
         full_target = full_baseline + torch.randn(4, 8, 6) * 0.0001
@@ -1279,12 +1279,13 @@ class TestEntrypointReplicatedAxis:
         assert comp.diff is not None
         assert comp.diff.passed
         assert len(comp.warnings) > 0
-        assert comp.category == "failed"
+        assert all(isinstance(w, ReplicatedMismatchWarning) for w in comp.warnings)
+        assert comp.category == "passed"
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
-        assert summary.failed == 1
-        assert summary.passed == 0
+        assert summary.passed == 1
+        assert summary.failed == 0
 
 
 class TestEntrypointAlignment:
