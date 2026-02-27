@@ -1896,8 +1896,13 @@ def _create_recompute_rank_dump(
     name: str,
     original_tensor: torch.Tensor,
     recompute_tensor: torch.Tensor,
+    dims: str = "h d",
 ) -> Path:
-    """Create a dump with both original and recompute forward passes via monkeypatched dumper."""
+    """Create a dump with both original and recompute forward passes via monkeypatched dumper.
+
+    The dumper naturally produces recompute_pseudo_rank=0 for original and =1 for recompute,
+    plus recompute_pseudo_size=2.
+    """
     with pytest.MonkeyPatch.context() as mp:
         mp.setattr(_dumper_module, "_get_rank", lambda: rank)
 
@@ -1916,7 +1921,7 @@ def _create_recompute_rank_dump(
             "_detect_recompute_status",
             lambda: _RecomputeStatus.ORIGINAL,
         )
-        dumper.dump(name, original_tensor)
+        dumper.dump(name, original_tensor, dims=dims)
 
         # dump recompute forward
         mp.setattr(
@@ -1924,7 +1929,7 @@ def _create_recompute_rank_dump(
             "_detect_recompute_status",
             lambda: _RecomputeStatus.RECOMPUTE,
         )
-        dumper.dump(name, recompute_tensor)
+        dumper.dump(name, recompute_tensor, dims=dims)
 
         dumper.step()
 
