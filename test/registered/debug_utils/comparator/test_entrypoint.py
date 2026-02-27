@@ -1525,7 +1525,6 @@ class TestEntrypointVisualize:
             filter="tensor_a",
             viz_bundle_details=True,
             viz_output_dir=str(viz_dir),
-            viz_max_tensors=10,
         )
 
         records = _run_and_parse(args, capsys)
@@ -1534,25 +1533,6 @@ class TestEntrypointVisualize:
         png_files = list(viz_dir.glob("*.png"))
         assert len(png_files) == 1
         assert png_files[0].stat().st_size > 0
-
-    def test_visualize_max_tensors_guard(self, tmp_path, capsys):
-        """Exceeding --viz-max-tensors skips extra visualizations."""
-        baseline_path, target_path = _create_dumps(
-            tmp_path, ["tensor_a", "tensor_b", "tensor_c"]
-        )
-        viz_dir = tmp_path / "viz_out"
-        args = _make_args(
-            baseline_path,
-            target_path,
-            grouping="raw",
-            viz_bundle_details=True,
-            viz_output_dir=str(viz_dir),
-            viz_max_tensors=1,
-        )
-
-        _run_and_parse(args, capsys)
-        png_files = list(viz_dir.glob("*.png"))
-        assert len(png_files) == 1
 
     def test_no_visualize_no_png(self, tmp_path, capsys):
         """Without --visualize-bundle-details, no PNGs are created."""
@@ -1564,7 +1544,6 @@ class TestEntrypointVisualize:
             grouping="raw",
             viz_bundle_details=False,
             viz_output_dir=str(viz_dir),
-            viz_max_tensors=10,
         )
 
         _run_and_parse(args, capsys)
@@ -1697,7 +1676,6 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         grouping="logical",
         viz_bundle_details=False,
         viz_output_dir="/tmp/comparator_viz/",
-        viz_max_tensors=10,
     )
     defaults.update(overrides)
     return Namespace(**defaults)

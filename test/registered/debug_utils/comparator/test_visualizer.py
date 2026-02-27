@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 import torch
 
-from sglang.srt.debug_utils.comparator.visualizer import (
+from sglang.srt.debug_utils.comparator.visualizer.preprocessing import (
     _preprocess_tensor,
     _reshape_to_balanced_aspect,
 )
