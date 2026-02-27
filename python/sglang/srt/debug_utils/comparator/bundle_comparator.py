@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -34,6 +35,12 @@ from sglang.srt.debug_utils.dump_loader import LOAD_FAILED, ValueWithMeta
 _FAILED_SIDE_MAP: dict[str, str] = {"x": "baseline", "y": "target"}
 
 
+@dataclass(frozen=True)
+class BundleComparisonResult:
+    record: Union[ComparisonRecord, SkipRecord, NonTensorRecord]
+    aligned_tensors: Optional[Pair[torch.Tensor]] = None
+
+
 def compare_bundle_pair(
     *,
     name: str,
@@ -45,9 +52,10 @@ def compare_bundle_pair(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
         x=None, y=None
     ),
-) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
+    retain_tensors: bool = False,
+) -> BundleComparisonResult:
     with warning_sink.context() as collected_warnings:
-        result = _compare_bundle_pair_inner(
+        bundle_result: BundleComparisonResult = _compare_bundle_pair_inner(
             name=name,
             filenames_pair=filenames_pair,
             baseline_path=baseline_path,
@@ -55,9 +63,14 @@ def compare_bundle_pair(
             token_aligner_plan=token_aligner_plan,
             diff_threshold=diff_threshold,
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
+            retain_tensors=retain_tensors,
         )
 
-    return result.model_copy(update={"warnings": collected_warnings})
+    record = bundle_result.record.model_copy(update={"warnings": collected_warnings})
+    return BundleComparisonResult(
+        record=record,
+        aligned_tensors=bundle_result.aligned_tensors,
+    )
 
 
 def _compare_bundle_pair_inner(
@@ -71,7 +84,8 @@ def _compare_bundle_pair_inner(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
         x=None, y=None
     ),
-) -> Union[ComparisonRecord, SkipRecord, NonTensorRecord]:
+    retain_tensors: bool = False,
+) -> BundleComparisonResult:
     # 1. Load all successfully loaded values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
         x=_load_all_values(filenames=filenames_pair.x, base_path=baseline_path),
@@ -80,14 +94,15 @@ def _compare_bundle_pair_inner(
 
     if not all_pair.x or not all_pair.y:
         reason = "baseline_load_failed" if not all_pair.x else "target_load_failed"
-        return SkipRecord(name=name, reason=reason)
+        return BundleComparisonResult(record=SkipRecord(name=name, reason=reason))
 
     # 2. Check if any side has non-tensor values → non-tensor display path
     has_non_tensor: bool = any(
         not isinstance(it.value, torch.Tensor) for it in [*all_pair.x, *all_pair.y]
     )
     if has_non_tensor:
-        return _compare_bundle_pair_non_tensor_type(name=name, value_pair=all_pair)
+        record = _compare_bundle_pair_non_tensor_type(name=name, value_pair=all_pair)
+        return BundleComparisonResult(record=record)
 
     # 3. All values are tensors → tensor comparison path
     return _compare_bundle_pair_tensor_type(
@@ -96,6 +111,7 @@ def _compare_bundle_pair_inner(
         token_aligner_plan=token_aligner_plan,
         diff_threshold=diff_threshold,
         thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
+        retain_tensors=retain_tensors,
     )
 
 
@@ -108,10 +124,11 @@ def _compare_bundle_pair_tensor_type(
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
         x=None, y=None
     ),
-) -> Union[ComparisonRecord, SkipRecord]:
+    retain_tensors: bool = False,
+) -> BundleComparisonResult:
     if not valid_pair.x or not valid_pair.y:
         reason = "baseline_load_failed" if not valid_pair.x else "target_load_failed"
-        return SkipRecord(name=name, reason=reason)
+        return BundleComparisonResult(record=SkipRecord(name=name, reason=reason))
 
     # Plan (meta only, no tensor)
     metas_pair: Pair[list[dict[str, Any]]] = valid_pair.map(
@@ -142,16 +159,25 @@ def _compare_bundle_pair_tensor_type(
         assert aligner_result.failed_side_xy is not None
         side_name: str = _FAILED_SIDE_MAP[aligner_result.failed_side_xy]
         reason: str = f"{side_name}_load_failed"
-        return SkipRecord(name=name, reason=reason)
+        return BundleComparisonResult(record=SkipRecord(name=name, reason=reason))
 
     # Compare
+    aligned_baseline: torch.Tensor = aligner_result.tensors.x.rename(None)
+    aligned_target: torch.Tensor = aligner_result.tensors.y.rename(None)
+
     info = compare_tensor_pair(
-        x_baseline=aligner_result.tensors.x.rename(None),
-        x_target=aligner_result.tensors.y.rename(None),
+        x_baseline=aligned_baseline,
+        x_target=aligned_target,
         name=name,
         diff_threshold=diff_threshold,
     )
-    return ComparisonRecord(**info.model_dump(), aligner_plan=plan)
+    record = ComparisonRecord(**info.model_dump(), aligner_plan=plan)
+
+    aligned: Optional[Pair[torch.Tensor]] = None
+    if retain_tensors:
+        aligned = Pair(x=aligned_baseline, y=aligned_target)
+
+    return BundleComparisonResult(record=record, aligned_tensors=aligned)
 
 
 def _compare_bundle_pair_non_tensor_type(
