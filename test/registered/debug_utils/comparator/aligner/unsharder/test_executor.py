@@ -15,6 +15,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
     AxisInfo,
     CpThdConcatParams,
     PickParams,
+    ReduceSumParams,
     UnsharderPlan,
 )
 from sglang.srt.debug_utils.comparator.dims import (
@@ -637,6 +638,127 @@ class TestThdCpConcat:
         assert torch.equal(
             unsharded[:, 6:10, :], torch.cat([seq_b_r0, seq_b_r1], dim=1)
         )
+
+
+class TestReduceSum:
+    def test_basic_tp2_reduce(self) -> None:
+        """2 partial tensors sum to full tensor."""
+        torch.manual_seed(42)
+        full_tensor = torch.randn(4, 8)
+        part_a = full_tensor * 0.6
+        part_b = full_tensor * 0.4
+
+        dim_specs = parse_dims("h(tp,partial) d")
+        parallel_infos = [
+            {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
+        ]
+        plans = compute_unsharder_plan(dim_specs, parallel_infos)
+        assert len(plans) == 1
+        assert isinstance(plans[0].params, ReduceSumParams)
+
+        named_parts: list[torch.Tensor] = _name_tensors([part_a, part_b], dim_specs)
+        with warning_sink.context():
+            result = execute_unsharder_plan(plans[0], named_parts)
+
+        assert len(result) == 1
+        assert torch.allclose(result[0].rename(None), full_tensor)
+
+    def test_tp4_reduce(self) -> None:
+        """4 partial tensors sum to full tensor."""
+        torch.manual_seed(42)
+        full_tensor = torch.randn(4, 8)
+        parts: list[torch.Tensor] = [full_tensor * 0.25 for _ in range(4)]
+
+        dim_specs = parse_dims("h(tp,partial) d")
+        parallel_infos = [
+            {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=4)} for i in range(4)
+        ]
+        plans = compute_unsharder_plan(dim_specs, parallel_infos)
+        assert len(plans) == 1
+
+        named_parts: list[torch.Tensor] = _name_tensors(parts, dim_specs)
+        with warning_sink.context():
+            result = execute_unsharder_plan(plans[0], named_parts)
+
+        assert len(result) == 1
+        assert torch.allclose(result[0].rename(None), full_tensor)
+
+    def test_multi_axis_concat_then_reduce(self) -> None:
+        """CP concat + TP reduce end-to-end."""
+        torch.manual_seed(42)
+        full_tensor = torch.randn(4, 8, 16)
+
+        cp_chunks = list(full_tensor.chunk(2, dim=1))
+        # Each CP chunk is held as partial sums across TP ranks
+        tensors: list[torch.Tensor] = []
+        parallel_infos: list[dict[ParallelAxis, AxisInfo]] = []
+        for cp_rank in range(2):
+            for tp_rank in range(2):
+                tensors.append(cp_chunks[cp_rank] * 0.5)
+                parallel_infos.append(
+                    {
+                        ParallelAxis.CP: AxisInfo(axis_rank=cp_rank, axis_size=2),
+                        ParallelAxis.TP: AxisInfo(axis_rank=tp_rank, axis_size=2),
+                    }
+                )
+
+        dim_specs = parse_dims("b s(cp) h(tp,partial)")
+        plans = compute_unsharder_plan(dim_specs, parallel_infos)
+        assert len(plans) == 2
+
+        current: list[torch.Tensor] = _name_tensors(tensors, dim_specs)
+        with warning_sink.context():
+            for plan in plans:
+                current = execute_unsharder_plan(plan, current)
+
+        assert len(current) == 1
+        assert torch.allclose(current[0].rename(None), full_tensor)
+
+    def test_reduce_scrambled_ranks(self) -> None:
+        """Scrambled rank order — sum is commutative so result is the same."""
+        torch.manual_seed(42)
+        full_tensor = torch.randn(4, 8)
+        parts: list[torch.Tensor] = [
+            full_tensor * 0.1,
+            full_tensor * 0.2,
+            full_tensor * 0.3,
+            full_tensor * 0.4,
+        ]
+
+        parallel_infos = [
+            {ParallelAxis.TP: AxisInfo(axis_rank=2, axis_size=4)},
+            {ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=4)},
+            {ParallelAxis.TP: AxisInfo(axis_rank=3, axis_size=4)},
+            {ParallelAxis.TP: AxisInfo(axis_rank=1, axis_size=4)},
+        ]
+        dim_specs = parse_dims("h(tp,partial) d")
+        plans = compute_unsharder_plan(dim_specs, parallel_infos)
+
+        named_parts: list[torch.Tensor] = _name_tensors(parts, dim_specs)
+        with warning_sink.context():
+            result = execute_unsharder_plan(plans[0], named_parts)
+
+        assert len(result) == 1
+        assert torch.allclose(result[0].rename(None), full_tensor)
+
+    def test_reduce_preserves_named_dims(self) -> None:
+        """Named tensor dimensions are preserved through reduce_sum."""
+        dim_specs = parse_dims("h(tp,partial) d")
+        part_a = torch.randn(4, 8).refine_names("h", "d")
+        part_b = torch.randn(4, 8).refine_names("h", "d")
+
+        plan = UnsharderPlan(
+            axis=ParallelAxis.TP,
+            params=ReduceSumParams(),
+            groups=[[0, 1]],
+        )
+        with warning_sink.context():
+            result = execute_unsharder_plan(plan, [part_a, part_b])
+
+        assert len(result) == 1
+        assert result[0].names == ("h", "d")
+        expected = (part_a.rename(None) + part_b.rename(None)).refine_names("h", "d")
+        assert torch.allclose(result[0].rename(None), expected.rename(None))
 
 
 if __name__ == "__main__":
