@@ -38,8 +38,6 @@ def compute_unsharder_plan(
         raise ValueError("parallel_infos must not be empty")
 
     # Within each dim spec, reverse modifier order: innermost shard (rightmost) unshards first.
-    # For fused dims, the dim_name used for concat must match
-    # the tensor's named dim (sanitized_name form, e.g. "num_heads___head_dim").
     reversed_sharded_modifiers: list[tuple[str, ParallelModifier]] = [
         (spec.sanitized_name, m)
         for spec in dim_specs
