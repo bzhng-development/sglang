@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import re
-from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 import yaml
-from pydantic import model_validator
 
 from sglang.srt.debug_utils.comparator.utils import Pair, _StrictBase
 
@@ -17,35 +15,8 @@ class MetaOverrideRule(_StrictBase):
     """Single override rule: regex match → replacement dims string(s)."""
 
     match: str
-    dims: Optional[str] = None
-    baseline_dims: Optional[str] = None
-    target_dims: Optional[str] = None
-
-    @model_validator(mode="after")
-    def _validate_dims_fields(self) -> "MetaOverrideRule":
-        has_shared: bool = self.dims is not None
-        has_per_side: bool = (
-            self.baseline_dims is not None or self.target_dims is not None
-        )
-
-        if has_shared and has_per_side:
-            raise ValueError(
-                "Cannot specify both 'dims' and 'baseline_dims'/'target_dims'; "
-                "use either shared 'dims' or per-side overrides"
-            )
-        if not has_shared and not has_per_side:
-            raise ValueError(
-                "Must specify either 'dims' or at least one of "
-                "'baseline_dims'/'target_dims'"
-            )
-
-        return self
-
-    def effective_baseline_dims(self) -> Optional[str]:
-        return self.dims if self.dims is not None else self.baseline_dims
-
-    def effective_target_dims(self) -> Optional[str]:
-        return self.dims if self.dims is not None else self.target_dims
+    dims: str
+    side: Literal["both", "baseline", "target"] = "both"
 
 
 class MetaOverrideConfig(_StrictBase):
@@ -77,15 +48,16 @@ class MetaOverrider:
         override_config: Optional[Path],
     ) -> "MetaOverrider":
         cli_rules: list[MetaOverrideRule] = [
-            MetaOverrideRule(match=name, dims=dims_str)
+            MetaOverrideRule(match=name, dims=dims_str, side="both")
             for name, dims_str in _parse_cli_override_args(override_dims)
         ]
-
         cli_rules.extend(
-            _merge_per_side_cli_rules(
-                override_baseline_dims=override_baseline_dims,
-                override_target_dims=override_target_dims,
-            )
+            MetaOverrideRule(match=name, dims=dims_str, side="baseline")
+            for name, dims_str in _parse_cli_override_args(override_baseline_dims)
+        )
+        cli_rules.extend(
+            MetaOverrideRule(match=name, dims=dims_str, side="target")
+            for name, dims_str in _parse_cli_override_args(override_target_dims)
         )
 
         yaml_rules: list[MetaOverrideRule] = (
@@ -106,11 +78,11 @@ class MetaOverrider:
             if pattern.search(name):
                 new_baseline: list[dict[str, Any]] = _apply_dims_to_metas(
                     metas=baseline_metas,
-                    new_dims=rule.effective_baseline_dims(),
+                    new_dims=rule.dims if rule.side in ("both", "baseline") else None,
                 )
                 new_target: list[dict[str, Any]] = _apply_dims_to_metas(
                     metas=target_metas,
-                    new_dims=rule.effective_target_dims(),
+                    new_dims=rule.dims if rule.side in ("both", "target") else None,
                 )
                 return Pair(x=new_baseline, y=new_target)
 
@@ -130,38 +102,6 @@ def _parse_cli_override_arg(raw: str) -> tuple[str, str]:
 def _parse_cli_override_args(raw_args: list[str]) -> list[tuple[str, str]]:
     """Parse multiple CLI override arguments."""
     return [_parse_cli_override_arg(raw) for raw in raw_args]
-
-
-def _merge_per_side_cli_rules(
-    *,
-    override_baseline_dims: list[str],
-    override_target_dims: list[str],
-) -> list[MetaOverrideRule]:
-    """Merge --override-baseline-dims and --override-target-dims into unified rules.
-
-    Same match pattern from both flags → one rule with both baseline_dims and target_dims.
-    Uses OrderedDict to preserve CLI order (first appearance wins).
-    """
-    merged: OrderedDict[str, dict[str, Optional[str]]] = OrderedDict()
-
-    for name, dims_str in _parse_cli_override_args(override_baseline_dims):
-        if name not in merged:
-            merged[name] = {"baseline_dims": None, "target_dims": None}
-        merged[name]["baseline_dims"] = dims_str
-
-    for name, dims_str in _parse_cli_override_args(override_target_dims):
-        if name not in merged:
-            merged[name] = {"baseline_dims": None, "target_dims": None}
-        merged[name]["target_dims"] = dims_str
-
-    return [
-        MetaOverrideRule(
-            match=name,
-            baseline_dims=sides["baseline_dims"],
-            target_dims=sides["target_dims"],
-        )
-        for name, sides in merged.items()
-    ]
 
 
 def _load_yaml_rules(path: Path) -> list[MetaOverrideRule]:
