@@ -18,7 +18,7 @@ from sglang.srt.debug_utils.comparator.aligner.reorderer.executor import (
 )
 from sglang.srt.debug_utils.comparator.aligner.reorderer.types import ReordererPlan
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat import (
-    execute_concat,
+    execute_token_aligner_concat,
 )
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.executor import (
     execute_token_aligner,
@@ -69,9 +69,8 @@ def execute_aligner_plan(
     # Cross-side: token alignment (or direct extraction for single-step)
     step_pair: Pair[dict[int, torch.Tensor]] = Pair(x=step_tensors_x, y=step_tensors_y)
     combined: Pair[torch.Tensor]
-
     if plan.token_aligner_mode == "concat":
-        combined = execute_concat(tensor_of_step_pair=step_pair)
+        combined = execute_token_aligner_concat(tensor_of_step_pair=step_pair)
     elif plan.token_aligner_mode == "smart":
         assert plan.token_aligner_plan is not None
         combined = execute_token_aligner(
