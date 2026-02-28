@@ -45,6 +45,13 @@ class DimSpec(_FrozenBase):
     parallel_modifiers: list[ParallelModifier] = []
 
 
+class DimsSpec(_FrozenBase):
+    """Parsed result of a full dims string like ``"b s h(tp) // dp:=moe_dp"``."""
+
+    dims: list[DimSpec]
+    dp_group_alias: Optional[str] = None
+
+
 class _SingletonDimUtil:
     """Utilities for squeeze dims (name="1") and their singleton tensor-name mapping."""
 
@@ -172,21 +179,23 @@ def parse_dim(token: str) -> DimSpec:
     return DimSpec(name=name, parallel_modifiers=modifiers)
 
 
-def parse_dims(dims_str: str) -> list[DimSpec]:
-    """Parse 'b s(cp:zigzag) h(tp) d' -> list[DimSpec].
+def parse_dims(dims_str: str) -> DimsSpec:
+    """Parse ``"b s(cp:zigzag) h(tp) d // dp:=moe_dp"`` → :class:`DimsSpec`.
 
-    A ``//`` separator may follow the shape part; everything after it
-    (tensor-level declarations like ``dp:=moe_dp``) is ignored here.
+    The shape part (before ``//``) produces :pyattr:`DimsSpec.dims`.
+    The declaration part (after ``//``) is scanned for ``dp:=<group>``
+    which populates :pyattr:`DimsSpec.dp_group_alias`.
     """
-    raw: str = dims_str.split("//", maxsplit=1)[0]
+    parts: list[str] = dims_str.split("//", maxsplit=1)
+    raw: str = parts[0]
 
     if not raw.strip():
         raise ValueError("dims string must not be empty")
 
-    result = [parse_dim(token) for token in raw.strip().split()]
+    dims: list[DimSpec] = [parse_dim(token) for token in raw.strip().split()]
 
     non_squeeze_names: list[str] = [
-        spec.name for spec in result if not _SingletonDimUtil.is_squeeze(spec)
+        spec.name for spec in dims if not _SingletonDimUtil.is_squeeze(spec)
     ]
     if len(non_squeeze_names) != len(set(non_squeeze_names)):
         duplicates = sorted(
@@ -194,12 +203,14 @@ def parse_dims(dims_str: str) -> list[DimSpec]:
         )
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
-    return result
+    dp_group_alias: Optional[str] = _extract_dp_group_alias(parts[1]) if len(parts) > 1 else None
+
+    return DimsSpec(dims=dims, dp_group_alias=dp_group_alias)
 
 
 def resolve_dim_names(dims_str: str) -> list[str]:
     """Parse dims string and return tensor-compatible names ('1' → 'singleton0', ...)."""
-    names: list[str] = [spec.name for spec in parse_dims(dims_str)]
+    names: list[str] = [spec.name for spec in parse_dims(dims_str).dims]
     return _SingletonDimUtil.sanitize_names(names)
 
 
@@ -230,21 +241,9 @@ def strip_dim_names(tensor: torch.Tensor) -> torch.Tensor:
 _DP_ALIAS_PATTERN = re.compile(r"^dp:=(\w+)$")
 
 
-def extract_dp_group_alias(dims_str: Optional[str]) -> Optional[str]:
-    """Extract the dp group alias from a dims string's ``//`` section.
-
-    E.g. ``"b s h(tp) // dp:=moe_dp"`` → ``"moe_dp"``.
-    Returns ``None`` when *dims_str* is ``None``, has no ``//``, or
-    contains no ``dp:=`` token.
-    """
-    if dims_str is None:
-        return None
-
-    parts: list[str] = dims_str.split("//", maxsplit=1)
-    if len(parts) < 2:
-        return None
-
-    for token in parts[1].strip().split():
+def _extract_dp_group_alias(declaration_part: str) -> Optional[str]:
+    """Scan the ``//`` declaration section for a ``dp:=<group>`` token."""
+    for token in declaration_part.strip().split():
         match = _DP_ALIAS_PATTERN.match(token)
         if match is not None:
             return match.group(1)

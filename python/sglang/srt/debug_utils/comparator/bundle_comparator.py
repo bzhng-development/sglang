@@ -22,7 +22,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     SEQ_DIM_NAME,
     TOKEN_DIM_NAME,
     apply_dim_names,
-    extract_dp_group_alias,
+    parse_dims,
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
@@ -154,7 +154,9 @@ def _extract_dp_alias_from_items(items: list[ValueWithMeta]) -> Optional[str]:
     if not items:
         return None
     dims_str: Optional[str] = items[0].meta.get("dims")
-    return extract_dp_group_alias(dims_str)
+    if dims_str is None:
+        return None
+    return parse_dims(dims_str).dp_group_alias
 
 
 def _compare_bundle_pair_tensor_type(
