@@ -322,7 +322,9 @@ class TestParseDimsWithDoubleSlash:
     """parse_dims strips the ``//`` declaration section from dims."""
 
     def test_shape_dims_unchanged(self) -> None:
-        assert parse_dims("b s h(tp) // dp:=moe_dp").dims == parse_dims("b s h(tp)").dims
+        assert (
+            parse_dims("b s h(tp) // dp:=moe_dp").dims == parse_dims("b s h(tp)").dims
+        )
 
     def test_dp_group_alias_extracted(self) -> None:
         assert parse_dims("b s h(tp) // dp:=moe_dp").dp_group_alias == "moe_dp"
@@ -354,7 +356,10 @@ class TestDpGroupAlias:
         assert parse_dims("t h(tp) // ep:replicated").dp_group_alias is None
 
     def test_multiple_tokens_picks_dp(self) -> None:
-        assert parse_dims("b s // ep:replicated dp:=custom_dp").dp_group_alias == "custom_dp"
+        assert (
+            parse_dims("b s // ep:replicated dp:=custom_dp").dp_group_alias
+            == "custom_dp"
+        )
 
 
 class TestResolveDimNamesWithDoubleSlash:

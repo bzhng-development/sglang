@@ -203,7 +203,9 @@ def parse_dims(dims_str: str) -> DimsSpec:
         )
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
-    dp_group_alias: Optional[str] = _extract_dp_group_alias(parts[1]) if len(parts) > 1 else None
+    dp_group_alias: Optional[str] = (
+        _extract_dp_group_alias(parts[1]) if len(parts) > 1 else None
+    )
 
     return DimsSpec(dims=dims, dp_group_alias=dp_group_alias)
 
