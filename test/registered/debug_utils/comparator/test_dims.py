@@ -371,6 +371,27 @@ class TestDpGroupAlias:
         )
 
 
+class TestResolveDimNamesWithFused:
+    def test_fused_dim_uses_double_underscore(self) -> None:
+        assert resolve_dim_names("t num_heads*head_dim") == [
+            "t",
+            "num_heads__head_dim",
+        ]
+
+    def test_fused_with_regular_dims(self) -> None:
+        assert resolve_dim_names("t num_heads(tp)*head_dim d") == [
+            "t",
+            "num_heads__head_dim",
+            "d",
+        ]
+
+    def test_three_way_fused(self) -> None:
+        assert resolve_dim_names("a*b*c") == ["a__b__c"]
+
+    def test_fused_with_squeeze(self) -> None:
+        assert resolve_dim_names("t 1 a*b") == ["t", "singleton0", "a__b"]
+
+
 class TestResolveDimNamesWithHash:
     def test_hash_stripped(self) -> None:
         assert resolve_dim_names("t h # dp:=moe_dp") == ["t", "h"]

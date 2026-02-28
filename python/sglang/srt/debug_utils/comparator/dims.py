@@ -309,9 +309,23 @@ def parse_dims(dims_str: str) -> DimsSpec:
     return DimsSpec(dims=dims, dp_group_alias=dp_group_alias)
 
 
+_FUSED_NAME_SEP: str = "__"
+
+
+def fused_tensor_name(spec: DimSpec) -> str:
+    """Convert a fused DimSpec's name to a PyTorch-named-tensor-compatible form.
+
+    ``"num_heads*head_dim"`` → ``"num_heads__head_dim"`` (``*`` is invalid in named tensors).
+    """
+    return _FUSED_NAME_SEP.join(fused_sub_names(spec))
+
+
 def resolve_dim_names(dims_str: str) -> list[str]:
     """Parse dims string and return tensor-compatible names ('1' → 'singleton0', ...)."""
-    names: list[str] = [spec.name for spec in parse_dims(dims_str).dims]
+    specs: list[DimSpec] = parse_dims(dims_str).dims
+    names: list[str] = [
+        fused_tensor_name(spec) if is_fused(spec) else spec.name for spec in specs
+    ]
     return _SingletonDimUtil.sanitize_names(names)
 
 
