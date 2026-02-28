@@ -15,6 +15,8 @@ from sglang.srt.debug_utils.comparator.dims import (
     DimSpec,
     ParallelAxis,
     ParallelModifier,
+    fused_tensor_name,
+    is_fused,
 )
 
 # _CoordsList[tensor_index][axis] =
@@ -38,9 +40,22 @@ def compute_unsharder_plan(
         raise ValueError("parallel_infos must not be empty")
 
     # Within each dim spec, reverse modifier order: innermost shard (rightmost) unshards first.
-    reversed_sharded_modifiers: list[tuple[str, ParallelModifier]] = [
-        (spec.name, m) for spec in dim_specs for m in reversed(spec.parallel_modifiers)
-    ]
+    # For fused dims, modifiers live on sub_dims; the dim_name used for concat must match
+    # the tensor's named dim (fused_tensor_name form, e.g. "num_heads__head_dim").
+    reversed_sharded_modifiers: list[tuple[str, ParallelModifier]] = []
+    for spec in dim_specs:
+        if is_fused(spec):
+            tensor_name: str = fused_tensor_name(spec)
+            sub_modifiers: list[ParallelModifier] = [
+                m for sub in spec.sub_dims for m in sub.parallel_modifiers
+            ]
+            reversed_sharded_modifiers.extend(
+                (tensor_name, m) for m in reversed(sub_modifiers)
+            )
+        else:
+            reversed_sharded_modifiers.extend(
+                (spec.name, m) for m in reversed(spec.parallel_modifiers)
+            )
 
     sharded_axes_raw: set[ParallelAxis] = {
         m.axis for _, m in reversed_sharded_modifiers
