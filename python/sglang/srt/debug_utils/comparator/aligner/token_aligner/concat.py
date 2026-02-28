@@ -16,6 +16,4 @@ def execute_concat(
 
 
 def _concat_steps(tensor_of_step: dict[int, torch.Tensor]) -> torch.Tensor:
-    return torch.cat(
-        [tensor_of_step[s] for s in sorted(tensor_of_step)], dim=0
-    )
+    return torch.cat([tensor_of_step[s] for s in sorted(tensor_of_step)], dim=0)

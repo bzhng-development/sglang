@@ -67,9 +67,7 @@ def execute_aligner_plan(
         )
 
     # Cross-side: token alignment (or direct extraction for single-step)
-    step_pair: Pair[dict[int, torch.Tensor]] = Pair(
-        x=step_tensors_x, y=step_tensors_y
-    )
+    step_pair: Pair[dict[int, torch.Tensor]] = Pair(x=step_tensors_x, y=step_tensors_y)
     combined: Pair[torch.Tensor]
 
     if plan.token_aligner_mode == "concat":
