@@ -74,7 +74,7 @@ def format_replicated_checks(checks: list[ReplicatedCheckResult]) -> str:
                 f"mean_abs_diff={check.diff.mean_abs_diff:.6e}"
             )
         else:
-            detail = "shape mismatch (no diff)"
+            detail = "n/a diff"
 
         lines.append(
             f"  {marker} axis={check.axis} group={check.group_index} "
