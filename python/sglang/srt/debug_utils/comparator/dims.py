@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional
 
 import torch
+from pydantic import model_validator
 
 from sglang.srt.debug_utils.comparator.utils import _FrozenBase
 
@@ -47,10 +48,29 @@ class SubDimSpec(_FrozenBase):
     parallel_modifiers: list[ParallelModifier] = []
 
 
+_FUSED_NAME_SEP: str = "__"
+
+
 class DimSpec(_FrozenBase):
     name: str
     parallel_modifiers: list[ParallelModifier] = []
     sub_dims: list[SubDimSpec] = []
+
+    @model_validator(mode="after")
+    def _validate_fused_invariant(self) -> DimSpec:
+        if self.sub_dims and self.parallel_modifiers:
+            raise ValueError(
+                f"Fused DimSpec {self.name!r} must not have parallel_modifiers "
+                f"on the DimSpec itself; modifiers belong on sub_dims."
+            )
+        return self
+
+    @property
+    def tensor_name(self) -> str:
+        """Name suitable for PyTorch named tensors (``*`` → ``__``)."""
+        if self.sub_dims:
+            return _FUSED_NAME_SEP.join(s.name for s in self.sub_dims)
+        return self.name
 
 
 def is_fused(spec: DimSpec) -> bool:
@@ -59,6 +79,18 @@ def is_fused(spec: DimSpec) -> bool:
 
 def fused_sub_names(spec: DimSpec) -> list[str]:
     return [s.name for s in spec.sub_dims]
+
+
+def fused_tensor_name(spec: DimSpec) -> str:
+    """Convert a fused DimSpec's name to a PyTorch-named-tensor-compatible form.
+
+    ``"num_heads*head_dim"`` → ``"num_heads__head_dim"`` (``*`` is invalid in named tensors).
+    """
+    if not spec.sub_dims:
+        raise ValueError(
+            f"fused_tensor_name() called on non-fused DimSpec {spec.name!r}"
+        )
+    return spec.tensor_name
 
 
 class DimsSpec(_FrozenBase):
@@ -309,29 +341,19 @@ def parse_dims(dims_str: str) -> DimsSpec:
     return DimsSpec(dims=dims, dp_group_alias=dp_group_alias)
 
 
-_FUSED_NAME_SEP: str = "__"
-
-
-def fused_tensor_name(spec: DimSpec) -> str:
-    """Convert a fused DimSpec's name to a PyTorch-named-tensor-compatible form.
-
-    ``"num_heads*head_dim"`` → ``"num_heads__head_dim"`` (``*`` is invalid in named tensors).
-    """
-    return _FUSED_NAME_SEP.join(fused_sub_names(spec))
-
-
 def resolve_dim_names(dims_str: str) -> list[str]:
     """Parse dims string and return tensor-compatible names ('1' → 'singleton0', ...)."""
     specs: list[DimSpec] = parse_dims(dims_str).dims
-    names: list[str] = [
-        fused_tensor_name(spec) if is_fused(spec) else spec.name for spec in specs
-    ]
+    names: list[str] = [spec.tensor_name for spec in specs]
     return _SingletonDimUtil.sanitize_names(names)
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
-    names: list[str] = [spec.name for spec in dim_specs]
-    return names.index(name) if name in names else None
+    """Find index by name. Accepts both ``*``-form and ``__``-form for fused dims."""
+    for i, spec in enumerate(dim_specs):
+        if spec.name == name or spec.tensor_name == name:
+            return i
+    return None
 
 
 def resolve_dim_by_name(tensor: torch.Tensor, name: str) -> int:

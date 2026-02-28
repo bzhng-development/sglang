@@ -491,6 +491,10 @@ class TestParseDimsWithFused:
         assert is_fused(result.dims[0])
         assert is_fused(result.dims[1])
 
+    def test_cross_fused_duplicate_sub_name_raises(self) -> None:
+        with pytest.raises(ValueError, match="Duplicate"):
+            parse_dims("a*b c*a")
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))
