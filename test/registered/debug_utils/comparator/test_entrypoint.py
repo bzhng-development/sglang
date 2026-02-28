@@ -1434,6 +1434,58 @@ class TestEntrypointConcatMode:
         assert comparisons[0].diff is not None
         assert comparisons[0].diff.passed
 
+    def test_concat_thd_cp_zigzag(self, tmp_path: Path, capsys) -> None:
+        """Concat mode with THD CP=2 zigzag (Megatron format) — unshard + reorder works."""
+        torch.manual_seed(42)
+        cp_size: int = 2
+        seq_lens: list[int] = [100, 64]
+        total_tokens: int = sum(seq_lens)
+        total_per_rank: int = 128
+        num_steps: int = 2
+
+        full_tensor: torch.Tensor = torch.randn(total_tokens + 92)
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        baseline_path: Path = _create_thd_cp_zigzag_dumps(
+            baseline_dir,
+            full_tensor=full_tensor,
+            name="hidden_states",
+            seq_lens=seq_lens,
+            cp_size=cp_size,
+            total_per_rank=total_per_rank,
+            num_steps=num_steps,
+        )
+
+        target_tensor: torch.Tensor = full_tensor + torch.randn_like(full_tensor) * 1e-5
+        target_path: Path = _create_thd_cp_zigzag_dumps(
+            target_dir,
+            full_tensor=target_tensor,
+            name="hidden_states",
+            seq_lens=seq_lens,
+            cp_size=cp_size,
+            total_per_rank=total_per_rank,
+            num_steps=num_steps,
+        )
+
+        args: Namespace = _make_args(
+            baseline_path,
+            target_path,
+            token_aligner="concat",
+            diff_threshold=1e-3,
+        )
+        records: list[AnyRecord] = _run_and_parse(args, capsys)
+
+        comparisons: list[ComparisonRecord] = _get_comparisons(records)
+        hidden_comparisons: list[ComparisonRecord] = [
+            c for c in comparisons if c.name == "hidden_states"
+        ]
+        assert len(hidden_comparisons) >= 1
+        assert all(c.diff is not None and c.diff.passed for c in hidden_comparisons)
+
 
 class TestEntrypointAxisAligner:
     """Test cross-framework dim reordering through the full entrypoint pipeline."""
