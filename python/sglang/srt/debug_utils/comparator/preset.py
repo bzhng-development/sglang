@@ -26,10 +26,10 @@ def expand_preset(argv: list[str], presets: dict[str, list[str]]) -> list[str]:
     If ``--preset`` is absent **and** ``--grouping-skip-keys`` is also absent,
     the DEFAULT_PRESET is applied automatically.
     """
-    has_preset: bool = "--preset" in argv
-    argv = _expand_flag(argv, "--preset", presets)
+    if (expanded := _expand_flag(argv, "--preset", presets)) is not None:
+        return expanded
 
-    if not has_preset and "--grouping-skip-keys" not in argv:
+    if "--grouping-skip-keys" not in argv:
         return presets[DEFAULT_PRESET] + argv
 
     return argv
@@ -40,7 +40,7 @@ def _expand_flag(
 ) -> list[str]:
     """Replace ``flag <name>`` in *argv* with the corresponding argv fragment from *mapping*."""
     if flag not in argv:
-        return argv
+        return None
 
     idx: int = argv.index(flag)
     name: str = argv[idx + 1]
