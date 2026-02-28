@@ -177,7 +177,7 @@ class TestComputeAlignerPlan:
 
 class TestComputePerStepSubPlansThd:
     def test_thd_zigzag_returns_thd_plans(self) -> None:
-        """t(cp:zigzag) h(tp) generates THD-typed unsharder + reorderer plans."""
+        """t[cp:zigzag] h[tp] generates THD-typed unsharder + reorderer plans."""
         thd_global_seq_lens: list[int] = [100, 64, 92]
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
             metas=[
