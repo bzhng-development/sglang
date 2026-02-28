@@ -1,9 +1,9 @@
 """E2E test: source patcher + dumper + comparator on SGLang server.
 
-Patches Qwen3DecoderLayer.forward to insert dumper.dump() calls,
-launches 1-GPU baseline and 2-GPU TP=2 target servers, runs inference,
-verifies patched dump fields exist, then runs comparator to verify
-numerical consistency.
+Patches Qwen3MoeDecoderLayer.forward (and related methods) to insert
+dumper.dump() calls at 8 points, launches TP=2 baseline and TP=4 target
+servers with Qwen3-30B-A3B (MOE model), runs inference, verifies patched
+dump fields exist, then runs comparator to verify numerical consistency.
 
 The dumper.apply_source_patches() auto-injects ``from ... import dumper``
 so the YAML only needs ``dumper.dump(...)`` calls.
@@ -30,50 +30,83 @@ from sglang.test.test_utils import (
     popen_launch_server,
 )
 
-register_cuda_ci(est_time=120, suite="nightly-2-gpu", nightly=True)
+register_cuda_ci(est_time=300, suite="nightly-4-gpu", nightly=True)
 
-MODEL = "Qwen/Qwen3-0.6B"
+MODEL = "Qwen/Qwen3-30B-A3B"
+BASELINE_TP = 2
+TARGET_TP = 4
 EXP_NAME = "e2e_source_patcher"
 DUMPER_FILTER = "layer_id in [0, 1, 2]"
 
 PATCH_CONFIG_YAML: str = """\
 patches:
-  - target: sglang.srt.models.qwen3.Qwen3DecoderLayer.forward
+  # --- decoder layer level (aligned with miles test) ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
     edits:
-      - match: "hidden_states = self.mlp(hidden_states)"
-        prepend: "dumper.dump('patched_attn_output', hidden_states, dims='t h')"
-      - match: "return hidden_states, residual"
-        prepend: "dumper.dump('patched_mlp_output', hidden_states, dims='t h')"
+      - match: "self.layer_communicator.prepare_attn_and_capture_last_layer_outputs("
+        append: "dumper.dump('layer_input', hidden_states, dims='t h')"
+      - match: "hidden_states = self.self_attn("
+        append: "dumper.dump('attn_output', hidden_states, dims='t h(tp,partial)')"
+      - match: "hidden_states, residual = self.layer_communicator.prepare_mlp("
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h')"
+      - match: "hidden_states = self.mlp("
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h(tp,partial)')"
+
+  # --- attention internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_prepare_native
+    edits:
+      - match: "qkv, _ = self.qkv_proj(hidden_states)"
+        append: "dumper.dump('attn_qkv', qkv, dims='t qkv(tp)')"
+
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
+    edits:
+      - match: "output, _ = self.o_proj(attn_output)"
+        prepend: "dumper.dump('attn_pre_proj', attn_output, dims='t attn_h(tp)')"
+
+  # --- moe internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
+    edits:
+      - match: "router_logits, _ = self.gate(hidden_states)"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts')"
+      - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h(tp,partial)')"
 """
 
 
 class TestSourcePatcherE2ESGLang:
-    """E2E: patch Qwen3 forward -> dump -> compare 1gpu vs 2gpu-tp2."""
+    """E2E: patch Qwen3Moe forward -> dump -> compare TP=2 vs TP=4."""
 
-    @pytest.mark.timeout(300)
+    @pytest.mark.timeout(600)
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
-        patched_fields: list[str] = ["patched_attn_output", "patched_mlp_output"]
+        patched_fields: list[str] = [
+            # decoder layer level (aligned with miles)
+            "layer_input", "attn_output", "pre_mlp_residual", "mlp_output",
+            # attention internals
+            "attn_qkv", "attn_pre_proj",
+            # moe internals
+            "moe_router_logits", "moe_expert_output",
+        ]
         base_url: str = DEFAULT_URL_FOR_TEST
 
         config_path: Path = tmp_path / "patch_config.yaml"
         config_path.write_text(PATCH_CONFIG_YAML)
 
-        # Run 1: baseline (1 GPU)
+        # Run 1: baseline (TP=2)
         baseline_dir: Path = tmp_path / "baseline"
         _run_server_and_generate(
             dump_dir=baseline_dir,
             config_path=config_path,
-            tp=1,
+            tp=BASELINE_TP,
             base_url=base_url,
         )
         _verify_patched_fields(dump_dir=baseline_dir, field_names=patched_fields)
 
-        # Run 2: target (2 GPU TP=2)
+        # Run 2: target (TP=4)
         target_dir: Path = tmp_path / "target"
         _run_server_and_generate(
             dump_dir=target_dir,
             config_path=config_path,
-            tp=2,
+            tp=TARGET_TP,
             base_url=base_url,
         )
         _verify_patched_fields(dump_dir=target_dir, field_names=patched_fields)
@@ -153,7 +186,12 @@ def _run_server_and_generate(
         MODEL,
         base_url,
         timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-        other_args=["--tp", str(tp), "--max-total-tokens", "128"],
+        other_args=[
+            "--tp", str(tp),
+            "--max-total-tokens", "128",
+            "--mem-fraction-static", "0.5",
+            "--disable-cuda-graph",
+        ],
         env=env,
     )
     try:
