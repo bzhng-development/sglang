@@ -1047,12 +1047,10 @@ class TestEntrypointGroupingLogical:
         assert comp.name == "hidden"
 
     def test_cp_zigzag_sp_same_dim_unshard(self, tmp_path, capsys):
-        """CP=2 zigzag + SP=2 on same token dim: multi-axis unshard + reorder."""
+        """CP=2 zigzag + SP=2 on same seq dim: multi-axis unshard + reorder."""
         torch.manual_seed(42)
-        seq_lens: list[int] = [8, 8]
-        total_tokens: int = sum(seq_lens)
-        full_baseline = torch.randn(total_tokens, 8)
-        full_target = full_baseline + torch.randn(total_tokens, 8) * 0.001
+        full_baseline = torch.randn(4, 8, 6)
+        full_target = full_baseline + torch.randn(4, 8, 6) * 0.001
 
         baseline_dir = tmp_path / "baseline"
         target_dir = tmp_path / "target"
@@ -1067,26 +1065,18 @@ class TestEntrypointGroupingLogical:
                 name="hidden",
                 cp_size=2,
                 sp_size=2,
-                dims_str="t(cp:zigzag,sp) h",
-                seq_lens=seq_lens,
+                dims_str="b s(cp:zigzag,sp) h",
             )
 
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping="logical",
-            token_aligner="smart",
             diff_threshold=0.01,
         )
 
         records, _ = _run_and_parse(args, capsys)
-
-        comparisons: list[ComparisonRecord] = _get_comparisons(records)
-        hidden_comparisons: list[ComparisonRecord] = [
-            c for c in comparisons if c.name == "hidden"
-        ]
-        assert len(hidden_comparisons) >= 1
-        assert all(c.diff is not None and c.diff.passed for c in hidden_comparisons)
+        comp = _assert_single_comparison_passed(records)
+        assert comp.name == "hidden"
 
 
 class TestEntrypointConcatMode:
@@ -2501,77 +2491,41 @@ def _create_cp_zigzag_sp_sharded_dumps(
     cp_size: int,
     sp_size: int,
     dims_str: str,
-    seq_lens: list[int],
+    seq_dim: int = 1,
     num_steps: int = 1,
 ) -> Path:
-    """Create CP-zigzag + SP sharded dump files for THD token dim.
+    """Create CP-zigzag + SP sharded dump files for a seq dim (b s h format).
 
     Shard order (outer to inner, matching left-to-right in dims annotation):
-      1. CP zigzag splits token dim per-sequence into cp_size chunks
+      1. CP zigzag splits seq dim into cp_size chunks (zigzag order)
       2. SP splits each CP chunk into sp_size chunks
-
-    Requires seq_lens for cu_seqlens_q (needed by zigzag reorder on 't' dim).
     """
-    # Per-sequence zigzag split, then concat across sequences per rank
-    offset: int = 0
-    rank_segments: list[list[torch.Tensor]] = [
-        [] for _ in range(cp_size * sp_size)
-    ]
-
-    for seq_len in seq_lens:
-        seq_tensor: torch.Tensor = full_tensor[offset : offset + seq_len]
-
-        # CP zigzag split this sequence
-        cp_chunks: list[torch.Tensor] = _zigzag_split_seq(
-            seq_tensor, cp_size=cp_size
-        )
-
-        # SP split within each CP chunk
-        for cp_rank in range(cp_size):
-            sp_chunks: list[torch.Tensor] = list(
-                cp_chunks[cp_rank].chunk(sp_size, dim=0)
-            )
-            for sp_rank in range(sp_size):
-                flat_rank: int = cp_rank * sp_size + sp_rank
-                rank_segments[flat_rank].append(sp_chunks[sp_rank])
-
-        offset += seq_len
-
-    cu_seqlens_q: torch.Tensor = torch.tensor(
-        [0] + [sum(seq_lens[: i + 1]) for i in range(len(seq_lens))],
-        dtype=torch.int64,
+    num_chunks: int = cp_size * 2
+    natural_chunks: list[torch.Tensor] = list(
+        full_tensor.chunk(num_chunks, dim=seq_dim)
     )
 
-    # Build per-rank input_ids (zigzag-split + SP-split, same structure as main tensor)
-    all_ids: torch.Tensor = torch.arange(sum(seq_lens), dtype=torch.int64)
-    offset_ids: int = 0
-    rank_id_segments: list[list[torch.Tensor]] = [
-        [] for _ in range(cp_size * sp_size)
-    ]
-    for seq_len in seq_lens:
-        seq_ids: torch.Tensor = all_ids[offset_ids : offset_ids + seq_len]
-        cp_id_chunks: list[torch.Tensor] = _zigzag_split_seq(
-            seq_ids, cp_size=cp_size
-        )
-        for cp_rank_i in range(cp_size):
-            sp_id_chunks: list[torch.Tensor] = list(
-                cp_id_chunks[cp_rank_i].chunk(sp_size, dim=0)
-            )
-            for sp_rank_i in range(sp_size):
-                flat_r: int = cp_rank_i * sp_size + sp_rank_i
-                rank_id_segments[flat_r].append(sp_id_chunks[sp_rank_i])
-        offset_ids += seq_len
+    zigzag_order: list[int] = []
+    for i in range(cp_size):
+        zigzag_order.append(i)
+        zigzag_order.append(num_chunks - 1 - i)
 
+    zigzagged: torch.Tensor = torch.cat(
+        [natural_chunks[idx] for idx in zigzag_order], dim=seq_dim
+    )
+    cp_chunks: list[torch.Tensor] = list(zigzagged.chunk(cp_size, dim=seq_dim))
+
+    rank: int = 0
     for cp_rank in range(cp_size):
+        sp_chunks: list[torch.Tensor] = list(
+            cp_chunks[cp_rank].chunk(sp_size, dim=seq_dim)
+        )
         for sp_rank in range(sp_size):
-            flat_rank: int = cp_rank * sp_size + sp_rank
-            rank_tensor: torch.Tensor = torch.cat(rank_segments[flat_rank], dim=0)
-            rank_ids: torch.Tensor = torch.cat(rank_id_segments[flat_rank], dim=0)
             _create_rank_dump(
                 directory,
-                rank=flat_rank,
+                rank=rank,
                 name=name,
-                tensor=rank_tensor,
+                tensor=sp_chunks[sp_rank],
                 dims=dims_str,
                 parallel_info={
                     "cp_rank": cp_rank,
@@ -2579,13 +2533,9 @@ def _create_cp_zigzag_sp_sharded_dumps(
                     "sp_rank": sp_rank,
                     "sp_size": sp_size,
                 },
-                framework="megatron",
                 num_steps=num_steps,
-                extra_dumps=[
-                    ("cu_seqlens_q", cu_seqlens_q),
-                    ("input_ids", rank_ids),
-                ],
             )
+            rank += 1
 
     return directory / _FIXED_EXP_NAME
 
