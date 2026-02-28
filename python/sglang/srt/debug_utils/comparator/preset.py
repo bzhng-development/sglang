@@ -7,12 +7,10 @@ PRESETS: dict[str, list[str]] = {
     "sglang_dev": [
         "--grouping-skip-keys",
         "rank",
-        "recompute_status",
     ],
     "sglang_megatron": [
         "--grouping-skip-keys",
         "rank",
-        "recompute_status",
         "step",
         "--token-aligner",
         "concat_steps",

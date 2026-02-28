@@ -364,7 +364,7 @@ class TestEntrypointGroupingRaw:
 
 
 class TestEntrypointGroupingLogical:
-    """Test `--grouping-skip-keys rank recompute_status` (logical) scenarios"""
+    """Test `--grouping-skip-keys rank` (logical) scenarios"""
 
     def test_no_dims_single_rank(self, tmp_path, capsys):
         """Single-rank dumps without dims fall back to raw loading."""
@@ -1894,7 +1894,7 @@ class TestEntrypointAlignment:
         argv = _make_argv(
             exp_paths[0],
             exp_paths[1],
-            grouping_skip_keys=["rank", "recompute_status", "step"],
+            grouping_skip_keys=["rank", "step"],
             token_aligner="smart",
         )
         records, _ = _run_and_parse(argv, capsys)
@@ -2007,7 +2007,7 @@ class TestEntrypointAlignment:
         argv = _make_argv(
             sglang_dir / _FIXED_EXP_NAME,
             megatron_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
+            grouping_skip_keys=["rank", "step"],
             token_aligner="smart",
         )
 
@@ -3140,7 +3140,7 @@ class TestEntrypointThdCpZigzag:
         argv: list[str] = _make_argv(
             sglang_dir / _FIXED_EXP_NAME,
             megatron_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
+            grouping_skip_keys=["rank", "step"],
             token_aligner="smart",
             diff_threshold=1e-3,
         )
@@ -3191,7 +3191,7 @@ class TestEntrypointThdCpZigzag:
         argv: list[str] = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
+            grouping_skip_keys=["rank", "step"],
             token_aligner="smart",
             diff_threshold=1e-3,
         )
