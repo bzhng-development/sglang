@@ -123,11 +123,10 @@ def _compare_bundle_pair_inner(
         )
 
     # 1c. DP filter: keep only the non-empty dp_rank
-    dp_alias_x: Optional[str] = _extract_dp_alias_from_items(all_pair.x)
-    dp_alias_y: Optional[str] = _extract_dp_alias_from_items(all_pair.y)
-    all_pair = Pair(
-        x=filter_to_non_empty_dp_rank(all_pair.x, dp_group_alias=dp_alias_x),
-        y=filter_to_non_empty_dp_rank(all_pair.y, dp_group_alias=dp_alias_y),
+    all_pair = all_pair.map(
+        lambda items: filter_to_non_empty_dp_rank(
+            items, dp_group_alias=_extract_dp_alias_from_items(items)
+        )
     )
 
     # 2. Check if any side has non-tensor values → non-tensor display path
