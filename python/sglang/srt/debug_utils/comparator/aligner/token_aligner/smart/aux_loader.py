@@ -12,12 +12,12 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.executor import (
 from sglang.srt.debug_utils.comparator.aligner.entrypoint.planner import (
     compute_per_step_sub_plans,
 )
-from sglang.srt.debug_utils.comparator.aligner.token_aligner.aux_plugins import (
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_plugins import (
     AUX_NAMES,
     _AuxFrameworkPlugin,
     _plugins,
 )
-from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import (
     TokenAlignerGlobalAux,
     TokenAlignerStepAux,
 )

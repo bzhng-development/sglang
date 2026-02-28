@@ -10,11 +10,12 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
     AlignerPerStepPlan,
     AlignerPerStepSubPlan,
     AlignerPlan,
+    TokenAlignerMode,
 )
 from sglang.srt.debug_utils.comparator.aligner.reorderer.planner import (
     compute_reorderer_plans,
 )
-from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import (
     TokenAlignerPlan,
 )
 from sglang.srt.debug_utils.comparator.aligner.unsharder.parallel_info import (
@@ -34,6 +35,7 @@ from sglang.srt.debug_utils.comparator.utils import Pair
 def compute_aligner_plan(
     *,
     metas_pair: Pair[list[dict[str, Any]]],
+    token_aligner_mode: Optional[TokenAlignerMode],
     token_aligner_plan: Optional[TokenAlignerPlan],
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
         x=None, y=None
@@ -57,6 +59,7 @@ def compute_aligner_plan(
                 thd_seq_lens_by_step=thd_seq_lens_by_step_pair.y,
             ),
         ),
+        token_aligner_mode=token_aligner_mode,
         token_aligner_plan=token_aligner_plan,
         axis_aligner_plan=axis_aligner_plan,
     )

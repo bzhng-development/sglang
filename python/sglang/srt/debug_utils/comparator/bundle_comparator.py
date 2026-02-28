@@ -14,8 +14,11 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.executor import (
 from sglang.srt.debug_utils.comparator.aligner.entrypoint.planner import (
     compute_aligner_plan,
 )
-from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import AlignerPlan
-from sglang.srt.debug_utils.comparator.aligner.token_aligner.types import (
+from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
+    AlignerPlan,
+    TokenAlignerMode,
+)
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import (
     TokenAlignerPlan,
 )
 from sglang.srt.debug_utils.comparator.dims import (
@@ -48,6 +51,7 @@ def compare_bundle_pair(
     filenames_pair: Pair[list[str]],
     baseline_path: Path,
     target_path: Path,
+    token_aligner_mode: Optional[TokenAlignerMode],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
@@ -63,6 +67,7 @@ def compare_bundle_pair(
             filenames_pair=filenames_pair,
             baseline_path=baseline_path,
             target_path=target_path,
+            token_aligner_mode=token_aligner_mode,
             token_aligner_plan=token_aligner_plan,
             diff_threshold=diff_threshold,
             thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
@@ -80,6 +85,7 @@ def _compare_bundle_pair_inner(
     filenames_pair: Pair[list[str]],
     baseline_path: Path,
     target_path: Path,
+    token_aligner_mode: Optional[TokenAlignerMode],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
@@ -134,6 +140,7 @@ def _compare_bundle_pair_inner(
     return _compare_bundle_pair_tensor_type(
         name=name,
         valid_pair=all_pair,
+        token_aligner_mode=token_aligner_mode,
         token_aligner_plan=token_aligner_plan,
         diff_threshold=diff_threshold,
         thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
@@ -146,6 +153,7 @@ def _compare_bundle_pair_tensor_type(
     *,
     name: str,
     valid_pair: Pair[list[ValueWithMeta]],
+    token_aligner_mode: Optional[TokenAlignerMode],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
@@ -164,6 +172,7 @@ def _compare_bundle_pair_tensor_type(
     )
     plan: AlignerPlan = compute_aligner_plan(
         metas_pair=metas_pair,
+        token_aligner_mode=token_aligner_mode,
         token_aligner_plan=token_aligner_plan,
         thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
     )

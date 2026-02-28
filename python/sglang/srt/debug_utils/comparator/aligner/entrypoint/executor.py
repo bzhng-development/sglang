@@ -17,7 +17,10 @@ from sglang.srt.debug_utils.comparator.aligner.reorderer.executor import (
     execute_reorderer_plan,
 )
 from sglang.srt.debug_utils.comparator.aligner.reorderer.types import ReordererPlan
-from sglang.srt.debug_utils.comparator.aligner.token_aligner.executor import (
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat import (
+    execute_concat,
+)
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.executor import (
     execute_token_aligner,
 )
 from sglang.srt.debug_utils.comparator.aligner.unsharder.executor import (
@@ -64,10 +67,18 @@ def execute_aligner_plan(
         )
 
     # Cross-side: token alignment (or direct extraction for single-step)
-    if plan.token_aligner_plan is not None:
-        combined: Pair[torch.Tensor] = execute_token_aligner(
+    step_pair: Pair[dict[int, torch.Tensor]] = Pair(
+        x=step_tensors_x, y=step_tensors_y
+    )
+    combined: Pair[torch.Tensor]
+
+    if plan.token_aligner_mode == "concat":
+        combined = execute_concat(tensor_of_step_pair=step_pair)
+    elif plan.token_aligner_mode == "smart":
+        assert plan.token_aligner_plan is not None
+        combined = execute_token_aligner(
             plan=plan.token_aligner_plan,
-            tensor_of_step_pair=Pair(x=step_tensors_x, y=step_tensors_y),
+            tensor_of_step_pair=step_pair,
         )
     else:
         assert len(step_tensors_x) == 1 and len(step_tensors_y) == 1
