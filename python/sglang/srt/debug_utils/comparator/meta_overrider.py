@@ -9,6 +9,7 @@ from typing import Any, Literal, Optional
 import yaml
 
 from sglang.srt.debug_utils.comparator.utils import Pair, _StrictBase
+from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 
 class MetaOverrideRule(_StrictBase):
@@ -94,6 +95,26 @@ class MetaOverrider:
                 target_matched = True
 
         return Pair(x=result_baseline, y=result_target)
+
+    def apply_to_value_with_meta_pair(
+        self,
+        *,
+        name: str,
+        pair: Pair[list[ValueWithMeta]],
+    ) -> Pair[list[ValueWithMeta]]:
+        """Apply dims overrides to a ValueWithMeta pair, returning a new pair with patched metas."""
+        if self.is_empty:
+            return pair
+
+        overridden: Pair[list[dict[str, Any]]] = self.apply_to_metas(
+            name=name,
+            baseline_metas=[it.meta for it in pair.x],
+            target_metas=[it.meta for it in pair.y],
+        )
+        return Pair(
+            x=[ValueWithMeta(value=v.value, meta=m) for v, m in zip(pair.x, overridden.x)],
+            y=[ValueWithMeta(value=v.value, meta=m) for v, m in zip(pair.y, overridden.y)],
+        )
 
 
 def _parse_cli_override_arg(raw: str) -> tuple[str, str]:
