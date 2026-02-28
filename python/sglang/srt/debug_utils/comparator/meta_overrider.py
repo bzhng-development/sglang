@@ -1,4 +1,8 @@
-"""Meta overrider: replace metadata fields (e.g. dims) without re-running dumps."""
+"""Meta overrider: replace metadata fields without re-running dumps.
+
+Currently only overrides 'dims', but the design supports overriding
+additional meta fields (e.g. parallel_info) in the future.
+"""
 
 from __future__ import annotations
 
@@ -13,7 +17,10 @@ from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 
 class MetaOverrideRule(_StrictBase):
-    """Single override rule: regex match → replacement dims string(s)."""
+    """Single override rule: regex match on tensor name → replacement meta field(s).
+
+    Currently only 'dims' is supported; more fields may be added in the future.
+    """
 
     match: str
     dims: str
@@ -23,7 +30,7 @@ class MetaOverrideRule(_StrictBase):
 class MetaOverrideConfig(_StrictBase):
     """YAML top-level config for overriding comparator behavior."""
 
-    dims: list[MetaOverrideRule] = []
+    overrides: list[MetaOverrideRule] = []
 
 
 class MetaOverrider:
@@ -141,7 +148,7 @@ def _load_yaml_rules(path: Path) -> list[MetaOverrideRule]:
         return []
 
     config: MetaOverrideConfig = MetaOverrideConfig.model_validate(raw_data)
-    return config.dims
+    return config.overrides
 
 
 def _apply_dims_to_metas(

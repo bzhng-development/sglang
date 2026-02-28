@@ -217,7 +217,7 @@ class TestFromArgsAndConfig:
         """CLI rules are ordered before YAML rules (CLI wins on conflict)."""
         yaml_path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-            dims:
+            overrides:
               - match: "hidden"
                 dims: "FROM_YAML"
         """))
@@ -272,10 +272,10 @@ class TestLoadYamlRules:
     """YAML loading and validation."""
 
     def test_valid_yaml(self, tmp_path: Path) -> None:
-        """Valid YAML with dims rules loads correctly."""
+        """Valid YAML with override rules loads correctly."""
         yaml_path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-            dims:
+            overrides:
               - match: "hidden"
                 dims: "b s h d"
               - match: "logits"
@@ -303,10 +303,10 @@ class TestLoadYamlRules:
         with pytest.raises(Exception):
             _load_yaml_rules(yaml_path)
 
-    def test_dims_only_top_level(self, tmp_path: Path) -> None:
-        """Only 'dims' key with no entries returns empty list."""
+    def test_overrides_empty_list(self, tmp_path: Path) -> None:
+        """Only 'overrides' key with no entries returns empty list."""
         yaml_path = tmp_path / "minimal.yaml"
-        yaml_path.write_text("dims: []\n")
+        yaml_path.write_text("overrides: []\n")
         rules = _load_yaml_rules(yaml_path)
         assert rules == []
 

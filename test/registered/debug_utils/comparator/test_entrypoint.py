@@ -2772,7 +2772,7 @@ class TestEntrypointMetaOverride:
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-            dims:
+            overrides:
               - match: "hidden"
                 dims: "t h"
         """))
@@ -2905,7 +2905,7 @@ class TestEntrypointMetaOverride:
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-            dims:
+            overrides:
               - match: "hidden"
                 dims: "t h"
               - match: "hidden"
@@ -2923,7 +2923,7 @@ class TestEntrypointMetaOverride:
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
-            dims:
+            overrides:
               - match: "hidden"
                 dims: "a b"
         """))
