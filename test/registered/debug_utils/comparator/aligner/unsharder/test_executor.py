@@ -33,7 +33,7 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 def _name_tensors(
     tensors: list[torch.Tensor], dim_specs: list[DimSpec]
 ) -> list[torch.Tensor]:
-    names: list[str] = [s.tensor_name for s in dim_specs]
+    names: list[str] = [s.sanitized_name for s in dim_specs]
     return [t.refine_names(*names) for t in tensors]
 
 

@@ -17,8 +17,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     _SingletonDimUtil,
     apply_dim_names,
     find_dim_index,
-    fused_sub_names,
-    is_fused,
     parse_dim,
     parse_dims,
     resolve_dim_by_name,
@@ -371,7 +369,7 @@ class TestDpGroupAlias:
 
 
 class TestResolveDimNamesWithFused:
-    def test_fused_dim_uses_double_underscore(self) -> None:
+    def test_fused_dim_uses_triple_underscore(self) -> None:
         assert resolve_dim_names("t (num_heads*head_dim)") == [
             "t",
             "num_heads___head_dim",
@@ -401,8 +399,7 @@ class TestParseFusedDim:
         result: DimSpec = parse_dim("(num_heads*head_dim)")
         assert result.name == "num_heads*head_dim"
         assert result.parallel_modifiers == []
-        assert is_fused(result)
-        assert fused_sub_names(result) == ["num_heads", "head_dim"]
+        assert result.is_fused
         assert result.sub_dims == ["num_heads", "head_dim"]
 
     def test_fused_with_modifier(self) -> None:
@@ -417,7 +414,7 @@ class TestParseFusedDim:
         result: DimSpec = parse_dim("(a*b*c)")
         assert result.name == "a*b*c"
         assert len(result.sub_dims) == 3
-        assert fused_sub_names(result) == ["a", "b", "c"]
+        assert result.sub_dims == ["a", "b", "c"]
 
     def test_three_way_fused_with_modifier(self) -> None:
         result: DimSpec = parse_dim("(a*b*c)[tp]")
@@ -435,9 +432,8 @@ class TestParseFusedDim:
 
     def test_regular_dim_not_fused(self) -> None:
         result: DimSpec = parse_dim("h[tp]")
-        assert not is_fused(result)
-        assert result.sub_dims is None
-        assert fused_sub_names(result) == []
+        assert not result.is_fused
+        assert result.sub_dims == ["h"]
 
     def test_fused_duplicate_sub_names_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate sub-dim"):
@@ -453,15 +449,15 @@ class TestParseDimsWithFused:
         result: DimsSpec = parse_dims("t (num_heads*head_dim)[tp]")
         assert len(result.dims) == 2
         assert result.dims[0] == DimSpec(name="t")
-        assert is_fused(result.dims[1])
+        assert result.dims[1].is_fused
         assert result.dims[1].name == "num_heads*head_dim"
 
     def test_fused_and_regular_mixed(self) -> None:
         result: DimsSpec = parse_dims("t (num_heads*head_dim)[tp] d")
         assert len(result.dims) == 3
-        assert not is_fused(result.dims[0])
-        assert is_fused(result.dims[1])
-        assert not is_fused(result.dims[2])
+        assert not result.dims[0].is_fused
+        assert result.dims[1].is_fused
+        assert not result.dims[2].is_fused
 
     def test_fused_sub_name_conflicts_with_regular_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate"):
@@ -470,8 +466,8 @@ class TestParseDimsWithFused:
     def test_multiple_fused_dims(self) -> None:
         result: DimsSpec = parse_dims("(a*b) (c*d)")
         assert len(result.dims) == 2
-        assert is_fused(result.dims[0])
-        assert is_fused(result.dims[1])
+        assert result.dims[0].is_fused
+        assert result.dims[1].is_fused
 
     def test_cross_fused_duplicate_sub_name_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate"):
