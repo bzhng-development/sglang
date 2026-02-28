@@ -17,11 +17,6 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_plugins i
 def load_thd_seq_lens_only(
     dump_path: Path, df: pl.DataFrame
 ) -> Optional[dict[int, list[int]]]:
-    """Lightweight loader: extract only thd_seq_lens without full aux normalization.
-
-    Used by concat_steps mode to provide seq_lens for zigzag reorder without
-    requiring the full smart token aligner pipeline.
-    """
     plugin: Optional[_AuxFrameworkPlugin] = _detect_plugin(df, dump_path=dump_path)
     if plugin is None or not plugin.cp_sharded_names:
         return None
