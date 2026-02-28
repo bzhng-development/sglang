@@ -17,13 +17,15 @@ from sglang.srt.debug_utils.comparator.dims import (
     ParallelState,
 )
 
-# _CoordsList[tensor_index][axis] =
-#     the axis_rank (shard position) of the tensor_index-th tensor along `axis`
-#     (e.g. coords[2] = {TP: 3} means tensor 2 is the 3rd shard in TP axis)
+
 # DP is data-parallel: each rank processes different data, not shards of the
 # same tensor.  It must never participate in unshard or replicated checks.
 _NON_SHARDABLE_AXES: frozenset[ParallelAxis] = frozenset({ParallelAxis.DP})
 
+
+# _CoordsList[tensor_index][axis] =
+#     the axis_rank (shard position) of the tensor_index-th tensor along `axis`
+#     (e.g. coords[2] = {TP: 3} means tensor 2 is the 3rd shard in TP axis)
 _CoordsList = list[dict[ParallelAxis, int]]
 
 
