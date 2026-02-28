@@ -226,8 +226,6 @@ def _run_e2e_scenario(
         str(target_exp),
         "--output-format",
         "json",
-        "--grouping",
-        "logical",
         "--allow-skipped-pattern",
         "input_ids|positions",
     ]
