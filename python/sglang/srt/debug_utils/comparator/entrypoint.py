@@ -93,9 +93,9 @@ def run(args: argparse.Namespace) -> int:
             override_dims=args.override_dims,
             override_baseline_dims=args.override_baseline_dims,
             override_target_dims=args.override_target_dims,
-            override_config=Path(args.override_config)
-            if args.override_config
-            else None,
+            override_config=(
+                Path(args.override_config) if args.override_config else None
+            ),
         )
 
         comparison_records = _compare_bundle_pairs(
