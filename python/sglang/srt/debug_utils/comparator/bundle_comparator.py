@@ -28,16 +28,18 @@ from sglang.srt.debug_utils.comparator.dims import (
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
 from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
-    GeneralWarning,
+    ErrorLog,
+    InfoLog,
     NonTensorComparisonRecord,
     SkipComparisonRecord,
     TensorComparisonRecord,
+    _split_logs,
 )
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
-from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
+from sglang.srt.debug_utils.comparator.log_sink import log_sink
 from sglang.srt.debug_utils.dump_loader import LOAD_FAILED, ValueWithMeta
 
 _FAILED_SIDE_MAP: dict[str, str] = {"x": "baseline", "y": "target"}
@@ -59,7 +61,7 @@ def compare_bundle_pair(
     compute_per_token: bool = False,
     meta_overrider: Optional[MetaOverrider] = None,
 ) -> Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]:
-    with warning_sink.context() as collected_warnings:
+    with log_sink.context() as collected_logs:
         result = _compare_bundle_pair_inner(
             name=name,
             filenames_pair=filenames_pair,
@@ -74,7 +76,8 @@ def compare_bundle_pair(
             meta_overrider=meta_overrider,
         )
 
-    return result.model_copy(update={"warnings": collected_warnings})
+    errors, infos = _split_logs(collected_logs)
+    return result.model_copy(update={"errors": errors, "infos": infos})
 
 
 def _compare_bundle_pair_inner(
@@ -267,8 +270,8 @@ def _try_generate_viz(
             output_path=output_path,
         )
     except Exception as exc:
-        warning_sink.add(
-            GeneralWarning(
+        log_sink.add(
+            ErrorLog(
                 category="visualizer",
                 message=f"Visualization failed for {name}: {exc}",
             )
