@@ -6,6 +6,7 @@ import torch
 from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import (
+    SQUEEZE_DIM_NAME,
     DimSpec,
     _SingletonDimUtil,
     fused_sub_names,
@@ -49,23 +50,8 @@ def compute_axis_aligner_plan(
         lambda s: parse_dims(s).dims
     )
 
-    # Expand semantic names: fused dims → sub-dim names, regular → [name]
-    semantic_pair: Pair[list[str]] = specs_pair.map(_expand_semantic_names)
-
-    # Check if semantic name sets match (after removing squeeze dims)
-    filtered_semantic_pair: Pair[list[str]] = Pair(
-        x=_filter_squeeze_from_names(
-            semantic_names=semantic_pair.x, specs=specs_pair.x
-        ),
-        y=_filter_squeeze_from_names(
-            semantic_names=semantic_pair.y, specs=specs_pair.y
-        ),
-    )
-
-    target_order: Optional[list[str]] = _resolve_target_order(
-        x_names=filtered_semantic_pair.x, y_names=filtered_semantic_pair.y
-    )
-    if target_order is None:
+    # Verify both sides share the same semantic name set (expanded, no squeeze)
+    if not _semantic_names_match(specs_pair):
         return None
 
     # Compute flatten plans: flatten the *separate* side to match the fused side
@@ -78,11 +64,17 @@ def compute_axis_aligner_plan(
         ),
     )
 
-    # After flatten, compute the physical dim names for einops pattern
+    # After flatten, compute the physical dim names for einops pattern.
+    # These are what we use for einops rearrange (squeeze dims as "1", fused as "a__b").
     post_flatten_names: Pair[list[str]] = Pair(
         x=_names_after_flatten(specs=specs_pair.x, flatten_plan=pre_flatten.x),
         y=_names_after_flatten(specs=specs_pair.y, flatten_plan=pre_flatten.y),
     )
+
+    # Target order: y's post-flatten names, with squeeze dims filtered out
+    target_order: list[str] = [
+        n for n in post_flatten_names.y if n != SQUEEZE_DIM_NAME
+    ]
 
     pattern: Pair[Optional[str]] = post_flatten_names.map(
         lambda names: _build_pattern(source=names, target=target_order)
@@ -99,68 +91,44 @@ def compute_axis_aligner_plan(
     return AxisAlignerPlan(pre_flatten=pre_flatten, pattern=pattern)
 
 
-def _expand_semantic_names(specs: list[DimSpec]) -> list[str]:
-    """Expand DimSpecs into flat semantic name list.
+def _semantic_names_match(specs_pair: Pair[list[DimSpec]]) -> bool:
+    """Check that both sides share the same semantic name set (ignoring squeeze dims).
 
-    Fused dims expand to sub-dim names; regular dims keep their name.
-    Each DimSpec contributes one or more semantic names.
+    Fused dims expand to sub-dim names for comparison.
     """
+    x_names: list[str] = _expand_non_squeeze(specs_pair.x)
+    y_names: list[str] = _expand_non_squeeze(specs_pair.y)
+
+    if set(x_names) == set(y_names):
+        return True
+
+    # Local import to avoid circular dependency:
+    # output_types -> aligner/entrypoint/types -> axis_aligner -> output_types
+    from sglang.srt.debug_utils.comparator.output_types import ErrorLog
+
+    log_sink.add(
+        ErrorLog(
+            category="axis_aligner_dim_mismatch",
+            message=(
+                f"AxisAligner: dim name sets differ (x={x_names}, y={y_names}), "
+                f"skipping axis swap"
+            ),
+        )
+    )
+    return False
+
+
+def _expand_non_squeeze(specs: list[DimSpec]) -> list[str]:
+    """Expand DimSpecs to flat semantic names, skipping squeeze dims."""
     result: list[str] = []
     for spec in specs:
+        if _SingletonDimUtil.is_squeeze(spec):
+            continue
         if is_fused(spec):
             result.extend(fused_sub_names(spec))
         else:
             result.append(spec.name)
     return result
-
-
-def _filter_squeeze_from_names(
-    *, semantic_names: list[str], specs: list[DimSpec]
-) -> list[str]:
-    """Remove names that came from squeeze dims."""
-    result: list[str] = []
-    idx: int = 0
-    for spec in specs:
-        if _SingletonDimUtil.is_squeeze(spec):
-            idx += 1
-            continue
-        if is_fused(spec):
-            n_sub: int = len(spec.sub_dims)
-            result.extend(semantic_names[idx : idx + n_sub])
-            idx += n_sub
-        else:
-            result.append(semantic_names[idx])
-            idx += 1
-    return result
-
-
-def _resolve_target_order(
-    x_names: list[str], y_names: list[str]
-) -> Optional[list[str]]:
-    """Determine canonical dim order from expanded semantic names.
-
-    Returns y_names if semantic name sets match, else None.
-    """
-    if x_names == y_names:
-        return y_names
-
-    if set(x_names) != set(y_names):
-        # Local import to avoid circular dependency:
-        # output_types -> aligner/entrypoint/types -> axis_aligner -> output_types
-        from sglang.srt.debug_utils.comparator.output_types import ErrorLog
-
-        log_sink.add(
-            ErrorLog(
-                category="axis_aligner_dim_mismatch",
-                message=(
-                    f"AxisAligner: dim name sets differ (x={x_names}, y={y_names}), "
-                    f"skipping axis swap"
-                ),
-            )
-        )
-        return None
-
-    return y_names
 
 
 def _compute_flatten_plan(
