@@ -2218,6 +2218,8 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         override_target_dims=[],
         override_config=None,
         allow_skip_pattern=".*",
+        report_path=None,
+        no_report=True,
     )
     defaults.update(overrides)
     return Namespace(**defaults)
@@ -3680,6 +3682,111 @@ class TestExitCodeSubprocess:
             baseline_path, target_path, allow_skip_pattern="^$"
         )
         assert result.returncode == 1
+
+
+class TestReportOutput:
+    """Test JSONL report file output via ReportSink."""
+
+    def test_default_report_path(self, tmp_path, capsys):
+        """Default writes to <target>/comparator_report.jsonl with ConfigRecord + SummaryRecord."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        args = _make_args(baseline_path, target_path, grouping="raw", no_report=False)
+
+        exit_code: int = run(args)
+
+        report_file: Path = target_path / "comparator_report.jsonl"
+        assert report_file.exists()
+
+        report_records: list[AnyRecord] = _parse_jsonl(report_file.read_text())
+        assert isinstance(report_records[0], ConfigRecord)
+        assert isinstance(report_records[-1], SummaryRecord)
+        assert exit_code == 0
+
+    def test_custom_report_path(self, tmp_path, capsys):
+        """--report-path writes to the specified location."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        custom_path: Path = tmp_path / "custom" / "report.jsonl"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            no_report=False,
+            report_path=str(custom_path),
+        )
+
+        run(args)
+
+        assert custom_path.exists()
+        report_records: list[AnyRecord] = _parse_jsonl(custom_path.read_text())
+        assert isinstance(report_records[0], ConfigRecord)
+        assert isinstance(report_records[-1], SummaryRecord)
+
+    def test_no_report(self, tmp_path, capsys):
+        """--no-report disables file generation."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        args = _make_args(baseline_path, target_path, grouping="raw", no_report=True)
+
+        run(args)
+
+        report_file: Path = target_path / "comparator_report.jsonl"
+        assert not report_file.exists()
+
+    def test_report_matches_stdout_json(self, tmp_path, capsys):
+        """In json mode, report content matches stdout output."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        report_file: Path = tmp_path / "report.jsonl"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            output_format="json",
+            no_report=False,
+            report_path=str(report_file),
+        )
+
+        capsys.readouterr()
+        run(args)
+
+        stdout_lines: list[str] = capsys.readouterr().out.strip().splitlines()
+        report_lines: list[str] = report_file.read_text().strip().splitlines()
+        assert stdout_lines == report_lines
+
+    def test_text_mode_also_writes_report(self, tmp_path, capsys):
+        """Text stdout mode still writes JSONL report."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        report_file: Path = tmp_path / "report.jsonl"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            output_format="text",
+            no_report=False,
+            report_path=str(report_file),
+        )
+
+        run(args)
+
+        assert report_file.exists()
+        report_records: list[AnyRecord] = _parse_jsonl(report_file.read_text())
+        assert isinstance(report_records[0], ConfigRecord)
+        assert isinstance(report_records[-1], SummaryRecord)
+
+    def test_streaming_flush(self, tmp_path, capsys):
+        """Report file is flushed after each record (readable before close)."""
+        from sglang.srt.debug_utils.comparator.output_types import report_sink
+
+        report_file: Path = tmp_path / "stream_report.jsonl"
+        report_sink.configure(
+            output_format="json",
+            report_path=report_file,
+        )
+
+        report_sink.add(ConfigRecord(config={"test": True}))
+
+        content: str = report_file.read_text()
+        assert len(content.strip().splitlines()) == 1
+        parsed: AnyRecord = parse_record_json(content.strip())
+        assert isinstance(parsed, ConfigRecord)
 
 
 if __name__ == "__main__":
