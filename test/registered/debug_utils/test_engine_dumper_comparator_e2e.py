@@ -148,6 +148,8 @@ class TestSourcePatcherE2ESGLang:
                 "json",
                 "--grouping",
                 "logical",
+                "--end-step",
+                "0",
             ],
             capture_output=True,
             text=True,
