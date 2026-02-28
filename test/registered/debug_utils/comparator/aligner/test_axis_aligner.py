@@ -98,11 +98,11 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="t (num_heads*head_dim)[tp]", y="t num_heads[tp] head_dim")
         )
         assert result is not None
-        assert result.pre_flatten.x is None
-        assert result.pre_flatten.y is not None
-        assert len(result.pre_flatten.y.groups) == 1
-        assert result.pre_flatten.y.groups[0].dim_indices == [1, 2]
-        assert result.pre_flatten.y.groups[0].target_name == "num_heads___head_dim"
+        assert result.flatten.x is None
+        assert result.flatten.y is not None
+        assert len(result.flatten.y.groups) == 1
+        assert result.flatten.y.groups[0].dim_indices == [1, 2]
+        assert result.flatten.y.groups[0].target_name == "num_heads___head_dim"
 
     def test_separate_vs_fused_generates_flatten(self) -> None:
         """x=separate 3D, y=fused 2D: x gets flattened to match y."""
@@ -110,9 +110,9 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="t num_heads[tp] head_dim", y="t (num_heads*head_dim)[tp]")
         )
         assert result is not None
-        assert result.pre_flatten.x is not None
-        assert result.pre_flatten.y is None
-        assert result.pre_flatten.x.groups[0].dim_indices == [1, 2]
+        assert result.flatten.x is not None
+        assert result.flatten.y is None
+        assert result.flatten.x.groups[0].dim_indices == [1, 2]
 
     def test_both_fused_same_no_plan(self) -> None:
         """Both sides fused, same order → None (no-op)."""
@@ -136,10 +136,10 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="(a*b) c", y="a b c")
         )
         assert result is not None
-        assert result.pre_flatten.y is not None
-        assert result.pre_flatten.y.groups[0].dim_indices == [0, 1]
-        assert result.pre_flatten.y.groups[0].target_name == "a___b"
-        assert result.pre_flatten.x is None
+        assert result.flatten.y is not None
+        assert result.flatten.y.groups[0].dim_indices == [0, 1]
+        assert result.flatten.y.groups[0].target_name == "a___b"
+        assert result.flatten.x is None
 
     def test_fused_with_squeeze(self) -> None:
         """Fused + squeeze on one side, separate on other."""

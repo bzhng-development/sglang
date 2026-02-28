@@ -29,7 +29,7 @@ class FlattenPlan(_FrozenBase):
 
 
 class AxisAlignerPlan(_FrozenBase):
-    pre_flatten: Pair[Optional[FlattenPlan]]
+    flatten: Pair[Optional[FlattenPlan]]
     pattern: Pair[Optional[str]]  # einops pattern per side, None = no-op
 
 
@@ -51,7 +51,7 @@ def compute_axis_aligner_plan(
         return None
 
     # Compute flatten plans: flatten the *separate* side to match the fused side
-    pre_flatten: Pair[Optional[FlattenPlan]] = Pair(
+    flatten_plan: Pair[Optional[FlattenPlan]] = Pair(
         x=_compute_flatten_plan(this_specs=specs_pair.x, other_specs=specs_pair.y),
         y=_compute_flatten_plan(this_specs=specs_pair.y, other_specs=specs_pair.x),
     )
@@ -59,8 +59,8 @@ def compute_axis_aligner_plan(
     # After flatten, compute the physical dim names for einops pattern.
     # These are what we use for einops rearrange (squeeze dims as "1", fused as "a__b").
     post_flatten_names: Pair[list[str]] = Pair(
-        x=_names_after_flatten(specs=specs_pair.x, flatten_plan=pre_flatten.x),
-        y=_names_after_flatten(specs=specs_pair.y, flatten_plan=pre_flatten.y),
+        x=_names_after_flatten(specs=specs_pair.x, flatten_plan=flatten_plan.x),
+        y=_names_after_flatten(specs=specs_pair.y, flatten_plan=flatten_plan.y),
     )
 
     # Target order: y's post-flatten names, with squeeze dims filtered out
@@ -71,14 +71,14 @@ def compute_axis_aligner_plan(
     )
 
     if (
-        pre_flatten.x is None
-        and pre_flatten.y is None
+        flatten_plan.x is None
+        and flatten_plan.y is None
         and pattern.x is None
         and pattern.y is None
     ):
         return None
 
-    return AxisAlignerPlan(pre_flatten=pre_flatten, pattern=pattern)
+    return AxisAlignerPlan(flatten=flatten_plan, pattern=pattern)
 
 
 def _semantic_names_match(specs_pair: Pair[list[DimSpec]]) -> bool:
@@ -213,7 +213,7 @@ def execute_axis_aligner_plan(
     tensor: torch.Tensor, plan: AxisAlignerPlan, *, side: str
 ) -> torch.Tensor:
     flatten_plan: Optional[FlattenPlan] = (
-        plan.pre_flatten.x if side == "x" else plan.pre_flatten.y
+        plan.flatten.x if side == "x" else plan.flatten.y
     )
     pattern: Optional[str] = plan.pattern.x if side == "x" else plan.pattern.y
 
