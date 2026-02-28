@@ -52,7 +52,19 @@ def filter_to_non_empty_dp_rank(items: list[ValueWithMeta]) -> list[ValueWithMet
         f"ranks={non_empty_ranks}"
     )
 
-    return groups[non_empty_ranks[0]]
+    result: list[ValueWithMeta] = groups[non_empty_ranks[0]]
+    for item in result:
+        _neutralize_dp_fields(item.meta)
+    return result
+
+
+def _neutralize_dp_fields(meta: dict) -> None:
+    """Set dp_size=1 in parallel_info so downstream treats DP as absent."""
+    for key in _PARALLEL_INFO_KEYS:
+        info = meta.get(key)
+        if isinstance(info, dict) and _DP_SIZE_FIELD in info:
+            info[_DP_SIZE_FIELD] = 1
+            info[_DP_RANK_FIELD] = 0
 
 
 def _extract_dp_info(meta: dict) -> Optional[tuple[int, int]]:
