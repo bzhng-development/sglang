@@ -56,20 +56,21 @@ def compute_maybe_token_aligner_result(
         return TokenAlignerResult(
             mode="concat", plan=None, thd_seq_lens_by_step_pair=_NONE_THD
         )
-
-    # smart mode
-    if not (has_aux_tensors(dfs.x) and has_aux_tensors(dfs.y)):
-        warning_sink.add(
-            GeneralWarning(
-                category="aux_tensors_missing",
-                message="Aux tensors missing, skipping token alignment",
+    elif token_aligner_mode == "smart":
+        if not (has_aux_tensors(dfs.x) and has_aux_tensors(dfs.y)):
+            warning_sink.add(
+                GeneralWarning(
+                    category="aux_tensors_missing",
+                    message="Aux tensors missing, skipping token alignment",
+                )
             )
-        )
-        return TokenAlignerResult(
-            mode=None, plan=None, thd_seq_lens_by_step_pair=_NONE_THD
-        )
+            return TokenAlignerResult(
+                mode=None, plan=None, thd_seq_lens_by_step_pair=_NONE_THD
+            )
 
-    return _build_smart_result(args=args, dfs=dfs)
+        return _build_smart_result(args=args, dfs=dfs)
+    else:
+        raise NotImplementedError(f"Unknown {token_aligner_mode=}")
 
 
 def _build_smart_result(
