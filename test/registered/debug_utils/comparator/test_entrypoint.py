@@ -2217,7 +2217,7 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         override_baseline_dims=[],
         override_target_dims=[],
         override_config=None,
-        forbid_skip=False,
+        allow_skip_pattern=".*",
     )
     defaults.update(overrides)
     return Namespace(**defaults)
@@ -3498,37 +3498,55 @@ class TestExitCode:
     def test_all_passed(self):
         """All passed → exit 0."""
         summary = SummaryRecord(total=3, passed=3, failed=0, skipped=0)
-        assert _compute_exit_code(summary, forbid_skip=False) == 0
+        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 0
 
     def test_has_failed_and_passed(self):
         """Has failed and passed → exit 1."""
         summary = SummaryRecord(total=4, passed=2, failed=2, skipped=0)
-        assert _compute_exit_code(summary, forbid_skip=False) == 1
+        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
 
     def test_all_failed(self):
         """All failed (0 passed) → exit 1."""
         summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
-        assert _compute_exit_code(summary, forbid_skip=False) == 1
+        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
 
-    def test_all_skipped(self):
-        """All skipped → exit 0 (without --forbid-skip)."""
+    def test_all_skipped_allow_all(self):
+        """All skipped + allow_skip_pattern='.*' → exit 0."""
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert _compute_exit_code(summary, forbid_skip=False) == 0
+        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a", "b"]) == 0
 
-    def test_skipped_with_forbid_skip(self):
-        """All skipped + --forbid-skip → exit 1."""
+    def test_all_skipped_forbid_all(self):
+        """All skipped + allow_skip_pattern='^$' → exit 1."""
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert _compute_exit_code(summary, forbid_skip=True) == 1
+        assert _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a", "b"]) == 1
 
-    def test_passed_and_skipped_no_forbid(self):
-        """Passed + skipped, no --forbid-skip → exit 0."""
+    def test_passed_and_skipped_allow_all(self):
+        """Passed + skipped, allow all → exit 0."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert _compute_exit_code(summary, forbid_skip=False) == 0
+        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a"]) == 0
 
-    def test_passed_and_skipped_with_forbid(self):
-        """Passed + skipped + --forbid-skip → exit 1."""
+    def test_passed_and_skipped_forbid_all(self):
+        """Passed + skipped + forbid all → exit 1."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert _compute_exit_code(summary, forbid_skip=True) == 1
+        assert _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a"]) == 1
+
+    def test_skip_pattern_matches_specific_name(self):
+        """Pattern matching specific name allows that skip, forbids others."""
+        summary = SummaryRecord(total=4, passed=2, failed=0, skipped=2)
+        assert _compute_exit_code(
+            summary,
+            allow_skip_pattern="positions|seq_lens",
+            skipped_names=["positions", "seq_lens"],
+        ) == 0
+
+    def test_skip_pattern_partial_match_forbidden(self):
+        """Pattern matches some skips but not all → exit 1."""
+        summary = SummaryRecord(total=4, passed=1, failed=0, skipped=3)
+        assert _compute_exit_code(
+            summary,
+            allow_skip_pattern="positions|seq_lens",
+            skipped_names=["positions", "seq_lens", "hidden_states"],
+        ) == 1
 
     def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
         """Integration: all comparisons pass → run() returns 0."""
@@ -3574,7 +3592,7 @@ class TestExitCodeSubprocess:
         target_path: Path,
         *,
         grouping: str = "raw",
-        forbid_skip: bool = False,
+        allow_skip_pattern: str = ".*",
     ) -> subprocess.CompletedProcess[str]:
         cmd: list[str] = [
             sys.executable,
@@ -3588,9 +3606,9 @@ class TestExitCodeSubprocess:
             grouping,
             "--output-format",
             "json",
+            "--allow-skip-pattern",
+            allow_skip_pattern,
         ]
-        if forbid_skip:
-            cmd.append("--forbid-skip")
         return subprocess.run(cmd, capture_output=True, text=True)
 
     def test_all_passed_exit_zero(self, tmp_path):
@@ -3611,24 +3629,24 @@ class TestExitCodeSubprocess:
         result = self._run_comparator(baseline_path, target_path)
         assert result.returncode == 1
 
-    def test_skipped_without_forbid_exit_zero(self, tmp_path):
-        """Subprocess: skipped comparison without --forbid-skip → exit 0."""
+    def test_skipped_allow_all_exit_zero(self, tmp_path):
+        """Subprocess: skipped comparison with allow_skip_pattern='.*' → exit 0."""
         baseline_path, target_path = _create_dumps(
             tmp_path,
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        result = self._run_comparator(baseline_path, target_path, forbid_skip=False)
+        result = self._run_comparator(baseline_path, target_path, allow_skip_pattern=".*")
         assert result.returncode == 0
 
-    def test_skipped_with_forbid_exit_nonzero(self, tmp_path):
-        """Subprocess: skipped comparison with --forbid-skip → exit 1."""
+    def test_skipped_forbid_all_exit_nonzero(self, tmp_path):
+        """Subprocess: skipped comparison with allow_skip_pattern='^$' → exit 1."""
         baseline_path, target_path = _create_dumps(
             tmp_path,
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        result = self._run_comparator(baseline_path, target_path, forbid_skip=True)
+        result = self._run_comparator(baseline_path, target_path, allow_skip_pattern="^$")
         assert result.returncode == 1
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional, Union
@@ -107,19 +108,32 @@ def run(args: argparse.Namespace) -> int:
         compute_per_token=visualize_per_token is not None,
         meta_overrider=meta_overrider,
     )
-    summary: SummaryRecord = _consume_comparison_records(
+    summary, skipped_names = _consume_comparison_records(
         comparison_records=comparison_records,
         output_format=args.output_format,
         visualize_per_token=visualize_per_token,
     )
-    return _compute_exit_code(summary, forbid_skip=args.forbid_skip)
+    return _compute_exit_code(
+        summary,
+        allow_skip_pattern=args.allow_skip_pattern,
+        skipped_names=skipped_names,
+    )
 
 
-def _compute_exit_code(summary: SummaryRecord, *, forbid_skip: bool) -> int:
+def _compute_exit_code(
+    summary: SummaryRecord,
+    *,
+    allow_skip_pattern: str,
+    skipped_names: list[str],
+) -> int:
     if summary.failed > 0:
         return 1
-    if forbid_skip and summary.skipped > 0:
+
+    pattern: re.Pattern[str] = re.compile(allow_skip_pattern)
+    forbidden: list[str] = [n for n in skipped_names if not pattern.fullmatch(n)]
+    if forbidden:
         return 1
+
     return 0
 
 
@@ -207,13 +221,16 @@ def _consume_comparison_records(
     comparison_records: Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]],
     output_format: str,
     visualize_per_token: Optional[Path] = None,
-) -> SummaryRecord:
+) -> tuple[SummaryRecord, list[str]]:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
     collected_comparisons: list[ComparisonRecord] = []
+    skipped_names: list[str] = []
 
     for record in comparison_records:
         counts[record.category] += 1
         print_record(record, output_format=output_format)
+        if isinstance(record, SkipRecord) and record.category == "skipped":
+            skipped_names.append(record.name)
         if visualize_per_token is not None and isinstance(record, ComparisonRecord):
             collected_comparisons.append(record)
 
@@ -226,7 +243,7 @@ def _consume_comparison_records(
             output_path=visualize_per_token,
         )
 
-    return summary
+    return summary, skipped_names
 
 
 def _parse_args() -> argparse.Namespace:
@@ -311,10 +328,11 @@ def _parse_args() -> argparse.Namespace:
         help="Path to YAML override config file (dims overrides, etc.)",
     )
     parser.add_argument(
-        "--forbid-skip",
-        action="store_true",
-        default=False,
-        help="Exit with non-zero status when any comparisons are skipped",
+        "--allow-skip-pattern",
+        type=str,
+        default=".*",
+        help="Regex pattern for tensor names allowed to be skipped. "
+        "Default '.*' allows all skips. Use '^$' to forbid all skips.",
     )
 
     return parser.parse_args()
