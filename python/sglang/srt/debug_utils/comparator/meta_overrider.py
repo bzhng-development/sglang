@@ -52,18 +52,16 @@ class MetaOverrider:
         override_target_dims: list[str],
         override_config: Optional[Path],
     ) -> "MetaOverrider":
-        cli_rules: list[MetaOverrideRule] = [
-            MetaOverrideRule(match=name, dims=dims_str, side="both")
-            for name, dims_str in _parse_cli_override_args(override_dims)
+        per_side_args: list[tuple[list[str], Literal["both", "baseline", "target"]]] = [
+            (override_dims, "both"),
+            (override_baseline_dims, "baseline"),
+            (override_target_dims, "target"),
         ]
-        cli_rules.extend(
-            MetaOverrideRule(match=name, dims=dims_str, side="baseline")
-            for name, dims_str in _parse_cli_override_args(override_baseline_dims)
-        )
-        cli_rules.extend(
-            MetaOverrideRule(match=name, dims=dims_str, side="target")
-            for name, dims_str in _parse_cli_override_args(override_target_dims)
-        )
+        cli_rules: list[MetaOverrideRule] = [
+            MetaOverrideRule(match=name, dims=dims_str, side=side)
+            for raw_args, side in per_side_args
+            for name, dims_str in _parse_cli_override_args(raw_args)
+        ]
 
         yaml_rules: list[MetaOverrideRule] = (
             _load_yaml_rules(override_config) if override_config is not None else []
