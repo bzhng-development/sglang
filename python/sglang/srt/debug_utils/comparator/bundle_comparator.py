@@ -25,13 +25,13 @@ from sglang.srt.debug_utils.comparator.dims import (
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
+from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     GeneralWarning,
     NonTensorRecord,
     SkipRecord,
 )
-from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )
@@ -109,8 +109,18 @@ def _compare_bundle_pair_inner(
     if meta_overrider is not None and not meta_overrider.is_empty:
         _apply = meta_overrider.apply_to_meta
         all_pair = Pair(
-            x=[ValueWithMeta(value=v.value, meta=_apply(name=name, meta=v.meta, side="baseline")) for v in all_pair.x],
-            y=[ValueWithMeta(value=v.value, meta=_apply(name=name, meta=v.meta, side="target")) for v in all_pair.y],
+            x=[
+                ValueWithMeta(
+                    value=v.value, meta=_apply(name=name, meta=v.meta, side="baseline")
+                )
+                for v in all_pair.x
+            ],
+            y=[
+                ValueWithMeta(
+                    value=v.value, meta=_apply(name=name, meta=v.meta, side="target")
+                )
+                for v in all_pair.y
+            ],
         )
 
     # 2. Check if any side has non-tensor values → non-tensor display path

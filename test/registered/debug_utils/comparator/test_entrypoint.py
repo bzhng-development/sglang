@@ -2698,7 +2698,9 @@ class TestEntrypointMetaOverride:
         return baseline_dir / _FIXED_EXP_NAME, target_dir / _FIXED_EXP_NAME
 
     @staticmethod
-    def _assert_all_passed(records: list[AnyRecord], *, expected_count: int = 1) -> None:
+    def _assert_all_passed(
+        records: list[AnyRecord], *, expected_count: int = 1
+    ) -> None:
         """Assert that exactly expected_count comparisons exist and all passed."""
         comparisons: list[ComparisonRecord] = _get_comparisons(records)
         assert len(comparisons) == expected_count
@@ -2756,11 +2758,18 @@ class TestEntrypointMetaOverride:
         ids=["baseline_only", "target_only", "both_via_override_dims"],
     )
     def test_single_side_override(
-        self, tmp_path: Path, capsys, baseline_dims: str, target_dims: str, override_kwarg: dict
+        self,
+        tmp_path: Path,
+        capsys,
+        baseline_dims: str,
+        target_dims: str,
+        override_kwarg: dict,
     ) -> None:
         """Per-side override fixes the wrong dims on one or both sides."""
         baseline_path, target_path = self._create_single_rank_pair(
-            tmp_path, baseline_dims=baseline_dims, target_dims=target_dims,
+            tmp_path,
+            baseline_dims=baseline_dims,
+            target_dims=target_dims,
         )
 
         args = _make_args(baseline_path, target_path, grouping="raw", **override_kwarg)
@@ -2778,18 +2787,26 @@ class TestEntrypointMetaOverride:
         """))
 
         args = _make_args(
-            baseline_path, target_path, grouping="raw", override_config=str(yaml_path),
+            baseline_path,
+            target_path,
+            grouping="raw",
+            override_config=str(yaml_path),
         )
         self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_no_match_uses_original_dims(self, tmp_path: Path, capsys) -> None:
         """When override regex doesn't match, original dims from dump are used."""
         baseline_path, target_path = self._create_single_rank_pair(
-            tmp_path, baseline_dims="t h", target_dims="t h",
+            tmp_path,
+            baseline_dims="t h",
+            target_dims="t h",
         )
 
         args = _make_args(
-            baseline_path, target_path, grouping="raw", override_dims=["no_match_pattern:b s d"],
+            baseline_path,
+            target_path,
+            grouping="raw",
+            override_dims=["no_match_pattern:b s d"],
         )
         self._assert_all_passed(_run_and_parse(args, capsys))
 
@@ -2913,7 +2930,10 @@ class TestEntrypointMetaOverride:
         """))
 
         args = _make_args(
-            baseline_path, target_path, grouping="raw", override_config=str(yaml_path),
+            baseline_path,
+            target_path,
+            grouping="raw",
+            override_config=str(yaml_path),
         )
         self._assert_all_passed(_run_and_parse(args, capsys))
 
@@ -2940,11 +2960,16 @@ class TestEntrypointMetaOverride:
     def test_override_injects_dims_when_absent(self, tmp_path: Path, capsys) -> None:
         """Override injects dims into meta even when dump had no dims annotation."""
         baseline_path, target_path = self._create_single_rank_pair(
-            tmp_path, baseline_dims=None, target_dims=None,
+            tmp_path,
+            baseline_dims=None,
+            target_dims=None,
         )
 
         args = _make_args(
-            baseline_path, target_path, grouping="raw", override_dims=["hidden:t h"],
+            baseline_path,
+            target_path,
+            grouping="raw",
+            override_dims=["hidden:t h"],
         )
         self._assert_all_passed(_run_and_parse(args, capsys))
 

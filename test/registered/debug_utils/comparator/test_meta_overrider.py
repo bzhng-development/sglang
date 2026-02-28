@@ -114,7 +114,9 @@ class TestMetaOverrider:
             ]
         )
         result: dict = overrider.apply_to_meta(
-            name="hidden_states", meta={"dims": "old"}, side="baseline",
+            name="hidden_states",
+            meta={"dims": "old"},
+            side="baseline",
         )
         assert result["dims"] == "FIRST"
 
@@ -124,7 +126,9 @@ class TestMetaOverrider:
             rules=[MetaOverrideRule(match=r"\.q_proj\.", dims="h d")]
         )
         result: dict = overrider.apply_to_meta(
-            name="layers.0.q_proj.weight", meta={"dims": "old"}, side="baseline",
+            name="layers.0.q_proj.weight",
+            meta={"dims": "old"},
+            side="baseline",
         )
         assert result["dims"] == "h d"
 
@@ -134,25 +138,34 @@ class TestMetaOverrider:
             rules=[MetaOverrideRule(match="logits", dims="b s v")]
         )
         result: dict = overrider.apply_to_meta(
-            name="hidden_states", meta={"dims": "original"}, side="baseline",
+            name="hidden_states",
+            meta={"dims": "original"},
+            side="baseline",
         )
         assert result["dims"] == "original"
 
-    @pytest.mark.parametrize("rule_side,apply_side,should_match", [
-        ("baseline", "baseline", True),
-        ("baseline", "target", False),
-        ("target", "target", True),
-        ("target", "baseline", False),
-        ("both", "baseline", True),
-        ("both", "target", True),
-    ])
-    def test_side_filtering(self, rule_side: str, apply_side: str, should_match: bool) -> None:
+    @pytest.mark.parametrize(
+        "rule_side,apply_side,should_match",
+        [
+            ("baseline", "baseline", True),
+            ("baseline", "target", False),
+            ("target", "target", True),
+            ("target", "baseline", False),
+            ("both", "baseline", True),
+            ("both", "target", True),
+        ],
+    )
+    def test_side_filtering(
+        self, rule_side: str, apply_side: str, should_match: bool
+    ) -> None:
         """Rule only applies when its side matches the apply side."""
         overrider = MetaOverrider(
             rules=[MetaOverrideRule(match="logits", dims="NEW", side=rule_side)]
         )
         result: dict = overrider.apply_to_meta(
-            name="logits", meta={"dims": "old"}, side=apply_side,
+            name="logits",
+            meta={"dims": "old"},
+            side=apply_side,
         )
         assert result["dims"] == ("NEW" if should_match else "old")
 
@@ -165,7 +178,9 @@ class TestMetaOverrider:
         """Override adds 'dims' even if original meta lacks it."""
         overrider = MetaOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
         result: dict = overrider.apply_to_meta(
-            name="hidden", meta={"other": "val"}, side="baseline",
+            name="hidden",
+            meta={"other": "val"},
+            side="baseline",
         )
         assert result["dims"] == "NEW"
 
@@ -193,7 +208,9 @@ class TestFromArgsAndConfig:
         )
 
         result: dict = overrider.apply_to_meta(
-            name="hidden", meta={"dims": "old"}, side="baseline",
+            name="hidden",
+            meta={"dims": "old"},
+            side="baseline",
         )
         assert result["dims"] == "FROM_CLI"
 
@@ -217,10 +234,14 @@ class TestFromArgsAndConfig:
         )
 
         baseline: dict = overrider.apply_to_meta(
-            name="hidden", meta={"dims": "old"}, side="baseline",
+            name="hidden",
+            meta={"dims": "old"},
+            side="baseline",
         )
         target: dict = overrider.apply_to_meta(
-            name="hidden", meta={"dims": "old"}, side="target",
+            name="hidden",
+            meta={"dims": "old"},
+            side="target",
         )
         assert baseline["dims"] == "b s h(tp)"
         assert target["dims"] == "b s h(ep)"

@@ -22,6 +22,7 @@ from sglang.srt.debug_utils.comparator.bundle_matcher import (
     match_bundles,
 )
 from sglang.srt.debug_utils.comparator.display import emit_display_records
+from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
@@ -30,7 +31,6 @@ from sglang.srt.debug_utils.comparator.output_types import (
     SummaryRecord,
     print_record,
 )
-from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
