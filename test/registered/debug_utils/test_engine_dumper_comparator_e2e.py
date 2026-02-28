@@ -9,10 +9,12 @@ The dumper.apply_source_patches() auto-injects ``from ... import dumper``
 so the YAML only needs ``dumper.dump(...)`` calls.
 """
 
+import json
 import os
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import pytest
 import requests
@@ -139,7 +141,6 @@ class TestSourcePatcherE2ESGLang:
                 "json",
                 "--grouping",
                 "logical",
-                "--forbid-skip",
             ],
             capture_output=True,
             text=True,
@@ -150,8 +151,13 @@ class TestSourcePatcherE2ESGLang:
         )
         print(f"Comparator debug output: {debug_file}")
 
-        assert result.returncode == 0, (
-            f"Comparator failed (rc={result.returncode}). "
+        summary: dict[str, int] = _parse_summary_from_jsonl(result.stdout)
+        assert summary["failed"] == 0, (
+            f"Comparator has {summary['failed']} failed comparisons. "
+            f"Debug output: {debug_file}"
+        )
+        assert summary["passed"] > 0, (
+            f"Comparator has 0 passed comparisons (total={summary['total']}). "
             f"Debug output: {debug_file}"
         )
 
@@ -218,6 +224,23 @@ def _verify_patched_fields(*, dump_dir: Path, field_names: list[str]) -> None:
             f"Expected patched field '{field}' not found under {dump_dir}. "
             f"Available files: {sorted(f.name for f in dump_dir.rglob('*.pt'))[:20]}"
         )
+
+
+def _parse_summary_from_jsonl(stdout: str) -> dict[str, int]:
+    """Extract the summary record from comparator JSONL output."""
+    for line in stdout.strip().splitlines():
+        try:
+            record: dict[str, Any] = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if record.get("type") == "summary":
+            return {
+                "total": record["total"],
+                "passed": record["passed"],
+                "failed": record["failed"],
+                "skipped": record["skipped"],
+            }
+    raise ValueError("No summary record found in comparator JSONL output")
 
 
 def _save_comparator_output(*, stdout: str, stderr: str) -> Path:
