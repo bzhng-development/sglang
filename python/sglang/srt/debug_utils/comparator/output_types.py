@@ -190,7 +190,6 @@ class SummaryRecord(_OutputRecord):
         )
 
 
-
 class WarningRecord(_OutputRecord):
     type: Literal["warning"] = "warning"
 
