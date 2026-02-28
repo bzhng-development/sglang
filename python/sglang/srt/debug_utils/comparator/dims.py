@@ -5,7 +5,6 @@ from enum import Enum
 from typing import Optional
 
 import torch
-from pydantic import model_validator
 
 from sglang.srt.debug_utils.comparator.utils import _FrozenBase
 
@@ -47,7 +46,6 @@ class SubDimSpec(_FrozenBase):
     """A sub-axis within a fused dim (e.g. ``num_heads`` in ``num_heads*head_dim``)."""
 
     name: str
-    parallel_modifiers: list[ParallelModifier] = []
 
 
 _FUSED_NAME_SEP: str = "__"
@@ -57,15 +55,6 @@ class DimSpec(_FrozenBase):
     name: str
     parallel_modifiers: list[ParallelModifier] = []
     sub_dims: list[SubDimSpec] = []
-
-    @model_validator(mode="after")
-    def _validate_fused_invariant(self) -> DimSpec:
-        if self.sub_dims and self.parallel_modifiers:
-            raise ValueError(
-                f"Fused DimSpec {self.name!r} must not have parallel_modifiers "
-                f"on the DimSpec itself; modifiers belong on sub_dims."
-            )
-        return self
 
     @property
     def tensor_name(self) -> str:
