@@ -7,7 +7,7 @@ from typing import Literal, Optional
 
 import polars as pl
 
-from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat_steps import (
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat_steps.thd_seq_lens_loader import (
     load_thd_seq_lens_only,
 )
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_loader import (
