@@ -78,6 +78,7 @@ class SkipRecord(_OutputRecord):
     type: Literal["skip"] = "skip"
     name: str
     reason: str
+    step: Optional[int] = None
 
     @property
     def category(self) -> str:
@@ -86,7 +87,8 @@ class SkipRecord(_OutputRecord):
         return "skipped"
 
     def _format_body(self) -> str:
-        return f"Skip: {self.name} ({self.reason})"
+        suffix: str = f" (step={self.step})" if self.step is not None else ""
+        return f"Skip: {self.name}{suffix} ({self.reason})"
 
 
 class _TableRecord(_OutputRecord):
@@ -122,6 +124,7 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
     model_config = ConfigDict(extra="forbid", defer_build=True)
 
     type: Literal["comparison"] = "comparison"
+    step: Optional[int] = None
     aligner_plan: Optional[AlignerPlan] = None
     replicated_checks: list[ReplicatedCheckResult] = Field(default_factory=list)
 
@@ -134,7 +137,8 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
         return "passed" if self.diff is not None and self.diff.passed else "failed"
 
     def _format_body(self) -> str:
-        body: str = format_comparison(self)
+        step_prefix: str = f"[step={self.step}] " if self.step is not None else ""
+        body: str = step_prefix + format_comparison(self)
         if self.replicated_checks:
             body += "\n" + format_replicated_checks(self.replicated_checks)
         if self.aligner_plan is not None:
@@ -150,6 +154,7 @@ class NonTensorRecord(_OutputRecord):
     baseline_type: str
     target_type: str
     values_equal: bool
+    step: Optional[int] = None
 
     @property
     def category(self) -> str:
@@ -158,10 +163,11 @@ class NonTensorRecord(_OutputRecord):
         return "passed" if self.values_equal else "failed"
 
     def _format_body(self) -> str:
+        suffix: str = f" (step={self.step})" if self.step is not None else ""
         if self.values_equal:
-            return f"NonTensor: {self.name} = {self.baseline_value} ({self.baseline_type}) [equal]"
+            return f"NonTensor: {self.name}{suffix} = {self.baseline_value} ({self.baseline_type}) [equal]"
         return (
-            f"NonTensor: {self.name}\n"
+            f"NonTensor: {self.name}{suffix}\n"
             f"  baseline = {self.baseline_value} ({self.baseline_type})\n"
             f"  target   = {self.target_value} ({self.target_type})"
         )
