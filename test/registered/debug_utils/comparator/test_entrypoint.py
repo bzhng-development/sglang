@@ -3197,9 +3197,7 @@ class TestEntrypointDpConcated:
         assert comparison.name == "hidden"
         assert comparison.unified_shape == [10, 8]
 
-        summary: SummaryRecord = [
-            r for r in records if isinstance(r, SummaryRecord)
-        ][0]
+        summary: SummaryRecord = [r for r in records if isinstance(r, SummaryRecord)][0]
         assert summary.passed == 1
         assert summary.failed == 0
 
@@ -3253,9 +3251,7 @@ class TestEntrypointDpConcated:
         assert comparison.name == "hidden"
         assert comparison.unified_shape == [10, 16]
 
-        summary: SummaryRecord = [
-            r for r in records if isinstance(r, SummaryRecord)
-        ][0]
+        summary: SummaryRecord = [r for r in records if isinstance(r, SummaryRecord)][0]
         assert summary.passed == 1
         assert summary.failed == 0
 

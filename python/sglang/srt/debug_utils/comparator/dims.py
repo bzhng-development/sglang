@@ -101,12 +101,8 @@ for _enum_cls, _field in _MODIFIER_FIELDS:
     for _member in _enum_cls:
         _MODIFIER_LOOKUP[_member.value] = (_field, _member)
 
-_PARALLEL_AXIS_BY_VALUE: dict[str, ParallelAxis] = {
-    m.value: m for m in ParallelAxis
-}
-_PARALLEL_STATE_BY_VALUE: dict[str, ParallelState] = {
-    m.value: m for m in ParallelState
-}
+_PARALLEL_AXIS_BY_VALUE: dict[str, ParallelAxis] = {m.value: m for m in ParallelAxis}
+_PARALLEL_STATE_BY_VALUE: dict[str, ParallelState] = {m.value: m for m in ParallelState}
 
 
 def _parse_single_modifier(part: str, full_token: str) -> dict[str, Enum]:

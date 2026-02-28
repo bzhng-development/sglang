@@ -40,14 +40,12 @@ def compute_unsharder_plan(
     sharded_axis_infos: dict[ParallelAxis, DimSpec] = {
         spec.parallel: spec
         for spec in dim_specs
-        if spec.parallel is not None
-        and spec.parallel_state == ParallelState.SHARDED
+        if spec.parallel is not None and spec.parallel_state == ParallelState.SHARDED
     }
     concated_axes: set[ParallelAxis] = {
         spec.parallel
         for spec in dim_specs
-        if spec.parallel is not None
-        and spec.parallel_state == ParallelState.CONCATED
+        if spec.parallel is not None and spec.parallel_state == ParallelState.CONCATED
     }
     sharded_axes_raw: set[ParallelAxis] = set(sharded_axis_infos)
 
