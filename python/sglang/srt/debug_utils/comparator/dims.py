@@ -42,46 +42,39 @@ class ParallelModifier(_FrozenBase):
     reduction: Optional[Reduction] = None
 
 
-class SubDimSpec(_FrozenBase):
-    """A sub-axis within a fused dim (e.g. ``num_heads`` in ``num_heads*head_dim``)."""
-
-    name: str
-
-
-_FUSED_NAME_SEP: str = "__"
+_FUSED_NAME_SEP: str = "___"
 
 
 class DimSpec(_FrozenBase):
     name: str
     parallel_modifiers: list[ParallelModifier] = []
-    sub_dims: list[SubDimSpec] = []
+
+    @property
+    def sub_dims(self) -> Optional[list[str]]:
+        """Sub-dim names for fused dims (e.g. ``["num_heads", "head_dim"]``), else ``None``."""
+        parts: list[str] = self.name.split("*")
+        if len(parts) == 1:
+            return None
+        return parts
 
     @property
     def tensor_name(self) -> str:
-        """Name suitable for PyTorch named tensors (``*`` → ``__``)."""
-        if self.sub_dims:
-            return _FUSED_NAME_SEP.join(s.name for s in self.sub_dims)
+        """Name suitable for PyTorch named tensors (``*`` → ``___``)."""
+        sub: Optional[list[str]] = self.sub_dims
+        if sub is not None:
+            return _FUSED_NAME_SEP.join(sub)
         return self.name
 
 
 def is_fused(spec: DimSpec) -> bool:
-    return len(spec.sub_dims) > 0
+    return spec.sub_dims is not None
 
 
 def fused_sub_names(spec: DimSpec) -> list[str]:
-    return [s.name for s in spec.sub_dims]
-
-
-def fused_tensor_name(spec: DimSpec) -> str:
-    """Convert a fused DimSpec's name to a PyTorch-named-tensor-compatible form.
-
-    ``"num_heads*head_dim"`` → ``"num_heads__head_dim"`` (``*`` is invalid in named tensors).
-    """
-    if not spec.sub_dims:
-        raise ValueError(
-            f"fused_tensor_name() called on non-fused DimSpec {spec.name!r}"
-        )
-    return spec.tensor_name
+    sub: Optional[list[str]] = spec.sub_dims
+    if sub is None:
+        return []
+    return sub
 
 
 class DimsSpec(_FrozenBase):
@@ -242,7 +235,6 @@ def _parse_fused_dim(*, token: str, fused_match: re.Match[str]) -> DimSpec:
             f"Fused dim must have at least 2 sub-dims, got {len(sub_names)} in: {token!r}"
         )
 
-    sub_dims: list[SubDimSpec] = [SubDimSpec(name=n) for n in sub_names]
     fused_name: str = "*".join(sub_names)
 
     modifiers: list[ParallelModifier] = []
@@ -251,7 +243,7 @@ def _parse_fused_dim(*, token: str, fused_match: re.Match[str]) -> DimSpec:
             modifiers_str=modifiers_str, dim_token=token
         )
 
-    return DimSpec(name=fused_name, sub_dims=sub_dims, parallel_modifiers=modifiers)
+    return DimSpec(name=fused_name, parallel_modifiers=modifiers)
 
 
 def _parse_modifiers(*, modifiers_str: str, dim_token: str) -> list[ParallelModifier]:
@@ -314,7 +306,7 @@ def resolve_dim_names(dims_str: str) -> list[str]:
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
-    """Find index by name. Accepts both ``*``-form and ``__``-form for fused dims."""
+    """Find index by name. Accepts both ``*``-form and ``___``-form for fused dims."""
     for i, spec in enumerate(dim_specs):
         if spec.name == name or spec.tensor_name == name:
             return i
