@@ -30,6 +30,7 @@ from sglang.srt.utils.common import (
 
 if TYPE_CHECKING:
     from sglang.srt.layers.moe.token_dispatcher import (
+        FlashinferDispatchOutput,
         StandardCombineInput,
         StandardDispatchOutput,
     )
@@ -483,6 +484,82 @@ def fused_experts_none_to_flashinfer_trtllm_fp4(
     return StandardCombineInput(hidden_states=result)
 
 
+def _pack_topk_ids_and_weights(
+    topk_ids: torch.Tensor, topk_weights: torch.Tensor
+) -> torch.Tensor:
+    """Pack expert ids and bf16 routing weights into TRTLLM routed int32 format."""
+    topk_ids_i32 = topk_ids.to(torch.int32)
+    topk_weights_i16 = topk_weights.to(torch.bfloat16).contiguous().view(torch.int16)
+    return (topk_ids_i32 << 16) | topk_weights_i16.to(torch.int32)
+
+
+def fused_experts_flashinfer_to_flashinfer_trtllm_fp4(
+    dispatch_output: FlashinferDispatchOutput,
+    quant_info: FlashInferTrtllmFp4MoeQuantInfo,
+    runner_config: MoeRunnerConfig,
+):
+    """FlashInfer A2A + FlashInfer TRTLLM FP4 routed MoE forward pass."""
+    from flashinfer.fused_moe import trtllm_fp4_block_scale_routed_moe
+
+    from sglang.srt.layers.moe.token_dispatcher.flashinfer import FlashinferCombineInput
+
+    assert runner_config.activation == "silu", "Only silu is supported for FP4 MoE."
+    assert runner_config.is_gated, "Only gated MoEs are supported for FP4 MoE."
+
+    hidden_states = dispatch_output.hidden_states
+    hidden_states_scale = dispatch_output.hidden_states_scale
+    topk_ids = dispatch_output.topk_output.topk_ids
+    topk_weights = dispatch_output.topk_output.topk_weights
+    routing_method_type = quant_info.routing_method_type
+
+    if hidden_states_scale is None:
+        hidden_states, hidden_states_scale = quantize_hidden_states_fp4(
+            hidden_states, quant_info.w13_input_scale_quant
+        )
+
+    if hidden_states_scale.dtype == torch.uint8:
+        hidden_states_scale = hidden_states_scale.view(torch.float8_e4m3fn)
+
+    packed_topk_ids = _pack_topk_ids_and_weights(topk_ids, topk_weights)
+
+    result = trtllm_fp4_block_scale_routed_moe(
+        topk_ids=packed_topk_ids,
+        routing_bias=None,
+        hidden_states=hidden_states,
+        hidden_states_scale=hidden_states_scale.flatten(),
+        gemm1_weights=quant_info.gemm1_weights_fp4_shuffled,
+        gemm1_weights_scale=quant_info.gemm1_scales_fp4_shuffled.view(
+            torch.float8_e4m3fn
+        ),
+        gemm1_bias=None,
+        gemm1_alpha=None,
+        gemm1_beta=None,
+        gemm1_clamp_limit=None,
+        gemm2_weights=quant_info.gemm2_weights_fp4_shuffled,
+        gemm2_weights_scale=quant_info.gemm2_scales_fp4_shuffled.view(
+            torch.float8_e4m3fn
+        ),
+        gemm2_bias=None,
+        output1_scale_scalar=quant_info.g1_scale_c,
+        output1_scale_gate_scalar=quant_info.g1_alphas,
+        output2_scale_scalar=quant_info.g2_alphas,
+        num_experts=quant_info.global_num_experts,
+        top_k=runner_config.top_k,
+        n_group=None,
+        topk_group=None,
+        intermediate_size=quant_info.intermediate_size_per_partition,
+        local_expert_offset=quant_info.local_expert_offset,
+        local_num_experts=quant_info.local_num_experts,
+        routed_scaling_factor=None,
+        routing_method_type=routing_method_type,
+        do_finalize=True,
+        tune_max_num_tokens=next_power_of_2(hidden_states.shape[0]),
+        output=dispatch_output.moe_output,
+    )[0]
+
+    return FlashinferCombineInput(hidden_states=result)
+
+
 @dataclass
 class FlashInferTrtllmBf16MoeQuantInfo(MoeQuantInfo):
     """Quantization payload consumed by FlashInfer TRT-LLM BF16 MoE kernels."""
@@ -576,4 +653,20 @@ def fused_experts_none_to_flashinfer_trtllm(
         )
     raise TypeError(
         f"Unexpected quant_info type for flashinfer_trtllm: {type(quant_info)}"
+    )
+
+
+@register_fused_func("flashinfer", "flashinfer_trtllm")
+def fused_experts_flashinfer_to_flashinfer_trtllm(
+    dispatch_output: FlashinferDispatchOutput,
+    quant_info: MoeQuantInfo,
+    runner_config: MoeRunnerConfig,
+):
+    if isinstance(quant_info, FlashInferTrtllmFp4MoeQuantInfo):
+        return fused_experts_flashinfer_to_flashinfer_trtllm_fp4(
+            dispatch_output, quant_info, runner_config
+        )
+    raise NotImplementedError(
+        "flashinfer a2a + flashinfer_trtllm runner currently supports FP4 "
+        "(modelopt_fp4/NVFP4) only."
     )
