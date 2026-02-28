@@ -137,20 +137,20 @@ def _compute_exit_code(
     allow_failed_pattern: Optional[str],
     failed_names: list[str],
 ) -> int:
-    truly_failed: int = summary.failed
-    if allow_failed_pattern is not None:
-        fail_re: re.Pattern[str] = re.compile(allow_failed_pattern)
-        truly_failed = len([n for n in failed_names if not fail_re.fullmatch(n)])
-
-    if truly_failed > 0:
+    if not _is_all_match_pattern(pattern=allow_failed_pattern, strings=failed_names):
         return 1
 
-    pattern: re.Pattern[str] = re.compile(allow_skipped_pattern)
-    forbidden: list[str] = [n for n in skipped_names if not pattern.fullmatch(n)]
-    if forbidden:
+    if not _is_all_match_pattern(pattern=allow_skipped_pattern, strings=skipped_names):
         return 1
 
     return 0
+
+
+def _is_all_match_pattern(*, pattern: Optional[str], strings: list[str]) -> bool:
+    if pattern is None:
+        return len(strings) == 0
+    compiled: re.Pattern[str] = re.compile(pattern)
+    return all(compiled.fullmatch(s) for s in strings)
 
 
 def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
