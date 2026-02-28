@@ -29,6 +29,7 @@ from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
     NonTensorRecord,
+    ReportPathRecord,
     SkipRecord,
     SummaryRecord,
     report_sink,
@@ -122,7 +123,7 @@ def run(args: argparse.Namespace) -> int:
     finally:
         report_sink.close()
         if report_path is not None:
-            print(f"Report: {report_path}", file=sys.stderr)
+            report_sink.add(ReportPathRecord(path=str(report_path)))
 
 
 def _compute_exit_code(
@@ -143,10 +144,8 @@ def _compute_exit_code(
 
 
 def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
-    if args.no_report:
-        return None
     if args.report_path is not None:
-        return Path(args.report_path)
+        return Path(args.report_path) if args.report_path else None
     return Path(args.target_path) / "comparator_report.jsonl"
 
 
@@ -352,13 +351,9 @@ def _parse_args() -> argparse.Namespace:
         "--report-path",
         type=str,
         default=None,
-        help="Path for JSONL report (default: <target-path>/comparator_report.jsonl)",
-    )
-    parser.add_argument(
-        "--no-report",
-        action="store_true",
-        default=False,
-        help="Disable automatic JSONL report generation",
+        help="Path for JSONL report file. "
+        "Default: <target-path>/comparator_report.jsonl. "
+        "Pass empty string '' to disable.",
     )
 
     return parser.parse_args()
