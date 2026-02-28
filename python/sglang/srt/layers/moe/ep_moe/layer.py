@@ -731,6 +731,11 @@ def get_moe_impl_class(quant_config: Optional[QuantizationConfig]):
         # Check for FP4 quantization with TRTLLM flag, regardless of EP
         # FlashInferFP4MoE must be paired with ModelOptNvFp4FusedMoEMethod.
         if quant_config is not None and quant_config.get_name() == "modelopt_fp4":
+            # For FlashInfer A2A we must execute: route -> communication -> routed MoE.
+            # Use the generic FusedMoE + dispatcher + runner pipeline instead of the
+            # monolithic FlashInferFP4MoE path.
+            if get_moe_a2a_backend().is_flashinfer():
+                return FusedMoE
             from sglang.srt.layers.moe.fused_moe_triton.layer import FlashInferFP4MoE
 
             return FlashInferFP4MoE
