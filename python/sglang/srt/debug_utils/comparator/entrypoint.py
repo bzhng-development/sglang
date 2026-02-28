@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional, Union
 
@@ -41,10 +42,10 @@ from sglang.srt.debug_utils.dump_loader import read_meta, read_tokenizer_path
 
 def main() -> None:
     args = _parse_args()
-    run(args)
+    sys.exit(run(args))
 
 
-def run(args: argparse.Namespace) -> None:
+def run(args: argparse.Namespace) -> int:
     print_record(
         ConfigRecord.from_args(args),
         output_format=args.output_format,
@@ -106,11 +107,20 @@ def run(args: argparse.Namespace) -> None:
         compute_per_token=visualize_per_token is not None,
         meta_overrider=meta_overrider,
     )
-    _consume_comparison_records(
+    summary: SummaryRecord = _consume_comparison_records(
         comparison_records=comparison_records,
         output_format=args.output_format,
         visualize_per_token=visualize_per_token,
     )
+    return _compute_exit_code(summary, forbid_skip=args.forbid_skip)
+
+
+def _compute_exit_code(summary: SummaryRecord, *, forbid_skip: bool) -> int:
+    if summary.failed > 0:
+        return 1
+    if forbid_skip and summary.skipped > 0:
+        return 1
+    return 0
 
 
 def _maybe_load_tokenizer(args: argparse.Namespace) -> Any:
@@ -197,7 +207,7 @@ def _consume_comparison_records(
     comparison_records: Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]],
     output_format: str,
     visualize_per_token: Optional[Path] = None,
-) -> None:
+) -> SummaryRecord:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
     collected_comparisons: list[ComparisonRecord] = []
 
@@ -207,16 +217,16 @@ def _consume_comparison_records(
         if visualize_per_token is not None and isinstance(record, ComparisonRecord):
             collected_comparisons.append(record)
 
-    print_record(
-        SummaryRecord(total=sum(counts.values()), **counts),
-        output_format=output_format,
-    )
+    summary: SummaryRecord = SummaryRecord(total=sum(counts.values()), **counts)
+    print_record(summary, output_format=output_format)
 
     if visualize_per_token is not None and collected_comparisons:
         generate_per_token_heatmap(
             records=collected_comparisons,
             output_path=visualize_per_token,
         )
+
+    return summary
 
 
 def _parse_args() -> argparse.Namespace:
@@ -299,6 +309,12 @@ def _parse_args() -> argparse.Namespace:
         type=str,
         default=None,
         help="Path to YAML override config file (dims overrides, etc.)",
+    )
+    parser.add_argument(
+        "--forbid-skip",
+        action="store_true",
+        default=False,
+        help="Exit with non-zero status when any comparisons are skipped",
     )
 
     return parser.parse_args()

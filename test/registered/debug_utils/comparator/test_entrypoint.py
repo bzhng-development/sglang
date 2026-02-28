@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import textwrap
 from argparse import Namespace
@@ -7,7 +8,7 @@ import pytest
 import torch
 
 import sglang.srt.debug_utils.dumper as _dumper_module
-from sglang.srt.debug_utils.comparator.entrypoint import run
+from sglang.srt.debug_utils.comparator.entrypoint import _compute_exit_code, run
 from sglang.srt.debug_utils.comparator.output_types import (
     AnyRecord,
     ComparisonRecord,
@@ -39,7 +40,7 @@ class TestEntrypointGroupingRaw:
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
         args = _make_args(baseline_path, target_path, grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         assert isinstance(records[0], ConfigRecord)
 
         assert len(_get_comparisons(records)) == 2
@@ -54,7 +55,7 @@ class TestEntrypointGroupingRaw:
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
         args = _make_args(baseline_path, target_path, filter="tensor_a", grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         assert len(_get_comparisons(records)) == 1
 
     def test_no_baseline_skip(self, tmp_path, capsys):
@@ -66,7 +67,7 @@ class TestEntrypointGroupingRaw:
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         skips = [r for r in records if isinstance(r, SkipRecord)]
         assert len(skips) == 1
         assert skips[0].reason == "baseline_load_failed"
@@ -82,7 +83,7 @@ class TestEntrypointGroupingRaw:
             baseline_path, target_path, start_step=1, end_step=1, grouping="raw"
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.total == 1
@@ -92,7 +93,7 @@ class TestEntrypointGroupingRaw:
         baseline_path, target_path = _create_dumps(tmp_path, ["t"], num_steps=2)
         args = _make_args(baseline_path, target_path, grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         assert all(isinstance(r, _OutputRecord) for r in records)
 
     def test_comparison_failed(self, tmp_path, capsys):
@@ -111,7 +112,7 @@ class TestEntrypointGroupingRaw:
             baseline_path, target_path, grouping="raw", diff_threshold=1e-3
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].diff is not None
@@ -133,7 +134,7 @@ class TestEntrypointGroupingRaw:
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].shape_mismatch is True
@@ -159,7 +160,7 @@ class TestEntrypointGroupingRaw:
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
 
@@ -189,7 +190,7 @@ class TestEntrypointGroupingRaw:
             baseline_path, target_path, grouping="raw", diff_threshold=0.01
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].diff_downcast is not None
@@ -227,7 +228,7 @@ class TestEntrypointGroupingRaw:
             diff_threshold=1e-3,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.passed == 1
@@ -242,7 +243,7 @@ class TestEntrypointGroupingRaw:
             baseline_path, target_path, filter="nonexistent_pattern", grouping="raw"
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.total == 0
@@ -271,7 +272,7 @@ class TestEntrypointGroupingRaw:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 2
 
@@ -348,7 +349,7 @@ class TestEntrypointGroupingRaw:
             grouping="raw",
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 2
         assert all(c.diff is not None and c.diff.passed for c in comparisons)
@@ -367,7 +368,7 @@ class TestEntrypointGroupingLogical:
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
         args = _make_args(baseline_path, target_path)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         assert len(_get_comparisons(records)) == 2
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
@@ -402,7 +403,7 @@ class TestEntrypointGroupingLogical:
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -439,7 +440,7 @@ class TestEntrypointGroupingLogical:
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         _assert_single_comparison_passed(records)
 
     def test_one_side_dims_single_baseline(self, tmp_path, capsys):
@@ -466,7 +467,7 @@ class TestEntrypointGroupingLogical:
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         _assert_single_comparison_passed(records)
 
     @pytest.mark.parametrize(
@@ -496,7 +497,7 @@ class TestEntrypointGroupingLogical:
             target_dir / _FIXED_EXP_NAME,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         skips = [r for r in records if isinstance(r, SkipRecord)]
         assert len(skips) == 1
         assert skips[0].reason == expected_reason
@@ -535,7 +536,7 @@ class TestEntrypointGroupingLogical:
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
         assert summary.total == 2
@@ -572,7 +573,7 @@ class TestEntrypointGroupingLogical:
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         # concat along dim 0 (fallback, no token dim) → 2 steps × [4, 8] = [8, 8]
@@ -613,7 +614,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "attn_out"
 
@@ -651,7 +652,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].name == "t_a"
@@ -696,7 +697,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 2
         assert all(c.diff is not None and c.diff.passed for c in comparisons)
@@ -737,7 +738,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -776,7 +777,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         _assert_single_comparison_passed(records)
 
     def test_ep_cp_tp_three_axis_unshard(self, tmp_path, capsys):
@@ -811,7 +812,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -836,7 +837,7 @@ class TestEntrypointGroupingLogical:
                 tp_size=1,
                 seq_dim=1,
                 head_dim=2,
-                dims_str="b s(cp,zigzag) h",
+                dims_str="b s(cp:zigzag) h",
             )
 
         args = _make_args(
@@ -845,7 +846,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "attn_out"
 
@@ -870,7 +871,7 @@ class TestEntrypointGroupingLogical:
                 tp_size=2,
                 seq_dim=1,
                 head_dim=2,
-                dims_str="b s(cp,zigzag) h(tp)",
+                dims_str="b s(cp:zigzag) h(tp)",
             )
 
         args = _make_args(
@@ -879,7 +880,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -906,7 +907,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -934,7 +935,7 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
 
@@ -958,19 +959,19 @@ class TestEntrypointGroupingLogical:
             full_tensor=full_baseline,
             name="attn_out",
             tp_size=2,
-            dims_str="b h(tp,partial)",
+            dims_str="b h(tp:partial)",
         )
         target_path = _create_tp_partial_dumps(
             target_dir,
             full_tensor=full_target,
             name="attn_out",
             tp_size=2,
-            dims_str="b h(tp,partial)",
+            dims_str="b h(tp:partial)",
         )
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "attn_out"
 
@@ -996,12 +997,12 @@ class TestEntrypointGroupingLogical:
             full_tensor=target_full,
             name="attn_out",
             tp_size=2,
-            dims_str="b h(tp,partial)",
+            dims_str="b h(tp:partial)",
         )
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "attn_out"
 
@@ -1025,7 +1026,7 @@ class TestEntrypointGroupingLogical:
                         rank=rank,
                         name="hidden",
                         tensor=cp_chunks[cp_rank] / 2,
-                        dims="b s(cp) h(tp,partial)",
+                        dims="b s(cp) h(tp:partial)",
                         parallel_info={
                             "cp_rank": cp_rank,
                             "cp_size": 2,
@@ -1041,7 +1042,39 @@ class TestEntrypointGroupingLogical:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
+        comp = _assert_single_comparison_passed(records)
+        assert comp.name == "hidden"
+
+    def test_cp_zigzag_sp_same_dim_unshard(self, tmp_path, capsys):
+        """CP=2 zigzag + SP=2 on same seq dim: multi-axis unshard + reorder."""
+        torch.manual_seed(42)
+        full_baseline = torch.randn(4, 8, 6)
+        full_target = full_baseline + torch.randn(4, 8, 6) * 0.001
+
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir, full_tensor in [
+            (baseline_dir, full_baseline),
+            (target_dir, full_target),
+        ]:
+            _create_cp_zigzag_sp_sharded_dumps(
+                side_dir,
+                full_tensor=full_tensor,
+                name="hidden",
+                cp_size=2,
+                sp_size=2,
+                dims_str="b s(cp:zigzag,sp) h",
+            )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -1105,7 +1138,8 @@ class TestEntrypointConcatMode:
         args: Namespace = _make_args(
             baseline_path, target_path, diff_threshold=diff_threshold
         )
-        return _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
+        return records
 
     def test_concat_multi_step_different_data(self, tmp_path, capsys):
         """Multi-step concat with different data per step + truncation."""
@@ -1168,7 +1202,7 @@ class TestEntrypointConcatMode:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         # 2 steps × [4, 8] concat along dim 0 (fallback) → [8, 8]
@@ -1330,7 +1364,7 @@ class TestEntrypointConcatMode:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         # all 3 tensors should be compared (not filtered out)
         names = {c.name for c in comparisons}
@@ -1425,7 +1459,7 @@ class TestEntrypointConcatMode:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         # CP unshard: [4,4,6] × 2 ranks → [4,8,6] per step
@@ -1467,7 +1501,7 @@ class TestEntrypointAxisAligner:
             diff_threshold=1e-3,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
         assert comp.baseline.shape == [4, 16, 8]
@@ -1504,7 +1538,7 @@ class TestEntrypointAxisAligner:
             diff_threshold=1e-3,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
@@ -1537,7 +1571,7 @@ class TestEntrypointAxisAligner:
             diff_threshold=1e-3,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
         assert comp.baseline.shape == [4, 8]
@@ -1576,7 +1610,7 @@ class TestEntrypointReplicatedAxis:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         assert comp.warnings == []
         assert all(c.passed for c in comp.replicated_checks)
@@ -1615,7 +1649,7 @@ class TestEntrypointReplicatedAxis:
             diff_threshold=0.01,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].category == "failed"
@@ -1661,7 +1695,7 @@ class TestEntrypointReplicatedAxis:
             diff_threshold=0.5,
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
 
@@ -1724,7 +1758,7 @@ class TestEntrypointAlignment:
         args = _make_args(
             exp_paths[0], exp_paths[1], grouping="logical", token_aligner="smart"
         )
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparisons = _get_comparisons(records)
         # AUX_NAMES are filtered out after plan computation → only hidden_states remains
@@ -1838,7 +1872,7 @@ class TestEntrypointAlignment:
             token_aligner="smart",
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         warning_records = [r for r in records if isinstance(r, WarningRecord)]
         layout_warnings = [
@@ -1905,7 +1939,7 @@ class TestEntrypointNonTensorValues:
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors = _get_non_tensors(records)
         assert len(non_tensors) == 1
@@ -1924,7 +1958,7 @@ class TestEntrypointNonTensorValues:
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.25
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors = _get_non_tensors(records)
         assert len(non_tensors) == 1
@@ -1944,7 +1978,7 @@ class TestEntrypointNonTensorValues:
             target_value="flash_attn",
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors = _get_non_tensors(records)
         assert len(non_tensors) == 1
@@ -1974,7 +2008,7 @@ class TestEntrypointNonTensorValues:
             target_dir / _FIXED_EXP_NAME,
             grouping="raw",
         )
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparisons = _get_comparisons(records)
         non_tensors = _get_non_tensors(records)
@@ -1995,7 +2029,7 @@ class TestEntrypointNonTensorValues:
             tmp_path, name="debug_info", baseline_value=value, target_value=value
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors = _get_non_tensors(records)
         assert len(non_tensors) == 1
@@ -2009,7 +2043,7 @@ class TestEntrypointNonTensorValues:
             tmp_path, name="optional_param", baseline_value=None, target_value=None
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors = _get_non_tensors(records)
         assert len(non_tensors) == 1
@@ -2025,7 +2059,7 @@ class TestEntrypointNonTensorValues:
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
         args = _make_args(baseline_path, target_path, grouping="raw")
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors = _get_non_tensors(records)
         assert len(non_tensors) == 1
@@ -2060,7 +2094,7 @@ class TestEntrypointVisualize:
             viz_output_dir=str(viz_dir),
         )
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
         assert len(_get_comparisons(records)) == 1
 
         png_files = list(viz_dir.glob("*.png"))
@@ -2215,15 +2249,18 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         override_baseline_dims=[],
         override_target_dims=[],
         override_config=None,
+        forbid_skip=False,
     )
     defaults.update(overrides)
     return Namespace(**defaults)
 
 
-def _run_and_parse(args: Namespace, capsys: pytest.CaptureFixture) -> list[AnyRecord]:
+def _run_and_parse(
+    args: Namespace, capsys: pytest.CaptureFixture
+) -> tuple[list[AnyRecord], int]:
     capsys.readouterr()
-    run(args)
-    return _parse_jsonl(capsys.readouterr().out)
+    exit_code: int = run(args)
+    return _parse_jsonl(capsys.readouterr().out), exit_code
 
 
 def _parse_jsonl(output: str) -> list[AnyRecord]:
@@ -2446,6 +2483,63 @@ def _create_cp_zigzag_tp_sharded_dumps(
     return directory / _FIXED_EXP_NAME
 
 
+def _create_cp_zigzag_sp_sharded_dumps(
+    directory: Path,
+    *,
+    full_tensor: torch.Tensor,
+    name: str,
+    cp_size: int,
+    sp_size: int,
+    dims_str: str,
+    seq_dim: int = 1,
+    num_steps: int = 1,
+) -> Path:
+    """Create CP-zigzag + SP sharded dump files for a seq dim (b s h format).
+
+    Shard order (outer to inner, matching left-to-right in dims annotation):
+      1. CP zigzag splits seq dim into cp_size chunks (zigzag order)
+      2. SP splits each CP chunk into sp_size chunks
+    """
+    num_chunks: int = cp_size * 2
+    natural_chunks: list[torch.Tensor] = list(
+        full_tensor.chunk(num_chunks, dim=seq_dim)
+    )
+
+    zigzag_order: list[int] = []
+    for i in range(cp_size):
+        zigzag_order.append(i)
+        zigzag_order.append(num_chunks - 1 - i)
+
+    zigzagged: torch.Tensor = torch.cat(
+        [natural_chunks[idx] for idx in zigzag_order], dim=seq_dim
+    )
+    cp_chunks: list[torch.Tensor] = list(zigzagged.chunk(cp_size, dim=seq_dim))
+
+    rank: int = 0
+    for cp_rank in range(cp_size):
+        sp_chunks: list[torch.Tensor] = list(
+            cp_chunks[cp_rank].chunk(sp_size, dim=seq_dim)
+        )
+        for sp_rank in range(sp_size):
+            _create_rank_dump(
+                directory,
+                rank=rank,
+                name=name,
+                tensor=sp_chunks[sp_rank],
+                dims=dims_str,
+                parallel_info={
+                    "cp_rank": cp_rank,
+                    "cp_size": cp_size,
+                    "sp_rank": sp_rank,
+                    "sp_size": sp_size,
+                },
+                num_steps=num_steps,
+            )
+            rank += 1
+
+    return directory / _FIXED_EXP_NAME
+
+
 def _create_replicated_tp_sharded_cp_dumps(
     directory: Path,
     *,
@@ -2640,7 +2734,7 @@ def _create_thd_cp_zigzag_dumps(
     seq_lens: list[int],
     cp_size: int,
     total_per_rank: int,
-    dims_str: str = "t(cp,zigzag)",
+    dims_str: str = "t(cp:zigzag)",
     num_steps: int = 1,
 ) -> Path:
     """Create THD CP-zigzag sharded dump files simulating Megatron forward.
@@ -2749,7 +2843,7 @@ class TestEntrypointPerTokenVisualization:
             grouping="raw",
             visualize_per_token=str(output_png),
         )
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 2
@@ -2766,7 +2860,7 @@ class TestEntrypointPerTokenVisualization:
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
         args = _make_args(baseline_path, target_path, grouping="raw")
 
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
@@ -2849,7 +2943,7 @@ class TestEntrypointThdCpZigzag:
                 rank=cp_rank,
                 name="hidden_states",
                 tensor=rank_hidden,
-                dims="t(cp,zigzag) h",
+                dims="t(cp:zigzag) h",
                 parallel_info={"cp_rank": cp_rank, "cp_size": cp_size},
                 framework="megatron",
                 extra_dumps=[
@@ -2866,7 +2960,7 @@ class TestEntrypointThdCpZigzag:
             token_aligner="smart",
             diff_threshold=1e-3,
         )
-        records: list[AnyRecord] = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparisons: list[ComparisonRecord] = _get_comparisons(records)
         hidden_comparisons: list[ComparisonRecord] = [
@@ -2917,7 +3011,7 @@ class TestEntrypointThdCpZigzag:
             token_aligner="smart",
             diff_threshold=1e-3,
         )
-        records: list[AnyRecord] = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         # hidden_states should pass comparison (after unshard + reorder)
         comparisons: list[ComparisonRecord] = _get_comparisons(records)
@@ -2987,7 +3081,7 @@ class TestEntrypointDpFilter:
             grouping="logical",
             diff_threshold=1e-3,
         )
-        records: list[AnyRecord] = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparison: ComparisonRecord = _assert_single_comparison_passed(records)
         assert comparison.name == "hidden"
@@ -3043,7 +3137,7 @@ class TestEntrypointDpFilter:
             grouping="logical",
             diff_threshold=1e-3,
         )
-        records: list[AnyRecord] = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparison: ComparisonRecord = _assert_single_comparison_passed(records)
         assert comparison.name == "hidden"
@@ -3092,7 +3186,7 @@ class TestEntrypointDpFilter:
             grouping="logical",
             diff_threshold=1e-3,
         )
-        records: list[AnyRecord] = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparison: ComparisonRecord = _assert_single_comparison_passed(records)
         assert comparison.name == "hidden"
@@ -3218,7 +3312,7 @@ class TestEntrypointMetaOverride:
             grouping="logical",
             override_dims=["hidden:t h(tp)"],
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     @pytest.mark.parametrize(
         "baseline_dims, target_dims, override_kwarg",
@@ -3245,7 +3339,7 @@ class TestEntrypointMetaOverride:
         )
 
         args = _make_args(baseline_path, target_path, grouping="raw", **override_kwarg)
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_override_config_yaml(self, tmp_path: Path, capsys) -> None:
         """--override-config YAML overrides dims."""
@@ -3264,7 +3358,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_config=str(yaml_path),
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_no_match_uses_original_dims(self, tmp_path: Path, capsys) -> None:
         """When override regex doesn't match, original dims from dump are used."""
@@ -3280,7 +3374,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["no_match_pattern:b s d"],
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_selective_match_multi_tensor(self, tmp_path: Path, capsys) -> None:
         """Override matches only 'logits'; 'hidden' uses original dims."""
@@ -3311,7 +3405,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["logits:t v"],
         )
-        self._assert_all_passed(_run_and_parse(args, capsys), expected_count=2)
+        self._assert_all_passed(_run_and_parse(args, capsys)[0], expected_count=2)
 
     def test_multiple_cli_override_dims(self, tmp_path: Path, capsys) -> None:
         """Multiple --override-dims for different tensors."""
@@ -3344,7 +3438,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["hidden:t h", "logits:t v"],
         )
-        self._assert_all_passed(_run_and_parse(args, capsys), expected_count=2)
+        self._assert_all_passed(_run_and_parse(args, capsys)[0], expected_count=2)
 
     def test_per_side_dims_different_parallelism(self, tmp_path: Path, capsys) -> None:
         """baseline TP-sharded, target EP-sharded — per-side override fixes both."""
@@ -3386,7 +3480,7 @@ class TestEntrypointMetaOverride:
             override_baseline_dims=["hidden:t h(tp)"],
             override_target_dims=["hidden:t h(ep)"],
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_yaml_first_match_wins_e2e(self, tmp_path: Path, capsys) -> None:
         """YAML with two matching rules: first rule wins in real pipeline."""
@@ -3407,7 +3501,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_config=str(yaml_path),
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_cli_overrides_yaml_e2e(self, tmp_path: Path, capsys) -> None:
         """CLI --override-dims wins over YAML rule for the same tensor."""
@@ -3427,7 +3521,7 @@ class TestEntrypointMetaOverride:
             override_dims=["hidden:t h"],
             override_config=str(yaml_path),
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_override_injects_dims_when_absent(self, tmp_path: Path, capsys) -> None:
         """Override injects dims into meta even when dump had no dims annotation."""
@@ -3443,7 +3537,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["hidden:t h"],
         )
-        self._assert_all_passed(_run_and_parse(args, capsys))
+        self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_non_tensor_unaffected_by_override(self, tmp_path: Path, capsys) -> None:
         """Non-tensor values pass through without error even with active override."""
@@ -3470,7 +3564,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["hidden:x y"],
         )
-        records = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         non_tensors: list[NonTensorRecord] = [
             r for r in records if isinstance(r, NonTensorRecord)
@@ -3485,6 +3579,146 @@ class TestEntrypointMetaOverride:
 
         summary: SummaryRecord = [r for r in records if isinstance(r, SummaryRecord)][0]
         assert summary.failed == 0
+
+
+class TestExitCode:
+    """Tests for exit code behavior based on comparison results."""
+
+    def test_all_passed(self):
+        """All passed → exit 0."""
+        summary = SummaryRecord(total=3, passed=3, failed=0, skipped=0)
+        assert _compute_exit_code(summary, forbid_skip=False) == 0
+
+    def test_has_failed_and_passed(self):
+        """Has failed and passed → exit 1."""
+        summary = SummaryRecord(total=4, passed=2, failed=2, skipped=0)
+        assert _compute_exit_code(summary, forbid_skip=False) == 1
+
+    def test_all_failed(self):
+        """All failed (0 passed) → exit 1."""
+        summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
+        assert _compute_exit_code(summary, forbid_skip=False) == 1
+
+    def test_all_skipped(self):
+        """All skipped → exit 0 (without --forbid-skip)."""
+        summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
+        assert _compute_exit_code(summary, forbid_skip=False) == 0
+
+    def test_skipped_with_forbid_skip(self):
+        """All skipped + --forbid-skip → exit 1."""
+        summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
+        assert _compute_exit_code(summary, forbid_skip=True) == 1
+
+    def test_passed_and_skipped_no_forbid(self):
+        """Passed + skipped, no --forbid-skip → exit 0."""
+        summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
+        assert _compute_exit_code(summary, forbid_skip=False) == 0
+
+    def test_passed_and_skipped_with_forbid(self):
+        """Passed + skipped + --forbid-skip → exit 1."""
+        summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
+        assert _compute_exit_code(summary, forbid_skip=True) == 1
+
+    def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
+        """Integration: all comparisons pass → run() returns 0."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
+        args = _make_args(baseline_path, target_path, grouping="raw")
+
+        records, exit_code = _run_and_parse(args, capsys)
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.passed == 2
+        assert summary.failed == 0
+        assert exit_code == 0
+
+    def test_e2e_has_failed_exit_nonzero(self, tmp_path, capsys):
+        """Integration: a failed comparison → run() returns 1."""
+        torch.manual_seed(42)
+        baseline_path = _create_rank_dump(
+            tmp_path / "baseline", rank=0, name="tensor_a", tensor=torch.randn(10, 10)
+        )
+        target_path = _create_rank_dump(
+            tmp_path / "target",
+            rank=0,
+            name="tensor_a",
+            tensor=torch.randn(10, 10) * 100,
+        )
+        args = _make_args(
+            baseline_path, target_path, grouping="raw", diff_threshold=1e-3
+        )
+
+        records, exit_code = _run_and_parse(args, capsys)
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.failed == 1
+        assert exit_code == 1
+
+
+class TestExitCodeSubprocess:
+    """E2E subprocess tests: invoke comparator as a child process and verify exit code."""
+
+    @staticmethod
+    def _run_comparator(
+        baseline_path: Path,
+        target_path: Path,
+        *,
+        grouping: str = "raw",
+        forbid_skip: bool = False,
+    ) -> subprocess.CompletedProcess[str]:
+        cmd: list[str] = [
+            sys.executable,
+            "-m",
+            "sglang.srt.debug_utils.comparator",
+            "--baseline-path",
+            str(baseline_path),
+            "--target-path",
+            str(target_path),
+            "--grouping",
+            grouping,
+            "--output-format",
+            "json",
+        ]
+        if forbid_skip:
+            cmd.append("--forbid-skip")
+        return subprocess.run(cmd, capture_output=True, text=True)
+
+    def test_all_passed_exit_zero(self, tmp_path):
+        """Subprocess: all comparisons pass → exit 0."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        result = self._run_comparator(baseline_path, target_path)
+        assert result.returncode == 0
+
+    def test_failed_exit_nonzero(self, tmp_path):
+        """Subprocess: failed comparison → exit 1."""
+        torch.manual_seed(42)
+        baseline_path = _create_rank_dump(
+            tmp_path / "baseline", rank=0, name="t", tensor=torch.randn(10, 10)
+        )
+        target_path = _create_rank_dump(
+            tmp_path / "target", rank=0, name="t", tensor=torch.randn(10, 10) * 100
+        )
+        result = self._run_comparator(baseline_path, target_path)
+        assert result.returncode == 1
+
+    def test_skipped_without_forbid_exit_zero(self, tmp_path):
+        """Subprocess: skipped comparison without --forbid-skip → exit 0."""
+        baseline_path, target_path = _create_dumps(
+            tmp_path,
+            tensor_names=["tensor_a", "tensor_extra"],
+            baseline_names=["tensor_a"],
+        )
+        result = self._run_comparator(baseline_path, target_path, forbid_skip=False)
+        assert result.returncode == 0
+
+    def test_skipped_with_forbid_exit_nonzero(self, tmp_path):
+        """Subprocess: skipped comparison with --forbid-skip → exit 1."""
+        baseline_path, target_path = _create_dumps(
+            tmp_path,
+            tensor_names=["tensor_a", "tensor_extra"],
+            baseline_names=["tensor_a"],
+        )
+        result = self._run_comparator(baseline_path, target_path, forbid_skip=True)
+        assert result.returncode == 1
 
 
 if __name__ == "__main__":
