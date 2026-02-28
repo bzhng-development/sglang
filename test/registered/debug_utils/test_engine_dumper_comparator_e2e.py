@@ -123,6 +123,7 @@ class TestSourcePatcherE2ESGLang:
             extra_comparator_args=[
                 "--override-target-dims", "attn_output:t h",
                 "--override-target-dims", "attn_pre_o_proj:t attn_h",
+                "--override-target-dims", "mlp_output:t h",
             ],
         )
 
