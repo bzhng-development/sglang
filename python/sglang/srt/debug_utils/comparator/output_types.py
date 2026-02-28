@@ -190,13 +190,6 @@ class SummaryRecord(_OutputRecord):
         )
 
 
-class ReportPathRecord(_OutputRecord):
-    type: Literal["report_path"] = "report_path"
-    path: str
-
-    def _format_body(self) -> str:
-        return f"Report: {self.path}"
-
 
 class WarningRecord(_OutputRecord):
     type: Literal["warning"] = "warning"
@@ -249,7 +242,6 @@ AnyRecord = Annotated[
         ComparisonRecord,
         NonTensorRecord,
         SummaryRecord,
-        ReportPathRecord,
         WarningRecord,
     ],
     Discriminator("type"),

@@ -29,7 +29,6 @@ from sglang.srt.debug_utils.comparator.output_types import (
     ComparisonRecord,
     ConfigRecord,
     NonTensorRecord,
-    ReportPathRecord,
     SkipRecord,
     SummaryRecord,
     report_sink,
@@ -123,7 +122,7 @@ def run(args: argparse.Namespace) -> int:
     finally:
         report_sink.close()
         if report_path is not None:
-            report_sink.add(ReportPathRecord(path=str(report_path)))
+            print(f"Report: {report_path}", file=sys.stderr)
 
 
 def _compute_exit_code(
