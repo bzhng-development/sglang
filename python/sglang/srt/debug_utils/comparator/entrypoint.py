@@ -118,9 +118,9 @@ def run(args: argparse.Namespace) -> int:
         )
         return _compute_exit_code(
             summary,
-            allow_skip_pattern=args.allow_skip_pattern,
+            allow_skipped_pattern=args.allow_skipped_pattern,
             skipped_names=skipped_names,
-            allow_fail_pattern=args.allow_fail_pattern,
+            allow_failed_pattern=args.allow_failed_pattern,
             failed_names=failed_names,
         )
     finally:
@@ -132,20 +132,20 @@ def run(args: argparse.Namespace) -> int:
 def _compute_exit_code(
     summary: SummaryRecord,
     *,
-    allow_skip_pattern: str,
+    allow_skipped_pattern: str,
     skipped_names: list[str],
-    allow_fail_pattern: Optional[str],
+    allow_failed_pattern: Optional[str],
     failed_names: list[str],
 ) -> int:
     truly_failed: int = summary.failed
-    if allow_fail_pattern is not None:
-        fail_re: re.Pattern[str] = re.compile(allow_fail_pattern)
+    if allow_failed_pattern is not None:
+        fail_re: re.Pattern[str] = re.compile(allow_failed_pattern)
         truly_failed = len([n for n in failed_names if not fail_re.fullmatch(n)])
 
     if truly_failed > 0:
         return 1
 
-    pattern: re.Pattern[str] = re.compile(allow_skip_pattern)
+    pattern: re.Pattern[str] = re.compile(allow_skipped_pattern)
     forbidden: list[str] = [n for n in skipped_names if not pattern.fullmatch(n)]
     if forbidden:
         return 1
@@ -375,14 +375,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         help="Path to YAML override config file (dims overrides, etc.)",
     )
     parser.add_argument(
-        "--allow-skip-pattern",
+        "--allow-skipped-pattern",
         type=str,
         default=".*",
         help="Regex pattern for tensor names allowed to be skipped. "
         "Default '.*' allows all skips. Use '^$' to forbid all skips.",
     )
     parser.add_argument(
-        "--allow-fail-pattern",
+        "--allow-failed-pattern",
         type=str,
         default=None,
         help="Regex pattern for tensor names allowed to fail without affecting exit code. "
