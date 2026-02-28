@@ -128,7 +128,7 @@ def _load_step_data(
     """
     result: dict[str, object] = {}
 
-    # Pass 1: non-tensor values
+    # Pass 0: non-tensor values
     for name in non_tensor_names:
         value = _load_non_tensor_aux(name=name, step=step, df=df, dump_path=dump_path)
         if value is not None:
