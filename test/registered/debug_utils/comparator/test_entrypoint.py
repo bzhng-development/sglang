@@ -39,7 +39,14 @@ class TestExpandPreset:
         """--preset sglang_megatron expands into its argv."""
         from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
 
-        argv = ["--baseline-path", "/a", "--preset", "sglang_megatron", "--diff-threshold", "0.01"]
+        argv = [
+            "--baseline-path",
+            "/a",
+            "--preset",
+            "sglang_megatron",
+            "--diff-threshold",
+            "0.01",
+        ]
         result = expand_preset(argv, presets=PRESETS)
         assert "--preset" not in result
         assert "--grouping-skip-keys" in result
@@ -92,7 +99,9 @@ class TestEntrypointGroupingRaw:
     def test_filter(self, tmp_path, capsys):
         """--filter selects only the matching tensor, producing 1 ComparisonRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
-        args = _make_args(baseline_path, target_path, filter="tensor_a", grouping_skip_keys=[])
+        args = _make_args(
+            baseline_path, target_path, filter="tensor_a", grouping_skip_keys=[]
+        )
 
         records, _ = _run_and_parse(args, capsys)
         assert len(_get_comparisons(records)) == 1
@@ -279,7 +288,10 @@ class TestEntrypointGroupingRaw:
         """--filter matching nothing produces summary with total=0."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
         args = _make_args(
-            baseline_path, target_path, filter="nonexistent_pattern", grouping_skip_keys=[]
+            baseline_path,
+            target_path,
+            filter="nonexistent_pattern",
+            grouping_skip_keys=[],
         )
 
         records, _ = _run_and_parse(args, capsys)
@@ -1930,7 +1942,10 @@ class TestEntrypointAlignment:
             exp_paths.append(d / _FIXED_EXP_NAME)
 
         args = _make_args(
-            exp_paths[0], exp_paths[1], grouping_skip_keys=["rank", "recompute_status", "step"], token_aligner="smart"
+            exp_paths[0],
+            exp_paths[1],
+            grouping_skip_keys=["rank", "recompute_status", "step"],
+            token_aligner="smart",
         )
         records, _ = _run_and_parse(args, capsys)
 
@@ -3651,7 +3666,9 @@ class TestEntrypointMetaOverride:
             target_dims=target_dims,
         )
 
-        args = _make_args(baseline_path, target_path, grouping_skip_keys=[], **override_kwarg)
+        args = _make_args(
+            baseline_path, target_path, grouping_skip_keys=[], **override_kwarg
+        )
         self._assert_all_passed(_run_and_parse(args, capsys)[0])
 
     def test_override_config_yaml(self, tmp_path: Path, capsys) -> None:
@@ -4089,7 +4106,9 @@ class TestReportOutput:
     def test_default_report_path(self, tmp_path, capsys):
         """Default writes to <target>/comparator_report.jsonl with ConfigRecord + SummaryRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        args = _make_args(baseline_path, target_path, grouping_skip_keys=[], report_path=None)
+        args = _make_args(
+            baseline_path, target_path, grouping_skip_keys=[], report_path=None
+        )
 
         exit_code: int = run(args)
 
@@ -4122,7 +4141,9 @@ class TestReportOutput:
     def test_disabled_report(self, tmp_path, capsys):
         """--report-path '' disables file generation."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        args = _make_args(baseline_path, target_path, grouping_skip_keys=[], report_path="")
+        args = _make_args(
+            baseline_path, target_path, grouping_skip_keys=[], report_path=""
+        )
 
         run(args)
 

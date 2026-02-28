@@ -228,9 +228,7 @@ def _compare_bundle_pairs(
         )
 
         target_steps: set[int] = {info.step for info in bundle_info_pair.y}
-        step: Optional[int] = (
-            target_steps.pop() if len(target_steps) == 1 else None
-        )
+        step: Optional[int] = target_steps.pop() if len(target_steps) == 1 else None
         if step is not None:
             record = record.model_copy(update={"step": step})
 
