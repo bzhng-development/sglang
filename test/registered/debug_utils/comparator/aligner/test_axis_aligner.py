@@ -6,6 +6,8 @@ import torch
 
 from sglang.srt.debug_utils.comparator.aligner.axis_aligner import (
     AxisAlignerPlan,
+    FlattenGroup,
+    FlattenPlan,
     compute_axis_aligner_plan,
     execute_axis_aligner_plan,
 )
@@ -14,6 +16,8 @@ from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)
+
+_NO_FLATTEN: Pair[Optional[FlattenPlan]] = Pair(x=None, y=None)
 
 
 class TestComputeAxisAlignerPlan:
@@ -87,11 +91,73 @@ class TestComputeAxisAlignerPlan:
         assert result.pattern.y == "t 1 h -> t h"
 
 
+class TestComputeAxisAlignerPlanFused:
+    def test_fused_vs_separate_generates_flatten(self) -> None:
+        """x=fused 2D, y=separate 3D: y gets flattened to match x."""
+        result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="t num_heads(tp)*head_dim", y="t num_heads(tp) head_dim")
+        )
+        assert result is not None
+        assert result.pre_flatten.x is None
+        assert result.pre_flatten.y is not None
+        assert len(result.pre_flatten.y.groups) == 1
+        assert result.pre_flatten.y.groups[0].dim_indices == [1, 2]
+        assert result.pre_flatten.y.groups[0].target_name == "num_heads__head_dim"
+
+    def test_separate_vs_fused_generates_flatten(self) -> None:
+        """x=separate 3D, y=fused 2D: x gets flattened to match y."""
+        result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="t num_heads(tp) head_dim", y="t num_heads(tp)*head_dim")
+        )
+        assert result is not None
+        assert result.pre_flatten.x is not None
+        assert result.pre_flatten.y is None
+        assert result.pre_flatten.x.groups[0].dim_indices == [1, 2]
+
+    def test_both_fused_same_no_plan(self) -> None:
+        """Both sides fused, same order → None (no-op)."""
+        result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="t a*b", y="t a*b")
+        )
+        assert result is None
+
+    def test_fused_name_mismatch_returns_none(self) -> None:
+        """Fused vs separate with mismatched names → None."""
+        with log_sink.context() as warnings:
+            result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+                Pair(x="t a*b", y="t c d")
+            )
+        assert result is None
+        assert len(warnings) == 1
+
+    def test_partial_fused_and_regular(self) -> None:
+        """x has "a*b c", y has "a b c": flatten a,b on y side."""
+        result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="a*b c", y="a b c")
+        )
+        assert result is not None
+        assert result.pre_flatten.y is not None
+        assert result.pre_flatten.y.groups[0].dim_indices == [0, 1]
+        assert result.pre_flatten.y.groups[0].target_name == "a__b"
+        assert result.pre_flatten.x is None
+
+    def test_fused_with_squeeze(self) -> None:
+        """Fused + squeeze on one side, separate on other."""
+        result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="t 1 a*b", y="t a b")
+        )
+        assert result is not None
+        # x has squeeze to remove, y has a,b to flatten
+        assert result.pre_flatten.y is not None
+        assert result.pre_flatten.y.groups[0].dim_indices == [1, 2]
+
+
 class TestExecuteAxisAlignerPlan:
     def test_rearrange(self) -> None:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
         plan = AxisAlignerPlan(
+            pre_flatten=_NO_FLATTEN,
             pattern=Pair(x="t h d -> t d h", y=None),
         )
 
@@ -110,6 +176,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
         plan = AxisAlignerPlan(
+            pre_flatten=_NO_FLATTEN,
             pattern=Pair(x="t 1 h -> t h", y=None),
         )
 
@@ -125,6 +192,7 @@ class TestExecuteAxisAlignerPlan:
             "t", "singleton0", "h", "d"
         )
         plan = AxisAlignerPlan(
+            pre_flatten=_NO_FLATTEN,
             pattern=Pair(x="t 1 h d -> t d h", y=None),
         )
 
@@ -138,6 +206,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
         plan = AxisAlignerPlan(
+            pre_flatten=_NO_FLATTEN,
             pattern=Pair(x=None, y="t 1 h -> t h"),
         )
 
@@ -151,6 +220,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
         plan = AxisAlignerPlan(
+            pre_flatten=_NO_FLATTEN,
             pattern=Pair(x="t h d -> t d h", y=None),
         )
 
@@ -159,6 +229,140 @@ class TestExecuteAxisAlignerPlan:
         )
 
         assert result.shape == (4, 8, 16)
+
+
+class TestExecuteAxisAlignerPlanFlatten:
+    def test_flatten_separate_to_match_fused(self) -> None:
+        """3D (t=4, nh=8, hd=16) → 2D (t=4, nh*hd=128) via flatten."""
+        torch.manual_seed(42)
+        tensor_3d: torch.Tensor = torch.randn(4, 8, 16)
+        plan = AxisAlignerPlan(
+            pre_flatten=Pair(
+                x=None,
+                y=FlattenPlan(
+                    groups=[FlattenGroup(dim_indices=[1, 2], target_name="nh__hd")]
+                ),
+            ),
+            pattern=Pair(x=None, y=None),
+        )
+
+        result: torch.Tensor = execute_axis_aligner_plan(
+            tensor=tensor_3d, plan=plan, side="y"
+        )
+
+        assert result.shape == (4, 128)
+        assert torch.equal(result, tensor_3d.reshape(4, 128))
+
+    def test_flatten_preserves_data(self) -> None:
+        """Flatten should be equivalent to reshape — verify element equality."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(2, 3, 4, 5)
+        plan = AxisAlignerPlan(
+            pre_flatten=Pair(
+                x=FlattenPlan(
+                    groups=[FlattenGroup(dim_indices=[1, 2], target_name="bc")]
+                ),
+                y=None,
+            ),
+            pattern=Pair(x=None, y=None),
+        )
+
+        result: torch.Tensor = execute_axis_aligner_plan(
+            tensor=tensor, plan=plan, side="x"
+        )
+
+        assert result.shape == (2, 12, 5)
+        assert torch.equal(result, tensor.reshape(2, 12, 5))
+
+    def test_flatten_then_rearrange(self) -> None:
+        """Flatten + reorder: flatten dims 1,2 then swap."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(4, 8, 16, 32)
+        plan = AxisAlignerPlan(
+            pre_flatten=Pair(
+                x=FlattenPlan(
+                    groups=[FlattenGroup(dim_indices=[1, 2], target_name="fused")]
+                ),
+                y=None,
+            ),
+            pattern=Pair(x="t fused d -> t d fused", y=None),
+        )
+
+        result: torch.Tensor = execute_axis_aligner_plan(
+            tensor=tensor, plan=plan, side="x"
+        )
+
+        assert result.shape == (4, 32, 128)
+
+
+class TestEndToEndFusedAlignment:
+    def test_fused_vs_separate_full_pipeline(self) -> None:
+        """Full pipeline: x=fused 2D "t nh*hd", y=separate 3D "t nh hd"."""
+        torch.manual_seed(42)
+        num_heads: int = 8
+        head_dim: int = 16
+
+        x_tensor: torch.Tensor = torch.randn(4, num_heads * head_dim)
+        y_tensor: torch.Tensor = x_tensor.reshape(4, num_heads, head_dim)
+
+        plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="t num_heads*head_dim", y="t num_heads head_dim")
+        )
+        assert plan is not None
+
+        y_aligned: torch.Tensor = execute_axis_aligner_plan(
+            tensor=y_tensor, plan=plan, side="y"
+        )
+
+        assert y_aligned.shape == x_tensor.shape
+        assert torch.equal(y_aligned, x_tensor)
+
+    def test_separate_vs_fused_full_pipeline(self) -> None:
+        """Full pipeline: x=separate 3D "t nh hd", y=fused 2D "t nh*hd"."""
+        torch.manual_seed(42)
+        num_heads: int = 8
+        head_dim: int = 16
+
+        x_tensor: torch.Tensor = torch.randn(4, num_heads, head_dim)
+        y_tensor: torch.Tensor = x_tensor.reshape(4, num_heads * head_dim)
+
+        plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="t num_heads head_dim", y="t num_heads*head_dim")
+        )
+        assert plan is not None
+
+        x_aligned: torch.Tensor = execute_axis_aligner_plan(
+            tensor=x_tensor, plan=plan, side="x"
+        )
+
+        assert x_aligned.shape == y_tensor.shape
+        assert torch.equal(x_aligned, y_tensor)
+
+    def test_fused_with_reorder(self) -> None:
+        """Fused x + reordered separate y: both need alignment."""
+        torch.manual_seed(42)
+        a_size: int = 3
+        b_size: int = 5
+
+        # x: fused "c a*b" shape (7, 15)
+        x_tensor: torch.Tensor = torch.randn(7, a_size * b_size)
+        # y: separate "a b c" shape (3, 5, 7)
+        y_tensor: torch.Tensor = x_tensor.reshape(7, a_size, b_size).permute(1, 2, 0)
+
+        plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="c a*b", y="a b c")
+        )
+        assert plan is not None
+
+        x_aligned: torch.Tensor = execute_axis_aligner_plan(
+            tensor=x_tensor, plan=plan, side="x"
+        )
+        y_aligned: torch.Tensor = execute_axis_aligner_plan(
+            tensor=y_tensor, plan=plan, side="y"
+        )
+
+        assert x_aligned.shape == y_aligned.shape
+        assert torch.allclose(x_aligned, y_aligned)
 
 
 if __name__ == "__main__":
