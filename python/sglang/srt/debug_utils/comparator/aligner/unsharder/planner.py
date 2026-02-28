@@ -42,7 +42,9 @@ def compute_unsharder_plan(
         (spec.name, m) for spec in dim_specs for m in reversed(spec.parallel_modifiers)
     ]
 
-    sharded_axes_raw: set[ParallelAxis] = {m.axis for _, m in reversed_sharded_modifiers}
+    sharded_axes_raw: set[ParallelAxis] = {
+        m.axis for _, m in reversed_sharded_modifiers
+    }
     all_axes: set[ParallelAxis] = {axis for info in parallel_infos for axis in info}
 
     # axis annotated in dims but absent from all parallel_infos -> axis_size=1, skip
