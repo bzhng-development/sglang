@@ -21,13 +21,7 @@ class ParallelAxis(Enum):
     CP = "cp"
     EP = "ep"
     SP = "sp"
-    DP = "dp"
     RECOMPUTE_PSEUDO = "recompute_pseudo"
-
-
-class ParallelState(Enum):
-    SHARDED = "sharded"
-    CONCATED = "concated"
 
 
 class Ordering(Enum):
@@ -43,7 +37,6 @@ class Reduction(Enum):
 class DimSpec:
     name: str
     parallel: Optional[ParallelAxis] = None
-    parallel_state: ParallelState = ParallelState.SHARDED
     ordering: Optional[Ordering] = None
     reduction: Optional[Reduction] = None
 
@@ -101,34 +94,6 @@ for _enum_cls, _field in _MODIFIER_FIELDS:
     for _member in _enum_cls:
         _MODIFIER_LOOKUP[_member.value] = (_field, _member)
 
-_PARALLEL_AXIS_BY_VALUE: dict[str, ParallelAxis] = {m.value: m for m in ParallelAxis}
-_PARALLEL_STATE_BY_VALUE: dict[str, ParallelState] = {m.value: m for m in ParallelState}
-
-
-def _parse_single_modifier(part: str, full_token: str) -> dict[str, Enum]:
-    """Parse one modifier part (e.g. 'tp', 'zigzag', 'dp:concated') into field dict."""
-    if ":" in part:
-        axis_str, state_str = part.split(":", maxsplit=1)
-        axis = _PARALLEL_AXIS_BY_VALUE.get(axis_str)
-        if axis is None:
-            raise ValueError(
-                f"Unknown parallel axis {axis_str!r} in colon modifier {part!r} "
-                f"of dim spec: {full_token!r}"
-            )
-        state = _PARALLEL_STATE_BY_VALUE.get(state_str)
-        if state is None:
-            raise ValueError(
-                f"Unknown parallel state {state_str!r} in colon modifier {part!r} "
-                f"of dim spec: {full_token!r}"
-            )
-
-        return {"parallel": axis, "parallel_state": state}
-
-    if part not in _MODIFIER_LOOKUP:
-        raise ValueError(f"Unknown modifier {part!r} in dim spec: {full_token!r}")
-    field_name, enum_value = _MODIFIER_LOOKUP[part]
-    return {field_name: enum_value}
-
 
 def parse_dim(token: str) -> DimSpec:
     if token == SQUEEZE_DIM_NAME:
@@ -138,21 +103,20 @@ def parse_dim(token: str) -> DimSpec:
     if match is None:
         raise ValueError(f"Invalid dim token: {token!r}")
 
-    name: str = match.group("name")
-    modifiers_str: Optional[str] = match.group("modifiers")
+    name = match.group("name")
+    modifiers_str = match.group("modifiers")
 
     if modifiers_str is None:
         return DimSpec(name=name)
 
     fields: dict[str, Enum] = {}
     for part in (p.strip() for p in modifiers_str.split(",")):
-        modifier_fields: dict[str, Enum] = _parse_single_modifier(part, token)
-        for field_name, enum_value in modifier_fields.items():
-            if field_name in fields:
-                raise ValueError(
-                    f"Multiple {field_name} values in dim token: {token!r}"
-                )
-            fields[field_name] = enum_value
+        if part not in _MODIFIER_LOOKUP:
+            raise ValueError(f"Unknown modifier {part!r} in dim spec: {token!r}")
+        field_name, enum_value = _MODIFIER_LOOKUP[part]
+        if field_name in fields:
+            raise ValueError(f"Multiple {field_name} values in dim token: {token!r}")
+        fields[field_name] = enum_value
 
     return DimSpec(name=name, **fields)
 

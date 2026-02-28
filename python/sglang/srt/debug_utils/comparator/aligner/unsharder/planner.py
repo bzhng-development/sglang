@@ -14,14 +14,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     TOKEN_DIM_NAME,
     DimSpec,
     ParallelAxis,
-    ParallelState,
 )
-
-
-# DP is data-parallel: each rank processes different data, not shards of the
-# same tensor.  It must never participate in unshard or replicated checks.
-_NON_SHARDABLE_AXES: frozenset[ParallelAxis] = frozenset({ParallelAxis.DP})
-
 
 # _CoordsList[tensor_index][axis] =
 #     the axis_rank (shard position) of the tensor_index-th tensor along `axis`
@@ -34,7 +27,6 @@ class _GroupResult(NamedTuple):
     projected_coords: _CoordsList
 
 
-# TODO: refactor and simplify this function
 def compute_unsharder_plan(
     dim_specs: list[DimSpec],
     parallel_infos: list[dict[ParallelAxis, AxisInfo]],
@@ -45,30 +37,18 @@ def compute_unsharder_plan(
         raise ValueError("parallel_infos must not be empty")
 
     sharded_axis_infos: dict[ParallelAxis, DimSpec] = {
-        spec.parallel: spec
-        for spec in dim_specs
-        if spec.parallel is not None and spec.parallel_state == ParallelState.SHARDED
-    }
-    concated_axes: set[ParallelAxis] = {
-        spec.parallel
-        for spec in dim_specs
-        if spec.parallel is not None and spec.parallel_state == ParallelState.CONCATED
+        spec.parallel: spec for spec in dim_specs if spec.parallel is not None
     }
     sharded_axes_raw: set[ParallelAxis] = set(sharded_axis_infos)
 
-    shardable_axes: set[ParallelAxis] = {
-        axis
-        for info in parallel_infos
-        for axis in info
-        if axis not in _NON_SHARDABLE_AXES
-    }
+    all_axes: set[ParallelAxis] = {axis for info in parallel_infos for axis in info}
 
     # axis annotated in dims but absent from all parallel_infos -> axis_size=1, skip
-    sharded_axes: set[ParallelAxis] = sharded_axes_raw & shardable_axes
+    sharded_axes: set[ParallelAxis] = sharded_axes_raw & all_axes
     sharded_axis_infos = {
         k: v for k, v in sharded_axis_infos.items() if k in sharded_axes
     }
-    replicated_axes: set[ParallelAxis] = shardable_axes - sharded_axes - concated_axes
+    replicated_axes: set[ParallelAxis] = all_axes - sharded_axes
 
     if not sharded_axes and not replicated_axes:
         return []

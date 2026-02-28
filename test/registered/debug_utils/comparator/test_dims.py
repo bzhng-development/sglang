@@ -11,7 +11,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     DimSpec,
     Ordering,
     ParallelAxis,
-    ParallelState,
     Reduction,
     _SingletonDimUtil,
     apply_dim_names,
@@ -81,40 +80,6 @@ class TestParseDim:
     def test_squeeze_dim_rejects_modifiers(self) -> None:
         with pytest.raises(ValueError, match="Invalid dim token"):
             parse_dim("1(tp)")
-
-    def test_axis_state_concated(self) -> None:
-        result: DimSpec = parse_dim("t(dp:concated)")
-        assert result == DimSpec(
-            name="t",
-            parallel=ParallelAxis.DP,
-            parallel_state=ParallelState.CONCATED,
-        )
-
-    def test_axis_state_sharded_explicit(self) -> None:
-        assert parse_dim("h(tp:sharded)") == parse_dim("h(tp)")
-
-    def test_dp_axis(self) -> None:
-        result: DimSpec = parse_dim("h(dp)")
-        assert result.parallel == ParallelAxis.DP
-        assert result.parallel_state == ParallelState.SHARDED
-
-    def test_unknown_axis_in_colon_raises(self) -> None:
-        with pytest.raises(ValueError, match="Unknown parallel axis"):
-            parse_dim("h(xyz:concated)")
-
-    def test_unknown_state_in_colon_raises(self) -> None:
-        with pytest.raises(ValueError, match="Unknown parallel state"):
-            parse_dim("h(tp:blah)")
-
-    def test_dp_attn_mlp_dims(self) -> None:
-        result: list[DimSpec] = parse_dims("t(dp:concated) h(tp)")
-        assert len(result) == 2
-        assert result[0] == DimSpec(
-            name="t",
-            parallel=ParallelAxis.DP,
-            parallel_state=ParallelState.CONCATED,
-        )
-        assert result[1] == DimSpec(name="h", parallel=ParallelAxis.TP)
 
 
 class TestParseDims:

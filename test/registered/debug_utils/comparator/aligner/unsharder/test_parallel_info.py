@@ -81,22 +81,6 @@ class TestNormalizeParallelInfo:
         }
         assert normalize_parallel_info(meta) == {}
 
-    def test_dp_info(self) -> None:
-        """Metadata with dp_rank/dp_size correctly extracts ParallelAxis.DP."""
-        meta = {
-            "sglang_parallel_info": {
-                "tp_rank": 0,
-                "tp_size": 2,
-                "dp_rank": 1,
-                "dp_size": 4,
-            }
-        }
-        result = normalize_parallel_info(meta)
-        assert result == {
-            ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
-            ParallelAxis.DP: AxisInfo(axis_rank=1, axis_size=4),
-        }
-
     def test_recompute_pseudo_from_top_level_meta(self) -> None:
         """recompute_pseudo_rank/size at top-level meta is extracted alongside TP."""
         meta = {
