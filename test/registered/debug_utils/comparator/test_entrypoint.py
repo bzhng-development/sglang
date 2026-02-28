@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import textwrap
 from argparse import Namespace
@@ -3562,6 +3563,73 @@ class TestExitCode:
         assert isinstance(summary, SummaryRecord)
         assert summary.failed == 1
         assert exit_code == 1
+
+
+class TestExitCodeSubprocess:
+    """E2E subprocess tests: invoke comparator as a child process and verify exit code."""
+
+    @staticmethod
+    def _run_comparator(
+        baseline_path: Path,
+        target_path: Path,
+        *,
+        grouping: str = "raw",
+        forbid_skip: bool = False,
+    ) -> subprocess.CompletedProcess[str]:
+        cmd: list[str] = [
+            sys.executable,
+            "-m",
+            "sglang.srt.debug_utils.comparator",
+            "--baseline-path",
+            str(baseline_path),
+            "--target-path",
+            str(target_path),
+            "--grouping",
+            grouping,
+            "--output-format",
+            "json",
+        ]
+        if forbid_skip:
+            cmd.append("--forbid-skip")
+        return subprocess.run(cmd, capture_output=True, text=True)
+
+    def test_all_passed_exit_zero(self, tmp_path):
+        """Subprocess: all comparisons pass → exit 0."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        result = self._run_comparator(baseline_path, target_path)
+        assert result.returncode == 0
+
+    def test_failed_exit_nonzero(self, tmp_path):
+        """Subprocess: failed comparison → exit 1."""
+        torch.manual_seed(42)
+        baseline_path = _create_rank_dump(
+            tmp_path / "baseline", rank=0, name="t", tensor=torch.randn(10, 10)
+        )
+        target_path = _create_rank_dump(
+            tmp_path / "target", rank=0, name="t", tensor=torch.randn(10, 10) * 100
+        )
+        result = self._run_comparator(baseline_path, target_path)
+        assert result.returncode == 1
+
+    def test_skipped_without_forbid_exit_zero(self, tmp_path):
+        """Subprocess: skipped comparison without --forbid-skip → exit 0."""
+        baseline_path, target_path = _create_dumps(
+            tmp_path,
+            tensor_names=["tensor_a", "tensor_extra"],
+            baseline_names=["tensor_a"],
+        )
+        result = self._run_comparator(baseline_path, target_path, forbid_skip=False)
+        assert result.returncode == 0
+
+    def test_skipped_with_forbid_exit_nonzero(self, tmp_path):
+        """Subprocess: skipped comparison with --forbid-skip → exit 1."""
+        baseline_path, target_path = _create_dumps(
+            tmp_path,
+            tensor_names=["tensor_a", "tensor_extra"],
+            baseline_names=["tensor_a"],
+        )
+        result = self._run_comparator(baseline_path, target_path, forbid_skip=True)
+        assert result.returncode == 1
 
 
 if __name__ == "__main__":
