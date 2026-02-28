@@ -66,9 +66,7 @@ class TestLoadAllValues:
         assert warnings[0].category == "load_failed"
         assert fn_bad in warnings[0].message
 
-    def test_all_corrupted_emits_warnings_returns_empty(
-        self, tmp_path: Path
-    ) -> None:
+    def test_all_corrupted_emits_warnings_returns_empty(self, tmp_path: Path) -> None:
         """All files corrupted — returns empty list and emits one warning per file."""
         fn0: str = "step=0___rank=0___dump_index=0___name=a.pt"
         fn1: str = "step=0___rank=1___dump_index=0___name=a.pt"
@@ -81,9 +79,7 @@ class TestLoadAllValues:
                 "sglang.srt.debug_utils.comparator.bundle_comparator.warning_sink",
                 sink,
             ):
-                result = _load_all_values(
-                    filenames=[fn0, fn1], base_path=tmp_path
-                )
+                result = _load_all_values(filenames=[fn0, fn1], base_path=tmp_path)
 
         assert len(result) == 0
         assert len(warnings) == 2
