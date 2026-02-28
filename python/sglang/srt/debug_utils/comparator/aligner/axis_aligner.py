@@ -85,10 +85,9 @@ def _semantic_names_match(specs_pair: Pair[list[DimSpec]]) -> bool:
 
     Fused dims expand to sub-dim names for comparison.
     """
-    x_names: list[str] = _expand_non_squeeze(specs_pair.x)
-    y_names: list[str] = _expand_non_squeeze(specs_pair.y)
+    names_pair: Pair[list[str]] = specs_pair.map(_expand_non_squeeze)
 
-    if set(x_names) == set(y_names):
+    if set(names_pair.x) == set(names_pair.y):
         return True
 
     # Local import to avoid circular dependency:
@@ -99,7 +98,7 @@ def _semantic_names_match(specs_pair: Pair[list[DimSpec]]) -> bool:
         ErrorLog(
             category="axis_aligner_dim_mismatch",
             message=(
-                f"AxisAligner: dim name sets differ (x={x_names}, y={y_names}), "
+                f"AxisAligner: dim name sets differ (x={names_pair.x}, y={names_pair.y}), "
                 f"skipping axis swap"
             ),
         )
