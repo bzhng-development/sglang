@@ -34,7 +34,7 @@ class TestParseDim:
     def test_parallel_axis(self) -> None:
         assert parse_dim("h(tp)") == DimSpec(
             name="h",
-            parallel_modifiers=(ParallelModifier(axis=ParallelAxis.TP),),
+            parallel_modifiers=[ParallelModifier(axis=ParallelAxis.TP)],
         )
 
     def test_all_parallel_axes(self) -> None:
@@ -59,15 +59,15 @@ class TestParseDim:
         )
 
     def test_all_qualifiers(self) -> None:
-        assert parse_dim("s(cp:zigzag:partial)") == DimSpec(
+        assert parse_dim("s(cp:zigzag+partial)") == DimSpec(
             name="s",
-            parallel_modifiers=(
+            parallel_modifiers=[
                 ParallelModifier(
                     axis=ParallelAxis.CP,
                     ordering=Ordering.ZIGZAG,
                     reduction=Reduction.PARTIAL,
                 ),
-            ),
+            ],
         )
 
     def test_multi_axis(self) -> None:
@@ -95,11 +95,11 @@ class TestParseDim:
 
     def test_multiple_ordering_raises(self) -> None:
         with pytest.raises(ValueError, match="Multiple ordering"):
-            parse_dim("s(cp:zigzag:natural)")
+            parse_dim("s(cp:zigzag+natural)")
 
     def test_multiple_reduction_raises(self) -> None:
         with pytest.raises(ValueError, match="Multiple reduction"):
-            parse_dim("h(tp:partial:partial)")
+            parse_dim("h(tp:partial+partial)")
 
     def test_duplicate_axis_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate axis"):
@@ -130,13 +130,13 @@ class TestParseDims:
             DimSpec(name="b"),
             DimSpec(
                 name="s",
-                parallel_modifiers=(
+                parallel_modifiers=[
                     ParallelModifier(axis=ParallelAxis.CP, ordering=Ordering.ZIGZAG),
-                ),
+                ],
             ),
             DimSpec(
                 name="h",
-                parallel_modifiers=(ParallelModifier(axis=ParallelAxis.TP),),
+                parallel_modifiers=[ParallelModifier(axis=ParallelAxis.TP)],
             ),
             DimSpec(name="d"),
         ]

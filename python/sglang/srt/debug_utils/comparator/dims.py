@@ -1,9 +1,10 @@
 import re
-from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
 import torch
+
+from sglang.srt.debug_utils.comparator.utils import _FrozenBase
 
 TOKEN_DIM_NAME: str = "t"
 BATCH_DIM_NAME: str = "b"
@@ -33,17 +34,15 @@ class Reduction(Enum):
     PARTIAL = "partial"
 
 
-@dataclass(frozen=True)
-class ParallelModifier:
+class ParallelModifier(_FrozenBase):
     axis: ParallelAxis
     ordering: Optional[Ordering] = None
     reduction: Optional[Reduction] = None
 
 
-@dataclass(frozen=True)
-class DimSpec:
+class DimSpec(_FrozenBase):
     name: str
-    parallel_modifiers: tuple[ParallelModifier, ...] = ()
+    parallel_modifiers: list[ParallelModifier] = []
 
 
 class _SingletonDimUtil:
@@ -96,27 +95,35 @@ _QUALIFIER_LOOKUP: dict[str, Ordering | Reduction] = {
 
 
 def _parse_modifier_token(modifier_token: str, dim_token: str) -> ParallelModifier:
-    """Parse a single modifier token like 'sp', 'cp:zigzag', or 'tp:partial'."""
-    parts: list[str] = modifier_token.split(":")
-    axis_str: str = parts[0].strip()
+    """Parse 'sp', 'cp:zigzag', 'tp:partial', or 'cp:zigzag+partial' → ParallelModifier.
 
+    Format: ``axis`` or ``axis:qual`` or ``axis:qual+qual``.
+    Colon separates axis from qualifiers; ``+`` separates multiple qualifiers.
+    """
+    axis_str: str
+    qualifiers_str: str
+    if ":" in modifier_token:
+        axis_str, qualifiers_str = modifier_token.split(":", maxsplit=1)
+    else:
+        axis_str, qualifiers_str = modifier_token, ""
+
+    axis_str = axis_str.strip()
     if axis_str not in _AXIS_LOOKUP:
         raise ValueError(
             f"Unknown axis {axis_str!r} in modifier {modifier_token!r} "
             f"of dim spec: {dim_token!r}"
         )
-    axis: ParallelAxis = _AXIS_LOOKUP[axis_str]
 
     ordering: Optional[Ordering] = None
     reduction: Optional[Reduction] = None
 
-    for qualifier_str in (p.strip() for p in parts[1:]):
-        if qualifier_str not in _QUALIFIER_LOOKUP:
+    for q_str in (q.strip() for q in qualifiers_str.split("+") if q.strip()):
+        if q_str not in _QUALIFIER_LOOKUP:
             raise ValueError(
-                f"Unknown qualifier {qualifier_str!r} in modifier "
+                f"Unknown qualifier {q_str!r} in modifier "
                 f"{modifier_token!r} of dim spec: {dim_token!r}"
             )
-        qualifier: Ordering | Reduction = _QUALIFIER_LOOKUP[qualifier_str]
+        qualifier: Ordering | Reduction = _QUALIFIER_LOOKUP[q_str]
         if isinstance(qualifier, Ordering):
             if ordering is not None:
                 raise ValueError(
@@ -132,7 +139,9 @@ def _parse_modifier_token(modifier_token: str, dim_token: str) -> ParallelModifi
                 )
             reduction = qualifier
 
-    return ParallelModifier(axis=axis, ordering=ordering, reduction=reduction)
+    return ParallelModifier(
+        axis=_AXIS_LOOKUP[axis_str], ordering=ordering, reduction=reduction
+    )
 
 
 def parse_dim(token: str) -> DimSpec:
@@ -161,7 +170,7 @@ def parse_dim(token: str) -> DimSpec:
         seen_axes.add(modifier.axis)
         modifiers.append(modifier)
 
-    return DimSpec(name=name, parallel_modifiers=tuple(modifiers))
+    return DimSpec(name=name, parallel_modifiers=modifiers)
 
 
 def parse_dims(dims_str: str) -> list[DimSpec]:

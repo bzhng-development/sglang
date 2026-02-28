@@ -37,20 +37,18 @@ def compute_unsharder_plan(
     if not parallel_infos:
         raise ValueError("parallel_infos must not be empty")
 
-    # Collect (dim_name, modifier) pairs. Within each dim spec, reverse the
-    # modifier order so that the innermost shard (rightmost) is unsharded first.
-    sharded_modifiers: list[tuple[str, ParallelModifier]] = []
-    for spec in dim_specs:
-        for modifier in reversed(spec.parallel_modifiers):
-            sharded_modifiers.append((spec.name, modifier))
+    # Within each dim spec, reverse modifier order: innermost shard (rightmost) unshards first.
+    reversed_sharded_modifiers: list[tuple[str, ParallelModifier]] = [
+        (spec.name, m) for spec in dim_specs for m in reversed(spec.parallel_modifiers)
+    ]
 
-    sharded_axes_raw: set[ParallelAxis] = {m.axis for _, m in sharded_modifiers}
+    sharded_axes_raw: set[ParallelAxis] = {m.axis for _, m in reversed_sharded_modifiers}
     all_axes: set[ParallelAxis] = {axis for info in parallel_infos for axis in info}
 
     # axis annotated in dims but absent from all parallel_infos -> axis_size=1, skip
     sharded_axes: set[ParallelAxis] = sharded_axes_raw & all_axes
-    sharded_modifiers = [
-        (name, m) for name, m in sharded_modifiers if m.axis in sharded_axes
+    reversed_sharded_modifiers = [
+        (name, m) for name, m in reversed_sharded_modifiers if m.axis in sharded_axes
     ]
     replicated_axes: set[ParallelAxis] = all_axes - sharded_axes
 
@@ -79,7 +77,7 @@ def compute_unsharder_plan(
                 thd_global_seq_lens=thd_global_seq_lens,
             ),
         )
-        for dim_name, modifier in sharded_modifiers
+        for dim_name, modifier in reversed_sharded_modifiers
     ]
 
     plans: list[UnsharderPlan] = []
