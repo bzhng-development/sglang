@@ -65,7 +65,7 @@ class RecordLocation(_StrictBase):
     step: Optional[int] = None
 
 
-class _BundleComparisonRecord(_OutputRecord):
+class _BaseComparisonRecord(_OutputRecord):
     location: RecordLocation = Field(default_factory=RecordLocation)
 
     def _format_location_prefix(self) -> str:
@@ -92,7 +92,7 @@ class ConfigRecord(_OutputRecord):
         return f"Config: {self.config}"
 
 
-class SkipComparisonRecord(_BundleComparisonRecord):
+class SkipComparisonRecord(_BaseComparisonRecord):
     type: Literal["skip"] = "skip"
     name: str
     reason: str
@@ -136,7 +136,7 @@ class InputIdsRecord(_TableRecord):
         return f"{self.label} input_ids & positions"
 
 
-class TensorComparisonRecord(TensorComparisonInfo, _BundleComparisonRecord):
+class TensorComparisonRecord(TensorComparisonInfo, _BaseComparisonRecord):
     model_config = ConfigDict(extra="forbid", defer_build=True)
 
     type: Literal["comparison"] = "comparison"
@@ -160,7 +160,7 @@ class TensorComparisonRecord(TensorComparisonInfo, _BundleComparisonRecord):
         return body
 
 
-class NonTensorComparisonRecord(_BundleComparisonRecord):
+class NonTensorComparisonRecord(_BaseComparisonRecord):
     type: Literal["non_tensor"] = "non_tensor"
     name: str
     baseline_value: str
