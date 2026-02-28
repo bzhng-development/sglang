@@ -40,9 +40,25 @@ class ParallelModifier(_FrozenBase):
     reduction: Optional[Reduction] = None
 
 
+class SubDimSpec(_FrozenBase):
+    """A sub-axis within a fused dim (e.g. ``num_heads`` in ``num_heads*head_dim``)."""
+
+    name: str
+    parallel_modifiers: list[ParallelModifier] = []
+
+
 class DimSpec(_FrozenBase):
     name: str
     parallel_modifiers: list[ParallelModifier] = []
+    sub_dims: list[SubDimSpec] = []
+
+
+def is_fused(spec: DimSpec) -> bool:
+    return len(spec.sub_dims) > 0
+
+
+def fused_sub_names(spec: DimSpec) -> list[str]:
+    return [s.name for s in spec.sub_dims]
 
 
 class DimsSpec(_FrozenBase):
@@ -154,6 +170,15 @@ def parse_dim(token: str) -> DimSpec:
     if token == SQUEEZE_DIM_NAME:
         return DimSpec(name=SQUEEZE_DIM_NAME)
 
+    # Check for fused dim syntax: "a(tp)*b" or "a*b(tp)*c"
+    sub_tokens: list[str] = _split_fused_token(token)
+    if len(sub_tokens) > 1:
+        return _parse_fused_dim(token=token, sub_tokens=sub_tokens)
+
+    return _parse_single_dim(token)
+
+
+def _parse_single_dim(token: str) -> DimSpec:
     match = _DIM_PATTERN.match(token)
     if match is None:
         raise ValueError(f"Invalid dim token: {token!r}")
@@ -164,19 +189,86 @@ def parse_dim(token: str) -> DimSpec:
     if modifiers_str is None:
         return DimSpec(name=name)
 
+    modifiers: list[ParallelModifier] = _parse_modifiers(
+        modifiers_str=modifiers_str, dim_token=token
+    )
+    return DimSpec(name=name, parallel_modifiers=modifiers)
+
+
+def _parse_sub_dim(token: str, *, full_token: str) -> SubDimSpec:
+    match = _DIM_PATTERN.match(token)
+    if match is None:
+        raise ValueError(
+            f"Invalid sub-dim {token!r} in fused dim token: {full_token!r}"
+        )
+
+    name: str = match.group("name")
+    modifiers_str: Optional[str] = match.group("modifiers")
+
+    if modifiers_str is None:
+        return SubDimSpec(name=name)
+
+    modifiers: list[ParallelModifier] = _parse_modifiers(
+        modifiers_str=modifiers_str, dim_token=full_token
+    )
+    return SubDimSpec(name=name, parallel_modifiers=modifiers)
+
+
+def _parse_fused_dim(*, token: str, sub_tokens: list[str]) -> DimSpec:
+    sub_dims: list[SubDimSpec] = [
+        _parse_sub_dim(st, full_token=token) for st in sub_tokens
+    ]
+
+    all_sub_names: list[str] = [s.name for s in sub_dims]
+    if len(all_sub_names) != len(set(all_sub_names)):
+        raise ValueError(f"Duplicate sub-dim names in fused dim token: {token!r}")
+
+    fused_name: str = "*".join(all_sub_names)
+    return DimSpec(name=fused_name, sub_dims=sub_dims)
+
+
+def _split_fused_token(token: str) -> list[str]:
+    """Split ``"a(tp)*b"`` into ``["a(tp)", "b"]``, respecting parentheses.
+
+    Only splits on ``*`` that is outside parentheses.
+    """
+    parts: list[str] = []
+    current: list[str] = []
+    depth: int = 0
+
+    for char in token:
+        if char == "(":
+            depth += 1
+            current.append(char)
+        elif char == ")":
+            depth -= 1
+            current.append(char)
+        elif char == "*" and depth == 0:
+            parts.append("".join(current))
+            current = []
+        else:
+            current.append(char)
+
+    parts.append("".join(current))
+    return parts
+
+
+def _parse_modifiers(
+    *, modifiers_str: str, dim_token: str
+) -> list[ParallelModifier]:
     modifiers: list[ParallelModifier] = []
     seen_axes: set[ParallelAxis] = set()
 
     for modifier_token in (p.strip() for p in modifiers_str.split(",")):
-        modifier: ParallelModifier = _parse_modifier_token(modifier_token, token)
+        modifier: ParallelModifier = _parse_modifier_token(modifier_token, dim_token)
         if modifier.axis in seen_axes:
             raise ValueError(
-                f"Duplicate axis {modifier.axis.value!r} in dim spec: {token!r}"
+                f"Duplicate axis {modifier.axis.value!r} in dim spec: {dim_token!r}"
             )
         seen_axes.add(modifier.axis)
         modifiers.append(modifier)
 
-    return DimSpec(name=name, parallel_modifiers=modifiers)
+    return modifiers
 
 
 def parse_dims(dims_str: str) -> DimsSpec:
@@ -194,12 +286,19 @@ def parse_dims(dims_str: str) -> DimsSpec:
 
     dims: list[DimSpec] = [parse_dim(token) for token in raw.strip().split()]
 
-    non_squeeze_names: list[str] = [
-        spec.name for spec in dims if not _SingletonDimUtil.is_squeeze(spec)
-    ]
-    if len(non_squeeze_names) != len(set(non_squeeze_names)):
+    # Collect all semantic names (expanding fused sub-dims) for duplicate detection
+    semantic_names: list[str] = []
+    for spec in dims:
+        if _SingletonDimUtil.is_squeeze(spec):
+            continue
+        if is_fused(spec):
+            semantic_names.extend(fused_sub_names(spec))
+        else:
+            semantic_names.append(spec.name)
+
+    if len(semantic_names) != len(set(semantic_names)):
         duplicates = sorted(
-            {n for n in non_squeeze_names if non_squeeze_names.count(n) > 1}
+            {n for n in semantic_names if semantic_names.count(n) > 1}
         )
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
