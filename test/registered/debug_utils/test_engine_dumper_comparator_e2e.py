@@ -96,6 +96,57 @@ patches:
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h(tp:partial)')"
 """
 
+PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
+patches:
+  # --- decoder layer level (aligned with miles test) ---
+  # In dp-attention mode: attn tensors are NOT TP-sharded (attn_tp_size=1),
+  # and mlp_output is already all-reduced inside forward_normal().
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
+    edits:
+      - match: |
+          hidden_states, residual = (
+              self.layer_communicator.prepare_attn_and_capture_last_layer_outputs(
+                  hidden_states,
+                  residual,
+                  forward_batch,
+                  captured_last_layer_outputs=captured_last_layer_outputs,
+                  **kwargs,
+              )
+          )
+        append: "dumper.dump('layer_input', hidden_states, dims='t h')"
+      - match: |
+          hidden_states = self.self_attn(
+              positions=positions,
+              hidden_states=hidden_states,
+              forward_batch=forward_batch,
+          )
+        append: "dumper.dump('attn_output', hidden_states, dims='t h')"
+      - match: |
+          hidden_states, residual = self.layer_communicator.prepare_mlp(
+              hidden_states, residual, forward_batch
+          )
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h')"
+      - match: |
+          hidden_states = self.mlp(
+              hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
+          )
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h')"
+
+  # --- attention internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
+    edits:
+      - match: "output, _ = self.o_proj(attn_output)"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h')"
+
+  # --- moe internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
+    edits:
+      - match: "router_logits, _ = self.gate(hidden_states)"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts')"
+      - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h(tp:partial)')"
+"""
+
 
 class TestSourcePatcherE2ESGLang:
     """E2E: patch Qwen3Moe forward -> dump -> compare."""
@@ -113,18 +164,14 @@ class TestSourcePatcherE2ESGLang:
         """TP=2 baseline vs TP=2+DP=2+dp-attention target.
 
         In dp-attention mode (attn_tp_size=1, attn_dp_size=2), attention
-        tensors are NOT TP-sharded. We override their dims on the target
-        side so the comparator unshards correctly.
+        tensors are NOT TP-sharded and mlp_output is already all-reduced.
+        A separate patch config with corrected dims is used for the target.
         """
         _run_e2e_scenario(
             tmp_path=tmp_path,
             target_tp=BASELINE_TP,
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
-            extra_comparator_args=[
-                "--override-target-dims", "attn_output:t h",
-                "--override-target-dims", "attn_pre_o_proj:t attn_h",
-                "--override-target-dims", "mlp_output:t h",
-            ],
+            target_patch_config_yaml=PATCH_CONFIG_DP_ATTENTION_YAML,
         )
 
 
@@ -136,18 +183,21 @@ def _run_e2e_scenario(
     tmp_path: Path,
     target_tp: int,
     extra_target_server_args: Optional[list[str]] = None,
-    extra_comparator_args: Optional[list[str]] = None,
+    target_patch_config_yaml: Optional[str] = None,
 ) -> None:
     """Full e2e: write patch config -> baseline run -> target run -> compare."""
     base_url: str = DEFAULT_URL_FOR_TEST
 
-    config_path: Path = tmp_path / "patch_config.yaml"
-    config_path.write_text(PATCH_CONFIG_YAML)
+    baseline_config_path: Path = tmp_path / "patch_config.yaml"
+    baseline_config_path.write_text(PATCH_CONFIG_YAML)
+
+    target_config_path: Path = tmp_path / "patch_config_target.yaml"
+    target_config_path.write_text(target_patch_config_yaml or PATCH_CONFIG_YAML)
 
     baseline_dir: Path = tmp_path / "baseline"
     _run_server_and_generate(
         dump_dir=baseline_dir,
-        config_path=config_path,
+        config_path=baseline_config_path,
         tp=BASELINE_TP,
         base_url=base_url,
     )
@@ -156,7 +206,7 @@ def _run_e2e_scenario(
     target_dir: Path = tmp_path / "target"
     _run_server_and_generate(
         dump_dir=target_dir,
-        config_path=config_path,
+        config_path=target_config_path,
         tp=target_tp,
         base_url=base_url,
         extra_server_args=extra_target_server_args,
@@ -181,8 +231,6 @@ def _run_e2e_scenario(
         "--allow-skip-pattern",
         "input_ids|positions",
     ]
-    if extra_comparator_args:
-        cmd.extend(extra_comparator_args)
 
     result: subprocess.CompletedProcess[str] = subprocess.run(
         cmd,
