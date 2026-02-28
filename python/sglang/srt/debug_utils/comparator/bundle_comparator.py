@@ -22,6 +22,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     SEQ_DIM_NAME,
     TOKEN_DIM_NAME,
     apply_dim_names,
+    extract_dp_group_alias,
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
@@ -102,13 +103,8 @@ def _compare_bundle_pair_inner(
         reason = "baseline_load_failed" if not all_pair.x else "target_load_failed"
         return SkipRecord(name=name, reason=reason)
 
-    # 1b. DP filter: keep only the non-empty dp_rank
-    all_pair = Pair(
-        x=filter_to_non_empty_dp_rank(all_pair.x),
-        y=filter_to_non_empty_dp_rank(all_pair.y),
-    )
-
-    # 1c. Dims override: patch meta["dims"] before downstream reads it
+    # 1b. Dims override: patch meta["dims"] before DP filter reads it
+    # (--override-dims may add ``// dp:=moe_dp``, so it must run first)
     if meta_overrider is not None and not meta_overrider.is_empty:
         _apply = meta_overrider.apply_to_meta
         all_pair = Pair(
@@ -125,6 +121,14 @@ def _compare_bundle_pair_inner(
                 for v in all_pair.y
             ],
         )
+
+    # 1c. DP filter: keep only the non-empty dp_rank
+    dp_alias_x: Optional[str] = _extract_dp_alias_from_items(all_pair.x)
+    dp_alias_y: Optional[str] = _extract_dp_alias_from_items(all_pair.y)
+    all_pair = Pair(
+        x=filter_to_non_empty_dp_rank(all_pair.x, dp_group_alias=dp_alias_x),
+        y=filter_to_non_empty_dp_rank(all_pair.y, dp_group_alias=dp_alias_y),
+    )
 
     # 2. Check if any side has non-tensor values → non-tensor display path
     has_non_tensor: bool = any(
@@ -144,6 +148,14 @@ def _compare_bundle_pair_inner(
         viz_output_dir=viz_output_dir,
         compute_per_token=compute_per_token,
     )
+
+
+def _extract_dp_alias_from_items(items: list[ValueWithMeta]) -> Optional[str]:
+    """Extract dp group alias from the first item's ``meta["dims"]``."""
+    if not items:
+        return None
+    dims_str: Optional[str] = items[0].meta.get("dims")
+    return extract_dp_group_alias(dims_str)
 
 
 def _compare_bundle_pair_tensor_type(

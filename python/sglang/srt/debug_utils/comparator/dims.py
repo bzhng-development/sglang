@@ -173,11 +173,17 @@ def parse_dim(token: str) -> DimSpec:
 
 
 def parse_dims(dims_str: str) -> list[DimSpec]:
-    """Parse 'b s(cp:zigzag) h(tp) d' -> list[DimSpec]."""
-    if not dims_str.strip():
+    """Parse 'b s(cp:zigzag) h(tp) d' -> list[DimSpec].
+
+    A ``//`` separator may follow the shape part; everything after it
+    (tensor-level declarations like ``dp:=moe_dp``) is ignored here.
+    """
+    raw: str = dims_str.split("//", maxsplit=1)[0]
+
+    if not raw.strip():
         raise ValueError("dims string must not be empty")
 
-    result = [parse_dim(token) for token in dims_str.strip().split()]
+    result = [parse_dim(token) for token in raw.strip().split()]
 
     non_squeeze_names: list[str] = [
         spec.name for spec in result if not _SingletonDimUtil.is_squeeze(spec)
@@ -219,3 +225,28 @@ def apply_dim_names(tensor: torch.Tensor, dim_names: list[str]) -> torch.Tensor:
 
 def strip_dim_names(tensor: torch.Tensor) -> torch.Tensor:
     return tensor.rename(None)
+
+
+_DP_ALIAS_PATTERN = re.compile(r"^dp:=(\w+)$")
+
+
+def extract_dp_group_alias(dims_str: Optional[str]) -> Optional[str]:
+    """Extract the dp group alias from a dims string's ``//`` section.
+
+    E.g. ``"b s h(tp) // dp:=moe_dp"`` → ``"moe_dp"``.
+    Returns ``None`` when *dims_str* is ``None``, has no ``//``, or
+    contains no ``dp:=`` token.
+    """
+    if dims_str is None:
+        return None
+
+    parts: list[str] = dims_str.split("//", maxsplit=1)
+    if len(parts) < 2:
+        return None
+
+    for token in parts[1].strip().split():
+        match = _DP_ALIAS_PATTERN.match(token)
+        if match is not None:
+            return match.group(1)
+
+    return None
