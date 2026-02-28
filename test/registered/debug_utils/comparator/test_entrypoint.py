@@ -1074,12 +1074,19 @@ class TestEntrypointGroupingLogical:
         args = _make_args(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
+            grouping="logical",
+            token_aligner="smart",
             diff_threshold=0.01,
         )
 
         records, _ = _run_and_parse(args, capsys)
-        comp = _assert_single_comparison_passed(records)
-        assert comp.name == "hidden"
+
+        comparisons: list[ComparisonRecord] = _get_comparisons(records)
+        hidden_comparisons: list[ComparisonRecord] = [
+            c for c in comparisons if c.name == "hidden"
+        ]
+        assert len(hidden_comparisons) >= 1
+        assert all(c.diff is not None and c.diff.passed for c in hidden_comparisons)
 
 
 class TestEntrypointConcatMode:
@@ -2535,10 +2542,31 @@ def _create_cp_zigzag_sp_sharded_dumps(
         dtype=torch.int64,
     )
 
+    # Build per-rank input_ids (zigzag-split + SP-split, same structure as main tensor)
+    all_ids: torch.Tensor = torch.arange(sum(seq_lens), dtype=torch.int64)
+    offset_ids: int = 0
+    rank_id_segments: list[list[torch.Tensor]] = [
+        [] for _ in range(cp_size * sp_size)
+    ]
+    for seq_len in seq_lens:
+        seq_ids: torch.Tensor = all_ids[offset_ids : offset_ids + seq_len]
+        cp_id_chunks: list[torch.Tensor] = _zigzag_split_seq(
+            seq_ids, cp_size=cp_size
+        )
+        for cp_rank_i in range(cp_size):
+            sp_id_chunks: list[torch.Tensor] = list(
+                cp_id_chunks[cp_rank_i].chunk(sp_size, dim=0)
+            )
+            for sp_rank_i in range(sp_size):
+                flat_r: int = cp_rank_i * sp_size + sp_rank_i
+                rank_id_segments[flat_r].append(sp_id_chunks[sp_rank_i])
+        offset_ids += seq_len
+
     for cp_rank in range(cp_size):
         for sp_rank in range(sp_size):
             flat_rank: int = cp_rank * sp_size + sp_rank
             rank_tensor: torch.Tensor = torch.cat(rank_segments[flat_rank], dim=0)
+            rank_ids: torch.Tensor = torch.cat(rank_id_segments[flat_rank], dim=0)
             _create_rank_dump(
                 directory,
                 rank=flat_rank,
@@ -2553,7 +2581,10 @@ def _create_cp_zigzag_sp_sharded_dumps(
                 },
                 framework="megatron",
                 num_steps=num_steps,
-                extra_dumps=[("cu_seqlens_q", cu_seqlens_q)],
+                extra_dumps=[
+                    ("cu_seqlens_q", cu_seqlens_q),
+                    ("input_ids", rank_ids),
+                ],
             )
 
     return directory / _FIXED_EXP_NAME
