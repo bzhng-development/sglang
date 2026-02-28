@@ -29,7 +29,6 @@ from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_ra
 from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ErrorLog,
-    InfoLog,
     NonTensorComparisonRecord,
     SkipComparisonRecord,
     TensorComparisonRecord,
@@ -335,8 +334,8 @@ def _load_all_values(filenames: list[str], base_path: Path) -> list[ValueWithMet
     for f in filenames:
         item: ValueWithMeta = ValueWithMeta.load(base_path / f)
         if item.value is LOAD_FAILED:
-            warning_sink.add(
-                GeneralWarning(
+            log_sink.add(
+                ErrorLog(
                     category="load_failed",
                     message=f"Failed to load tensor file: {f}",
                 )

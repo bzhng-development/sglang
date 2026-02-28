@@ -16,13 +16,14 @@ from sglang.srt.debug_utils.comparator.entrypoint import (
 from sglang.srt.debug_utils.comparator.output_types import (
     AnyRecord,
     ConfigRecord,
-    GeneralWarning,
+    ErrorLog,
+    InfoLog,
+    LogRecord,
     NonTensorComparisonRecord,
     ReplicatedCheckResult,
     SkipComparisonRecord,
     SummaryRecord,
     TensorComparisonRecord,
-    WarningRecord,
     _OutputRecord,
     parse_record_json,
 )
@@ -1750,7 +1751,8 @@ class TestEntrypointReplicatedAxis:
 
         records, _ = _run_and_parse(argv, capsys)
         comp = _assert_single_comparison_passed(records)
-        assert comp.warnings == []
+        assert comp.errors == []
+        assert comp.infos == []
         assert all(c.passed for c in comp.replicated_checks)
 
         summary = records[-1]
@@ -2015,15 +2017,15 @@ class TestEntrypointAlignment:
 
         records, _ = _run_and_parse(argv, capsys)
 
-        warning_records = [r for r in records if isinstance(r, WarningRecord)]
-        layout_warnings = [
-            w
-            for wr in warning_records
-            for w in wr.warnings
-            if isinstance(w, GeneralWarning)
-            and w.category == "layout_detection_fallback"
+        log_records = [r for r in records if isinstance(r, LogRecord)]
+        layout_infos = [
+            i
+            for lr in log_records
+            for i in lr.infos
+            if isinstance(i, InfoLog)
+            and i.category == "layout_detection_fallback"
         ]
-        assert len(layout_warnings) == 1
+        assert len(layout_infos) == 1
 
         comparisons = _get_comparisons(records)
         # AUX_NAMES filtered out → only hidden_states remains
@@ -2052,14 +2054,14 @@ class TestEntrypointAlignment:
         run(parse_args(argv))
         captured = capsys.readouterr()
         records = _parse_jsonl(captured.out)
-        warning_records = [r for r in records if isinstance(r, WarningRecord)]
-        aux_missing_warnings = [
-            w
-            for wr in warning_records
-            for w in wr.warnings
-            if isinstance(w, GeneralWarning) and w.category == "aux_tensors_missing"
+        log_records = [r for r in records if isinstance(r, LogRecord)]
+        aux_missing_infos = [
+            i
+            for lr in log_records
+            for i in lr.infos
+            if isinstance(i, InfoLog) and i.category == "aux_tensors_missing"
         ]
-        assert len(aux_missing_warnings) == 1
+        assert len(aux_missing_infos) == 1
 
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 2
