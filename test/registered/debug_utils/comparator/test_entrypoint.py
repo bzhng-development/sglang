@@ -3139,6 +3139,127 @@ class TestEntrypointDpFilter:
             _run_and_parse(args, capsys)
 
 
+class TestEntrypointDpConcated:
+    """E2E tests for DP concated axis (dp_attn scenario).
+
+    When DP > 1 with dp_attn, MLP tensors have dims like 't(dp:concated) h(tp)'.
+    dp_utils filters empty dp_rank items first, then the concated DP axis
+    is excluded from unshard — only TP is concat'd.
+    """
+
+    def test_dp2_tp2_concated(self, tmp_path: Path, capsys) -> None:
+        """DP=2, TP=2, dims='t(dp:concated) h(tp)': dp_rank=0 has data, dp_rank=1 empty."""
+        torch.manual_seed(42)
+        full_tensor: torch.Tensor = torch.randn(10, 8)
+        tp_chunks: list[torch.Tensor] = list(full_tensor.chunk(2, dim=1))
+
+        target_full: torch.Tensor = full_tensor + torch.randn(10, 8) * 0.001
+        target_tp_chunks: list[torch.Tensor] = list(target_full.chunk(2, dim=1))
+
+        for side_dir_name, chunks in [
+            ("baseline", tp_chunks),
+            ("target", target_tp_chunks),
+        ]:
+            side_dir: Path = tmp_path / side_dir_name
+            side_dir.mkdir()
+
+            rank: int = 0
+            for dp_rank in range(2):
+                for tp_rank in range(2):
+                    tensor: torch.Tensor = (
+                        chunks[tp_rank] if dp_rank == 0 else torch.empty(0, 4)
+                    )
+                    _create_rank_dump(
+                        side_dir,
+                        rank=rank,
+                        name="hidden",
+                        tensor=tensor,
+                        dims="t(dp:concated) h(tp)",
+                        parallel_info={
+                            "tp_rank": tp_rank,
+                            "tp_size": 2,
+                            "dp_rank": dp_rank,
+                            "dp_size": 2,
+                        },
+                        framework="sglang",
+                    )
+                    rank += 1
+
+        args: Namespace = _make_args(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            grouping="logical",
+            diff_threshold=1e-3,
+        )
+        records: list[AnyRecord] = _run_and_parse(args, capsys)
+
+        comparison: ComparisonRecord = _assert_single_comparison_passed(records)
+        assert comparison.name == "hidden"
+        assert comparison.unified_shape == [10, 8]
+
+        summary: SummaryRecord = [
+            r for r in records if isinstance(r, SummaryRecord)
+        ][0]
+        assert summary.passed == 1
+        assert summary.failed == 0
+
+    def test_dp2_tp4_concated(self, tmp_path: Path, capsys) -> None:
+        """DP=2, TP=4, dims='t(dp:concated) h(tp)': 8 ranks, dp_rank=0 has data."""
+        torch.manual_seed(42)
+        full_tensor: torch.Tensor = torch.randn(10, 16)
+        tp_chunks: list[torch.Tensor] = list(full_tensor.chunk(4, dim=1))
+
+        target_full: torch.Tensor = full_tensor + torch.randn(10, 16) * 0.001
+        target_tp_chunks: list[torch.Tensor] = list(target_full.chunk(4, dim=1))
+
+        for side_dir_name, chunks in [
+            ("baseline", tp_chunks),
+            ("target", target_tp_chunks),
+        ]:
+            side_dir: Path = tmp_path / side_dir_name
+            side_dir.mkdir()
+
+            rank: int = 0
+            for dp_rank in range(2):
+                for tp_rank in range(4):
+                    tensor: torch.Tensor = (
+                        chunks[tp_rank] if dp_rank == 0 else torch.empty(0, 4)
+                    )
+                    _create_rank_dump(
+                        side_dir,
+                        rank=rank,
+                        name="hidden",
+                        tensor=tensor,
+                        dims="t(dp:concated) h(tp)",
+                        parallel_info={
+                            "tp_rank": tp_rank,
+                            "tp_size": 4,
+                            "dp_rank": dp_rank,
+                            "dp_size": 2,
+                        },
+                        framework="sglang",
+                    )
+                    rank += 1
+
+        args: Namespace = _make_args(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            grouping="logical",
+            diff_threshold=1e-3,
+        )
+        records: list[AnyRecord] = _run_and_parse(args, capsys)
+
+        comparison: ComparisonRecord = _assert_single_comparison_passed(records)
+        assert comparison.name == "hidden"
+        assert comparison.unified_shape == [10, 16]
+
+        summary: SummaryRecord = [
+            r for r in records if isinstance(r, SummaryRecord)
+        ][0]
+        assert summary.passed == 1
+        assert summary.failed == 0
+
+
 class TestEntrypointMetaOverride:
     """E2E: dump with wrong dims → --override-dims / --override-config corrects at comparison time."""
 
