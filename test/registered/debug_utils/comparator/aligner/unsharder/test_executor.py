@@ -794,9 +794,7 @@ class TestFusedDimExecutor:
         )
 
         assert len(unsharder_result.tensors) == 1
-        assert torch.allclose(
-            unsharder_result.tensors[0].rename(None), full_tensor
-        )
+        assert torch.allclose(unsharder_result.tensors[0].rename(None), full_tensor)
 
 
 if __name__ == "__main__":

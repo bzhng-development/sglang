@@ -287,9 +287,7 @@ def _split_fused_token(token: str) -> list[str]:
     return parts
 
 
-def _parse_modifiers(
-    *, modifiers_str: str, dim_token: str
-) -> list[ParallelModifier]:
+def _parse_modifiers(*, modifiers_str: str, dim_token: str) -> list[ParallelModifier]:
     modifiers: list[ParallelModifier] = []
     seen_axes: set[ParallelAxis] = set()
 
@@ -331,9 +329,7 @@ def parse_dims(dims_str: str) -> DimsSpec:
             semantic_names.append(spec.name)
 
     if len(semantic_names) != len(set(semantic_names)):
-        duplicates = sorted(
-            {n for n in semantic_names if semantic_names.count(n) > 1}
-        )
+        duplicates = sorted({n for n in semantic_names if semantic_names.count(n) > 1})
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
     dp_group_alias: Optional[str] = (

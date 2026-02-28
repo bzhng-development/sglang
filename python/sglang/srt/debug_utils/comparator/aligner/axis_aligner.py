@@ -46,9 +46,7 @@ def compute_axis_aligner_plan(
 
     dims_pair: Pair[str] = Pair(x=dims_str_pair.x, y=dims_str_pair.y)
 
-    specs_pair: Pair[list[DimSpec]] = dims_pair.map(
-        lambda s: parse_dims(s).dims
-    )
+    specs_pair: Pair[list[DimSpec]] = dims_pair.map(lambda s: parse_dims(s).dims)
 
     # Verify both sides share the same semantic name set (expanded, no squeeze)
     if not _semantic_names_match(specs_pair):
@@ -56,12 +54,8 @@ def compute_axis_aligner_plan(
 
     # Compute flatten plans: flatten the *separate* side to match the fused side
     pre_flatten: Pair[Optional[FlattenPlan]] = Pair(
-        x=_compute_flatten_plan(
-            this_specs=specs_pair.x, other_specs=specs_pair.y
-        ),
-        y=_compute_flatten_plan(
-            this_specs=specs_pair.y, other_specs=specs_pair.x
-        ),
+        x=_compute_flatten_plan(this_specs=specs_pair.x, other_specs=specs_pair.y),
+        y=_compute_flatten_plan(this_specs=specs_pair.y, other_specs=specs_pair.x),
     )
 
     # After flatten, compute the physical dim names for einops pattern.
@@ -72,9 +66,7 @@ def compute_axis_aligner_plan(
     )
 
     # Target order: y's post-flatten names, with squeeze dims filtered out
-    target_order: list[str] = [
-        n for n in post_flatten_names.y if n != SQUEEZE_DIM_NAME
-    ]
+    target_order: list[str] = [n for n in post_flatten_names.y if n != SQUEEZE_DIM_NAME]
 
     pattern: Pair[Optional[str]] = post_flatten_names.map(
         lambda names: _build_pattern(source=names, target=target_order)
@@ -176,9 +168,7 @@ def _compute_flatten_plan(
 
 
 def _are_consecutive(indices: list[int]) -> bool:
-    return all(
-        indices[i] + 1 == indices[i + 1] for i in range(len(indices) - 1)
-    )
+    return all(indices[i] + 1 == indices[i + 1] for i in range(len(indices) - 1))
 
 
 def _names_after_flatten(
@@ -242,9 +232,7 @@ def execute_axis_aligner_plan(
     return tensor
 
 
-def _execute_flatten(
-    tensor: torch.Tensor, plan: FlattenPlan
-) -> torch.Tensor:
+def _execute_flatten(tensor: torch.Tensor, plan: FlattenPlan) -> torch.Tensor:
     """Flatten groups of consecutive dims via reshape.
 
     Processes groups in reverse index order so earlier indices remain valid.
