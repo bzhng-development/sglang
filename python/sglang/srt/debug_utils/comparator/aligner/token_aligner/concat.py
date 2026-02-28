@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Optional
+
 import torch
 
 from sglang.srt.debug_utils.comparator.dims import (
+    SEQ_DIM_NAME,
     TOKEN_DIM_NAME,
-    resolve_dim_by_name,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
 
@@ -28,10 +30,20 @@ def execute_concat(
 
 
 def _resolve_token_dim(tensor: torch.Tensor) -> int:
+    """Find the token/seq dim index. Falls back to dim 0 for unnamed tensors or
+    tensors without a recognised token/seq dim."""
     if tensor.names[0] is None:
         return _UNNAMED_TOKEN_DIM_FALLBACK
-    return resolve_dim_by_name(tensor, TOKEN_DIM_NAME)
+
+    names: tuple[Optional[str], ...] = tensor.names
+    for candidate in (TOKEN_DIM_NAME, SEQ_DIM_NAME):
+        if candidate in names:
+            return list(names).index(candidate)
+
+    return _UNNAMED_TOKEN_DIM_FALLBACK
 
 
-def _concat_steps(tensor_of_step: dict[int, torch.Tensor], *, dim: int) -> torch.Tensor:
+def _concat_steps(
+    tensor_of_step: dict[int, torch.Tensor], *, dim: int
+) -> torch.Tensor:
     return torch.cat([tensor_of_step[s] for s in sorted(tensor_of_step)], dim=dim)

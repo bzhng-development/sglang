@@ -59,6 +59,26 @@ class TestExecuteConcat:
         assert result.x.shape == (2, 6, 4)
         assert result.y.shape == (2, 6, 4)
 
+    def test_named_dims_no_token_dim_fallback(self) -> None:
+        """Named dims without t or s → fallback to dim 0."""
+        x = torch.randn(4, 8).refine_names("b", "h")
+        y = torch.randn(3, 8).refine_names("b", "h")
+        result: Pair[torch.Tensor] = execute_concat(
+            tensor_of_step_pair=Pair(x={0: x}, y={0: y}),
+        )
+        assert result.x.shape == (3, 8)
+        assert result.y.shape == (3, 8)
+
+    def test_seq_dim_fallback(self) -> None:
+        """Named dims with s but no t → uses s as token dim."""
+        x = torch.randn(2, 5, 4).refine_names("b", "s", "h")
+        y = torch.randn(2, 3, 4).refine_names("b", "s", "h")
+        result: Pair[torch.Tensor] = execute_concat(
+            tensor_of_step_pair=Pair(x={0: x}, y={0: y}),
+        )
+        assert result.x.shape == (2, 3, 4)
+        assert result.y.shape == (2, 3, 4)
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))

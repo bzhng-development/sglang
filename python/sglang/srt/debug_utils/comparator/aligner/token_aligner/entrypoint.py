@@ -3,13 +3,11 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional
 
 import polars as pl
 
-from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
-    TokenAlignerMode,
-)
+TokenAlignerMode = Literal["concat", "smart"]
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_loader import (
     has_aux_tensors,
     load_and_normalize_aux,

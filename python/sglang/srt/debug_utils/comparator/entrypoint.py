@@ -6,9 +6,6 @@ from typing import Any, Iterator, Optional, Union
 
 import polars as pl
 
-from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
-    TokenAlignerMode,
-)
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.entrypoint import (
     TokenAlignerResult,
     compute_maybe_token_aligner_result,
@@ -164,7 +161,7 @@ def _compare_bundle_pairs(
     bundle_info_pairs: list[Pair[TensorBundleInfo]],
     baseline_path: Path,
     target_path: Path,
-    token_aligner_mode: Optional[TokenAlignerMode],
+    token_aligner_mode: Optional[str],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
     thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
