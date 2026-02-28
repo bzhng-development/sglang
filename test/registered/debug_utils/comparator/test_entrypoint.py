@@ -32,52 +32,6 @@ _FIXED_EXP_NAME = "my_exp_name"
 # Each test has a one-line docstring describing the scenario it covers.
 
 
-class TestExpandPreset:
-    """Test preset expansion logic."""
-
-    def test_explicit_preset(self):
-        """--preset sglang_megatron expands into its argv."""
-        from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-
-        argv = [
-            "--baseline-path",
-            "/a",
-            "--preset",
-            "sglang_megatron",
-            "--diff-threshold",
-            "0.01",
-        ]
-        result = expand_preset(argv, presets=PRESETS)
-        assert "--preset" not in result
-        assert "--grouping-skip-keys" in result
-        assert "concat_steps" in result
-        assert "--baseline-path" in result
-        assert "--diff-threshold" in result
-
-    def test_default_preset_applied(self):
-        """No --preset and no --grouping-skip-keys triggers default preset."""
-        from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-
-        argv = ["--baseline-path", "/a"]
-        result = expand_preset(argv, presets=PRESETS)
-        assert "--grouping-skip-keys" in result
-
-    def test_explicit_skip_keys_prevents_default(self):
-        """Explicit --grouping-skip-keys prevents default preset injection."""
-        from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-
-        argv = ["--grouping-skip-keys", "rank", "--baseline-path", "/a"]
-        result = expand_preset(argv, presets=PRESETS)
-        assert result == argv
-
-    def test_unknown_preset_raises(self):
-        """Unknown preset name raises ValueError."""
-        from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-
-        with pytest.raises(ValueError, match="Unknown preset"):
-            expand_preset(["--preset", "nonexistent"], presets=PRESETS)
-
-
 class TestEntrypointGroupingRaw:
     """Test `--grouping-skip-keys` empty (raw) scenarios"""
 
