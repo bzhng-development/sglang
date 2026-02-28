@@ -36,8 +36,11 @@ from sglang.srt.debug_utils.comparator.output_types import (
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
+from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.dump_loader import read_meta, read_tokenizer_path
+
+_DEFAULT_SKIP_KEYS: set[str] = {"dump_index", "filename"}
 
 
 def main() -> None:
@@ -76,9 +79,7 @@ def run(args: argparse.Namespace) -> int:
 
         bundle_info_pairs: list[Pair[TensorBundleInfo]] = match_bundles(
             dfs=dfs,
-            skip_keys=_compute_skip_keys(
-                args, has_token_aligner=ta_result.mode is not None
-            ),
+            skip_keys=_compute_skip_keys(args),
         )
 
         viz_output_dir: Optional[Path] = (
@@ -182,12 +183,10 @@ def _read_df(args: argparse.Namespace) -> Pair[pl.DataFrame]:
     return Pair(x=df_baseline, y=df_target)
 
 
-def _compute_skip_keys(args, *, has_token_aligner: bool) -> set[str]:
-    skip_keys: set[str] = {"dump_index", "filename"}
-    if args.grouping == "logical":
-        skip_keys |= {"rank", "recompute_status"}
-        if has_token_aligner:
-            skip_keys |= {"step"}
+def _compute_skip_keys(args: argparse.Namespace) -> set[str]:
+    skip_keys: set[str] = set(_DEFAULT_SKIP_KEYS)
+    if args.grouping_skip_keys is not None:
+        skip_keys |= set(args.grouping_skip_keys)
     return skip_keys
 
 
@@ -212,19 +211,30 @@ def _compare_bundle_pairs(
         filenames_pair: Pair[list[str]] = bundle_info_pair.map(
             lambda infos: [info.filename for info in infos]
         )
-        yield compare_bundle_pair(
-            name=name,
-            filenames_pair=filenames_pair,
-            baseline_path=baseline_path,
-            target_path=target_path,
-            token_aligner_mode=token_aligner_mode,
-            token_aligner_plan=token_aligner_plan,
-            diff_threshold=diff_threshold,
-            thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
-            viz_output_dir=viz_output_dir,
-            compute_per_token=compute_per_token,
-            meta_overrider=meta_overrider,
+        record: Union[ComparisonRecord, SkipRecord, NonTensorRecord] = (
+            compare_bundle_pair(
+                name=name,
+                filenames_pair=filenames_pair,
+                baseline_path=baseline_path,
+                target_path=target_path,
+                token_aligner_mode=token_aligner_mode,
+                token_aligner_plan=token_aligner_plan,
+                diff_threshold=diff_threshold,
+                thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
+                viz_output_dir=viz_output_dir,
+                compute_per_token=compute_per_token,
+                meta_overrider=meta_overrider,
+            )
         )
+
+        target_steps: set[int] = {info.step for info in bundle_info_pair.y}
+        step: Optional[int] = (
+            target_steps.pop() if len(target_steps) == 1 else None
+        )
+        if step is not None:
+            record = record.model_copy(update={"step": step})
+
+        yield record
 
 
 def _consume_comparison_records(
@@ -257,6 +267,9 @@ def _consume_comparison_records(
 
 
 def _parse_args() -> argparse.Namespace:
+    argv: list[str] = sys.argv[1:]
+    argv = expand_preset(argv, presets=PRESETS)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline-path", type=str)
     parser.add_argument("--target-path", type=str)
@@ -274,18 +287,28 @@ def _parse_args() -> argparse.Namespace:
         help="Output format: text (default) or json (JSONL, one JSON object per line)",
     )
     parser.add_argument(
-        "--grouping",
+        "--preset",
         type=str,
-        choices=["logical", "raw"],
-        default="logical",
-        help="Grouping mode: logical (cross-rank unshard) or raw (rank-by-rank)",
+        choices=list(PRESETS.keys()),
+        default=None,
+        help="Preset configuration (expanded before parsing). "
+        f"Available: {list(PRESETS.keys())}",
+    )
+    parser.add_argument(
+        "--grouping-skip-keys",
+        nargs="*",
+        default=None,
+        help="Metadata keys to skip when grouping bundles (additive on top of "
+        "always-skipped dump_index and filename). "
+        "E.g. '--grouping-skip-keys rank step' skips rank and step.",
     )
     parser.add_argument(
         "--token-aligner",
         type=str,
         choices=["smart", "concat_steps"],
-        default="concat_steps",
-        help="Token aligner mode: concat_steps (BS=1, no aux needed) or smart (BS>1, sequence matching)",
+        default=None,
+        help="Token aligner mode: concat_steps (BS=1, no aux needed) or smart (BS>1, sequence matching). "
+        "Default None (per-step comparison).",
     )
     parser.add_argument(
         "--tokenizer",
@@ -354,4 +377,4 @@ def _parse_args() -> argparse.Namespace:
         "Pass empty string '' to disable.",
     )
 
-    return parser.parse_args()
+    return parser.parse_args(argv)
