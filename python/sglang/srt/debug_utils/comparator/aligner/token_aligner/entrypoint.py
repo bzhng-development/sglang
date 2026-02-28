@@ -7,7 +7,6 @@ from typing import Literal, Optional
 
 import polars as pl
 
-TokenAlignerMode = Literal["concat", "smart"]
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_loader import (
     has_aux_tensors,
     load_and_normalize_aux,
@@ -28,6 +27,9 @@ from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 
 _NONE_THD: Pair[Optional[dict[int, list[int]]]] = Pair(x=None, y=None)
+
+
+TokenAlignerMode = Literal["concat", "smart"]
 
 
 @dataclass(frozen=True)
