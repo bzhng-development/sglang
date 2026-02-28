@@ -207,7 +207,9 @@ class TestPerTokenHeatmapManualVerify:
         the left (small diff), bright/hot on the right (large diff). Multiple
         rows for different tensor names. Colorbar shows log10 scale.
         """
-        from sglang.srt.debug_utils.comparator.output_types import TensorComparisonRecord
+        from sglang.srt.debug_utils.comparator.output_types import (
+            TensorComparisonRecord,
+        )
         from sglang.srt.debug_utils.comparator.per_token_visualizer import (
             generate_per_token_heatmap,
         )
@@ -250,7 +252,9 @@ class TestPerTokenHeatmapManualVerify:
         Expected: Heatmap shows one bright vertical stripe at the spike position,
         rest is dark/cold.
         """
-        from sglang.srt.debug_utils.comparator.output_types import TensorComparisonRecord
+        from sglang.srt.debug_utils.comparator.output_types import (
+            TensorComparisonRecord,
+        )
         from sglang.srt.debug_utils.comparator.per_token_visualizer import (
             generate_per_token_heatmap,
         )

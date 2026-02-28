@@ -200,7 +200,9 @@ def _compare_bundle_pairs(
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
     meta_overrider: Optional[MetaOverrider] = None,
-) -> Iterator[Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]]:
+) -> Iterator[
+    Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]
+]:
     for bundle_info_pair in bundle_info_pairs:
         if not bundle_info_pair.y:
             continue
@@ -209,35 +211,35 @@ def _compare_bundle_pairs(
         filenames_pair: Pair[list[str]] = bundle_info_pair.map(
             lambda infos: [info.filename for info in infos]
         )
-        record: Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord] = (
-            compare_bundle_pair(
-                name=name,
-                filenames_pair=filenames_pair,
-                baseline_path=baseline_path,
-                target_path=target_path,
-                token_aligner_mode=token_aligner_mode,
-                token_aligner_plan=token_aligner_plan,
-                diff_threshold=diff_threshold,
-                thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
-                viz_output_dir=viz_output_dir,
-                compute_per_token=compute_per_token,
-                meta_overrider=meta_overrider,
-            )
+        record: Union[
+            TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord
+        ] = compare_bundle_pair(
+            name=name,
+            filenames_pair=filenames_pair,
+            baseline_path=baseline_path,
+            target_path=target_path,
+            token_aligner_mode=token_aligner_mode,
+            token_aligner_plan=token_aligner_plan,
+            diff_threshold=diff_threshold,
+            thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
+            viz_output_dir=viz_output_dir,
+            compute_per_token=compute_per_token,
+            meta_overrider=meta_overrider,
         )
 
         target_steps: set[int] = {info.step for info in bundle_info_pair.y}
         step: Optional[int] = target_steps.pop() if len(target_steps) == 1 else None
         if step is not None:
-            record = record.model_copy(
-                update={"location": RecordLocation(step=step)}
-            )
+            record = record.model_copy(update={"location": RecordLocation(step=step)})
 
         yield record
 
 
 def _consume_comparison_records(
     *,
-    comparison_records: Iterator[Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]],
+    comparison_records: Iterator[
+        Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]
+    ],
     visualize_per_token: Optional[Path] = None,
 ) -> tuple[SummaryRecord, list[str]]:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
@@ -249,7 +251,9 @@ def _consume_comparison_records(
         report_sink.add(record)
         if isinstance(record, SkipComparisonRecord) and record.category == "skipped":
             skipped_names.append(record.name)
-        if visualize_per_token is not None and isinstance(record, TensorComparisonRecord):
+        if visualize_per_token is not None and isinstance(
+            record, TensorComparisonRecord
+        ):
             collected_comparisons.append(record)
 
     summary: SummaryRecord = SummaryRecord(total=sum(counts.values()), **counts)

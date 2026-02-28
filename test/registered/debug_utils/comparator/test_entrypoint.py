@@ -57,9 +57,7 @@ class TestEntrypointGroupingRaw:
     def test_filter(self, tmp_path, capsys):
         """--filter selects only the matching tensor, producing 1 TensorComparisonRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
-        argv = _make_argv(
-            baseline_path, target_path, filter="tensor_a", preset="raw"
-        )
+        argv = _make_argv(baseline_path, target_path, filter="tensor_a", preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
         assert len(_get_comparisons(records)) == 1
@@ -114,9 +112,7 @@ class TestEntrypointGroupingRaw:
             name="tensor_a",
             tensor=torch.randn(10, 10) * 100,
         )
-        argv = _make_argv(
-            baseline_path, target_path, preset="raw", diff_threshold=1e-3
-        )
+        argv = _make_argv(baseline_path, target_path, preset="raw", diff_threshold=1e-3)
 
         records, _ = _run_and_parse(argv, capsys)
         comparisons = _get_comparisons(records)
@@ -192,9 +188,7 @@ class TestEntrypointGroupingRaw:
         target_path = _create_rank_dump(
             tmp_path / "target", rank=0, name="tensor_a", tensor=target_tensor
         )
-        argv = _make_argv(
-            baseline_path, target_path, preset="raw", diff_threshold=0.01
-        )
+        argv = _make_argv(baseline_path, target_path, preset="raw", diff_threshold=0.01)
 
         records, _ = _run_and_parse(argv, capsys)
         comparisons = _get_comparisons(records)
@@ -2272,7 +2266,9 @@ def _get_non_tensors(records: list[AnyRecord]) -> list[NonTensorComparisonRecord
     return [r for r in records if isinstance(r, NonTensorComparisonRecord)]
 
 
-def _assert_single_comparison_passed(records: list[AnyRecord]) -> TensorComparisonRecord:
+def _assert_single_comparison_passed(
+    records: list[AnyRecord],
+) -> TensorComparisonRecord:
     comparisons = _get_comparisons(records)
     assert len(comparisons) == 1
     assert comparisons[0].diff is not None
@@ -2398,10 +2394,14 @@ def _make_argv(
     visualize_per_token: str | None = None,
 ) -> list[str]:
     argv: list[str] = [
-        "--baseline-path", str(baseline_path),
-        "--target-path", str(target_path),
-        "--diff-threshold", str(diff_threshold),
-        "--output-format", output_format,
+        "--baseline-path",
+        str(baseline_path),
+        "--target-path",
+        str(target_path),
+        "--diff-threshold",
+        str(diff_threshold),
+        "--output-format",
+        output_format,
     ]
 
     if preset is not None:
@@ -3659,9 +3659,7 @@ class TestEntrypointMetaOverride:
             target_dims=target_dims,
         )
 
-        argv = _make_argv(
-            baseline_path, target_path, preset="raw", **override_kwarg
-        )
+        argv = _make_argv(baseline_path, target_path, preset="raw", **override_kwarg)
         self._assert_all_passed(_run_and_parse(argv, capsys)[0])
 
     def test_override_config_yaml(self, tmp_path: Path, capsys) -> None:
@@ -4011,9 +4009,7 @@ class TestExitCode:
             name="tensor_a",
             tensor=torch.randn(10, 10) * 100,
         )
-        argv = _make_argv(
-            baseline_path, target_path, preset="raw", diff_threshold=1e-3
-        )
+        argv = _make_argv(baseline_path, target_path, preset="raw", diff_threshold=1e-3)
 
         records, exit_code = _run_and_parse(argv, capsys)
         summary = records[-1]
@@ -4099,9 +4095,7 @@ class TestReportOutput:
     def test_default_report_path(self, tmp_path, capsys):
         """Default writes to <target>/comparator_report.jsonl with ConfigRecord + SummaryRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        argv = _make_argv(
-            baseline_path, target_path, preset="raw", report_path=None
-        )
+        argv = _make_argv(baseline_path, target_path, preset="raw", report_path=None)
 
         exit_code: int = run(parse_args(argv))
 
@@ -4134,9 +4128,7 @@ class TestReportOutput:
     def test_disabled_report(self, tmp_path, capsys):
         """--report-path '' disables file generation."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        argv = _make_argv(
-            baseline_path, target_path, preset="raw", report_path=""
-        )
+        argv = _make_argv(baseline_path, target_path, preset="raw", report_path="")
 
         run(parse_args(argv))
 
