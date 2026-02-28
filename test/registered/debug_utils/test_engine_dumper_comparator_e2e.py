@@ -101,6 +101,8 @@ patches:
   # --- decoder layer level (aligned with miles test) ---
   # In dp-attention mode: attn tensors are NOT TP-sharded (attn_tp_size=1),
   # and mlp_output is already all-reduced inside forward_normal().
+  # layer_input is dumped after prepare_attn which DP-distributes tokens,
+  # so it needs dp:=attn_dp to filter to the non-empty DP rank.
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
     edits:
       - match: |
@@ -113,7 +115,7 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h')"
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # dp:=attn_dp')"
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
