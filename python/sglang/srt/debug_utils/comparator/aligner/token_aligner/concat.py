@@ -20,13 +20,13 @@ def execute_token_aligner_concat(
     some_tensor: torch.Tensor = next(iter(tensor_of_step_pair.x.values()))
     token_dim: int = _resolve_token_dim(some_tensor)
 
-    x: torch.Tensor = _concat_steps(tensor_of_step_pair.x, dim=token_dim)
-    y: torch.Tensor = _concat_steps(tensor_of_step_pair.y, dim=token_dim)
-    common: int = min(x.shape[token_dim], y.shape[token_dim])
-    return Pair(
-        x=x.narrow(dim=token_dim, start=0, length=common),
-        y=y.narrow(dim=token_dim, start=0, length=common),
+    concatenated: Pair[torch.Tensor] = tensor_of_step_pair.map(
+        lambda d: _concat_steps(d, dim=token_dim)
     )
+    common: int = min(
+        concatenated.x.shape[token_dim], concatenated.y.shape[token_dim]
+    )
+    return concatenated.map(lambda t: t.narrow(dim=token_dim, start=0, length=common))
 
 
 def _resolve_token_dim(tensor: torch.Tensor) -> int:
