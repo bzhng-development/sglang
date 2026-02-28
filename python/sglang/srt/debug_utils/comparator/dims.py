@@ -50,31 +50,20 @@ class DimSpec(_FrozenBase):
     parallel_modifiers: list[ParallelModifier] = []
 
     @property
-    def sub_dims(self) -> Optional[list[str]]:
-        """Sub-dim names for fused dims (e.g. ``["num_heads", "head_dim"]``), else ``None``."""
-        parts: list[str] = self.name.split("*")
-        if len(parts) == 1:
-            return None
-        return parts
+    def sub_dims(self) -> list[str]:
+        """Sub-dim names. Fused: ``["num_heads", "head_dim"]``; plain: ``["h"]``."""
+        return self.name.split("*")
 
     @property
-    def tensor_name(self) -> str:
-        """Name suitable for PyTorch named tensors (``*`` → ``___``)."""
-        sub: Optional[list[str]] = self.sub_dims
-        if sub is not None:
-            return _FUSED_NAME_SEP.join(sub)
+    def is_fused(self) -> bool:
+        return "*" in self.name
+
+    @property
+    def sanitized_name(self) -> str:
+        """Name safe for PyTorch named tensors (``*`` → ``___``)."""
+        if self.is_fused:
+            return _FUSED_NAME_SEP.join(self.sub_dims)
         return self.name
-
-
-def is_fused(spec: DimSpec) -> bool:
-    return spec.sub_dims is not None
-
-
-def fused_sub_names(spec: DimSpec) -> list[str]:
-    sub: Optional[list[str]] = spec.sub_dims
-    if sub is None:
-        return []
-    return sub
 
 
 class DimsSpec(_FrozenBase):
@@ -205,13 +194,8 @@ def _parse_single_dim(token: str) -> DimSpec:
         raise ValueError(f"Invalid dim token: {token!r}")
 
     name: str = match.group("name")
-    modifiers_str: Optional[str] = match.group("modifiers")
-
-    if modifiers_str is None:
-        return DimSpec(name=name)
-
     modifiers: list[ParallelModifier] = _parse_modifiers(
-        modifiers_str=modifiers_str, dim_token=token
+        modifiers_str=match.group("modifiers"), dim_token=token
     )
     return DimSpec(name=name, parallel_modifiers=modifiers)
 
@@ -236,17 +220,18 @@ def _parse_fused_dim(*, token: str, fused_match: re.Match[str]) -> DimSpec:
         )
 
     fused_name: str = "*".join(sub_names)
-
-    modifiers: list[ParallelModifier] = []
-    if modifiers_str is not None:
-        modifiers = _parse_modifiers(
-            modifiers_str=modifiers_str, dim_token=token
-        )
-
+    modifiers: list[ParallelModifier] = _parse_modifiers(
+        modifiers_str=modifiers_str, dim_token=token
+    )
     return DimSpec(name=fused_name, parallel_modifiers=modifiers)
 
 
-def _parse_modifiers(*, modifiers_str: str, dim_token: str) -> list[ParallelModifier]:
+def _parse_modifiers(
+    *, modifiers_str: Optional[str], dim_token: str
+) -> list[ParallelModifier]:
+    if modifiers_str is None:
+        return []
+
     modifiers: list[ParallelModifier] = []
     seen_axes: set[ParallelAxis] = set()
 
@@ -282,10 +267,7 @@ def parse_dims(dims_str: str) -> DimsSpec:
     for spec in dims:
         if _SingletonDimUtil.is_squeeze(spec):
             continue
-        if is_fused(spec):
-            semantic_names.extend(fused_sub_names(spec))
-        else:
-            semantic_names.append(spec.name)
+        semantic_names.extend(spec.sub_dims)
 
     if len(semantic_names) != len(set(semantic_names)):
         duplicates = sorted({n for n in semantic_names if semantic_names.count(n) > 1})
@@ -301,14 +283,14 @@ def parse_dims(dims_str: str) -> DimsSpec:
 def resolve_dim_names(dims_str: str) -> list[str]:
     """Parse dims string and return tensor-compatible names ('1' → 'singleton0', ...)."""
     specs: list[DimSpec] = parse_dims(dims_str).dims
-    names: list[str] = [spec.tensor_name for spec in specs]
+    names: list[str] = [spec.sanitized_name for spec in specs]
     return _SingletonDimUtil.sanitize_names(names)
 
 
 def find_dim_index(dim_specs: list[DimSpec], name: str) -> Optional[int]:
     """Find index by name. Accepts both ``*``-form and ``___``-form for fused dims."""
     for i, spec in enumerate(dim_specs):
-        if spec.name == name or spec.tensor_name == name:
+        if spec.name == name or spec.sanitized_name == name:
             return i
     return None
 

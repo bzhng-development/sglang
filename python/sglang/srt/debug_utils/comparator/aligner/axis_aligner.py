@@ -9,8 +9,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     SQUEEZE_DIM_NAME,
     DimSpec,
     _SingletonDimUtil,
-    fused_sub_names,
-    is_fused,
     parse_dims,
 )
 from sglang.srt.debug_utils.comparator.log_sink import log_sink
@@ -116,10 +114,7 @@ def _expand_non_squeeze(specs: list[DimSpec]) -> list[str]:
     for spec in specs:
         if _SingletonDimUtil.is_squeeze(spec):
             continue
-        if is_fused(spec):
-            result.extend(fused_sub_names(spec))
-        else:
-            result.append(spec.name)
+        result.extend(spec.sub_dims)
     return result
 
 
@@ -133,9 +128,8 @@ def _compute_flatten_plan(
     """
     other_fused_groups: dict[frozenset[str], str] = {}
     for spec in other_specs:
-        if is_fused(spec):
-            sub_names: list[str] = fused_sub_names(spec)
-            other_fused_groups[frozenset(sub_names)] = spec.tensor_name
+        if spec.is_fused:
+            other_fused_groups[frozenset(spec.sub_dims)] = spec.sanitized_name
 
     if not other_fused_groups:
         return None
@@ -145,7 +139,7 @@ def _compute_flatten_plan(
     for phys_idx, spec in enumerate(this_specs):
         if _SingletonDimUtil.is_squeeze(spec):
             continue
-        if is_fused(spec):
+        if spec.is_fused:
             continue
         this_name_to_idx[spec.name] = phys_idx
 
@@ -176,10 +170,10 @@ def _names_after_flatten(
 ) -> list[str]:
     """Compute the physical dim names after applying flatten.
 
-    Squeeze dims use their original name ("1"). Fused dims use tensor_name.
+    Squeeze dims use their original name ("1"). Fused dims use sanitized_name.
     Flatten groups merge multiple names into one.
     """
-    names: list[str] = [spec.tensor_name for spec in specs]
+    names: list[str] = [spec.sanitized_name for spec in specs]
 
     if flatten_plan is None:
         return names
