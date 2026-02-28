@@ -3242,14 +3242,7 @@ class TestEntrypointDpGroupAlias:
     """
 
     def test_dp_alias_absent_group_noop(self, tmp_path: Path, capsys) -> None:
-        """dp_size=2 but ``// dp:=moe_dp`` with no moe_dp fields → dp filter noop.
-
-        Single-rank scenario: only dp_rank=0 has data, dp_rank=1 is empty.
-        Without the alias, dp_filter would use dp_rank/dp_size and correctly
-        pick rank 0.  With the alias pointing to a non-existent group,
-        dp_filter becomes noop — but since one rank is empty, the aligner
-        only sees the single non-empty rank's tensor.
-        """
+        """Single rank with ``// dp:=moe_dp`` in dims → parse_dims strips ``//``, comparison OK."""
         torch.manual_seed(42)
         tensor_data: torch.Tensor = torch.randn(10, 8)
         target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
@@ -3258,7 +3251,6 @@ class TestEntrypointDpGroupAlias:
             side_dir: Path = tmp_path / side_dir_name
             side_dir.mkdir()
 
-            # dp_rank=0: non-empty
             _create_rank_dump(
                 side_dir,
                 rank=0,
@@ -3269,23 +3261,7 @@ class TestEntrypointDpGroupAlias:
                     "tp_rank": 0,
                     "tp_size": 1,
                     "dp_rank": 0,
-                    "dp_size": 2,
-                },
-                framework="sglang",
-            )
-
-            # dp_rank=1: empty
-            _create_rank_dump(
-                side_dir,
-                rank=1,
-                name="hidden",
-                tensor=torch.empty(0, 8),
-                dims="t h // dp:=moe_dp",
-                parallel_info={
-                    "tp_rank": 0,
-                    "tp_size": 1,
-                    "dp_rank": 1,
-                    "dp_size": 2,
+                    "dp_size": 1,
                 },
                 framework="sglang",
             )
@@ -3302,7 +3278,7 @@ class TestEntrypointDpGroupAlias:
         assert comparison.name == "hidden"
 
     def test_dp_alias_via_override_dims(self, tmp_path: Path, capsys) -> None:
-        """--override-dims adds ``// dp:=moe_dp`` → dp filter uses alias."""
+        """--override-dims adds ``// dp:=moe_dp`` → dp filter uses alias, filters correctly."""
         torch.manual_seed(42)
         tensor_data: torch.Tensor = torch.randn(10, 8)
         target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
@@ -3311,6 +3287,7 @@ class TestEntrypointDpGroupAlias:
             side_dir: Path = tmp_path / side_dir_name
             side_dir.mkdir()
 
+            # moe_dp_rank=0: non-empty
             _create_rank_dump(
                 side_dir,
                 rank=0,
@@ -3321,11 +3298,14 @@ class TestEntrypointDpGroupAlias:
                     "tp_rank": 0,
                     "tp_size": 1,
                     "dp_rank": 0,
-                    "dp_size": 2,
+                    "dp_size": 1,
+                    "moe_dp_rank": 0,
+                    "moe_dp_size": 2,
                 },
                 framework="sglang",
             )
 
+            # moe_dp_rank=1: empty
             _create_rank_dump(
                 side_dir,
                 rank=1,
@@ -3335,8 +3315,10 @@ class TestEntrypointDpGroupAlias:
                 parallel_info={
                     "tp_rank": 0,
                     "tp_size": 1,
-                    "dp_rank": 1,
-                    "dp_size": 2,
+                    "dp_rank": 0,
+                    "dp_size": 1,
+                    "moe_dp_rank": 1,
+                    "moe_dp_size": 2,
                 },
                 framework="sglang",
             )
