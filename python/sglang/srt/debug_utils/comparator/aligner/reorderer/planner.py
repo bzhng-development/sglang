@@ -12,7 +12,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     DimSpec,
     Ordering,
     ParallelAxis,
-    ParallelModifier,
 )
 
 _ALLOWED_ZIGZAG_DIM_NAMES: set[str] = {SEQ_DIM_NAME, TOKEN_DIM_NAME}

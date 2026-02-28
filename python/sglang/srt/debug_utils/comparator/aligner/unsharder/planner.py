@@ -177,8 +177,6 @@ def _resolve_unshard_params(
                     f"Sequences must be padded to a multiple of cp_size for CP zigzag."
                 )
         seq_lens_per_rank: list[int] = [s // axis_size for s in thd_global_seq_lens]
-        return CpThdConcatParams(
-            dim_name=dim_name, seq_lens_per_rank=seq_lens_per_rank
-        )
+        return CpThdConcatParams(dim_name=dim_name, seq_lens_per_rank=seq_lens_per_rank)
 
     return ConcatParams(dim_name=dim_name)
