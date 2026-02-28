@@ -17,11 +17,6 @@ from pathlib import Path
 import pytest
 import requests
 
-from sglang.srt.debug_utils.comparator.output_types import (
-    AnyRecord,
-    SummaryRecord,
-    parse_record_json,
-)
 from sglang.srt.utils import kill_process_tree
 from sglang.test.ci.ci_register import register_cuda_ci
 from sglang.test.test_utils import (
@@ -140,10 +135,9 @@ class TestSourcePatcherE2ESGLang:
                 str(baseline_exp),
                 "--target-path",
                 str(target_exp),
-                "--output-format",
-                "json",
                 "--grouping",
                 "logical",
+                "--forbid-skip",
             ],
             capture_output=True,
             text=True,
@@ -157,25 +151,6 @@ class TestSourcePatcherE2ESGLang:
         assert result.returncode == 0, (
             f"Comparator failed (rc={result.returncode}). "
             f"Debug output: {debug_file}"
-        )
-
-        records: list[AnyRecord] = [
-            parse_record_json(line)
-            for line in result.stdout.strip().splitlines()
-            if line.strip()
-        ]
-        assert (
-            len(records) > 0
-        ), f"Comparator produced no output records. Debug: {debug_file}"
-
-        summary: SummaryRecord = _find_summary(records=records, debug_file=debug_file)
-        assert (
-            summary.passed > 0
-        ), f"No comparisons passed (total={summary.total}). Debug: {debug_file}"
-        assert summary.failed == 0, (
-            f"{summary.failed} comparisons failed "
-            f"(passed={summary.passed}, skipped={summary.skipped}). "
-            f"Debug: {debug_file}"
         )
 
 
@@ -241,19 +216,6 @@ def _verify_patched_fields(*, dump_dir: Path, field_names: list[str]) -> None:
             f"Expected patched field '{field}' not found under {dump_dir}. "
             f"Available files: {sorted(f.name for f in dump_dir.rglob('*.pt'))[:20]}"
         )
-
-
-def _find_summary(*, records: list[AnyRecord], debug_file: Path) -> SummaryRecord:
-    """Extract the SummaryRecord from comparator output."""
-    summaries: list[SummaryRecord] = [
-        r for r in records if isinstance(r, SummaryRecord)
-    ]
-    assert len(summaries) == 1, (
-        f"Expected 1 summary record, got {len(summaries)}. "
-        f"Record types: {[type(r).__name__ for r in records]}. "
-        f"Debug: {debug_file}"
-    )
-    return summaries[0]
 
 
 def _save_comparator_output(*, stdout: str, stderr: str) -> Path:
