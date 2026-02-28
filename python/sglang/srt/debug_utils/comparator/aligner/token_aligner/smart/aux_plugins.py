@@ -12,8 +12,8 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import 
     TokenAlignerStepAux,
 )
 from sglang.srt.debug_utils.comparator.dims import TokenLayout
-from sglang.srt.debug_utils.comparator.output_types import InfoLog
 from sglang.srt.debug_utils.comparator.log_sink import log_sink
+from sglang.srt.debug_utils.comparator.output_types import InfoLog
 
 # ── plugin ABC ─────────────────────────────────────────────────────
 

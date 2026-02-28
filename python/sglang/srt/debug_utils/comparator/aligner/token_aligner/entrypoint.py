@@ -25,9 +25,9 @@ from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import 
     TokenAlignerPlan,
     TokenAlignerSeqsInfo,
 )
+from sglang.srt.debug_utils.comparator.log_sink import log_sink
 from sglang.srt.debug_utils.comparator.output_types import InfoLog
 from sglang.srt.debug_utils.comparator.utils import Pair
-from sglang.srt.debug_utils.comparator.log_sink import log_sink
 
 _NONE_THD: Pair[Optional[dict[int, list[int]]]] = Pair(x=None, y=None)
 

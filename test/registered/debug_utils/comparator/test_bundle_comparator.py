@@ -6,8 +6,8 @@ import pytest
 import torch
 
 from sglang.srt.debug_utils.comparator.bundle_comparator import _load_all_values
-from sglang.srt.debug_utils.comparator.output_types import ErrorLog
 from sglang.srt.debug_utils.comparator.log_sink import LogSink
+from sglang.srt.debug_utils.comparator.output_types import ErrorLog
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)

@@ -31,8 +31,8 @@ from sglang.srt.debug_utils.comparator.dims import (
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
-from sglang.srt.debug_utils.comparator.output_types import ErrorLog, InfoLog
 from sglang.srt.debug_utils.comparator.log_sink import log_sink
+from sglang.srt.debug_utils.comparator.output_types import ErrorLog, InfoLog
 from sglang.srt.debug_utils.dump_loader import ValueWithMeta, filter_rows
 
 # re-export for existing callers

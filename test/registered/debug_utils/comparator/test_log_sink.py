@@ -3,11 +3,11 @@ import sys
 
 import pytest
 
+from sglang.srt.debug_utils.comparator.log_sink import LogSink
 from sglang.srt.debug_utils.comparator.output_types import (
     ErrorLog,
     report_sink,
 )
-from sglang.srt.debug_utils.comparator.log_sink import LogSink
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=10, suite="default", nightly=True)

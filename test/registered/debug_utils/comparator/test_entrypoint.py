@@ -16,7 +16,6 @@ from sglang.srt.debug_utils.comparator.entrypoint import (
 from sglang.srt.debug_utils.comparator.output_types import (
     AnyRecord,
     ConfigRecord,
-    ErrorLog,
     InfoLog,
     LogRecord,
     NonTensorComparisonRecord,

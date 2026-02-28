@@ -9,8 +9,8 @@ from sglang.srt.debug_utils.comparator.aligner.axis_aligner import (
     compute_axis_aligner_plan,
     execute_axis_aligner_plan,
 )
-from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.srt.debug_utils.comparator.log_sink import log_sink
+from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)

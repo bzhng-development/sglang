@@ -9,8 +9,8 @@ from sglang.srt.debug_utils.comparator.dims import (
     _SingletonDimUtil,
     parse_dims,
 )
-from sglang.srt.debug_utils.comparator.utils import Pair, _FrozenBase
 from sglang.srt.debug_utils.comparator.log_sink import log_sink
+from sglang.srt.debug_utils.comparator.utils import Pair, _FrozenBase
 
 # --- types ---
 

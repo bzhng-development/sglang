@@ -26,6 +26,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     resolve_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dp_utils import filter_to_non_empty_dp_rank
+from sglang.srt.debug_utils.comparator.log_sink import log_sink
 from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ErrorLog,
@@ -38,7 +39,6 @@ from sglang.srt.debug_utils.comparator.tensor_comparator.comparator import (
     compare_tensor_pair,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
-from sglang.srt.debug_utils.comparator.log_sink import log_sink
 from sglang.srt.debug_utils.dump_loader import LOAD_FAILED, ValueWithMeta
 
 _FAILED_SIDE_MAP: dict[str, str] = {"x": "baseline", "y": "target"}
