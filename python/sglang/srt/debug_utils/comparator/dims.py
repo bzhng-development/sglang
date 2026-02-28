@@ -108,7 +108,8 @@ def _parse_modifier_token(modifier_token: str, dim_token: str) -> ParallelModifi
         axis_str, qualifiers_str = modifier_token, ""
 
     axis_str = axis_str.strip()
-    if axis_str not in _AXIS_LOOKUP:
+    axis: Optional[ParallelAxis] = _AXIS_LOOKUP.get(axis_str)
+    if axis is None:
         raise ValueError(
             f"Unknown axis {axis_str!r} in modifier {modifier_token!r} "
             f"of dim spec: {dim_token!r}"
@@ -118,12 +119,12 @@ def _parse_modifier_token(modifier_token: str, dim_token: str) -> ParallelModifi
     reduction: Optional[Reduction] = None
 
     for q_str in (q.strip() for q in qualifiers_str.split("+") if q.strip()):
-        if q_str not in _QUALIFIER_LOOKUP:
+        qualifier: Optional[Ordering | Reduction] = _QUALIFIER_LOOKUP.get(q_str)
+        if qualifier is None:
             raise ValueError(
                 f"Unknown qualifier {q_str!r} in modifier "
                 f"{modifier_token!r} of dim spec: {dim_token!r}"
             )
-        qualifier: Ordering | Reduction = _QUALIFIER_LOOKUP[q_str]
         if isinstance(qualifier, Ordering):
             if ordering is not None:
                 raise ValueError(
@@ -139,9 +140,7 @@ def _parse_modifier_token(modifier_token: str, dim_token: str) -> ParallelModifi
                 )
             reduction = qualifier
 
-    return ParallelModifier(
-        axis=_AXIS_LOOKUP[axis_str], ordering=ordering, reduction=reduction
-    )
+    return ParallelModifier(axis=axis, ordering=ordering, reduction=reduction)
 
 
 def parse_dim(token: str) -> DimSpec:
