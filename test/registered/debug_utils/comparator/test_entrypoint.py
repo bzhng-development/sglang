@@ -1067,7 +1067,6 @@ class TestEntrypointGroupingLogical:
                 name="hidden",
                 cp_size=2,
                 sp_size=2,
-                token_dim=0,
                 dims_str="t(cp:zigzag,sp) h",
                 seq_lens=seq_lens,
             )
