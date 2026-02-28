@@ -43,7 +43,6 @@ def compute_axis_aligner_plan(
         return None
 
     dims_pair: Pair[str] = Pair(x=dims_str_pair.x, y=dims_str_pair.y)
-
     specs_pair: Pair[list[DimSpec]] = dims_pair.map(lambda s: parse_dims(s).dims)
 
     # Verify both sides share the same semantic name set (expanded, no squeeze)
