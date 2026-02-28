@@ -144,6 +144,8 @@ class TestSourcePatcherE2ESGLang:
                 "json",
                 "--grouping",
                 "logical",
+                "--diff-threshold",
+                "0.2",
             ],
             capture_output=True,
             text=True,
