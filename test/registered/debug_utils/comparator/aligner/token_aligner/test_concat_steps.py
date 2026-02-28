@@ -4,7 +4,7 @@ import pytest
 import torch
 
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat_steps import (
-    execute_token_aligner_concat_steps_steps,
+    execute_token_aligner_concat_steps,
 )
 from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
