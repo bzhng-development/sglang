@@ -42,7 +42,7 @@ class TestEntrypointGroupingRaw:
     def test_run_basic(self, tmp_path, capsys):
         """Two matching tensors produce ConfigRecord, 2 TensorComparisonRecords, and SummaryRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
         assert isinstance(records[0], ConfigRecord)
@@ -58,7 +58,7 @@ class TestEntrypointGroupingRaw:
         """--filter selects only the matching tensor, producing 1 TensorComparisonRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
         argv = _make_argv(
-            baseline_path, target_path, filter="tensor_a", grouping_skip_keys=[]
+            baseline_path, target_path, filter="tensor_a", preset="raw"
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -71,7 +71,7 @@ class TestEntrypointGroupingRaw:
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
         skips = [r for r in records if isinstance(r, SkipComparisonRecord)]
@@ -86,7 +86,7 @@ class TestEntrypointGroupingRaw:
         """--start_step/--end_step restricts comparison to a single step out of three."""
         baseline_path, target_path = _create_dumps(tmp_path, ["t"], num_steps=3)
         argv = _make_argv(
-            baseline_path, target_path, start_step=1, end_step=1, grouping_skip_keys=[]
+            baseline_path, target_path, start_step=1, end_step=1, preset="raw"
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -97,7 +97,7 @@ class TestEntrypointGroupingRaw:
     def test_all_valid_records(self, tmp_path, capsys):
         """Every emitted JSON record is a valid _OutputRecord subclass."""
         baseline_path, target_path = _create_dumps(tmp_path, ["t"], num_steps=2)
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
         assert all(isinstance(r, _OutputRecord) for r in records)
@@ -115,7 +115,7 @@ class TestEntrypointGroupingRaw:
             tensor=torch.randn(10, 10) * 100,
         )
         argv = _make_argv(
-            baseline_path, target_path, grouping_skip_keys=[], diff_threshold=1e-3
+            baseline_path, target_path, preset="raw", diff_threshold=1e-3
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -138,7 +138,7 @@ class TestEntrypointGroupingRaw:
         target_path = _create_rank_dump(
             tmp_path / "target", rank=0, name="tensor_a", tensor=torch.randn(4, 10)
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
         comparisons = _get_comparisons(records)
@@ -164,7 +164,7 @@ class TestEntrypointGroupingRaw:
         target_path = _create_rank_dump(
             tmp_path / "target", rank=0, name="tensor_a", tensor=target_tensor
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
         comparisons = _get_comparisons(records)
@@ -193,7 +193,7 @@ class TestEntrypointGroupingRaw:
             tmp_path / "target", rank=0, name="tensor_a", tensor=target_tensor
         )
         argv = _make_argv(
-            baseline_path, target_path, grouping_skip_keys=[], diff_threshold=0.01
+            baseline_path, target_path, preset="raw", diff_threshold=0.01
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -230,7 +230,7 @@ class TestEntrypointGroupingRaw:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
             diff_threshold=1e-3,
         )
 
@@ -249,7 +249,7 @@ class TestEntrypointGroupingRaw:
             baseline_path,
             target_path,
             filter="nonexistent_pattern",
-            grouping_skip_keys=[],
+            preset="raw",
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -277,7 +277,7 @@ class TestEntrypointGroupingRaw:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
             diff_threshold=0.01,
         )
 
@@ -294,7 +294,7 @@ class TestEntrypointGroupingRaw:
         """Text output format renders without errors and contains Config/Summary sections."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
         argv = _make_argv(
-            baseline_path, target_path, output_format="text", grouping_skip_keys=[]
+            baseline_path, target_path, output_format="text", preset="raw"
         )
         capsys.readouterr()
 
@@ -317,7 +317,7 @@ class TestEntrypointGroupingRaw:
             tensor=torch.randn(10, 10) * 100,
         )
         argv = _make_argv(
-            baseline_path, target_path, output_format="text", grouping_skip_keys=[]
+            baseline_path, target_path, output_format="text", preset="raw"
         )
         capsys.readouterr()
 
@@ -355,7 +355,7 @@ class TestEntrypointGroupingRaw:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -584,8 +584,7 @@ class TestEntrypointGroupingLogical:
             baseline_path,
             target_path,
             diff_threshold=0.01,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
-            token_aligner="concat_steps",
+            preset="sglang_megatron",
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -1225,8 +1224,7 @@ class TestEntrypointConcatMode:
             baseline_path,
             target_path,
             diff_threshold=diff_threshold,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
-            token_aligner="concat_steps",
+            preset="sglang_megatron",
         )
         records, _ = _run_and_parse(argv, capsys)
         return records
@@ -1290,8 +1288,7 @@ class TestEntrypointConcatMode:
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
             diff_threshold=0.01,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
-            token_aligner="concat_steps",
+            preset="sglang_megatron",
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -1549,8 +1546,7 @@ class TestEntrypointConcatMode:
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
             diff_threshold=0.01,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
-            token_aligner="concat_steps",
+            preset="sglang_megatron",
         )
 
         records, _ = _run_and_parse(argv, capsys)
@@ -1602,8 +1598,7 @@ class TestEntrypointConcatMode:
         argv: list[str] = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=["rank", "recompute_status", "step"],
-            token_aligner="concat_steps",
+            preset="sglang_megatron",
             diff_threshold=1e-3,
         )
         records, _ = _run_and_parse(argv, capsys)
@@ -2053,7 +2048,6 @@ class TestEntrypointAlignment:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=["rank", "recompute_status"],
             token_aligner="smart",
             diff_threshold=0.1,
         )
@@ -2088,7 +2082,7 @@ class TestEntrypointNonTensorValues:
         baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
         records, _ = _run_and_parse(argv, capsys)
 
         non_tensors = _get_non_tensors(records)
@@ -2107,7 +2101,7 @@ class TestEntrypointNonTensorValues:
         baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.25
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
         records, _ = _run_and_parse(argv, capsys)
 
         non_tensors = _get_non_tensors(records)
@@ -2127,7 +2121,7 @@ class TestEntrypointNonTensorValues:
             baseline_value="flash_attn",
             target_value="flash_attn",
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
         records, _ = _run_and_parse(argv, capsys)
 
         non_tensors = _get_non_tensors(records)
@@ -2156,7 +2150,7 @@ class TestEntrypointNonTensorValues:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
         )
         records, _ = _run_and_parse(argv, capsys)
 
@@ -2178,7 +2172,7 @@ class TestEntrypointNonTensorValues:
         baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="debug_info", baseline_value=value, target_value=value
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
         records, _ = _run_and_parse(argv, capsys)
 
         non_tensors = _get_non_tensors(records)
@@ -2192,7 +2186,7 @@ class TestEntrypointNonTensorValues:
         baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="optional_param", baseline_value=None, target_value=None
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
         records, _ = _run_and_parse(argv, capsys)
 
         non_tensors = _get_non_tensors(records)
@@ -2208,7 +2202,7 @@ class TestEntrypointNonTensorValues:
         baseline_path, target_path = _create_non_tensor_dumps(
             tmp_path, name="sm_scale", baseline_value=0.125, target_value=0.125
         )
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
         records, _ = _run_and_parse(argv, capsys)
 
         non_tensors = _get_non_tensors(records)
@@ -2238,7 +2232,7 @@ class TestEntrypointVisualize:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             filter="tensor_a",
             viz_bundle_details=True,
             viz_output_dir=str(viz_dir),
@@ -2258,7 +2252,7 @@ class TestEntrypointVisualize:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             viz_bundle_details=False,
             viz_output_dir=str(viz_dir),
         )
@@ -2449,7 +2443,7 @@ def _run_and_parse(
 ) -> tuple[list[AnyRecord], int]:
     args: Namespace = parse_args(argv)
     capsys.readouterr()
-    exit_code: int = run(parse_args(argv))
+    exit_code: int = run(args)
     return _parse_jsonl(capsys.readouterr().out), exit_code
 
 
@@ -3030,7 +3024,7 @@ class TestEntrypointPerTokenVisualization:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             visualize_per_token=str(output_png),
         )
         records, _ = _run_and_parse(argv, capsys)
@@ -3048,7 +3042,7 @@ class TestEntrypointPerTokenVisualization:
     def test_no_visualize_no_per_token(self, tmp_path: Path, capsys) -> None:
         """Without --visualize-per-token, per_token_rel_diff is None."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, _ = _run_and_parse(argv, capsys)
 
@@ -3666,7 +3660,7 @@ class TestEntrypointMetaOverride:
         )
 
         argv = _make_argv(
-            baseline_path, target_path, grouping_skip_keys=[], **override_kwarg
+            baseline_path, target_path, preset="raw", **override_kwarg
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0])
 
@@ -3684,7 +3678,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             override_config=str(yaml_path),
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0])
@@ -3700,7 +3694,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             override_dims=["no_match_pattern:b s d"],
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0])
@@ -3731,7 +3725,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
             override_dims=["logits:t v"],
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0], expected_count=2)
@@ -3764,7 +3758,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
             override_dims=["hidden:t h", "logits:t v"],
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0], expected_count=2)
@@ -3826,7 +3820,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             override_config=str(yaml_path),
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0])
@@ -3845,7 +3839,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             override_dims=["hidden:t h"],
             override_config=str(yaml_path),
         )
@@ -3862,7 +3856,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             override_dims=["hidden:t h"],
         )
         self._assert_all_passed(_run_and_parse(argv, capsys)[0])
@@ -3889,7 +3883,7 @@ class TestEntrypointMetaOverride:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
-            grouping_skip_keys=[],
+            preset="raw",
             override_dims=["hidden:x y"],
         )
         records, _ = _run_and_parse(argv, capsys)
@@ -3996,7 +3990,7 @@ class TestExitCode:
     def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
         """Integration: all comparisons pass → run() returns 0."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
-        argv = _make_argv(baseline_path, target_path, grouping_skip_keys=[])
+        argv = _make_argv(baseline_path, target_path, preset="raw")
 
         records, exit_code = _run_and_parse(argv, capsys)
         summary = records[-1]
@@ -4018,7 +4012,7 @@ class TestExitCode:
             tensor=torch.randn(10, 10) * 100,
         )
         argv = _make_argv(
-            baseline_path, target_path, grouping_skip_keys=[], diff_threshold=1e-3
+            baseline_path, target_path, preset="raw", diff_threshold=1e-3
         )
 
         records, exit_code = _run_and_parse(argv, capsys)
@@ -4036,7 +4030,7 @@ class TestExitCodeSubprocess:
         baseline_path: Path,
         target_path: Path,
         *,
-        grouping: str = "raw",
+        preset: str = "raw",
         allow_skip_pattern: str = ".*",
     ) -> subprocess.CompletedProcess[str]:
         cmd: list[str] = [
@@ -4047,8 +4041,8 @@ class TestExitCodeSubprocess:
             str(baseline_path),
             "--target-path",
             str(target_path),
-            "--grouping",
-            grouping,
+            "--preset",
+            preset,
             "--output-format",
             "json",
             "--allow-skip-pattern",
@@ -4106,7 +4100,7 @@ class TestReportOutput:
         """Default writes to <target>/comparator_report.jsonl with ConfigRecord + SummaryRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
         argv = _make_argv(
-            baseline_path, target_path, grouping_skip_keys=[], report_path=None
+            baseline_path, target_path, preset="raw", report_path=None
         )
 
         exit_code: int = run(parse_args(argv))
@@ -4126,7 +4120,7 @@ class TestReportOutput:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             report_path=str(custom_path),
         )
 
@@ -4141,7 +4135,7 @@ class TestReportOutput:
         """--report-path '' disables file generation."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
         argv = _make_argv(
-            baseline_path, target_path, grouping_skip_keys=[], report_path=""
+            baseline_path, target_path, preset="raw", report_path=""
         )
 
         run(parse_args(argv))
@@ -4156,7 +4150,7 @@ class TestReportOutput:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             output_format="json",
             report_path=str(report_file),
         )
@@ -4175,7 +4169,7 @@ class TestReportOutput:
         argv = _make_argv(
             baseline_path,
             target_path,
-            grouping_skip_keys=[],
+            preset="raw",
             output_format="text",
             report_path=str(report_file),
         )
