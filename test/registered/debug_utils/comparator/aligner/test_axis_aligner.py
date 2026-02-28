@@ -148,8 +148,8 @@ class TestComputeAxisAlignerPlanFused:
         )
         assert result is not None
         # x has squeeze to remove, y has a,b to flatten
-        assert result.pre_flatten.y is not None
-        assert result.pre_flatten.y.groups[0].dim_indices == [1, 2]
+        assert result.flatten.y is not None
+        assert result.flatten.y.groups[0].dim_indices == [1, 2]
 
 
 class TestExecuteAxisAlignerPlan:
@@ -157,7 +157,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
         plan = AxisAlignerPlan(
-            pre_flatten=_NO_FLATTEN,
+            flatten=_NO_FLATTEN,
             pattern=Pair(x="t h d -> t d h", y=None),
         )
 
@@ -176,7 +176,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
         plan = AxisAlignerPlan(
-            pre_flatten=_NO_FLATTEN,
+            flatten=_NO_FLATTEN,
             pattern=Pair(x="t 1 h -> t h", y=None),
         )
 
@@ -192,7 +192,7 @@ class TestExecuteAxisAlignerPlan:
             "t", "singleton0", "h", "d"
         )
         plan = AxisAlignerPlan(
-            pre_flatten=_NO_FLATTEN,
+            flatten=_NO_FLATTEN,
             pattern=Pair(x="t 1 h d -> t d h", y=None),
         )
 
@@ -206,7 +206,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
         plan = AxisAlignerPlan(
-            pre_flatten=_NO_FLATTEN,
+            flatten=_NO_FLATTEN,
             pattern=Pair(x=None, y="t 1 h -> t h"),
         )
 
@@ -220,7 +220,7 @@ class TestExecuteAxisAlignerPlan:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
         plan = AxisAlignerPlan(
-            pre_flatten=_NO_FLATTEN,
+            flatten=_NO_FLATTEN,
             pattern=Pair(x="t h d -> t d h", y=None),
         )
 
@@ -237,7 +237,7 @@ class TestExecuteAxisAlignerPlanFlatten:
         torch.manual_seed(42)
         tensor_3d: torch.Tensor = torch.randn(4, 8, 16)
         plan = AxisAlignerPlan(
-            pre_flatten=Pair(
+            flatten=Pair(
                 x=None,
                 y=FlattenPlan(
                     groups=[FlattenGroup(dim_indices=[1, 2], target_name="nh__hd")]
@@ -258,7 +258,7 @@ class TestExecuteAxisAlignerPlanFlatten:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(2, 3, 4, 5)
         plan = AxisAlignerPlan(
-            pre_flatten=Pair(
+            flatten=Pair(
                 x=FlattenPlan(
                     groups=[FlattenGroup(dim_indices=[1, 2], target_name="bc")]
                 ),
@@ -279,7 +279,7 @@ class TestExecuteAxisAlignerPlanFlatten:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16, 32)
         plan = AxisAlignerPlan(
-            pre_flatten=Pair(
+            flatten=Pair(
                 x=FlattenPlan(
                     groups=[FlattenGroup(dim_indices=[1, 2], target_name="fused")]
                 ),
