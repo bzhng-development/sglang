@@ -20,23 +20,31 @@ PRESETS: dict[str, list[str]] = {
 DEFAULT_PRESET: str = "sglang_dev"
 
 
+def _expand_flag(
+    argv: list[str], flag: str, mapping: dict[str, list[str]]
+) -> list[str]:
+    """Replace ``flag <name>`` in *argv* with the corresponding argv fragment from *mapping*."""
+    if flag not in argv:
+        return argv
+
+    idx: int = argv.index(flag)
+    name: str = argv[idx + 1]
+    if name not in mapping:
+        raise ValueError(f"Unknown value for {flag}: {name}. Available: {list(mapping.keys())}")
+
+    return argv[:idx] + mapping[name] + argv[idx + 2 :]
+
+
 def expand_preset(argv: list[str], presets: dict[str, list[str]]) -> list[str]:
     """Expand ``--preset <name>`` into the corresponding argv fragment.
 
     If ``--preset`` is absent **and** ``--grouping-skip-keys`` is also absent,
     the DEFAULT_PRESET is applied automatically.
     """
-    if "--preset" in argv:
-        idx: int = argv.index("--preset")
-        preset_name: str = argv[idx + 1]
-        if preset_name not in presets:
-            raise ValueError(
-                f"Unknown preset: {preset_name}. Available: {list(presets.keys())}"
-            )
-        preset_args: list[str] = presets[preset_name]
-        return argv[:idx] + preset_args + argv[idx + 2 :]
+    has_preset: bool = "--preset" in argv
+    argv = _expand_flag(argv, "--preset", presets)
 
-    if "--grouping-skip-keys" not in argv:
+    if not has_preset and "--grouping-skip-keys" not in argv:
         return presets[DEFAULT_PRESET] + argv
 
     return argv
