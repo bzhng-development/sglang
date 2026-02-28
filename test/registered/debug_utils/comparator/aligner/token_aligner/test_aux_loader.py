@@ -422,7 +422,7 @@ class TestLoadThdSeqLensOnly:
         from unittest.mock import patch
 
         with patch(
-            "sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_loader._detect_plugin",
+            "sglang.srt.debug_utils.comparator.aligner.token_aligner.concat_steps.thd_seq_lens_loader._detect_plugin",
             return_value=_NoCpPlugin(),
         ):
             result = load_thd_seq_lens_only(dump_path=tmp_path, df=df)
