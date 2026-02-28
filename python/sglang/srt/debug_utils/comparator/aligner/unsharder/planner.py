@@ -34,6 +34,7 @@ class _GroupResult(NamedTuple):
     projected_coords: _CoordsList
 
 
+# TODO: refactor and simplify this function
 def compute_unsharder_plan(
     dim_specs: list[DimSpec],
     parallel_infos: list[dict[ParallelAxis, AxisInfo]],
