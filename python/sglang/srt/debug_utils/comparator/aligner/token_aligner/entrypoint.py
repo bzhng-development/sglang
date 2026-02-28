@@ -7,10 +7,12 @@ from typing import Literal, Optional
 
 import polars as pl
 
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat_steps import (
+    load_thd_seq_lens_only,
+)
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_loader import (
     has_aux_tensors,
     load_and_normalize_aux,
-    load_thd_seq_lens_only,
 )
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.planner import (
     compute_token_aligner_plan,
@@ -30,7 +32,7 @@ from sglang.srt.debug_utils.comparator.warning_sink import warning_sink
 _NONE_THD: Pair[Optional[dict[int, list[int]]]] = Pair(x=None, y=None)
 
 
-TokenAlignerMode = Literal["concat", "smart"]
+TokenAlignerMode = Literal["concat_steps", "smart"]
 
 
 @dataclass(frozen=True)
@@ -51,14 +53,16 @@ def compute_maybe_token_aligner_result(
             mode=None, plan=None, thd_seq_lens_by_step_pair=_NONE_THD
         )
 
-    token_aligner_mode: TokenAlignerMode = getattr(args, "token_aligner", "concat")
+    token_aligner_mode: TokenAlignerMode = getattr(
+        args, "token_aligner", "concat_steps"
+    )
 
-    if token_aligner_mode == "concat":
+    if token_aligner_mode == "concat_steps":
         thd_pair: Pair[Optional[dict[int, list[int]]]] = _load_thd_seq_lens_pair(
             args=args, dfs=dfs
         )
         return TokenAlignerResult(
-            mode="concat", plan=None, thd_seq_lens_by_step_pair=thd_pair
+            mode="concat_steps", plan=None, thd_seq_lens_by_step_pair=thd_pair
         )
     elif token_aligner_mode == "smart":
         if not (has_aux_tensors(dfs.x) and has_aux_tensors(dfs.y)):

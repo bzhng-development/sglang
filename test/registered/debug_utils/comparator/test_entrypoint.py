@@ -1354,7 +1354,7 @@ class TestEntrypointConcatMode:
         assert len(comparisons) == 1
         plan = comparisons[0].aligner_plan
         assert plan is not None
-        assert plan.token_aligner_mode == "concat"
+        assert plan.token_aligner_mode == "concat_steps"
         assert plan.token_aligner_plan is None
 
     def test_concat_comparison_fails(self, tmp_path, capsys):
@@ -1474,7 +1474,7 @@ class TestEntrypointConcatMode:
         args: Namespace = _make_args(
             baseline_path,
             target_path,
-            token_aligner="concat",
+            token_aligner="concat_steps",
             diff_threshold=1e-3,
         )
         records: list[AnyRecord] = _run_and_parse(args, capsys)
@@ -2259,7 +2259,7 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         filter=None,
         output_format="json",
         grouping="logical",
-        token_aligner="concat",
+        token_aligner="concat_steps",
         viz_bundle_details=False,
         viz_output_dir="/tmp/comparator_viz/",
         visualize_per_token=None,

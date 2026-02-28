@@ -5,12 +5,14 @@ import polars as pl
 import pytest
 import torch
 
+from sglang.srt.debug_utils.comparator.aligner.token_aligner.concat_steps import (
+    load_thd_seq_lens_only,
+)
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_loader import (
     _detect_plugin,
     _ensure_dims_in_metas,
     _load_and_align_aux_tensor,
     _load_non_tensor_aux,
-    load_thd_seq_lens_only,
 )
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.aux_plugins import (
     _MegatronPlugin,

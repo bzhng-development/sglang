@@ -246,9 +246,9 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--token-aligner",
         type=str,
-        choices=["smart", "concat"],
-        default="concat",
-        help="Token aligner mode: concat (BS=1, no aux needed) or smart (BS>1, sequence matching)",
+        choices=["smart", "concat_steps"],
+        default="concat_steps",
+        help="Token aligner mode: concat_steps (BS=1, no aux needed) or smart (BS>1, sequence matching)",
     )
     parser.add_argument(
         "--tokenizer",
