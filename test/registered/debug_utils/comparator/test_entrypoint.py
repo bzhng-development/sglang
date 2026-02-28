@@ -1644,6 +1644,7 @@ class TestEntrypointConcatMode:
         args: Namespace = _make_args(
             baseline_path,
             target_path,
+            grouping_skip_keys=["rank", "recompute_status", "step"],
             token_aligner="concat_steps",
             diff_threshold=1e-3,
         )
