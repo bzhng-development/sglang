@@ -322,9 +322,7 @@ class TestParseDimsWithHash:
     """parse_dims strips the ``#`` declaration section from dims."""
 
     def test_shape_dims_unchanged(self) -> None:
-        assert (
-            parse_dims("b s h(tp) # dp:=moe_dp").dims == parse_dims("b s h(tp)").dims
-        )
+        assert parse_dims("b s h(tp) # dp:=moe_dp").dims == parse_dims("b s h(tp)").dims
 
     def test_dp_group_alias_extracted(self) -> None:
         assert parse_dims("b s h(tp) # dp:=moe_dp").dp_group_alias == "moe_dp"
