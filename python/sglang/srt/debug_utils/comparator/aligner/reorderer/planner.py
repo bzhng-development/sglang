@@ -12,7 +12,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     DimSpec,
     Ordering,
     ParallelAxis,
-    ParallelModifier,
 )
 
 _ALLOWED_ZIGZAG_DIM_NAMES: set[str] = {SEQ_DIM_NAME, TOKEN_DIM_NAME}
@@ -27,8 +26,7 @@ def compute_reorderer_plans(
     plans: list[ReordererPlan] = []
 
     for spec in dim_specs:
-        modifiers: list[ParallelModifier] = spec.parallel_modifiers
-        for modifier in modifiers:
+        for modifier in spec.parallel_modifiers:
             if modifier.ordering is None or modifier.ordering == Ordering.NATURAL:
                 continue
 
