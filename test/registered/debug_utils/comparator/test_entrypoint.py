@@ -3910,21 +3910,42 @@ class TestExitCode:
         """All passed → exit 0."""
         summary = SummaryRecord(total=3, passed=3, failed=0, skipped=0)
         assert (
-            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 0
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern=".*",
+                skipped_names=[],
+                allow_fail_pattern=None,
+                failed_names=[],
+            )
+            == 0
         )
 
     def test_has_failed_and_passed(self):
         """Has failed and passed → exit 1."""
         summary = SummaryRecord(total=4, passed=2, failed=2, skipped=0)
         assert (
-            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern=".*",
+                skipped_names=[],
+                allow_fail_pattern=None,
+                failed_names=["a", "b"],
+            )
+            == 1
         )
 
     def test_all_failed(self):
         """All failed (0 passed) → exit 1."""
         summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
         assert (
-            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern=".*",
+                skipped_names=[],
+                allow_fail_pattern=None,
+                failed_names=["a", "b", "c"],
+            )
+            == 1
         )
 
     def test_all_skipped_allow_all(self):
@@ -3932,7 +3953,11 @@ class TestExitCode:
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
         assert (
             _compute_exit_code(
-                summary, allow_skip_pattern=".*", skipped_names=["a", "b"]
+                summary,
+                allow_skip_pattern=".*",
+                skipped_names=["a", "b"],
+                allow_fail_pattern=None,
+                failed_names=[],
             )
             == 0
         )
@@ -3942,7 +3967,11 @@ class TestExitCode:
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
         assert (
             _compute_exit_code(
-                summary, allow_skip_pattern="^$", skipped_names=["a", "b"]
+                summary,
+                allow_skip_pattern="^$",
+                skipped_names=["a", "b"],
+                allow_fail_pattern=None,
+                failed_names=[],
             )
             == 1
         )
@@ -3951,7 +3980,13 @@ class TestExitCode:
         """Passed + skipped, allow all → exit 0."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
         assert (
-            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a"])
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern=".*",
+                skipped_names=["a"],
+                allow_fail_pattern=None,
+                failed_names=[],
+            )
             == 0
         )
 
@@ -3959,7 +3994,13 @@ class TestExitCode:
         """Passed + skipped + forbid all → exit 1."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
         assert (
-            _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a"])
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern="^$",
+                skipped_names=["a"],
+                allow_fail_pattern=None,
+                failed_names=[],
+            )
             == 1
         )
 
@@ -3971,6 +4012,8 @@ class TestExitCode:
                 summary,
                 allow_skip_pattern="positions|seq_lens",
                 skipped_names=["positions", "seq_lens"],
+                allow_fail_pattern=None,
+                failed_names=[],
             )
             == 0
         )
@@ -3983,6 +4026,8 @@ class TestExitCode:
                 summary,
                 allow_skip_pattern="positions|seq_lens",
                 skipped_names=["positions", "seq_lens", "hidden_states"],
+                allow_fail_pattern=None,
+                failed_names=[],
             )
             == 1
         )
