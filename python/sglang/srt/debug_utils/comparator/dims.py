@@ -167,7 +167,7 @@ def parse_dim(token: str) -> DimSpec:
 
 
 def parse_dims(dims_str: str) -> list[DimSpec]:
-    """Parse 'b s(cp,zigzag) h(tp) d' -> list[DimSpec]."""
+    """Parse 'b s(cp:zigzag) h(tp) d' -> list[DimSpec]."""
     if not dims_str.strip():
         raise ValueError("dims string must not be empty")
 

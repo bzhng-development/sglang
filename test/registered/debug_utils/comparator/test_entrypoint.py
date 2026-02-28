@@ -837,7 +837,7 @@ class TestEntrypointGroupingLogical:
                 tp_size=1,
                 seq_dim=1,
                 head_dim=2,
-                dims_str="b s(cp,zigzag) h",
+                dims_str="b s(cp:zigzag) h",
             )
 
         args = _make_args(
@@ -871,7 +871,7 @@ class TestEntrypointGroupingLogical:
                 tp_size=2,
                 seq_dim=1,
                 head_dim=2,
-                dims_str="b s(cp,zigzag) h(tp)",
+                dims_str="b s(cp:zigzag) h(tp)",
             )
 
         args = _make_args(
@@ -959,14 +959,14 @@ class TestEntrypointGroupingLogical:
             full_tensor=full_baseline,
             name="attn_out",
             tp_size=2,
-            dims_str="b h(tp,partial)",
+            dims_str="b h(tp:partial)",
         )
         target_path = _create_tp_partial_dumps(
             target_dir,
             full_tensor=full_target,
             name="attn_out",
             tp_size=2,
-            dims_str="b h(tp,partial)",
+            dims_str="b h(tp:partial)",
         )
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
@@ -997,7 +997,7 @@ class TestEntrypointGroupingLogical:
             full_tensor=target_full,
             name="attn_out",
             tp_size=2,
-            dims_str="b h(tp,partial)",
+            dims_str="b h(tp:partial)",
         )
 
         args = _make_args(baseline_path, target_path, diff_threshold=0.01)
@@ -1026,7 +1026,7 @@ class TestEntrypointGroupingLogical:
                         rank=rank,
                         name="hidden",
                         tensor=cp_chunks[cp_rank] / 2,
-                        dims="b s(cp) h(tp,partial)",
+                        dims="b s(cp) h(tp:partial)",
                         parallel_info={
                             "cp_rank": cp_rank,
                             "cp_size": 2,
@@ -2645,7 +2645,7 @@ def _create_thd_cp_zigzag_dumps(
     seq_lens: list[int],
     cp_size: int,
     total_per_rank: int,
-    dims_str: str = "t(cp,zigzag)",
+    dims_str: str = "t(cp:zigzag)",
     num_steps: int = 1,
 ) -> Path:
     """Create THD CP-zigzag sharded dump files simulating Megatron forward.
@@ -2854,7 +2854,7 @@ class TestEntrypointThdCpZigzag:
                 rank=cp_rank,
                 name="hidden_states",
                 tensor=rank_hidden,
-                dims="t(cp,zigzag) h",
+                dims="t(cp:zigzag) h",
                 parallel_info={"cp_rank": cp_rank, "cp_size": cp_size},
                 framework="megatron",
                 extra_dumps=[
