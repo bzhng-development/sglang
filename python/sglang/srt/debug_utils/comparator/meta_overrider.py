@@ -12,7 +12,7 @@ from typing import Any, Literal, Optional
 
 import yaml
 
-from sglang.srt.debug_utils.comparator.utils import Pair, _StrictBase
+from sglang.srt.debug_utils.comparator.utils import _StrictBase
 from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 
@@ -69,54 +69,34 @@ class MetaOverrider:
 
         return cls(rules=cli_rules + yaml_rules)
 
-    def apply_to_metas(
+    def apply_to_meta(
         self,
         *,
         name: str,
-        baseline_metas: list[dict[str, Any]],
-        target_metas: list[dict[str, Any]],
-    ) -> Pair[list[dict[str, Any]]]:
-        """First-match-wins per side: each side is overridden by the first matching rule that covers it."""
-        result_baseline: list[dict[str, Any]] = baseline_metas
-        result_target: list[dict[str, Any]] = target_metas
-        baseline_matched: bool = False
-        target_matched: bool = False
-
+        meta: dict[str, Any],
+        side: Literal["baseline", "target"],
+    ) -> dict[str, Any]:
+        """First-match-wins: return meta with dims replaced by the first matching rule for this side."""
         for rule in self._rules:
-            if baseline_matched and target_matched:
-                break
-            if not re.search(rule.match, name):
+            if rule.side not in ("both", side):
                 continue
+            if re.search(rule.match, name):
+                return {**meta, "dims": rule.dims}
 
-            if not baseline_matched and rule.side in ("both", "baseline"):
-                result_baseline = _apply_dims_to_metas(metas=baseline_metas, new_dims=rule.dims)
-                baseline_matched = True
+        return meta
 
-            if not target_matched and rule.side in ("both", "target"):
-                result_target = _apply_dims_to_metas(metas=target_metas, new_dims=rule.dims)
-                target_matched = True
-
-        return Pair(x=result_baseline, y=result_target)
-
-    def apply_to_value_with_meta_pair(
+    def apply_to_value(
         self,
         *,
         name: str,
-        pair: Pair[list[ValueWithMeta]],
-    ) -> Pair[list[ValueWithMeta]]:
-        """Apply dims overrides to a ValueWithMeta pair, returning a new pair with patched metas."""
-        if self.is_empty:
-            return pair
-
-        overridden: Pair[list[dict[str, Any]]] = self.apply_to_metas(
-            name=name,
-            baseline_metas=[it.meta for it in pair.x],
-            target_metas=[it.meta for it in pair.y],
+        value: ValueWithMeta,
+        side: Literal["baseline", "target"],
+    ) -> ValueWithMeta:
+        """Apply dims override to a single ValueWithMeta."""
+        new_meta: dict[str, Any] = self.apply_to_meta(
+            name=name, meta=value.meta, side=side,
         )
-        return Pair(
-            x=[ValueWithMeta(value=v.value, meta=m) for v, m in zip(pair.x, overridden.x)],
-            y=[ValueWithMeta(value=v.value, meta=m) for v, m in zip(pair.y, overridden.y)],
-        )
+        return ValueWithMeta(value=value.value, meta=new_meta)
 
 
 def _parse_cli_override_arg(raw: str) -> tuple[str, str]:
@@ -144,15 +124,3 @@ def _load_yaml_rules(path: Path) -> list[MetaOverrideRule]:
 
     config: MetaOverrideConfig = MetaOverrideConfig.model_validate(raw_data)
     return config.overrides
-
-
-def _apply_dims_to_metas(
-    *,
-    metas: list[dict[str, Any]],
-    new_dims: Optional[str],
-) -> list[dict[str, Any]]:
-    """Replace 'dims' in each meta dict if new_dims is provided."""
-    if new_dims is None:
-        return metas
-
-    return [{**meta, "dims": new_dims} for meta in metas]

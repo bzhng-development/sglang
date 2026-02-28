@@ -14,7 +14,6 @@ from sglang.srt.debug_utils.comparator.meta_overrider import (
     _load_yaml_rules,
     _parse_cli_override_arg,
 )
-from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=10, suite="default", nightly=True)
@@ -104,7 +103,7 @@ class TestParseCLIOverrideArg:
 
 
 class TestMetaOverrider:
-    """MetaOverrider logic: matching, priority, apply_to_metas."""
+    """MetaOverrider logic: matching, priority, apply_to_meta."""
 
     def test_first_match_wins(self) -> None:
         """First matching rule takes effect; later rules ignored."""
@@ -114,97 +113,71 @@ class TestMetaOverrider:
                 MetaOverrideRule(match="hidden", dims="SECOND"),
             ]
         )
-        result: Pair[list[dict]] = overrider.apply_to_metas(
-            name="hidden_states",
-            baseline_metas=[{"dims": "old"}],
-            target_metas=[{"dims": "old"}],
+        result: dict = overrider.apply_to_meta(
+            name="hidden_states", meta={"dims": "old"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "FIRST"
-        assert result.y[0]["dims"] == "FIRST"
+        assert result["dims"] == "FIRST"
 
     def test_regex_contains_match(self) -> None:
         """match is a regex contains search, not exact match."""
         overrider = MetaOverrider(
             rules=[MetaOverrideRule(match=r"\.q_proj\.", dims="h d")]
         )
-        result = overrider.apply_to_metas(
-            name="layers.0.q_proj.weight",
-            baseline_metas=[{"dims": "old"}],
-            target_metas=[{"dims": "old"}],
+        result: dict = overrider.apply_to_meta(
+            name="layers.0.q_proj.weight", meta={"dims": "old"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "h d"
+        assert result["dims"] == "h d"
 
     def test_no_match_preserves_original(self) -> None:
-        """No matching rule leaves metas untouched."""
+        """No matching rule leaves meta untouched."""
         overrider = MetaOverrider(
             rules=[MetaOverrideRule(match="logits", dims="b s v")]
         )
-        original_meta: dict = {"dims": "original"}
-        result = overrider.apply_to_metas(
-            name="hidden_states",
-            baseline_metas=[original_meta],
-            target_metas=[original_meta],
+        result: dict = overrider.apply_to_meta(
+            name="hidden_states", meta={"dims": "original"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "original"
-        assert result.y[0]["dims"] == "original"
+        assert result["dims"] == "original"
 
     def test_side_baseline_only(self) -> None:
-        """side='baseline' overrides only baseline; target unchanged."""
+        """side='baseline' rule applies to baseline but not target."""
         overrider = MetaOverrider(
-            rules=[
-                MetaOverrideRule(match="logits", dims="b s v(tp)", side="baseline")
-            ]
+            rules=[MetaOverrideRule(match="logits", dims="b s v(tp)", side="baseline")]
         )
-        result = overrider.apply_to_metas(
-            name="logits",
-            baseline_metas=[{"dims": "old_b"}],
-            target_metas=[{"dims": "old_t"}],
+        baseline: dict = overrider.apply_to_meta(
+            name="logits", meta={"dims": "old"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "b s v(tp)"
-        assert result.y[0]["dims"] == "old_t"
+        target: dict = overrider.apply_to_meta(
+            name="logits", meta={"dims": "old"}, side="target",
+        )
+        assert baseline["dims"] == "b s v(tp)"
+        assert target["dims"] == "old"
 
     def test_side_target_only(self) -> None:
-        """side='target' overrides only target; baseline unchanged."""
+        """side='target' rule applies to target but not baseline."""
         overrider = MetaOverrider(
-            rules=[
-                MetaOverrideRule(match="logits", dims="b s v(ep)", side="target")
-            ]
+            rules=[MetaOverrideRule(match="logits", dims="b s v(ep)", side="target")]
         )
-        result = overrider.apply_to_metas(
-            name="logits",
-            baseline_metas=[{"dims": "old_b"}],
-            target_metas=[{"dims": "old_t"}],
+        baseline: dict = overrider.apply_to_meta(
+            name="logits", meta={"dims": "old"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "old_b"
-        assert result.y[0]["dims"] == "b s v(ep)"
+        target: dict = overrider.apply_to_meta(
+            name="logits", meta={"dims": "old"}, side="target",
+        )
+        assert baseline["dims"] == "old"
+        assert target["dims"] == "b s v(ep)"
 
     def test_is_empty(self) -> None:
         """Empty overrider reports is_empty=True."""
         assert MetaOverrider(rules=[]).is_empty
         assert not MetaOverrider(rules=[MetaOverrideRule(match="x", dims="d")]).is_empty
 
-    def test_multiple_metas(self) -> None:
-        """All metas in the list are updated when a rule matches."""
-        overrider = MetaOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
-        result = overrider.apply_to_metas(
-            name="hidden",
-            baseline_metas=[{"dims": "a"}, {"dims": "b"}],
-            target_metas=[{"dims": "c"}],
-        )
-        assert result.x[0]["dims"] == "NEW"
-        assert result.x[1]["dims"] == "NEW"
-        assert result.y[0]["dims"] == "NEW"
-
     def test_meta_without_dims_key(self) -> None:
         """Override adds 'dims' even if original meta lacks it."""
         overrider = MetaOverrider(rules=[MetaOverrideRule(match="hidden", dims="NEW")])
-        result = overrider.apply_to_metas(
-            name="hidden",
-            baseline_metas=[{"other": "val"}],
-            target_metas=[{}],
+        result: dict = overrider.apply_to_meta(
+            name="hidden", meta={"other": "val"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "NEW"
-        assert result.y[0]["dims"] == "NEW"
+        assert result["dims"] == "NEW"
 
 
 # ──────────────────── Unit: from_args_and_config ────────────────────
@@ -229,12 +202,10 @@ class TestFromArgsAndConfig:
             override_config=yaml_path,
         )
 
-        result = overrider.apply_to_metas(
-            name="hidden",
-            baseline_metas=[{"dims": "old"}],
-            target_metas=[{"dims": "old"}],
+        result: dict = overrider.apply_to_meta(
+            name="hidden", meta={"dims": "old"}, side="baseline",
         )
-        assert result.x[0]["dims"] == "FROM_CLI"
+        assert result["dims"] == "FROM_CLI"
 
     def test_no_config_no_cli(self) -> None:
         """Empty CLI + no YAML yields empty overrider."""
@@ -255,14 +226,14 @@ class TestFromArgsAndConfig:
             override_config=None,
         )
 
-        result = overrider.apply_to_metas(
-            name="hidden",
-            baseline_metas=[{"dims": "old"}],
-            target_metas=[{"dims": "old"}],
+        baseline: dict = overrider.apply_to_meta(
+            name="hidden", meta={"dims": "old"}, side="baseline",
         )
-        # Each side matched by its own first-matching rule
-        assert result.x[0]["dims"] == "b s h(tp)"
-        assert result.y[0]["dims"] == "b s h(ep)"
+        target: dict = overrider.apply_to_meta(
+            name="hidden", meta={"dims": "old"}, side="target",
+        )
+        assert baseline["dims"] == "b s h(tp)"
+        assert target["dims"] == "b s h(ep)"
 
 
 # ──────────────────── Unit: _load_yaml_rules ────────────────────
