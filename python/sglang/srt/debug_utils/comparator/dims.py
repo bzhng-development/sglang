@@ -89,8 +89,6 @@ class _SingletonDimUtil:
 _DIM_PATTERN = re.compile(r"^(?P<name>[a-zA-Z_]\w*)(?:\((?P<modifiers>[^)]+)\))?$")
 
 _AXIS_LOOKUP: dict[str, ParallelAxis] = {m.value: m for m in ParallelAxis}
-_ORDERING_LOOKUP: dict[str, Ordering] = {m.value: m for m in Ordering}
-_REDUCTION_LOOKUP: dict[str, Reduction] = {m.value: m for m in Reduction}
 _QUALIFIER_LOOKUP: dict[str, Ordering | Reduction] = {
     **{m.value: m for m in Ordering},
     **{m.value: m for m in Reduction},
