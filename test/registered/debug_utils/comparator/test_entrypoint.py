@@ -544,7 +544,7 @@ class TestEntrypointGroupingLogical:
         assert summary.skipped == 0
 
     def test_multi_step_tp(self, tmp_path, capsys):
-        """Two steps with TP=2 shards produce two per-step comparisons (no aux → no alignment)."""
+        """Two steps with TP=2 shards: concat mode merges into one comparison."""
         torch.manual_seed(42)
         full_tensor = torch.randn(4, 8)
 
@@ -574,14 +574,14 @@ class TestEntrypointGroupingLogical:
 
         records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
-        assert len(comparisons) == 2
-        assert comparisons[0].baseline.shape == [4, 8]
-        assert comparisons[1].baseline.shape == [4, 8]
+        assert len(comparisons) == 1
+        # concat along dim 0 (fallback, no token dim) → 2 steps × [4, 8] = [8, 8]
+        assert comparisons[0].baseline.shape == [8, 8]
 
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
-        assert summary.total == 2
-        assert summary.passed == 2
+        assert summary.total == 1
+        assert summary.passed == 1
 
     def test_cp_axis_unshard(self, tmp_path, capsys):
         """CP-sharded tensors are correctly concatenated along the sequence dim."""
@@ -1811,6 +1811,7 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         filter=None,
         output_format="json",
         grouping="logical",
+        token_aligner="concat",
         viz_bundle_details=False,
         viz_output_dir="/tmp/comparator_viz/",
         visualize_per_token=None,
