@@ -2404,6 +2404,7 @@ class TestEntrypointThdCpZigzag:
             sglang_dir / _FIXED_EXP_NAME,
             megatron_dir / _FIXED_EXP_NAME,
             grouping="logical",
+            token_aligner="smart",
             diff_threshold=1e-3,
         )
         records: list[AnyRecord] = _run_and_parse(args, capsys)
@@ -2451,7 +2452,11 @@ class TestEntrypointThdCpZigzag:
         )
 
         args: Namespace = _make_args(
-            baseline_path, target_path, grouping="logical", diff_threshold=1e-3
+            baseline_path,
+            target_path,
+            grouping="logical",
+            token_aligner="smart",
+            diff_threshold=1e-3,
         )
         records: list[AnyRecord] = _run_and_parse(args, capsys)
 
