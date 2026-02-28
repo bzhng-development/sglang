@@ -13,7 +13,6 @@ from typing import Any, Literal, Optional
 import yaml
 
 from sglang.srt.debug_utils.comparator.utils import _StrictBase
-from sglang.srt.debug_utils.dump_loader import ValueWithMeta
 
 
 class MetaOverrideRule(_StrictBase):
@@ -60,7 +59,7 @@ class MetaOverrider:
         cli_rules: list[MetaOverrideRule] = [
             MetaOverrideRule(match=name, dims=dims_str, side=side)
             for raw_args, side in per_side_args
-            for name, dims_str in _parse_cli_override_args(raw_args)
+            for name, dims_str in [_parse_cli_override_arg(raw) for raw in raw_args]
         ]
 
         yaml_rules: list[MetaOverrideRule] = (
@@ -85,19 +84,6 @@ class MetaOverrider:
 
         return meta
 
-    def apply_to_value(
-        self,
-        *,
-        name: str,
-        value: ValueWithMeta,
-        side: Literal["baseline", "target"],
-    ) -> ValueWithMeta:
-        """Apply dims override to a single ValueWithMeta."""
-        new_meta: dict[str, Any] = self.apply_to_meta(
-            name=name, meta=value.meta, side=side,
-        )
-        return ValueWithMeta(value=value.value, meta=new_meta)
-
 
 def _parse_cli_override_arg(raw: str) -> tuple[str, str]:
     """Parse 'name:dims_string' from a CLI --override-* argument."""
@@ -107,11 +93,6 @@ def _parse_cli_override_arg(raw: str) -> tuple[str, str]:
             f"Invalid override format: {raw!r}; expected 'name:dims_string'"
         )
     return parts[0].strip(), parts[1].strip()
-
-
-def _parse_cli_override_args(raw_args: list[str]) -> list[tuple[str, str]]:
-    """Parse multiple CLI override arguments."""
-    return [_parse_cli_override_arg(raw) for raw in raw_args]
 
 
 def _load_yaml_rules(path: Path) -> list[MetaOverrideRule]:

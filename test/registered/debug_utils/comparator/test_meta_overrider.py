@@ -138,33 +138,23 @@ class TestMetaOverrider:
         )
         assert result["dims"] == "original"
 
-    def test_side_baseline_only(self) -> None:
-        """side='baseline' rule applies to baseline but not target."""
+    @pytest.mark.parametrize("rule_side,apply_side,should_match", [
+        ("baseline", "baseline", True),
+        ("baseline", "target", False),
+        ("target", "target", True),
+        ("target", "baseline", False),
+        ("both", "baseline", True),
+        ("both", "target", True),
+    ])
+    def test_side_filtering(self, rule_side: str, apply_side: str, should_match: bool) -> None:
+        """Rule only applies when its side matches the apply side."""
         overrider = MetaOverrider(
-            rules=[MetaOverrideRule(match="logits", dims="b s v(tp)", side="baseline")]
+            rules=[MetaOverrideRule(match="logits", dims="NEW", side=rule_side)]
         )
-        baseline: dict = overrider.apply_to_meta(
-            name="logits", meta={"dims": "old"}, side="baseline",
+        result: dict = overrider.apply_to_meta(
+            name="logits", meta={"dims": "old"}, side=apply_side,
         )
-        target: dict = overrider.apply_to_meta(
-            name="logits", meta={"dims": "old"}, side="target",
-        )
-        assert baseline["dims"] == "b s v(tp)"
-        assert target["dims"] == "old"
-
-    def test_side_target_only(self) -> None:
-        """side='target' rule applies to target but not baseline."""
-        overrider = MetaOverrider(
-            rules=[MetaOverrideRule(match="logits", dims="b s v(ep)", side="target")]
-        )
-        baseline: dict = overrider.apply_to_meta(
-            name="logits", meta={"dims": "old"}, side="baseline",
-        )
-        target: dict = overrider.apply_to_meta(
-            name="logits", meta={"dims": "old"}, side="target",
-        )
-        assert baseline["dims"] == "old"
-        assert target["dims"] == "b s v(ep)"
+        assert result["dims"] == ("NEW" if should_match else "old")
 
     def test_is_empty(self) -> None:
         """Empty overrider reports is_empty=True."""

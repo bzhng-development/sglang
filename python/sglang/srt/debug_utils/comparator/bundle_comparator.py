@@ -107,9 +107,10 @@ def _compare_bundle_pair_inner(
 
     # 1c. Dims override: patch meta["dims"] before downstream reads it
     if meta_overrider is not None and not meta_overrider.is_empty:
+        _apply = meta_overrider.apply_to_meta
         all_pair = Pair(
-            x=[meta_overrider.apply_to_value(name=name, value=v, side="baseline") for v in all_pair.x],
-            y=[meta_overrider.apply_to_value(name=name, value=v, side="target") for v in all_pair.y],
+            x=[ValueWithMeta(value=v.value, meta=_apply(name=name, meta=v.meta, side="baseline")) for v in all_pair.x],
+            y=[ValueWithMeta(value=v.value, meta=_apply(name=name, meta=v.meta, side="target")) for v in all_pair.y],
         )
 
     # 2. Check if any side has non-tensor values → non-tensor display path
