@@ -289,7 +289,7 @@ class TestComputeUnsharderPlan:
         assert len(plans[2].groups[0]) == 2
 
     def test_same_dim_cp_sp_plan(self) -> None:
-        """t(cp:zigzag,sp) with CP=2 SP=2: SP unshards first (inner), then CP."""
+        """t[cp:zigzag,sp] with CP=2 SP=2: SP unshards first (inner), then CP."""
         dim_specs = parse_dims("t[cp:zigzag,sp] 1 h").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = []
         for cp_rank in range(2):
@@ -323,7 +323,7 @@ class TestComputeUnsharderPlan:
         assert len(cp_plan.groups[0]) == 2
 
     def test_same_dim_cp_sp_with_thd(self) -> None:
-        """t(cp:zigzag,sp) with THD: SP → ConcatParams, CP → CpThdConcatParams."""
+        """t[cp:zigzag,sp] with THD: SP → ConcatParams, CP → CpThdConcatParams."""
         from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
             CpThdConcatParams,
         )
@@ -360,7 +360,7 @@ class TestComputeUnsharderPlan:
         assert cp_plan.params.seq_lens_per_rank == [50, 32]
 
     def test_sp_in_dims_but_not_in_parallel_info(self) -> None:
-        """s(sp) in dims but SP absent from parallel_info (SP disabled), should auto-skip."""
+        """s[sp] in dims but SP absent from parallel_info (SP disabled), should auto-skip."""
         dim_specs = parse_dims("s[sp] b h[tp]").dims
         parallel_infos = [
             {ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2)},
@@ -371,7 +371,7 @@ class TestComputeUnsharderPlan:
         assert plans[0].axis == ParallelAxis.TP
 
     def test_all_dims_sharded_but_single_gpu(self) -> None:
-        """Single GPU (TP=1, CP=1), dims has s(cp) h(tp) but parallel_info is empty."""
+        """Single GPU (TP=1, CP=1), dims has s[cp] h[tp] but parallel_info is empty."""
         dim_specs = parse_dims("b s[cp] h[tp] d").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [{}]
         plans = compute_unsharder_plan(dim_specs, parallel_infos)
@@ -396,7 +396,7 @@ class TestComputeUnsharderPlan:
 
 class TestReplicatedAxes:
     def test_replicated_tp_with_sharded_cp(self) -> None:
-        """CP2 TP2, dims='b s(cp) d' → PickPlan(TP) + ConcatPlan(CP)."""
+        """CP2 TP2, dims='b s[cp] d' → PickPlan(TP) + ConcatPlan(CP)."""
         dim_specs = parse_dims("b s[cp] d").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
             {
@@ -458,7 +458,7 @@ class TestReplicatedAxes:
         assert axes == {ParallelAxis.CP, ParallelAxis.TP}
 
     def test_multiple_replicated_one_sharded(self) -> None:
-        """CP2 TP2 EP2, dims='h(tp)' → PickPlan(CP) + PickPlan(EP) + ConcatPlan(TP)."""
+        """CP2 TP2 EP2, dims='h[tp]' → PickPlan(CP) + PickPlan(EP) + ConcatPlan(TP)."""
         dim_specs = parse_dims("h[tp]").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = []
         for cp_rank in range(2):
@@ -562,8 +562,8 @@ class TestReplicatedAxes:
 
 class TestComputeUnsharderPlanFusedDims:
     def test_fused_dim_tp2(self) -> None:
-        """Fused dim "num_heads(tp)*head_dim" should unshard on the fused tensor name."""
-        dim_specs = parse_dims("t num_heads(tp)*head_dim").dims
+        """Fused dim "num_heads[tp]*head_dim" should unshard on the fused tensor name."""
+        dim_specs = parse_dims("t num_heads[tp]*head_dim").dims
         parallel_infos = [
             {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
         ]
@@ -576,8 +576,8 @@ class TestComputeUnsharderPlanFusedDims:
         assert plans[0].groups == [[0, 1]]
 
     def test_fused_dim_modifier_on_second_sub(self) -> None:
-        """Modifier on last sub-dim: "a*b(tp)" should still produce concat plan."""
-        dim_specs = parse_dims("t a*b(tp)").dims
+        """Modifier on last sub-dim: "a*b[tp]" should still produce concat plan."""
+        dim_specs = parse_dims("t a*b[tp]").dims
         parallel_infos = [
             {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
         ]
@@ -601,8 +601,8 @@ class TestComputeUnsharderPlanFusedDims:
         assert isinstance(plans[0].params, PickParams)
 
     def test_fused_dim_with_reduction(self) -> None:
-        """Fused dim with partial reduction: "a(tp:partial)*b"."""
-        dim_specs = parse_dims("t a(tp:partial)*b").dims
+        """Fused dim with partial reduction: "a[tp:partial]*b"."""
+        dim_specs = parse_dims("t a[tp:partial]*b").dims
         parallel_infos = [
             {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
         ]

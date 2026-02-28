@@ -25,7 +25,7 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 class TestComputeReordererPlans:
     def test_compute_reorderer_plans_zigzag(self) -> None:
-        """s(cp:zigzag) produces a ReordererPlan."""
+        """s[cp:zigzag] produces a ReordererPlan."""
         dim_specs = parse_dims("b s[cp:zigzag] h[tp]").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
             {
@@ -43,7 +43,7 @@ class TestComputeReordererPlans:
         assert plans[0].params.cp_size == 2
 
     def test_compute_reorderer_plans_thd_zigzag(self) -> None:
-        """t(cp:zigzag) produces a ZigzagToNaturalThdParams plan."""
+        """t[cp:zigzag] produces a ZigzagToNaturalThdParams plan."""
         dim_specs = parse_dims("t[cp:zigzag] h[tp]").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
             {
@@ -64,7 +64,7 @@ class TestComputeReordererPlans:
         assert plans[0].params.seq_lens == [100, 64, 92]
 
     def test_non_seq_dim_still_raises(self) -> None:
-        """Zigzag on non-sequence/non-token dim (e.g. h(cp:zigzag)) raises ValueError."""
+        """Zigzag on non-sequence/non-token dim (e.g. h[cp:zigzag]) raises ValueError."""
         dim_specs = parse_dims("h[cp:zigzag] d").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
             {ParallelAxis.CP: AxisInfo(axis_rank=0, axis_size=2)},
@@ -73,7 +73,7 @@ class TestComputeReordererPlans:
             compute_reorderer_plans(dim_specs=dim_specs, parallel_infos=parallel_infos)
 
     def test_thd_zigzag_without_seq_lens_raises(self) -> None:
-        """t(cp:zigzag) without thd_global_seq_lens raises ValueError."""
+        """t[cp:zigzag] without thd_global_seq_lens raises ValueError."""
         dim_specs = parse_dims("t[cp:zigzag] h[tp]").dims
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
             {
@@ -85,7 +85,7 @@ class TestComputeReordererPlans:
             compute_reorderer_plans(dim_specs=dim_specs, parallel_infos=parallel_infos)
 
     def test_thd_natural_no_reorder(self) -> None:
-        """t(cp:natural) and t(cp) produce no reorder plans."""
+        """t[cp:natural] and t[cp] produce no reorder plans."""
         for dims_str in ["t[cp:natural] h[tp]", "t[cp] h[tp]"]:
             dim_specs = parse_dims(dims_str).dims
             parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
@@ -100,7 +100,7 @@ class TestComputeReordererPlans:
             assert plans == []
 
     def test_compute_reorderer_plans_natural(self) -> None:
-        """s(cp) and s(cp:natural) produce no reorder plans."""
+        """s[cp] and s[cp:natural] produce no reorder plans."""
         for dims_str in ["b s[cp] h[tp]", "b s[cp:natural] h[tp]"]:
             dim_specs = parse_dims(dims_str).dims
             parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
@@ -167,7 +167,7 @@ class TestCpZigzagTpE2E:
 
 
 class TestCpZigzagSpSameDimE2E:
-    """E2E test for t(cp:zigzag,sp) — two axes sharding the same token dim."""
+    """E2E test for t[cp:zigzag,sp] — two axes sharding the same token dim."""
 
     def test_cp2_sp2_zigzag_e2e(self) -> None:
         """CP=2 zigzag + SP=2 on same token dim: full unshard + reorder round-trip.
