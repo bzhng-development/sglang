@@ -2249,7 +2249,8 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         override_baseline_dims=[],
         override_target_dims=[],
         override_config=None,
-        forbid_skip=False,
+        allow_skip_pattern=".*",
+        report_path="",
     )
     defaults.update(overrides)
     return Namespace(**defaults)
@@ -3587,37 +3588,83 @@ class TestExitCode:
     def test_all_passed(self):
         """All passed → exit 0."""
         summary = SummaryRecord(total=3, passed=3, failed=0, skipped=0)
-        assert _compute_exit_code(summary, forbid_skip=False) == 0
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 0
+        )
 
     def test_has_failed_and_passed(self):
         """Has failed and passed → exit 1."""
         summary = SummaryRecord(total=4, passed=2, failed=2, skipped=0)
-        assert _compute_exit_code(summary, forbid_skip=False) == 1
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+        )
 
     def test_all_failed(self):
         """All failed (0 passed) → exit 1."""
         summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
-        assert _compute_exit_code(summary, forbid_skip=False) == 1
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+        )
 
-    def test_all_skipped(self):
-        """All skipped → exit 0 (without --forbid-skip)."""
+    def test_all_skipped_allow_all(self):
+        """All skipped + allow_skip_pattern='.*' → exit 0."""
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert _compute_exit_code(summary, forbid_skip=False) == 0
+        assert (
+            _compute_exit_code(
+                summary, allow_skip_pattern=".*", skipped_names=["a", "b"]
+            )
+            == 0
+        )
 
-    def test_skipped_with_forbid_skip(self):
-        """All skipped + --forbid-skip → exit 1."""
+    def test_all_skipped_forbid_all(self):
+        """All skipped + allow_skip_pattern='^$' → exit 1."""
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert _compute_exit_code(summary, forbid_skip=True) == 1
+        assert (
+            _compute_exit_code(
+                summary, allow_skip_pattern="^$", skipped_names=["a", "b"]
+            )
+            == 1
+        )
 
-    def test_passed_and_skipped_no_forbid(self):
-        """Passed + skipped, no --forbid-skip → exit 0."""
+    def test_passed_and_skipped_allow_all(self):
+        """Passed + skipped, allow all → exit 0."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert _compute_exit_code(summary, forbid_skip=False) == 0
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a"])
+            == 0
+        )
 
-    def test_passed_and_skipped_with_forbid(self):
-        """Passed + skipped + --forbid-skip → exit 1."""
+    def test_passed_and_skipped_forbid_all(self):
+        """Passed + skipped + forbid all → exit 1."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert _compute_exit_code(summary, forbid_skip=True) == 1
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a"])
+            == 1
+        )
+
+    def test_skip_pattern_matches_specific_name(self):
+        """Pattern matching specific name allows that skip, forbids others."""
+        summary = SummaryRecord(total=4, passed=2, failed=0, skipped=2)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern="positions|seq_lens",
+                skipped_names=["positions", "seq_lens"],
+            )
+            == 0
+        )
+
+    def test_skip_pattern_partial_match_forbidden(self):
+        """Pattern matches some skips but not all → exit 1."""
+        summary = SummaryRecord(total=4, passed=1, failed=0, skipped=3)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern="positions|seq_lens",
+                skipped_names=["positions", "seq_lens", "hidden_states"],
+            )
+            == 1
+        )
 
     def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
         """Integration: all comparisons pass → run() returns 0."""
@@ -3663,7 +3710,7 @@ class TestExitCodeSubprocess:
         target_path: Path,
         *,
         grouping: str = "raw",
-        forbid_skip: bool = False,
+        allow_skip_pattern: str = ".*",
     ) -> subprocess.CompletedProcess[str]:
         cmd: list[str] = [
             sys.executable,
@@ -3677,9 +3724,9 @@ class TestExitCodeSubprocess:
             grouping,
             "--output-format",
             "json",
+            "--allow-skip-pattern",
+            allow_skip_pattern,
         ]
-        if forbid_skip:
-            cmd.append("--forbid-skip")
         return subprocess.run(cmd, capture_output=True, text=True)
 
     def test_all_passed_exit_zero(self, tmp_path):
@@ -3700,25 +3747,131 @@ class TestExitCodeSubprocess:
         result = self._run_comparator(baseline_path, target_path)
         assert result.returncode == 1
 
-    def test_skipped_without_forbid_exit_zero(self, tmp_path):
-        """Subprocess: skipped comparison without --forbid-skip → exit 0."""
+    def test_skipped_allow_all_exit_zero(self, tmp_path):
+        """Subprocess: skipped comparison with allow_skip_pattern='.*' → exit 0."""
         baseline_path, target_path = _create_dumps(
             tmp_path,
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        result = self._run_comparator(baseline_path, target_path, forbid_skip=False)
+        result = self._run_comparator(
+            baseline_path, target_path, allow_skip_pattern=".*"
+        )
         assert result.returncode == 0
 
-    def test_skipped_with_forbid_exit_nonzero(self, tmp_path):
-        """Subprocess: skipped comparison with --forbid-skip → exit 1."""
+    def test_skipped_forbid_all_exit_nonzero(self, tmp_path):
+        """Subprocess: skipped comparison with allow_skip_pattern='^$' → exit 1."""
         baseline_path, target_path = _create_dumps(
             tmp_path,
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        result = self._run_comparator(baseline_path, target_path, forbid_skip=True)
+        result = self._run_comparator(
+            baseline_path, target_path, allow_skip_pattern="^$"
+        )
         assert result.returncode == 1
+
+
+class TestReportOutput:
+    """Test JSONL report file output via ReportSink."""
+
+    def test_default_report_path(self, tmp_path, capsys):
+        """Default writes to <target>/comparator_report.jsonl with ConfigRecord + SummaryRecord."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        args = _make_args(baseline_path, target_path, grouping="raw", report_path=None)
+
+        exit_code: int = run(args)
+
+        report_file: Path = target_path / "comparator_report.jsonl"
+        assert report_file.exists()
+
+        report_records: list[AnyRecord] = _parse_jsonl(report_file.read_text())
+        assert isinstance(report_records[0], ConfigRecord)
+        assert isinstance(report_records[-1], SummaryRecord)
+        assert exit_code == 0
+
+    def test_custom_report_path(self, tmp_path, capsys):
+        """--report-path writes to the specified location."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        custom_path: Path = tmp_path / "custom" / "report.jsonl"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            report_path=str(custom_path),
+        )
+
+        run(args)
+
+        assert custom_path.exists()
+        report_records: list[AnyRecord] = _parse_jsonl(custom_path.read_text())
+        assert isinstance(report_records[0], ConfigRecord)
+        assert isinstance(report_records[-1], SummaryRecord)
+
+    def test_disabled_report(self, tmp_path, capsys):
+        """--report-path '' disables file generation."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        args = _make_args(baseline_path, target_path, grouping="raw", report_path="")
+
+        run(args)
+
+        report_file: Path = target_path / "comparator_report.jsonl"
+        assert not report_file.exists()
+
+    def test_report_matches_stdout_json(self, tmp_path, capsys):
+        """In json mode, report content matches stdout output."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        report_file: Path = tmp_path / "report.jsonl"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            output_format="json",
+            report_path=str(report_file),
+        )
+
+        capsys.readouterr()
+        run(args)
+
+        stdout_lines: list[str] = capsys.readouterr().out.strip().splitlines()
+        report_lines: list[str] = report_file.read_text().strip().splitlines()
+        assert stdout_lines == report_lines
+
+    def test_text_mode_also_writes_report(self, tmp_path, capsys):
+        """Text stdout mode still writes JSONL report."""
+        baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
+        report_file: Path = tmp_path / "report.jsonl"
+        args = _make_args(
+            baseline_path,
+            target_path,
+            grouping="raw",
+            output_format="text",
+            report_path=str(report_file),
+        )
+
+        run(args)
+
+        assert report_file.exists()
+        report_records: list[AnyRecord] = _parse_jsonl(report_file.read_text())
+        assert isinstance(report_records[0], ConfigRecord)
+        assert isinstance(report_records[-1], SummaryRecord)
+
+    def test_streaming_flush(self, tmp_path, capsys):
+        """Report file is flushed after each record (readable before close)."""
+        from sglang.srt.debug_utils.comparator.output_types import report_sink
+
+        report_file: Path = tmp_path / "stream_report.jsonl"
+        report_sink.configure(
+            output_format="json",
+            report_path=report_file,
+        )
+
+        report_sink.add(ConfigRecord(config={"test": True}))
+
+        content: str = report_file.read_text()
+        assert len(content.strip().splitlines()) == 1
+        parsed: AnyRecord = parse_record_json(content.strip())
+        assert isinstance(parsed, ConfigRecord)
 
 
 if __name__ == "__main__":
