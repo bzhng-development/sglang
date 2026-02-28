@@ -184,10 +184,7 @@ def _read_df(args: argparse.Namespace) -> Pair[pl.DataFrame]:
 
 
 def _compute_skip_keys(args: argparse.Namespace) -> set[str]:
-    skip_keys: set[str] = set(_DEFAULT_SKIP_KEYS)
-    if args.grouping_skip_keys is not None:
-        skip_keys |= set(args.grouping_skip_keys)
-    return skip_keys
+    return _DEFAULT_SKIP_KEYS | set(args.grouping_skip_keys or [])
 
 
 def _compare_bundle_pairs(
