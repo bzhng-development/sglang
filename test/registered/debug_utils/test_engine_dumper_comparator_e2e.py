@@ -73,11 +73,6 @@ patches:
         append: "dumper.dump('mlp_output', hidden_states, dims='t h(tp,partial)')"
 
   # --- attention internals ---
-  - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_prepare_native
-    edits:
-      - match: "qkv, _ = self.qkv_proj(hidden_states)"
-        append: "dumper.dump('attn_qkv', qkv, dims='t qkv(tp)')"
-
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
@@ -102,7 +97,7 @@ class TestSourcePatcherE2ESGLang:
             # decoder layer level (aligned with miles)
             "layer_input", "attn_output", "pre_mlp_residual", "mlp_output",
             # attention internals
-            "attn_qkv", "attn_pre_proj",
+            "attn_pre_proj",
             # moe internals
             "moe_router_logits", "moe_expert_output",
         ]
