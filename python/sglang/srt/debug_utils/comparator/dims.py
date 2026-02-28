@@ -122,10 +122,7 @@ def _parse_single_modifier(part: str, full_token: str) -> dict[str, Enum]:
                 f"of dim spec: {full_token!r}"
             )
 
-        result: dict[str, Enum] = {"parallel": axis}
-        if state != ParallelState.SHARDED:
-            result["parallel_state"] = state
-        return result
+        return {"parallel": axis, "parallel_state": state}
 
     if part not in _MODIFIER_LOOKUP:
         raise ValueError(f"Unknown modifier {part!r} in dim spec: {full_token!r}")
