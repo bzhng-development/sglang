@@ -1591,6 +1591,8 @@ class TestEntrypointConcatMode:
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
             diff_threshold=0.01,
+            grouping_skip_keys=["rank", "recompute_status", "step"],
+            token_aligner="concat_steps",
         )
 
         records, _ = _run_and_parse(args, capsys)
