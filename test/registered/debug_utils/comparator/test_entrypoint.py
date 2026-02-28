@@ -3498,55 +3498,83 @@ class TestExitCode:
     def test_all_passed(self):
         """All passed → exit 0."""
         summary = SummaryRecord(total=3, passed=3, failed=0, skipped=0)
-        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 0
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 0
+        )
 
     def test_has_failed_and_passed(self):
         """Has failed and passed → exit 1."""
         summary = SummaryRecord(total=4, passed=2, failed=2, skipped=0)
-        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+        )
 
     def test_all_failed(self):
         """All failed (0 passed) → exit 1."""
         summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
-        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=[]) == 1
+        )
 
     def test_all_skipped_allow_all(self):
         """All skipped + allow_skip_pattern='.*' → exit 0."""
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a", "b"]) == 0
+        assert (
+            _compute_exit_code(
+                summary, allow_skip_pattern=".*", skipped_names=["a", "b"]
+            )
+            == 0
+        )
 
     def test_all_skipped_forbid_all(self):
         """All skipped + allow_skip_pattern='^$' → exit 1."""
         summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a", "b"]) == 1
+        assert (
+            _compute_exit_code(
+                summary, allow_skip_pattern="^$", skipped_names=["a", "b"]
+            )
+            == 1
+        )
 
     def test_passed_and_skipped_allow_all(self):
         """Passed + skipped, allow all → exit 0."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a"]) == 0
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern=".*", skipped_names=["a"])
+            == 0
+        )
 
     def test_passed_and_skipped_forbid_all(self):
         """Passed + skipped + forbid all → exit 1."""
         summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a"]) == 1
+        assert (
+            _compute_exit_code(summary, allow_skip_pattern="^$", skipped_names=["a"])
+            == 1
+        )
 
     def test_skip_pattern_matches_specific_name(self):
         """Pattern matching specific name allows that skip, forbids others."""
         summary = SummaryRecord(total=4, passed=2, failed=0, skipped=2)
-        assert _compute_exit_code(
-            summary,
-            allow_skip_pattern="positions|seq_lens",
-            skipped_names=["positions", "seq_lens"],
-        ) == 0
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern="positions|seq_lens",
+                skipped_names=["positions", "seq_lens"],
+            )
+            == 0
+        )
 
     def test_skip_pattern_partial_match_forbidden(self):
         """Pattern matches some skips but not all → exit 1."""
         summary = SummaryRecord(total=4, passed=1, failed=0, skipped=3)
-        assert _compute_exit_code(
-            summary,
-            allow_skip_pattern="positions|seq_lens",
-            skipped_names=["positions", "seq_lens", "hidden_states"],
-        ) == 1
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skip_pattern="positions|seq_lens",
+                skipped_names=["positions", "seq_lens", "hidden_states"],
+            )
+            == 1
+        )
 
     def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
         """Integration: all comparisons pass → run() returns 0."""
@@ -3636,7 +3664,9 @@ class TestExitCodeSubprocess:
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        result = self._run_comparator(baseline_path, target_path, allow_skip_pattern=".*")
+        result = self._run_comparator(
+            baseline_path, target_path, allow_skip_pattern=".*"
+        )
         assert result.returncode == 0
 
     def test_skipped_forbid_all_exit_nonzero(self, tmp_path):
@@ -3646,7 +3676,9 @@ class TestExitCodeSubprocess:
             tensor_names=["tensor_a", "tensor_extra"],
             baseline_names=["tensor_a"],
         )
-        result = self._run_comparator(baseline_path, target_path, allow_skip_pattern="^$")
+        result = self._run_comparator(
+            baseline_path, target_path, allow_skip_pattern="^$"
+        )
         assert result.returncode == 1
 
 
