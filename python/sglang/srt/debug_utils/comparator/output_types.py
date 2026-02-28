@@ -61,6 +61,24 @@ class _OutputRecord(_StrictBase):
         return body
 
 
+class RecordLocation(_StrictBase):
+    step: Optional[int] = None
+
+
+class _BundleComparisonRecord(_OutputRecord):
+    location: RecordLocation = Field(default_factory=RecordLocation)
+
+    def _format_location_prefix(self) -> str:
+        if self.location.step is not None:
+            return f"[step={self.location.step}] "
+        return ""
+
+    def _format_location_suffix(self) -> str:
+        if self.location.step is not None:
+            return f" (step={self.location.step})"
+        return ""
+
+
 class ConfigRecord(_OutputRecord):
     type: Literal["config"] = "config"
     config: dict[str, Any]
@@ -74,11 +92,10 @@ class ConfigRecord(_OutputRecord):
         return f"Config: {self.config}"
 
 
-class SkipRecord(_OutputRecord):
+class SkipComparisonRecord(_BundleComparisonRecord):
     type: Literal["skip"] = "skip"
     name: str
     reason: str
-    step: Optional[int] = None
 
     @property
     def category(self) -> str:
@@ -87,8 +104,7 @@ class SkipRecord(_OutputRecord):
         return "skipped"
 
     def _format_body(self) -> str:
-        suffix: str = f" (step={self.step})" if self.step is not None else ""
-        return f"Skip: {self.name}{suffix} ({self.reason})"
+        return f"Skip: {self.name}{self._format_location_suffix()} ({self.reason})"
 
 
 class _TableRecord(_OutputRecord):
@@ -120,11 +136,10 @@ class InputIdsRecord(_TableRecord):
         return f"{self.label} input_ids & positions"
 
 
-class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
+class TensorComparisonRecord(TensorComparisonInfo, _BundleComparisonRecord):
     model_config = ConfigDict(extra="forbid", defer_build=True)
 
     type: Literal["comparison"] = "comparison"
-    step: Optional[int] = None
     aligner_plan: Optional[AlignerPlan] = None
     replicated_checks: list[ReplicatedCheckResult] = Field(default_factory=list)
 
@@ -137,8 +152,7 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
         return "passed" if self.diff is not None and self.diff.passed else "failed"
 
     def _format_body(self) -> str:
-        step_prefix: str = f"[step={self.step}] " if self.step is not None else ""
-        body: str = step_prefix + format_comparison(self)
+        body: str = self._format_location_prefix() + format_comparison(self)
         if self.replicated_checks:
             body += "\n" + format_replicated_checks(self.replicated_checks)
         if self.aligner_plan is not None:
@@ -146,7 +160,7 @@ class ComparisonRecord(TensorComparisonInfo, _OutputRecord):
         return body
 
 
-class NonTensorRecord(_OutputRecord):
+class NonTensorComparisonRecord(_BundleComparisonRecord):
     type: Literal["non_tensor"] = "non_tensor"
     name: str
     baseline_value: str
@@ -154,7 +168,6 @@ class NonTensorRecord(_OutputRecord):
     baseline_type: str
     target_type: str
     values_equal: bool
-    step: Optional[int] = None
 
     @property
     def category(self) -> str:
@@ -163,7 +176,7 @@ class NonTensorRecord(_OutputRecord):
         return "passed" if self.values_equal else "failed"
 
     def _format_body(self) -> str:
-        suffix: str = f" (step={self.step})" if self.step is not None else ""
+        suffix: str = self._format_location_suffix()
         if self.values_equal:
             return f"NonTensor: {self.name}{suffix} = {self.baseline_value} ({self.baseline_type}) [equal]"
         return (
@@ -243,9 +256,9 @@ AnyRecord = Annotated[
         ConfigRecord,
         RankInfoRecord,
         InputIdsRecord,
-        SkipRecord,
-        ComparisonRecord,
-        NonTensorRecord,
+        SkipComparisonRecord,
+        TensorComparisonRecord,
+        NonTensorComparisonRecord,
         SummaryRecord,
         WarningRecord,
     ],

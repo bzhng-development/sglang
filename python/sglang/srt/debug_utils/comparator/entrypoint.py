@@ -27,11 +27,11 @@ from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ConfigRecord,
-    NonTensorTensorComparisonRecord,
+    NonTensorComparisonRecord,
     RecordLocation,
-    SkipTensorComparisonRecord,
+    SkipComparisonRecord,
     SummaryRecord,
-    TensorTensorComparisonRecord,
+    TensorComparisonRecord,
     report_sink,
 )
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
