@@ -211,6 +211,7 @@ def _run_server_and_generate(
             "--max-total-tokens", "128",
             "--mem-fraction-static", "0.5",
             "--disable-cuda-graph",
+            "--disable-radix-cache",
         ],
         env=env,
     )
