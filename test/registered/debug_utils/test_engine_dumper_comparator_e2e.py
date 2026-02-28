@@ -103,35 +103,9 @@ class TestSourcePatcherE2ESGLang:
     @pytest.mark.timeout(600)
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4 target."""
-        base_url: str = DEFAULT_URL_FOR_TEST
-
-        config_path: Path = tmp_path / "patch_config.yaml"
-        config_path.write_text(PATCH_CONFIG_YAML)
-
-        # Run 1: baseline (TP=2)
-        baseline_dir: Path = tmp_path / "baseline"
-        _run_server_and_generate(
-            dump_dir=baseline_dir,
-            config_path=config_path,
-            tp=BASELINE_TP,
-            base_url=base_url,
-        )
-        _verify_patched_fields(dump_dir=baseline_dir, field_names=_FIELDS_TO_VERIFY)
-
-        # Run 2: target (TP=4)
-        target_dir: Path = tmp_path / "target"
-        _run_server_and_generate(
-            dump_dir=target_dir,
-            config_path=config_path,
-            tp=TARGET_TP,
-            base_url=base_url,
-        )
-        _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
-
-        # Compare baseline vs target
-        _run_comparator_and_assert(
-            baseline_dir=baseline_dir,
-            target_dir=target_dir,
+        _run_e2e_scenario(
+            tmp_path=tmp_path,
+            target_tp=TARGET_TP,
         )
 
     @pytest.mark.timeout(600)
@@ -142,36 +116,10 @@ class TestSourcePatcherE2ESGLang:
         tensors are NOT TP-sharded. We override their dims on the target
         side so the comparator unshards correctly.
         """
-        base_url: str = DEFAULT_URL_FOR_TEST
-
-        config_path: Path = tmp_path / "patch_config.yaml"
-        config_path.write_text(PATCH_CONFIG_YAML)
-
-        # Run 1: baseline (TP=2, standard)
-        baseline_dir: Path = tmp_path / "baseline"
-        _run_server_and_generate(
-            dump_dir=baseline_dir,
-            config_path=config_path,
-            tp=BASELINE_TP,
-            base_url=base_url,
-        )
-        _verify_patched_fields(dump_dir=baseline_dir, field_names=_FIELDS_TO_VERIFY)
-
-        # Run 2: target (TP=2 + DP=2 + dp-attention, 2 GPUs total)
-        target_dir: Path = tmp_path / "target"
-        _run_server_and_generate(
-            dump_dir=target_dir,
-            config_path=config_path,
-            tp=BASELINE_TP,
-            base_url=base_url,
-            extra_server_args=["--dp", "2", "--enable-dp-attention"],
-        )
-        _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
-
-        # Compare: override target dims for attention tensors (attn_tp_size=1)
-        _run_comparator_and_assert(
-            baseline_dir=baseline_dir,
-            target_dir=target_dir,
+        _run_e2e_scenario(
+            tmp_path=tmp_path,
+            target_tp=BASELINE_TP,
+            extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
             extra_comparator_args=[
                 "--override-target-dims", "attn_output:t h",
                 "--override-target-dims", "attn_pre_o_proj:t attn_h",
@@ -182,13 +130,38 @@ class TestSourcePatcherE2ESGLang:
 # --------------------------------- helpers ---------------------------------
 
 
-def _run_comparator_and_assert(
+def _run_e2e_scenario(
     *,
-    baseline_dir: Path,
-    target_dir: Path,
+    tmp_path: Path,
+    target_tp: int,
+    extra_target_server_args: Optional[list[str]] = None,
     extra_comparator_args: Optional[list[str]] = None,
 ) -> None:
-    """Run comparator on baseline vs target and assert success."""
+    """Full e2e: write patch config -> baseline run -> target run -> compare."""
+    base_url: str = DEFAULT_URL_FOR_TEST
+
+    config_path: Path = tmp_path / "patch_config.yaml"
+    config_path.write_text(PATCH_CONFIG_YAML)
+
+    baseline_dir: Path = tmp_path / "baseline"
+    _run_server_and_generate(
+        dump_dir=baseline_dir,
+        config_path=config_path,
+        tp=BASELINE_TP,
+        base_url=base_url,
+    )
+    _verify_patched_fields(dump_dir=baseline_dir, field_names=_FIELDS_TO_VERIFY)
+
+    target_dir: Path = tmp_path / "target"
+    _run_server_and_generate(
+        dump_dir=target_dir,
+        config_path=config_path,
+        tp=target_tp,
+        base_url=base_url,
+        extra_server_args=extra_target_server_args,
+    )
+    _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
+
     baseline_exp: Path = baseline_dir / EXP_NAME
     target_exp: Path = target_dir / EXP_NAME
 
