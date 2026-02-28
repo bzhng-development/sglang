@@ -1648,7 +1648,7 @@ class TestEntrypointConcatMode:
             token_aligner="concat_steps",
             diff_threshold=1e-3,
         )
-        records: list[AnyRecord] = _run_and_parse(args, capsys)
+        records, _ = _run_and_parse(args, capsys)
 
         comparisons: list[ComparisonRecord] = _get_comparisons(records)
         hidden_comparisons: list[ComparisonRecord] = [
