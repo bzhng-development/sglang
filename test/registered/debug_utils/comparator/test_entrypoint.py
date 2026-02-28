@@ -1332,7 +1332,9 @@ class TestEntrypointAlignment:
 
             exp_paths.append(d / _FIXED_EXP_NAME)
 
-        args = _make_args(exp_paths[0], exp_paths[1], grouping="logical")
+        args = _make_args(
+            exp_paths[0], exp_paths[1], grouping="logical", token_aligner="smart"
+        )
         records = _run_and_parse(args, capsys)
 
         comparisons = _get_comparisons(records)
@@ -1444,6 +1446,7 @@ class TestEntrypointAlignment:
             sglang_dir / _FIXED_EXP_NAME,
             megatron_dir / _FIXED_EXP_NAME,
             grouping="logical",
+            token_aligner="smart",
         )
 
         records = _run_and_parse(args, capsys)
@@ -1475,7 +1478,11 @@ class TestEntrypointAlignment:
         """Without aux tensors, logical grouping skips alignment and compares per-step."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"], num_steps=2)
         args = _make_args(
-            baseline_path, target_path, grouping="logical", diff_threshold=0.1
+            baseline_path,
+            target_path,
+            grouping="logical",
+            token_aligner="smart",
+            diff_threshold=0.1,
         )
 
         capsys.readouterr()
