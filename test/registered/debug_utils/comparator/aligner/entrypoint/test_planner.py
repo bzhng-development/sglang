@@ -36,6 +36,8 @@ def _make_meta(
     tp_size: int = 1,
     cp_rank: int = 0,
     cp_size: int = 1,
+    dp_rank: int = 0,
+    dp_size: int = 1,
 ) -> dict[str, Any]:
     meta: dict[str, Any] = {"step": step}
     if dims is not None:
@@ -45,6 +47,8 @@ def _make_meta(
         "tp_size": tp_size,
         "cp_rank": cp_rank,
         "cp_size": cp_size,
+        "dp_rank": dp_rank,
+        "dp_size": dp_size,
     }
     return meta
 
@@ -173,6 +177,36 @@ class TestComputeAlignerPlan:
 
         assert plan.token_aligner_plan is ta_plan
         assert plan.token_aligner_mode == "smart"
+
+
+class TestComputePerStepSubPlansDpConcated:
+    def test_dp_concated_with_tp_sharded(self) -> None:
+        """t(dp:concated) h(tp) with DP=2 TP=2 → plan only contains TP unshard."""
+        metas: list[dict[str, Any]] = [
+            _make_meta(
+                dims="t(dp:concated) h(tp)",
+                dp_rank=0,
+                dp_size=2,
+                tp_rank=0,
+                tp_size=2,
+            ),
+            _make_meta(
+                dims="t(dp:concated) h(tp)",
+                dp_rank=0,
+                dp_size=2,
+                tp_rank=1,
+                tp_size=2,
+            ),
+        ]
+        result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(metas=metas)
+
+        unsharder_plans: list[UnsharderPlan] = [
+            p for p in result if isinstance(p, UnsharderPlan)
+        ]
+        assert len(unsharder_plans) == 1
+        from sglang.srt.debug_utils.comparator.dims import ParallelAxis
+
+        assert unsharder_plans[0].axis == ParallelAxis.TP
 
 
 class TestComputePerStepSubPlansThd:
