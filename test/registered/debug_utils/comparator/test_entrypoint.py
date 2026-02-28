@@ -1046,6 +1046,39 @@ class TestEntrypointGroupingLogical:
         comp = _assert_single_comparison_passed(records)
         assert comp.name == "hidden"
 
+    def test_cp_zigzag_sp_same_dim_unshard(self, tmp_path, capsys):
+        """CP=2 zigzag + SP=2 on same token dim: multi-axis unshard + reorder."""
+        torch.manual_seed(42)
+        full_baseline = torch.randn(16, 8)
+        full_target = full_baseline + torch.randn(16, 8) * 0.001
+
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir, full_tensor in [
+            (baseline_dir, full_baseline),
+            (target_dir, full_target),
+        ]:
+            _create_cp_zigzag_sp_sharded_dumps(
+                side_dir,
+                full_tensor=full_tensor,
+                name="hidden",
+                cp_size=2,
+                sp_size=2,
+                token_dim=0,
+                dims_str="t(cp:zigzag,sp) h",
+            )
+
+        args = _make_args(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+
+        records, _ = _run_and_parse(args, capsys)
+        comp = _assert_single_comparison_passed(records)
+        assert comp.name == "hidden"
+
 
 class TestEntrypointConcatMode:
     """Test concat token-aligner mode through the full entrypoint pipeline."""
@@ -2444,6 +2477,63 @@ def _create_cp_zigzag_tp_sharded_dumps(
                 tensor=tp_chunks[tp_rank],
                 dims=dims_str,
                 parallel_info=parallel_info,
+                num_steps=num_steps,
+            )
+            rank += 1
+
+    return directory / _FIXED_EXP_NAME
+
+
+def _create_cp_zigzag_sp_sharded_dumps(
+    directory: Path,
+    *,
+    full_tensor: torch.Tensor,
+    name: str,
+    cp_size: int,
+    sp_size: int,
+    token_dim: int,
+    dims_str: str,
+    num_steps: int = 1,
+) -> Path:
+    """Create CP-zigzag + SP sharded dump files for a 1D token dim.
+
+    Shard order (outer to inner, matching left-to-right in dims annotation):
+      1. CP zigzag splits token dim into cp_size chunks (zigzag order)
+      2. SP splits each CP chunk into sp_size chunks
+    """
+    num_chunks: int = cp_size * 2
+    natural_chunks: list[torch.Tensor] = list(
+        full_tensor.chunk(num_chunks, dim=token_dim)
+    )
+
+    zigzag_order: list[int] = []
+    for i in range(cp_size):
+        zigzag_order.append(i)
+        zigzag_order.append(num_chunks - 1 - i)
+
+    zigzagged: torch.Tensor = torch.cat(
+        [natural_chunks[idx] for idx in zigzag_order], dim=token_dim
+    )
+    cp_chunks: list[torch.Tensor] = list(zigzagged.chunk(cp_size, dim=token_dim))
+
+    rank: int = 0
+    for cp_rank in range(cp_size):
+        sp_chunks: list[torch.Tensor] = list(
+            cp_chunks[cp_rank].chunk(sp_size, dim=token_dim)
+        )
+        for sp_rank in range(sp_size):
+            _create_rank_dump(
+                directory,
+                rank=rank,
+                name=name,
+                tensor=sp_chunks[sp_rank],
+                dims=dims_str,
+                parallel_info={
+                    "cp_rank": cp_rank,
+                    "cp_size": cp_size,
+                    "sp_rank": sp_rank,
+                    "sp_size": sp_size,
+                },
                 num_steps=num_steps,
             )
             rank += 1
