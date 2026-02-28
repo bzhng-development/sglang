@@ -43,7 +43,5 @@ def _resolve_token_dim(tensor: torch.Tensor) -> int:
     return _UNNAMED_TOKEN_DIM_FALLBACK
 
 
-def _concat_steps(
-    tensor_of_step: dict[int, torch.Tensor], *, dim: int
-) -> torch.Tensor:
+def _concat_steps(tensor_of_step: dict[int, torch.Tensor], *, dim: int) -> torch.Tensor:
     return torch.cat([tensor_of_step[s] for s in sorted(tensor_of_step)], dim=dim)
