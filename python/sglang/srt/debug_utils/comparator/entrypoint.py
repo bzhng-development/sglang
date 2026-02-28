@@ -353,9 +353,13 @@ def _parse_args() -> argparse.Namespace:
         "--report-path",
         type=str,
         default=None,
-        help="Path for JSONL report file. "
-        "Default: <target-path>/comparator_report.jsonl. "
-        "Pass empty string '' to disable.",
+        help="Path for JSONL report (default: <target-path>/comparator_report.jsonl)",
+    )
+    parser.add_argument(
+        "--no-report",
+        action="store_true",
+        default=False,
+        help="Disable automatic JSONL report generation",
     )
 
     return parser.parse_args()
