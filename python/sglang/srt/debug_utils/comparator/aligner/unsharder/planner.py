@@ -55,7 +55,7 @@ def compute_unsharder_plan(
     }
     sharded_axes_raw: set[ParallelAxis] = set(sharded_axis_infos)
 
-    all_axes: set[ParallelAxis] = {
+    shardable_axes: set[ParallelAxis] = {
         axis
         for info in parallel_infos
         for axis in info
@@ -63,11 +63,11 @@ def compute_unsharder_plan(
     }
 
     # axis annotated in dims but absent from all parallel_infos -> axis_size=1, skip
-    sharded_axes: set[ParallelAxis] = sharded_axes_raw & all_axes
+    sharded_axes: set[ParallelAxis] = sharded_axes_raw & shardable_axes
     sharded_axis_infos = {
         k: v for k, v in sharded_axis_infos.items() if k in sharded_axes
     }
-    replicated_axes: set[ParallelAxis] = all_axes - sharded_axes - concated_axes
+    replicated_axes: set[ParallelAxis] = shardable_axes - sharded_axes - concated_axes
 
     if not sharded_axes and not replicated_axes:
         return []
