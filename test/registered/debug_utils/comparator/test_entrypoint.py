@@ -9,7 +9,6 @@ import torch
 
 import sglang.srt.debug_utils.dumper as _dumper_module
 from sglang.srt.debug_utils.comparator.entrypoint import (
-    _compute_exit_code,
     parse_args,
     run,
 )
@@ -3992,217 +3991,7 @@ class TestEntrypointMetaOverride:
 
 
 class TestExitCode:
-    """Tests for exit code behavior based on comparison results."""
-
-    def test_all_passed(self):
-        """All passed → exit 0."""
-        summary = SummaryRecord(total=3, passed=3, failed=0, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 0
-        )
-
-    def test_has_failed_and_passed(self):
-        """Has failed and passed → exit 1."""
-        summary = SummaryRecord(total=4, passed=2, failed=2, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern=None,
-                failed_names=["a", "b"],
-            )
-            == 1
-        )
-
-    def test_all_failed(self):
-        """All failed (0 passed) → exit 1."""
-        summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern=None,
-                failed_names=["a", "b", "c"],
-            )
-            == 1
-        )
-
-    def test_all_skipped_allow_all(self):
-        """All skipped + allow_skipped_pattern='.*' → exit 0."""
-        summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=["a", "b"],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 0
-        )
-
-    def test_all_skipped_forbid_all(self):
-        """All skipped + allow_skipped_pattern='^$' → exit 1."""
-        summary = SummaryRecord(total=2, passed=0, failed=0, skipped=2)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern="^$",
-                skipped_names=["a", "b"],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 1
-        )
-
-    def test_passed_and_skipped_allow_all(self):
-        """Passed + skipped, allow all → exit 0."""
-        summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=["a"],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 0
-        )
-
-    def test_passed_and_skipped_forbid_all(self):
-        """Passed + skipped + forbid all → exit 1."""
-        summary = SummaryRecord(total=3, passed=2, failed=0, skipped=1)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern="^$",
-                skipped_names=["a"],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 1
-        )
-
-    def test_skip_pattern_matches_specific_name(self):
-        """Pattern matching specific name allows that skip, forbids others."""
-        summary = SummaryRecord(total=4, passed=2, failed=0, skipped=2)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern="positions|seq_lens",
-                skipped_names=["positions", "seq_lens"],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 0
-        )
-
-    def test_skip_pattern_partial_match_forbidden(self):
-        """Pattern matches some skips but not all → exit 1."""
-        summary = SummaryRecord(total=4, passed=1, failed=0, skipped=3)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern="positions|seq_lens",
-                skipped_names=["positions", "seq_lens", "hidden_states"],
-                allow_failed_pattern=None,
-                failed_names=[],
-            )
-            == 1
-        )
-
-    def test_allow_failed_pattern_matches_all(self):
-        """allow_failed_pattern='.*' tolerates all failures → exit 0."""
-        summary = SummaryRecord(total=3, passed=1, failed=2, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern=".*",
-                failed_names=["a", "b"],
-            )
-            == 0
-        )
-
-    def test_allow_failed_pattern_matches_specific(self):
-        """Pattern matches all failed names → exit 0."""
-        summary = SummaryRecord(total=3, passed=1, failed=2, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern="hidden_states|logits",
-                failed_names=["hidden_states", "logits"],
-            )
-            == 0
-        )
-
-    def test_allow_failed_pattern_partial_match(self):
-        """Pattern matches some but not all failures → exit 1."""
-        summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern="hidden_states",
-                failed_names=["hidden_states", "logits", "attn"],
-            )
-            == 1
-        )
-
-    def test_allow_failed_pattern_no_failures(self):
-        """Pattern set but no failures → exit 0."""
-        summary = SummaryRecord(total=2, passed=2, failed=0, skipped=0)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern=".*",
-                skipped_names=[],
-                allow_failed_pattern=".*",
-                failed_names=[],
-            )
-            == 0
-        )
-
-    def test_both_failed_and_skipped_patterns(self):
-        """Both patterns set, both satisfied → exit 0."""
-        summary = SummaryRecord(total=4, passed=1, failed=1, skipped=2)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern="positions|seq_lens",
-                skipped_names=["positions", "seq_lens"],
-                allow_failed_pattern="logits",
-                failed_names=["logits"],
-            )
-            == 0
-        )
-
-    def test_failed_pattern_satisfied_but_skipped_not(self):
-        """Failed pattern OK but skipped pattern fails → exit 1."""
-        summary = SummaryRecord(total=3, passed=1, failed=1, skipped=1)
-        assert (
-            _compute_exit_code(
-                summary,
-                allow_skipped_pattern="^$",
-                skipped_names=["a"],
-                allow_failed_pattern=".*",
-                failed_names=["b"],
-            )
-            == 1
-        )
+    """E2E tests for exit code behavior based on comparison results."""
 
     def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
         """Integration: all comparisons pass → run() returns 0."""
@@ -4237,42 +4026,57 @@ class TestExitCode:
         assert exit_code == 1
 
     def test_e2e_allow_failed_pattern_exit_zero(self, tmp_path, capsys):
-        """E2E: failed tensor matched by allow_failed_pattern → exit 0."""
+        """E2E: failed tensor matched by allow_failed_pattern + a passing tensor → exit 0."""
         torch.manual_seed(42)
+        shared_tensor = torch.randn(10, 10)
+
         baseline_path = _create_rank_dump(
-            tmp_path / "baseline", rank=0, name="tensor_a", tensor=torch.randn(10, 10)
+            tmp_path / "baseline",
+            rank=0,
+            name="tensor_bad",
+            tensor=torch.randn(10, 10),
+            extra_dumps=[("tensor_good", shared_tensor)],
         )
         target_path = _create_rank_dump(
             tmp_path / "target",
             rank=0,
-            name="tensor_a",
+            name="tensor_bad",
             tensor=torch.randn(10, 10) * 100,
+            extra_dumps=[("tensor_good", shared_tensor)],
         )
         argv = _make_argv(
             baseline_path,
             target_path,
             preset="raw",
             diff_threshold=1e-3,
-            allow_failed_pattern="tensor_a",
+            allow_failed_pattern="tensor_bad",
         )
 
         records, exit_code = _run_and_parse(argv, capsys)
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
+        assert summary.passed == 1
         assert summary.failed == 1
         assert exit_code == 0
 
     def test_e2e_allow_failed_pattern_no_match_exit_one(self, tmp_path, capsys):
         """E2E: failed tensor NOT matched by allow_failed_pattern → exit 1."""
         torch.manual_seed(42)
+        shared_tensor = torch.randn(10, 10)
+
         baseline_path = _create_rank_dump(
-            tmp_path / "baseline", rank=0, name="tensor_a", tensor=torch.randn(10, 10)
+            tmp_path / "baseline",
+            rank=0,
+            name="tensor_bad",
+            tensor=torch.randn(10, 10),
+            extra_dumps=[("tensor_good", shared_tensor)],
         )
         target_path = _create_rank_dump(
             tmp_path / "target",
             rank=0,
-            name="tensor_a",
+            name="tensor_bad",
             tensor=torch.randn(10, 10) * 100,
+            extra_dumps=[("tensor_good", shared_tensor)],
         )
         argv = _make_argv(
             baseline_path,
@@ -4285,6 +4089,7 @@ class TestExitCode:
         records, exit_code = _run_and_parse(argv, capsys)
         summary = records[-1]
         assert isinstance(summary, SummaryRecord)
+        assert summary.passed == 1
         assert summary.failed == 1
         assert exit_code == 1
 

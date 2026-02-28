@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import re
 import sys
 from pathlib import Path
 from typing import Any, Iterator, Optional, Union
@@ -38,7 +37,7 @@ from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
 from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-from sglang.srt.debug_utils.comparator.utils import Pair
+from sglang.srt.debug_utils.comparator.utils import Pair, compute_exit_code
 from sglang.srt.debug_utils.dump_loader import read_meta, read_tokenizer_path
 
 _DEFAULT_SKIP_KEYS: set[str] = {"dump_index", "filename"}
@@ -116,7 +115,7 @@ def run(args: argparse.Namespace) -> int:
             comparison_records=comparison_records,
             visualize_per_token=visualize_per_token,
         )
-        return _compute_exit_code(
+        return compute_exit_code(
             summary,
             allow_skipped_pattern=args.allow_skipped_pattern,
             skipped_names=skipped_names,
@@ -128,29 +127,6 @@ def run(args: argparse.Namespace) -> int:
         if report_path is not None:
             print(f"Report: {report_path}", file=sys.stderr)
 
-
-def _compute_exit_code(
-    summary: SummaryRecord,
-    *,
-    allow_skipped_pattern: str,
-    skipped_names: list[str],
-    allow_failed_pattern: Optional[str],
-    failed_names: list[str],
-) -> int:
-    if not _is_all_match_pattern(pattern=allow_failed_pattern, strings=failed_names):
-        return 1
-
-    if not _is_all_match_pattern(pattern=allow_skipped_pattern, strings=skipped_names):
-        return 1
-
-    return 0
-
-
-def _is_all_match_pattern(*, pattern: Optional[str], strings: list[str]) -> bool:
-    if pattern is None:
-        return len(strings) == 0
-    compiled: re.Pattern[str] = re.compile(pattern)
-    return all(compiled.fullmatch(s) for s in strings)
 
 
 def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
