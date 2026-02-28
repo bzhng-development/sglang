@@ -112,7 +112,7 @@ def run(args: argparse.Namespace) -> int:
             compute_per_token=visualize_per_token is not None,
             meta_overrider=meta_overrider,
         )
-        summary, skipped_names = _consume_comparison_records(
+        summary, skipped_names, failed_names = _consume_comparison_records(
             comparison_records=comparison_records,
             visualize_per_token=visualize_per_token,
         )
@@ -120,6 +120,8 @@ def run(args: argparse.Namespace) -> int:
             summary,
             allow_skip_pattern=args.allow_skip_pattern,
             skipped_names=skipped_names,
+            allow_fail_pattern=args.allow_fail_pattern,
+            failed_names=failed_names,
         )
     finally:
         report_sink.close()
@@ -132,8 +134,15 @@ def _compute_exit_code(
     *,
     allow_skip_pattern: str,
     skipped_names: list[str],
+    allow_fail_pattern: Optional[str],
+    failed_names: list[str],
 ) -> int:
-    if summary.failed > 0:
+    truly_failed: int = summary.failed
+    if allow_fail_pattern is not None:
+        fail_re: re.Pattern[str] = re.compile(allow_fail_pattern)
+        truly_failed = len([n for n in failed_names if not fail_re.fullmatch(n)])
+
+    if truly_failed > 0:
         return 1
 
     pattern: re.Pattern[str] = re.compile(allow_skip_pattern)
@@ -179,9 +188,6 @@ def _read_df(args: argparse.Namespace) -> Pair[pl.DataFrame]:
     )
     if args.filter:
         df_target = df_target.filter(pl.col("filename").str.contains(args.filter))
-    if args.exclude:
-        df_baseline = df_baseline.filter(~pl.col("filename").str.contains(args.exclude))
-        df_target = df_target.filter(~pl.col("filename").str.contains(args.exclude))
     assert all(c in df_target.columns for c in ["rank", "step", "dump_index", "name"])
 
     return Pair(x=df_baseline, y=df_target)
@@ -244,16 +250,19 @@ def _consume_comparison_records(
         Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]
     ],
     visualize_per_token: Optional[Path] = None,
-) -> tuple[SummaryRecord, list[str]]:
+) -> tuple[SummaryRecord, list[str], list[str]]:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
     collected_comparisons: list[TensorComparisonRecord] = []
     skipped_names: list[str] = []
+    failed_names: list[str] = []
 
     for record in comparison_records:
         counts[record.category] += 1
         report_sink.add(record)
         if isinstance(record, SkipComparisonRecord) and record.category == "skipped":
             skipped_names.append(record.name)
+        if record.category == "failed":
+            failed_names.append(record.name)
         if visualize_per_token is not None and isinstance(
             record, TensorComparisonRecord
         ):
@@ -268,7 +277,7 @@ def _consume_comparison_records(
             output_path=visualize_per_token,
         )
 
-    return summary, skipped_names
+    return summary, skipped_names, failed_names
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -283,12 +292,6 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--diff-threshold", type=float, default=1e-3)
     parser.add_argument(
         "--filter", type=str, default=None, help="Regex to filter filenames (include)"
-    )
-    parser.add_argument(
-        "--exclude",
-        type=str,
-        default=None,
-        help="Regex to exclude filenames (applied after --filter)",
     )
     parser.add_argument(
         "--output-format",
@@ -377,6 +380,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=".*",
         help="Regex pattern for tensor names allowed to be skipped. "
         "Default '.*' allows all skips. Use '^$' to forbid all skips.",
+    )
+    parser.add_argument(
+        "--allow-fail-pattern",
+        type=str,
+        default=None,
+        help="Regex pattern for tensor names allowed to fail without affecting exit code. "
+        "Default None (all failures affect exit code).",
     )
 
     # Report output
