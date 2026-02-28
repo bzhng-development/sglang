@@ -1049,8 +1049,10 @@ class TestEntrypointGroupingLogical:
     def test_cp_zigzag_sp_same_dim_unshard(self, tmp_path, capsys):
         """CP=2 zigzag + SP=2 on same token dim: multi-axis unshard + reorder."""
         torch.manual_seed(42)
-        full_baseline = torch.randn(16, 8)
-        full_target = full_baseline + torch.randn(16, 8) * 0.001
+        seq_lens: list[int] = [8, 8]
+        total_tokens: int = sum(seq_lens)
+        full_baseline = torch.randn(total_tokens, 8)
+        full_target = full_baseline + torch.randn(total_tokens, 8) * 0.001
 
         baseline_dir = tmp_path / "baseline"
         target_dir = tmp_path / "target"
@@ -1067,6 +1069,7 @@ class TestEntrypointGroupingLogical:
                 sp_size=2,
                 token_dim=0,
                 dims_str="t(cp:zigzag,sp) h",
+                seq_lens=seq_lens,
             )
 
         args = _make_args(
@@ -2491,42 +2494,57 @@ def _create_cp_zigzag_sp_sharded_dumps(
     name: str,
     cp_size: int,
     sp_size: int,
-    token_dim: int,
     dims_str: str,
+    seq_lens: list[int],
     num_steps: int = 1,
 ) -> Path:
-    """Create CP-zigzag + SP sharded dump files for a 1D token dim.
+    """Create CP-zigzag + SP sharded dump files for THD token dim.
 
     Shard order (outer to inner, matching left-to-right in dims annotation):
-      1. CP zigzag splits token dim into cp_size chunks (zigzag order)
+      1. CP zigzag splits token dim per-sequence into cp_size chunks
       2. SP splits each CP chunk into sp_size chunks
+
+    Requires seq_lens for cu_seqlens_q (needed by zigzag reorder on 't' dim).
     """
-    num_chunks: int = cp_size * 2
-    natural_chunks: list[torch.Tensor] = list(
-        full_tensor.chunk(num_chunks, dim=token_dim)
-    )
+    # Per-sequence zigzag split, then concat across sequences per rank
+    offset: int = 0
+    rank_segments: list[list[torch.Tensor]] = [
+        [] for _ in range(cp_size * sp_size)
+    ]
 
-    zigzag_order: list[int] = []
-    for i in range(cp_size):
-        zigzag_order.append(i)
-        zigzag_order.append(num_chunks - 1 - i)
+    for seq_len in seq_lens:
+        seq_tensor: torch.Tensor = full_tensor[offset : offset + seq_len]
 
-    zigzagged: torch.Tensor = torch.cat(
-        [natural_chunks[idx] for idx in zigzag_order], dim=token_dim
-    )
-    cp_chunks: list[torch.Tensor] = list(zigzagged.chunk(cp_size, dim=token_dim))
-
-    rank: int = 0
-    for cp_rank in range(cp_size):
-        sp_chunks: list[torch.Tensor] = list(
-            cp_chunks[cp_rank].chunk(sp_size, dim=token_dim)
+        # CP zigzag split this sequence
+        cp_chunks: list[torch.Tensor] = _zigzag_split_seq(
+            seq_tensor, cp_size=cp_size
         )
+
+        # SP split within each CP chunk
+        for cp_rank in range(cp_size):
+            sp_chunks: list[torch.Tensor] = list(
+                cp_chunks[cp_rank].chunk(sp_size, dim=0)
+            )
+            for sp_rank in range(sp_size):
+                flat_rank: int = cp_rank * sp_size + sp_rank
+                rank_segments[flat_rank].append(sp_chunks[sp_rank])
+
+        offset += seq_len
+
+    cu_seqlens_q: torch.Tensor = torch.tensor(
+        [0] + [sum(seq_lens[: i + 1]) for i in range(len(seq_lens))],
+        dtype=torch.int64,
+    )
+
+    for cp_rank in range(cp_size):
         for sp_rank in range(sp_size):
+            flat_rank: int = cp_rank * sp_size + sp_rank
+            rank_tensor: torch.Tensor = torch.cat(rank_segments[flat_rank], dim=0)
             _create_rank_dump(
                 directory,
-                rank=rank,
+                rank=flat_rank,
                 name=name,
-                tensor=sp_chunks[sp_rank],
+                tensor=rank_tensor,
                 dims=dims_str,
                 parallel_info={
                     "cp_rank": cp_rank,
@@ -2534,9 +2552,10 @@ def _create_cp_zigzag_sp_sharded_dumps(
                     "sp_rank": sp_rank,
                     "sp_size": sp_size,
                 },
+                framework="megatron",
                 num_steps=num_steps,
+                extra_dumps=[("cu_seqlens_q", cu_seqlens_q)],
             )
-            rank += 1
 
     return directory / _FIXED_EXP_NAME
 
