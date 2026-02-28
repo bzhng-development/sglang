@@ -2670,6 +2670,40 @@ class TestEntrypointDpFilter:
 class TestEntrypointMetaOverride:
     """E2E: dump with wrong dims → --override-dims / --override-config corrects at comparison time."""
 
+    @staticmethod
+    def _create_single_rank_pair(
+        tmp_path: Path,
+        *,
+        name: str = "hidden",
+        baseline_dims: str | None = "x y",
+        target_dims: str | None = "x y",
+    ) -> tuple[Path, Path]:
+        """Create single-rank baseline+target dumps with a close tensor pair."""
+        torch.manual_seed(42)
+        tensor: torch.Tensor = torch.randn(10, 8)
+        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
+
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+
+        _create_rank_dump(
+            baseline_dir, rank=0, name=name, tensor=tensor, dims=baseline_dims
+        )
+        _create_rank_dump(
+            target_dir, rank=0, name=name, tensor=target, dims=target_dims
+        )
+
+        return baseline_dir / _FIXED_EXP_NAME, target_dir / _FIXED_EXP_NAME
+
+    @staticmethod
+    def _assert_all_passed(records: list[AnyRecord], *, expected_count: int = 1) -> None:
+        """Assert that exactly expected_count comparisons exist and all passed."""
+        comparisons: list[ComparisonRecord] = _get_comparisons(records)
+        assert len(comparisons) == expected_count
+        assert all(c.diff is not None and c.diff.passed for c in comparisons)
+
     def test_override_dims_fixes_wrong_dims(self, tmp_path: Path, capsys) -> None:
         """Tensor dumped with wrong dims='h d' is fixed by --override-dims to 't h(tp)'."""
         torch.manual_seed(42)
@@ -2710,86 +2744,31 @@ class TestEntrypointMetaOverride:
             grouping="logical",
             override_dims=["hidden:t h(tp)"],
         )
-        records = _run_and_parse(args, capsys)
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
-
-    def test_override_baseline_dims_only(self, tmp_path: Path, capsys) -> None:
-        """--override-baseline-dims overrides only the baseline side."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
+    @pytest.mark.parametrize(
+        "baseline_dims, target_dims, override_kwarg",
+        [
+            ("x y", "t h", {"override_baseline_dims": ["hidden:t h"]}),
+            ("t h", "x y", {"override_target_dims": ["hidden:t h"]}),
+            ("x y", "x y", {"override_dims": ["hidden:t h"]}),
+        ],
+        ids=["baseline_only", "target_only", "both_via_override_dims"],
+    )
+    def test_single_side_override(
+        self, tmp_path: Path, capsys, baseline_dims: str, target_dims: str, override_kwarg: dict
+    ) -> None:
+        """Per-side override fixes the wrong dims on one or both sides."""
+        baseline_path, target_path = self._create_single_rank_pair(
+            tmp_path, baseline_dims=baseline_dims, target_dims=target_dims,
         )
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="t h")
 
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
-            override_baseline_dims=["hidden:t h"],
-        )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
-
-    def test_override_target_dims_only(self, tmp_path: Path, capsys) -> None:
-        """--override-target-dims overrides only the target side."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="t h"
-        )
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
-            override_target_dims=["hidden:t h"],
-        )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        args = _make_args(baseline_path, target_path, grouping="raw", **override_kwarg)
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_override_config_yaml(self, tmp_path: Path, capsys) -> None:
         """--override-config YAML overrides dims."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
-        )
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
+        baseline_path, target_path = self._create_single_rank_pair(tmp_path)
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
@@ -2799,46 +2778,20 @@ class TestEntrypointMetaOverride:
         """))
 
         args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
-            override_config=str(yaml_path),
+            baseline_path, target_path, grouping="raw", override_config=str(yaml_path),
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_no_match_uses_original_dims(self, tmp_path: Path, capsys) -> None:
         """When override regex doesn't match, original dims from dump are used."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="t h"
+        baseline_path, target_path = self._create_single_rank_pair(
+            tmp_path, baseline_dims="t h", target_dims="t h",
         )
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="t h")
 
         args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
-            override_dims=["no_match_pattern:b s d"],
+            baseline_path, target_path, grouping="raw", override_dims=["no_match_pattern:b s d"],
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_selective_match_multi_tensor(self, tmp_path: Path, capsys) -> None:
         """Override matches only 'logits'; 'hidden' uses original dims."""
@@ -2869,11 +2822,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["logits:t v"],
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 2
-        assert all(c.diff is not None and c.diff.passed for c in comparisons)
+        self._assert_all_passed(_run_and_parse(args, capsys), expected_count=2)
 
     def test_multiple_cli_override_dims(self, tmp_path: Path, capsys) -> None:
         """Multiple --override-dims for different tensors."""
@@ -2906,11 +2855,7 @@ class TestEntrypointMetaOverride:
             grouping="raw",
             override_dims=["hidden:t h", "logits:t v"],
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 2
-        assert all(c.diff is not None and c.diff.passed for c in comparisons)
+        self._assert_all_passed(_run_and_parse(args, capsys), expected_count=2)
 
     def test_per_side_dims_different_parallelism(self, tmp_path: Path, capsys) -> None:
         """baseline TP-sharded, target EP-sharded — per-side override fixes both."""
@@ -2952,28 +2897,11 @@ class TestEntrypointMetaOverride:
             override_baseline_dims=["hidden:t h(tp)"],
             override_target_dims=["hidden:t h(ep)"],
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_yaml_first_match_wins_e2e(self, tmp_path: Path, capsys) -> None:
         """YAML with two matching rules: first rule wins in real pipeline."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
-        )
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
+        baseline_path, target_path = self._create_single_rank_pair(tmp_path)
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
@@ -2985,33 +2913,13 @@ class TestEntrypointMetaOverride:
         """))
 
         args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
-            override_config=str(yaml_path),
+            baseline_path, target_path, grouping="raw", override_config=str(yaml_path),
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_cli_overrides_yaml_e2e(self, tmp_path: Path, capsys) -> None:
         """CLI --override-dims wins over YAML rule for the same tensor."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(
-            baseline_dir, rank=0, name="hidden", tensor=tensor, dims="x y"
-        )
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims="x y")
+        baseline_path, target_path = self._create_single_rank_pair(tmp_path)
 
         yaml_path: Path = tmp_path / "override.yaml"
         yaml_path.write_text(textwrap.dedent("""\
@@ -3021,45 +2929,24 @@ class TestEntrypointMetaOverride:
         """))
 
         args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
+            baseline_path,
+            target_path,
             grouping="raw",
             override_dims=["hidden:t h"],
             override_config=str(yaml_path),
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_override_injects_dims_when_absent(self, tmp_path: Path, capsys) -> None:
         """Override injects dims into meta even when dump had no dims annotation."""
-        torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(10, 8)
-        target: torch.Tensor = tensor + torch.randn(10, 8) * 0.001
-
-        baseline_dir: Path = tmp_path / "baseline"
-        target_dir: Path = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        _create_rank_dump(baseline_dir, rank=0, name="hidden", tensor=tensor, dims=None)
-        _create_rank_dump(target_dir, rank=0, name="hidden", tensor=target, dims=None)
+        baseline_path, target_path = self._create_single_rank_pair(
+            tmp_path, baseline_dims=None, target_dims=None,
+        )
 
         args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            grouping="raw",
-            override_dims=["hidden:t h"],
+            baseline_path, target_path, grouping="raw", override_dims=["hidden:t h"],
         )
-        records = _run_and_parse(args, capsys)
-
-        comparisons = _get_comparisons(records)
-        assert len(comparisons) == 1
-        assert comparisons[0].diff is not None
-        assert comparisons[0].diff.passed
+        self._assert_all_passed(_run_and_parse(args, capsys))
 
     def test_non_tensor_unaffected_by_override(self, tmp_path: Path, capsys) -> None:
         """Non-tensor values pass through without error even with active override."""
