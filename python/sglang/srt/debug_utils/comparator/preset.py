@@ -37,7 +37,7 @@ def expand_preset(argv: list[str], presets: dict[str, list[str]]) -> list[str]:
 
 def _expand_flag(
     argv: list[str], flag: str, mapping: dict[str, list[str]]
-) -> list[str]:
+) -> list[str] | None:
     """Replace ``flag <name>`` in *argv* with the corresponding argv fragment from *mapping*."""
     if flag not in argv:
         return None
