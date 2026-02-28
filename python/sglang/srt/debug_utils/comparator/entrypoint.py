@@ -26,11 +26,12 @@ from sglang.srt.debug_utils.comparator.bundle_matcher import (
 from sglang.srt.debug_utils.comparator.display import emit_display_records
 from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
-    ComparisonRecord,
     ConfigRecord,
-    NonTensorRecord,
-    SkipRecord,
+    NonTensorTensorComparisonRecord,
+    RecordLocation,
+    SkipTensorComparisonRecord,
     SummaryRecord,
+    TensorTensorComparisonRecord,
     report_sink,
 )
 from sglang.srt.debug_utils.comparator.per_token_visualizer import (
@@ -199,7 +200,7 @@ def _compare_bundle_pairs(
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
     meta_overrider: Optional[MetaOverrider] = None,
-) -> Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]]:
+) -> Iterator[Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]]:
     for bundle_info_pair in bundle_info_pairs:
         if not bundle_info_pair.y:
             continue
@@ -208,7 +209,7 @@ def _compare_bundle_pairs(
         filenames_pair: Pair[list[str]] = bundle_info_pair.map(
             lambda infos: [info.filename for info in infos]
         )
-        record: Union[ComparisonRecord, SkipRecord, NonTensorRecord] = (
+        record: Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord] = (
             compare_bundle_pair(
                 name=name,
                 filenames_pair=filenames_pair,
@@ -227,26 +228,28 @@ def _compare_bundle_pairs(
         target_steps: set[int] = {info.step for info in bundle_info_pair.y}
         step: Optional[int] = target_steps.pop() if len(target_steps) == 1 else None
         if step is not None:
-            record = record.model_copy(update={"step": step})
+            record = record.model_copy(
+                update={"location": RecordLocation(step=step)}
+            )
 
         yield record
 
 
 def _consume_comparison_records(
     *,
-    comparison_records: Iterator[Union[ComparisonRecord, SkipRecord, NonTensorRecord]],
+    comparison_records: Iterator[Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]],
     visualize_per_token: Optional[Path] = None,
 ) -> tuple[SummaryRecord, list[str]]:
     counts: dict[str, int] = {"passed": 0, "failed": 0, "skipped": 0}
-    collected_comparisons: list[ComparisonRecord] = []
+    collected_comparisons: list[TensorComparisonRecord] = []
     skipped_names: list[str] = []
 
     for record in comparison_records:
         counts[record.category] += 1
         report_sink.add(record)
-        if isinstance(record, SkipRecord) and record.category == "skipped":
+        if isinstance(record, SkipComparisonRecord) and record.category == "skipped":
             skipped_names.append(record.name)
-        if visualize_per_token is not None and isinstance(record, ComparisonRecord):
+        if visualize_per_token is not None and isinstance(record, TensorComparisonRecord):
             collected_comparisons.append(record)
 
     summary: SummaryRecord = SummaryRecord(total=sum(counts.values()), **counts)
@@ -261,8 +264,8 @@ def _consume_comparison_records(
     return summary, skipped_names
 
 
-def _parse_args() -> argparse.Namespace:
-    argv: list[str] = sys.argv[1:]
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    """Parse CLI arguments from an argv list. Applies preset expansion."""
     argv = expand_preset(argv, presets=PRESETS)
 
     parser = argparse.ArgumentParser()
@@ -373,3 +376,7 @@ def _parse_args() -> argparse.Namespace:
     )
 
     return parser.parse_args(argv)
+
+
+def _parse_args() -> argparse.Namespace:
+    return parse_args(sys.argv[1:])
