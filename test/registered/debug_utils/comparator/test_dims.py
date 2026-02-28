@@ -405,9 +405,7 @@ class TestParseFusedDim:
     def test_fused_with_modifier(self) -> None:
         result: DimSpec = parse_dim("(num_heads*head_dim)[tp]")
         assert result.name == "num_heads*head_dim"
-        assert result.parallel_modifiers == [
-            ParallelModifier(axis=ParallelAxis.TP)
-        ]
+        assert result.parallel_modifiers == [ParallelModifier(axis=ParallelAxis.TP)]
         assert result.sub_dims == ["num_heads", "head_dim"]
 
     def test_three_way_fused(self) -> None:
@@ -418,9 +416,7 @@ class TestParseFusedDim:
 
     def test_three_way_fused_with_modifier(self) -> None:
         result: DimSpec = parse_dim("(a*b*c)[tp]")
-        assert result.parallel_modifiers == [
-            ParallelModifier(axis=ParallelAxis.TP)
-        ]
+        assert result.parallel_modifiers == [ParallelModifier(axis=ParallelAxis.TP)]
         assert len(result.sub_dims) == 3
 
     def test_fused_with_complex_modifier(self) -> None:

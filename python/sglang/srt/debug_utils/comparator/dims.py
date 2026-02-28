@@ -115,9 +115,7 @@ class _SingletonDimUtil:
 
 _DIM_PATTERN = re.compile(r"^(?P<name>[a-zA-Z_]\w*)(?:\[(?P<modifiers>[^\]]+)\])?$")
 
-_FUSED_DIM_PATTERN = re.compile(
-    r"^\((?P<inner>[^)]+)\)(?:\[(?P<modifiers>[^\]]+)\])?$"
-)
+_FUSED_DIM_PATTERN = re.compile(r"^\((?P<inner>[^)]+)\)(?:\[(?P<modifiers>[^\]]+)\])?$")
 
 _SUB_DIM_NAME_PATTERN = re.compile(r"^[a-zA-Z_]\w*$")
 
