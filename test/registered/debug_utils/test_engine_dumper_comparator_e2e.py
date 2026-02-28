@@ -43,13 +43,33 @@ patches:
   # --- decoder layer level (aligned with miles test) ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
     edits:
-      - match: "self.layer_communicator.prepare_attn_and_capture_last_layer_outputs("
+      - match: |
+          hidden_states, residual = (
+              self.layer_communicator.prepare_attn_and_capture_last_layer_outputs(
+                  hidden_states,
+                  residual,
+                  forward_batch,
+                  captured_last_layer_outputs=captured_last_layer_outputs,
+                  **kwargs,
+              )
+          )
         append: "dumper.dump('layer_input', hidden_states, dims='t h')"
-      - match: "hidden_states = self.self_attn("
+      - match: |
+          hidden_states = self.self_attn(
+              positions=positions,
+              hidden_states=hidden_states,
+              forward_batch=forward_batch,
+          )
         append: "dumper.dump('attn_output', hidden_states, dims='t h(tp,partial)')"
-      - match: "hidden_states, residual = self.layer_communicator.prepare_mlp("
+      - match: |
+          hidden_states, residual = self.layer_communicator.prepare_mlp(
+              hidden_states, residual, forward_batch
+          )
         append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h')"
-      - match: "hidden_states = self.mlp("
+      - match: |
+          hidden_states = self.mlp(
+              hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
+          )
         append: "dumper.dump('mlp_output', hidden_states, dims='t h(tp,partial)')"
 
   # --- attention internals ---
