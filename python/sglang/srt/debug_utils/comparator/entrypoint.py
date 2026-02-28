@@ -144,8 +144,10 @@ def _compute_exit_code(
 
 
 def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
+    if args.no_report:
+        return None
     if args.report_path is not None:
-        return Path(args.report_path) if args.report_path else None
+        return Path(args.report_path)
     return Path(args.target_path) / "comparator_report.jsonl"
 
 
