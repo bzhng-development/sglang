@@ -45,7 +45,7 @@ class ReplicatedCheckResult(_StrictBase):
     baseline_index: int
     passed: bool
     atol: float
-    diff: DiffInfo
+    diff: Optional[DiffInfo] = None
 
 
 class _OutputRecord(_StrictBase):
