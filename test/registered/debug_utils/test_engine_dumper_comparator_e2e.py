@@ -135,6 +135,8 @@ class TestSourcePatcherE2ESGLang:
                 str(baseline_exp),
                 "--target-path",
                 str(target_exp),
+                "--output-format",
+                "json",
                 "--grouping",
                 "logical",
                 "--forbid-skip",
