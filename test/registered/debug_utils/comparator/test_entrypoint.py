@@ -3234,15 +3234,15 @@ class TestEntrypointDpFilter:
 
 
 class TestEntrypointDpGroupAlias:
-    """E2E tests for the ``// dp:=<group>`` dp group alias feature.
+    """E2E tests for the ``# dp:=<group>`` dp group alias feature.
 
     In dp_attn mode, dp_size > 1 but MLP tensors after dp_gather have data
-    on all ranks.  With ``// dp:=moe_dp`` in dims, the dp filter uses
+    on all ranks.  With ``# dp:=moe_dp`` in dims, the dp filter uses
     ``moe_dp_rank/moe_dp_size`` instead of ``dp_rank/dp_size``.
     """
 
     def test_dp_alias_absent_group_noop(self, tmp_path: Path, capsys) -> None:
-        """Single rank with ``// dp:=moe_dp`` in dims → parse_dims strips ``//``, comparison OK."""
+        """Single rank with ``# dp:=moe_dp`` in dims → parse_dims strips ``#``, comparison OK."""
         torch.manual_seed(42)
         tensor_data: torch.Tensor = torch.randn(10, 8)
         target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
@@ -3256,7 +3256,7 @@ class TestEntrypointDpGroupAlias:
                 rank=0,
                 name="hidden",
                 tensor=data,
-                dims="t h // dp:=moe_dp",
+                dims="t h # dp:=moe_dp",
                 parallel_info={
                     "tp_rank": 0,
                     "tp_size": 1,
@@ -3278,7 +3278,7 @@ class TestEntrypointDpGroupAlias:
         assert comparison.name == "hidden"
 
     def test_dp_alias_via_override_dims(self, tmp_path: Path, capsys) -> None:
-        """--override-dims adds ``// dp:=moe_dp`` → dp filter uses alias, filters correctly."""
+        """--override-dims adds ``# dp:=moe_dp`` → dp filter uses alias, filters correctly."""
         torch.manual_seed(42)
         tensor_data: torch.Tensor = torch.randn(10, 8)
         target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
@@ -3328,7 +3328,7 @@ class TestEntrypointDpGroupAlias:
             tmp_path / "target" / _FIXED_EXP_NAME,
             grouping="logical",
             diff_threshold=1e-3,
-            override_dims=["hidden:t h // dp:=moe_dp"],
+            override_dims=["hidden:t h # dp:=moe_dp"],
         )
         records, _ = _run_and_parse(args, capsys)
 
@@ -3354,7 +3354,7 @@ class TestEntrypointDpGroupAlias:
                     rank=moe_dp_rank,
                     name="hidden",
                     tensor=tensor,
-                    dims="t h // dp:=moe_dp",
+                    dims="t h # dp:=moe_dp",
                     parallel_info={
                         "tp_rank": 0,
                         "tp_size": 1,

@@ -318,53 +318,53 @@ class TestSingletonDimUtilSanitizeNames:
         assert _SingletonDimUtil.sanitize_names([]) == []
 
 
-class TestParseDimsWithDoubleSlash:
-    """parse_dims strips the ``//`` declaration section from dims."""
+class TestParseDimsWithHash:
+    """parse_dims strips the ``#`` declaration section from dims."""
 
     def test_shape_dims_unchanged(self) -> None:
         assert (
-            parse_dims("b s h(tp) // dp:=moe_dp").dims == parse_dims("b s h(tp)").dims
+            parse_dims("b s h(tp) # dp:=moe_dp").dims == parse_dims("b s h(tp)").dims
         )
 
     def test_dp_group_alias_extracted(self) -> None:
-        assert parse_dims("b s h(tp) // dp:=moe_dp").dp_group_alias == "moe_dp"
+        assert parse_dims("b s h(tp) # dp:=moe_dp").dp_group_alias == "moe_dp"
 
-    def test_no_slash_no_alias(self) -> None:
+    def test_no_hash_no_alias(self) -> None:
         assert parse_dims("b s h(tp)").dp_group_alias is None
 
-    def test_whitespace_around_slash(self) -> None:
-        assert parse_dims("t h //   dp:=foo  ").dims == parse_dims("t h").dims
-        assert parse_dims("t h //   dp:=foo  ").dp_group_alias == "foo"
+    def test_whitespace_around_hash(self) -> None:
+        assert parse_dims("t h #   dp:=foo  ").dims == parse_dims("t h").dims
+        assert parse_dims("t h #   dp:=foo  ").dp_group_alias == "foo"
 
     def test_multiple_declarations_picks_dp(self) -> None:
-        result: DimsSpec = parse_dims("t h(tp) // dp:=moe_dp ep:replicated")
+        result: DimsSpec = parse_dims("t h(tp) # dp:=moe_dp ep:replicated")
         assert result.dims == parse_dims("t h(tp)").dims
         assert result.dp_group_alias == "moe_dp"
 
     def test_no_dp_alias_token(self) -> None:
-        assert parse_dims("t h(tp) // ep:replicated").dp_group_alias is None
+        assert parse_dims("t h(tp) # ep:replicated").dp_group_alias is None
 
 
 class TestDpGroupAlias:
     def test_basic(self) -> None:
-        assert parse_dims("b s h(tp) // dp:=moe_dp").dp_group_alias == "moe_dp"
+        assert parse_dims("b s h(tp) # dp:=moe_dp").dp_group_alias == "moe_dp"
 
-    def test_no_slash_returns_none(self) -> None:
+    def test_no_hash_returns_none(self) -> None:
         assert parse_dims("t h").dp_group_alias is None
 
     def test_no_dp_alias_token(self) -> None:
-        assert parse_dims("t h(tp) // ep:replicated").dp_group_alias is None
+        assert parse_dims("t h(tp) # ep:replicated").dp_group_alias is None
 
     def test_multiple_tokens_picks_dp(self) -> None:
         assert (
-            parse_dims("b s // ep:replicated dp:=custom_dp").dp_group_alias
+            parse_dims("b s # ep:replicated dp:=custom_dp").dp_group_alias
             == "custom_dp"
         )
 
 
-class TestResolveDimNamesWithDoubleSlash:
-    def test_slash_stripped(self) -> None:
-        assert resolve_dim_names("t h // dp:=moe_dp") == ["t", "h"]
+class TestResolveDimNamesWithHash:
+    def test_hash_stripped(self) -> None:
+        assert resolve_dim_names("t h # dp:=moe_dp") == ["t", "h"]
 
 
 if __name__ == "__main__":

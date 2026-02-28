@@ -104,7 +104,7 @@ def _compare_bundle_pair_inner(
         return SkipRecord(name=name, reason=reason)
 
     # 1b. Dims override: patch meta["dims"] before DP filter reads it
-    # (--override-dims may add ``// dp:=moe_dp``, so it must run first)
+    # (--override-dims may add ``# dp:=moe_dp``, so it must run first)
     if meta_overrider is not None and not meta_overrider.is_empty:
         _apply = meta_overrider.apply_to_meta
         all_pair = Pair(

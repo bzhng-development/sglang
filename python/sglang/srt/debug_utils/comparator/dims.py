@@ -46,7 +46,7 @@ class DimSpec(_FrozenBase):
 
 
 class DimsSpec(_FrozenBase):
-    """Parsed result of a full dims string like ``"b s h(tp) // dp:=moe_dp"``."""
+    """Parsed result of a full dims string like ``"b s h(tp) # dp:=moe_dp"``."""
 
     dims: list[DimSpec]
     dp_group_alias: Optional[str] = None
@@ -180,13 +180,13 @@ def parse_dim(token: str) -> DimSpec:
 
 
 def parse_dims(dims_str: str) -> DimsSpec:
-    """Parse ``"b s(cp:zigzag) h(tp) d // dp:=moe_dp"`` → :class:`DimsSpec`.
+    """Parse ``"b s(cp:zigzag) h(tp) d # dp:=moe_dp"`` → :class:`DimsSpec`.
 
-    The shape part (before ``//``) produces :pyattr:`DimsSpec.dims`.
-    The declaration part (after ``//``) is scanned for ``dp:=<group>``
+    The shape part (before ``#``) produces :pyattr:`DimsSpec.dims`.
+    The declaration part (after ``#``) is scanned for ``dp:=<group>``
     which populates :pyattr:`DimsSpec.dp_group_alias`.
     """
-    parts: list[str] = dims_str.split("//", maxsplit=1)
+    parts: list[str] = dims_str.split("#", maxsplit=1)
     raw: str = parts[0]
 
     if not raw.strip():
@@ -244,7 +244,7 @@ _DP_ALIAS_PATTERN = re.compile(r"^dp:=(\w+)$")
 
 
 def _extract_dp_group_alias(declaration_part: str) -> Optional[str]:
-    """Scan the ``//`` declaration section for a ``dp:=<group>`` token."""
+    """Scan the ``#`` declaration section for a ``dp:=<group>`` token."""
     for token in declaration_part.strip().split():
         match = _DP_ALIAS_PATTERN.match(token)
         if match is not None:
