@@ -73,20 +73,27 @@ class MetaOverrider:
         baseline_metas: list[dict[str, Any]],
         target_metas: list[dict[str, Any]],
     ) -> Pair[list[dict[str, Any]]]:
-        """First-match-wins: find the first matching rule, apply its dims."""
-        for pattern, rule in self._compiled:
-            if pattern.search(name):
-                new_baseline: list[dict[str, Any]] = _apply_dims_to_metas(
-                    metas=baseline_metas,
-                    new_dims=rule.dims if rule.side in ("both", "baseline") else None,
-                )
-                new_target: list[dict[str, Any]] = _apply_dims_to_metas(
-                    metas=target_metas,
-                    new_dims=rule.dims if rule.side in ("both", "target") else None,
-                )
-                return Pair(x=new_baseline, y=new_target)
+        """First-match-wins per side: each side is overridden by the first matching rule that covers it."""
+        result_baseline: list[dict[str, Any]] = baseline_metas
+        result_target: list[dict[str, Any]] = target_metas
+        baseline_matched: bool = False
+        target_matched: bool = False
 
-        return Pair(x=baseline_metas, y=target_metas)
+        for pattern, rule in self._compiled:
+            if baseline_matched and target_matched:
+                break
+            if not pattern.search(name):
+                continue
+
+            if not baseline_matched and rule.side in ("both", "baseline"):
+                result_baseline = _apply_dims_to_metas(metas=baseline_metas, new_dims=rule.dims)
+                baseline_matched = True
+
+            if not target_matched and rule.side in ("both", "target"):
+                result_target = _apply_dims_to_metas(metas=target_metas, new_dims=rule.dims)
+                target_matched = True
+
+        return Pair(x=result_baseline, y=result_target)
 
 
 def _parse_cli_override_arg(raw: str) -> tuple[str, str]:

@@ -260,10 +260,9 @@ class TestFromArgsAndConfig:
             baseline_metas=[{"dims": "old"}],
             target_metas=[{"dims": "old"}],
         )
-        # baseline rule matches first (side="baseline"), sets baseline dims
+        # Each side matched by its own first-matching rule
         assert result.x[0]["dims"] == "b s h(tp)"
-        # target is unchanged because first-match-wins and side="baseline" doesn't touch target
-        assert result.y[0]["dims"] == "old"
+        assert result.y[0]["dims"] == "b s h(ep)"
 
 
 # ──────────────────── Unit: _load_yaml_rules ────────────────────
