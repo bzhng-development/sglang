@@ -145,7 +145,7 @@ class TestSourcePatcherE2ESGLang:
                 "--grouping",
                 "logical",
                 "--diff-threshold",
-                "0.2",
+                "0.01",
             ],
             capture_output=True,
             text=True,
@@ -227,7 +227,7 @@ def _run_server_and_generate(
             f"{base_url}/generate",
             json={
                 "text": "The capital of France is",
-                "sampling_params": {"max_new_tokens": 1},
+                "sampling_params": {"max_new_tokens": 1, "temperature": 0},
             },
         )
         assert resp.status_code == 200, f"Generate failed: {resp.text}"
