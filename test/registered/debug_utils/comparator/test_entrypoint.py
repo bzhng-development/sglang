@@ -912,6 +912,7 @@ class TestEntrypointGroupingLogical:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
+            grouping_skip_keys=["rank", "recompute_status"],
             diff_threshold=0.01,
         )
 
@@ -940,6 +941,7 @@ class TestEntrypointGroupingLogical:
         argv = _make_argv(
             baseline_dir / _FIXED_EXP_NAME,
             target_dir / _FIXED_EXP_NAME,
+            grouping_skip_keys=["rank", "recompute_status"],
             diff_threshold=0.01,
         )
 
