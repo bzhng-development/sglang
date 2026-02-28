@@ -45,7 +45,7 @@ _DEFAULT_SKIP_KEYS: set[str] = {"dump_index", "filename"}
 
 
 def main() -> None:
-    args = _parse_args()
+    args = parse_args(sys.argv[1:])
     sys.exit(run(args))
 
 
@@ -380,7 +380,3 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
 
     return parser.parse_args(argv)
-
-
-def _parse_args() -> argparse.Namespace:
-    return parse_args(sys.argv[1:])
