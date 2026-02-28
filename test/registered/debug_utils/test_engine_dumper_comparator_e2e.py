@@ -1,9 +1,13 @@
 """E2E test: source patcher + dumper + comparator on SGLang server.
 
 Patches Qwen3MoeDecoderLayer.forward (and related methods) to insert
-dumper.dump() calls at 7 points, launches TP=2 baseline and TP=4 target
-servers with Qwen3-30B-A3B (MOE model), runs inference, verifies patched
-dump fields exist, then runs comparator to verify numerical consistency.
+dumper.dump() calls at 7 points, launches servers with Qwen3-30B-A3B
+(MOE model), runs inference, verifies patched dump fields exist, then
+runs comparator to verify numerical consistency.
+
+Test cases:
+- test_patch_dump_and_compare: TP=2 baseline vs TP=4 target
+- test_dp_attention: TP=2 baseline vs TP=2+DP=2+dp-attention target
 
 The dumper.apply_source_patches() auto-injects ``from ... import dumper``
 so the YAML only needs ``dumper.dump(...)`` calls.
@@ -13,6 +17,7 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
+from typing import Optional
 
 import pytest
 import requests
@@ -93,10 +98,11 @@ patches:
 
 
 class TestSourcePatcherE2ESGLang:
-    """E2E: patch Qwen3Moe forward -> dump -> compare TP=2 vs TP=4."""
+    """E2E: patch Qwen3Moe forward -> dump -> compare."""
 
     @pytest.mark.timeout(600)
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
+        """TP=2 baseline vs TP=4 target."""
         base_url: str = DEFAULT_URL_FOR_TEST
 
         config_path: Path = tmp_path / "patch_config.yaml"
@@ -123,41 +129,102 @@ class TestSourcePatcherE2ESGLang:
         _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
 
         # Compare baseline vs target
-        baseline_exp: Path = baseline_dir / EXP_NAME
-        target_exp: Path = target_dir / EXP_NAME
+        _run_comparator_and_assert(
+            baseline_dir=baseline_dir,
+            target_dir=target_dir,
+        )
 
-        result: subprocess.CompletedProcess[str] = subprocess.run(
-            [
-                "python",
-                "-m",
-                "sglang.srt.debug_utils.comparator",
-                "--baseline-path",
-                str(baseline_exp),
-                "--target-path",
-                str(target_exp),
-                "--output-format",
-                "json",
-                "--grouping",
-                "logical",
-                "--allow-skip-pattern",
-                "input_ids|positions",
+    @pytest.mark.timeout(600)
+    def test_dp_attention(self, tmp_path: Path) -> None:
+        """TP=2 baseline vs TP=2+DP=2+dp-attention target.
+
+        In dp-attention mode (attn_tp_size=1, attn_dp_size=2), attention
+        tensors are NOT TP-sharded. We override their dims on the target
+        side so the comparator unshards correctly.
+        """
+        base_url: str = DEFAULT_URL_FOR_TEST
+
+        config_path: Path = tmp_path / "patch_config.yaml"
+        config_path.write_text(PATCH_CONFIG_YAML)
+
+        # Run 1: baseline (TP=2, standard)
+        baseline_dir: Path = tmp_path / "baseline"
+        _run_server_and_generate(
+            dump_dir=baseline_dir,
+            config_path=config_path,
+            tp=BASELINE_TP,
+            base_url=base_url,
+        )
+        _verify_patched_fields(dump_dir=baseline_dir, field_names=_FIELDS_TO_VERIFY)
+
+        # Run 2: target (TP=2 + DP=2 + dp-attention, 2 GPUs total)
+        target_dir: Path = tmp_path / "target"
+        _run_server_and_generate(
+            dump_dir=target_dir,
+            config_path=config_path,
+            tp=BASELINE_TP,
+            base_url=base_url,
+            extra_server_args=["--dp", "2", "--enable-dp-attention"],
+        )
+        _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
+
+        # Compare: override target dims for attention tensors (attn_tp_size=1)
+        _run_comparator_and_assert(
+            baseline_dir=baseline_dir,
+            target_dir=target_dir,
+            extra_comparator_args=[
+                "--override-target-dims", "attn_output:t h",
+                "--override-target-dims", "attn_pre_o_proj:t attn_h",
             ],
-            capture_output=True,
-            text=True,
-        )
-
-        debug_file: Path = _save_comparator_output(
-            stdout=result.stdout, stderr=result.stderr
-        )
-        print(f"Comparator debug output: {debug_file}")
-
-        assert result.returncode == 0, (
-            f"Comparator failed (rc={result.returncode}). "
-            f"Debug output: {debug_file}"
         )
 
 
 # --------------------------------- helpers ---------------------------------
+
+
+def _run_comparator_and_assert(
+    *,
+    baseline_dir: Path,
+    target_dir: Path,
+    extra_comparator_args: Optional[list[str]] = None,
+) -> None:
+    """Run comparator on baseline vs target and assert success."""
+    baseline_exp: Path = baseline_dir / EXP_NAME
+    target_exp: Path = target_dir / EXP_NAME
+
+    cmd: list[str] = [
+        "python",
+        "-m",
+        "sglang.srt.debug_utils.comparator",
+        "--baseline-path",
+        str(baseline_exp),
+        "--target-path",
+        str(target_exp),
+        "--output-format",
+        "json",
+        "--grouping",
+        "logical",
+        "--allow-skip-pattern",
+        "input_ids|positions",
+    ]
+    if extra_comparator_args:
+        cmd.extend(extra_comparator_args)
+
+    result: subprocess.CompletedProcess[str] = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+    )
+
+    debug_file: Path = _save_comparator_output(
+        stdout=result.stdout, stderr=result.stderr
+    )
+    print(f"Comparator debug output: {debug_file}")
+
+    assert result.returncode == 0, (
+        f"Comparator failed (rc={result.returncode}). "
+        f"Debug output: {debug_file}"
+    )
 
 
 def _run_server_and_generate(
@@ -166,6 +233,7 @@ def _run_server_and_generate(
     config_path: Path,
     tp: int,
     base_url: str,
+    extra_server_args: Optional[list[str]] = None,
 ) -> None:
     """Launch SGLang server with source patcher + dumper, send a generate request."""
     env: dict[str, str] = {
@@ -176,17 +244,21 @@ def _run_server_and_generate(
         "DUMPER_SERVER_PORT": "reuse",
     }
 
+    server_args: list[str] = [
+        "--tp", str(tp),
+        "--max-total-tokens", "128",
+        "--mem-fraction-static", "0.5",
+        "--disable-cuda-graph",
+        "--disable-radix-cache",
+    ]
+    if extra_server_args:
+        server_args.extend(extra_server_args)
+
     proc = popen_launch_server(
         MODEL,
         base_url,
         timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-        other_args=[
-            "--tp", str(tp),
-            "--max-total-tokens", "128",
-            "--mem-fraction-static", "0.5",
-            "--disable-cuda-graph",
-            "--disable-radix-cache",
-        ],
+        other_args=server_args,
         env=env,
     )
     try:
