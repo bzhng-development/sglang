@@ -14,7 +14,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     ParallelAxis,
     ParallelModifier,
     Reduction,
-    SubDimSpec,
     _SingletonDimUtil,
     apply_dim_names,
     find_dim_index,
@@ -375,21 +374,21 @@ class TestResolveDimNamesWithFused:
     def test_fused_dim_uses_double_underscore(self) -> None:
         assert resolve_dim_names("t (num_heads*head_dim)") == [
             "t",
-            "num_heads__head_dim",
+            "num_heads___head_dim",
         ]
 
     def test_fused_with_regular_dims(self) -> None:
         assert resolve_dim_names("t (num_heads*head_dim)[tp] d") == [
             "t",
-            "num_heads__head_dim",
+            "num_heads___head_dim",
             "d",
         ]
 
     def test_three_way_fused(self) -> None:
-        assert resolve_dim_names("(a*b*c)") == ["a__b__c"]
+        assert resolve_dim_names("(a*b*c)") == ["a___b___c"]
 
     def test_fused_with_squeeze(self) -> None:
-        assert resolve_dim_names("t 1 (a*b)") == ["t", "singleton0", "a__b"]
+        assert resolve_dim_names("t 1 (a*b)") == ["t", "singleton0", "a___b"]
 
 
 class TestResolveDimNamesWithHash:
@@ -404,10 +403,7 @@ class TestParseFusedDim:
         assert result.parallel_modifiers == []
         assert is_fused(result)
         assert fused_sub_names(result) == ["num_heads", "head_dim"]
-        assert result.sub_dims == [
-            SubDimSpec(name="num_heads"),
-            SubDimSpec(name="head_dim"),
-        ]
+        assert result.sub_dims == ["num_heads", "head_dim"]
 
     def test_fused_with_modifier(self) -> None:
         result: DimSpec = parse_dim("(num_heads*head_dim)[tp]")
@@ -415,10 +411,7 @@ class TestParseFusedDim:
         assert result.parallel_modifiers == [
             ParallelModifier(axis=ParallelAxis.TP)
         ]
-        assert result.sub_dims == [
-            SubDimSpec(name="num_heads"),
-            SubDimSpec(name="head_dim"),
-        ]
+        assert result.sub_dims == ["num_heads", "head_dim"]
 
     def test_three_way_fused(self) -> None:
         result: DimSpec = parse_dim("(a*b*c)")
@@ -438,15 +431,12 @@ class TestParseFusedDim:
         assert result.parallel_modifiers == [
             ParallelModifier(axis=ParallelAxis.CP, ordering=Ordering.ZIGZAG)
         ]
-        assert result.sub_dims == [
-            SubDimSpec(name="a"),
-            SubDimSpec(name="b"),
-        ]
+        assert result.sub_dims == ["a", "b"]
 
     def test_regular_dim_not_fused(self) -> None:
         result: DimSpec = parse_dim("h[tp]")
         assert not is_fused(result)
-        assert result.sub_dims == []
+        assert result.sub_dims is None
         assert fused_sub_names(result) == []
 
     def test_fused_duplicate_sub_names_raises(self) -> None:

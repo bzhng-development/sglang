@@ -53,7 +53,7 @@ class TestComputeAxisAlignerPlan:
 
     def test_modifiers_ignored_for_name_extraction(self) -> None:
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t h(tp) d", y="t d h(tp)")
+            Pair(x="t h[tp] d", y="t d h[tp]")
         )
         assert result is not None
         assert result.pattern.x == "t h d -> t d h"
@@ -95,19 +95,19 @@ class TestComputeAxisAlignerPlanFused:
     def test_fused_vs_separate_generates_flatten(self) -> None:
         """x=fused 2D, y=separate 3D: y gets flattened to match x."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t num_heads(tp)*head_dim", y="t num_heads(tp) head_dim")
+            Pair(x="t (num_heads*head_dim)[tp]", y="t num_heads[tp] head_dim")
         )
         assert result is not None
         assert result.pre_flatten.x is None
         assert result.pre_flatten.y is not None
         assert len(result.pre_flatten.y.groups) == 1
         assert result.pre_flatten.y.groups[0].dim_indices == [1, 2]
-        assert result.pre_flatten.y.groups[0].target_name == "num_heads__head_dim"
+        assert result.pre_flatten.y.groups[0].target_name == "num_heads___head_dim"
 
     def test_separate_vs_fused_generates_flatten(self) -> None:
         """x=separate 3D, y=fused 2D: x gets flattened to match y."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t num_heads(tp) head_dim", y="t num_heads(tp)*head_dim")
+            Pair(x="t num_heads[tp] head_dim", y="t (num_heads*head_dim)[tp]")
         )
         assert result is not None
         assert result.pre_flatten.x is not None
@@ -117,7 +117,7 @@ class TestComputeAxisAlignerPlanFused:
     def test_both_fused_same_no_plan(self) -> None:
         """Both sides fused, same order → None (no-op)."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t a*b", y="t a*b")
+            Pair(x="t (a*b)", y="t (a*b)")
         )
         assert result is None
 
@@ -125,26 +125,26 @@ class TestComputeAxisAlignerPlanFused:
         """Fused vs separate with mismatched names → None."""
         with log_sink.context() as warnings:
             result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-                Pair(x="t a*b", y="t c d")
+                Pair(x="t (a*b)", y="t c d")
             )
         assert result is None
         assert len(warnings) == 1
 
     def test_partial_fused_and_regular(self) -> None:
-        """x has "a*b c", y has "a b c": flatten a,b on y side."""
+        """x has "(a*b) c", y has "a b c": flatten a,b on y side."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="a*b c", y="a b c")
+            Pair(x="(a*b) c", y="a b c")
         )
         assert result is not None
         assert result.pre_flatten.y is not None
         assert result.pre_flatten.y.groups[0].dim_indices == [0, 1]
-        assert result.pre_flatten.y.groups[0].target_name == "a__b"
+        assert result.pre_flatten.y.groups[0].target_name == "a___b"
         assert result.pre_flatten.x is None
 
     def test_fused_with_squeeze(self) -> None:
         """Fused + squeeze on one side, separate on other."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t 1 a*b", y="t a b")
+            Pair(x="t 1 (a*b)", y="t a b")
         )
         assert result is not None
         # x has squeeze to remove, y has a,b to flatten
@@ -306,7 +306,7 @@ class TestEndToEndFusedAlignment:
         y_tensor: torch.Tensor = x_tensor.reshape(4, num_heads, head_dim)
 
         plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t num_heads*head_dim", y="t num_heads head_dim")
+            Pair(x="t (num_heads*head_dim)", y="t num_heads head_dim")
         )
         assert plan is not None
 
@@ -327,7 +327,7 @@ class TestEndToEndFusedAlignment:
         y_tensor: torch.Tensor = x_tensor.reshape(4, num_heads * head_dim)
 
         plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="t num_heads head_dim", y="t num_heads*head_dim")
+            Pair(x="t num_heads head_dim", y="t (num_heads*head_dim)")
         )
         assert plan is not None
 
@@ -350,7 +350,7 @@ class TestEndToEndFusedAlignment:
         y_tensor: torch.Tensor = x_tensor.reshape(7, a_size, b_size).permute(1, 2, 0)
 
         plan: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
-            Pair(x="c a*b", y="a b c")
+            Pair(x="c (a*b)", y="a b c")
         )
         assert plan is not None
 
