@@ -1,7 +1,7 @@
 """E2E test: source patcher + dumper + comparator on SGLang server.
 
 Patches Qwen3MoeDecoderLayer.forward (and related methods) to insert
-dumper.dump() calls at 8 points, launches TP=2 baseline and TP=4 target
+dumper.dump() calls at 7 points, launches TP=2 baseline and TP=4 target
 servers with Qwen3-30B-A3B (MOE model), runs inference, verifies patched
 dump fields exist, then runs comparator to verify numerical consistency.
 
@@ -37,6 +37,15 @@ BASELINE_TP = 2
 TARGET_TP = 4
 EXP_NAME = "e2e_source_patcher"
 DUMPER_FILTER = "layer_id in [0, 1, 2]"
+
+_FIELDS_TO_VERIFY: list[str] = [
+    # decoder layer level (aligned with miles)
+    "layer_input", "attn_output", "pre_mlp_residual", "mlp_output",
+    # attention internals
+    "attn_pre_o_proj",
+    # moe internals
+    "moe_router_logits", "moe_expert_output",
+]
 
 PATCH_CONFIG_YAML: str = """\
 patches:
@@ -76,7 +85,7 @@ patches:
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
-        prepend: "dumper.dump('attn_pre_proj', attn_output, dims='t attn_h(tp)')"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h(tp)')"
 
   # --- moe internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
@@ -93,14 +102,6 @@ class TestSourcePatcherE2ESGLang:
 
     @pytest.mark.timeout(600)
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
-        patched_fields: list[str] = [
-            # decoder layer level (aligned with miles)
-            "layer_input", "attn_output", "pre_mlp_residual", "mlp_output",
-            # attention internals
-            "attn_pre_proj",
-            # moe internals
-            "moe_router_logits", "moe_expert_output",
-        ]
         base_url: str = DEFAULT_URL_FOR_TEST
 
         config_path: Path = tmp_path / "patch_config.yaml"
@@ -114,7 +115,7 @@ class TestSourcePatcherE2ESGLang:
             tp=BASELINE_TP,
             base_url=base_url,
         )
-        _verify_patched_fields(dump_dir=baseline_dir, field_names=patched_fields)
+        _verify_patched_fields(dump_dir=baseline_dir, field_names=_FIELDS_TO_VERIFY)
 
         # Run 2: target (TP=4)
         target_dir: Path = tmp_path / "target"
@@ -124,7 +125,7 @@ class TestSourcePatcherE2ESGLang:
             tp=TARGET_TP,
             base_url=base_url,
         )
-        _verify_patched_fields(dump_dir=target_dir, field_names=patched_fields)
+        _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
 
         # Compare baseline vs target
         baseline_exp: Path = baseline_dir / EXP_NAME
@@ -143,8 +144,6 @@ class TestSourcePatcherE2ESGLang:
                 "json",
                 "--grouping",
                 "logical",
-                "--end-step",
-                "0",
             ],
             capture_output=True,
             text=True,
@@ -226,7 +225,7 @@ def _run_server_and_generate(
             f"{base_url}/generate",
             json={
                 "text": "The capital of France is",
-                "sampling_params": {"max_new_tokens": 8},
+                "sampling_params": {"max_new_tokens": 1},
             },
         )
         assert resp.status_code == 200, f"Generate failed: {resp.text}"
