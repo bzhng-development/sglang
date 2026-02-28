@@ -34,13 +34,10 @@ class MetaOverrideConfig(_StrictBase):
 
 
 class MetaOverrider:
-    """Holds compiled override rules and applies first-match-wins replacement."""
+    """Holds override rules and applies first-match-wins replacement."""
 
     def __init__(self, rules: list[MetaOverrideRule]) -> None:
         self._rules: list[MetaOverrideRule] = rules
-        self._compiled: list[tuple[re.Pattern[str], MetaOverrideRule]] = [
-            (re.compile(rule.match), rule) for rule in rules
-        ]
 
     @property
     def is_empty(self) -> bool:
@@ -87,10 +84,10 @@ class MetaOverrider:
         baseline_matched: bool = False
         target_matched: bool = False
 
-        for pattern, rule in self._compiled:
+        for rule in self._rules:
             if baseline_matched and target_matched:
                 break
-            if not pattern.search(name):
+            if not re.search(rule.match, name):
                 continue
 
             if not baseline_matched and rule.side in ("both", "baseline"):
