@@ -6,6 +6,7 @@ import pytest
 from sglang.srt.debug_utils.comparator.log_sink import LogSink
 from sglang.srt.debug_utils.comparator.output_types import (
     ErrorLog,
+    InfoLog,
     report_sink,
 )
 from sglang.test.ci.ci_register import register_cpu_ci
@@ -84,6 +85,17 @@ class TestLogSink:
         parsed: dict = json.loads(captured.out.strip())
         assert "errors" in parsed
         assert len(parsed["errors"]) == 1
+
+    def test_info_log_outside_context_routes_to_infos(self, capsys) -> None:
+        """InfoLog added outside context populates LogRecord.infos, not errors."""
+        sink = LogSink()
+        report_sink.configure(output_format="json")
+
+        sink.add(InfoLog(category="test", message="info msg"))
+
+        parsed: dict = json.loads(capsys.readouterr().out.strip())
+        assert len(parsed["infos"]) == 1
+        assert len(parsed["errors"]) == 0
 
     def test_exception_in_context_cleans_stack(self, capsys) -> None:
         sink = LogSink()

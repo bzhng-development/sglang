@@ -1849,6 +1849,90 @@ class TestEntrypointReplicatedAxis:
         assert summary.failed == 1
         assert summary.passed == 0
 
+    def test_replicated_shape_mismatch(self, tmp_path, capsys):
+        """TP replicated tensors with different shapes → failed, replicated diff=None."""
+        torch.manual_seed(42)
+
+        baseline_dir = tmp_path / "baseline"
+        target_dir = tmp_path / "target"
+
+        for side_dir in [baseline_dir, target_dir]:
+            # rank 0 (cp=0, tp=0): shape (4, 4, 6)
+            _create_rank_dump(
+                side_dir,
+                rank=0,
+                name="attn_out",
+                tensor=torch.randn(4, 4, 6),
+                dims="b s(cp) d",
+                parallel_info={
+                    "cp_rank": 0,
+                    "cp_size": 2,
+                    "tp_rank": 0,
+                    "tp_size": 2,
+                },
+            )
+            # rank 1 (cp=0, tp=1): shape (4, 4, 3) — different last dim
+            _create_rank_dump(
+                side_dir,
+                rank=1,
+                name="attn_out",
+                tensor=torch.randn(4, 4, 3),
+                dims="b s(cp) d",
+                parallel_info={
+                    "cp_rank": 0,
+                    "cp_size": 2,
+                    "tp_rank": 1,
+                    "tp_size": 2,
+                },
+            )
+            # rank 2 (cp=1, tp=0): shape (4, 4, 6)
+            _create_rank_dump(
+                side_dir,
+                rank=2,
+                name="attn_out",
+                tensor=torch.randn(4, 4, 6),
+                dims="b s(cp) d",
+                parallel_info={
+                    "cp_rank": 1,
+                    "cp_size": 2,
+                    "tp_rank": 0,
+                    "tp_size": 2,
+                },
+            )
+            # rank 3 (cp=1, tp=1): shape (4, 4, 3) — different last dim
+            _create_rank_dump(
+                side_dir,
+                rank=3,
+                name="attn_out",
+                tensor=torch.randn(4, 4, 3),
+                dims="b s(cp) d",
+                parallel_info={
+                    "cp_rank": 1,
+                    "cp_size": 2,
+                    "tp_rank": 1,
+                    "tp_size": 2,
+                },
+            )
+
+        argv = _make_argv(
+            baseline_dir / _FIXED_EXP_NAME,
+            target_dir / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+
+        records, _ = _run_and_parse(argv, capsys)
+        comparisons = _get_comparisons(records)
+        assert len(comparisons) == 1
+        assert comparisons[0].category == "failed"
+
+        failed_checks = [c for c in comparisons[0].replicated_checks if not c.passed]
+        assert len(failed_checks) >= 1
+        assert all(c.diff is None for c in failed_checks)
+
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.failed == 1
+
 
 class TestEntrypointAlignment:
     """Test smart token alignment with aux tensors."""
@@ -2391,6 +2475,7 @@ def _make_argv(
     override_target_dims: list[str] | None = None,
     override_config: str | None = None,
     allow_skipped_pattern: str | None = None,
+    allow_failed_pattern: str | None = None,
     report_path: str | None = "",
     viz_bundle_details: bool = False,
     viz_output_dir: str | None = None,
@@ -2429,6 +2514,8 @@ def _make_argv(
         argv += ["--override-config", override_config]
     if allow_skipped_pattern is not None:
         argv += ["--allow-skipped-pattern", allow_skipped_pattern]
+    if allow_failed_pattern is not None:
+        argv += ["--allow-failed-pattern", allow_failed_pattern]
     if report_path is not None:
         argv += ["--report-path", report_path]
     if viz_bundle_details:
@@ -4033,6 +4120,90 @@ class TestExitCode:
             == 1
         )
 
+    def test_allow_failed_pattern_matches_all(self):
+        """allow_failed_pattern='.*' tolerates all failures → exit 0."""
+        summary = SummaryRecord(total=3, passed=1, failed=2, skipped=0)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skipped_pattern=".*",
+                skipped_names=[],
+                allow_failed_pattern=".*",
+                failed_names=["a", "b"],
+            )
+            == 0
+        )
+
+    def test_allow_failed_pattern_matches_specific(self):
+        """Pattern matches all failed names → exit 0."""
+        summary = SummaryRecord(total=3, passed=1, failed=2, skipped=0)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skipped_pattern=".*",
+                skipped_names=[],
+                allow_failed_pattern="hidden_states|logits",
+                failed_names=["hidden_states", "logits"],
+            )
+            == 0
+        )
+
+    def test_allow_failed_pattern_partial_match(self):
+        """Pattern matches some but not all failures → exit 1."""
+        summary = SummaryRecord(total=3, passed=0, failed=3, skipped=0)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skipped_pattern=".*",
+                skipped_names=[],
+                allow_failed_pattern="hidden_states",
+                failed_names=["hidden_states", "logits", "attn"],
+            )
+            == 1
+        )
+
+    def test_allow_failed_pattern_no_failures(self):
+        """Pattern set but no failures → exit 0."""
+        summary = SummaryRecord(total=2, passed=2, failed=0, skipped=0)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skipped_pattern=".*",
+                skipped_names=[],
+                allow_failed_pattern=".*",
+                failed_names=[],
+            )
+            == 0
+        )
+
+    def test_both_failed_and_skipped_patterns(self):
+        """Both patterns set, both satisfied → exit 0."""
+        summary = SummaryRecord(total=4, passed=1, failed=1, skipped=2)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skipped_pattern="positions|seq_lens",
+                skipped_names=["positions", "seq_lens"],
+                allow_failed_pattern="logits",
+                failed_names=["logits"],
+            )
+            == 0
+        )
+
+    def test_failed_pattern_satisfied_but_skipped_not(self):
+        """Failed pattern OK but skipped pattern fails → exit 1."""
+        summary = SummaryRecord(total=3, passed=1, failed=1, skipped=1)
+        assert (
+            _compute_exit_code(
+                summary,
+                allow_skipped_pattern="^$",
+                skipped_names=["a"],
+                allow_failed_pattern=".*",
+                failed_names=["b"],
+            )
+            == 1
+        )
+
     def test_e2e_all_passed_exit_zero(self, tmp_path, capsys):
         """Integration: all comparisons pass → run() returns 0."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a", "tensor_b"])
@@ -4058,6 +4229,58 @@ class TestExitCode:
             tensor=torch.randn(10, 10) * 100,
         )
         argv = _make_argv(baseline_path, target_path, preset="raw", diff_threshold=1e-3)
+
+        records, exit_code = _run_and_parse(argv, capsys)
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.failed == 1
+        assert exit_code == 1
+
+    def test_e2e_allow_failed_pattern_exit_zero(self, tmp_path, capsys):
+        """E2E: failed tensor matched by allow_failed_pattern → exit 0."""
+        torch.manual_seed(42)
+        baseline_path = _create_rank_dump(
+            tmp_path / "baseline", rank=0, name="tensor_a", tensor=torch.randn(10, 10)
+        )
+        target_path = _create_rank_dump(
+            tmp_path / "target",
+            rank=0,
+            name="tensor_a",
+            tensor=torch.randn(10, 10) * 100,
+        )
+        argv = _make_argv(
+            baseline_path,
+            target_path,
+            preset="raw",
+            diff_threshold=1e-3,
+            allow_failed_pattern="tensor_a",
+        )
+
+        records, exit_code = _run_and_parse(argv, capsys)
+        summary = records[-1]
+        assert isinstance(summary, SummaryRecord)
+        assert summary.failed == 1
+        assert exit_code == 0
+
+    def test_e2e_allow_failed_pattern_no_match_exit_one(self, tmp_path, capsys):
+        """E2E: failed tensor NOT matched by allow_failed_pattern → exit 1."""
+        torch.manual_seed(42)
+        baseline_path = _create_rank_dump(
+            tmp_path / "baseline", rank=0, name="tensor_a", tensor=torch.randn(10, 10)
+        )
+        target_path = _create_rank_dump(
+            tmp_path / "target",
+            rank=0,
+            name="tensor_a",
+            tensor=torch.randn(10, 10) * 100,
+        )
+        argv = _make_argv(
+            baseline_path,
+            target_path,
+            preset="raw",
+            diff_threshold=1e-3,
+            allow_failed_pattern="other_tensor",
+        )
 
         records, exit_code = _run_and_parse(argv, capsys)
         summary = records[-1]
