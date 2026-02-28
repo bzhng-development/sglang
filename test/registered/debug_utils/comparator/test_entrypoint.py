@@ -3233,6 +3233,132 @@ class TestEntrypointDpFilter:
             _run_and_parse(args, capsys)
 
 
+class TestEntrypointDpGroupAlias:
+    """E2E tests for the ``// dp:=<group>`` dp group alias feature.
+
+    In dp_attn mode, dp_size > 1 but MLP tensors have data on all ranks.
+    With ``// dp:=moe_dp`` in dims and no ``moe_dp_rank/size`` in metadata,
+    dp filtering is a noop → all ranks kept → comparison succeeds.
+    """
+
+    def test_dp_alias_absent_group_noop(self, tmp_path: Path, capsys) -> None:
+        """dp_size=2 but dims has ``// dp:=moe_dp`` and metadata has no moe_dp fields → noop."""
+        torch.manual_seed(42)
+        tensor_data: torch.Tensor = torch.randn(10, 8)
+        target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
+
+        for side_dir_name, data in [("baseline", tensor_data), ("target", target_data)]:
+            side_dir: Path = tmp_path / side_dir_name
+            side_dir.mkdir()
+
+            for dp_rank in range(2):
+                _create_rank_dump(
+                    side_dir,
+                    rank=dp_rank,
+                    name="hidden",
+                    tensor=data,
+                    dims="t h // dp:=moe_dp",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "dp_rank": dp_rank,
+                        "dp_size": 2,
+                    },
+                    framework="sglang",
+                )
+
+        args: Namespace = _make_args(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            grouping="logical",
+            diff_threshold=1e-3,
+        )
+        records, _ = _run_and_parse(args, capsys)
+
+        comparison: ComparisonRecord = _assert_single_comparison_passed(records)
+        assert comparison.name == "hidden"
+
+    def test_dp_alias_via_override_dims(self, tmp_path: Path, capsys) -> None:
+        """Dims override adds ``// dp:=moe_dp`` → dp filter uses alias (noop) → succeeds."""
+        torch.manual_seed(42)
+        tensor_data: torch.Tensor = torch.randn(10, 8)
+        target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
+
+        for side_dir_name, data in [("baseline", tensor_data), ("target", target_data)]:
+            side_dir: Path = tmp_path / side_dir_name
+            side_dir.mkdir()
+
+            for dp_rank in range(2):
+                _create_rank_dump(
+                    side_dir,
+                    rank=dp_rank,
+                    name="hidden",
+                    tensor=data,
+                    dims="t h",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "dp_rank": dp_rank,
+                        "dp_size": 2,
+                    },
+                    framework="sglang",
+                )
+
+        args: Namespace = _make_args(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            grouping="logical",
+            diff_threshold=1e-3,
+            override_dims=["hidden:t h // dp:=moe_dp"],
+        )
+        records, _ = _run_and_parse(args, capsys)
+
+        comparison: ComparisonRecord = _assert_single_comparison_passed(records)
+        assert comparison.name == "hidden"
+
+    def test_dp_alias_with_real_alias_group_filters(
+        self, tmp_path: Path, capsys
+    ) -> None:
+        """Alias group present with size=2 and one empty rank → filters correctly."""
+        torch.manual_seed(42)
+        tensor_data: torch.Tensor = torch.randn(10, 8)
+        target_data: torch.Tensor = tensor_data + torch.randn(10, 8) * 0.001
+
+        for side_dir_name, data in [("baseline", tensor_data), ("target", target_data)]:
+            side_dir: Path = tmp_path / side_dir_name
+            side_dir.mkdir()
+
+            for moe_dp_rank in range(2):
+                tensor: torch.Tensor = data if moe_dp_rank == 0 else torch.empty(0, 8)
+                _create_rank_dump(
+                    side_dir,
+                    rank=moe_dp_rank,
+                    name="hidden",
+                    tensor=tensor,
+                    dims="t h // dp:=moe_dp",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "dp_rank": 0,
+                        "dp_size": 1,
+                        "moe_dp_rank": moe_dp_rank,
+                        "moe_dp_size": 2,
+                    },
+                    framework="sglang",
+                )
+
+        args: Namespace = _make_args(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            grouping="logical",
+            diff_threshold=1e-3,
+        )
+        records, _ = _run_and_parse(args, capsys)
+
+        comparison: ComparisonRecord = _assert_single_comparison_passed(records)
+        assert comparison.name == "hidden"
+
+
 class TestEntrypointMetaOverride:
     """E2E: dump with wrong dims → --override-dims / --override-config corrects at comparison time."""
 

@@ -15,6 +15,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     Reduction,
     _SingletonDimUtil,
     apply_dim_names,
+    extract_dp_group_alias,
     find_dim_index,
     parse_dim,
     parse_dims,
@@ -315,6 +316,45 @@ class TestSingletonDimUtilSanitizeNames:
 
     def test_empty(self) -> None:
         assert _SingletonDimUtil.sanitize_names([]) == []
+
+
+class TestParseDimsWithDoubleSlash:
+    """parse_dims strips the ``//`` declaration section."""
+
+    def test_shape_only_unchanged(self) -> None:
+        assert parse_dims("b s h(tp) // dp:=moe_dp") == parse_dims("b s h(tp)")
+
+    def test_whitespace_around_slash(self) -> None:
+        assert parse_dims("t h //   dp:=foo  ") == parse_dims("t h")
+
+    def test_multiple_declarations_ignored(self) -> None:
+        assert parse_dims("t h(tp) // dp:=moe_dp ep:replicated") == parse_dims(
+            "t h(tp)"
+        )
+
+
+class TestExtractDpGroupAlias:
+    def test_basic(self) -> None:
+        assert extract_dp_group_alias("b s h(tp) // dp:=moe_dp") == "moe_dp"
+
+    def test_no_slash_returns_none(self) -> None:
+        assert extract_dp_group_alias("t h") is None
+
+    def test_none_input(self) -> None:
+        assert extract_dp_group_alias(None) is None
+
+    def test_no_dp_alias_token(self) -> None:
+        assert extract_dp_group_alias("t h(tp) // ep:replicated") is None
+
+    def test_multiple_tokens_picks_dp(self) -> None:
+        assert (
+            extract_dp_group_alias("b s // ep:replicated dp:=custom_dp") == "custom_dp"
+        )
+
+
+class TestResolveDimNamesWithDoubleSlash:
+    def test_slash_stripped(self) -> None:
+        assert resolve_dim_names("t h // dp:=moe_dp") == ["t", "h"]
 
 
 if __name__ == "__main__":
