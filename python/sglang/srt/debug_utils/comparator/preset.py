@@ -20,21 +20,6 @@ PRESETS: dict[str, list[str]] = {
 DEFAULT_PRESET: str = "sglang_dev"
 
 
-def _expand_flag(
-    argv: list[str], flag: str, mapping: dict[str, list[str]]
-) -> list[str]:
-    """Replace ``flag <name>`` in *argv* with the corresponding argv fragment from *mapping*."""
-    if flag not in argv:
-        return argv
-
-    idx: int = argv.index(flag)
-    name: str = argv[idx + 1]
-    if name not in mapping:
-        raise ValueError(f"Unknown value for {flag}: {name}. Available: {list(mapping.keys())}")
-
-    return argv[:idx] + mapping[name] + argv[idx + 2 :]
-
-
 def expand_preset(argv: list[str], presets: dict[str, list[str]]) -> list[str]:
     """Expand ``--preset <name>`` into the corresponding argv fragment.
 
@@ -48,3 +33,18 @@ def expand_preset(argv: list[str], presets: dict[str, list[str]]) -> list[str]:
         return presets[DEFAULT_PRESET] + argv
 
     return argv
+
+
+def _expand_flag(
+    argv: list[str], flag: str, mapping: dict[str, list[str]]
+) -> list[str]:
+    """Replace ``flag <name>`` in *argv* with the corresponding argv fragment from *mapping*."""
+    if flag not in argv:
+        return argv
+
+    idx: int = argv.index(flag)
+    name: str = argv[idx + 1]
+    if name not in mapping:
+        raise ValueError(f"Unknown value for {flag}: {name}. Available: {list(mapping.keys())}")
+
+    return argv[:idx] + mapping[name] + argv[idx + 2 :]
