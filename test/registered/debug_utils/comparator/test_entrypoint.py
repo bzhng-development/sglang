@@ -1049,14 +1049,67 @@ class TestEntrypointGroupingLogical:
 class TestEntrypointConcatMode:
     """Test concat token-aligner mode through the full entrypoint pipeline."""
 
+    @staticmethod
+    def _make_dirs(tmp_path: Path) -> tuple[Path, Path]:
+        baseline_dir: Path = tmp_path / "baseline"
+        target_dir: Path = tmp_path / "target"
+        baseline_dir.mkdir()
+        target_dir.mkdir()
+        return baseline_dir, target_dir
+
+    @staticmethod
+    def _create_both_sides(
+        tmp_path: Path,
+        *,
+        baseline_steps: list[torch.Tensor],
+        target_steps: list[torch.Tensor],
+        name: str = "hidden",
+        dims: str | None = None,
+    ) -> tuple[Path, Path]:
+        """Create multi-step rank-0 dumps for both sides and return exp paths."""
+        baseline_dir, target_dir = TestEntrypointConcatMode._make_dirs(tmp_path)
+
+        for side_dir, steps in [
+            (baseline_dir, baseline_steps),
+            (target_dir, target_steps),
+        ]:
+            _create_multi_step_rank_dump(
+                side_dir,
+                rank=0,
+                name=name,
+                tensors_per_step=steps,
+                dims=dims,
+            )
+
+        return baseline_dir / _FIXED_EXP_NAME, target_dir / _FIXED_EXP_NAME
+
+    @staticmethod
+    def _run_concat(
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture,
+        *,
+        baseline_steps: list[torch.Tensor],
+        target_steps: list[torch.Tensor],
+        name: str = "hidden",
+        dims: str | None = None,
+        diff_threshold: float = 0.01,
+    ) -> list[AnyRecord]:
+        """Create both-side dumps, run comparator, return parsed records."""
+        baseline_path, target_path = TestEntrypointConcatMode._create_both_sides(
+            tmp_path,
+            baseline_steps=baseline_steps,
+            target_steps=target_steps,
+            name=name,
+            dims=dims,
+        )
+        args: Namespace = _make_args(
+            baseline_path, target_path, diff_threshold=diff_threshold
+        )
+        return _run_and_parse(args, capsys)
+
     def test_concat_multi_step_different_data(self, tmp_path, capsys):
         """Multi-step concat with different data per step + truncation."""
         torch.manual_seed(42)
-
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
 
         # baseline: 2 steps [5,4] + [3,4] → concat → [8,4]
         baseline_step0 = torch.randn(5, 4)
@@ -1066,26 +1119,12 @@ class TestEntrypointConcatMode:
         # target: 1 step [6,4] — will be truncated to min(8,6)=6
         target_step0 = baseline_concat[:6] + torch.randn(6, 4) * 0.0001
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[baseline_step0, baseline_step1],
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[baseline_step0, baseline_step1],
+            target_steps=[target_step0],
         )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[target_step0],
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            diff_threshold=0.01,
-        )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         # truncated to min(8,6) = 6 along concat dim
@@ -1102,7 +1141,6 @@ class TestEntrypointConcatMode:
         # 2 steps: [4,8] each → concat → [8,8]
         full_step0 = torch.randn(4, 8)
         full_step1 = torch.randn(4, 8)
-        full_concat = torch.cat([full_step0, full_step1], dim=0)
 
         _create_multi_step_tp_sharded_dumps(
             baseline_dir,
@@ -1142,11 +1180,6 @@ class TestEntrypointConcatMode:
         """Baseline 3 steps vs target 2 steps with truncation."""
         torch.manual_seed(42)
 
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
         # baseline: 3 steps [3]+[4]+[2] = 9 tokens along dim 0
         b_step0 = torch.randn(3, 4)
         b_step1 = torch.randn(4, 4)
@@ -1157,26 +1190,12 @@ class TestEntrypointConcatMode:
         t_step0 = b_concat[:5] + torch.randn(5, 4) * 0.0001
         t_step1 = b_concat[5:8] + torch.randn(3, 4) * 0.0001
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1, b_step2],
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[b_step0, b_step1, b_step2],
+            target_steps=[t_step0, t_step1],
         )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_step0, t_step1],
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            diff_threshold=0.01,
-        )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         # truncated to min(9,8) = 8
@@ -1189,11 +1208,6 @@ class TestEntrypointConcatMode:
         """Token dim at dim=1 (dims='b t h') — concat along dim 1."""
         torch.manual_seed(42)
 
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
         # 2 steps: [2,5,4] + [2,3,4] → concat along dim 1 → [2,8,4]
         b_step0 = torch.randn(2, 5, 4)
         b_step1 = torch.randn(2, 3, 4)
@@ -1202,28 +1216,13 @@ class TestEntrypointConcatMode:
         t_step0 = b_concat[:, :5, :] + torch.randn(2, 5, 4) * 0.0001
         t_step1 = b_concat[:, 5:, :] + torch.randn(2, 3, 4) * 0.0001
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1],
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[b_step0, b_step1],
+            target_steps=[t_step0, t_step1],
             dims="b t h",
         )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_step0, t_step1],
-            dims="b t h",
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            diff_threshold=0.01,
-        )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].baseline.shape == [2, 8, 4]
@@ -1234,11 +1233,6 @@ class TestEntrypointConcatMode:
         """No 't' dim but 's' dim present (dims='b s h') → concat along s."""
         torch.manual_seed(42)
 
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
         # 2 steps: [2,5,4] + [2,3,4] → concat along dim 1 (s) → [2,8,4]
         b_step0 = torch.randn(2, 5, 4)
         b_step1 = torch.randn(2, 3, 4)
@@ -1247,28 +1241,13 @@ class TestEntrypointConcatMode:
         t_step0 = b_concat[:, :5, :] + torch.randn(2, 5, 4) * 0.0001
         t_step1 = b_concat[:, 5:, :] + torch.randn(2, 3, 4) * 0.0001
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1],
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[b_step0, b_step1],
+            target_steps=[t_step0, t_step1],
             dims="b s h",
         )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_step0, t_step1],
-            dims="b s h",
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            diff_threshold=0.01,
-        )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].baseline.shape == [2, 8, 4]
@@ -1279,11 +1258,6 @@ class TestEntrypointConcatMode:
         """No dims annotation → fallback to concat along dim 0."""
         torch.manual_seed(42)
 
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
         # 2 steps: [5,4] + [3,4] → concat along dim 0 → [8,4]
         b_step0 = torch.randn(5, 4)
         b_step1 = torch.randn(3, 4)
@@ -1292,26 +1266,12 @@ class TestEntrypointConcatMode:
         t_step0 = b_concat[:5] + torch.randn(5, 4) * 0.0001
         t_step1 = b_concat[5:] + torch.randn(3, 4) * 0.0001
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1],
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[b_step0, b_step1],
+            target_steps=[t_step0, t_step1],
         )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_step0, t_step1],
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            diff_threshold=0.01,
-        )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].baseline.shape == [8, 4]
@@ -1320,11 +1280,6 @@ class TestEntrypointConcatMode:
 
     def test_concat_preserves_step_order(self, tmp_path, capsys):
         """Verify step0 data precedes step1 data in the concatenated result."""
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
         # deterministic integer data: step0=[1,2,3], step1=[4,5]
         b_step0 = torch.tensor([[1.0], [2.0], [3.0]])
         b_step1 = torch.tensor([[4.0], [5.0]])
@@ -1332,26 +1287,12 @@ class TestEntrypointConcatMode:
         # target: same data, single step [1,2,3,4,5]
         t_full = torch.tensor([[1.0], [2.0], [3.0], [4.0], [5.0]])
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1],
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[b_step0, b_step1],
+            target_steps=[t_full],
         )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_full],
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
-            diff_threshold=0.01,
-        )
-
-        records = _run_and_parse(args, capsys)
         comp = _assert_single_comparison_passed(records)
         # if order were wrong, diff would not pass with exact integer data
         assert comp.baseline.shape == [5, 1]
@@ -1362,10 +1303,7 @@ class TestEntrypointConcatMode:
         """Concat mode does not filter aux tensors — all participate in comparison."""
         torch.manual_seed(42)
 
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
+        baseline_dir, target_dir = self._make_dirs(tmp_path)
 
         hidden = torch.randn(4, 8)
         input_ids = torch.randint(0, 100, (4,))
@@ -1405,38 +1343,13 @@ class TestEntrypointConcatMode:
         """ComparisonRecord.aligner_plan reports mode='concat' with plan=None."""
         torch.manual_seed(42)
 
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
-        # 2 steps to actually trigger concat logic
-        b_step0 = torch.randn(3, 4)
-        b_step1 = torch.randn(2, 4)
-
-        t_step0 = torch.randn(3, 4)
-        t_step1 = torch.randn(2, 4)
-
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1],
-        )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_step0, t_step1],
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[torch.randn(3, 4), torch.randn(2, 4)],
+            target_steps=[torch.randn(3, 4), torch.randn(2, 4)],
             diff_threshold=100.0,
         )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         plan = comparisons[0].aligner_plan
@@ -1447,12 +1360,6 @@ class TestEntrypointConcatMode:
     def test_concat_comparison_fails(self, tmp_path, capsys):
         """Completely different data → comparison fails."""
         torch.manual_seed(42)
-
-        baseline_dir = tmp_path / "baseline"
-        target_dir = tmp_path / "target"
-        baseline_dir.mkdir()
-        target_dir.mkdir()
-
         b_step0 = torch.randn(4, 4)
         b_step1 = torch.randn(3, 4)
 
@@ -1461,26 +1368,13 @@ class TestEntrypointConcatMode:
         t_step0 = torch.randn(4, 4) * 100
         t_step1 = torch.randn(3, 4) * 100
 
-        _create_multi_step_rank_dump(
-            baseline_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[b_step0, b_step1],
-        )
-        _create_multi_step_rank_dump(
-            target_dir,
-            rank=0,
-            name="hidden",
-            tensors_per_step=[t_step0, t_step1],
-        )
-
-        args = _make_args(
-            baseline_dir / _FIXED_EXP_NAME,
-            target_dir / _FIXED_EXP_NAME,
+        records = self._run_concat(
+            tmp_path,
+            capsys,
+            baseline_steps=[b_step0, b_step1],
+            target_steps=[t_step0, t_step1],
             diff_threshold=1e-6,
         )
-
-        records = _run_and_parse(args, capsys)
         comparisons = _get_comparisons(records)
         assert len(comparisons) == 1
         assert comparisons[0].diff is not None
