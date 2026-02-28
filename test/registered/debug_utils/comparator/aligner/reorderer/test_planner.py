@@ -166,5 +166,87 @@ class TestCpZigzagTpE2E:
         assert torch.allclose(current[0].rename(None), full_tensor)
 
 
+class TestCpZigzagSpSameDimE2E:
+    """E2E test for t(cp:zigzag,sp) — two axes sharding the same token dim."""
+
+    def test_cp2_sp2_zigzag_e2e(self) -> None:
+        """CP=2 zigzag + SP=2 on same token dim: full unshard + reorder round-trip.
+
+        Shard order (outer to inner, matching left-to-right in dims annotation):
+          1. CP zigzag splits token dim into 2 CP chunks (zigzag order)
+          2. SP splits each CP chunk into 2 SP chunks
+
+        Unshard order (inner to outer, right-to-left):
+          1. SP concat (inner): merge SP chunks back
+          2. CP concat (outer): merge CP chunks back
+          3. Zigzag reorder: restore natural token order
+        """
+        torch.manual_seed(42)
+        total_tokens: int = 16
+        hidden: int = 8
+        full_tensor: torch.Tensor = torch.randn(total_tokens, hidden)
+
+        # Step 1: CP zigzag split — split into 2*cp_size=4 natural chunks, reorder by zigzag
+        cp_size: int = 2
+        sp_size: int = 2
+        n_natural_chunks: int = cp_size * 2
+        natural_chunks: list[torch.Tensor] = list(
+            full_tensor.chunk(n_natural_chunks, dim=0)
+        )
+        zigzag_order: list[int] = [0, 3, 1, 2]
+        zigzagged: torch.Tensor = torch.cat(
+            [natural_chunks[i] for i in zigzag_order], dim=0
+        )
+        cp_chunks: list[torch.Tensor] = list(zigzagged.chunk(cp_size, dim=0))
+
+        # Step 2: SP split within each CP chunk
+        tensors: list[torch.Tensor] = []
+        parallel_infos: list[dict[ParallelAxis, AxisInfo]] = []
+        for cp_rank in range(cp_size):
+            sp_chunks: list[torch.Tensor] = list(
+                cp_chunks[cp_rank].chunk(sp_size, dim=0)
+            )
+            for sp_rank in range(sp_size):
+                tensors.append(sp_chunks[sp_rank])
+                parallel_infos.append(
+                    {
+                        ParallelAxis.CP: AxisInfo(
+                            axis_rank=cp_rank, axis_size=cp_size
+                        ),
+                        ParallelAxis.SP: AxisInfo(
+                            axis_rank=sp_rank, axis_size=sp_size
+                        ),
+                    }
+                )
+
+        dim_specs: list[DimSpec] = parse_dims("t(cp:zigzag,sp) h")
+        dim_names: list[str] = [s.name for s in dim_specs]
+
+        unsharder_plans = compute_unsharder_plan(
+            dim_specs=dim_specs, parallel_infos=parallel_infos
+        )
+        reorderer_plans = compute_reorderer_plans(
+            dim_specs=dim_specs,
+            parallel_infos=parallel_infos,
+            thd_global_seq_lens=[total_tokens],
+        )
+        all_plans = [*unsharder_plans, *reorderer_plans]
+
+        assert len(unsharder_plans) == 2  # SP concat, CP concat
+        assert unsharder_plans[0].axis == ParallelAxis.SP
+        assert unsharder_plans[1].axis == ParallelAxis.CP
+        assert len(reorderer_plans) == 1  # zigzag reorder
+
+        current: list[torch.Tensor] = [t.refine_names(*dim_names) for t in tensors]
+        for plan in all_plans:
+            if isinstance(plan, ReordererPlan):
+                current = execute_reorderer_plan(plan, current)
+            else:
+                current = execute_unsharder_plan(plan, current).tensors
+
+        assert len(current) == 1
+        assert torch.allclose(current[0].rename(None), full_tensor)
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))
