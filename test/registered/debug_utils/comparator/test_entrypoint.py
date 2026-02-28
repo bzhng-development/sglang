@@ -2218,8 +2218,7 @@ def _make_args(baseline_path: Path, target_path: Path, **overrides) -> Namespace
         override_target_dims=[],
         override_config=None,
         allow_skip_pattern=".*",
-        report_path=None,
-        no_report=True,
+        report_path="",
     )
     defaults.update(overrides)
     return Namespace(**defaults)
@@ -3690,7 +3689,7 @@ class TestReportOutput:
     def test_default_report_path(self, tmp_path, capsys):
         """Default writes to <target>/comparator_report.jsonl with ConfigRecord + SummaryRecord."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        args = _make_args(baseline_path, target_path, grouping="raw", no_report=False)
+        args = _make_args(baseline_path, target_path, grouping="raw", report_path=None)
 
         exit_code: int = run(args)
 
@@ -3710,7 +3709,6 @@ class TestReportOutput:
             baseline_path,
             target_path,
             grouping="raw",
-            no_report=False,
             report_path=str(custom_path),
         )
 
@@ -3721,10 +3719,10 @@ class TestReportOutput:
         assert isinstance(report_records[0], ConfigRecord)
         assert isinstance(report_records[-1], SummaryRecord)
 
-    def test_no_report(self, tmp_path, capsys):
-        """--no-report disables file generation."""
+    def test_disabled_report(self, tmp_path, capsys):
+        """--report-path '' disables file generation."""
         baseline_path, target_path = _create_dumps(tmp_path, ["tensor_a"])
-        args = _make_args(baseline_path, target_path, grouping="raw", no_report=True)
+        args = _make_args(baseline_path, target_path, grouping="raw", report_path="")
 
         run(args)
 
@@ -3740,7 +3738,6 @@ class TestReportOutput:
             target_path,
             grouping="raw",
             output_format="json",
-            no_report=False,
             report_path=str(report_file),
         )
 
@@ -3760,7 +3757,6 @@ class TestReportOutput:
             target_path,
             grouping="raw",
             output_format="text",
-            no_report=False,
             report_path=str(report_file),
         )
 

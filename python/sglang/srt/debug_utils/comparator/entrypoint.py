@@ -144,10 +144,8 @@ def _compute_exit_code(
 
 
 def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
-    if args.no_report:
-        return None
     if args.report_path is not None:
-        return Path(args.report_path)
+        return Path(args.report_path) if args.report_path else None
     return Path(args.target_path) / "comparator_report.jsonl"
 
 
@@ -353,13 +351,8 @@ def _parse_args() -> argparse.Namespace:
         "--report-path",
         type=str,
         default=None,
-        help="Path for JSONL report (default: <target-path>/comparator_report.jsonl)",
-    )
-    parser.add_argument(
-        "--no-report",
-        action="store_true",
-        default=False,
-        help="Disable automatic JSONL report generation",
+        help="Path for JSONL report (default: <target-path>/comparator_report.jsonl). "
+        "Pass empty string '' to disable.",
     )
 
     return parser.parse_args()
