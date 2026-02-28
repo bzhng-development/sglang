@@ -14,6 +14,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     TOKEN_DIM_NAME,
     DimSpec,
     ParallelAxis,
+    ParallelState,
 )
 
 # _CoordsList[tensor_index][axis] =
@@ -37,7 +38,16 @@ def compute_unsharder_plan(
         raise ValueError("parallel_infos must not be empty")
 
     sharded_axis_infos: dict[ParallelAxis, DimSpec] = {
-        spec.parallel: spec for spec in dim_specs if spec.parallel is not None
+        spec.parallel: spec
+        for spec in dim_specs
+        if spec.parallel is not None
+        and spec.parallel_state == ParallelState.SHARDED
+    }
+    concated_axes: set[ParallelAxis] = {
+        spec.parallel
+        for spec in dim_specs
+        if spec.parallel is not None
+        and spec.parallel_state == ParallelState.CONCATED
     }
     sharded_axes_raw: set[ParallelAxis] = set(sharded_axis_infos)
 
@@ -48,7 +58,7 @@ def compute_unsharder_plan(
     sharded_axis_infos = {
         k: v for k, v in sharded_axis_infos.items() if k in sharded_axes
     }
-    replicated_axes: set[ParallelAxis] = all_axes - sharded_axes
+    replicated_axes: set[ParallelAxis] = all_axes - sharded_axes - concated_axes
 
     if not sharded_axes and not replicated_axes:
         return []
