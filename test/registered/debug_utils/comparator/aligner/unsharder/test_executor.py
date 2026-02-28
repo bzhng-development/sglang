@@ -33,7 +33,7 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 def _name_tensors(
     tensors: list[torch.Tensor], dim_specs: list[DimSpec]
 ) -> list[torch.Tensor]:
-    names: list[str] = [s.name for s in dim_specs]
+    names: list[str] = [s.tensor_name for s in dim_specs]
     return [t.refine_names(*names) for t in tensors]
 
 
@@ -770,6 +770,32 @@ class TestReduceSum:
         expected = (part_a.rename(None) + part_b.rename(None)).refine_names("h", "d")
         assert torch.allclose(
             unsharder_result.tensors[0].rename(None), expected.rename(None)
+        )
+
+
+class TestFusedDimExecutor:
+    def test_fused_tp2_concat(self) -> None:
+        """Fused dim "t num_heads(tp)*head_dim": TP=2 concat on fused axis."""
+        torch.manual_seed(42)
+        full_tensor = torch.randn(4, 128)  # t=4, nh*hd=128
+
+        shards = list(full_tensor.chunk(2, dim=1))
+
+        dim_specs = parse_dims("t num_heads(tp)*head_dim").dims
+        parallel_infos = [
+            {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
+        ]
+        plans = compute_unsharder_plan(dim_specs, parallel_infos)
+        assert len(plans) == 1
+
+        named_shards: list[torch.Tensor] = _name_tensors(shards, dim_specs)
+        unsharder_result: UnsharderResult = execute_unsharder_plan(
+            plans[0], named_shards
+        )
+
+        assert len(unsharder_result.tensors) == 1
+        assert torch.allclose(
+            unsharder_result.tensors[0].rename(None), full_tensor
         )
 
 
