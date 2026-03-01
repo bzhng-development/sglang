@@ -198,6 +198,10 @@ class TestSourcePatcherE2ESGLang:
             extra_target_server_args=["--ep-size", "4"],
         )
 
+    @pytest.mark.skip(
+        reason="DeepEP non-quantized GEMM paths deprecated in upstream sglang "
+        "(forward_deepgemm_contiguous/masked assert False in ep_moe/layer.py)"
+    )
     def test_ep_deepep_normal(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4+DeepEP normal target.
 
@@ -215,6 +219,10 @@ class TestSourcePatcherE2ESGLang:
             ],
         )
 
+    @pytest.mark.skip(
+        reason="DeepEP non-quantized GEMM paths deprecated in upstream sglang "
+        "(forward_deepgemm_contiguous/masked assert False in ep_moe/layer.py)"
+    )
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4+DeepEP low-latency target.
 
