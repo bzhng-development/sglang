@@ -152,6 +152,9 @@ def _build_side_pattern(
 def execute_axis_aligner_plan(
     tensor: torch.Tensor, plan: AxisAlignerPlan, *, side: str
 ) -> torch.Tensor:
+    if side not in ("x", "y"):
+        raise ValueError(f"side must be 'x' or 'y', got {side!r}")
+
     pattern: Optional[str] = plan.pattern.x if side == "x" else plan.pattern.y
 
     if pattern is not None:
