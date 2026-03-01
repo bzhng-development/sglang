@@ -1,0 +1,39 @@
+# Source patcher YAML for Megatron EP MoE dump points.
+# Covers: MoEAlltoAllTokenDispatcher + GroupedMLP.
+#
+# Usage:
+#   export DUMPER_SOURCE_PATCHER_CONFIG=.../debug_utils/dumper_patches/ep_moe_megatron.yaml
+
+patches:
+  # ── Megatron AlltoAll dispatch ─────────────────────────────────────
+
+  # Dump permutation mapping and tokens_per_expert after permute()
+  - target: megatron.core.transformer.moe.token_dispatcher.MoEAlltoAllTokenDispatcher.dispatch_preprocess
+    edits:
+      - match: "return permuted_local_hidden_states, tokens_per_expert"
+        prepend: |
+          dumper.dump_tensor("reversed_local_input_permutation_mapping",
+                            self.reversed_local_input_permutation_mapping,
+                            dims="t_permuted",
+                            ep_dispatch_path="megatron_a2a")
+          dumper.dump_tensor("tokens_per_expert", tokens_per_expert,
+                            dims="e(ep)",
+                            ep_dispatch_path="megatron_a2a")
+
+  # ── Megatron GroupedMLP ────────────────────────────────────────────
+
+  # Dump activations in GroupedMLP.forward
+  - target: megatron.core.transformer.moe.experts.GroupedMLP.forward
+    edits:
+      # ② After gate+up GEMM
+      - match: "self.activation_func("
+        prepend: |
+          dumper.dump_tensor("megatron_after_gemm1", fc1_output,
+                            dims="t_global(ep) n // ep:replicated",
+                            ep_dispatch_path="megatron_a2a")
+      # ⑤ After down GEMM
+      - match: "return fc2_output"
+        prepend: |
+          dumper.dump_tensor("megatron_after_gemm2", fc2_output,
+                            dims="t_global(ep) h // ep:replicated",
+                            ep_dispatch_path="megatron_a2a")
