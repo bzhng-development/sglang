@@ -6,6 +6,7 @@ import torch
 from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import (
+    _FUSED_NAME_SEP,
     DimSpec,
     _SingletonDimUtil,
     parse_dims,
@@ -78,7 +79,7 @@ def _expand_and_skip_squeeze(specs: list[DimSpec]) -> list[str]:
 def _build_canonical_order(specs_pair: Pair[list[DimSpec]]) -> list[str]:
     """Build canonical dim order following y, preferring fused representation.
 
-    Each element is either a plain name (``"c"``) or a fused placeholder (``"a__b"``).
+    Each element is either a plain name (``"c"``) or a fused placeholder (``"a___b"``).
     Fused groups from *either* side are merged — the separate side must flatten.
     Squeeze dims are excluded.
     """
@@ -86,7 +87,7 @@ def _build_canonical_order(specs_pair: Pair[list[DimSpec]]) -> list[str]:
     fused_lookup: dict[str, tuple[str, frozenset[str]]] = {}
     for spec in (*specs_pair.x, *specs_pair.y):
         if spec.is_fused:
-            placeholder: str = "__".join(spec.sub_dims)
+            placeholder: str = spec.sanitized_name
             siblings: frozenset[str] = frozenset(spec.sub_dims)
             for sub_name in spec.sub_dims:
                 fused_lookup.setdefault(sub_name, (placeholder, siblings))
@@ -124,17 +125,18 @@ def _build_side_pattern(
     Squeeze dims (``1``) appear on the LHS but are dropped from the RHS.
     """
     source_tokens: list[str] = [
-        "__".join(spec.sub_dims) if spec.is_fused else spec.name
-        for spec in specs
+        spec.sanitized_name for spec in specs
     ]
 
     # Build per-side target: replace fused placeholders with ``(a b)`` only if this side
     # has the sub-dims as separate (non-fused) names in the source
     fused_placeholders: set[str] = {
-        "__".join(spec.sub_dims) for spec in specs if spec.is_fused
+        spec.sanitized_name for spec in specs if spec.is_fused
     }
     target_tokens: list[str] = [
-        f"({t.replace('__', ' ')})" if "__" in t and t not in fused_placeholders else t
+        f"({t.replace(_FUSED_NAME_SEP, ' ')})"
+        if _FUSED_NAME_SEP in t and t not in fused_placeholders
+        else t
         for t in canonical_order
     ]
 
