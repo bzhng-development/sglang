@@ -112,7 +112,9 @@ class TestComputePerStepPlans:
             _make_meta(step=0, tp_rank=1, tp_size=2),
             _make_meta(step=1, tp_rank=0, tp_size=1),
         ]
-        result: list[AlignerPerStepPlan] = _compute_per_step_plans(metas=metas)
+        result: list[AlignerPerStepPlan] = _compute_per_step_plans(
+            bundle_name="", metas=metas
+        )
 
         assert len(result) == 2
         assert result[0].step == 0
@@ -126,7 +128,9 @@ class TestComputePerStepPlans:
             _make_meta(step=0),
             _make_meta(step=1),
         ]
-        result: list[AlignerPerStepPlan] = _compute_per_step_plans(metas=metas)
+        result: list[AlignerPerStepPlan] = _compute_per_step_plans(
+            bundle_name="", metas=metas
+        )
 
         steps: list[int] = [p.step for p in result]
         assert steps == [0, 1, 2]
@@ -136,7 +140,9 @@ class TestComputePerStepPlans:
             _make_meta(step=0),
             _make_meta(step=1),
         ]
-        result: list[AlignerPerStepPlan] = _compute_per_step_plans(metas=metas)
+        result: list[AlignerPerStepPlan] = _compute_per_step_plans(
+            bundle_name="", metas=metas
+        )
 
         assert len(result) == 2
         assert all(plan.sub_plans == [] for plan in result)
