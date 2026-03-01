@@ -24,7 +24,7 @@ class TestDeepEPNormalDeRouter:
 
         plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"rank_prefix_matrix": rank_prefix_matrix},
+            aux_tensors={"deepep_normal_rank_prefix_matrix": rank_prefix_matrix},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=total_slots,
@@ -44,7 +44,7 @@ class TestDeepEPNormalDeRouter:
 
         plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"rank_prefix_matrix": rank_prefix_matrix},
+            aux_tensors={"deepep_normal_rank_prefix_matrix": rank_prefix_matrix},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=4,
@@ -65,7 +65,7 @@ class TestDeepEPNormalDeRouter:
 
         plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"rank_prefix_matrix": rank_prefix_matrix},
+            aux_tensors={"deepep_normal_rank_prefix_matrix": rank_prefix_matrix},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=total_slots,

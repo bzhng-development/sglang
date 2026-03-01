@@ -26,7 +26,7 @@ class TestFusedMoEDeRouter:
 
         plugin: FusedMoEDeRouter = FusedMoEDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"sorted_token_ids": sorted_token_ids},
+            aux_tensors={"fused_moe_sorted_token_ids": sorted_token_ids},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=total_slots,
@@ -48,7 +48,7 @@ class TestFusedMoEDeRouter:
 
         plugin: FusedMoEDeRouter = FusedMoEDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"sorted_token_ids": sorted_token_ids},
+            aux_tensors={"fused_moe_sorted_token_ids": sorted_token_ids},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=4,
@@ -66,7 +66,7 @@ class TestFusedMoEDeRouter:
 
         plugin: FusedMoEDeRouter = FusedMoEDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"sorted_token_ids": sorted_token_ids},
+            aux_tensors={"fused_moe_sorted_token_ids": sorted_token_ids},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=num_tokens,

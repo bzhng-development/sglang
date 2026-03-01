@@ -25,7 +25,7 @@ class TestMegatronA2ADeRouter:
 
         plugin: MegatronA2ADeRouter = MegatronA2ADeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"reversed_local_input_permutation_mapping": sorted_indices},
+            aux_tensors={"megatron_a2a_reversed_local_input_permutation_mapping": sorted_indices},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=4,
@@ -46,7 +46,7 @@ class TestMegatronA2ADeRouter:
 
         plugin: MegatronA2ADeRouter = MegatronA2ADeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"reversed_local_input_permutation_mapping": sorted_indices},
+            aux_tensors={"megatron_a2a_reversed_local_input_permutation_mapping": sorted_indices},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=4,
@@ -65,7 +65,7 @@ class TestMegatronA2ADeRouter:
 
         plugin: MegatronA2ADeRouter = MegatronA2ADeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"reversed_local_input_permutation_mapping": sorted_indices},
+            aux_tensors={"megatron_a2a_reversed_local_input_permutation_mapping": sorted_indices},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=num_tokens,

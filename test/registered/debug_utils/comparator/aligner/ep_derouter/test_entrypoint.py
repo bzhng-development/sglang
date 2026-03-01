@@ -24,7 +24,6 @@ class TestExecuteDeRouterPlan:
 
         plan: DeRouterPlan = DeRouterPlan(
             dispatch_path="fused_moe",
-            aux_tensor_refs={"sorted_token_ids": "my_sorted_token_ids"},
             num_tokens=num_tokens,
             top_k=top_k,
         )
@@ -33,7 +32,9 @@ class TestExecuteDeRouterPlan:
         routed_tensor: torch.Tensor = torch.tensor(
             [[10.0, 11.0, 12.0], [20.0, 21.0, 22.0]]
         )
-        aux_tensors: dict[str, torch.Tensor] = {"my_sorted_token_ids": sorted_token_ids}
+        aux_tensors: dict[str, torch.Tensor] = {
+            "fused_moe_sorted_token_ids": sorted_token_ids,
+        }
 
         result: torch.Tensor = execute_de_router_plan(
             plan=plan, tensor=routed_tensor, aux_tensors=aux_tensors
@@ -49,7 +50,6 @@ class TestExecuteDeRouterPlan:
         with pytest.raises(pydantic.ValidationError):
             DeRouterPlan(
                 dispatch_path="unknown_path",
-                aux_tensor_refs={},
                 num_tokens=4,
                 top_k=2,
             )
@@ -58,7 +58,6 @@ class TestExecuteDeRouterPlan:
         """Missing required auxiliary tensor raises ValueError."""
         plan: DeRouterPlan = DeRouterPlan(
             dispatch_path="fused_moe",
-            aux_tensor_refs={"sorted_token_ids": "missing_tensor"},
             num_tokens=2,
             top_k=1,
         )
@@ -77,16 +76,15 @@ class TestExecuteDeRouterPlan:
 
         plan: DeRouterPlan = DeRouterPlan(
             dispatch_path="megatron_a2a",
-            aux_tensor_refs={
-                "reversed_local_input_permutation_mapping": "perm_map",
-            },
             num_tokens=num_tokens,
             top_k=top_k,
         )
 
         # Identity permutation
         aux_tensors: dict[str, torch.Tensor] = {
-            "perm_map": torch.arange(num_tokens, dtype=torch.long),
+            "megatron_a2a_reversed_local_input_permutation_mapping": torch.arange(
+                num_tokens, dtype=torch.long
+            ),
         }
         routed_tensor: torch.Tensor = torch.randn(num_tokens, hidden_dim)
 
@@ -104,14 +102,15 @@ class TestExecuteDeRouterPlan:
 
         plan: DeRouterPlan = DeRouterPlan(
             dispatch_path="deepep_normal",
-            aux_tensor_refs={"rank_prefix_matrix": "rpm"},
             num_tokens=num_tokens,
             top_k=top_k,
         )
 
         # Rank 0 contributes 2 tokens (positions 0,1), rank 1 contributes 2 (positions 2,3)
         aux_tensors: dict[str, torch.Tensor] = {
-            "rpm": torch.tensor([0, 2], dtype=torch.long),
+            "deepep_normal_rank_prefix_matrix": torch.tensor(
+                [0, 2], dtype=torch.long
+            ),
         }
         routed_tensor: torch.Tensor = torch.tensor(
             [[10.0, 11.0], [20.0, 21.0], [30.0, 31.0], [40.0, 41.0]]
@@ -137,10 +136,6 @@ class TestExecuteDeRouterPlan:
 
         plan: DeRouterPlan = DeRouterPlan(
             dispatch_path="deepep_ll",
-            aux_tensor_refs={
-                "packed_recv_src_info": "src_info",
-                "masked_m": "mm",
-            },
             num_tokens=num_tokens,
             top_k=top_k,
         )
@@ -164,8 +159,8 @@ class TestExecuteDeRouterPlan:
         routed_tensor[1, 1] = torch.tensor([40.0, 41.0, 42.0])  # token 1, k=1
 
         aux_tensors: dict[str, torch.Tensor] = {
-            "src_info": packed_recv_src_info,
-            "mm": masked_m,
+            "deepep_ll_packed_recv_src_info": packed_recv_src_info,
+            "deepep_ll_masked_m": masked_m,
         }
 
         result: torch.Tensor = execute_de_router_plan(

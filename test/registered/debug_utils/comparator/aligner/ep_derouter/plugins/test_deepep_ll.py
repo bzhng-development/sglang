@@ -32,8 +32,8 @@ class TestDeepEPLLDeRouter:
         flat: torch.Tensor = plugin.flatten_routed_tensor(
             routed_tensor=routed_tensor,
             aux_tensors={
-                "packed_recv_src_info": torch.zeros(2, 4),
-                "masked_m": masked_m,
+                "deepep_ll_packed_recv_src_info": torch.zeros(2, 4),
+                "deepep_ll_masked_m": masked_m,
             },
         )
 
@@ -63,8 +63,8 @@ class TestDeepEPLLDeRouter:
         plugin: DeepEPLLDeRouter = DeepEPLLDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
             aux_tensors={
-                "packed_recv_src_info": packed_recv_src_info,
-                "masked_m": masked_m,
+                "deepep_ll_packed_recv_src_info": packed_recv_src_info,
+                "deepep_ll_masked_m": masked_m,
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -95,8 +95,8 @@ class TestDeepEPLLDeRouter:
         plugin: DeepEPLLDeRouter = DeepEPLLDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
             aux_tensors={
-                "packed_recv_src_info": packed_recv_src_info,
-                "masked_m": masked_m,
+                "deepep_ll_packed_recv_src_info": packed_recv_src_info,
+                "deepep_ll_masked_m": masked_m,
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -126,8 +126,8 @@ class TestDeepEPLLDeRouter:
         plugin: DeepEPLLDeRouter = DeepEPLLDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
             aux_tensors={
-                "packed_recv_src_info": packed_recv_src_info,
-                "masked_m": masked_m,
+                "deepep_ll_packed_recv_src_info": packed_recv_src_info,
+                "deepep_ll_masked_m": masked_m,
             },
             num_tokens=num_tokens,
             top_k=top_k,

@@ -185,7 +185,6 @@ class TestComputePerStepSubPlansDeRouter:
         meta["ep_dispatch_path"] = "fused_moe"
         meta["ep_num_tokens"] = 32
         meta["ep_top_k"] = 2
-        meta["ep_aux_tensor_refs"] = {"sorted_token_ids": "my_sorted_ids"}
 
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
             metas=[
@@ -195,7 +194,6 @@ class TestComputePerStepSubPlansDeRouter:
                     "ep_dispatch_path": "fused_moe",
                     "ep_num_tokens": 32,
                     "ep_top_k": 2,
-                    "ep_aux_tensor_refs": {"sorted_token_ids": "my_sorted_ids"},
                 },
             ]
         )
