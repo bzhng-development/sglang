@@ -4306,7 +4306,9 @@ class TestEntrypointAutoDescend:
         target_exp.rename(wrapper / "engine_0")
 
         argv = _make_argv(baseline_exp, wrapper, preset="raw")
-        _run_and_parse(argv, capsys)
+        args: Namespace = parse_args(argv)
+        capsys.readouterr()
+        run(args)
 
         stderr: str = capsys.readouterr().err
         assert "[comparator] auto-descend target_path:" in stderr
