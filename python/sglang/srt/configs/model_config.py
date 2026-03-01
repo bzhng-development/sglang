@@ -1272,6 +1272,7 @@ multimodal_model_archs = [
     "MiDashengLMModel",
     "StepVLForConditionalGeneration",
     "KimiK25ForConditionalGeneration",
+    "NemotronParseForConditionalGeneration",
 ]
 
 if external_mm_model_arch := envs.SGLANG_EXTERNAL_MM_MODEL_ARCH.get():
@@ -1306,6 +1307,7 @@ def is_audio_model(model_architectures: List[str]):
 def is_encoder_decoder_model(model_architectures: List[str]):
     models = [
         "WhisperForConditionalGeneration",
+        "NemotronParseForConditionalGeneration",
     ]
     return any(model in model_architectures for model in models)
 
