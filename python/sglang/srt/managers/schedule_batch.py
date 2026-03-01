@@ -2021,22 +2021,6 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
             if draft_input.verify_done is not None:
                 draft_input.verify_done.synchronize()
 
-    def maybe_stream_wait_verify_done(self):
-        """Issue a non-blocking stream-level wait for the verify event.
-
-        Unlike maybe_wait_verify_done() which blocks the CPU thread until the
-        GPU verify completes, this only makes the current CUDA stream wait for
-        the verify event. Subsequent GPU operations on the current stream will
-        execute after verify finishes, but the CPU is free to continue
-        immediately.
-        """
-        if self.is_spec_v2:
-            draft_input: EagleDraftInput = self.spec_info
-            if draft_input.verify_done is not None:
-                torch.get_device_module(self.device).current_stream().wait_event(
-                    draft_input.verify_done
-                )
-
     def filter_batch(
         self,
         chunked_req_to_exclude: Optional[Union[Req, List[Req]]] = None,
@@ -2044,16 +2028,9 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         # FIXME(lsyin): deprecate this API after spec v1 is deprecated
         v1_spec_info_filtered: Optional[bool] = False,
     ):
-        # For spec v2, the verify result (which updates seq_lens on the GPU)
-        # may still be in flight on the forward stream. We issue a stream-level
-        # wait so that the GPU indexing ops below execute after verify finishes,
-        # without blocking the CPU thread. The CPU-blocking sync is deferred to
-        # prepare_for_decode() where seq_lens_cpu and seq_lens_sum are
-        # recomputed from the settled GPU tensor.
-        #
-        # For non-spec-v2 paths, maybe_wait_verify_done() is a no-op, and
-        # maybe_stream_wait_verify_done() is also a no-op.
-        self.maybe_stream_wait_verify_done()
+        # FIXME(lsyin): used here to get the correct seq_lens
+        # The batch has been launched but we need it verified to get correct next batch info
+        self.maybe_wait_verify_done()
 
         if keep_indices is None:
             if isinstance(chunked_req_to_exclude, Req):
@@ -2092,24 +2069,7 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         self.seq_lens_cpu = self.seq_lens_cpu[keep_indices]
         self.orig_seq_lens = self.orig_seq_lens[keep_indices_device]
         self.out_cache_loc = None
-        if (
-            self.is_spec_v2
-            and self.spec_info is not None
-            and getattr(self.spec_info, "verify_done", None) is not None
-        ):
-            # For spec v2 with a pending verify, seq_lens is a "future" GPU
-            # tensor (updated by the verify kernel on the forward stream).
-            # Calling .sum().item() here would force a CPU-GPU sync (~3.8ms).
-            # We skip it because seq_lens_sum is not read between
-            # filter_batch() and prepare_for_decode(), which recomputes it
-            # from the settled seq_lens_cpu (see
-            # EagleDraftInputV2Mixin.prepare_for_decode).
-            # seq_lens_cpu is also stale here (not yet updated with verify
-            # results), so we cannot use it either.
-            # Set to None as a sentinel to catch accidental use.
-            self.seq_lens_sum = None
-        else:
-            self.seq_lens_sum = self.seq_lens.sum().item()
+        self.seq_lens_sum = self.seq_lens.sum().item()
 
         if self.output_ids is not None:
             self.output_ids = self.output_ids[keep_indices_device]
