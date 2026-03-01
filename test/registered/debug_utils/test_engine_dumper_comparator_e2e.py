@@ -226,6 +226,63 @@ patches:
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
 """
 
+# DeepEP uses forward_deepep (not forward_normal), so MoE internals need
+# different match targets. The experts call uses keyword args and
+# final_hidden_states is the DeepEPMoE output (already EP-combined).
+PATCH_CONFIG_DEEPEP_YAML: str = """\
+patches:
+  # --- decoder layer level ---
+  # DeepEP auto-sets ep_size=tp_size. moe_ep:replicated still applies.
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
+    edits:
+      - match: |
+          hidden_states, residual = (
+              self.layer_communicator.prepare_attn_and_capture_last_layer_outputs(
+                  hidden_states,
+                  residual,
+                  forward_batch,
+                  captured_last_layer_outputs=captured_last_layer_outputs,
+                  **kwargs,
+              )
+          )
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+      - match: |
+          hidden_states = self.self_attn(
+              positions=positions,
+              hidden_states=hidden_states,
+              forward_batch=forward_batch,
+          )
+        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+      - match: |
+          hidden_states, residual = self.layer_communicator.prepare_mlp(
+              hidden_states, residual, forward_batch
+          )
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+      - match: |
+          hidden_states = self.mlp(
+              hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
+          )
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+
+  # --- attention internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
+    edits:
+      - match: "output, _ = self.o_proj(attn_output)"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp] # moe_ep:replicated')"
+
+  # --- moe internals (forward_deepep path) ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_deepep
+    edits:
+      - match: "router_logits, _ = self.gate(hidden_states)"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated')"
+      - match: |
+          final_hidden_states = self.experts(
+              hidden_states=hidden_states,
+              topk_output=topk_output,
+          )
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+"""
+
 
 # ================================= test classes =================================
 
@@ -325,6 +382,8 @@ class TestFP8DeepEP:
 
         DeepEP normal mode uses all-to-all dispatch with contiguous GEMM.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
+        DeepEP bypasses forward_normal and uses forward_deepep, so MoE
+        internals need a separate patch config targeting forward_deepep.
         """
         _run_target_and_compare(
             model=MODEL_FP8,
@@ -337,7 +396,7 @@ class TestFP8DeepEP:
                 "--deepep-mode",
                 "normal",
             ],
-            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
+            target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
         )
 
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
@@ -345,6 +404,8 @@ class TestFP8DeepEP:
 
         DeepEP low-latency mode uses masked GEMM with 3D tensor layout.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
+        DeepEP bypasses forward_normal and uses forward_deepep, so MoE
+        internals need a separate patch config targeting forward_deepep.
         """
         _run_target_and_compare(
             model=MODEL_FP8,
@@ -357,7 +418,7 @@ class TestFP8DeepEP:
                 "--deepep-mode",
                 "low_latency",
             ],
-            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
+            target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
         )
 
 
