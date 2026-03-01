@@ -542,7 +542,6 @@ class RadioModel(nn.Module):
         if not return_summary:
             return all_feat
 
-        # Extract summary from CLS tokens
         summary = self._extract_summary(y)
         return summary, all_feat
 
