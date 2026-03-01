@@ -1,7 +1,7 @@
-"""Loads EP auxiliary tensors by (step, rank, layer_id) from a dump directory.
+"""Loads auxiliary tensors by (step, rank, layer_id) from a dump directory.
 
 Caches results by (step, rank, layer_id, frozenset(aux_names)) since
-multiple routed tensor bundles in the same layer share the same aux tensors.
+multiple tensor bundles in the same layer may share the same aux tensors.
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from sglang.srt.debug_utils.dump_loader import ValueWithMeta, filter_rows
 
 
 class RawAuxLoader:
-    """Load EP auxiliary tensors on demand with LRU caching."""
+    """Load auxiliary tensors on demand with LRU caching."""
 
     def __init__(self, df: pl.DataFrame, dump_dir: Path) -> None:
         self._df = df
@@ -45,6 +45,12 @@ class RawAuxLoader:
             )
             if not rows:
                 continue
+            if len(rows) != 1:
+                raise ValueError(
+                    f"Expected exactly 1 row for aux tensor {aux_name!r} "
+                    f"(step={step}, rank={rank}, layer_id={layer_id}), "
+                    f"got {len(rows)}"
+                )
 
             item: ValueWithMeta = ValueWithMeta.load(
                 self._dump_dir / rows[0]["filename"]

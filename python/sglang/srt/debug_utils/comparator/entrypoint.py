@@ -7,9 +7,6 @@ from typing import Any, Iterator, Optional, Union
 
 import polars as pl
 
-from sglang.srt.debug_utils.comparator.aligner.ep_derouter.entrypoint import (
-    ALL_EP_AUX_DUMP_NAMES,
-)
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.entrypoint import (
     TokenAlignerResult,
     compute_maybe_token_aligner_result,
@@ -106,25 +103,13 @@ def run(args: argparse.Namespace) -> int:
             token_aligner_mode=args.token_aligner,
         )
 
-        # Construct EP aux loaders *before* filtering aux names out of dfs
-        aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(
-            x=(
-                RawAuxLoader(df=dfs.x, dump_dir=dir_pair.x)
-                if _has_ep_aux(dfs.x)
-                else None
-            ),
-            y=(
-                RawAuxLoader(df=dfs.y, dump_dir=dir_pair.y)
-                if _has_ep_aux(dfs.y)
-                else None
-            ),
+        aux_loader_pair: Pair[RawAuxLoader] = Pair(
+            x=RawAuxLoader(df=dfs.x, dump_dir=dir_pair.x),
+            y=RawAuxLoader(df=dfs.y, dump_dir=dir_pair.y),
         )
 
         if ta_result.mode == "smart":
             dfs = dfs.map(lambda df: df.filter(~pl.col("name").is_in(AUX_NAMES)))
-        dfs = dfs.map(
-            lambda df: df.filter(~pl.col("name").is_in(ALL_EP_AUX_DUMP_NAMES))
-        )
 
         skip_keys: set[str] = _DEFAULT_SKIP_KEYS | set(args.grouping_skip_keys or [])
         bundle_info_pairs: list[Pair[TensorBundleInfo]] = match_bundles(
@@ -166,11 +151,6 @@ def run(args: argparse.Namespace) -> int:
         if report_path is not None:
             print(f"Report: {report_path}", file=sys.stderr)
 
-
-def _has_ep_aux(df: pl.DataFrame) -> bool:
-    """Check whether the DataFrame contains any EP auxiliary tensor names."""
-    names: set[str] = set(df["name"].unique().to_list())
-    return bool(names & ALL_EP_AUX_DUMP_NAMES)
 
 
 def _resolve_report_path(
@@ -232,7 +212,7 @@ def _compare_bundle_pairs(
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
     meta_overrider: Optional[MetaOverrider] = None,
-    aux_loader_pair: Pair[Optional[RawAuxLoader]],
+    aux_loader_pair: Pair[RawAuxLoader],
 ) -> Iterator[
     Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]
 ]:
