@@ -47,30 +47,23 @@ def execute_aligner_plan(
     *,
     tensors_pair: Pair[list[torch.Tensor]],
     plan: AlignerPlan,
-    aux_tensors_pair: Optional[Pair[dict[str, torch.Tensor]]] = None,
+    aux_tensors_pair: Pair[dict[str, torch.Tensor]] = Pair(x={}, y={}),
 ) -> AlignerResult:
     """Execute unified unshard/reorder + token-align."""
     all_checks: list[ReplicatedCheckResult] = []
-
-    aux_x: dict[str, torch.Tensor] = (
-        aux_tensors_pair.x if aux_tensors_pair is not None else {}
-    )
-    aux_y: dict[str, torch.Tensor] = (
-        aux_tensors_pair.y if aux_tensors_pair is not None else {}
-    )
 
     # Per-side: unshard + reorder -> dict[step, tensor]
     step_tensors_x, checks_x = _execute_step_plans(
         tensors=tensors_pair.x,
         step_plans=plan.per_step_plans.x,
-        aux_tensors=aux_x,
+        aux_tensors=aux_tensors_pair.x,
     )
     all_checks.extend(checks_x)
 
     step_tensors_y, checks_y = _execute_step_plans(
         tensors=tensors_pair.y,
         step_plans=plan.per_step_plans.y,
-        aux_tensors=aux_y,
+        aux_tensors=aux_tensors_pair.y,
     )
     all_checks.extend(checks_y)
 
@@ -118,7 +111,7 @@ def _execute_step_plans(
     tensors: list[torch.Tensor],
     step_plans: list[AlignerPerStepPlan],
     *,
-    aux_tensors: Optional[dict[str, torch.Tensor]] = None,
+    aux_tensors: dict[str, torch.Tensor],
 ) -> tuple[dict[int, torch.Tensor], list[ReplicatedCheckResult]]:
     result: dict[int, torch.Tensor] = {}
     all_checks: list[ReplicatedCheckResult] = []
@@ -130,7 +123,7 @@ def _execute_step_plans(
         tensor, checks = execute_sub_plans(
             tensors=step_tensors,
             plans=step_plan.sub_plans,
-            aux_tensors=aux_tensors or {},
+            aux_tensors=aux_tensors,
         )
         all_checks.extend(checks)
         if tensor is not None:
@@ -143,7 +136,7 @@ def execute_sub_plans(
     tensors: list[torch.Tensor],
     plans: list[AlignerPerStepSubPlan],
     *,
-    aux_tensors: Optional[dict[str, torch.Tensor]] = None,
+    aux_tensors: dict[str, torch.Tensor],
 ) -> tuple[Optional[torch.Tensor], list[ReplicatedCheckResult]]:
     if not tensors:
         return None, []
@@ -157,7 +150,7 @@ def execute_sub_plans(
     all_checks: list[ReplicatedCheckResult] = []
     for plan in plans:
         current, checks = execute_sub_plan(
-            tensors=current, plan=plan, aux_tensors=aux_tensors or {}
+            tensors=current, plan=plan, aux_tensors=aux_tensors
         )
         all_checks.extend(checks)
 
@@ -169,7 +162,7 @@ def execute_sub_plan(
     tensors: list[torch.Tensor],
     plan: AlignerPerStepSubPlan,
     *,
-    aux_tensors: Optional[dict[str, torch.Tensor]] = None,
+    aux_tensors: dict[str, torch.Tensor],
 ) -> tuple[list[torch.Tensor], list[ReplicatedCheckResult]]:
     if isinstance(plan, UnsharderPlan):
         unsharder_result: UnsharderResult = execute_unsharder_plan(plan, tensors)
@@ -181,7 +174,7 @@ def execute_sub_plan(
             execute_de_router_plan(
                 plan=plan,
                 tensor=t,
-                aux_tensors=aux_tensors or {},
+                aux_tensors=aux_tensors,
             )
             for t in tensors
         ]
