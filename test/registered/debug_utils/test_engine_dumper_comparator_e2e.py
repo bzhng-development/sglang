@@ -258,6 +258,7 @@ class TestSourcePatcherE2ESGLang:
         DeepEP normal mode uses all-to-all dispatch with contiguous GEMM.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size.
         Uses EP-specific dims (moe_ep:replicated) since EP is active.
+        BF16 dispatch is forced so the native torch fallback receives BF16 tensors.
         """
         _run_e2e_scenario(
             tmp_path=tmp_path,
@@ -268,6 +269,7 @@ class TestSourcePatcherE2ESGLang:
                 "--deepep-mode",
                 "normal",
             ],
+            extra_target_env={"SGLANG_DEEPEP_BF16_DISPATCH": "1"},
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
@@ -277,6 +279,7 @@ class TestSourcePatcherE2ESGLang:
         DeepEP low-latency mode uses masked GEMM with 3D tensor layout.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size.
         Uses EP-specific dims (moe_ep:replicated) since EP is active.
+        BF16 dispatch is forced so the native torch fallback receives BF16 tensors.
         """
         _run_e2e_scenario(
             tmp_path=tmp_path,
@@ -287,6 +290,7 @@ class TestSourcePatcherE2ESGLang:
                 "--deepep-mode",
                 "low_latency",
             ],
+            extra_target_env={"SGLANG_DEEPEP_BF16_DISPATCH": "1"},
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
@@ -299,6 +303,7 @@ def _run_e2e_scenario(
     tmp_path: Path,
     target_tp: int,
     extra_target_server_args: Optional[list[str]] = None,
+    extra_target_env: Optional[dict[str, str]] = None,
     target_patch_config_yaml: Optional[str] = None,
 ) -> None:
     """Full e2e: write patch config -> baseline run -> target run -> compare."""
@@ -326,6 +331,7 @@ def _run_e2e_scenario(
         tp=target_tp,
         base_url=base_url,
         extra_server_args=extra_target_server_args,
+        extra_env=extra_target_env,
     )
     _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
 
@@ -369,6 +375,7 @@ def _run_server_and_generate(
     tp: int,
     base_url: str,
     extra_server_args: Optional[list[str]] = None,
+    extra_env: Optional[dict[str, str]] = None,
 ) -> None:
     """Launch SGLang server with source patcher + dumper, send a generate request."""
     env: dict[str, str] = {
@@ -377,6 +384,7 @@ def _run_server_and_generate(
         "DUMPER_DIR": str(dump_dir),
         "DUMPER_EXP_NAME": EXP_NAME,
         "DUMPER_SERVER_PORT": "reuse",
+        **(extra_env or {}),
     }
 
     server_args: list[str] = [
