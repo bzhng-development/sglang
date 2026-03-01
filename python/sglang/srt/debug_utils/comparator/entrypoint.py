@@ -53,81 +53,84 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
-    baseline_path: Path = auto_descend_dir(
-        Path(args.baseline_path), label="baseline_path"
+    dir_pair: Pair[Path] = Pair(
+        x=auto_descend_dir(Path(args.baseline_path), label="baseline_path"),
+        y=auto_descend_dir(Path(args.target_path), label="target_path"),
     )
-    target_path: Path = auto_descend_dir(Path(args.target_path), label="target_path")
+
+    output_format: str = args.output_format
+    start_step: int = args.start_step
+    end_step: int = args.end_step
+    filter_pattern: Optional[str] = args.filter
+    tokenizer_arg: Optional[str] = args.tokenizer
+    grouping_skip_keys: Optional[list[str]] = args.grouping_skip_keys
+    diff_threshold: float = args.diff_threshold
+    viz_output_dir: Optional[Path] = (
+        Path(args.viz_output_dir) if args.viz_bundle_details else None
+    )
+    visualize_per_token: Optional[Path] = (
+        Path(args.visualize_per_token) if args.visualize_per_token else None
+    )
+    override_config: Optional[Path] = (
+        Path(args.override_config) if args.override_config else None
+    )
+    override_dims: list[str] = args.override_dims
+    override_baseline_dims: list[str] = args.override_baseline_dims
+    override_target_dims: list[str] = args.override_target_dims
+    allow_skipped_pattern: str = args.allow_skipped_pattern
+    allow_failed_pattern: Optional[str] = args.allow_failed_pattern
 
     report_path: Optional[Path] = _resolve_report_path(
-        target_path=target_path,
+        target_path=dir_pair.y,
         report_path_arg=args.report_path,
     )
-    report_sink.configure(
-        output_format=args.output_format,
-        report_path=report_path,
-    )
+    report_sink.configure(output_format=output_format, report_path=report_path)
 
     try:
         report_sink.add(ConfigRecord.from_args(args))
 
         dfs: Pair[pl.DataFrame] = _read_df(
-            baseline_path=baseline_path,
-            target_path=target_path,
-            start_step=args.start_step,
-            end_step=args.end_step,
-            filter_pattern=args.filter,
+            dir_pair=dir_pair,
+            start_step=start_step,
+            end_step=end_step,
+            filter_pattern=filter_pattern,
         )
 
         tokenizer: Any = _maybe_load_tokenizer(
-            tokenizer_arg=args.tokenizer,
-            baseline_path=baseline_path,
-            target_path=target_path,
+            tokenizer_arg=tokenizer_arg, dir_pair=dir_pair
         )
         for label, df, dump_dir in [
-            ("baseline", dfs.x, baseline_path),
-            ("target", dfs.y, target_path),
+            ("baseline", dfs.x, dir_pair.x),
+            ("target", dfs.y, dir_pair.y),
         ]:
             emit_display_records(
-                df=df,
-                dump_dir=dump_dir,
-                label=label,
-                tokenizer=tokenizer,
+                df=df, dump_dir=dump_dir, label=label, tokenizer=tokenizer
             )
 
+        # NOTE: compute_maybe_token_aligner_result still takes args (external API)
         ta_result: TokenAlignerResult = compute_maybe_token_aligner_result(args, dfs)
 
         if ta_result.mode == "smart":
             dfs = dfs.map(lambda df: df.filter(~pl.col("name").is_in(AUX_NAMES)))
 
+        skip_keys: set[str] = _DEFAULT_SKIP_KEYS | set(grouping_skip_keys or [])
         bundle_info_pairs: list[Pair[TensorBundleInfo]] = match_bundles(
-            dfs=dfs,
-            skip_keys=_compute_skip_keys(args),
-        )
-
-        viz_output_dir: Optional[Path] = (
-            Path(args.viz_output_dir) if args.viz_bundle_details else None
-        )
-
-        visualize_per_token: Optional[Path] = (
-            Path(args.visualize_per_token) if args.visualize_per_token else None
+            dfs=dfs, skip_keys=skip_keys
         )
 
         meta_overrider: MetaOverrider = MetaOverrider.from_args_and_config(
-            override_dims=args.override_dims,
-            override_baseline_dims=args.override_baseline_dims,
-            override_target_dims=args.override_target_dims,
-            override_config=(
-                Path(args.override_config) if args.override_config else None
-            ),
+            override_dims=override_dims,
+            override_baseline_dims=override_baseline_dims,
+            override_target_dims=override_target_dims,
+            override_config=override_config,
         )
 
         comparison_records = _compare_bundle_pairs(
             bundle_info_pairs=bundle_info_pairs,
-            baseline_path=baseline_path,
-            target_path=target_path,
+            dir_pair=dir_pair,
             token_aligner_mode=ta_result.mode,
             token_aligner_plan=ta_result.plan,
-            diff_threshold=args.diff_threshold,
+            diff_threshold=diff_threshold,
             thd_seq_lens_by_step_pair=ta_result.thd_seq_lens_by_step_pair,
             viz_output_dir=viz_output_dir,
             compute_per_token=visualize_per_token is not None,
@@ -139,9 +142,9 @@ def run(args: argparse.Namespace) -> int:
         )
         return compute_exit_code(
             summary,
-            allow_skipped_pattern=args.allow_skipped_pattern,
+            allow_skipped_pattern=allow_skipped_pattern,
             skipped_names=skipped_names,
-            allow_failed_pattern=args.allow_failed_pattern,
+            allow_failed_pattern=allow_failed_pattern,
             failed_names=failed_names,
         )
     finally:
@@ -159,12 +162,12 @@ def _resolve_report_path(
 
 
 def _maybe_load_tokenizer(
-    *, tokenizer_arg: Optional[str], baseline_path: Path, target_path: Path
+    *, tokenizer_arg: Optional[str], dir_pair: Pair[Path]
 ) -> Any:
     tokenizer_path: Optional[str] = tokenizer_arg
 
     if tokenizer_path is None:
-        for directory in [baseline_path, target_path]:
+        for directory in [dir_pair.x, dir_pair.y]:
             tokenizer_path = read_tokenizer_path(directory)
             if tokenizer_path is not None:
                 break
@@ -182,15 +185,14 @@ def _maybe_load_tokenizer(
 
 def _read_df(
     *,
-    baseline_path: Path,
-    target_path: Path,
+    dir_pair: Pair[Path],
     start_step: int,
     end_step: int,
     filter_pattern: Optional[str],
 ) -> Pair[pl.DataFrame]:
-    df_baseline = read_meta(baseline_path)
+    df_baseline = read_meta(dir_pair.x)
 
-    df_target = read_meta(target_path)
+    df_target = read_meta(dir_pair.y)
     df_target = df_target.filter(
         (pl.col("step") >= start_step) & (pl.col("step") <= end_step)
     )
@@ -201,15 +203,10 @@ def _read_df(
     return Pair(x=df_baseline, y=df_target)
 
 
-def _compute_skip_keys(args: argparse.Namespace) -> set[str]:
-    return _DEFAULT_SKIP_KEYS | set(args.grouping_skip_keys or [])
-
-
 def _compare_bundle_pairs(
     *,
     bundle_info_pairs: list[Pair[TensorBundleInfo]],
-    baseline_path: Path,
-    target_path: Path,
+    dir_pair: Pair[Path],
     token_aligner_mode: Optional[str],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
@@ -233,8 +230,8 @@ def _compare_bundle_pairs(
         ] = compare_bundle_pair(
             name=name,
             filenames_pair=filenames_pair,
-            baseline_path=baseline_path,
-            target_path=target_path,
+            baseline_path=dir_pair.x,
+            target_path=dir_pair.y,
             token_aligner_mode=token_aligner_mode,
             token_aligner_plan=token_aligner_plan,
             diff_threshold=diff_threshold,
