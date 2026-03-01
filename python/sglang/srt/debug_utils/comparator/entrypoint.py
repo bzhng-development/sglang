@@ -23,9 +23,11 @@ from sglang.srt.debug_utils.comparator.bundle_matcher import (
     match_bundles,
 )
 from sglang.srt.debug_utils.comparator.display import emit_display_records
+from sglang.srt.debug_utils.comparator.log_sink import log_sink
 from sglang.srt.debug_utils.comparator.meta_overrider import MetaOverrider
 from sglang.srt.debug_utils.comparator.output_types import (
     ConfigRecord,
+    InfoLog,
     NonTensorComparisonRecord,
     RecordLocation,
     SkipComparisonRecord,
@@ -37,14 +39,31 @@ from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
 from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-from sglang.srt.debug_utils.comparator.utils import (
-    Pair,
-    auto_descend_dir,
-    compute_exit_code,
-)
+from sglang.srt.debug_utils.comparator.utils import Pair, compute_exit_code
 from sglang.srt.debug_utils.dump_loader import read_meta, read_tokenizer_path
 
 _DEFAULT_SKIP_KEYS: set[str] = {"dump_index", "filename"}
+
+
+def _auto_descend_dir(directory: Path, label: str) -> Path:
+    """If directory has no .pt files but exactly one subdirectory does, descend into it."""
+    if any(directory.glob("*.pt")):
+        return directory
+
+    candidates: list[Path] = [
+        sub for sub in directory.iterdir() if sub.is_dir() and any(sub.glob("*.pt"))
+    ]
+    if len(candidates) == 1:
+        resolved: Path = candidates[0]
+        log_sink.add(
+            InfoLog(
+                category="auto_descend",
+                message=f"auto-descend {label}: {directory} -> {resolved}",
+            )
+        )
+        return resolved
+
+    return directory
 
 
 def main() -> None:
@@ -53,9 +72,11 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
+    # NOTE: Only this function (and parse_args) should access `args` directly.
+    # All helpers below receive explicit parameters, never the raw namespace.
     dir_pair: Pair[Path] = Pair(
-        x=auto_descend_dir(Path(args.baseline_path), label="baseline_path"),
-        y=auto_descend_dir(Path(args.target_path), label="target_path"),
+        x=_auto_descend_dir(Path(args.baseline_path), label="baseline_path"),
+        y=_auto_descend_dir(Path(args.target_path), label="target_path"),
     )
 
     output_format: str = args.output_format
@@ -87,7 +108,7 @@ def run(args: argparse.Namespace) -> int:
     report_sink.configure(output_format=output_format, report_path=report_path)
 
     try:
-        report_sink.add(ConfigRecord.from_args(args))
+        report_sink.add(ConfigRecord(config=vars(args)))
 
         dfs: Pair[pl.DataFrame] = _read_df(
             dir_pair=dir_pair,
@@ -150,9 +171,6 @@ def run(args: argparse.Namespace) -> int:
     finally:
         report_sink.close()
         if report_path is not None:
-            from sglang.srt.debug_utils.comparator.log_sink import log_sink
-            from sglang.srt.debug_utils.comparator.output_types import InfoLog
-
             log_sink.add(
                 InfoLog(
                     category="report_path",

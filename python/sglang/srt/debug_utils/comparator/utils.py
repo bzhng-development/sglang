@@ -20,31 +20,6 @@ def _check_equal_lengths(**named_lists: list) -> None:
         raise ValueError(f"Length mismatch: {details}")
 
 
-def auto_descend_dir(directory: Path, label: str) -> Path:
-    """If directory has no .pt files but exactly one subdirectory does, descend into it."""
-    if any(directory.glob("*.pt")):
-        return directory
-
-    candidates: list[Path] = [
-        sub for sub in directory.iterdir() if sub.is_dir() and any(sub.glob("*.pt"))
-    ]
-    if len(candidates) == 1:
-        resolved: Path = candidates[0]
-
-        from sglang.srt.debug_utils.comparator.log_sink import log_sink
-        from sglang.srt.debug_utils.comparator.output_types import InfoLog
-
-        log_sink.add(
-            InfoLog(
-                category="auto_descend",
-                message=f"auto-descend {label}: {directory} -> {resolved}",
-            )
-        )
-        return resolved
-
-    return directory
-
-
 class _StrictBase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
