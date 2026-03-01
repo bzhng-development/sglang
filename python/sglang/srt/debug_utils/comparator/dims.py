@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from enum import Enum
-from typing import Optional
+from typing import NamedTuple, Optional
 
 import torch
 
@@ -275,12 +275,11 @@ def parse_dims(dims_str: str) -> DimsSpec:
         duplicates = sorted({n for n in semantic_names if semantic_names.count(n) > 1})
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
-    dp_group_alias: Optional[str] = None
-    replicated_axes: frozenset[ParallelAxis] = frozenset()
-
-    if len(parts) > 1:
-        dp_group_alias = _extract_dp_group_alias(parts[1])
-        replicated_axes = _extract_replicated_axes(parts[1])
+    comment_suffix: _CommentSuffix = (
+        _parse_comment_suffix(parts[1]) if len(parts) > 1 else _CommentSuffix()
+    )
+    dp_group_alias: Optional[str] = comment_suffix.dp_group_alias
+    replicated_axes: frozenset[ParallelAxis] = comment_suffix.replicated_axes
 
     sharded_axes: set[ParallelAxis] = {
         m.axis for spec in dims for m in spec.parallel_modifiers
@@ -344,33 +343,37 @@ _DP_ALIAS_PATTERN = re.compile(r"^dp:=(\w+)$")
 _REPLICATED_PATTERN = re.compile(r"^(\w+):replicated$")
 
 
-def _extract_dp_group_alias(declaration_part: str) -> Optional[str]:
-    """Scan the ``#`` declaration section for a ``dp:=<group>`` token."""
-    for token in declaration_part.strip().split():
-        match = _DP_ALIAS_PATTERN.match(token)
-        if match is not None:
-            return match.group(1)
-
-    return None
+class _CommentSuffix(NamedTuple):
+    dp_group_alias: Optional[str] = None
+    replicated_axes: frozenset[ParallelAxis] = frozenset()
 
 
-def _extract_replicated_axes(declaration_part: str) -> frozenset[ParallelAxis]:
-    """Scan the ``#`` declaration section for ``axis:replicated`` tokens."""
-    axes: set[ParallelAxis] = set()
+def _parse_comment_suffix(declaration_part: str) -> _CommentSuffix:
+    """Parse the ``#`` comment section for dp alias and replicated declarations."""
+    dp_group_alias: Optional[str] = None
+    replicated_axes: set[ParallelAxis] = set()
 
     for token in declaration_part.strip().split():
-        match = _REPLICATED_PATTERN.match(token)
-        if match is None:
+        dp_match = _DP_ALIAS_PATTERN.match(token)
+        if dp_match is not None:
+            dp_group_alias = dp_match.group(1)
             continue
 
-        axis_str: str = match.group(1)
-        axis: Optional[ParallelAxis] = _AXIS_LOOKUP.get(axis_str)
-        if axis is None:
-            raise ValueError(
-                f"Unknown axis {axis_str!r} in replicated declaration: {token!r}"
-            )
-        if axis in axes:
-            raise ValueError(f"Duplicate replicated declaration for axis {axis_str!r}")
-        axes.add(axis)
+        repl_match = _REPLICATED_PATTERN.match(token)
+        if repl_match is not None:
+            axis_str: str = repl_match.group(1)
+            axis: Optional[ParallelAxis] = _AXIS_LOOKUP.get(axis_str)
+            if axis is None:
+                raise ValueError(
+                    f"Unknown axis {axis_str!r} in replicated declaration: {token!r}"
+                )
+            if axis in replicated_axes:
+                raise ValueError(
+                    f"Duplicate replicated declaration for axis {axis_str!r}"
+                )
+            replicated_axes.add(axis)
 
-    return frozenset(axes)
+    return _CommentSuffix(
+        dp_group_alias=dp_group_alias,
+        replicated_axes=frozenset(replicated_axes),
+    )
