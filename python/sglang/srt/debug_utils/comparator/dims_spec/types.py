@@ -20,6 +20,8 @@ class ParallelAxis(Enum):
     TP = "tp"
     CP = "cp"
     EP = "ep"
+    ETP = "etp"
+    EDP = "edp"
     SP = "sp"
     RECOMPUTE_PSEUDO = "recompute_pseudo"
 
