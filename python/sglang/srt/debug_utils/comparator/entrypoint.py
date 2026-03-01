@@ -52,9 +52,7 @@ def run(args: argparse.Namespace) -> int:
     baseline_path: Path = _auto_descend_dir(
         Path(args.baseline_path), label="baseline_path"
     )
-    target_path: Path = _auto_descend_dir(
-        Path(args.target_path), label="target_path"
-    )
+    target_path: Path = _auto_descend_dir(Path(args.target_path), label="target_path")
 
     report_path: Optional[Path] = _resolve_report_path(
         target_path=target_path,
@@ -212,9 +210,7 @@ def _read_df(
         (pl.col("step") >= start_step) & (pl.col("step") <= end_step)
     )
     if filter_pattern:
-        df_target = df_target.filter(
-            pl.col("filename").str.contains(filter_pattern)
-        )
+        df_target = df_target.filter(pl.col("filename").str.contains(filter_pattern))
     assert all(c in df_target.columns for c in ["rank", "step", "dump_index", "name"])
 
     return Pair(x=df_baseline, y=df_target)
