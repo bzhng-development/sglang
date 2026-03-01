@@ -22,6 +22,11 @@ from typing import Optional
 import pytest
 import requests
 
+from sglang.srt.debug_utils.comparator.output_types import (
+    AnyRecord,
+    SummaryRecord,
+    parse_record_json,
+)
 from sglang.srt.utils import kill_process_tree
 from sglang.test.ci.ci_register import register_cuda_ci
 from sglang.test.test_utils import (
@@ -69,7 +74,7 @@ patches:
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        append: "dumper.dump('attn_output', hidden_states, dims='t h(tp:partial)')"
+        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial]')"
       - match: |
           hidden_states, residual = self.layer_communicator.prepare_mlp(
               hidden_states, residual, forward_batch
@@ -79,13 +84,13 @@ patches:
           hidden_states = self.mlp(
               hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
           )
-        append: "dumper.dump('mlp_output', hidden_states, dims='t h(tp:partial)')"
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial]')"
 
   # --- attention internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
-        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h(tp)')"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp]')"
 
   # --- moe internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
@@ -93,7 +98,7 @@ patches:
       - match: "router_logits, _ = self.gate(hidden_states)"
         append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h(tp:partial)')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -146,7 +151,7 @@ patches:
       - match: "router_logits, _ = self.gate(hidden_states)"
         append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h(tp:partial)')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
 """
 
 
@@ -248,6 +253,25 @@ def _run_e2e_scenario(
         f"Debug output: {debug_file}"
     )
 
+    records: list[AnyRecord] = [
+        parse_record_json(line)
+        for line in result.stdout.strip().splitlines()
+        if line.strip()
+    ]
+    assert (
+        len(records) > 0
+    ), f"Comparator produced no output records. Debug: {debug_file}"
+
+    summary: SummaryRecord = _find_summary(records=records, debug_file=debug_file)
+    assert (
+        summary.passed > 0
+    ), f"No comparisons passed (total={summary.total}). Debug: {debug_file}"
+    assert summary.failed == 0, (
+        f"{summary.failed} comparisons failed "
+        f"(passed={summary.passed}, skipped={summary.skipped}). "
+        f"Debug: {debug_file}"
+    )
+
 
 def _run_server_and_generate(
     *,
@@ -313,6 +337,19 @@ def _verify_patched_fields(*, dump_dir: Path, field_names: list[str]) -> None:
             f"Expected patched field '{field}' not found under {dump_dir}. "
             f"Available files: {sorted(f.name for f in dump_dir.rglob('*.pt'))[:20]}"
         )
+
+
+def _find_summary(*, records: list[AnyRecord], debug_file: Path) -> SummaryRecord:
+    """Extract the SummaryRecord from comparator output."""
+    summaries: list[SummaryRecord] = [
+        r for r in records if isinstance(r, SummaryRecord)
+    ]
+    assert len(summaries) == 1, (
+        f"Expected 1 summary record, got {len(summaries)}. "
+        f"Record types: {[type(r).__name__ for r in records]}. "
+        f"Debug: {debug_file}"
+    )
+    return summaries[0]
 
 
 def _save_comparator_output(*, stdout: str, stderr: str) -> Path:
