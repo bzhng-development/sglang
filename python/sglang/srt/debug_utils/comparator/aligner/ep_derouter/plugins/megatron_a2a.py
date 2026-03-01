@@ -12,13 +12,8 @@ class MegatronA2ADeRouter(DeRouterPlugin):
     a **token-level** index (values in ``[0, num_tokens)``): position ``i`` in
     the permuted tensor holds original token ``sorted_indices[i]``.
 
-    ``tokens_per_expert[e]`` gives the number of tokens routed to local expert
-    ``e``.  Tokens in the permuted tensor are grouped by expert, so the first
-    ``tokens_per_expert[0]`` rows belong to expert 0, etc.
-
-    Since ``sorted_indices`` is token-level (not flatten), we need
-    ``tokens_per_expert`` to reconstruct the k-index: if a token appears in
-    multiple experts, each occurrence corresponds to a different k slot.
+    Since ``sorted_indices`` is token-level (not flatten), when a token appears
+    in multiple experts each occurrence corresponds to a different k slot.
     """
 
     def de_route(
@@ -32,7 +27,6 @@ class MegatronA2ADeRouter(DeRouterPlugin):
         sorted_indices: torch.Tensor = aux_tensors[
             "reversed_local_input_permutation_mapping"
         ]
-        tokens_per_expert: torch.Tensor = aux_tensors["tokens_per_expert"]
 
         total_slots: int = num_tokens * top_k
         trailing_shape: list[int] = list(routed_tensor.shape[1:])

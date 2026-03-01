@@ -83,7 +83,6 @@ class TestExecuteDeRouterPlan:
             dispatch_path="megatron_a2a",
             aux_tensor_refs={
                 "reversed_local_input_permutation_mapping": "perm_map",
-                "tokens_per_expert": "tpe",
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -92,7 +91,6 @@ class TestExecuteDeRouterPlan:
         # Identity permutation
         aux_tensors: dict[str, torch.Tensor] = {
             "perm_map": torch.arange(num_tokens, dtype=torch.long),
-            "tpe": torch.tensor([num_tokens], dtype=torch.long),
         }
         routed_tensor: torch.Tensor = torch.randn(num_tokens, hidden_dim)
 

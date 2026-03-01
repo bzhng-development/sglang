@@ -24,7 +24,6 @@ class TestMegatronA2ADeRouter:
         # sorted_indices[i] = original token at permuted position i
         # Permuted order: [token2, token0, token3, token1]
         sorted_indices: torch.Tensor = torch.tensor([2, 0, 3, 1], dtype=torch.long)
-        tokens_per_expert: torch.Tensor = torch.tensor([2, 2], dtype=torch.long)
 
         # routed[0] has token 2's data, routed[1] has token 0's data, etc.
         routed_tensor: torch.Tensor = torch.zeros(total_slots, hidden_dim)
@@ -38,7 +37,6 @@ class TestMegatronA2ADeRouter:
             routed_tensor=routed_tensor,
             aux_tensors={
                 "reversed_local_input_permutation_mapping": sorted_indices,
-                "tokens_per_expert": tokens_per_expert,
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -64,7 +62,6 @@ class TestMegatronA2ADeRouter:
         # Token 0 appears twice (expert 0 and expert 1), token 1 appears twice
         # Permuted: [token0, token1, token0, token1]
         sorted_indices: torch.Tensor = torch.tensor([0, 1, 0, 1], dtype=torch.long)
-        tokens_per_expert: torch.Tensor = torch.tensor([2, 2], dtype=torch.long)
 
         routed_tensor: torch.Tensor = torch.tensor(
             [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]]
@@ -75,7 +72,6 @@ class TestMegatronA2ADeRouter:
             routed_tensor=routed_tensor,
             aux_tensors={
                 "reversed_local_input_permutation_mapping": sorted_indices,
-                "tokens_per_expert": tokens_per_expert,
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -98,7 +94,6 @@ class TestMegatronA2ADeRouter:
         hidden_dim: int = 4
 
         sorted_indices: torch.Tensor = torch.arange(num_tokens, dtype=torch.long)
-        tokens_per_expert: torch.Tensor = torch.tensor([num_tokens], dtype=torch.long)
         routed_tensor: torch.Tensor = torch.randn(num_tokens, hidden_dim)
 
         plugin: MegatronA2ADeRouter = MegatronA2ADeRouter()
@@ -106,7 +101,6 @@ class TestMegatronA2ADeRouter:
             routed_tensor=routed_tensor,
             aux_tensors={
                 "reversed_local_input_permutation_mapping": sorted_indices,
-                "tokens_per_expert": tokens_per_expert,
             },
             num_tokens=num_tokens,
             top_k=top_k,
