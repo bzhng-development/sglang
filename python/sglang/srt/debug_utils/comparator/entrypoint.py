@@ -53,6 +53,8 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
+    report_sink.configure(output_format=args.output_format, report_path=None)
+
     dir_pair: Pair[Path] = Pair(
         x=auto_descend_dir(Path(args.baseline_path), label="baseline_path"),
         y=auto_descend_dir(Path(args.target_path), label="target_path"),
