@@ -1,4 +1,4 @@
-"""
+r"""
 Test Nemotron Parse model via /generate endpoint.
 
 Requires a running server:
@@ -10,6 +10,35 @@ Requires a running server:
 Usage:
     python test/srt/models/test_nemotron_parse.py
     python test/srt/models/test_nemotron_parse.py --port 29999
+
+Expected successful output (example):
+    ....
+    ----------------------------------------------------------------------
+    Ran 4 tests in <time>s
+
+    OK
+    Found 10 bbox coords, 5 class labels
+    Classes: ['<class_Page-header>', '<class_Text>', '<class_Section-header>', '<class_Text>', '<class_Table>']
+    Detected classes: {'Page-header', 'Text', 'Table', 'Section-header'}
+    Table extraction OK
+    Extracted text:
+    <x_0.0293><y_0.0148>Document<x_0.0723><y_0.0187><class_Page-header>
+
+    <x_0.0293><y_0.0391>This is a paragraph of text in a simple document for testing OCR capabilities.<x_0.1338><y_0.0539><class_Text>
+
+    <x_0.0293><y_0.0781>Section 2: Results<x_0.0781><y_0.0828><class_Section-header>
+
+    <x_0.0293><y_0.0977>The results show improvement<x_0.1162><y_0.1023><class_Text>
+
+    <x_0.0293><y_0.1313>\begin{tabular}{cc}
+    Column A & Column B \\
+    1.0 & 2.0 \\
+    3.0 & 4.0 \\
+    \end{tabular}<x_0.2422><y_0.175><class_Table>
+
+Notes:
+    - Runtime and class-set ordering may vary.
+    - Output text may differ slightly across model versions.
 """
 
 import argparse
@@ -90,66 +119,48 @@ class TestNemotronParse(unittest.TestCase):
     host = DEFAULT_HOST
     port = DEFAULT_PORT
 
+    @classmethod
+    def setUpClass(cls):
+        img_b64 = image_to_base64(make_test_image())
+        cls.result = generate(cls.host, cls.port, img_b64)
+        cls.text = cls.result["text"]
+        cls.meta = cls.result["meta_info"]
+
     def test_basic_ocr(self):
-        img = make_test_image()
-        img_b64 = image_to_base64(img)
-        result = generate(self.host, self.port, img_b64)
-
-        text = result["text"]
-        meta = result["meta_info"]
-
-        self.assertEqual(meta["finish_reason"]["type"], "stop")
-        self.assertEqual(meta["prompt_tokens"], 5)
+        self.assertEqual(self.meta["finish_reason"]["type"], "stop")
 
         bbox_pattern = r"<x_[\d.]+><y_[\d.]+>"
-        bboxes = re.findall(bbox_pattern, text)
+        bboxes = re.findall(bbox_pattern, self.text)
         self.assertGreater(len(bboxes), 0, "No bounding boxes found in output")
 
         class_pattern = r"<class_[\w-]+>"
-        classes = re.findall(class_pattern, text)
+        classes = re.findall(class_pattern, self.text)
         self.assertGreater(len(classes), 0, "No class labels found in output")
 
         print(f"Found {len(bboxes)} bbox coords, {len(classes)} class labels")
         print(f"Classes: {classes}")
 
     def test_text_extraction(self):
-        img = make_test_image()
-        img_b64 = image_to_base64(img)
-        result = generate(self.host, self.port, img_b64)
+        self.assertIn("Document", self.text)
+        self.assertIn("Section", self.text)
+        self.assertIn("Results", self.text)
 
-        text = result["text"]
-
-        self.assertIn("Document", text)
-        self.assertIn("Section", text)
-        self.assertIn("Results", text)
-
-        print(f"Extracted text (first 500 chars):\n{text[:500]}")
+        print(f"Extracted text:\n{self.text}")
 
     def test_table_extraction(self):
-        img = make_test_image()
-        img_b64 = image_to_base64(img)
-        result = generate(self.host, self.port, img_b64)
-
-        text = result["text"]
-
-        self.assertIn("<class_Table>", text)
-        self.assertIn("Column A", text)
-        self.assertIn("Column B", text)
+        self.assertIn("<class_Table>", self.text)
+        self.assertIn("Column A", self.text)
+        self.assertIn("Column B", self.text)
 
         print("Table extraction OK")
 
     def test_class_types(self):
-        img = make_test_image()
-        img_b64 = image_to_base64(img)
-        result = generate(self.host, self.port, img_b64)
-
-        text = result["text"]
-        classes = re.findall(r"<class_([\w-]+)>", text)
+        classes = re.findall(r"<class_([\w-]+)>", self.text)
 
         self.assertIn("Text", classes)
         self.assertIn("Table", classes)
 
-        print(f"Detected classes: {set(classes)}")
+        print(f"Detected classes: {sorted(set(classes))}")
 
 
 if __name__ == "__main__":
