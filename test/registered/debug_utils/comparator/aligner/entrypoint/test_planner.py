@@ -52,7 +52,9 @@ def _make_meta(
 
 class TestComputePerStepSubPlans:
     def test_empty_metas(self) -> None:
-        result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(bundle_name="", metas=[])
+        result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
+            bundle_name="", metas=[]
+        )
         assert result == []
 
     def test_single_meta(self) -> None:
@@ -63,19 +65,21 @@ class TestComputePerStepSubPlans:
 
     def test_dims_none(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="", metas=[
+            bundle_name="",
+            metas=[
                 _make_meta(tp_rank=0, tp_size=2),
                 _make_meta(tp_rank=1, tp_size=2),
-            ]
+            ],
         )
         assert result == []
 
     def test_tp_sharded_returns_unsharder_plan(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="", metas=[
+            bundle_name="",
+            metas=[
                 _make_meta(dims="b h[tp]", tp_rank=0, tp_size=2),
                 _make_meta(dims="b h[tp]", tp_rank=1, tp_size=2),
-            ]
+            ],
         )
         assert len(result) >= 1
         unsharder_plans: list[UnsharderPlan] = [
@@ -85,10 +89,11 @@ class TestComputePerStepSubPlans:
 
     def test_zigzag_returns_both_plans(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="", metas=[
+            bundle_name="",
+            metas=[
                 _make_meta(dims="b s[cp:zigzag] h", cp_rank=0, cp_size=2),
                 _make_meta(dims="b s[cp:zigzag] h", cp_rank=1, cp_size=2),
-            ]
+            ],
         )
         unsharder_plans: list[UnsharderPlan] = [
             p for p in result if isinstance(p, UnsharderPlan)
@@ -233,7 +238,8 @@ class TestComputePerStepSubPlansThd:
         """t[cp:zigzag] h[tp] generates THD-typed unsharder + reorderer plans."""
         thd_global_seq_lens: list[int] = [100, 64, 92]
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="", metas=[
+            bundle_name="",
+            metas=[
                 _make_meta(
                     dims="t[cp:zigzag] h[tp]",
                     cp_rank=0,
