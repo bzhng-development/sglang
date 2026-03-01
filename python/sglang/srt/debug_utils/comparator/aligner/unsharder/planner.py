@@ -56,12 +56,20 @@ def compute_unsharder_plan(
         (name, m) for name, m in reversed_sharded_modifiers if m.axis in sharded_axes
     ]
 
+    # RECOMPUTE_PSEUDO is always implicitly replicated (system-injected, not user-facing)
+    auto_replicated: frozenset[ParallelAxis] = frozenset(
+        {ParallelAxis.RECOMPUTE_PSEUDO} & all_axes
+    )
+    effective_replicated: frozenset[ParallelAxis] = (
+        explicit_replicated_axes | auto_replicated
+    )
+
     _validate_explicit_replicated(
-        explicit_replicated_axes=explicit_replicated_axes,
+        explicit_replicated_axes=effective_replicated,
         sharded_axes=sharded_axes,
         all_axes=all_axes,
     )
-    replicated_axes: frozenset[ParallelAxis] = explicit_replicated_axes
+    replicated_axes: frozenset[ParallelAxis] = effective_replicated
 
     if not sharded_axes and not replicated_axes:
         return []

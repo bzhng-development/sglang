@@ -562,8 +562,22 @@ class TestExplicitReplicatedAxes:
                 dim_specs, parallel_infos, explicit_replicated_axes=replicated
             )
 
-    def test_recompute_pseudo_replicated(self) -> None:
-        """RECOMPUTE_PSEUDO with explicit replicated → PickParams."""
+    def test_recompute_pseudo_auto_replicated(self) -> None:
+        """RECOMPUTE_PSEUDO is auto-replicated without explicit declaration."""
+        dim_specs = parse_dims("h d").dims
+        parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
+            {ParallelAxis.RECOMPUTE_PSEUDO: AxisInfo(axis_rank=0, axis_size=2)},
+            {ParallelAxis.RECOMPUTE_PSEUDO: AxisInfo(axis_rank=1, axis_size=2)},
+        ]
+        plans = compute_unsharder_plan(dim_specs, parallel_infos)
+
+        assert len(plans) == 1
+        assert plans[0].axis == ParallelAxis.RECOMPUTE_PSEUDO
+        assert isinstance(plans[0].params, PickParams)
+        assert plans[0].groups == [[0, 1]]
+
+    def test_recompute_pseudo_explicit_replicated_also_works(self) -> None:
+        """RECOMPUTE_PSEUDO with explicit # recompute_pseudo:replicated also works."""
         dim_specs = parse_dims("h d # recompute_pseudo:replicated").dims
         replicated = frozenset({ParallelAxis.RECOMPUTE_PSEUDO})
         parallel_infos: list[dict[ParallelAxis, AxisInfo]] = [
