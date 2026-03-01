@@ -56,7 +56,7 @@ class DimSpec(_FrozenBase):
 
     @property
     def is_fused(self) -> bool:
-        return "*" in self.name
+        return len(self.sub_dims) > 1
 
     @property
     def sanitized_name(self) -> str:

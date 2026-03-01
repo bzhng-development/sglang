@@ -131,6 +131,15 @@ class TestComputeAxisAlignerPlanFused:
         assert result.pattern.x is None
         assert result.pattern.y == "a b c -> (a b) c"
 
+    def test_fused_vs_reordered_separate(self) -> None:
+        """x=fused "(a*b) c", y=reordered separate "b a c": both need alignment."""
+        result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+            Pair(x="(a*b) c", y="b a c")
+        )
+        assert result is not None
+        assert result.pattern.x is None
+        assert result.pattern.y == "b a c -> (a b) c"
+
     def test_fused_with_squeeze(self) -> None:
         """Fused + squeeze on one side, separate on other."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(

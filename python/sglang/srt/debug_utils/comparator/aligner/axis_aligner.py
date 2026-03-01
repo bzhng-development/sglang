@@ -40,9 +40,7 @@ def compute_axis_aligner_plan(
 
     # Target: y's tokens with squeeze removed. Fused dims stay fused — both sides
     # flatten toward the fused representation (unflatten is ambiguous without sizes).
-    target_tokens: list[str] = _build_fused_target(
-        x_specs=specs_pair.x, y_specs=specs_pair.y
-    )
+    target_tokens: list[str] = _build_fused_target(specs_pair)
 
     pattern: Pair[Optional[str]] = source_tokens_pair.map(
         lambda tokens: _build_pattern(source=tokens, target=target_tokens)
@@ -93,9 +91,7 @@ def _build_einops_tokens(specs: list[DimSpec]) -> list[str]:
     ]
 
 
-def _build_fused_target(
-    *, x_specs: list[DimSpec], y_specs: list[DimSpec]
-) -> list[str]:
+def _build_fused_target(specs_pair: Pair[list[DimSpec]]) -> list[str]:
     """Build target token list that prefers the fused representation.
 
     For each semantic name group, if *either* side has it as a fused dim, the target
@@ -104,41 +100,35 @@ def _build_fused_target(
 
     Dim order follows y; squeeze dims are excluded.
     """
-    # Collect fused groups from both sides: frozenset of sub_names → "(a b)" token
-    fused_groups: dict[frozenset[str], str] = {}
-    for spec in (*x_specs, *y_specs):
+    # Map each sub-dim name → (fused_token, set_of_siblings) from both sides
+    fused_lookup: dict[str, tuple[str, frozenset[str]]] = {}
+    for spec in (*specs_pair.x, *specs_pair.y):
         if spec.is_fused:
-            key: frozenset[str] = frozenset(spec.sub_dims)
-            if key not in fused_groups:
-                fused_groups[key] = f"({' '.join(spec.sub_dims)})"
+            token: str = f"({' '.join(spec.sub_dims)})"
+            siblings: frozenset[str] = frozenset(spec.sub_dims)
+            for sub_name in spec.sub_dims:
+                fused_lookup.setdefault(sub_name, (token, siblings))
 
-    # Walk y's semantic names in order, merging fused groups
+    # Walk y's semantic names in order, emitting fused tokens or plain names
     result: list[str] = []
     consumed: set[str] = set()
 
-    for spec in y_specs:
+    for spec in specs_pair.y:
         if _SingletonDimUtil.is_squeeze(spec):
             continue
 
-        if spec.is_fused:
-            token: str = fused_groups[frozenset(spec.sub_dims)]
-            result.append(token)
-            consumed.update(spec.sub_dims)
+        names: list[str] = spec.sub_dims
+        if any(n in consumed for n in names):
             continue
 
-        # Check if this plain dim belongs to a fused group from x
-        matched_group: Optional[str] = None
-        for key, token in fused_groups.items():
-            if spec.name in key and spec.name not in consumed:
-                matched_group = token
-                consumed.update(key)
-                break
-
-        if matched_group is not None:
-            result.append(matched_group)
+        entry: Optional[tuple[str, frozenset[str]]] = fused_lookup.get(names[0])
+        if entry is not None:
+            fused_token, siblings = entry
+            result.append(fused_token)
+            consumed.update(siblings)
         else:
             result.append(spec.name)
-            consumed.add(spec.name)
+            consumed.update(names)
 
     return result
 
