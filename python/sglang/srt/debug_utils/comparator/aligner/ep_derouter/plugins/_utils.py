@@ -25,10 +25,12 @@ def compute_within_group_indices(token_ids: torch.Tensor) -> torch.Tensor:
     sorted_order: torch.Tensor = torch.argsort(token_ids, stable=True)
     sorted_tids: torch.Tensor = token_ids[sorted_order]
 
-    same_as_prev: torch.Tensor = torch.cat([
-        torch.tensor([False], device=token_ids.device),
-        sorted_tids[1:] == sorted_tids[:-1],
-    ])
+    same_as_prev: torch.Tensor = torch.cat(
+        [
+            torch.tensor([False], device=token_ids.device),
+            sorted_tids[1:] == sorted_tids[:-1],
+        ]
+    )
 
     positions: torch.Tensor = torch.arange(n, dtype=torch.long, device=token_ids.device)
     reset_positions: torch.Tensor = torch.where(

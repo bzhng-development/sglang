@@ -8,7 +8,9 @@ from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins._utils import
 )
 
 
-def _extract_valid_rows(tensor_3d: torch.Tensor, masked_m: torch.Tensor) -> torch.Tensor:
+def _extract_valid_rows(
+    tensor_3d: torch.Tensor, masked_m: torch.Tensor
+) -> torch.Tensor:
     """Extract valid rows from a 3D ``[num_experts, expected_m, ...]`` tensor.
 
     For each expert ``e``, takes the first ``masked_m[e]`` rows and concatenates

@@ -31,7 +31,10 @@ class TestDeepEPLLDeRouter:
         plugin: DeepEPLLDeRouter = DeepEPLLDeRouter()
         flat: torch.Tensor = plugin.flatten_routed_tensor(
             routed_tensor=routed_tensor,
-            aux_tensors={"packed_recv_src_info": torch.zeros(2, 4), "masked_m": masked_m},
+            aux_tensors={
+                "packed_recv_src_info": torch.zeros(2, 4),
+                "masked_m": masked_m,
+            },
         )
 
         assert flat.shape == (4, hidden_dim)
@@ -82,9 +85,9 @@ class TestDeepEPLLDeRouter:
         packed_recv_src_info: torch.Tensor = torch.zeros(
             num_experts, expected_m, dtype=torch.long
         )
-        packed_recv_src_info[0, 0] = 0   # valid: token 0
+        packed_recv_src_info[0, 0] = 0  # valid: token 0
         packed_recv_src_info[0, 1] = 999  # padding
-        packed_recv_src_info[1, 0] = 1   # valid: token 1
+        packed_recv_src_info[1, 0] = 1  # valid: token 1
         packed_recv_src_info[1, 1] = 999  # padding
 
         masked_m: torch.Tensor = torch.tensor([1, 1], dtype=torch.long)

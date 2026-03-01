@@ -33,7 +33,9 @@ class TestFusedMoEDeRouter:
         )
 
         assert perm.shape == (total_slots,)
-        assert torch.equal(perm, torch.tensor([3, 0, 7, 1, 5, 2, 4, 6], dtype=torch.long))
+        assert torch.equal(
+            perm, torch.tensor([3, 0, 7, 1, 5, 2, 4, 6], dtype=torch.long)
+        )
 
     def test_padding_positions_marked_negative(self) -> None:
         """Padding positions (sorted_token_ids >= total_slots) become -1."""

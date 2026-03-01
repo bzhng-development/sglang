@@ -61,7 +61,9 @@ class TestComputeWithinGroupIndices:
         generator: torch.Generator = torch.Generator().manual_seed(42)
         for _ in range(20):
             n: int = int(torch.randint(1, 100, (1,), generator=generator).item())
-            num_unique: int = int(torch.randint(1, max(2, n), (1,), generator=generator).item())
+            num_unique: int = int(
+                torch.randint(1, max(2, n), (1,), generator=generator).item()
+            )
             token_ids: torch.Tensor = torch.randint(
                 0, num_unique, (n,), dtype=torch.long, generator=generator
             )
