@@ -1738,7 +1738,7 @@ class TestEntrypointReplicatedAxis:
                 cp_size=2,
                 tp_size=2,
                 seq_dim=1,
-                dims_str="b s[cp] d",
+                dims_str="b s[cp] d # tp:replicated",
             )
 
         argv = _make_argv(
@@ -1777,7 +1777,7 @@ class TestEntrypointReplicatedAxis:
                 cp_size=2,
                 tp_size=2,
                 seq_dim=1,
-                dims_str="b s[cp] d",
+                dims_str="b s[cp] d # tp:replicated",
                 tp_noise=0.5,
             )
 
@@ -1813,7 +1813,7 @@ class TestEntrypointReplicatedAxis:
             cp_size=2,
             tp_size=2,
             seq_dim=1,
-            dims_str="b s[cp] d",
+            dims_str="b s[cp] d # tp:replicated",
             tp_noise=0.5,
         )
         _create_replicated_tp_sharded_cp_dumps(
@@ -1823,7 +1823,7 @@ class TestEntrypointReplicatedAxis:
             cp_size=2,
             tp_size=2,
             seq_dim=1,
-            dims_str="b s[cp] d",
+            dims_str="b s[cp] d # tp:replicated",
             tp_noise=0.5,
         )
 
