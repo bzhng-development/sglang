@@ -212,6 +212,17 @@ class TestComputeAxisAlignerPlanFused:
         assert result.pattern.x == "c a___b -> a___b c"
         assert result.pattern.y is None
 
+    def test_overlapping_fused_groups_returns_none(self) -> None:
+        """x fuses (a*b), y fuses (b*c): incompatible overlap → None with warning."""
+        with log_sink.context() as warnings:
+            result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
+                Pair(x="(a*b) c", y="a (b*c)")
+            )
+        assert result is None
+        assert len(warnings) == 1
+        assert warnings[0].category == "axis_aligner_fused_conflict"
+        assert "overlapping fused groups" in warnings[0].message
+
 
 class TestExecuteAxisAlignerPlan:
     def test_rearrange(self) -> None:

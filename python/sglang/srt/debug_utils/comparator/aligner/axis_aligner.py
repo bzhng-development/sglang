@@ -37,7 +37,10 @@ def compute_axis_aligner_plan(
         return None
 
     # Canonical dim order follows y; fused groups stay fused (flatten, not unflatten).
-    canonical_order: list[str] = _build_canonical_order(specs_pair)
+    canonical_order: Optional[list[str]] = _build_canonical_order(specs_pair)
+    if canonical_order is None:
+        return None
+
     pattern: Pair[Optional[str]] = specs_pair.map(
         lambda specs: _build_side_pattern(specs=specs, canonical_order=canonical_order)
     )
@@ -76,12 +79,15 @@ def _expand_and_skip_squeeze(specs: list[DimSpec]) -> list[str]:
     return [name for spec in specs if not _SingletonDimUtil.is_squeeze(spec) for name in spec.sub_dims]
 
 
-def _build_canonical_order(specs_pair: Pair[list[DimSpec]]) -> list[str]:
+def _build_canonical_order(specs_pair: Pair[list[DimSpec]]) -> Optional[list[str]]:
     """Build canonical dim order following y, preferring fused representation.
 
     Each element is either a plain name (``"c"``) or a fused placeholder (``"a___b"``).
     Fused groups from *either* side are merged — the separate side must flatten.
     Squeeze dims are excluded.
+
+    Returns ``None`` if the two sides have overlapping but incompatible fused groups
+    (e.g. x fuses ``(a*b)`` while y fuses ``(b*c)``).
     """
     # Map each sub-dim name → (placeholder, siblings) from both sides
     fused_lookup: dict[str, tuple[str, frozenset[str]]] = {}
@@ -90,6 +96,20 @@ def _build_canonical_order(specs_pair: Pair[list[DimSpec]]) -> list[str]:
             placeholder: str = spec.sanitized_name
             siblings: frozenset[str] = frozenset(spec.sub_dims)
             for sub_name in spec.sub_dims:
+                existing: Optional[tuple[str, frozenset[str]]] = fused_lookup.get(sub_name)
+                if existing is not None and existing[1] != siblings:
+                    from sglang.srt.debug_utils.comparator.output_types import ErrorLog
+
+                    log_sink.add(
+                        ErrorLog(
+                            category="axis_aligner_fused_conflict",
+                            message=(
+                                f"AxisAligner: overlapping fused groups for sub-dim {sub_name!r} "
+                                f"({existing[0]} vs {placeholder}), skipping axis alignment"
+                            ),
+                        )
+                    )
+                    return None
                 fused_lookup.setdefault(sub_name, (placeholder, siblings))
 
     result: list[str] = []
