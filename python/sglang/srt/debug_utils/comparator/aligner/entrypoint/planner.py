@@ -25,6 +25,8 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
 )
 from sglang.srt.debug_utils.comparator.dims import (
     DimSpec,
+    DimsSpec,
+    ParallelAxis,
     _SingletonDimUtil,
     parse_dims,
 )
@@ -106,12 +108,15 @@ def compute_per_step_sub_plans(
     if dims_str is None:
         return []
 
-    dim_specs: list[DimSpec] = _SingletonDimUtil.filter_out(parse_dims(dims_str).dims)
+    dims_spec: DimsSpec = parse_dims(dims_str)
+    dim_specs: list[DimSpec] = _SingletonDimUtil.filter_out(dims_spec.dims)
+    replicated_axes: frozenset[ParallelAxis] = dims_spec.replicated_axes
     parallel_infos = [normalize_parallel_info(meta) for meta in metas]
 
     unsharder_plans = compute_unsharder_plan(
         dim_specs=dim_specs,
         parallel_infos=parallel_infos,
+        explicit_replicated_axes=replicated_axes,
         thd_global_seq_lens=thd_global_seq_lens,
     )
     reorderer_plans = compute_reorderer_plans(

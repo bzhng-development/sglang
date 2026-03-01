@@ -71,6 +71,7 @@ class DimsSpec(_FrozenBase):
 
     dims: list[DimSpec]
     dp_group_alias: Optional[str] = None
+    replicated_axes: frozenset[ParallelAxis] = frozenset()
 
 
 class _SingletonDimUtil:
@@ -151,6 +152,8 @@ def _parse_modifier_token(modifier_token: str, dim_token: str) -> ParallelModifi
     reduction: Optional[Reduction] = None
 
     for q_str in (q.strip() for q in qualifiers_str.split("+") if q.strip()):
+        if q_str == "sharded":
+            continue
         qualifier: Optional[Ordering | Reduction] = _QUALIFIER_LOOKUP.get(q_str)
         if qualifier is None:
             raise ValueError(
@@ -246,11 +249,12 @@ def _parse_modifiers(
 
 
 def parse_dims(dims_str: str) -> DimsSpec:
-    """Parse ``"b s[cp:zigzag] h[tp] d # dp:=moe_dp"`` → :class:`DimsSpec`.
+    """Parse ``"b s[cp:zigzag] h[tp] d # dp:=moe_dp ep:replicated"`` → :class:`DimsSpec`.
 
     The shape part (before ``#``) produces :pyattr:`DimsSpec.dims`.
-    The declaration part (after ``#``) is scanned for ``dp:=<group>``
-    which populates :pyattr:`DimsSpec.dp_group_alias`.
+    The declaration part (after ``#``) is scanned for:
+    - ``dp:=<group>`` → :pyattr:`DimsSpec.dp_group_alias`
+    - ``axis:replicated`` → :pyattr:`DimsSpec.replicated_axes`
     """
     parts: list[str] = dims_str.split("#", maxsplit=1)
     raw: str = parts[0]
@@ -271,11 +275,29 @@ def parse_dims(dims_str: str) -> DimsSpec:
         duplicates = sorted({n for n in semantic_names if semantic_names.count(n) > 1})
         raise ValueError(f"Duplicate dim names: {duplicates}")
 
-    dp_group_alias: Optional[str] = (
-        _extract_dp_group_alias(parts[1]) if len(parts) > 1 else None
-    )
+    dp_group_alias: Optional[str] = None
+    replicated_axes: frozenset[ParallelAxis] = frozenset()
 
-    return DimsSpec(dims=dims, dp_group_alias=dp_group_alias)
+    if len(parts) > 1:
+        dp_group_alias = _extract_dp_group_alias(parts[1])
+        replicated_axes = _extract_replicated_axes(parts[1])
+
+    sharded_axes: set[ParallelAxis] = {
+        m.axis for spec in dims for m in spec.parallel_modifiers
+    }
+    conflict: frozenset[ParallelAxis] = replicated_axes & sharded_axes
+    if conflict:
+        conflict_names: str = ", ".join(sorted(a.value for a in conflict))
+        raise ValueError(
+            f"Axes declared as both sharded (in dim spec) and replicated "
+            f"(in # declaration): {conflict_names}"
+        )
+
+    return DimsSpec(
+        dims=dims,
+        dp_group_alias=dp_group_alias,
+        replicated_axes=replicated_axes,
+    )
 
 
 def resolve_dim_names(dims_str: str) -> list[str]:
@@ -319,6 +341,7 @@ def strip_dim_names(tensor: torch.Tensor) -> torch.Tensor:
 
 
 _DP_ALIAS_PATTERN = re.compile(r"^dp:=(\w+)$")
+_REPLICATED_PATTERN = re.compile(r"^(\w+):replicated$")
 
 
 def _extract_dp_group_alias(declaration_part: str) -> Optional[str]:
@@ -329,3 +352,27 @@ def _extract_dp_group_alias(declaration_part: str) -> Optional[str]:
             return match.group(1)
 
     return None
+
+
+def _extract_replicated_axes(declaration_part: str) -> frozenset[ParallelAxis]:
+    """Scan the ``#`` declaration section for ``axis:replicated`` tokens."""
+    axes: set[ParallelAxis] = set()
+
+    for token in declaration_part.strip().split():
+        match = _REPLICATED_PATTERN.match(token)
+        if match is None:
+            continue
+
+        axis_str: str = match.group(1)
+        axis: Optional[ParallelAxis] = _AXIS_LOOKUP.get(axis_str)
+        if axis is None:
+            raise ValueError(
+                f"Unknown axis {axis_str!r} in replicated declaration: {token!r}"
+            )
+        if axis in axes:
+            raise ValueError(
+                f"Duplicate replicated declaration for axis {axis_str!r}"
+            )
+        axes.add(axis)
+
+    return frozenset(axes)

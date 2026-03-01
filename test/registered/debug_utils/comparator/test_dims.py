@@ -346,9 +346,12 @@ class TestParseDimsWithHash:
         result: DimsSpec = parse_dims("t h[tp] # dp:=moe_dp ep:replicated")
         assert result.dims == parse_dims("t h[tp]").dims
         assert result.dp_group_alias == "moe_dp"
+        assert result.replicated_axes == frozenset({ParallelAxis.EP})
 
     def test_no_dp_alias_token(self) -> None:
-        assert parse_dims("t h[tp] # ep:replicated").dp_group_alias is None
+        result: DimsSpec = parse_dims("t h[tp] # ep:replicated")
+        assert result.dp_group_alias is None
+        assert result.replicated_axes == frozenset({ParallelAxis.EP})
 
 
 class TestDpGroupAlias:
@@ -366,6 +369,46 @@ class TestDpGroupAlias:
             parse_dims("b s # ep:replicated dp:=custom_dp").dp_group_alias
             == "custom_dp"
         )
+
+
+class TestExplicitReplicatedAxes:
+    def test_single_replicated(self) -> None:
+        result: DimsSpec = parse_dims("b s h[tp] d # ep:replicated")
+        assert result.replicated_axes == frozenset({ParallelAxis.EP})
+
+    def test_explicit_sharded_equivalent(self) -> None:
+        assert parse_dims("b s h[tp:sharded] d").dims == parse_dims("b s h[tp] d").dims
+
+    def test_multiple_replicated(self) -> None:
+        result: DimsSpec = parse_dims("b s h[tp] d # ep:replicated cp:replicated")
+        assert result.replicated_axes == frozenset(
+            {ParallelAxis.EP, ParallelAxis.CP}
+        )
+
+    def test_dp_alias_and_replicated_coexist(self) -> None:
+        result: DimsSpec = parse_dims("b s h[tp] d # dp:=moe_dp ep:replicated")
+        assert result.dp_group_alias == "moe_dp"
+        assert result.replicated_axes == frozenset({ParallelAxis.EP})
+
+    def test_no_hash_replicated_empty(self) -> None:
+        result: DimsSpec = parse_dims("b s h[tp] d")
+        assert result.replicated_axes == frozenset()
+
+    def test_hash_without_replicated(self) -> None:
+        result: DimsSpec = parse_dims("b s h[tp] d # dp:=moe_dp")
+        assert result.replicated_axes == frozenset()
+
+    def test_replicated_conflicts_with_sharded_raises(self) -> None:
+        with pytest.raises(ValueError, match="both sharded.*and replicated"):
+            parse_dims("b s h[tp] d # tp:replicated")
+
+    def test_unknown_axis_in_replicated_raises(self) -> None:
+        with pytest.raises(ValueError, match="Unknown axis"):
+            parse_dims("b s h[tp] d # xyz:replicated")
+
+    def test_duplicate_replicated_declaration_raises(self) -> None:
+        with pytest.raises(ValueError, match="Duplicate replicated"):
+            parse_dims("b s h d # ep:replicated ep:replicated")
 
 
 class TestResolveDimNamesWithFused:

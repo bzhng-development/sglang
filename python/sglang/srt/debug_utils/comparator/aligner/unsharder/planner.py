@@ -32,6 +32,7 @@ def compute_unsharder_plan(
     dim_specs: list[DimSpec],
     parallel_infos: list[dict[ParallelAxis, AxisInfo]],
     *,
+    explicit_replicated_axes: frozenset[ParallelAxis] = frozenset(),
     thd_global_seq_lens: Optional[list[int]] = None,
 ) -> list[UnsharderPlan]:
     if not parallel_infos:
@@ -54,7 +55,13 @@ def compute_unsharder_plan(
     reversed_sharded_modifiers = [
         (name, m) for name, m in reversed_sharded_modifiers if m.axis in sharded_axes
     ]
-    replicated_axes: set[ParallelAxis] = all_axes - sharded_axes
+
+    _validate_explicit_replicated(
+        explicit_replicated_axes=explicit_replicated_axes,
+        sharded_axes=sharded_axes,
+        all_axes=all_axes,
+    )
+    replicated_axes: frozenset[ParallelAxis] = explicit_replicated_axes
 
     if not sharded_axes and not replicated_axes:
         return []
@@ -94,6 +101,37 @@ def compute_unsharder_plan(
         current_coords = result.projected_coords
 
     return plans
+
+
+def _validate_explicit_replicated(
+    *,
+    explicit_replicated_axes: frozenset[ParallelAxis],
+    sharded_axes: set[ParallelAxis],
+    all_axes: set[ParallelAxis],
+) -> None:
+    """Validate explicit replicated declarations against sharded axes and parallel_infos."""
+    invalid: frozenset[ParallelAxis] = explicit_replicated_axes - all_axes
+    if invalid:
+        invalid_names: str = ", ".join(sorted(a.value for a in invalid))
+        raise ValueError(
+            f"Declared replicated axes {{{invalid_names}}} not found in parallel_infos "
+            f"(active axes: {{{', '.join(sorted(a.value for a in all_axes))}}})"
+        )
+
+    conflict: set[ParallelAxis] = explicit_replicated_axes & sharded_axes
+    if conflict:
+        conflict_names: str = ", ".join(sorted(a.value for a in conflict))
+        raise ValueError(
+            f"Axes {{{conflict_names}}} declared as both sharded and replicated"
+        )
+
+    undeclared: set[ParallelAxis] = all_axes - sharded_axes - explicit_replicated_axes
+    if undeclared:
+        undeclared_names: str = ", ".join(sorted(a.value for a in undeclared))
+        raise ValueError(
+            f"Axes {{{undeclared_names}}} are active (axis_size > 1) but not declared "
+            f"in dims. Annotate as sharded in dim spec or as '# axis:replicated'."
+        )
 
 
 def _validate(
