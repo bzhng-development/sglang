@@ -252,15 +252,12 @@ class TestSourcePatcherE2ESGLang:
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
-    @pytest.mark.skip(
-        reason="DeepEP non-quantized GEMM paths deprecated in upstream sglang "
-        "(forward_deepgemm_contiguous/masked assert False in ep_moe/layer.py)"
-    )
     def test_ep_deepep_normal(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4+DeepEP normal target.
 
         DeepEP normal mode uses all-to-all dispatch with contiguous GEMM.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size.
+        Uses EP-specific dims (moe_ep:replicated) since EP is active.
         """
         _run_e2e_scenario(
             tmp_path=tmp_path,
@@ -271,17 +268,15 @@ class TestSourcePatcherE2ESGLang:
                 "--deepep-mode",
                 "normal",
             ],
+            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
-    @pytest.mark.skip(
-        reason="DeepEP non-quantized GEMM paths deprecated in upstream sglang "
-        "(forward_deepgemm_contiguous/masked assert False in ep_moe/layer.py)"
-    )
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4+DeepEP low-latency target.
 
         DeepEP low-latency mode uses masked GEMM with 3D tensor layout.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size.
+        Uses EP-specific dims (moe_ep:replicated) since EP is active.
         """
         _run_e2e_scenario(
             tmp_path=tmp_path,
@@ -292,6 +287,7 @@ class TestSourcePatcherE2ESGLang:
                 "--deepep-mode",
                 "low_latency",
             ],
+            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
 
