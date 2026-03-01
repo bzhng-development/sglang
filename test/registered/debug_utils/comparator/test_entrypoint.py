@@ -4297,8 +4297,8 @@ class TestEntrypointAutoDescend:
         assert exit_code == 0
         _assert_single_comparison_passed(records)
 
-    def test_auto_descend_stderr_message(self, tmp_path: Path, capsys) -> None:
-        """Auto-descend prints info message to stderr."""
+    def test_auto_descend_emits_log_record(self, tmp_path: Path, capsys) -> None:
+        """Auto-descend emits a LogRecord with the info message."""
         baseline_exp, target_exp = _create_dumps(tmp_path, ["tensor_a"])
 
         wrapper: Path = tmp_path / "target_wrap"
@@ -4306,12 +4306,18 @@ class TestEntrypointAutoDescend:
         target_exp.rename(wrapper / "engine_0")
 
         argv = _make_argv(baseline_exp, wrapper, preset="raw")
-        args: Namespace = parse_args(argv)
-        capsys.readouterr()
-        run(args)
+        records, _ = _run_and_parse(argv, capsys)
 
-        stderr: str = capsys.readouterr().err
-        assert "[comparator] auto-descend target_path:" in stderr
+        log_records: list[LogRecord] = [
+            r for r in records if isinstance(r, LogRecord)
+        ]
+        auto_descend_msgs: list[str] = [
+            info.message
+            for lr in log_records
+            for info in lr.infos
+            if "auto-descend" in info.message
+        ]
+        assert any("target_path" in m for m in auto_descend_msgs)
 
     def test_auto_descend_single_nonempty_among_empty(
         self, tmp_path: Path, capsys
