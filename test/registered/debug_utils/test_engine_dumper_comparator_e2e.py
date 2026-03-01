@@ -8,6 +8,9 @@ runs comparator to verify numerical consistency.
 Test cases:
 - test_patch_dump_and_compare: TP=2 baseline vs TP=4 target
 - test_dp_attention: TP=2 baseline vs TP=2+DP=2+dp-attention target
+- test_ep_fused_moe: TP=2 baseline vs TP=4+EP=4 (StandardDispatcher/Triton)
+- test_ep_deepep_normal: TP=2 baseline vs TP=4+DeepEP normal
+- test_ep_deepep_low_latency: TP=2 baseline vs TP=4+DeepEP low-latency
 
 The dumper.apply_source_patches() auto-injects ``from ... import dumper``
 so the YAML only needs ``dumper.dump(...)`` calls.
@@ -180,6 +183,53 @@ class TestSourcePatcherE2ESGLang:
             target_tp=BASELINE_TP,
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
             target_patch_config_yaml=PATCH_CONFIG_DP_ATTENTION_YAML,
+        )
+
+    def test_ep_fused_moe(self, tmp_path: Path) -> None:
+        """TP=2 baseline vs TP=4+EP=4 target (FusedMoE StandardDispatcher).
+
+        With --ep-size 4 on TP=4, MoE experts are distributed across all
+        4 ranks via FusedMoE/Triton dispatch. Decoder-level tensors remain
+        TP-sharded and should compare correctly after unsharding.
+        """
+        _run_e2e_scenario(
+            tmp_path=tmp_path,
+            target_tp=TARGET_TP,
+            extra_target_server_args=["--ep-size", "4"],
+        )
+
+    def test_ep_deepep_normal(self, tmp_path: Path) -> None:
+        """TP=2 baseline vs TP=4+DeepEP normal target.
+
+        DeepEP normal mode uses all-to-all dispatch with contiguous GEMM.
+        --moe-a2a-backend deepep automatically sets ep_size=tp_size.
+        """
+        _run_e2e_scenario(
+            tmp_path=tmp_path,
+            target_tp=TARGET_TP,
+            extra_target_server_args=[
+                "--moe-a2a-backend",
+                "deepep",
+                "--deepep-mode",
+                "normal",
+            ],
+        )
+
+    def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
+        """TP=2 baseline vs TP=4+DeepEP low-latency target.
+
+        DeepEP low-latency mode uses masked GEMM with 3D tensor layout.
+        --moe-a2a-backend deepep automatically sets ep_size=tp_size.
+        """
+        _run_e2e_scenario(
+            tmp_path=tmp_path,
+            target_tp=TARGET_TP,
+            extra_target_server_args=[
+                "--moe-a2a-backend",
+                "deepep",
+                "--deepep-mode",
+                "low_latency",
+            ],
         )
 
 
