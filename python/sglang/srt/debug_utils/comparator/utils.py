@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import functools
 import re
+import sys
+from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Generic, Optional, Tuple, TypeVar
 
 import torch
@@ -17,6 +19,25 @@ def _check_equal_lengths(**named_lists: list) -> None:
     if len(unique) > 1:
         details: str = ", ".join(f"{name}={length}" for name, length in lengths.items())
         raise ValueError(f"Length mismatch: {details}")
+
+
+def auto_descend_dir(directory: Path, label: str) -> Path:
+    """If directory has no .pt files but exactly one subdirectory does, descend into it."""
+    if any(directory.glob("*.pt")):
+        return directory
+
+    candidates: list[Path] = [
+        sub for sub in directory.iterdir() if sub.is_dir() and any(sub.glob("*.pt"))
+    ]
+    if len(candidates) == 1:
+        resolved: Path = candidates[0]
+        print(
+            f"[comparator] auto-descend {label}: {directory} -> {resolved}",
+            file=sys.stderr,
+        )
+        return resolved
+
+    return directory
 
 
 class _StrictBase(BaseModel):

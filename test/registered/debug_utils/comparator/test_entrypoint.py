@@ -4266,5 +4266,51 @@ class TestReportOutput:
         assert isinstance(parsed, ConfigRecord)
 
 
+class TestEntrypointAutoDescend:
+    """Test auto-descend: --baseline-path / --target-path pointing to a parent
+    directory that contains a single subdirectory with .pt files."""
+
+    def test_auto_descend_single_engine(self, tmp_path: Path, capsys) -> None:
+        """Parent dir wrapping a single engine subdir is auto-descended and comparison succeeds."""
+        baseline_exp, target_exp = _create_dumps(tmp_path, ["tensor_a"])
+
+        baseline_wrapper: Path = tmp_path / "baseline_wrap"
+        target_wrapper: Path = tmp_path / "target_wrap"
+        baseline_wrapper.mkdir()
+        target_wrapper.mkdir()
+        baseline_exp.rename(baseline_wrapper / "engine_0")
+        target_exp.rename(target_wrapper / "engine_0")
+
+        argv = _make_argv(baseline_wrapper, target_wrapper, preset="raw")
+        records, exit_code = _run_and_parse(argv, capsys)
+
+        assert exit_code == 0
+        _assert_single_comparison_passed(records)
+
+    def test_no_descend_when_pt_at_root(self, tmp_path: Path, capsys) -> None:
+        """Direct .pt files — no descend needed, comparison still works."""
+        baseline_exp, target_exp = _create_dumps(tmp_path, ["tensor_a"])
+
+        argv = _make_argv(baseline_exp, target_exp, preset="raw")
+        records, exit_code = _run_and_parse(argv, capsys)
+
+        assert exit_code == 0
+        _assert_single_comparison_passed(records)
+
+    def test_auto_descend_stderr_message(self, tmp_path: Path, capsys) -> None:
+        """Auto-descend prints info message to stderr."""
+        baseline_exp, target_exp = _create_dumps(tmp_path, ["tensor_a"])
+
+        wrapper: Path = tmp_path / "target_wrap"
+        wrapper.mkdir()
+        target_exp.rename(wrapper / "engine_0")
+
+        argv = _make_argv(baseline_exp, wrapper, preset="raw")
+        _run_and_parse(argv, capsys)
+
+        stderr: str = capsys.readouterr().err
+        assert "[comparator] auto-descend target_path:" in stderr
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))

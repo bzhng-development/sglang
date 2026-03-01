@@ -37,7 +37,11 @@ from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
 from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
-from sglang.srt.debug_utils.comparator.utils import Pair, compute_exit_code
+from sglang.srt.debug_utils.comparator.utils import (
+    Pair,
+    auto_descend_dir,
+    compute_exit_code,
+)
 from sglang.srt.debug_utils.dump_loader import read_meta, read_tokenizer_path
 
 _DEFAULT_SKIP_KEYS: set[str] = {"dump_index", "filename"}
@@ -49,10 +53,10 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
-    baseline_path: Path = _auto_descend_dir(
+    baseline_path: Path = auto_descend_dir(
         Path(args.baseline_path), label="baseline_path"
     )
-    target_path: Path = _auto_descend_dir(Path(args.target_path), label="target_path")
+    target_path: Path = auto_descend_dir(Path(args.target_path), label="target_path")
 
     report_path: Optional[Path] = _resolve_report_path(
         target_path=target_path,
@@ -144,25 +148,6 @@ def run(args: argparse.Namespace) -> int:
         report_sink.close()
         if report_path is not None:
             print(f"Report: {report_path}", file=sys.stderr)
-
-
-def _auto_descend_dir(directory: Path, label: str) -> Path:
-    """If directory has no .pt files but exactly one subdirectory does, descend into it."""
-    if any(directory.glob("*.pt")):
-        return directory
-
-    candidates: list[Path] = [
-        sub for sub in directory.iterdir() if sub.is_dir() and any(sub.glob("*.pt"))
-    ]
-    if len(candidates) == 1:
-        resolved: Path = candidates[0]
-        print(
-            f"[comparator] auto-descend {label}: {directory} -> {resolved}",
-            file=sys.stderr,
-        )
-        return resolved
-
-    return directory
 
 
 def _resolve_report_path(

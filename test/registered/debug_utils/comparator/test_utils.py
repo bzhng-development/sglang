@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import pytest
 import torch
@@ -7,6 +8,7 @@ from sglang.srt.debug_utils.comparator.output_types import SummaryRecord
 from sglang.srt.debug_utils.comparator.utils import (
     Pair,
     argmax_coord,
+    auto_descend_dir,
     calc_per_token_rel_diff,
     calc_rel_diff,
     compute_exit_code,
@@ -407,6 +409,36 @@ class TestComputeExitCode:
             )
             == 1
         )
+
+
+def _make_pt(directory: Path) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    torch.save(torch.tensor([1.0]), directory / "dummy.pt")
+
+
+class TestAutoDescendDir:
+    def test_no_descend_when_pt_at_root(self, tmp_path: Path) -> None:
+        """Directory with .pt files directly is returned as-is."""
+        _make_pt(tmp_path)
+        _make_pt(tmp_path / "child_a")
+        assert auto_descend_dir(tmp_path, label="test") == tmp_path
+
+    def test_descend_into_single_child(self, tmp_path: Path) -> None:
+        """Single child with .pt triggers descend."""
+        child: Path = tmp_path / "engine_0"
+        _make_pt(child)
+        assert auto_descend_dir(tmp_path, label="test") == child
+
+    def test_no_descend_with_multiple_children(self, tmp_path: Path) -> None:
+        """Two children with .pt files — ambiguous, no descend."""
+        _make_pt(tmp_path / "engine_0")
+        _make_pt(tmp_path / "engine_1")
+        assert auto_descend_dir(tmp_path, label="test") == tmp_path
+
+    def test_no_descend_when_no_children_have_pt(self, tmp_path: Path) -> None:
+        """No child has .pt files — no descend."""
+        (tmp_path / "empty_child").mkdir()
+        assert auto_descend_dir(tmp_path, label="test") == tmp_path
 
 
 if __name__ == "__main__":
