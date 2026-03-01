@@ -543,11 +543,17 @@ def _run_comparator(
         str(target_exp),
         "--output-format",
         "json",
-        "--allow-skipped-pattern",
-        "input_ids|positions",
     ]
     if use_token_aligner:
-        cmd.extend(["--token-aligner", "smart"])
+        # Smart token aligner needs positions to align tokens, so only
+        # skip input_ids (not positions). Positions will be consumed by
+        # the aligner and not compared directly.
+        cmd.extend([
+            "--allow-skipped-pattern", "input_ids",
+            "--token-aligner", "smart",
+        ])
+    else:
+        cmd.extend(["--allow-skipped-pattern", "input_ids|positions"])
 
     result: subprocess.CompletedProcess[str] = subprocess.run(
         cmd,
