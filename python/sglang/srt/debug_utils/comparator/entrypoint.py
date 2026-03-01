@@ -49,6 +49,9 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
+    args.baseline_path = str(_auto_descend_dir(Path(args.baseline_path), label="baseline_path"))
+    args.target_path = str(_auto_descend_dir(Path(args.target_path), label="target_path"))
+
     report_path: Optional[Path] = _resolve_report_path(args)
     report_sink.configure(
         output_format=args.output_format,
@@ -128,30 +131,30 @@ def run(args: argparse.Namespace) -> int:
             print(f"Report: {report_path}", file=sys.stderr)
 
 
+def _auto_descend_dir(directory: Path, label: str) -> Path:
+    """If directory has no .pt files but exactly one subdirectory does, descend into it."""
+    if any(directory.glob("*.pt")):
+        return directory
+
+    candidates: list[Path] = [
+        sub for sub in directory.iterdir()
+        if sub.is_dir() and any(sub.glob("*.pt"))
+    ]
+    if len(candidates) == 1:
+        resolved: Path = candidates[0]
+        print(
+            f"[comparator] auto-descend {label}: {directory} -> {resolved}",
+            file=sys.stderr,
+        )
+        return resolved
+
+    return directory
+
+
 def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
     if args.report_path is not None:
         return Path(args.report_path) if args.report_path else None
     return Path(args.target_path) / "comparator_report.jsonl"
-
-
-def _maybe_load_tokenizer(args: argparse.Namespace) -> Any:
-    tokenizer_path: Optional[str] = getattr(args, "tokenizer", None)
-
-    if tokenizer_path is None:
-        for directory in [Path(args.baseline_path), Path(args.target_path)]:
-            tokenizer_path = read_tokenizer_path(directory)
-            if tokenizer_path is not None:
-                break
-
-    if tokenizer_path is None:
-        return None
-
-    try:
-        from transformers import AutoTokenizer
-
-        return AutoTokenizer.from_pretrained(tokenizer_path)
-    except Exception:
-        return None
 
 
 def _maybe_load_tokenizer(args: argparse.Namespace) -> Any:
