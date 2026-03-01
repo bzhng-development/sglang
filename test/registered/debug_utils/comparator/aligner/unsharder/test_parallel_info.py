@@ -94,8 +94,8 @@ class TestNormalizeParallelInfo:
             ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
         }
 
-    def test_moe_tp_aliased_to_etp(self) -> None:
-        """sglang moe_tp_rank/moe_tp_size should be mapped to etp."""
+    def test_sglang_moe_tp(self) -> None:
+        """sglang moe_tp_rank/moe_tp_size maps to ParallelAxis.MOE_TP."""
         meta = {
             "sglang_parallel_info": {
                 "tp_rank": 0,
@@ -107,11 +107,11 @@ class TestNormalizeParallelInfo:
         result = normalize_parallel_info(meta)
         assert result == {
             ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
-            ParallelAxis.ETP: AxisInfo(axis_rank=1, axis_size=4),
+            ParallelAxis.MOE_TP: AxisInfo(axis_rank=1, axis_size=4),
         }
 
-    def test_moe_dp_aliased_to_edp(self) -> None:
-        """sglang moe_dp_rank/moe_dp_size should be mapped to edp."""
+    def test_sglang_moe_dp(self) -> None:
+        """sglang moe_dp_rank/moe_dp_size maps to ParallelAxis.MOE_DP."""
         meta = {
             "sglang_parallel_info": {
                 "ep_rank": 0,
@@ -123,21 +123,40 @@ class TestNormalizeParallelInfo:
         result = normalize_parallel_info(meta)
         assert result == {
             ParallelAxis.EP: AxisInfo(axis_rank=0, axis_size=2),
-            ParallelAxis.EDP: AxisInfo(axis_rank=1, axis_size=4),
+            ParallelAxis.MOE_DP: AxisInfo(axis_rank=1, axis_size=4),
         }
 
-    def test_moe_tp_and_etp_conflict_raises(self) -> None:
-        """Both moe_tp and etp present should raise ValueError."""
+    def test_megatron_etp(self) -> None:
+        """Megatron etp_rank/etp_size maps to ParallelAxis.ETP."""
         meta = {
-            "sglang_parallel_info": {
-                "moe_tp_rank": 0,
-                "moe_tp_size": 2,
-                "etp_rank": 0,
-                "etp_size": 2,
+            "megatron_parallel_info": {
+                "tp_rank": 0,
+                "tp_size": 2,
+                "etp_rank": 1,
+                "etp_size": 4,
             }
         }
-        with pytest.raises(ValueError, match="Both.*present"):
-            normalize_parallel_info(meta)
+        result = normalize_parallel_info(meta)
+        assert result == {
+            ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
+            ParallelAxis.ETP: AxisInfo(axis_rank=1, axis_size=4),
+        }
+
+    def test_sglang_moe_ep(self) -> None:
+        """sglang moe_ep_rank/moe_ep_size maps to ParallelAxis.MOE_EP."""
+        meta = {
+            "sglang_parallel_info": {
+                "tp_rank": 0,
+                "tp_size": 2,
+                "moe_ep_rank": 1,
+                "moe_ep_size": 4,
+            }
+        }
+        result = normalize_parallel_info(meta)
+        assert result == {
+            ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
+            ParallelAxis.MOE_EP: AxisInfo(axis_rank=1, axis_size=4),
+        }
 
 
 if __name__ == "__main__":

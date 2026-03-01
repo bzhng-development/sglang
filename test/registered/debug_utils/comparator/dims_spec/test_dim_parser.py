@@ -31,6 +31,9 @@ class TestParseDim:
         assert parse_dim("a[ep]").parallel_modifiers[0].axis == ParallelAxis.EP
         assert parse_dim("a[etp]").parallel_modifiers[0].axis == ParallelAxis.ETP
         assert parse_dim("a[edp]").parallel_modifiers[0].axis == ParallelAxis.EDP
+        assert parse_dim("a[moe_ep]").parallel_modifiers[0].axis == ParallelAxis.MOE_EP
+        assert parse_dim("a[moe_tp]").parallel_modifiers[0].axis == ParallelAxis.MOE_TP
+        assert parse_dim("a[moe_dp]").parallel_modifiers[0].axis == ParallelAxis.MOE_DP
         assert parse_dim("a[sp]").parallel_modifiers[0].axis == ParallelAxis.SP
 
     def test_ordering(self) -> None:

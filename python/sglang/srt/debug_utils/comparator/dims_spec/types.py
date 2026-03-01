@@ -22,6 +22,9 @@ class ParallelAxis(Enum):
     EP = "ep"
     ETP = "etp"
     EDP = "edp"
+    MOE_EP = "moe_ep"
+    MOE_TP = "moe_tp"
+    MOE_DP = "moe_dp"
     SP = "sp"
     RECOMPUTE_PSEUDO = "recompute_pseudo"
 
