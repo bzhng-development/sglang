@@ -3,7 +3,7 @@ from __future__ import annotations
 import torch
 
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.base import DeRouterPlugin
-from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins._utils import (
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins.utils import (
     compute_within_group_indices,
 )
 

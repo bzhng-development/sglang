@@ -3,7 +3,7 @@ import sys
 import pytest
 import torch
 
-from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins._utils import (
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins.utils import (
     compute_within_group_indices,
 )
 from sglang.test.ci.ci_register import register_cpu_ci
