@@ -229,10 +229,17 @@ patches:
 # DeepEP uses forward_deepep (not forward_normal), so MoE internals need
 # different match targets. The experts call uses keyword args and
 # final_hidden_states is the DeepEPMoE output (already EP-combined).
+#
+# Dims: With DeepEP TP=2+EP=2, moe_ep and tp share the same 2 ranks.
+# Unlike FusedMoE EP (where ep is an independent axis), DeepEP's EP
+# overlays TP ranks — non-MoE tensors are just tp-sharded as usual,
+# and MoE outputs are already EP-combined by DeepEPMoE internally.
+# Therefore NO moe_ep annotation is needed (same dims as baseline).
 PATCH_CONFIG_DEEPEP_YAML: str = """\
 patches:
   # --- decoder layer level ---
-  # DeepEP auto-sets ep_size=tp_size. moe_ep:replicated still applies.
+  # DeepEP auto-sets ep_size=tp_size. Since EP overlays the same ranks
+  # as TP, non-MoE tensors have the same dims as the non-EP baseline.
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
     edits:
       - match: |
@@ -245,42 +252,44 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated')"
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial]')"
       - match: |
           hidden_states, residual = self.layer_communicator.prepare_mlp(
               hidden_states, residual, forward_batch
           )
-        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated')"
       - match: |
           hidden_states = self.mlp(
               hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
           )
-        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial]')"
 
   # --- attention internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
-        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp] # moe_ep:replicated')"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp]')"
 
   # --- moe internals (forward_deepep path) ---
+  # DeepEPMoE combines EP results internally, so moe_expert_output is
+  # already the full (EP-combined) result. Same dims as non-EP baseline.
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_deepep
     edits:
       - match: "router_logits, _ = self.gate(hidden_states)"
-        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated')"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated')"
       - match: |
           final_hidden_states = self.experts(
               hidden_states=hidden_states,
               topk_output=topk_output,
           )
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
 """
 
 
@@ -384,8 +393,6 @@ class TestFP8DeepEP:
         --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
         DeepEP bypasses forward_normal and uses forward_deepep, so MoE
         internals need a separate patch config targeting forward_deepep.
-        DeepEP introduces padding tokens for EP alignment, so the smart
-        token aligner is needed to match tokens by position.
         """
         _run_target_and_compare(
             model=MODEL_FP8,
@@ -399,7 +406,6 @@ class TestFP8DeepEP:
                 "normal",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
-            use_token_aligner=True,
         )
 
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
@@ -409,8 +415,6 @@ class TestFP8DeepEP:
         --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
         DeepEP bypasses forward_normal and uses forward_deepep, so MoE
         internals need a separate patch config targeting forward_deepep.
-        DeepEP introduces padding tokens for EP alignment, so the smart
-        token aligner is needed to match tokens by position.
         """
         _run_target_and_compare(
             model=MODEL_FP8,
@@ -424,7 +428,6 @@ class TestFP8DeepEP:
                 "low_latency",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
-            use_token_aligner=True,
         )
 
 
@@ -439,7 +442,6 @@ def _run_target_and_compare(
     target_tp: int,
     extra_target_server_args: Optional[list[str]] = None,
     target_patch_config_yaml: Optional[str] = None,
-    use_token_aligner: bool = False,
 ) -> None:
     """Run target server + comparator against a pre-existing baseline."""
     base_url: str = DEFAULT_URL_FOR_TEST
@@ -459,11 +461,7 @@ def _run_target_and_compare(
     _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
 
     target_exp: Path = target_dir / EXP_NAME
-    _run_comparator(
-        baseline_exp=baseline_exp_dir,
-        target_exp=target_exp,
-        use_token_aligner=use_token_aligner,
-    )
+    _run_comparator(baseline_exp=baseline_exp_dir, target_exp=target_exp)
 
 
 def _run_server_and_generate(
@@ -526,12 +524,7 @@ def _run_server_and_generate(
         kill_process_tree(proc.pid)
 
 
-def _run_comparator(
-    *,
-    baseline_exp: Path,
-    target_exp: Path,
-    use_token_aligner: bool = False,
-) -> None:
+def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
     """Run comparator CLI and assert success."""
     cmd: list[str] = [
         "python",
@@ -543,17 +536,9 @@ def _run_comparator(
         str(target_exp),
         "--output-format",
         "json",
+        "--allow-skipped-pattern",
+        "input_ids|positions",
     ]
-    if use_token_aligner:
-        # Smart token aligner needs positions to align tokens, so only
-        # skip input_ids (not positions). Positions will be consumed by
-        # the aligner and not compared directly.
-        cmd.extend([
-            "--allow-skipped-pattern", "input_ids",
-            "--token-aligner", "smart",
-        ])
-    else:
-        cmd.extend(["--allow-skipped-pattern", "input_ids|positions"])
 
     result: subprocess.CompletedProcess[str] = subprocess.run(
         cmd,
