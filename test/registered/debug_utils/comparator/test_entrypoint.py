@@ -2656,7 +2656,9 @@ class TestEntrypointDpFilter:
             diff_threshold=1e-3,
         )
 
-        with pytest.raises(AssertionError, match="Expected exactly 1 non-empty dp_rank"):
+        with pytest.raises(
+            AssertionError, match="Expected exactly 1 non-empty dp_rank"
+        ):
             _run_and_parse(args, capsys)
 
 
