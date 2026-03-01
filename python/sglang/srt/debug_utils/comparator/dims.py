@@ -370,9 +370,7 @@ def _extract_replicated_axes(declaration_part: str) -> frozenset[ParallelAxis]:
                 f"Unknown axis {axis_str!r} in replicated declaration: {token!r}"
             )
         if axis in axes:
-            raise ValueError(
-                f"Duplicate replicated declaration for axis {axis_str!r}"
-            )
+            raise ValueError(f"Duplicate replicated declaration for axis {axis_str!r}")
         axes.add(axis)
 
     return frozenset(axes)

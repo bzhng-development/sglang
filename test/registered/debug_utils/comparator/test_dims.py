@@ -381,9 +381,7 @@ class TestExplicitReplicatedAxes:
 
     def test_multiple_replicated(self) -> None:
         result: DimsSpec = parse_dims("b s h[tp] d # ep:replicated cp:replicated")
-        assert result.replicated_axes == frozenset(
-            {ParallelAxis.EP, ParallelAxis.CP}
-        )
+        assert result.replicated_axes == frozenset({ParallelAxis.EP, ParallelAxis.CP})
 
     def test_dp_alias_and_replicated_coexist(self) -> None:
         result: DimsSpec = parse_dims("b s h[tp] d # dp:=moe_dp ep:replicated")
