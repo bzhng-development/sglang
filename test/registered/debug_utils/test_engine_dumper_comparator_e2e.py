@@ -384,6 +384,8 @@ class TestFP8DeepEP:
         --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
         DeepEP bypasses forward_normal and uses forward_deepep, so MoE
         internals need a separate patch config targeting forward_deepep.
+        DeepEP introduces padding tokens for EP alignment, so the smart
+        token aligner is needed to match tokens by position.
         """
         _run_target_and_compare(
             model=MODEL_FP8,
@@ -397,6 +399,7 @@ class TestFP8DeepEP:
                 "normal",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
+            use_token_aligner=True,
         )
 
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
@@ -406,6 +409,8 @@ class TestFP8DeepEP:
         --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
         DeepEP bypasses forward_normal and uses forward_deepep, so MoE
         internals need a separate patch config targeting forward_deepep.
+        DeepEP introduces padding tokens for EP alignment, so the smart
+        token aligner is needed to match tokens by position.
         """
         _run_target_and_compare(
             model=MODEL_FP8,
@@ -419,6 +424,7 @@ class TestFP8DeepEP:
                 "low_latency",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
+            use_token_aligner=True,
         )
 
 
@@ -433,6 +439,7 @@ def _run_target_and_compare(
     target_tp: int,
     extra_target_server_args: Optional[list[str]] = None,
     target_patch_config_yaml: Optional[str] = None,
+    use_token_aligner: bool = False,
 ) -> None:
     """Run target server + comparator against a pre-existing baseline."""
     base_url: str = DEFAULT_URL_FOR_TEST
@@ -452,7 +459,11 @@ def _run_target_and_compare(
     _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
 
     target_exp: Path = target_dir / EXP_NAME
-    _run_comparator(baseline_exp=baseline_exp_dir, target_exp=target_exp)
+    _run_comparator(
+        baseline_exp=baseline_exp_dir,
+        target_exp=target_exp,
+        use_token_aligner=use_token_aligner,
+    )
 
 
 def _run_server_and_generate(
@@ -515,7 +526,12 @@ def _run_server_and_generate(
         kill_process_tree(proc.pid)
 
 
-def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
+def _run_comparator(
+    *,
+    baseline_exp: Path,
+    target_exp: Path,
+    use_token_aligner: bool = False,
+) -> None:
     """Run comparator CLI and assert success."""
     cmd: list[str] = [
         "python",
@@ -530,6 +546,8 @@ def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
         "--allow-skipped-pattern",
         "input_ids|positions",
     ]
+    if use_token_aligner:
+        cmd.extend(["--token-aligner", "smart"])
 
     result: subprocess.CompletedProcess[str] = subprocess.run(
         cmd,
