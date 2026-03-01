@@ -5,6 +5,7 @@ from typing import Annotated, Optional, Union
 from pydantic import Discriminator
 
 from sglang.srt.debug_utils.comparator.aligner.axis_aligner import AxisAlignerPlan
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
 from sglang.srt.debug_utils.comparator.aligner.reorderer.types import ReordererPlan
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import (
     TokenAlignerPlan,
@@ -13,7 +14,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.types import UnsharderP
 from sglang.srt.debug_utils.comparator.utils import Pair, _FrozenBase
 
 AlignerPerStepSubPlan = Annotated[
-    Union[UnsharderPlan, ReordererPlan],
+    Union[UnsharderPlan, ReordererPlan, DeRouterPlan],
     Discriminator("type"),
 ]
 

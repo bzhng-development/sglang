@@ -13,6 +13,10 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
     AlignerPerStepSubPlan,
     AlignerPlan,
 )
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.entrypoint import (
+    execute_de_router_plan,
+)
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
 from sglang.srt.debug_utils.comparator.aligner.reorderer.executor import (
     execute_reorderer_plan,
 )
@@ -43,18 +47,30 @@ def execute_aligner_plan(
     *,
     tensors_pair: Pair[list[torch.Tensor]],
     plan: AlignerPlan,
+    aux_tensors_pair: Optional[Pair[dict[str, torch.Tensor]]] = None,
 ) -> AlignerResult:
     """Execute unified unshard/reorder + token-align."""
     all_checks: list[ReplicatedCheckResult] = []
 
+    aux_x: dict[str, torch.Tensor] = (
+        aux_tensors_pair.x if aux_tensors_pair is not None else {}
+    )
+    aux_y: dict[str, torch.Tensor] = (
+        aux_tensors_pair.y if aux_tensors_pair is not None else {}
+    )
+
     # Per-side: unshard + reorder -> dict[step, tensor]
     step_tensors_x, checks_x = _execute_step_plans(
-        tensors=tensors_pair.x, step_plans=plan.per_step_plans.x
+        tensors=tensors_pair.x,
+        step_plans=plan.per_step_plans.x,
+        aux_tensors=aux_x,
     )
     all_checks.extend(checks_x)
 
     step_tensors_y, checks_y = _execute_step_plans(
-        tensors=tensors_pair.y, step_plans=plan.per_step_plans.y
+        tensors=tensors_pair.y,
+        step_plans=plan.per_step_plans.y,
+        aux_tensors=aux_y,
     )
     all_checks.extend(checks_y)
 
@@ -101,6 +117,8 @@ def execute_aligner_plan(
 def _execute_step_plans(
     tensors: list[torch.Tensor],
     step_plans: list[AlignerPerStepPlan],
+    *,
+    aux_tensors: Optional[dict[str, torch.Tensor]] = None,
 ) -> tuple[dict[int, torch.Tensor], list[ReplicatedCheckResult]]:
     result: dict[int, torch.Tensor] = {}
     all_checks: list[ReplicatedCheckResult] = []
@@ -110,7 +128,9 @@ def _execute_step_plans(
             tensors[i] for i in step_plan.input_object_indices
         ]
         tensor, checks = execute_sub_plans(
-            tensors=step_tensors, plans=step_plan.sub_plans
+            tensors=step_tensors,
+            plans=step_plan.sub_plans,
+            aux_tensors=aux_tensors or {},
         )
         all_checks.extend(checks)
         if tensor is not None:
@@ -122,6 +142,8 @@ def _execute_step_plans(
 def execute_sub_plans(
     tensors: list[torch.Tensor],
     plans: list[AlignerPerStepSubPlan],
+    *,
+    aux_tensors: Optional[dict[str, torch.Tensor]] = None,
 ) -> tuple[Optional[torch.Tensor], list[ReplicatedCheckResult]]:
     if not tensors:
         return None, []
@@ -134,7 +156,9 @@ def execute_sub_plans(
     current: list[torch.Tensor] = tensors
     all_checks: list[ReplicatedCheckResult] = []
     for plan in plans:
-        current, checks = execute_sub_plan(tensors=current, plan=plan)
+        current, checks = execute_sub_plan(
+            tensors=current, plan=plan, aux_tensors=aux_tensors or {}
+        )
         all_checks.extend(checks)
 
     assert len(current) == 1
@@ -144,11 +168,23 @@ def execute_sub_plans(
 def execute_sub_plan(
     tensors: list[torch.Tensor],
     plan: AlignerPerStepSubPlan,
+    *,
+    aux_tensors: Optional[dict[str, torch.Tensor]] = None,
 ) -> tuple[list[torch.Tensor], list[ReplicatedCheckResult]]:
     if isinstance(plan, UnsharderPlan):
         unsharder_result: UnsharderResult = execute_unsharder_plan(plan, tensors)
         return unsharder_result.tensors, unsharder_result.replicated_checks
     elif isinstance(plan, ReordererPlan):
         return execute_reorderer_plan(plan, tensors), []
+    elif isinstance(plan, DeRouterPlan):
+        result: list[torch.Tensor] = [
+            execute_de_router_plan(
+                plan=plan,
+                tensor=t,
+                aux_tensors=aux_tensors or {},
+            )
+            for t in tensors
+        ]
+        return result, []
     else:
         raise NotImplementedError(f"Unknown {plan=}")

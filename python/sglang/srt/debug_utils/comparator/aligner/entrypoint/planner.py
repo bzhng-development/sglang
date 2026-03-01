@@ -11,6 +11,7 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
     AlignerPerStepSubPlan,
     AlignerPlan,
 )
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
 from sglang.srt.debug_utils.comparator.aligner.reorderer.planner import (
     compute_reorderer_plans,
 )
@@ -119,9 +120,36 @@ def compute_per_step_sub_plans(
         explicit_replicated_axes=replicated_axes,
         thd_global_seq_lens=thd_global_seq_lens,
     )
+    de_router_plans: list[DeRouterPlan] = _maybe_compute_de_router_plan(metas)
     reorderer_plans = compute_reorderer_plans(
         dim_specs=dim_specs,
         parallel_infos=parallel_infos,
         thd_global_seq_lens=thd_global_seq_lens,
     )
-    return [*unsharder_plans, *reorderer_plans]
+    return [*unsharder_plans, *de_router_plans, *reorderer_plans]
+
+
+def _maybe_compute_de_router_plan(
+    metas: list[dict[str, Any]],
+) -> list[DeRouterPlan]:
+    """Generate a DeRouterPlan if the first meta has ``ep_dispatch_path``."""
+    if not metas:
+        return []
+
+    meta: dict[str, Any] = metas[0]
+    dispatch_path: Optional[str] = meta.get("ep_dispatch_path")
+    if dispatch_path is None:
+        return []
+
+    num_tokens: int = int(meta["ep_num_tokens"])
+    top_k: int = int(meta["ep_top_k"])
+    aux_tensor_refs: dict[str, str] = meta.get("ep_aux_tensor_refs", {})
+
+    return [
+        DeRouterPlan(
+            dispatch_path=dispatch_path,
+            aux_tensor_refs=aux_tensor_refs,
+            num_tokens=num_tokens,
+            top_k=top_k,
+        )
+    ]
