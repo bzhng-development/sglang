@@ -13,6 +13,7 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import (
     AlignerPerStepSubPlan,
     AlignerPlan,
 )
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
 from sglang.srt.debug_utils.comparator.aligner.reorderer.types import (
     ReordererPlan,
     ZigzagToNaturalThdParams,
@@ -173,6 +174,53 @@ class TestComputeAlignerPlan:
 
         assert plan.token_aligner_plan is ta_plan
         assert plan.token_aligner_mode == "smart"
+
+
+class TestComputePerStepSubPlansDeRouter:
+    """Test de-router plan generation from ep_dispatch_path metadata."""
+
+    def test_ep_dispatch_path_generates_de_router_plan(self) -> None:
+        """Metadata with ep_dispatch_path should produce a DeRouterPlan."""
+        meta: dict[str, Any] = _make_meta(dims="t h[tp]", tp_rank=0, tp_size=2)
+        meta["ep_dispatch_path"] = "fused_moe"
+        meta["ep_num_tokens"] = 32
+        meta["ep_top_k"] = 2
+        meta["ep_aux_tensor_refs"] = {"sorted_token_ids": "my_sorted_ids"}
+
+        result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
+            metas=[
+                meta,
+                {
+                    **_make_meta(dims="t h[tp]", tp_rank=1, tp_size=2),
+                    "ep_dispatch_path": "fused_moe",
+                    "ep_num_tokens": 32,
+                    "ep_top_k": 2,
+                    "ep_aux_tensor_refs": {"sorted_token_ids": "my_sorted_ids"},
+                },
+            ]
+        )
+
+        de_router_plans: list[DeRouterPlan] = [
+            p for p in result if isinstance(p, DeRouterPlan)
+        ]
+        assert len(de_router_plans) == 1
+        assert de_router_plans[0].dispatch_path == "fused_moe"
+        assert de_router_plans[0].num_tokens == 32
+        assert de_router_plans[0].top_k == 2
+
+    def test_no_ep_dispatch_path_no_de_router_plan(self) -> None:
+        """Without ep_dispatch_path, no DeRouterPlan should be generated."""
+        result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
+            metas=[
+                _make_meta(dims="b h[tp]", tp_rank=0, tp_size=2),
+                _make_meta(dims="b h[tp]", tp_rank=1, tp_size=2),
+            ]
+        )
+
+        de_router_plans: list[DeRouterPlan] = [
+            p for p in result if isinstance(p, DeRouterPlan)
+        ]
+        assert len(de_router_plans) == 0
 
 
 class TestComputePerStepSubPlansThd:

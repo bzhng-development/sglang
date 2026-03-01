@@ -94,6 +94,51 @@ class TestNormalizeParallelInfo:
             ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
         }
 
+    def test_moe_tp_aliased_to_etp(self) -> None:
+        """sglang moe_tp_rank/moe_tp_size should be mapped to etp."""
+        meta = {
+            "sglang_parallel_info": {
+                "tp_rank": 0,
+                "tp_size": 2,
+                "moe_tp_rank": 1,
+                "moe_tp_size": 4,
+            }
+        }
+        result = normalize_parallel_info(meta)
+        assert result == {
+            ParallelAxis.TP: AxisInfo(axis_rank=0, axis_size=2),
+            ParallelAxis.ETP: AxisInfo(axis_rank=1, axis_size=4),
+        }
+
+    def test_moe_dp_aliased_to_edp(self) -> None:
+        """sglang moe_dp_rank/moe_dp_size should be mapped to edp."""
+        meta = {
+            "sglang_parallel_info": {
+                "ep_rank": 0,
+                "ep_size": 2,
+                "moe_dp_rank": 1,
+                "moe_dp_size": 4,
+            }
+        }
+        result = normalize_parallel_info(meta)
+        assert result == {
+            ParallelAxis.EP: AxisInfo(axis_rank=0, axis_size=2),
+            ParallelAxis.EDP: AxisInfo(axis_rank=1, axis_size=4),
+        }
+
+    def test_moe_tp_and_etp_conflict_raises(self) -> None:
+        """Both moe_tp and etp present should raise ValueError."""
+        meta = {
+            "sglang_parallel_info": {
+                "moe_tp_rank": 0,
+                "moe_tp_size": 2,
+                "etp_rank": 0,
+                "etp_size": 2,
+            }
+        }
+        with pytest.raises(ValueError, match="Both.*present"):
+            normalize_parallel_info(meta)
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))

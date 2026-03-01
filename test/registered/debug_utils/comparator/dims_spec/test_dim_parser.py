@@ -29,6 +29,8 @@ class TestParseDim:
         assert parse_dim("a[tp]").parallel_modifiers[0].axis == ParallelAxis.TP
         assert parse_dim("a[cp]").parallel_modifiers[0].axis == ParallelAxis.CP
         assert parse_dim("a[ep]").parallel_modifiers[0].axis == ParallelAxis.EP
+        assert parse_dim("a[etp]").parallel_modifiers[0].axis == ParallelAxis.ETP
+        assert parse_dim("a[edp]").parallel_modifiers[0].axis == ParallelAxis.EDP
         assert parse_dim("a[sp]").parallel_modifiers[0].axis == ParallelAxis.SP
 
     def test_ordering(self) -> None:
