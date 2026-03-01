@@ -96,6 +96,93 @@ class TestExecuteDeRouterPlan:
 
         assert torch.allclose(result, routed_tensor)
 
+    def test_deepep_normal_dispatch(self) -> None:
+        """End-to-end: deepep_normal with 2-rank scenario."""
+        num_tokens: int = 4
+        top_k: int = 1
+        hidden_dim: int = 2
+
+        plan: DeRouterPlan = DeRouterPlan(
+            dispatch_path="deepep_normal",
+            aux_tensor_refs={"rank_prefix_matrix": "rpm"},
+            num_tokens=num_tokens,
+            top_k=top_k,
+        )
+
+        # Rank 0 contributes 2 tokens (positions 0,1), rank 1 contributes 2 (positions 2,3)
+        aux_tensors: dict[str, torch.Tensor] = {
+            "rpm": torch.tensor([0, 2], dtype=torch.long),
+        }
+        routed_tensor: torch.Tensor = torch.tensor(
+            [[10.0, 11.0], [20.0, 21.0], [30.0, 31.0], [40.0, 41.0]]
+        )
+
+        result: torch.Tensor = execute_de_router_plan(
+            plan=plan, tensor=routed_tensor, aux_tensors=aux_tensors
+        )
+
+        assert result.shape == (num_tokens * top_k, hidden_dim)
+        assert torch.allclose(result[0], torch.tensor([10.0, 11.0]))
+        assert torch.allclose(result[1], torch.tensor([20.0, 21.0]))
+        assert torch.allclose(result[2], torch.tensor([30.0, 31.0]))
+        assert torch.allclose(result[3], torch.tensor([40.0, 41.0]))
+
+    def test_deepep_ll_dispatch(self) -> None:
+        """End-to-end: deepep_ll with 2-expert 3D tensor, verifies flatten + scatter."""
+        num_tokens: int = 2
+        top_k: int = 2
+        num_experts: int = 2
+        expected_m: int = 2
+        hidden_dim: int = 3
+
+        plan: DeRouterPlan = DeRouterPlan(
+            dispatch_path="deepep_ll",
+            aux_tensor_refs={
+                "packed_recv_src_info": "src_info",
+                "masked_m": "mm",
+            },
+            num_tokens=num_tokens,
+            top_k=top_k,
+        )
+
+        packed_recv_src_info: torch.Tensor = torch.zeros(
+            num_experts, expected_m, dtype=torch.long
+        )
+        # Expert 0: token 0 and token 1
+        packed_recv_src_info[0, 0] = 0
+        packed_recv_src_info[0, 1] = 1
+        # Expert 1: token 0 and token 1 (second appearance → k=1)
+        packed_recv_src_info[1, 0] = 0
+        packed_recv_src_info[1, 1] = 1
+
+        masked_m: torch.Tensor = torch.tensor([2, 2], dtype=torch.long)
+
+        routed_tensor: torch.Tensor = torch.zeros(num_experts, expected_m, hidden_dim)
+        routed_tensor[0, 0] = torch.tensor([10.0, 11.0, 12.0])  # token 0, k=0
+        routed_tensor[0, 1] = torch.tensor([20.0, 21.0, 22.0])  # token 1, k=0
+        routed_tensor[1, 0] = torch.tensor([30.0, 31.0, 32.0])  # token 0, k=1
+        routed_tensor[1, 1] = torch.tensor([40.0, 41.0, 42.0])  # token 1, k=1
+
+        aux_tensors: dict[str, torch.Tensor] = {
+            "src_info": packed_recv_src_info,
+            "mm": masked_m,
+        }
+
+        result: torch.Tensor = execute_de_router_plan(
+            plan=plan, tensor=routed_tensor, aux_tensors=aux_tensors
+        )
+
+        total_slots: int = num_tokens * top_k
+        assert result.shape == (total_slots, hidden_dim)
+        # token 0, k=0 → slot 0
+        assert torch.allclose(result[0], torch.tensor([10.0, 11.0, 12.0]))
+        # token 0, k=1 → slot 1
+        assert torch.allclose(result[1], torch.tensor([30.0, 31.0, 32.0]))
+        # token 1, k=0 → slot 2
+        assert torch.allclose(result[2], torch.tensor([20.0, 21.0, 22.0]))
+        # token 1, k=1 → slot 3
+        assert torch.allclose(result[3], torch.tensor([40.0, 41.0, 42.0]))
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))
