@@ -1,19 +1,30 @@
 """E2E test: source patcher + dumper + comparator on SGLang server.
 
 Patches Qwen3MoeDecoderLayer.forward (and related methods) to insert
-dumper.dump() calls at 7 points, launches servers with Qwen3-30B-A3B-FP8
+dumper.dump() calls at 7 points, launches servers with Qwen3-30B-A3B
 (MOE model), runs inference, verifies patched dump fields exist, then
 runs comparator to verify numerical consistency.
 
-The baseline (TP=2) is run once in setup_class and shared across all tests.
-Each test only runs the target server + comparator.
+Two test classes, each with its own model and shared baseline:
 
-Test cases:
-- test_patch_dump_and_compare: TP=2 baseline vs TP=4 target
+TestBF16 (Qwen3-30B-A3B):
+- test_basic_tp: TP=2 baseline vs TP=4 target
 - test_dp_attention: TP=2 baseline vs TP=2+DP=2+dp-attention target
-- test_ep_fused_moe: TP=2 baseline vs TP=4+EP=4 (StandardDispatcher/Triton)
-- test_ep_deepep_normal: TP=2 baseline vs TP=4+DeepEP normal
-- test_ep_deepep_low_latency: TP=2 baseline vs TP=4+DeepEP low-latency
+- test_ep_fused_moe: TP=2 baseline vs TP=4+EP=4 target (FusedMoE)
+
+TestFP8DeepEP (Qwen3-30B-A3B-FP8):
+- test_ep_deepep_normal: TP=2 baseline vs TP=2+DeepEP normal target
+- test_ep_deepep_low_latency: TP=2 baseline vs TP=2+DeepEP low-latency target
+
+Known limitations:
+- FP8 + TP=4 incompatible: Qwen3-30B-A3B-FP8 has moe_intermediate_size=768,
+  TP=4 yields 768/4=192 per rank, which is not divisible by FP8
+  weight_block_size[0]=128 -> ValueError in fp8.py:create_weights.
+  FP8 tests are therefore limited to TP=2.
+- BF16 + DeepEP incompatible: upstream sglang ep_moe/layer.py has
+  ``assert False`` in forward_deepgemm_contiguous / forward_deepgemm_masked
+  (non-quantized GEMM paths are deprecated). BF16 models hit these asserts;
+  FP8 models take the quantized path and bypass them.
 
 The dumper.apply_source_patches() auto-injects ``from ... import dumper``
 so the YAML only needs ``dumper.dump(...)`` calls.
@@ -42,7 +53,8 @@ from sglang.test.test_utils import (
 
 register_cuda_ci(est_time=300, suite="nightly-4-gpu", nightly=True)
 
-MODEL = "Qwen/Qwen3-30B-A3B-FP8"
+MODEL_BF16 = "Qwen/Qwen3-30B-A3B"
+MODEL_FP8 = "Qwen/Qwen3-30B-A3B-FP8"
 BASELINE_TP = 2
 TARGET_TP = 4
 EXP_NAME = "e2e_source_patcher"
@@ -163,7 +175,6 @@ patches:
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
 """
 
-
 PATCH_CONFIG_EP_YAML: str = """\
 patches:
   # --- decoder layer level ---
@@ -216,36 +227,34 @@ patches:
 """
 
 
-class TestSourcePatcherE2ESGLang:
-    """E2E: patch Qwen3Moe forward -> dump -> compare.
+# ================================= test classes =================================
 
-    Baseline (TP=2) is run once in setup_class; all tests share the same
-    baseline dump data and only run their own target server + comparator.
-    """
+
+class TestBF16:
+    """E2E tests using BF16 model (Qwen3-30B-A3B) with shared baseline."""
 
     _baseline_dir: Path
 
     @classmethod
     def setup_class(cls) -> None:
-        cls._baseline_dir = Path(tempfile.mkdtemp(prefix="e2e_baseline_"))
-
+        cls._baseline_dir = Path(tempfile.mkdtemp(prefix="e2e_baseline_bf16_"))
         config_path: Path = cls._baseline_dir / "patch_config.yaml"
         config_path.write_text(PATCH_CONFIG_YAML)
-
         _run_server_and_generate(
+            model=MODEL_BF16,
             dump_dir=cls._baseline_dir / "dump",
             config_path=config_path,
             tp=BASELINE_TP,
             base_url=DEFAULT_URL_FOR_TEST,
         )
         _verify_patched_fields(
-            dump_dir=cls._baseline_dir / "dump",
-            field_names=_FIELDS_TO_VERIFY,
+            dump_dir=cls._baseline_dir / "dump", field_names=_FIELDS_TO_VERIFY
         )
 
-    def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
+    def test_basic_tp(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4 target."""
         _run_target_and_compare(
+            model=MODEL_BF16,
             baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
@@ -259,6 +268,7 @@ class TestSourcePatcherE2ESGLang:
         A separate patch config with corrected dims is used for the target.
         """
         _run_target_and_compare(
+            model=MODEL_BF16,
             baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=BASELINE_TP,
@@ -275,6 +285,7 @@ class TestSourcePatcherE2ESGLang:
         The target uses EP-specific dims with moe_ep:replicated.
         """
         _run_target_and_compare(
+            model=MODEL_BF16,
             baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
@@ -282,16 +293,44 @@ class TestSourcePatcherE2ESGLang:
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
+
+class TestFP8DeepEP:
+    """E2E tests using FP8 model (Qwen3-30B-A3B-FP8) with shared baseline.
+
+    FP8 + TP=4 is incompatible (moe_intermediate_size=768, 768/4=192,
+    192 % 128 != 0 -> ValueError in fp8 create_weights). Tests use TP=2.
+    BF16 + DeepEP is incompatible (assert False in non-quantized GEMM paths).
+    """
+
+    _baseline_dir: Path
+
+    @classmethod
+    def setup_class(cls) -> None:
+        cls._baseline_dir = Path(tempfile.mkdtemp(prefix="e2e_baseline_fp8_"))
+        config_path: Path = cls._baseline_dir / "patch_config.yaml"
+        config_path.write_text(PATCH_CONFIG_YAML)
+        _run_server_and_generate(
+            model=MODEL_FP8,
+            dump_dir=cls._baseline_dir / "dump",
+            config_path=config_path,
+            tp=BASELINE_TP,
+            base_url=DEFAULT_URL_FOR_TEST,
+        )
+        _verify_patched_fields(
+            dump_dir=cls._baseline_dir / "dump", field_names=_FIELDS_TO_VERIFY
+        )
+
     def test_ep_deepep_normal(self, tmp_path: Path) -> None:
-        """TP=2 baseline vs TP=4+DeepEP normal target.
+        """TP=2 baseline vs TP=2+DeepEP normal target.
 
         DeepEP normal mode uses all-to-all dispatch with contiguous GEMM.
-        --moe-a2a-backend deepep automatically sets ep_size=tp_size.
+        --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
         """
         _run_target_and_compare(
+            model=MODEL_FP8,
             baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
-            target_tp=TARGET_TP,
+            target_tp=BASELINE_TP,
             extra_target_server_args=[
                 "--moe-a2a-backend",
                 "deepep",
@@ -302,15 +341,16 @@ class TestSourcePatcherE2ESGLang:
         )
 
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
-        """TP=2 baseline vs TP=4+DeepEP low-latency target.
+        """TP=2 baseline vs TP=2+DeepEP low-latency target.
 
         DeepEP low-latency mode uses masked GEMM with 3D tensor layout.
-        --moe-a2a-backend deepep automatically sets ep_size=tp_size.
+        --moe-a2a-backend deepep automatically sets ep_size=tp_size=2.
         """
         _run_target_and_compare(
+            model=MODEL_FP8,
             baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
-            target_tp=TARGET_TP,
+            target_tp=BASELINE_TP,
             extra_target_server_args=[
                 "--moe-a2a-backend",
                 "deepep",
@@ -321,11 +361,12 @@ class TestSourcePatcherE2ESGLang:
         )
 
 
-# --------------------------------- helpers ---------------------------------
+# ================================== helpers ==================================
 
 
 def _run_target_and_compare(
     *,
+    model: str,
     baseline_exp_dir: Path,
     tmp_path: Path,
     target_tp: int,
@@ -340,6 +381,7 @@ def _run_target_and_compare(
 
     target_dir: Path = tmp_path / "target"
     _run_server_and_generate(
+        model=model,
         dump_dir=target_dir,
         config_path=target_config_path,
         tp=target_tp,
@@ -350,6 +392,66 @@ def _run_target_and_compare(
 
     target_exp: Path = target_dir / EXP_NAME
     _run_comparator(baseline_exp=baseline_exp_dir, target_exp=target_exp)
+
+
+def _run_server_and_generate(
+    *,
+    model: str,
+    dump_dir: Path,
+    config_path: Path,
+    tp: int,
+    base_url: str,
+    extra_server_args: Optional[list[str]] = None,
+) -> None:
+    """Launch SGLang server with source patcher + dumper, send a generate request."""
+    env: dict[str, str] = {
+        **os.environ,
+        "DUMPER_SOURCE_PATCHER_CONFIG": str(config_path),
+        "DUMPER_DIR": str(dump_dir),
+        "DUMPER_EXP_NAME": EXP_NAME,
+        "DUMPER_SERVER_PORT": "reuse",
+    }
+
+    server_args: list[str] = [
+        "--tp",
+        str(tp),
+        "--max-total-tokens",
+        "128",
+        "--mem-fraction-static",
+        "0.5",
+        "--disable-cuda-graph",
+        "--disable-radix-cache",
+    ]
+    if extra_server_args:
+        server_args.extend(extra_server_args)
+
+    proc = popen_launch_server(
+        model,
+        base_url,
+        timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+        other_args=server_args,
+        env=env,
+    )
+    try:
+        requests.post(
+            f"{base_url}/dumper/configure",
+            json={
+                "enable": True,
+                "filter": DUMPER_FILTER,
+                "cleanup_previous": True,
+            },
+        ).raise_for_status()
+
+        resp = requests.post(
+            f"{base_url}/generate",
+            json={
+                "text": "The capital of France is",
+                "sampling_params": {"max_new_tokens": 1, "temperature": 0},
+            },
+        )
+        assert resp.status_code == 200, f"Generate failed: {resp.text}"
+    finally:
+        kill_process_tree(proc.pid)
 
 
 def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
@@ -382,65 +484,6 @@ def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
     assert result.returncode == 0, (
         f"Comparator failed (rc={result.returncode}). Debug output: {debug_file}"
     )
-
-
-def _run_server_and_generate(
-    *,
-    dump_dir: Path,
-    config_path: Path,
-    tp: int,
-    base_url: str,
-    extra_server_args: Optional[list[str]] = None,
-) -> None:
-    """Launch SGLang server with source patcher + dumper, send a generate request."""
-    env: dict[str, str] = {
-        **os.environ,
-        "DUMPER_SOURCE_PATCHER_CONFIG": str(config_path),
-        "DUMPER_DIR": str(dump_dir),
-        "DUMPER_EXP_NAME": EXP_NAME,
-        "DUMPER_SERVER_PORT": "reuse",
-    }
-
-    server_args: list[str] = [
-        "--tp",
-        str(tp),
-        "--max-total-tokens",
-        "128",
-        "--mem-fraction-static",
-        "0.5",
-        "--disable-cuda-graph",
-        "--disable-radix-cache",
-    ]
-    if extra_server_args:
-        server_args.extend(extra_server_args)
-
-    proc = popen_launch_server(
-        MODEL,
-        base_url,
-        timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
-        other_args=server_args,
-        env=env,
-    )
-    try:
-        requests.post(
-            f"{base_url}/dumper/configure",
-            json={
-                "enable": True,
-                "filter": DUMPER_FILTER,
-                "cleanup_previous": True,
-            },
-        ).raise_for_status()
-
-        resp = requests.post(
-            f"{base_url}/generate",
-            json={
-                "text": "The capital of France is",
-                "sampling_params": {"max_new_tokens": 1, "temperature": 0},
-            },
-        )
-        assert resp.status_code == 200, f"Generate failed: {resp.text}"
-    finally:
-        kill_process_tree(proc.pid)
 
 
 def _verify_patched_fields(*, dump_dir: Path, field_names: list[str]) -> None:
