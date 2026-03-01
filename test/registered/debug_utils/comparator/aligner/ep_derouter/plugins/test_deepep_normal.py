@@ -12,7 +12,7 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 
 class TestDeepEPNormalDeRouter:
-    """Test reconstruction from rank_prefix_matrix + recv_topk_ids."""
+    """Test reconstruction from rank_prefix_matrix."""
 
     def test_single_rank(self) -> None:
         """Single source rank: tokens arrive in order within that rank."""
@@ -23,10 +23,6 @@ class TestDeepEPNormalDeRouter:
 
         # Single rank contributes all tokens
         rank_prefix_matrix: torch.Tensor = torch.tensor([0], dtype=torch.long)
-        recv_topk_ids: torch.Tensor = torch.zeros(total_slots, top_k, dtype=torch.long)
-        num_recv_tokens_per_expert: torch.Tensor = torch.tensor(
-            [total_slots], dtype=torch.long
-        )
 
         routed_tensor: torch.Tensor = torch.arange(
             total_slots * hidden_dim, dtype=torch.float
@@ -37,8 +33,6 @@ class TestDeepEPNormalDeRouter:
             routed_tensor=routed_tensor,
             aux_tensors={
                 "rank_prefix_matrix": rank_prefix_matrix,
-                "recv_topk_ids": recv_topk_ids,
-                "num_recv_tokens_per_expert": num_recv_tokens_per_expert,
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -55,10 +49,6 @@ class TestDeepEPNormalDeRouter:
 
         # Rank 0 contributes 2 tokens, rank 1 contributes 2 tokens
         rank_prefix_matrix: torch.Tensor = torch.tensor([0, 2], dtype=torch.long)
-        recv_topk_ids: torch.Tensor = torch.zeros(total_slots, top_k, dtype=torch.long)
-        num_recv_tokens_per_expert: torch.Tensor = torch.tensor(
-            [total_slots], dtype=torch.long
-        )
 
         # routed_tensor: positions 0,1 from rank 0; positions 2,3 from rank 1
         routed_tensor: torch.Tensor = torch.tensor(
@@ -70,8 +60,6 @@ class TestDeepEPNormalDeRouter:
             routed_tensor=routed_tensor,
             aux_tensors={
                 "rank_prefix_matrix": rank_prefix_matrix,
-                "recv_topk_ids": recv_topk_ids,
-                "num_recv_tokens_per_expert": num_recv_tokens_per_expert,
             },
             num_tokens=num_tokens,
             top_k=top_k,
@@ -93,10 +81,6 @@ class TestDeepEPNormalDeRouter:
         total_slots: int = num_tokens * top_k
 
         rank_prefix_matrix: torch.Tensor = torch.tensor([0], dtype=torch.long)
-        recv_topk_ids: torch.Tensor = torch.zeros(total_slots, top_k, dtype=torch.long)
-        num_recv_tokens_per_expert: torch.Tensor = torch.tensor(
-            [total_slots], dtype=torch.long
-        )
 
         routed_tensor: torch.Tensor = torch.randn(total_slots, hidden_dim)
 
@@ -105,8 +89,6 @@ class TestDeepEPNormalDeRouter:
             routed_tensor=routed_tensor,
             aux_tensors={
                 "rank_prefix_matrix": rank_prefix_matrix,
-                "recv_topk_ids": recv_topk_ids,
-                "num_recv_tokens_per_expert": num_recv_tokens_per_expert,
             },
             num_tokens=num_tokens,
             top_k=top_k,
