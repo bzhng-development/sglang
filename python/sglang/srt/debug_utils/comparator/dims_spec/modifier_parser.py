@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import Optional
 
 from sglang.srt.debug_utils.comparator.dims_spec.types import (
+    _AXIS_LOOKUP,
+    _QUALIFIER_LOOKUP,
     Ordering,
     ParallelAxis,
     ParallelModifier,
     Reduction,
-    _AXIS_LOOKUP,
-    _QUALIFIER_LOOKUP,
 )
 
 

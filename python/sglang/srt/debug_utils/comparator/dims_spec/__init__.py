@@ -11,18 +11,18 @@ from sglang.srt.debug_utils.comparator.dims_spec.tensor_naming import (
     strip_dim_names,
 )
 from sglang.srt.debug_utils.comparator.dims_spec.types import (
+    _FUSED_NAME_SEP,
     BATCH_DIM_NAME,
     SEQ_DIM_NAME,
     SQUEEZE_DIM_NAME,
     TOKEN_DIM_NAME,
-    DimsSpec,
     DimSpec,
+    DimsSpec,
     Ordering,
     ParallelAxis,
     ParallelModifier,
     Reduction,
     TokenLayout,
-    _FUSED_NAME_SEP,
 )
 
 __all__ = [

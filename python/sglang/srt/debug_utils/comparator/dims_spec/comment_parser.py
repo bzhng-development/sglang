@@ -4,8 +4,8 @@ import re
 from typing import NamedTuple, Optional
 
 from sglang.srt.debug_utils.comparator.dims_spec.types import (
-    ParallelAxis,
     _AXIS_LOOKUP,
+    ParallelAxis,
 )
 
 _DP_ALIAS_PATTERN = re.compile(r"^dp:=(\w+)$")
