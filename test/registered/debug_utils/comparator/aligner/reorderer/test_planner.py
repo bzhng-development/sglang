@@ -210,12 +210,8 @@ class TestCpZigzagSpSameDimE2E:
                 tensors.append(sp_chunks[sp_rank])
                 parallel_infos.append(
                     {
-                        ParallelAxis.CP: AxisInfo(
-                            axis_rank=cp_rank, axis_size=cp_size
-                        ),
-                        ParallelAxis.SP: AxisInfo(
-                            axis_rank=sp_rank, axis_size=sp_size
-                        ),
+                        ParallelAxis.CP: AxisInfo(axis_rank=cp_rank, axis_size=cp_size),
+                        ParallelAxis.SP: AxisInfo(axis_rank=sp_rank, axis_size=sp_size),
                     }
                 )
 
