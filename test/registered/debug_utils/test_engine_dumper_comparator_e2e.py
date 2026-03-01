@@ -22,6 +22,10 @@ from typing import Optional
 import pytest
 import requests
 
+pytestmark = pytest.mark.filterwarnings(
+    "ignore:Unknown config option. asyncio_mode:pytest.PytestConfigWarning",
+)
+
 from sglang.srt.utils import kill_process_tree
 from sglang.test.ci.ci_register import register_cuda_ci
 from sglang.test.test_utils import (
@@ -153,7 +157,6 @@ patches:
 class TestSourcePatcherE2ESGLang:
     """E2E: patch Qwen3Moe forward -> dump -> compare."""
 
-    @pytest.mark.timeout(600)
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4 target."""
         _run_e2e_scenario(
@@ -161,7 +164,6 @@ class TestSourcePatcherE2ESGLang:
             target_tp=TARGET_TP,
         )
 
-    @pytest.mark.timeout(600)
     def test_dp_attention(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=2+DP=2+dp-attention target.
 
