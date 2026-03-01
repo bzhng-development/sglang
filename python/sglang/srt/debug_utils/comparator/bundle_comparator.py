@@ -182,6 +182,7 @@ def _compare_bundle_pair_tensor_type(
         lambda items: [it.meta for it in items]
     )
     plan: AlignerPlan = compute_aligner_plan(
+        bundle_name=name,
         metas_pair=metas_pair,
         token_aligner_mode=token_aligner_mode,
         token_aligner_plan=token_aligner_plan,

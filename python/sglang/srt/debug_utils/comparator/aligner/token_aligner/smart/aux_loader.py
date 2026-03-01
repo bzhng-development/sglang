@@ -229,6 +229,7 @@ def _load_and_align_aux_tensor(
     )
 
     sub_plans = compute_per_step_sub_plans(
+        bundle_name=name,
         metas=metas,
         thd_global_seq_lens=(
             thd_global_seq_lens if name in plugin.cp_sharded_names else None

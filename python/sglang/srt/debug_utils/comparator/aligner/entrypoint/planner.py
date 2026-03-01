@@ -39,6 +39,7 @@ from sglang.srt.debug_utils.comparator.utils import Pair
 
 def compute_aligner_plan(
     *,
+    bundle_name: str,
     metas_pair: Pair[list[dict[str, Any]]],
     token_aligner_mode: Optional[str],
     token_aligner_plan: Optional[TokenAlignerPlan],
@@ -56,10 +57,12 @@ def compute_aligner_plan(
     return AlignerPlan(
         per_step_plans=Pair(
             x=_compute_per_step_plans(
+                bundle_name=bundle_name,
                 metas=metas_pair.x,
                 thd_seq_lens_by_step=thd_seq_lens_by_step_pair.x,
             ),
             y=_compute_per_step_plans(
+                bundle_name=bundle_name,
                 metas=metas_pair.y,
                 thd_seq_lens_by_step=thd_seq_lens_by_step_pair.y,
             ),
@@ -71,8 +74,9 @@ def compute_aligner_plan(
 
 
 def _compute_per_step_plans(
-    metas: list[dict[str, Any]],
     *,
+    bundle_name: str,
+    metas: list[dict[str, Any]],
     thd_seq_lens_by_step: Optional[dict[int, list[int]]] = None,
 ) -> list[AlignerPerStepPlan]:
     step_to_input_indices: dict[int, list[int]] = {}
@@ -88,6 +92,7 @@ def _compute_per_step_plans(
             thd_seq_lens_by_step.get(step) if thd_seq_lens_by_step is not None else None
         )
         plans: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
+            bundle_name=bundle_name,
             metas=step_metas,
             thd_global_seq_lens=step_seq_lens,
         )
@@ -101,8 +106,9 @@ def _compute_per_step_plans(
 
 
 def compute_per_step_sub_plans(
-    metas: list[dict[str, Any]],
     *,
+    bundle_name: str,
+    metas: list[dict[str, Any]],
     thd_global_seq_lens: Optional[list[int]] = None,
 ) -> list[AlignerPerStepSubPlan]:
     if not metas or len(metas) == 1:
@@ -123,7 +129,10 @@ def compute_per_step_sub_plans(
         explicit_replicated_axes=replicated_axes,
         thd_global_seq_lens=thd_global_seq_lens,
     )
-    de_router_plans: list[DeRouterPlan] = maybe_compute_de_router_plan(metas)
+    de_router_plans: list[DeRouterPlan] = maybe_compute_de_router_plan(
+        bundle_name=bundle_name,
+        dims_spec=dims_spec,
+    )
     reorderer_plans = compute_reorderer_plans(
         dim_specs=dim_specs,
         parallel_infos=parallel_infos,

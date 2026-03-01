@@ -37,26 +37,37 @@ def execute_de_router_plan(
 
     plugin: DeRouterPlugin = plugin_cls()
 
+    ep_meta_names: frozenset[str] = frozenset(
+        {
+            f"{plan.dispatch_path}_ep_num_tokens",
+            f"{plan.dispatch_path}_ep_top_k",
+        }
+    )
+    all_required: frozenset[str] = plugin.required_aux_dump_names | ep_meta_names
+
     aux_tensors: dict[str, torch.Tensor] = _load_aux_tensors(
-        required_names=plugin.required_aux_dump_names,
+        required_names=all_required,
         aux_loader=aux_loader,
         meta=meta,
     )
+
+    num_tokens: int = int(aux_tensors.pop(f"{plan.dispatch_path}_ep_num_tokens").item())
+    top_k: int = int(aux_tensors.pop(f"{plan.dispatch_path}_ep_top_k").item())
 
     flat_tensor: torch.Tensor = plugin.flatten_routed_tensor(
         routed_tensor=tensor, aux_tensors=aux_tensors
     )
     forward_perm: torch.Tensor = plugin.compute_forward_permutation(
         aux_tensors=aux_tensors,
-        num_tokens=plan.num_tokens,
-        top_k=plan.top_k,
+        num_tokens=num_tokens,
+        top_k=top_k,
         num_routed=flat_tensor.shape[0],
     )
 
     return _apply_forward_permutation(
         flat_routed=flat_tensor,
         forward_perm=forward_perm,
-        total_slots=plan.num_tokens * plan.top_k,
+        total_slots=num_tokens * top_k,
     )
 
 

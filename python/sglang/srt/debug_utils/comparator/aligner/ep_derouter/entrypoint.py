@@ -20,18 +20,3 @@ _PLUGIN_REGISTRY: dict[str, type[DeRouterPlugin]] = {
     "deepep_ll": DeepEPLLDeRouter,
     "megatron_a2a": MegatronA2ADeRouter,
 }
-
-ALL_EP_AUX_DUMP_NAMES: frozenset[str] = frozenset().union(
-    *(cls().required_aux_dump_names for cls in _PLUGIN_REGISTRY.values())
-)
-
-
-def get_required_aux_dump_names(dispatch_path: str) -> frozenset[str]:
-    """Return the set of dump tensor names required by a given dispatch path."""
-    plugin_cls: type[DeRouterPlugin] | None = _PLUGIN_REGISTRY.get(dispatch_path)
-    if plugin_cls is None:
-        raise ValueError(
-            f"Unknown dispatch_path {dispatch_path!r}. "
-            f"Available: {sorted(_PLUGIN_REGISTRY.keys())}"
-        )
-    return plugin_cls().required_aux_dump_names

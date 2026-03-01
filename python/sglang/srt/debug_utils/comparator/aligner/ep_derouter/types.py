@@ -14,5 +14,3 @@ class DeRouterPlan(_FrozenBase):
 
     type: Literal["de_router"] = "de_router"
     dispatch_path: Literal["fused_moe", "deepep_normal", "deepep_ll", "megatron_a2a"]
-    num_tokens: int
-    top_k: int

@@ -21,10 +21,19 @@ class _FakeAuxLoader:
         self._tensors = tensors
 
     def load(self, **kwargs: Any) -> dict[str, torch.Tensor]:
-        return self._tensors
+        return dict(self._tensors)
 
 
 _FAKE_META: dict[str, Any] = {"step": 0, "rank": 0, "layer_id": 0}
+
+
+def _make_ep_meta_tensors(
+    dispatch_path: str, *, num_tokens: int, top_k: int
+) -> dict[str, torch.Tensor]:
+    return {
+        f"{dispatch_path}_ep_num_tokens": torch.tensor(num_tokens),
+        f"{dispatch_path}_ep_top_k": torch.tensor(top_k),
+    }
 
 
 class TestExecuteDeRouterPlan:
@@ -36,17 +45,20 @@ class TestExecuteDeRouterPlan:
         top_k: int = 1
         hidden_dim: int = 3
 
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="fused_moe",
-            num_tokens=num_tokens,
-            top_k=top_k,
-        )
+        plan: DeRouterPlan = DeRouterPlan(dispatch_path="fused_moe")
 
         sorted_token_ids: torch.Tensor = torch.tensor([1, 0], dtype=torch.int64)
         routed_tensor: torch.Tensor = torch.tensor(
             [[10.0, 11.0, 12.0], [20.0, 21.0, 22.0]]
         )
-        loader = _FakeAuxLoader({"fused_moe_sorted_token_ids": sorted_token_ids})
+        loader = _FakeAuxLoader(
+            {
+                "fused_moe_sorted_token_ids": sorted_token_ids,
+                **_make_ep_meta_tensors(
+                    "fused_moe", num_tokens=num_tokens, top_k=top_k
+                ),
+            }
+        )
 
         result: torch.Tensor = execute_de_router_plan(
             plan=plan, tensor=routed_tensor, aux_loader=loader, meta=_FAKE_META
@@ -60,19 +72,11 @@ class TestExecuteDeRouterPlan:
     def test_unknown_dispatch_path_raises(self) -> None:
         """Unknown dispatch_path is rejected by Pydantic validation."""
         with pytest.raises(pydantic.ValidationError):
-            DeRouterPlan(
-                dispatch_path="unknown_path",
-                num_tokens=4,
-                top_k=2,
-            )
+            DeRouterPlan(dispatch_path="unknown_path")
 
     def test_missing_aux_loader_raises(self) -> None:
         """Missing aux_loader when plugin requires aux tensors raises ValueError."""
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="fused_moe",
-            num_tokens=2,
-            top_k=1,
-        )
+        plan: DeRouterPlan = DeRouterPlan(dispatch_path="fused_moe")
         with pytest.raises(ValueError, match="no aux_loader"):
             execute_de_router_plan(
                 plan=plan,
@@ -83,11 +87,7 @@ class TestExecuteDeRouterPlan:
 
     def test_missing_aux_tensor_raises(self) -> None:
         """Missing required auxiliary tensor in loader output raises ValueError."""
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="fused_moe",
-            num_tokens=2,
-            top_k=1,
-        )
+        plan: DeRouterPlan = DeRouterPlan(dispatch_path="fused_moe")
         loader = _FakeAuxLoader({})
         with pytest.raises(ValueError, match="not found"):
             execute_de_router_plan(
@@ -103,16 +103,15 @@ class TestExecuteDeRouterPlan:
         top_k: int = 1
         hidden_dim: int = 2
 
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="megatron_a2a",
-            num_tokens=num_tokens,
-            top_k=top_k,
-        )
+        plan: DeRouterPlan = DeRouterPlan(dispatch_path="megatron_a2a")
 
         loader = _FakeAuxLoader(
             {
                 "megatron_a2a_reversed_local_input_permutation_mapping": torch.arange(
                     num_tokens, dtype=torch.long
+                ),
+                **_make_ep_meta_tensors(
+                    "megatron_a2a", num_tokens=num_tokens, top_k=top_k
                 ),
             }
         )
@@ -130,16 +129,15 @@ class TestExecuteDeRouterPlan:
         top_k: int = 1
         hidden_dim: int = 2
 
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="deepep_normal",
-            num_tokens=num_tokens,
-            top_k=top_k,
-        )
+        plan: DeRouterPlan = DeRouterPlan(dispatch_path="deepep_normal")
 
         loader = _FakeAuxLoader(
             {
                 "deepep_normal_rank_prefix_matrix": torch.tensor(
                     [0, 2], dtype=torch.long
+                ),
+                **_make_ep_meta_tensors(
+                    "deepep_normal", num_tokens=num_tokens, top_k=top_k
                 ),
             }
         )
@@ -165,11 +163,7 @@ class TestExecuteDeRouterPlan:
         expected_m: int = 2
         hidden_dim: int = 3
 
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="deepep_ll",
-            num_tokens=num_tokens,
-            top_k=top_k,
-        )
+        plan: DeRouterPlan = DeRouterPlan(dispatch_path="deepep_ll")
 
         packed_recv_src_info: torch.Tensor = torch.zeros(
             num_experts, expected_m, dtype=torch.long
@@ -193,6 +187,9 @@ class TestExecuteDeRouterPlan:
             {
                 "deepep_ll_packed_recv_src_info": packed_recv_src_info,
                 "deepep_ll_masked_m": masked_m,
+                **_make_ep_meta_tensors(
+                    "deepep_ll", num_tokens=num_tokens, top_k=top_k
+                ),
             }
         )
 
