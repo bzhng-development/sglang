@@ -429,16 +429,25 @@ class TestAutoDescendDir:
         _make_pt(child)
         assert auto_descend_dir(tmp_path, label="test") == child
 
-    def test_no_descend_with_multiple_children(self, tmp_path: Path) -> None:
-        """Two children with .pt files — ambiguous, no descend."""
+    def test_descend_single_nonempty_child_among_empty(self, tmp_path: Path) -> None:
+        """Two subdirs but only one has .pt — descend into that one."""
+        nonempty: Path = tmp_path / "engine_0"
+        _make_pt(nonempty)
+        (tmp_path / "empty_child").mkdir()
+        assert auto_descend_dir(tmp_path, label="test") == nonempty
+
+    def test_error_with_multiple_nonempty_children(self, tmp_path: Path) -> None:
+        """Two children with .pt files — ambiguous, raises ValueError."""
         _make_pt(tmp_path / "engine_0")
         _make_pt(tmp_path / "engine_1")
-        assert auto_descend_dir(tmp_path, label="test") == tmp_path
+        with pytest.raises(ValueError, match="multiple subdirectories contain data"):
+            auto_descend_dir(tmp_path, label="test")
 
-    def test_no_descend_when_no_children_have_pt(self, tmp_path: Path) -> None:
-        """No child has .pt files — no descend."""
+    def test_error_when_no_data_found(self, tmp_path: Path) -> None:
+        """No .pt files anywhere — raises ValueError."""
         (tmp_path / "empty_child").mkdir()
-        assert auto_descend_dir(tmp_path, label="test") == tmp_path
+        with pytest.raises(ValueError, match="no .pt files found"):
+            auto_descend_dir(tmp_path, label="test")
 
 
 if __name__ == "__main__":

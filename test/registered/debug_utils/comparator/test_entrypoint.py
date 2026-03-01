@@ -4313,6 +4313,50 @@ class TestEntrypointAutoDescend:
         stderr: str = capsys.readouterr().err
         assert "[comparator] auto-descend target_path:" in stderr
 
+    def test_auto_descend_single_nonempty_among_empty(
+        self, tmp_path: Path, capsys
+    ) -> None:
+        """Two subdirs but only one has .pt — auto-descend picks the non-empty one."""
+        baseline_exp, target_exp = _create_dumps(tmp_path, ["tensor_a"])
+
+        wrapper: Path = tmp_path / "target_wrap"
+        wrapper.mkdir()
+        target_exp.rename(wrapper / "engine_0")
+        (wrapper / "empty_subdir").mkdir()
+
+        argv = _make_argv(baseline_exp, wrapper, preset="raw")
+        records, exit_code = _run_and_parse(argv, capsys)
+
+        assert exit_code == 0
+        _assert_single_comparison_passed(records)
+
+    def test_error_multiple_nonempty_subdirs(self, tmp_path: Path) -> None:
+        """Two subdirs both with .pt — raises ValueError with clear message."""
+        baseline_exp, target_exp = _create_dumps(tmp_path, ["tensor_a"])
+
+        wrapper: Path = tmp_path / "target_wrap"
+        wrapper.mkdir()
+        target_exp.rename(wrapper / "engine_0")
+        engine_1: Path = wrapper / "engine_1"
+        engine_1.mkdir()
+        torch.save(torch.tensor([1.0]), engine_1 / "dummy.pt")
+
+        argv: list[str] = _make_argv(baseline_exp, wrapper, preset="raw")
+        with pytest.raises(ValueError, match="multiple subdirectories contain data"):
+            run(parse_args(argv))
+
+    def test_error_no_data_found(self, tmp_path: Path) -> None:
+        """No .pt files anywhere — raises ValueError."""
+        baseline_exp, _ = _create_dumps(tmp_path, ["tensor_a"])
+
+        empty_dir: Path = tmp_path / "empty_target"
+        empty_dir.mkdir()
+        (empty_dir / "subdir").mkdir()
+
+        argv: list[str] = _make_argv(baseline_exp, empty_dir, preset="raw")
+        with pytest.raises(ValueError, match="no .pt files found"):
+            run(parse_args(argv))
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__]))
