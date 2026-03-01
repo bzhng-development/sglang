@@ -193,12 +193,12 @@ class TestComputePerStepSubPlansDeRouter:
     """Test de-router plan generation from dims (ep) and bundle name."""
 
     def test_ep_dims_generates_de_router_plan(self) -> None:
-        """Dims with (ep) and a matching bundle name should produce a DeRouterPlan."""
+        """Dims with [ep] and a matching bundle name should produce a DeRouterPlan."""
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
             bundle_name="fused_moe_after_gemm1",
             metas=[
-                _make_meta(dims="t k[ep] n", tp_rank=0, tp_size=2),
-                _make_meta(dims="t k[ep] n", tp_rank=1, tp_size=2),
+                _make_meta(dims="t k[ep] n"),
+                _make_meta(dims="t k[ep] n"),
             ],
         )
 
@@ -224,12 +224,12 @@ class TestComputePerStepSubPlansDeRouter:
         assert len(de_router_plans) == 0
 
     def test_ep_dims_unrecognized_name_no_plan(self) -> None:
-        """Dims with (ep) but unrecognized bundle name prefix → no plan."""
+        """Dims with [ep] but unrecognized bundle name prefix → no plan."""
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
             bundle_name="unknown_dispatch_after_gemm1",
             metas=[
-                _make_meta(dims="t k[ep] n", tp_rank=0, tp_size=2),
-                _make_meta(dims="t k[ep] n", tp_rank=1, tp_size=2),
+                _make_meta(dims="t k[ep] n"),
+                _make_meta(dims="t k[ep] n"),
             ],
         )
 
