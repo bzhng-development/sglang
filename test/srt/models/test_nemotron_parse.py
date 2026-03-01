@@ -8,6 +8,7 @@ Requires a running server:
         --port 29999
 
 Usage:
+    pip install albumentations open_clip_torch timm
     python test/srt/models/test_nemotron_parse.py
     python test/srt/models/test_nemotron_parse.py --port 29999
 
