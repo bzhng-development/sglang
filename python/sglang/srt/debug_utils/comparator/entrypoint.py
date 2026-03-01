@@ -7,6 +7,9 @@ from typing import Any, Iterator, Optional, Union
 
 import polars as pl
 
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.entrypoint import (
+    ALL_EP_AUX_DUMP_NAMES,
+)
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.entrypoint import (
     TokenAlignerResult,
     compute_maybe_token_aligner_result,
@@ -37,6 +40,7 @@ from sglang.srt.debug_utils.comparator.per_token_visualizer import (
     generate_per_token_heatmap,
 )
 from sglang.srt.debug_utils.comparator.preset import PRESETS, expand_preset
+from sglang.srt.debug_utils.comparator.raw_aux_loader import RawAuxLoader
 from sglang.srt.debug_utils.comparator.utils import (
     Pair,
     auto_descend_dir,
@@ -102,8 +106,25 @@ def run(args: argparse.Namespace) -> int:
             token_aligner_mode=args.token_aligner,
         )
 
+        # Construct EP aux loaders *before* filtering aux names out of dfs
+        aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(
+            x=(
+                RawAuxLoader(df=dfs.x, dump_dir=dir_pair.x)
+                if _has_ep_aux(dfs.x)
+                else None
+            ),
+            y=(
+                RawAuxLoader(df=dfs.y, dump_dir=dir_pair.y)
+                if _has_ep_aux(dfs.y)
+                else None
+            ),
+        )
+
         if ta_result.mode == "smart":
             dfs = dfs.map(lambda df: df.filter(~pl.col("name").is_in(AUX_NAMES)))
+        dfs = dfs.map(
+            lambda df: df.filter(~pl.col("name").is_in(ALL_EP_AUX_DUMP_NAMES))
+        )
 
         skip_keys: set[str] = _DEFAULT_SKIP_KEYS | set(args.grouping_skip_keys or [])
         bundle_info_pairs: list[Pair[TensorBundleInfo]] = match_bundles(
@@ -127,6 +148,7 @@ def run(args: argparse.Namespace) -> int:
             viz_output_dir=viz_output_dir,
             compute_per_token=visualize_per_token is not None,
             meta_overrider=meta_overrider,
+            aux_loader_pair=aux_loader_pair,
         )
         summary, skipped_names, failed_names = _consume_comparison_records(
             comparison_records=comparison_records,
@@ -143,6 +165,12 @@ def run(args: argparse.Namespace) -> int:
         report_sink.close()
         if report_path is not None:
             print(f"Report: {report_path}", file=sys.stderr)
+
+
+def _has_ep_aux(df: pl.DataFrame) -> bool:
+    """Check whether the DataFrame contains any EP auxiliary tensor names."""
+    names: set[str] = set(df["name"].unique().to_list())
+    return bool(names & ALL_EP_AUX_DUMP_NAMES)
 
 
 def _resolve_report_path(
@@ -204,6 +232,7 @@ def _compare_bundle_pairs(
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
     meta_overrider: Optional[MetaOverrider] = None,
+    aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(x=None, y=None),
 ) -> Iterator[
     Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]
 ]:
@@ -228,6 +257,7 @@ def _compare_bundle_pairs(
             viz_output_dir=viz_output_dir,
             compute_per_token=compute_per_token,
             meta_overrider=meta_overrider,
+            aux_loader_pair=aux_loader_pair,
         )
 
         target_steps: set[int] = {info.step for info in bundle_info_pair.y}
