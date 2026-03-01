@@ -408,6 +408,14 @@ class TestExplicitReplicatedAxes:
         with pytest.raises(ValueError, match="Duplicate replicated"):
             parse_dims("b s h d # ep:replicated ep:replicated")
 
+    def test_unrecognized_token_in_comment_raises(self) -> None:
+        with pytest.raises(ValueError, match="Unrecognized token"):
+            parse_dims("b s h[tp] d # ep:replicatd")
+
+    def test_duplicate_dp_alias_raises(self) -> None:
+        with pytest.raises(ValueError, match="Duplicate dp alias"):
+            parse_dims("b s h d # dp:=foo dp:=bar")
+
 
 class TestResolveDimNamesWithFused:
     def test_fused_dim_uses_triple_underscore(self) -> None:

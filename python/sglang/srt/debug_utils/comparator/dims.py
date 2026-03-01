@@ -356,6 +356,11 @@ def _parse_comment_suffix(declaration_part: str) -> _CommentSuffix:
     for token in declaration_part.strip().split():
         dp_match = _DP_ALIAS_PATTERN.match(token)
         if dp_match is not None:
+            if dp_group_alias is not None:
+                raise ValueError(
+                    f"Duplicate dp alias declaration: already have {dp_group_alias!r}, "
+                    f"got {dp_match.group(1)!r}"
+                )
             dp_group_alias = dp_match.group(1)
             continue
 
@@ -372,6 +377,12 @@ def _parse_comment_suffix(declaration_part: str) -> _CommentSuffix:
                     f"Duplicate replicated declaration for axis {axis_str!r}"
                 )
             replicated_axes.add(axis)
+            continue
+
+        raise ValueError(
+            f"Unrecognized token {token!r} in # comment section. "
+            f"Expected 'dp:=<group>' or '<axis>:replicated'."
+        )
 
     return _CommentSuffix(
         dp_group_alias=dp_group_alias,

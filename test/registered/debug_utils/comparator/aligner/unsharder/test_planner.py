@@ -629,6 +629,18 @@ class TestExplicitReplicatedAxes:
                 dim_specs, parallel_infos, explicit_replicated_axes=replicated
             )
 
+    def test_explicit_replicated_conflicts_with_sharded_raises(self) -> None:
+        """Planner-level defense: replicated overlaps sharded → ValueError."""
+        dim_specs = parse_dims("h[tp]").dims
+        replicated = frozenset({ParallelAxis.TP})
+        parallel_infos = [
+            {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
+        ]
+        with pytest.raises(ValueError, match="both sharded and replicated"):
+            compute_unsharder_plan(
+                dim_specs, parallel_infos, explicit_replicated_axes=replicated
+            )
+
 
 class TestComputeUnsharderPlanFusedDims:
     def test_fused_dim_tp2(self) -> None:
