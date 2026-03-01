@@ -1,9 +1,12 @@
 """E2E test: source patcher + dumper + comparator on SGLang server.
 
 Patches Qwen3MoeDecoderLayer.forward (and related methods) to insert
-dumper.dump() calls at 7 points, launches servers with Qwen3-30B-A3B
+dumper.dump() calls at 7 points, launches servers with Qwen3-30B-A3B-FP8
 (MOE model), runs inference, verifies patched dump fields exist, then
 runs comparator to verify numerical consistency.
+
+The baseline (TP=2) is run once in setup_class and shared across all tests.
+Each test only runs the target server + comparator.
 
 Test cases:
 - test_patch_dump_and_compare: TP=2 baseline vs TP=4 target
@@ -39,7 +42,7 @@ from sglang.test.test_utils import (
 
 register_cuda_ci(est_time=300, suite="nightly-4-gpu", nightly=True)
 
-MODEL = "Qwen/Qwen3-30B-A3B"
+MODEL = "Qwen/Qwen3-30B-A3B-FP8"
 BASELINE_TP = 2
 TARGET_TP = 4
 EXP_NAME = "e2e_source_patcher"
@@ -214,11 +217,36 @@ patches:
 
 
 class TestSourcePatcherE2ESGLang:
-    """E2E: patch Qwen3Moe forward -> dump -> compare."""
+    """E2E: patch Qwen3Moe forward -> dump -> compare.
+
+    Baseline (TP=2) is run once in setup_class; all tests share the same
+    baseline dump data and only run their own target server + comparator.
+    """
+
+    _baseline_dir: Path
+
+    @classmethod
+    def setup_class(cls) -> None:
+        cls._baseline_dir = Path(tempfile.mkdtemp(prefix="e2e_baseline_"))
+
+        config_path: Path = cls._baseline_dir / "patch_config.yaml"
+        config_path.write_text(PATCH_CONFIG_YAML)
+
+        _run_server_and_generate(
+            dump_dir=cls._baseline_dir / "dump",
+            config_path=config_path,
+            tp=BASELINE_TP,
+            base_url=DEFAULT_URL_FOR_TEST,
+        )
+        _verify_patched_fields(
+            dump_dir=cls._baseline_dir / "dump",
+            field_names=_FIELDS_TO_VERIFY,
+        )
 
     def test_patch_dump_and_compare(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4 target."""
-        _run_e2e_scenario(
+        _run_target_and_compare(
+            baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
         )
@@ -230,7 +258,8 @@ class TestSourcePatcherE2ESGLang:
         tensors are NOT TP-sharded and mlp_output is already all-reduced.
         A separate patch config with corrected dims is used for the target.
         """
-        _run_e2e_scenario(
+        _run_target_and_compare(
+            baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=BASELINE_TP,
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
@@ -245,24 +274,22 @@ class TestSourcePatcherE2ESGLang:
         TP-sharded and should compare correctly after unsharding.
         The target uses EP-specific dims with moe_ep:replicated.
         """
-        _run_e2e_scenario(
+        _run_target_and_compare(
+            baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
-    @pytest.mark.skip(
-        reason="DeepEP non-quantized GEMM paths deprecated in upstream sglang "
-        "(forward_deepgemm_contiguous/masked assert False in ep_moe/layer.py)"
-    )
     def test_ep_deepep_normal(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4+DeepEP normal target.
 
         DeepEP normal mode uses all-to-all dispatch with contiguous GEMM.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size.
         """
-        _run_e2e_scenario(
+        _run_target_and_compare(
+            baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
             extra_target_server_args=[
@@ -271,19 +298,17 @@ class TestSourcePatcherE2ESGLang:
                 "--deepep-mode",
                 "normal",
             ],
+            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
-    @pytest.mark.skip(
-        reason="DeepEP non-quantized GEMM paths deprecated in upstream sglang "
-        "(forward_deepgemm_contiguous/masked assert False in ep_moe/layer.py)"
-    )
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=4+DeepEP low-latency target.
 
         DeepEP low-latency mode uses masked GEMM with 3D tensor layout.
         --moe-a2a-backend deepep automatically sets ep_size=tp_size.
         """
-        _run_e2e_scenario(
+        _run_target_and_compare(
+            baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
             extra_target_server_args=[
@@ -292,36 +317,26 @@ class TestSourcePatcherE2ESGLang:
                 "--deepep-mode",
                 "low_latency",
             ],
+            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
 
 # --------------------------------- helpers ---------------------------------
 
 
-def _run_e2e_scenario(
+def _run_target_and_compare(
     *,
+    baseline_exp_dir: Path,
     tmp_path: Path,
     target_tp: int,
     extra_target_server_args: Optional[list[str]] = None,
     target_patch_config_yaml: Optional[str] = None,
 ) -> None:
-    """Full e2e: write patch config -> baseline run -> target run -> compare."""
+    """Run target server + comparator against a pre-existing baseline."""
     base_url: str = DEFAULT_URL_FOR_TEST
-
-    baseline_config_path: Path = tmp_path / "patch_config.yaml"
-    baseline_config_path.write_text(PATCH_CONFIG_YAML)
 
     target_config_path: Path = tmp_path / "patch_config_target.yaml"
     target_config_path.write_text(target_patch_config_yaml or PATCH_CONFIG_YAML)
-
-    baseline_dir: Path = tmp_path / "baseline"
-    _run_server_and_generate(
-        dump_dir=baseline_dir,
-        config_path=baseline_config_path,
-        tp=BASELINE_TP,
-        base_url=base_url,
-    )
-    _verify_patched_fields(dump_dir=baseline_dir, field_names=_FIELDS_TO_VERIFY)
 
     target_dir: Path = tmp_path / "target"
     _run_server_and_generate(
@@ -333,9 +348,12 @@ def _run_e2e_scenario(
     )
     _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
 
-    baseline_exp: Path = baseline_dir / EXP_NAME
     target_exp: Path = target_dir / EXP_NAME
+    _run_comparator(baseline_exp=baseline_exp_dir, target_exp=target_exp)
 
+
+def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
+    """Run comparator CLI and assert success."""
     cmd: list[str] = [
         "python",
         "-m",
@@ -362,7 +380,7 @@ def _run_e2e_scenario(
     print(f"Comparator debug output: {debug_file}")
 
     assert result.returncode == 0, (
-        f"Comparator failed (rc={result.returncode}). " f"Debug output: {debug_file}"
+        f"Comparator failed (rc={result.returncode}). Debug output: {debug_file}"
     )
 
 
