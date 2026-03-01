@@ -6,8 +6,6 @@ import torch
 
 from sglang.srt.debug_utils.comparator.aligner.axis_aligner import (
     AxisAlignerPlan,
-    FlattenGroup,
-    FlattenPlan,
     compute_axis_aligner_plan,
     execute_axis_aligner_plan,
 )
@@ -16,8 +14,6 @@ from sglang.srt.debug_utils.comparator.utils import Pair
 from sglang.test.ci.ci_register import register_cpu_ci
 
 register_cpu_ci(est_time=15, suite="default", nightly=True)
-
-_NO_FLATTEN: Pair[Optional[FlattenPlan]] = Pair(x=None, y=None)
 
 
 class TestComputeAxisAlignerPlan:
@@ -93,16 +89,13 @@ class TestComputeAxisAlignerPlan:
 
 class TestComputeAxisAlignerPlanFused:
     def test_fused_vs_separate_generates_flatten(self) -> None:
-        """x=fused 2D, y=separate 3D: y gets flattened to match x."""
+        """x=fused 2D, y=separate 3D: y gets flattened to match x via einops."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t (num_heads*head_dim)[tp]", y="t num_heads[tp] head_dim")
         )
         assert result is not None
-        assert result.flatten.x is None
-        assert result.flatten.y is not None
-        assert len(result.flatten.y.groups) == 1
-        assert result.flatten.y.groups[0].dim_indices == [1, 2]
-        assert result.flatten.y.groups[0].target_name == "num_heads___head_dim"
+        assert result.pattern.x is None
+        assert result.pattern.y == "t num_heads head_dim -> t (num_heads head_dim)"
 
     def test_separate_vs_fused_generates_flatten(self) -> None:
         """x=separate 3D, y=fused 2D: x gets flattened to match y."""
@@ -110,9 +103,8 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="t num_heads[tp] head_dim", y="t (num_heads*head_dim)[tp]")
         )
         assert result is not None
-        assert result.flatten.x is not None
-        assert result.flatten.y is None
-        assert result.flatten.x.groups[0].dim_indices == [1, 2]
+        assert result.pattern.x == "t num_heads head_dim -> t (num_heads head_dim)"
+        assert result.pattern.y is None
 
     def test_both_fused_same_no_plan(self) -> None:
         """Both sides fused, same order → None (no-op)."""
@@ -136,10 +128,8 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="(a*b) c", y="a b c")
         )
         assert result is not None
-        assert result.flatten.y is not None
-        assert result.flatten.y.groups[0].dim_indices == [0, 1]
-        assert result.flatten.y.groups[0].target_name == "a___b"
-        assert result.flatten.x is None
+        assert result.pattern.x is None
+        assert result.pattern.y == "a b c -> (a b) c"
 
     def test_fused_with_squeeze(self) -> None:
         """Fused + squeeze on one side, separate on other."""
@@ -147,19 +137,15 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="t 1 (a*b)", y="t a b")
         )
         assert result is not None
-        # x has squeeze to remove, y has a,b to flatten
-        assert result.flatten.y is not None
-        assert result.flatten.y.groups[0].dim_indices == [1, 2]
+        assert result.pattern.x == "t 1 (a b) -> t (a b)"
+        assert result.pattern.y == "t a b -> t (a b)"
 
 
 class TestExecuteAxisAlignerPlan:
     def test_rearrange(self) -> None:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
-        plan = AxisAlignerPlan(
-            flatten=_NO_FLATTEN,
-            pattern=Pair(x="t h d -> t d h", y=None),
-        )
+        plan = AxisAlignerPlan(pattern=Pair(x="t h d -> t d h", y=None))
 
         result: torch.Tensor = execute_axis_aligner_plan(
             tensor=tensor, plan=plan, side="x"
@@ -167,18 +153,14 @@ class TestExecuteAxisAlignerPlan:
 
         assert result.shape == (4, 16, 8)
         for i in range(4):
-            assert torch.equal(
-                result[i],
-                tensor.rename(None)[i].T,
-            )
+            assert torch.equal(result[i], tensor.rename(None)[i].T)
 
     def test_execute_squeeze(self) -> None:
         torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
-        plan = AxisAlignerPlan(
-            flatten=_NO_FLATTEN,
-            pattern=Pair(x="t 1 h -> t h", y=None),
+        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names(
+            "t", "singleton0", "h"
         )
+        plan = AxisAlignerPlan(pattern=Pair(x="t 1 h -> t h", y=None))
 
         result: torch.Tensor = execute_axis_aligner_plan(
             tensor=tensor, plan=plan, side="x"
@@ -191,10 +173,7 @@ class TestExecuteAxisAlignerPlan:
         tensor: torch.Tensor = torch.randn(4, 1, 8, 16).refine_names(
             "t", "singleton0", "h", "d"
         )
-        plan = AxisAlignerPlan(
-            flatten=_NO_FLATTEN,
-            pattern=Pair(x="t 1 h d -> t d h", y=None),
-        )
+        plan = AxisAlignerPlan(pattern=Pair(x="t 1 h d -> t d h", y=None))
 
         result: torch.Tensor = execute_axis_aligner_plan(
             tensor=tensor, plan=plan, side="x"
@@ -204,11 +183,10 @@ class TestExecuteAxisAlignerPlan:
 
     def test_execute_y_side(self) -> None:
         torch.manual_seed(42)
-        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names("t", "singleton0", "h")
-        plan = AxisAlignerPlan(
-            flatten=_NO_FLATTEN,
-            pattern=Pair(x=None, y="t 1 h -> t h"),
+        tensor: torch.Tensor = torch.randn(4, 1, 8).refine_names(
+            "t", "singleton0", "h"
         )
+        plan = AxisAlignerPlan(pattern=Pair(x=None, y="t 1 h -> t h"))
 
         result: torch.Tensor = execute_axis_aligner_plan(
             tensor=tensor, plan=plan, side="y"
@@ -219,10 +197,7 @@ class TestExecuteAxisAlignerPlan:
     def test_noop_side(self) -> None:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16).refine_names("t", "h", "d")
-        plan = AxisAlignerPlan(
-            flatten=_NO_FLATTEN,
-            pattern=Pair(x="t h d -> t d h", y=None),
-        )
+        plan = AxisAlignerPlan(pattern=Pair(x="t h d -> t d h", y=None))
 
         result: torch.Tensor = execute_axis_aligner_plan(
             tensor=tensor, plan=plan, side="y"
@@ -233,17 +208,11 @@ class TestExecuteAxisAlignerPlan:
 
 class TestExecuteAxisAlignerPlanFlatten:
     def test_flatten_separate_to_match_fused(self) -> None:
-        """3D (t=4, nh=8, hd=16) → 2D (t=4, nh*hd=128) via flatten."""
+        """3D (t=4, nh=8, hd=16) → 2D (t=4, nh*hd=128) via einops flatten."""
         torch.manual_seed(42)
         tensor_3d: torch.Tensor = torch.randn(4, 8, 16)
         plan = AxisAlignerPlan(
-            flatten=Pair(
-                x=None,
-                y=FlattenPlan(
-                    groups=[FlattenGroup(dim_indices=[1, 2], target_name="nh__hd")]
-                ),
-            ),
-            pattern=Pair(x=None, y=None),
+            pattern=Pair(x=None, y="t nh hd -> t (nh hd)"),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
@@ -258,13 +227,7 @@ class TestExecuteAxisAlignerPlanFlatten:
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(2, 3, 4, 5)
         plan = AxisAlignerPlan(
-            flatten=Pair(
-                x=FlattenPlan(
-                    groups=[FlattenGroup(dim_indices=[1, 2], target_name="bc")]
-                ),
-                y=None,
-            ),
-            pattern=Pair(x=None, y=None),
+            pattern=Pair(x="a b c d -> a (b c) d", y=None),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
@@ -275,17 +238,11 @@ class TestExecuteAxisAlignerPlanFlatten:
         assert torch.equal(result, tensor.reshape(2, 12, 5))
 
     def test_flatten_then_rearrange(self) -> None:
-        """Flatten + reorder: flatten dims 1,2 then swap."""
+        """Flatten + reorder in a single einops pattern."""
         torch.manual_seed(42)
         tensor: torch.Tensor = torch.randn(4, 8, 16, 32)
         plan = AxisAlignerPlan(
-            flatten=Pair(
-                x=FlattenPlan(
-                    groups=[FlattenGroup(dim_indices=[1, 2], target_name="fused")]
-                ),
-                y=None,
-            ),
-            pattern=Pair(x="t fused d -> t d fused", y=None),
+            pattern=Pair(x="t a b d -> t d (a b)", y=None),
         )
 
         result: torch.Tensor = execute_axis_aligner_plan(
