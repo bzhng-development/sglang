@@ -59,9 +59,7 @@ class DeepEPLLDeRouter(DeRouterPlugin):
             expert_hidden: torch.Tensor = routed_tensor[expert_i, :valid_count]
 
             # Decode token index from packed format
-            token_indices: torch.Tensor = (
-                expert_src_info.long() % num_tokens
-            )
+            token_indices: torch.Tensor = expert_src_info.long() % num_tokens
 
             # Assign k-index for each token occurrence
             for j in range(valid_count):

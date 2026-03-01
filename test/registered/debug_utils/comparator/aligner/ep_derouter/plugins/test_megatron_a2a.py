@@ -23,9 +23,7 @@ class TestMegatronA2ADeRouter:
 
         # sorted_indices[i] = original token at permuted position i
         # Permuted order: [token2, token0, token3, token1]
-        sorted_indices: torch.Tensor = torch.tensor(
-            [2, 0, 3, 1], dtype=torch.long
-        )
+        sorted_indices: torch.Tensor = torch.tensor([2, 0, 3, 1], dtype=torch.long)
         tokens_per_expert: torch.Tensor = torch.tensor([2, 2], dtype=torch.long)
 
         # routed[0] has token 2's data, routed[1] has token 0's data, etc.
@@ -65,9 +63,7 @@ class TestMegatronA2ADeRouter:
 
         # Token 0 appears twice (expert 0 and expert 1), token 1 appears twice
         # Permuted: [token0, token1, token0, token1]
-        sorted_indices: torch.Tensor = torch.tensor(
-            [0, 1, 0, 1], dtype=torch.long
-        )
+        sorted_indices: torch.Tensor = torch.tensor([0, 1, 0, 1], dtype=torch.long)
         tokens_per_expert: torch.Tensor = torch.tensor([2, 2], dtype=torch.long)
 
         routed_tensor: torch.Tensor = torch.tensor(

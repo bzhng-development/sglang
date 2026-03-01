@@ -32,9 +32,7 @@ class TestExecuteDeRouterPlan:
         routed_tensor: torch.Tensor = torch.tensor(
             [[10.0, 11.0, 12.0], [20.0, 21.0, 22.0]]
         )
-        aux_tensors: dict[str, torch.Tensor] = {
-            "my_sorted_token_ids": sorted_token_ids
-        }
+        aux_tensors: dict[str, torch.Tensor] = {"my_sorted_token_ids": sorted_token_ids}
 
         result: torch.Tensor = execute_de_router_plan(
             plan=plan, tensor=routed_tensor, aux_tensors=aux_tensors

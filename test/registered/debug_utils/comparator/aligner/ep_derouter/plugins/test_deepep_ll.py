@@ -37,9 +37,7 @@ class TestDeepEPLLDeRouter:
         masked_m: torch.Tensor = torch.tensor([2, 2], dtype=torch.long)
 
         # 3D routed tensor: (num_experts, expected_m, hidden_dim)
-        routed_tensor: torch.Tensor = torch.zeros(
-            num_experts, expected_m, hidden_dim
-        )
+        routed_tensor: torch.Tensor = torch.zeros(num_experts, expected_m, hidden_dim)
         routed_tensor[0, 0] = torch.tensor([10.0, 11.0, 12.0])
         routed_tensor[0, 1] = torch.tensor([20.0, 21.0, 22.0])
         routed_tensor[1, 0] = torch.tensor([30.0, 31.0, 32.0])
