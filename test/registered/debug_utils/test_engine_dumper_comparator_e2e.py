@@ -161,6 +161,58 @@ patches:
 """
 
 
+PATCH_CONFIG_EP_YAML: str = """\
+patches:
+  # --- decoder layer level ---
+  # With --ep-size, moe_ep is active. All decoder-level and MOE tensors
+  # are replicated across moe_ep (FusedMoE combines results internally).
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
+    edits:
+      - match: |
+          hidden_states, residual = (
+              self.layer_communicator.prepare_attn_and_capture_last_layer_outputs(
+                  hidden_states,
+                  residual,
+                  forward_batch,
+                  captured_last_layer_outputs=captured_last_layer_outputs,
+                  **kwargs,
+              )
+          )
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+      - match: |
+          hidden_states = self.self_attn(
+              positions=positions,
+              hidden_states=hidden_states,
+              forward_batch=forward_batch,
+          )
+        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+      - match: |
+          hidden_states, residual = self.layer_communicator.prepare_mlp(
+              hidden_states, residual, forward_batch
+          )
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+      - match: |
+          hidden_states = self.mlp(
+              hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
+          )
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+
+  # --- attention internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
+    edits:
+      - match: "output, _ = self.o_proj(attn_output)"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp] # moe_ep:replicated')"
+
+  # --- moe internals ---
+  - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
+    edits:
+      - match: "router_logits, _ = self.gate(hidden_states)"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated')"
+      - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+"""
+
+
 class TestSourcePatcherE2ESGLang:
     """E2E: patch Qwen3Moe forward -> dump -> compare."""
 
@@ -191,11 +243,13 @@ class TestSourcePatcherE2ESGLang:
         With --ep-size 4 on TP=4, MoE experts are distributed across all
         4 ranks via FusedMoE/Triton dispatch. Decoder-level tensors remain
         TP-sharded and should compare correctly after unsharding.
+        The target uses EP-specific dims with moe_ep:replicated.
         """
         _run_e2e_scenario(
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
             extra_target_server_args=["--ep-size", "4"],
+            target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
         )
 
     @pytest.mark.skip(
