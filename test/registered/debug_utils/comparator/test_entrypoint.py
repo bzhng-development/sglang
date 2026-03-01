@@ -2153,6 +2153,162 @@ class TestEntrypointAlignment:
         assert summary.passed == 2
 
 
+class TestEntrypointSglangMoeAxes:
+    """E2E tests for sglang MOE parallel axes (moe_tp, moe_ep, moe_dp)."""
+
+    def test_moe_tp_unshard(self, tmp_path: Path, capsys) -> None:
+        """moe_tp_rank/moe_tp_size with dims h[moe_tp] unshards correctly."""
+        torch.manual_seed(42)
+        full_baseline: torch.Tensor = torch.randn(4, 8)
+        full_target: torch.Tensor = full_baseline + torch.randn(4, 8) * 0.001
+
+        moe_tp_size: int = 2
+        for side_name, full_tensor in [("baseline", full_baseline), ("target", full_target)]:
+            side_dir: Path = tmp_path / side_name
+            side_dir.mkdir()
+            chunks: list[torch.Tensor] = list(full_tensor.chunk(moe_tp_size, dim=1))
+            for moe_tp_rank in range(moe_tp_size):
+                _create_rank_dump(
+                    side_dir,
+                    rank=moe_tp_rank,
+                    name="expert_out",
+                    tensor=chunks[moe_tp_rank],
+                    dims="t h[moe_tp]",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "moe_tp_rank": moe_tp_rank,
+                        "moe_tp_size": moe_tp_size,
+                    },
+                    framework="sglang",
+                )
+
+        argv: list[str] = _make_argv(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+        records, _ = _run_and_parse(argv, capsys)
+        comp: TensorComparisonRecord = _assert_single_comparison_passed(records)
+        assert comp.name == "expert_out"
+
+    def test_moe_ep_unshard(self, tmp_path: Path, capsys) -> None:
+        """moe_ep_rank/moe_ep_size with dims e[moe_ep] unshards correctly."""
+        torch.manual_seed(42)
+        full_baseline: torch.Tensor = torch.randn(8, 4, 6)
+        full_target: torch.Tensor = full_baseline + torch.randn(8, 4, 6) * 0.001
+
+        moe_ep_size: int = 2
+        for side_name, full_tensor in [("baseline", full_baseline), ("target", full_target)]:
+            side_dir: Path = tmp_path / side_name
+            side_dir.mkdir()
+            chunks: list[torch.Tensor] = list(full_tensor.chunk(moe_ep_size, dim=0))
+            for moe_ep_rank in range(moe_ep_size):
+                _create_rank_dump(
+                    side_dir,
+                    rank=moe_ep_rank,
+                    name="routed",
+                    tensor=chunks[moe_ep_rank],
+                    dims="e[moe_ep] t h",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "moe_ep_rank": moe_ep_rank,
+                        "moe_ep_size": moe_ep_size,
+                    },
+                    framework="sglang",
+                )
+
+        argv: list[str] = _make_argv(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+        records, _ = _run_and_parse(argv, capsys)
+        comp: TensorComparisonRecord = _assert_single_comparison_passed(records)
+        assert comp.name == "routed"
+
+    def test_moe_ep_moe_tp_combined_unshard(self, tmp_path: Path, capsys) -> None:
+        """moe_ep + moe_tp two-axis shards unshard correctly."""
+        torch.manual_seed(42)
+        full_baseline: torch.Tensor = torch.randn(4, 8, 16)
+        full_target: torch.Tensor = full_baseline + torch.randn(4, 8, 16) * 0.001
+
+        moe_ep_size: int = 2
+        moe_tp_size: int = 2
+        for side_name, full_tensor in [("baseline", full_baseline), ("target", full_target)]:
+            side_dir: Path = tmp_path / side_name
+            side_dir.mkdir()
+            ep_chunks: list[torch.Tensor] = list(full_tensor.chunk(moe_ep_size, dim=0))
+            rank: int = 0
+            for moe_ep_rank in range(moe_ep_size):
+                tp_chunks: list[torch.Tensor] = list(
+                    ep_chunks[moe_ep_rank].chunk(moe_tp_size, dim=2)
+                )
+                for moe_tp_rank in range(moe_tp_size):
+                    _create_rank_dump(
+                        side_dir,
+                        rank=rank,
+                        name="expert_hidden",
+                        tensor=tp_chunks[moe_tp_rank],
+                        dims="e[moe_ep] t h[moe_tp]",
+                        parallel_info={
+                            "tp_rank": 0,
+                            "tp_size": 1,
+                            "moe_ep_rank": moe_ep_rank,
+                            "moe_ep_size": moe_ep_size,
+                            "moe_tp_rank": moe_tp_rank,
+                            "moe_tp_size": moe_tp_size,
+                        },
+                        framework="sglang",
+                    )
+                    rank += 1
+
+        argv: list[str] = _make_argv(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+        records, _ = _run_and_parse(argv, capsys)
+        comp: TensorComparisonRecord = _assert_single_comparison_passed(records)
+        assert comp.name == "expert_hidden"
+
+    def test_moe_tp_replicated(self, tmp_path: Path, capsys) -> None:
+        """moe_tp:replicated checks replicated consistency across moe_tp ranks."""
+        torch.manual_seed(42)
+        tensor_data: torch.Tensor = torch.randn(4, 8)
+        target_data: torch.Tensor = tensor_data + torch.randn(4, 8) * 0.001
+
+        moe_tp_size: int = 2
+        for side_name, data in [("baseline", tensor_data), ("target", target_data)]:
+            side_dir: Path = tmp_path / side_name
+            side_dir.mkdir()
+            for moe_tp_rank in range(moe_tp_size):
+                _create_rank_dump(
+                    side_dir,
+                    rank=moe_tp_rank,
+                    name="router_logits",
+                    tensor=data,
+                    dims="t e # moe_tp:replicated",
+                    parallel_info={
+                        "tp_rank": 0,
+                        "tp_size": 1,
+                        "moe_tp_rank": moe_tp_rank,
+                        "moe_tp_size": moe_tp_size,
+                    },
+                    framework="sglang",
+                )
+
+        argv: list[str] = _make_argv(
+            tmp_path / "baseline" / _FIXED_EXP_NAME,
+            tmp_path / "target" / _FIXED_EXP_NAME,
+            diff_threshold=0.01,
+        )
+        records, _ = _run_and_parse(argv, capsys)
+        comp: TensorComparisonRecord = _assert_single_comparison_passed(records)
+        assert comp.name == "router_logits"
+
+
 class TestEntrypointNonTensorValues:
     """Test non-tensor value comparison through the full entrypoint pipeline."""
 
