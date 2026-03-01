@@ -44,11 +44,15 @@ DUMPER_FILTER = "layer_id in [0, 1, 2]"
 
 _FIELDS_TO_VERIFY: list[str] = [
     # decoder layer level (aligned with miles)
-    "layer_input", "attn_output", "pre_mlp_residual", "mlp_output",
+    "layer_input",
+    "attn_output",
+    "pre_mlp_residual",
+    "mlp_output",
     # attention internals
     "attn_pre_o_proj",
     # moe internals
-    "moe_router_logits", "moe_expert_output",
+    "moe_router_logits",
+    "moe_expert_output",
 ]
 
 PATCH_CONFIG_YAML: str = """\
@@ -246,8 +250,7 @@ def _run_e2e_scenario(
     print(f"Comparator debug output: {debug_file}")
 
     assert result.returncode == 0, (
-        f"Comparator failed (rc={result.returncode}). "
-        f"Debug output: {debug_file}"
+        f"Comparator failed (rc={result.returncode}). " f"Debug output: {debug_file}"
     )
 
 
@@ -269,9 +272,12 @@ def _run_server_and_generate(
     }
 
     server_args: list[str] = [
-        "--tp", str(tp),
-        "--max-total-tokens", "128",
-        "--mem-fraction-static", "0.5",
+        "--tp",
+        str(tp),
+        "--max-total-tokens",
+        "128",
+        "--mem-fraction-static",
+        "0.5",
         "--disable-cuda-graph",
         "--disable-radix-cache",
     ]

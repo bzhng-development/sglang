@@ -1,6 +1,8 @@
 import warnings
 
-warnings.filterwarnings("ignore", message="builtin type Swig.*", category=DeprecationWarning)
+warnings.filterwarnings(
+    "ignore", message="builtin type Swig.*", category=DeprecationWarning
+)
 
 import pytest
 
