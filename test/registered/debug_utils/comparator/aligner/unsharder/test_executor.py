@@ -775,13 +775,13 @@ class TestReduceSum:
 
 class TestFusedDimExecutor:
     def test_fused_tp2_concat(self) -> None:
-        """Fused dim "t num_heads[tp]*head_dim": TP=2 concat on fused axis."""
+        """Fused dim "t (num_heads*head_dim)[tp]": TP=2 concat on fused axis."""
         torch.manual_seed(42)
         full_tensor = torch.randn(4, 128)  # t=4, nh*hd=128
 
         shards = list(full_tensor.chunk(2, dim=1))
 
-        dim_specs = parse_dims("t num_heads[tp]*head_dim").dims
+        dim_specs = parse_dims("t (num_heads*head_dim)[tp]").dims
         parallel_infos = [
             {ParallelAxis.TP: AxisInfo(axis_rank=i, axis_size=2)} for i in range(2)
         ]
