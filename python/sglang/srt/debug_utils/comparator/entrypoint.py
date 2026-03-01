@@ -49,8 +49,12 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
-    args.baseline_path = str(_auto_descend_dir(Path(args.baseline_path), label="baseline_path"))
-    args.target_path = str(_auto_descend_dir(Path(args.target_path), label="target_path"))
+    args.baseline_path = str(
+        _auto_descend_dir(Path(args.baseline_path), label="baseline_path")
+    )
+    args.target_path = str(
+        _auto_descend_dir(Path(args.target_path), label="target_path")
+    )
 
     report_path: Optional[Path] = _resolve_report_path(args)
     report_sink.configure(
@@ -137,8 +141,7 @@ def _auto_descend_dir(directory: Path, label: str) -> Path:
         return directory
 
     candidates: list[Path] = [
-        sub for sub in directory.iterdir()
-        if sub.is_dir() and any(sub.glob("*.pt"))
+        sub for sub in directory.iterdir() if sub.is_dir() and any(sub.glob("*.pt"))
     ]
     if len(candidates) == 1:
         resolved: Path = candidates[0]

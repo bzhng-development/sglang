@@ -1,5 +1,6 @@
-import torch
 from pathlib import Path
+
+import torch
 
 from sglang.srt.debug_utils.comparator.entrypoint import _auto_descend_dir
 
