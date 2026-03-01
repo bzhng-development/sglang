@@ -137,7 +137,7 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="(a*b) c", y="b a c")
         )
         assert result is not None
-        assert result.pattern.x is None
+        assert result.pattern.x == "c a__b -> a__b c"
         assert result.pattern.y == "b a c -> (a b) c"
 
     def test_fused_with_squeeze(self) -> None:
@@ -146,7 +146,7 @@ class TestComputeAxisAlignerPlanFused:
             Pair(x="t 1 (a*b)", y="t a b")
         )
         assert result is not None
-        assert result.pattern.x == "t 1 (a b) -> t (a b)"
+        assert result.pattern.x == "t 1 a__b -> t a__b"
         assert result.pattern.y == "t a b -> t (a b)"
 
 

@@ -6,7 +6,6 @@ import torch
 from einops import rearrange
 
 from sglang.srt.debug_utils.comparator.dims import (
-    SQUEEZE_DIM_NAME,
     DimSpec,
     _SingletonDimUtil,
     parse_dims,
@@ -36,14 +35,10 @@ def compute_axis_aligner_plan(
     if not _semantic_names_match(specs_pair):
         return None
 
-    source_tokens_pair: Pair[list[str]] = specs_pair.map(_build_einops_tokens)
-
-    # Target: y's tokens with squeeze removed. Fused dims stay fused — both sides
-    # flatten toward the fused representation (unflatten is ambiguous without sizes).
-    target_tokens: list[str] = _build_fused_target(specs_pair)
-
-    pattern: Pair[Optional[str]] = source_tokens_pair.map(
-        lambda tokens: _build_pattern(source=tokens, target=target_tokens)
+    # Canonical dim order follows y; fused groups stay fused (flatten, not unflatten).
+    canonical_order: list[str] = _build_canonical_order(specs_pair)
+    pattern: Pair[Optional[str]] = specs_pair.map(
+        lambda specs: _build_side_pattern(specs=specs, canonical_order=canonical_order)
     )
 
     if pattern.x is None and pattern.y is None:
@@ -80,36 +75,22 @@ def _expand_and_skip_squeeze(specs: list[DimSpec]) -> list[str]:
     return [name for spec in specs if not _SingletonDimUtil.is_squeeze(spec) for name in spec.sub_dims]
 
 
-def _build_einops_tokens(specs: list[DimSpec]) -> list[str]:
-    """Convert DimSpecs to einops-compatible tokens.
+def _build_canonical_order(specs_pair: Pair[list[DimSpec]]) -> list[str]:
+    """Build canonical dim order following y, preferring fused representation.
 
-    Fused dims become ``"(a b)"``; squeeze dims stay ``"1"``; plain dims use their name.
+    Each element is either a plain name (``"c"``) or a fused placeholder (``"a__b"``).
+    Fused groups from *either* side are merged — the separate side must flatten.
+    Squeeze dims are excluded.
     """
-    return [
-        f"({' '.join(spec.sub_dims)})" if spec.is_fused else spec.name
-        for spec in specs
-    ]
-
-
-def _build_fused_target(specs_pair: Pair[list[DimSpec]]) -> list[str]:
-    """Build target token list that prefers the fused representation.
-
-    For each semantic name group, if *either* side has it as a fused dim, the target
-    uses the fused ``(a b)`` token. This ensures the separate side always flattens
-    (einops can flatten without extra size info, but unflatten is ambiguous).
-
-    Dim order follows y; squeeze dims are excluded.
-    """
-    # Map each sub-dim name → (fused_token, set_of_siblings) from both sides
+    # Map each sub-dim name → (placeholder, siblings) from both sides
     fused_lookup: dict[str, tuple[str, frozenset[str]]] = {}
     for spec in (*specs_pair.x, *specs_pair.y):
         if spec.is_fused:
-            token: str = f"({' '.join(spec.sub_dims)})"
+            placeholder: str = "__".join(spec.sub_dims)
             siblings: frozenset[str] = frozenset(spec.sub_dims)
             for sub_name in spec.sub_dims:
-                fused_lookup.setdefault(sub_name, (token, siblings))
+                fused_lookup.setdefault(sub_name, (placeholder, siblings))
 
-    # Walk y's semantic names in order, emitting fused tokens or plain names
     result: list[str] = []
     consumed: set[str] = set()
 
@@ -123,9 +104,9 @@ def _build_fused_target(specs_pair: Pair[list[DimSpec]]) -> list[str]:
 
         entry: Optional[tuple[str, frozenset[str]]] = fused_lookup.get(names[0])
         if entry is not None:
-            fused_token, siblings = entry
-            result.append(fused_token)
-            consumed.update(siblings)
+            fused_placeholder, sibs = entry
+            result.append(fused_placeholder)
+            consumed.update(sibs)
         else:
             result.append(spec.name)
             consumed.update(names)
@@ -133,12 +114,34 @@ def _build_fused_target(specs_pair: Pair[list[DimSpec]]) -> list[str]:
     return result
 
 
-def _build_pattern(*, source: list[str], target: list[str]) -> Optional[str]:
-    """Build an einops rearrange pattern. Returns None if already matching."""
-    if source == target:
+def _build_side_pattern(
+    *, specs: list[DimSpec], canonical_order: list[str]
+) -> Optional[str]:
+    """Build an einops pattern for one side to reach ``canonical_order``.
+
+    Fused specs become their placeholder; separate specs that belong to a fused group
+    stay as individual names on the LHS and become ``(a b)`` on the RHS (einops flatten).
+    Squeeze dims (``1``) appear on the LHS but are dropped from the RHS.
+    """
+    source_tokens: list[str] = [
+        "__".join(spec.sub_dims) if spec.is_fused else spec.name
+        for spec in specs
+    ]
+
+    # Build per-side target: replace fused placeholders with ``(a b)`` only if this side
+    # has the sub-dims as separate (non-fused) names in the source
+    fused_placeholders: set[str] = {
+        "__".join(spec.sub_dims) for spec in specs if spec.is_fused
+    }
+    target_tokens: list[str] = [
+        f"({t.replace('__', ' ')})" if "__" in t and t not in fused_placeholders else t
+        for t in canonical_order
+    ]
+
+    if source_tokens == target_tokens:
         return None
 
-    return f"{' '.join(source)} -> {' '.join(target)}"
+    return f"{' '.join(source_tokens)} -> {' '.join(target_tokens)}"
 
 
 # --- executor ---
