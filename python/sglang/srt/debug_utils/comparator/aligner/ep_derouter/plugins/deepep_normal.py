@@ -9,8 +9,8 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
     """De-router for SGLang DeepEP Normal dispatch path.
 
     After dispatch, tokens from all source ranks are laid out contiguously per
-    expert.  ``rank_prefix_matrix[src_rank]`` gives the starting offset for
-    tokens coming from ``src_rank``.
+    expert.  ``deepep_normal_rank_prefix_matrix[src_rank]`` gives the starting
+    offset for tokens coming from ``src_rank``.
 
     We reconstruct the global flatten index for each received token using:
     1. The source rank prefix offsets to determine which source rank each
@@ -24,6 +24,10 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
     total number of tokens from ranks ``< r``.
     """
 
+    @property
+    def required_aux_dump_names(self) -> frozenset[str]:
+        return frozenset({"deepep_normal_rank_prefix_matrix"})
+
     def compute_forward_permutation(
         self,
         aux_tensors: dict[str, torch.Tensor],
@@ -32,7 +36,9 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
         top_k: int,
         num_routed: int,
     ) -> torch.Tensor:
-        rank_prefix_matrix: torch.Tensor = aux_tensors["rank_prefix_matrix"]
+        rank_prefix_matrix: torch.Tensor = aux_tensors[
+            "deepep_normal_rank_prefix_matrix"
+        ]
         total_slots: int = num_tokens * top_k
 
         rank_prefix: torch.Tensor = rank_prefix_matrix.to(dtype=torch.long).flatten()

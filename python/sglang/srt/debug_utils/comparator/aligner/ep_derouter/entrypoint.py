@@ -24,6 +24,21 @@ _PLUGIN_REGISTRY: dict[str, type[DeRouterPlugin]] = {
     "megatron_a2a": MegatronA2ADeRouter,
 }
 
+ALL_EP_AUX_DUMP_NAMES: frozenset[str] = frozenset().union(
+    *(cls().required_aux_dump_names for cls in _PLUGIN_REGISTRY.values())
+)
+
+
+def get_required_aux_dump_names(dispatch_path: str) -> frozenset[str]:
+    """Return the set of dump tensor names required by a given dispatch path."""
+    plugin_cls: type[DeRouterPlugin] | None = _PLUGIN_REGISTRY.get(dispatch_path)
+    if plugin_cls is None:
+        raise ValueError(
+            f"Unknown dispatch_path {dispatch_path!r}. "
+            f"Available: {sorted(_PLUGIN_REGISTRY.keys())}"
+        )
+    return plugin_cls().required_aux_dump_names
+
 
 def execute_de_router_plan(
     plan: DeRouterPlan,
@@ -32,9 +47,10 @@ def execute_de_router_plan(
 ) -> torch.Tensor:
     """Execute a de-router plan on a single tensor.
 
-    Resolves the plugin from ``plan.dispatch_path``, gathers the required
-    auxiliary tensors, then calls ``flatten_routed_tensor`` +
-    ``compute_forward_permutation`` and applies the unified scatter.
+    Resolves the plugin from ``plan.dispatch_path``, validates that all
+    required auxiliary tensors are present, then calls
+    ``flatten_routed_tensor`` + ``compute_forward_permutation`` and
+    applies the unified scatter.
     """
     plugin_cls: type[DeRouterPlugin] | None = _PLUGIN_REGISTRY.get(plan.dispatch_path)
     if plugin_cls is None:
@@ -45,21 +61,19 @@ def execute_de_router_plan(
 
     plugin: DeRouterPlugin = plugin_cls()
 
-    resolved_aux: dict[str, torch.Tensor] = {}
-    for ref_key, dump_name in plan.aux_tensor_refs.items():
-        if dump_name not in aux_tensors:
+    for name in plugin.required_aux_dump_names:
+        if name not in aux_tensors:
             raise ValueError(
                 f"De-router plugin {plan.dispatch_path!r} requires auxiliary tensor "
-                f"{ref_key!r} (dump name {dump_name!r}), but it was not found. "
+                f"{name!r}, but it was not found. "
                 f"Available: {sorted(aux_tensors.keys())}"
             )
-        resolved_aux[ref_key] = aux_tensors[dump_name]
 
     flat_tensor: torch.Tensor = plugin.flatten_routed_tensor(
-        routed_tensor=tensor, aux_tensors=resolved_aux
+        routed_tensor=tensor, aux_tensors=aux_tensors
     )
     forward_perm: torch.Tensor = plugin.compute_forward_permutation(
-        aux_tensors=resolved_aux,
+        aux_tensors=aux_tensors,
         num_tokens=plan.num_tokens,
         top_k=plan.top_k,
         num_routed=flat_tensor.shape[0],

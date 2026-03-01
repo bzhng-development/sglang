@@ -8,8 +8,9 @@ import torch
 class DeRouterPlugin(ABC):
     """Base class for de-routing routed MoE tensors back to global (token, top_k) order.
 
-    Subclasses implement two methods:
+    Subclasses implement:
 
+    - ``required_aux_dump_names``: the dump tensor names this plugin needs.
     - ``flatten_routed_tensor``: reshape non-2D tensors into flat 2D form
       (default is identity — only DeepEP LL overrides this).
     - ``compute_forward_permutation``: return an index mapping from the flat
@@ -17,6 +18,12 @@ class DeRouterPlugin(ABC):
 
     The entrypoint applies the permutation uniformly for all plugins.
     """
+
+    @property
+    @abstractmethod
+    def required_aux_dump_names(self) -> frozenset[str]:
+        """Dump tensor names that must be present in aux_tensors."""
+        ...
 
     def flatten_routed_tensor(
         self,

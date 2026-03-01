@@ -12,21 +12,25 @@ class DeepEPLLDeRouter(DeRouterPlugin):
     """De-router for SGLang DeepEP Low-Latency dispatch path.
 
     Routed tensor is 3D: ``(num_experts, expected_m, hidden_size)``.
-    ``masked_m[expert_i]`` specifies how many of the ``expected_m`` rows
-    are valid for expert ``expert_i``.
+    ``deepep_ll_masked_m[expert_i]`` specifies how many of the ``expected_m``
+    rows are valid for expert ``expert_i``.
 
-    ``packed_recv_src_info`` has shape ``(num_experts, expected_m)`` and encodes
-    the source identity of each received token.  The encoding is::
+    ``deepep_ll_packed_recv_src_info`` has shape ``(num_experts, expected_m)``
+    and encodes the source identity of each received token.  The encoding is::
 
-        packed_recv_src_info[e][j] % num_tokens == original_token_index
+        deepep_ll_packed_recv_src_info[e][j] % num_tokens == original_token_index
     """
+
+    @property
+    def required_aux_dump_names(self) -> frozenset[str]:
+        return frozenset({"deepep_ll_masked_m", "deepep_ll_packed_recv_src_info"})
 
     def flatten_routed_tensor(
         self,
         routed_tensor: torch.Tensor,
         aux_tensors: dict[str, torch.Tensor],
     ) -> torch.Tensor:
-        masked_m: torch.Tensor = aux_tensors["masked_m"]
+        masked_m: torch.Tensor = aux_tensors["deepep_ll_masked_m"]
         return _extract_valid_rows(routed_tensor, masked_m)
 
     def compute_forward_permutation(
@@ -37,8 +41,10 @@ class DeepEPLLDeRouter(DeRouterPlugin):
         top_k: int,
         num_routed: int,
     ) -> torch.Tensor:
-        packed_recv_src_info: torch.Tensor = aux_tensors["packed_recv_src_info"]
-        masked_m: torch.Tensor = aux_tensors["masked_m"]
+        packed_recv_src_info: torch.Tensor = aux_tensors[
+            "deepep_ll_packed_recv_src_info"
+        ]
+        masked_m: torch.Tensor = aux_tensors["deepep_ll_masked_m"]
 
         flat_src_info: torch.Tensor = _extract_valid_rows(
             packed_recv_src_info.unsqueeze(-1), masked_m

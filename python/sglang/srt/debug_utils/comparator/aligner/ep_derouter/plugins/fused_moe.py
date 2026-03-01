@@ -8,9 +8,9 @@ from sglang.srt.debug_utils.comparator.aligner.ep_derouter.base import DeRouterP
 class FusedMoEDeRouter(DeRouterPlugin):
     """De-router for SGLang FusedMoE (StandardDispatcher / Triton path).
 
-    ``sorted_token_ids`` from ``moe_align_block_size()`` maps dispatch positions to
-    original flatten indices (``token_idx * top_k + k``).  Padding positions have
-    values ``>= num_tokens * top_k``.
+    ``fused_moe_sorted_token_ids`` from ``moe_align_block_size()`` maps dispatch
+    positions to original flatten indices (``token_idx * top_k + k``).  Padding
+    positions have values ``>= num_tokens * top_k``.
 
     The routed tensor is **not physically permuted** — the Triton kernel uses
     ``sorted_token_ids`` for indirect addressing.  So we actually just need to
@@ -20,6 +20,10 @@ class FusedMoEDeRouter(DeRouterPlugin):
     original token order.
     """
 
+    @property
+    def required_aux_dump_names(self) -> frozenset[str]:
+        return frozenset({"fused_moe_sorted_token_ids"})
+
     def compute_forward_permutation(
         self,
         aux_tensors: dict[str, torch.Tensor],
@@ -28,7 +32,7 @@ class FusedMoEDeRouter(DeRouterPlugin):
         top_k: int,
         num_routed: int,
     ) -> torch.Tensor:
-        sorted_token_ids: torch.Tensor = aux_tensors["sorted_token_ids"]
+        sorted_token_ids: torch.Tensor = aux_tensors["fused_moe_sorted_token_ids"]
 
         total_slots: int = num_tokens * top_k
         forward_perm: torch.Tensor = sorted_token_ids.long().clone()
