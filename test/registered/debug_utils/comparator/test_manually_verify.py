@@ -198,6 +198,7 @@ class TestBundleDetailsManualVerify:
             publish_dir=publish_dir,
         )
 
+
 class TestPerTokenHeatmapManualVerify:
     def test_increasing_diff(self, tmp_path: Path, publish_dir: Path) -> None:
         """Per-token heatmap with linearly increasing diff across token positions.
