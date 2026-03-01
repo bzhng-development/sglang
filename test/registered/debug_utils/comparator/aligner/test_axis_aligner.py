@@ -88,8 +88,8 @@ class TestComputeAxisAlignerPlan:
 
 
 class TestComputeAxisAlignerPlanFused:
-    def test_fused_vs_separate_generates_flatten(self) -> None:
-        """x=fused 2D, y=separate 3D: y gets flattened to match x via einops."""
+    def test_fused_vs_separate(self) -> None:
+        """x=fused 2D, y=separate 3D: y flattens to match x's fused form."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t (num_heads*head_dim)[tp]", y="t num_heads[tp] head_dim")
         )
@@ -97,8 +97,8 @@ class TestComputeAxisAlignerPlanFused:
         assert result.pattern.x is None
         assert result.pattern.y == "t num_heads head_dim -> t (num_heads head_dim)"
 
-    def test_separate_vs_fused_generates_flatten(self) -> None:
-        """x=separate 3D, y=fused 2D: x gets flattened to match y."""
+    def test_separate_vs_fused(self) -> None:
+        """x=separate 3D, y=fused 2D: x flattens to match y's fused form."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="t num_heads[tp] head_dim", y="t (num_heads*head_dim)[tp]")
         )
@@ -123,7 +123,7 @@ class TestComputeAxisAlignerPlanFused:
         assert len(warnings) == 1
 
     def test_partial_fused_and_regular(self) -> None:
-        """x has "(a*b) c", y has "a b c": flatten a,b on y side."""
+        """x has "(a*b) c", y has "a b c": y flattens a,b to match x's fused form."""
         result: Optional[AxisAlignerPlan] = compute_axis_aligner_plan(
             Pair(x="(a*b) c", y="a b c")
         )
