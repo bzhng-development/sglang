@@ -1,9 +1,9 @@
 import logging
 from typing import Any, Dict, Optional
 
-import numpy as np
 import torch
-from PIL import Image
+from torchvision.transforms import InterpolationMode
+from torchvision.transforms import functional as TF
 
 from sglang.srt.managers.schedule_batch import Modality, MultimodalDataItem
 from sglang.srt.models.nemotron_parse import NemotronParseForConditionalGeneration
@@ -24,8 +24,8 @@ class NemotronParseProcessor(BaseMultimodalProcessor):
             hf_config, "image_size", [2048, 1648]
         )
 
-    def _resize_with_aspect_ratio(self, image: Image.Image) -> Image.Image:
-        width, height = image.size
+    def _resize_with_aspect_ratio(self, image: torch.Tensor) -> torch.Tensor:
+        _, height, width = image.shape
         aspect_ratio = width / height
 
         new_height = height
@@ -40,30 +40,34 @@ class NemotronParseProcessor(BaseMultimodalProcessor):
             new_height = int(new_width / aspect_ratio)
 
         if (new_width, new_height) != (width, height):
-            image = image.resize((new_width, new_height), Image.BILINEAR)
+            image = TF.resize(
+                image,
+                [new_height, new_width],
+                interpolation=InterpolationMode.BILINEAR,
+                antialias=True,
+            )
 
         return image
 
-    def _pad_to_target(self, image: Image.Image) -> Image.Image:
-        width, height = image.size
+    def _pad_to_target(self, image: torch.Tensor) -> torch.Tensor:
+        _, height, width = image.shape
         if width == self.target_width and height == self.target_height:
             return image
 
-        padded = Image.new(
-            "RGB", (self.target_width, self.target_height), (255, 255, 255)
+        pad_right = self.target_width - width
+        pad_bottom = self.target_height - height
+        return TF.pad(
+            image,
+            [0, 0, pad_right, pad_bottom],
+            fill=1.0,
         )
-        padded.paste(image, (0, 0))
-        return padded
 
-    def _image_to_tensor(self, image: Image.Image) -> torch.Tensor:
-        arr = np.array(image, dtype=np.float32) / 255.0
-        tensor = torch.from_numpy(arr).permute(2, 0, 1)
-
-        mean = torch.tensor([0.48145466, 0.4578275, 0.40821073]).view(3, 1, 1)
-        std = torch.tensor([0.26862954, 0.26130258, 0.27577711]).view(3, 1, 1)
-        tensor = (tensor - mean) / std
-
-        return tensor
+    def _image_to_tensor(self, image: torch.Tensor) -> torch.Tensor:
+        return TF.normalize(
+            image,
+            mean=[0.48145466, 0.4578275, 0.40821073],
+            std=[0.26862954, 0.26130258, 0.27577711],
+        )
 
     async def process_mm_data_async(
         self,
@@ -83,11 +87,15 @@ class NemotronParseProcessor(BaseMultimodalProcessor):
 
         pil_image, _ = load_image(image_data[0])
         pil_image = pil_image.convert("RGB")
+        pixel_values = TF.convert_image_dtype(
+            TF.pil_to_tensor(pil_image),
+            torch.float32,
+        )
 
-        pil_image = self._resize_with_aspect_ratio(pil_image)
-        pil_image = self._pad_to_target(pil_image)
+        pixel_values = self._resize_with_aspect_ratio(pixel_values)
+        pixel_values = self._pad_to_target(pixel_values)
 
-        pixel_values = self._image_to_tensor(pil_image)
+        pixel_values = self._image_to_tensor(pixel_values)
 
         eos_token_id = getattr(self.hf_config, "eos_token_id", 2)
         bos_token_id = getattr(self.hf_config, "bos_token_id", 0)
