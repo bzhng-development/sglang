@@ -25,6 +25,7 @@ import torch.nn.functional as F
 from torch import nn
 from transformers import PretrainedConfig
 
+from sglang.jit_kernel.fused_sigmoid_mul_add_gluon import fused_sigmoid_mul_add_gluon
 from sglang.srt.batch_overlap.two_batch_overlap import model_forward_maybe_tbo
 from sglang.srt.distributed import (
     get_moe_expert_parallel_world_size,
@@ -35,7 +36,7 @@ from sglang.srt.distributed import (
 from sglang.srt.eplb.expert_distribution import get_global_expert_distribution_recorder
 from sglang.srt.eplb.expert_location import ModelConfigForExpertLocation
 from sglang.srt.eplb.expert_location_dispatch import ExpertLocationDispatchInfo
-from sglang.srt.layers.activation import SiluAndMul, fused_sigmoid_mul_add
+from sglang.srt.layers.activation import SiluAndMul
 from sglang.srt.layers.communicator import (
     LayerCommunicator,
     LayerScatterModes,
@@ -282,7 +283,7 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
         if isinstance(shared_output, tuple):
             # CUDA fused path: (shared_output_tensor, gate_tensor)
             shared_out, gate = shared_output
-            fused_sigmoid_mul_add(gate, shared_out, final_hidden_states)
+            fused_sigmoid_mul_add_gluon(gate, shared_out, final_hidden_states)
         else:
             # In-place add is required to keep final_hidden_states in the
             # symmetric memory pool (when --enable-symm-mem is used).
