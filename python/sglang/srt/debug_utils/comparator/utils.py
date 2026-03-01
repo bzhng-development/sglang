@@ -31,9 +31,15 @@ def auto_descend_dir(directory: Path, label: str) -> Path:
     ]
     if len(candidates) == 1:
         resolved: Path = candidates[0]
-        print(
-            f"[comparator] auto-descend {label}: {directory} -> {resolved}",
-            file=sys.stderr,
+
+        from sglang.srt.debug_utils.comparator.log_sink import log_sink
+        from sglang.srt.debug_utils.comparator.output_types import InfoLog
+
+        log_sink.add(
+            InfoLog(
+                category="auto_descend",
+                message=f"auto-descend {label}: {directory} -> {resolved}",
+            )
         )
         return resolved
 
