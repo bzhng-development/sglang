@@ -33,7 +33,8 @@ def execute_de_router_plan(
     """Execute a de-router plan on a single tensor.
 
     Resolves the plugin from ``plan.dispatch_path``, gathers the required
-    auxiliary tensors by their ref keys, and calls the plugin's ``de_route``.
+    auxiliary tensors, then calls ``flatten_routed_tensor`` +
+    ``compute_forward_permutation`` and applies the unified scatter.
     """
     plugin_cls: type[DeRouterPlugin] | None = _PLUGIN_REGISTRY.get(plan.dispatch_path)
     if plugin_cls is None:
@@ -54,9 +55,41 @@ def execute_de_router_plan(
             )
         resolved_aux[ref_key] = aux_tensors[dump_name]
 
-    return plugin.de_route(
-        routed_tensor=tensor,
+    flat_tensor: torch.Tensor = plugin.flatten_routed_tensor(
+        routed_tensor=tensor, aux_tensors=resolved_aux
+    )
+    forward_perm: torch.Tensor = plugin.compute_forward_permutation(
         aux_tensors=resolved_aux,
         num_tokens=plan.num_tokens,
         top_k=plan.top_k,
+        num_routed=flat_tensor.shape[0],
     )
+
+    return _apply_forward_permutation(
+        flat_routed=flat_tensor,
+        forward_perm=forward_perm,
+        total_slots=plan.num_tokens * plan.top_k,
+    )
+
+
+def _apply_forward_permutation(
+    flat_routed: torch.Tensor,
+    forward_perm: torch.Tensor,
+    *,
+    total_slots: int,
+) -> torch.Tensor:
+    """Scatter flat_routed into output using forward_perm indices.
+
+    Positions where ``forward_perm[i] == -1`` are discarded (padding).
+    """
+    valid_mask: torch.Tensor = forward_perm >= 0
+    trailing_shape: list[int] = list(flat_routed.shape[1:])
+
+    output: torch.Tensor = torch.zeros(
+        [total_slots] + trailing_shape,
+        dtype=flat_routed.dtype,
+        device=flat_routed.device,
+    )
+    output[forward_perm[valid_mask]] = flat_routed[valid_mask]
+
+    return output

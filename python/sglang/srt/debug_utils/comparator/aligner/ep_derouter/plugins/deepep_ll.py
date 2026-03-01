@@ -3,6 +3,25 @@ from __future__ import annotations
 import torch
 
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.base import DeRouterPlugin
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins._utils import (
+    compute_within_group_indices,
+)
+
+
+def _extract_valid_rows(tensor_3d: torch.Tensor, masked_m: torch.Tensor) -> torch.Tensor:
+    """Extract valid rows from a 3D ``[num_experts, expected_m, ...]`` tensor.
+
+    For each expert ``e``, takes the first ``masked_m[e]`` rows and concatenates
+    them into a 2D tensor.
+    """
+    num_experts: int = tensor_3d.shape[0]
+    expected_m: int = tensor_3d.shape[1]
+
+    arange: torch.Tensor = torch.arange(expected_m, device=masked_m.device)
+    valid_mask: torch.Tensor = arange.unsqueeze(0) < masked_m.unsqueeze(1)
+    # valid_mask shape: [num_experts, expected_m]
+
+    return tensor_3d[valid_mask]  # fancy indexing flattens to 2D
 
 
 class DeepEPLLDeRouter(DeRouterPlugin):
@@ -22,52 +41,34 @@ class DeepEPLLDeRouter(DeRouterPlugin):
     which we can decode with modular arithmetic.
     """
 
-    def de_route(
+    def flatten_routed_tensor(
         self,
         routed_tensor: torch.Tensor,
+        aux_tensors: dict[str, torch.Tensor],
+    ) -> torch.Tensor:
+        masked_m: torch.Tensor = aux_tensors["masked_m"]
+        return _extract_valid_rows(routed_tensor, masked_m)
+
+    def compute_forward_permutation(
+        self,
         aux_tensors: dict[str, torch.Tensor],
         *,
         num_tokens: int,
         top_k: int,
+        num_routed: int,
     ) -> torch.Tensor:
         packed_recv_src_info: torch.Tensor = aux_tensors["packed_recv_src_info"]
         masked_m: torch.Tensor = aux_tensors["masked_m"]
 
-        num_experts: int = routed_tensor.shape[0]
-        expected_m: int = routed_tensor.shape[1]
-        trailing_shape: list[int] = list(routed_tensor.shape[2:])
+        # Extract valid src_info rows (same mask as flatten_routed_tensor)
+        flat_src_info: torch.Tensor = _extract_valid_rows(
+            packed_recv_src_info.unsqueeze(-1), masked_m
+        ).squeeze(-1)
+
+        token_ids: torch.Tensor = flat_src_info.long() % num_tokens
+        k_indices: torch.Tensor = compute_within_group_indices(token_ids)
+        forward_perm: torch.Tensor = token_ids * top_k + k_indices
+
         total_slots: int = num_tokens * top_k
-
-        output: torch.Tensor = torch.zeros(
-            [total_slots] + trailing_shape,
-            dtype=routed_tensor.dtype,
-            device=routed_tensor.device,
-        )
-
-        # Track how many times each token has been seen to assign k-index
-        token_k_counter: torch.Tensor = torch.zeros(
-            num_tokens, dtype=torch.long, device=routed_tensor.device
-        )
-
-        for expert_i in range(num_experts):
-            valid_count: int = int(masked_m[expert_i].item())
-            if valid_count == 0:
-                continue
-
-            # Extract valid rows for this expert
-            expert_src_info: torch.Tensor = packed_recv_src_info[expert_i, :valid_count]
-            expert_hidden: torch.Tensor = routed_tensor[expert_i, :valid_count]
-
-            # Decode token index from packed format
-            token_indices: torch.Tensor = expert_src_info.long() % num_tokens
-
-            # Assign k-index for each token occurrence
-            for j in range(valid_count):
-                token_idx: int = int(token_indices[j].item())
-                k_idx: int = int(token_k_counter[token_idx].item())
-                flatten_idx: int = token_idx * top_k + k_idx
-                if flatten_idx < total_slots:
-                    output[flatten_idx] = expert_hidden[j]
-                token_k_counter[token_idx] += 1
-
-        return output
+        forward_perm[forward_perm >= total_slots] = -1
+        return forward_perm

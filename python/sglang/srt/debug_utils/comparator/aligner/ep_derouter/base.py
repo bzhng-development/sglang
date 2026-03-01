@@ -6,26 +6,50 @@ import torch
 
 
 class DeRouterPlugin(ABC):
-    """Base class for de-routing routed MoE tensors back to global (token, top_k) order."""
+    """Base class for de-routing routed MoE tensors back to global (token, top_k) order.
 
-    @abstractmethod
-    def de_route(
+    Subclasses implement two methods:
+
+    - ``flatten_routed_tensor``: reshape non-2D tensors into flat 2D form
+      (default is identity — only DeepEP LL overrides this).
+    - ``compute_forward_permutation``: return an index mapping from the flat
+      routed tensor to the canonical ``[num_tokens * top_k, ...]`` output.
+
+    The entrypoint applies the permutation uniformly for all plugins.
+    """
+
+    def flatten_routed_tensor(
         self,
         routed_tensor: torch.Tensor,
+        aux_tensors: dict[str, torch.Tensor],
+    ) -> torch.Tensor:
+        """Reshape the routed tensor into 2D ``[num_routed, ...]`` form.
+
+        Override for non-2D routed tensors (e.g. DeepEP LL 3D).
+        Default: return the tensor unchanged.
+        """
+        return routed_tensor
+
+    @abstractmethod
+    def compute_forward_permutation(
+        self,
         aux_tensors: dict[str, torch.Tensor],
         *,
         num_tokens: int,
         top_k: int,
+        num_routed: int,
     ) -> torch.Tensor:
-        """Restore routed tensor to shape ``[num_tokens * top_k, ...]`` in global order.
+        """Compute forward permutation from flat routed positions to output slots.
 
         Args:
-            routed_tensor: The dispatched tensor (shape varies by dispatch path).
             aux_tensors: Auxiliary tensors dumped alongside (e.g. sorted_token_ids).
             num_tokens: Total number of tokens before dispatch.
             top_k: Number of experts per token.
+            num_routed: Number of rows in the flattened routed tensor.
 
         Returns:
-            Tensor of shape ``[num_tokens * top_k, ...]`` in canonical
-            ``(token_i * top_k + k)`` order.
+            1-D ``torch.long`` tensor of shape ``[num_routed]``, where
+            ``result[i]`` is the output slot index for ``flat_routed[i]``.
+            Use ``-1`` to mark padding / discard positions.
+            Output slot values are in ``[0, num_tokens * top_k)``.
         """

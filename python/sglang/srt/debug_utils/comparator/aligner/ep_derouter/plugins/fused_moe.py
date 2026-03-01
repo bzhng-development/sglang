@@ -20,27 +20,18 @@ class FusedMoEDeRouter(DeRouterPlugin):
     original token order.
     """
 
-    def de_route(
+    def compute_forward_permutation(
         self,
-        routed_tensor: torch.Tensor,
         aux_tensors: dict[str, torch.Tensor],
         *,
         num_tokens: int,
         top_k: int,
+        num_routed: int,
     ) -> torch.Tensor:
         sorted_token_ids: torch.Tensor = aux_tensors["sorted_token_ids"]
 
         total_slots: int = num_tokens * top_k
-        valid_mask: torch.Tensor = sorted_token_ids < total_slots
-        valid_ids: torch.Tensor = sorted_token_ids[valid_mask]
-        valid_routed: torch.Tensor = routed_tensor[valid_mask]
+        forward_perm: torch.Tensor = sorted_token_ids.long().clone()
+        forward_perm[forward_perm >= total_slots] = -1
 
-        trailing_shape: list[int] = list(routed_tensor.shape[1:])
-        output: torch.Tensor = torch.zeros(
-            [total_slots] + trailing_shape,
-            dtype=routed_tensor.dtype,
-            device=routed_tensor.device,
-        )
-        output[valid_ids] = valid_routed
-
-        return output
+        return forward_perm

@@ -3,6 +3,9 @@ from __future__ import annotations
 import torch
 
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.base import DeRouterPlugin
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins._utils import (
+    compute_within_group_indices,
+)
 
 
 class MegatronA2ADeRouter(DeRouterPlugin):
@@ -16,42 +19,22 @@ class MegatronA2ADeRouter(DeRouterPlugin):
     in multiple experts each occurrence corresponds to a different k slot.
     """
 
-    def de_route(
+    def compute_forward_permutation(
         self,
-        routed_tensor: torch.Tensor,
         aux_tensors: dict[str, torch.Tensor],
         *,
         num_tokens: int,
         top_k: int,
+        num_routed: int,
     ) -> torch.Tensor:
         sorted_indices: torch.Tensor = aux_tensors[
             "reversed_local_input_permutation_mapping"
         ]
 
-        total_slots: int = num_tokens * top_k
-        trailing_shape: list[int] = list(routed_tensor.shape[1:])
-
-        output: torch.Tensor = torch.zeros(
-            [total_slots] + trailing_shape,
-            dtype=routed_tensor.dtype,
-            device=routed_tensor.device,
-        )
-
-        # Track how many times each token has been seen so far, to assign k-index
-        token_k_counter: torch.Tensor = torch.zeros(
-            num_tokens, dtype=torch.long, device=routed_tensor.device
-        )
-
-        # sorted_indices[i] = original token index at permuted position i
         token_ids: torch.Tensor = sorted_indices.long()
-        num_permuted: int = token_ids.shape[0]
+        k_indices: torch.Tensor = compute_within_group_indices(token_ids)
+        forward_perm: torch.Tensor = token_ids * top_k + k_indices
 
-        for i in range(num_permuted):
-            token_idx: int = int(token_ids[i].item())
-            k_idx: int = int(token_k_counter[token_idx].item())
-            flatten_idx: int = token_idx * top_k + k_idx
-            if flatten_idx < total_slots:
-                output[flatten_idx] = routed_tensor[i]
-            token_k_counter[token_idx] += 1
-
-        return output
+        total_slots: int = num_tokens * top_k
+        forward_perm[forward_perm >= total_slots] = -1
+        return forward_perm

@@ -24,23 +24,20 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
     total number of tokens from ranks ``< r``.
     """
 
-    def de_route(
+    def compute_forward_permutation(
         self,
-        routed_tensor: torch.Tensor,
         aux_tensors: dict[str, torch.Tensor],
         *,
         num_tokens: int,
         top_k: int,
+        num_routed: int,
     ) -> torch.Tensor:
         rank_prefix_matrix: torch.Tensor = aux_tensors["rank_prefix_matrix"]
 
         total_slots: int = num_tokens * top_k
-        num_recv: int = routed_tensor.shape[0]
 
         # Build source rank assignment for each received token
-        rank_prefix: torch.Tensor = rank_prefix_matrix.to(
-            dtype=torch.long, device=routed_tensor.device
-        ).flatten()
+        rank_prefix: torch.Tensor = rank_prefix_matrix.to(dtype=torch.long).flatten()
         num_ranks: int = rank_prefix.shape[0]
 
         # rank_prefix is cumulative: token at position pos came from rank r
@@ -49,18 +46,19 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
         # That maps to original token: (rank * tokens_per_rank + local_pos)
 
         # Compute cumulative bounds for rank assignment
+        device: torch.device = rank_prefix.device
         if num_ranks > 1:
             rank_bounds: torch.Tensor = rank_prefix.clone()
-            if rank_bounds[-1] < num_recv:
+            if rank_bounds[-1] < num_routed:
                 rank_bounds = torch.cat(
-                    [rank_bounds, torch.tensor([num_recv], device=rank_bounds.device)]
+                    [rank_bounds, torch.tensor([num_routed], device=device)]
                 )
         else:
-            rank_bounds = torch.tensor([0, num_recv], device=routed_tensor.device)
+            rank_bounds = torch.tensor([0, num_routed], device=device)
 
         # Assign each position to its source rank via searchsorted
         positions: torch.Tensor = torch.arange(
-            num_recv, dtype=torch.long, device=routed_tensor.device
+            num_routed, dtype=torch.long, device=device
         )
         source_ranks: torch.Tensor = (
             torch.searchsorted(rank_bounds, positions, right=True) - 1
@@ -77,15 +75,5 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
         k_idx: torch.Tensor = local_positions % top_k
         flatten_idx: torch.Tensor = global_token_idx * top_k + k_idx
 
-        # Scatter into output
-        trailing_shape: list[int] = list(routed_tensor.shape[1:])
-        output: torch.Tensor = torch.zeros(
-            [total_slots] + trailing_shape,
-            dtype=routed_tensor.dtype,
-            device=routed_tensor.device,
-        )
-
-        valid_mask: torch.Tensor = flatten_idx < total_slots
-        output[flatten_idx[valid_mask]] = routed_tensor[valid_mask]
-
-        return output
+        flatten_idx[flatten_idx >= total_slots] = -1
+        return flatten_idx
