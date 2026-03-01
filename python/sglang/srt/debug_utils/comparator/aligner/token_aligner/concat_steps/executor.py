@@ -23,9 +23,7 @@ def execute_token_aligner_concat_steps(
     concatenated: Pair[torch.Tensor] = tensor_of_step_pair.map(
         lambda d: _concat_steps(d, dim=token_dim)
     )
-    common: int = min(
-        concatenated.x.shape[token_dim], concatenated.y.shape[token_dim]
-    )
+    common: int = min(concatenated.x.shape[token_dim], concatenated.y.shape[token_dim])
     return concatenated.map(lambda t: t.narrow(dim=token_dim, start=0, length=common))
 
 
