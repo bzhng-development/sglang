@@ -35,7 +35,7 @@ from sglang.srt.distributed import (
 from sglang.srt.eplb.expert_distribution import get_global_expert_distribution_recorder
 from sglang.srt.eplb.expert_location import ModelConfigForExpertLocation
 from sglang.srt.eplb.expert_location_dispatch import ExpertLocationDispatchInfo
-from sglang.srt.layers.activation import SiluAndMul
+from sglang.srt.layers.activation import SiluAndMul, fused_sigmoid_mul_add
 from sglang.srt.layers.communicator import (
     LayerCommunicator,
     LayerScatterModes,
@@ -232,6 +232,13 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
         ]
 
     def _forward_shared_experts(self, hidden_states: torch.Tensor):
+        """Compute shared expert output.
+
+        On CUDA, returns (shared_output, gate) as a tuple so the caller can
+        use the fused sigmoid-mul-add kernel to merge the gating with the
+        final_hidden_states addition.  On other backends the gating is applied
+        here and the plain shared_output tensor is returned.
+        """
         shared_output = None
         if self.shared_expert is not None:
             shared_output = self.shared_expert(hidden_states)
@@ -244,6 +251,11 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
                         True,
                         shared_output,
                     )
+                elif _is_cuda:
+                    # On CUDA, defer gating to the caller so it can be fused
+                    # with the final_hidden_states addition.
+                    gate = self.shared_expert_gate(hidden_states)
+                    return (shared_output, gate)
                 else:
                     shared_output = (
                         F.sigmoid(self.shared_expert_gate(hidden_states))
@@ -251,6 +263,30 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
                     )
 
         return shared_output
+
+    @staticmethod
+    def _add_shared_expert_output(
+        final_hidden_states: torch.Tensor,
+        shared_output,
+    ) -> None:
+        """Add the shared expert contribution to final_hidden_states in-place.
+
+        ``shared_output`` is either:
+        * a plain tensor (non-CUDA path) — simple in-place add, or
+        * a ``(shared_output, gate)`` tuple (CUDA path) — uses the fused
+          Triton kernel that computes ``sigmoid(gate) * shared_output``
+          and adds it in one kernel launch.
+        """
+        if shared_output is None:
+            return
+        if isinstance(shared_output, tuple):
+            # CUDA fused path: (shared_output_tensor, gate_tensor)
+            shared_out, gate = shared_output
+            fused_sigmoid_mul_add(gate, shared_out, final_hidden_states)
+        else:
+            # In-place add is required to keep final_hidden_states in the
+            # symmetric memory pool (when --enable-symm-mem is used).
+            final_hidden_states.add_(shared_output)
 
     def _forward_deepep(self, hidden_states: torch.Tensor, forward_batch: ForwardBatch):
         shared_output = None
@@ -273,8 +309,7 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
             topk_output=topk_output,
         )
 
-        if shared_output is not None:
-            final_hidden_states.add_(shared_output)
+        self._add_shared_expert_output(final_hidden_states, shared_output)
 
         return final_hidden_states
 
@@ -323,12 +358,7 @@ class Qwen2MoeSparseMoeBlock(nn.Module):
             shared_output = self._forward_shared_experts(hidden_states)
             final_hidden_states = self._forward_router_experts(hidden_states)
 
-        if shared_output is not None:
-            # In-place add is required to keep final_hidden_states in the
-            # symmetric memory pool (when --enable-symm-mem is used).
-            # An out-of-place add would allocate a new tensor outside symm
-            # memory, breaking subsequent symmetric collective operations.
-            final_hidden_states += shared_output
+        self._add_shared_expert_output(final_hidden_states, shared_output)
         if self.tp_size > 1 and not use_reduce_scatter:
             final_hidden_states = tensor_model_parallel_all_reduce(final_hidden_states)
 
