@@ -5,7 +5,7 @@ import pydantic
 import pytest
 import torch
 
-from sglang.srt.debug_utils.comparator.aligner.ep_derouter.entrypoint import (
+from sglang.srt.debug_utils.comparator.aligner.ep_derouter.executor import (
     execute_de_router_plan,
 )
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
