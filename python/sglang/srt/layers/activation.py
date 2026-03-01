@@ -22,6 +22,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers import PretrainedConfig
 
+try:
+    import triton
+    import triton.language as tl
+
+    HAS_TRITON = True
+except ImportError:
+    HAS_TRITON = False
+
 from sglang.srt.distributed import (
     divide,
     get_tensor_model_parallel_rank,
@@ -58,6 +66,86 @@ if is_npu():
     import torch_npu
 
 logger = logging.getLogger(__name__)
+
+
+# ── Fused sigmoid-mul-add Triton kernel for shared expert gating ──────────
+#
+# Computes: final_hidden_states[row, col] += sigmoid(gate[row, 0]) * shared_output[row, col]
+# in a single kernel launch, replacing 3 separate CUDA kernels (sigmoid, mul, add).
+#
+# gate has shape [num_tokens, 1] and is broadcast across hidden_size.
+# shared_output and final_hidden_states have shape [num_tokens, hidden_size].
+
+if HAS_TRITON:
+
+    @triton.jit
+    def _fused_sigmoid_mul_add_kernel(
+        gate_ptr,  # [num_tokens] (flattened from [num_tokens, 1])
+        shared_ptr,  # [num_tokens, hidden_size]
+        out_ptr,  # [num_tokens, hidden_size] (in-place)
+        hidden_size,  # number of columns
+        shared_stride_row,  # stride of shared_output along row dim
+        out_stride_row,  # stride of final_hidden_states along row dim
+        BLOCK_SIZE: tl.constexpr,
+    ):
+        # Each program handles one (row, col_block) tile.
+        row = tl.program_id(0)
+        col_block = tl.program_id(1)
+
+        col_offsets = col_block * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
+        mask = col_offsets < hidden_size
+
+        # Load gate value for this row (scalar, broadcast).
+        gate_val = tl.load(gate_ptr + row).to(tl.float32)
+        sig = tl.sigmoid(gate_val)
+
+        # Load shared_output and final_hidden_states tiles.
+        shared_offsets = row * shared_stride_row + col_offsets
+        out_offsets = row * out_stride_row + col_offsets
+
+        shared_val = tl.load(shared_ptr + shared_offsets, mask=mask).to(tl.float32)
+        out_val = tl.load(out_ptr + out_offsets, mask=mask).to(tl.float32)
+
+        # Fused sigmoid * mul + add, cast back to output dtype for store.
+        result = out_val + sig * shared_val
+
+        tl.store(out_ptr + out_offsets, result, mask=mask)
+
+
+def fused_sigmoid_mul_add(
+    gate: torch.Tensor,
+    shared_output: torch.Tensor,
+    final_hidden_states: torch.Tensor,
+) -> None:
+    """Fused sigmoid-mul-add for shared expert gating.
+
+    Computes in-place:
+        final_hidden_states += sigmoid(gate) * shared_output
+
+    Args:
+        gate: [num_tokens, 1] — output of the shared expert gate linear.
+        shared_output: [num_tokens, hidden_size] — shared expert output.
+        final_hidden_states: [num_tokens, hidden_size] — router expert output (modified in-place).
+    """
+    assert HAS_TRITON, "Triton is required for fused_sigmoid_mul_add"
+    num_tokens, hidden_size = shared_output.shape
+
+    # Flatten gate to 1-D for simpler pointer arithmetic.
+    gate_flat = gate.view(-1)
+
+    BLOCK_SIZE = 1024
+    num_col_blocks = triton.cdiv(hidden_size, BLOCK_SIZE)
+    grid = (num_tokens, num_col_blocks)
+
+    _fused_sigmoid_mul_add_kernel[grid](
+        gate_flat,
+        shared_output,
+        final_hidden_states,
+        hidden_size,
+        shared_output.stride(0),
+        final_hidden_states.stride(0),
+        BLOCK_SIZE=BLOCK_SIZE,
+    )
 
 
 class SiluAndMul(MultiPlatformOp):
