@@ -79,7 +79,7 @@ def run(args: argparse.Namespace) -> int:
         )
 
         tokenizer: Any = _maybe_load_tokenizer(
-            tokenizer_arg=getattr(args, "tokenizer", None),
+            tokenizer_arg=args.tokenizer,
             baseline_path=baseline_path,
             target_path=target_path,
         )
