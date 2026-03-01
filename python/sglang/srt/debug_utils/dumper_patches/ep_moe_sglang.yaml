@@ -15,9 +15,11 @@ patches:
     edits:
       - match: "return TritonRunnerInput("
         prepend: |
-          dumper.dump_tensor("sorted_token_ids", sorted_token_ids,
+          dumper.dump_tensor("fused_moe_sorted_token_ids", sorted_token_ids,
                             dims="t_padded",
-                            ep_dispatch_path="fused_moe")
+                            ep_dispatch_path="fused_moe",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
 
   # Dump intermediate activations in TritonRunnerCore.run
   - target: sglang.srt.layers.moe.moe_runner.triton.TritonRunnerCore.run
@@ -27,19 +29,25 @@ patches:
         prepend: |
           dumper.dump_tensor("fused_moe_after_gemm1", intermediate_cache1,
                             dims="t k(ep) n // ep:replicated",
-                            ep_dispatch_path="fused_moe")
+                            ep_dispatch_path="fused_moe",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
       # After activation
       - match: "intermediate_cache3 = torch.empty("
         prepend: |
           dumper.dump_tensor("fused_moe_after_activation", intermediate_cache2,
                             dims="t_k(ep) n_half // ep:replicated",
-                            ep_dispatch_path="fused_moe")
+                            ep_dispatch_path="fused_moe",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
       # After down projection
       - match: "return TritonRunnerOutput("
         prepend: |
           dumper.dump_tensor("fused_moe_after_gemm2", out_hidden_states,
                             dims="t h(ep) // ep:replicated",
-                            ep_dispatch_path="fused_moe")
+                            ep_dispatch_path="fused_moe",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
 
   # ── DeepEP Normal ──────────────────────────────────────────────────
 
@@ -50,7 +58,9 @@ patches:
         prepend: |
           dumper.dump_tensor("deepep_normal_recv_topk_ids", topk_ids,
                             dims="t_recv k(ep) // ep:replicated",
-                            ep_dispatch_path="deepep_normal")
+                            ep_dispatch_path="deepep_normal",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
           dumper.dump_tensor("deepep_normal_num_recv_tokens_per_expert",
                             torch.tensor(num_recv_tokens_per_expert),
                             dims="e(ep)",
@@ -64,13 +74,17 @@ patches:
         prepend: |
           dumper.dump_tensor("deepep_normal_after_gemm1", gateup_output,
                             dims="t_recv(ep) n // ep:replicated",
-                            ep_dispatch_path="deepep_normal")
+                            ep_dispatch_path="deepep_normal",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
       # After down GEMM
       - match: "return down_output"
         prepend: |
           dumper.dump_tensor("deepep_normal_after_gemm2", down_output,
                             dims="t_recv(ep) h // ep:replicated",
-                            ep_dispatch_path="deepep_normal")
+                            ep_dispatch_path="deepep_normal",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
 
   # ── DeepEP Low-Latency ─────────────────────────────────────────────
 
@@ -82,6 +96,9 @@ patches:
           dumper.dump_tensor("deepep_ll_masked_m", masked_m,
                             dims="e(ep)",
                             ep_dispatch_path="deepep_ll")
+          dumper.dump_tensor("deepep_ll_packed_recv_src_info", packed_recv_src_info,
+                            dims="e(ep) m",
+                            ep_dispatch_path="deepep_ll")
 
   # Dump masked GEMM activations (DeepEP LL uses masked path)
   - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_masked_gemm
@@ -91,10 +108,14 @@ patches:
         prepend: |
           dumper.dump_tensor("deepep_ll_after_gemm1", gateup_output,
                             dims="e(ep) m n // ep:replicated",
-                            ep_dispatch_path="deepep_ll")
+                            ep_dispatch_path="deepep_ll",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
       # After down GEMM
       - match: "return down_output"
         prepend: |
           dumper.dump_tensor("deepep_ll_after_gemm2", down_output,
                             dims="e(ep) m h // ep:replicated",
-                            ep_dispatch_path="deepep_ll")
+                            ep_dispatch_path="deepep_ll",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)

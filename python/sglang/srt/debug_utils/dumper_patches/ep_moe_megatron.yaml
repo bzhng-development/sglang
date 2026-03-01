@@ -12,11 +12,13 @@ patches:
     edits:
       - match: "return permuted_local_hidden_states, tokens_per_expert"
         prepend: |
-          dumper.dump_tensor("reversed_local_input_permutation_mapping",
+          dumper.dump_tensor("megatron_a2a_reversed_local_input_permutation_mapping",
                             self.reversed_local_input_permutation_mapping,
                             dims="t_permuted",
-                            ep_dispatch_path="megatron_a2a")
-          dumper.dump_tensor("tokens_per_expert", tokens_per_expert,
+                            ep_dispatch_path="megatron_a2a",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
+          dumper.dump_tensor("megatron_a2a_tokens_per_expert", tokens_per_expert,
                             dims="e(ep)",
                             ep_dispatch_path="megatron_a2a")
 
@@ -30,10 +32,14 @@ patches:
         prepend: |
           dumper.dump_tensor("megatron_after_gemm1", fc1_output,
                             dims="t_global(ep) n // ep:replicated",
-                            ep_dispatch_path="megatron_a2a")
+                            ep_dispatch_path="megatron_a2a",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
       # After down GEMM
       - match: "return fc2_output"
         prepend: |
           dumper.dump_tensor("megatron_after_gemm2", fc2_output,
                             dims="t_global(ep) h // ep:replicated",
-                            ep_dispatch_path="megatron_a2a")
+                            ep_dispatch_path="megatron_a2a",
+                            ep_num_tokens=num_tokens,
+                            ep_top_k=top_k)
