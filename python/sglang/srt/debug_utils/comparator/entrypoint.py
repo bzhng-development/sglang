@@ -8,7 +8,6 @@ from typing import Any, Iterator, Optional, Union
 import polars as pl
 
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.entrypoint import (
-    TokenAlignerMode,
     TokenAlignerResult,
     compute_maybe_token_aligner_result,
 )
@@ -54,23 +53,10 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
-    # NOTE: Only this function (and parse_args) should access `args` directly.
-    # All helpers below receive explicit parameters, never the raw namespace.
-    raw_dir_pair: Pair[Path] = Pair(
-        x=Path(args.baseline_path), y=Path(args.target_path)
+    dir_pair: Pair[Path] = Pair(
+        x=auto_descend_dir(Path(args.baseline_path), label="baseline_path"),
+        y=auto_descend_dir(Path(args.target_path), label="target_path"),
     )
-    dir_pair: Pair[Path] = raw_dir_pair.map(
-        lambda p: auto_descend_dir(p, label=str(p))
-    )
-
-    output_format: str = args.output_format
-    start_step: int = args.start_step
-    end_step: int = args.end_step
-    filter_pattern: Optional[str] = args.filter
-    tokenizer_arg: Optional[str] = args.tokenizer
-    token_aligner_mode: Optional[TokenAlignerMode] = args.token_aligner
-    grouping_skip_keys: Optional[list[str]] = args.grouping_skip_keys
-    diff_threshold: float = args.diff_threshold
     viz_output_dir: Optional[Path] = (
         Path(args.viz_output_dir) if args.viz_bundle_details else None
     )
@@ -80,30 +66,25 @@ def run(args: argparse.Namespace) -> int:
     override_config: Optional[Path] = (
         Path(args.override_config) if args.override_config else None
     )
-    override_dims: list[str] = args.override_dims
-    override_baseline_dims: list[str] = args.override_baseline_dims
-    override_target_dims: list[str] = args.override_target_dims
-    allow_skipped_pattern: str = args.allow_skipped_pattern
-    allow_failed_pattern: Optional[str] = args.allow_failed_pattern
 
     report_path: Optional[Path] = _resolve_report_path(
         target_path=dir_pair.y,
         report_path_arg=args.report_path,
     )
-    report_sink.configure(output_format=output_format, report_path=report_path)
+    report_sink.configure(output_format=args.output_format, report_path=report_path)
 
     try:
         report_sink.add(ConfigRecord(config=vars(args)))
 
         dfs: Pair[pl.DataFrame] = _read_df(
             dir_pair=dir_pair,
-            start_step=start_step,
-            end_step=end_step,
-            filter_pattern=filter_pattern,
+            start_step=args.start_step,
+            end_step=args.end_step,
+            filter_pattern=args.filter,
         )
 
         tokenizer: Any = _maybe_load_tokenizer(
-            tokenizer_arg=tokenizer_arg, dir_pair=dir_pair
+            tokenizer_arg=args.tokenizer, dir_pair=dir_pair
         )
         for label, df, dump_dir in [
             ("baseline", dfs.x, dir_pair.x),
@@ -116,21 +97,21 @@ def run(args: argparse.Namespace) -> int:
         ta_result: TokenAlignerResult = compute_maybe_token_aligner_result(
             dir_pair=dir_pair,
             dfs=dfs,
-            token_aligner_mode=token_aligner_mode,
+            token_aligner_mode=args.token_aligner,
         )
 
         if ta_result.mode == "smart":
             dfs = dfs.map(lambda df: df.filter(~pl.col("name").is_in(AUX_NAMES)))
 
-        skip_keys: set[str] = _DEFAULT_SKIP_KEYS | set(grouping_skip_keys or [])
+        skip_keys: set[str] = _DEFAULT_SKIP_KEYS | set(args.grouping_skip_keys or [])
         bundle_info_pairs: list[Pair[TensorBundleInfo]] = match_bundles(
             dfs=dfs, skip_keys=skip_keys
         )
 
         meta_overrider: MetaOverrider = MetaOverrider.from_args_and_config(
-            override_dims=override_dims,
-            override_baseline_dims=override_baseline_dims,
-            override_target_dims=override_target_dims,
+            override_dims=args.override_dims,
+            override_baseline_dims=args.override_baseline_dims,
+            override_target_dims=args.override_target_dims,
             override_config=override_config,
         )
 
@@ -139,7 +120,7 @@ def run(args: argparse.Namespace) -> int:
             dir_pair=dir_pair,
             token_aligner_mode=ta_result.mode,
             token_aligner_plan=ta_result.plan,
-            diff_threshold=diff_threshold,
+            diff_threshold=args.diff_threshold,
             thd_seq_lens_by_step_pair=ta_result.thd_seq_lens_by_step_pair,
             viz_output_dir=viz_output_dir,
             compute_per_token=visualize_per_token is not None,
@@ -151,9 +132,9 @@ def run(args: argparse.Namespace) -> int:
         )
         return compute_exit_code(
             summary,
-            allow_skipped_pattern=allow_skipped_pattern,
+            allow_skipped_pattern=args.allow_skipped_pattern,
             skipped_names=skipped_names,
-            allow_failed_pattern=allow_failed_pattern,
+            allow_failed_pattern=args.allow_failed_pattern,
             failed_names=failed_names,
         )
     finally:
