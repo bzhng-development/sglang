@@ -108,9 +108,7 @@ class TestExecuteDeRouterPlan:
 
         # Rank 0 contributes 2 tokens (positions 0,1), rank 1 contributes 2 (positions 2,3)
         aux_tensors: dict[str, torch.Tensor] = {
-            "deepep_normal_rank_prefix_matrix": torch.tensor(
-                [0, 2], dtype=torch.long
-            ),
+            "deepep_normal_rank_prefix_matrix": torch.tensor([0, 2], dtype=torch.long),
         }
         routed_tensor: torch.Tensor = torch.tensor(
             [[10.0, 11.0], [20.0, 21.0], [30.0, 31.0], [40.0, 41.0]]

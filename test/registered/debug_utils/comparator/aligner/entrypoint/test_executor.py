@@ -61,7 +61,9 @@ class TestExecuteSubPlans:
             groups=[[0, 1]],
         )
 
-        result, checks = execute_sub_plans(tensors=[t0, t1], plans=[plan], aux_tensors={})
+        result, checks = execute_sub_plans(
+            tensors=[t0, t1], plans=[plan], aux_tensors={}
+        )
 
         assert result is not None
         expected: torch.Tensor = torch.tensor([[1.0, 2.0, 3.0, 4.0]])

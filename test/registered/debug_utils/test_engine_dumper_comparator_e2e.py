@@ -551,9 +551,9 @@ def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
     )
     print(f"Comparator debug output: {debug_file}")
 
-    assert result.returncode == 0, (
-        f"Comparator failed (rc={result.returncode}). Debug output: {debug_file}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"Comparator failed (rc={result.returncode}). Debug output: {debug_file}"
 
 
 def _verify_patched_fields(*, dump_dir: Path, field_names: list[str]) -> None:

@@ -22,9 +22,7 @@ class MegatronA2ADeRouter(DeRouterPlugin):
 
     @property
     def required_aux_dump_names(self) -> frozenset[str]:
-        return frozenset(
-            {"megatron_a2a_reversed_local_input_permutation_mapping"}
-        )
+        return frozenset({"megatron_a2a_reversed_local_input_permutation_mapping"})
 
     def compute_forward_permutation(
         self,
