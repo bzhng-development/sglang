@@ -441,22 +441,6 @@ class DeepEPMoE(FusedMoE):
 
         return hidden_states
 
-    @staticmethod
-    def _dequant_fp8_if_needed(
-        hidden_states: torch.Tensor,
-        hidden_states_scale: Optional[torch.Tensor],
-    ) -> torch.Tensor:
-        """Dequantize FP8 hidden_states using per-token-group scale, or cast to BF16."""
-        if hidden_states_scale is None:
-            return hidden_states.to(torch.bfloat16)
-
-        bf16: torch.Tensor = hidden_states.to(torch.float32)
-        num_tokens: int = bf16.shape[0] if bf16.ndim == 2 else bf16.shape[0] * bf16.shape[1]
-        hidden_dim: int = bf16.shape[-1]
-        block_size: int = hidden_dim // hidden_states_scale.shape[-1]
-        bf16 = bf16.view(*bf16.shape[:-1], -1, block_size) * hidden_states_scale.unsqueeze(-1)
-        return bf16.view(*hidden_states.shape[:-1], hidden_dim).to(torch.bfloat16)
-
     def _forward_native_contiguous(
         self,
         dispatch_output: DeepEPNormalDispatchOutput,
@@ -467,13 +451,11 @@ class DeepEPMoE(FusedMoE):
         projections using plain torch ops. Slow but correct for non-quantized
         models where deep_gemm / cutlass paths are unavailable.
         """
-        hidden_states: torch.Tensor = self._dequant_fp8_if_needed(
-            dispatch_output.hidden_states, dispatch_output.hidden_states_scale,
-        )
+        hidden_states = dispatch_output.hidden_states
         num_recv_tokens_per_expert = dispatch_output.num_recv_tokens_per_expert
 
         if num_recv_tokens_per_expert is None or sum(num_recv_tokens_per_expert) == 0:
-            return hidden_states
+            return hidden_states.to(torch.bfloat16)
 
         from torch.nn import functional as F
 
@@ -488,7 +470,7 @@ class DeepEPMoE(FusedMoE):
                 continue
 
             tokens: torch.Tensor = hidden_states[offset : offset + num_tokens]
-            gate_up: torch.Tensor = F.linear(tokens, self.w13_weight[expert_idx])
+            gate_up: torch.Tensor = F.linear(tokens.to(torch.bfloat16), self.w13_weight[expert_idx])
             activated: torch.Tensor = act_fn(gate_up)
             down: torch.Tensor = F.linear(activated, self.w2_weight[expert_idx])
             outputs.append(down)
@@ -508,9 +490,7 @@ class DeepEPMoE(FusedMoE):
         masked_m[i] gives the number of valid tokens for expert i. We process
         each expert independently and write results back into the same 3D layout.
         """
-        hidden_states: torch.Tensor = self._dequant_fp8_if_needed(
-            dispatch_output.hidden_states, dispatch_output.hidden_states_scale,
-        )
+        hidden_states = dispatch_output.hidden_states
         masked_m = dispatch_output.masked_m
 
         from torch.nn import functional as F
@@ -532,7 +512,7 @@ class DeepEPMoE(FusedMoE):
             if m == 0:
                 continue
 
-            tokens: torch.Tensor = hidden_states[expert_idx, :m]
+            tokens: torch.Tensor = hidden_states[expert_idx, :m].to(torch.bfloat16)
             gate_up: torch.Tensor = F.linear(tokens, self.w13_weight[expert_idx])
             activated: torch.Tensor = act_fn(gate_up)
             down: torch.Tensor = F.linear(activated, self.w2_weight[expert_idx])
