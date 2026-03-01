@@ -150,7 +150,15 @@ def run(args: argparse.Namespace) -> int:
     finally:
         report_sink.close()
         if report_path is not None:
-            print(f"Report: {report_path}", file=sys.stderr)
+            from sglang.srt.debug_utils.comparator.log_sink import log_sink
+            from sglang.srt.debug_utils.comparator.output_types import InfoLog
+
+            log_sink.add(
+                InfoLog(
+                    category="report_path",
+                    message=f"Report: {report_path}",
+                )
+            )
 
 
 def _resolve_report_path(
