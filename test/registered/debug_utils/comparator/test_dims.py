@@ -18,7 +18,6 @@ from sglang.srt.debug_utils.comparator.dims import (
     apply_dim_names,
     find_dim_index,
     parse_dim,
-    parse_dim_names,
     parse_dims,
     resolve_dim_by_name,
     resolve_dim_names,
