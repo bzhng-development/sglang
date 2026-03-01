@@ -152,7 +152,6 @@ def run(args: argparse.Namespace) -> int:
             print(f"Report: {report_path}", file=sys.stderr)
 
 
-
 def _resolve_report_path(
     *, target_path: Path, report_path_arg: Optional[str]
 ) -> Optional[Path]:

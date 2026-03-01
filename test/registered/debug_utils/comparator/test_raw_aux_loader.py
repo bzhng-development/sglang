@@ -186,9 +186,7 @@ class TestRawAuxLoaderDuplicateRows:
         loader = RawAuxLoader(df=df, dump_dir=tmp_path)
 
         with pytest.raises(ValueError, match="Expected exactly 1 row"):
-            loader.load(
-                step=0, rank=0, layer_id=0, aux_names=frozenset({"aux"})
-            )
+            loader.load(step=0, rank=0, layer_id=0, aux_names=frozenset({"aux"}))
 
 
 if __name__ == "__main__":
