@@ -43,6 +43,11 @@ class InfoLog(BaseLog):
 AnyLog = Annotated[Union[ErrorLog, InfoLog], Discriminator("kind")]
 
 
+class GeneralWarning(_StrictBase):
+    category: str
+    message: str
+
+
 def _split_logs(logs: list[BaseLog]) -> tuple[list[ErrorLog], list[InfoLog]]:
     errors: list[ErrorLog] = [log for log in logs if isinstance(log, ErrorLog)]
     infos: list[InfoLog] = [log for log in logs if isinstance(log, InfoLog)]
