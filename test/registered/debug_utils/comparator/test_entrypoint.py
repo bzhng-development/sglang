@@ -2163,7 +2163,10 @@ class TestEntrypointSglangMoeAxes:
         full_target: torch.Tensor = full_baseline + torch.randn(4, 8) * 0.001
 
         moe_tp_size: int = 2
-        for side_name, full_tensor in [("baseline", full_baseline), ("target", full_target)]:
+        for side_name, full_tensor in [
+            ("baseline", full_baseline),
+            ("target", full_target),
+        ]:
             side_dir: Path = tmp_path / side_name
             side_dir.mkdir()
             chunks: list[torch.Tensor] = list(full_tensor.chunk(moe_tp_size, dim=1))
@@ -2199,7 +2202,10 @@ class TestEntrypointSglangMoeAxes:
         full_target: torch.Tensor = full_baseline + torch.randn(8, 4, 6) * 0.001
 
         moe_ep_size: int = 2
-        for side_name, full_tensor in [("baseline", full_baseline), ("target", full_target)]:
+        for side_name, full_tensor in [
+            ("baseline", full_baseline),
+            ("target", full_target),
+        ]:
             side_dir: Path = tmp_path / side_name
             side_dir.mkdir()
             chunks: list[torch.Tensor] = list(full_tensor.chunk(moe_ep_size, dim=0))
@@ -2236,7 +2242,10 @@ class TestEntrypointSglangMoeAxes:
 
         moe_ep_size: int = 2
         moe_tp_size: int = 2
-        for side_name, full_tensor in [("baseline", full_baseline), ("target", full_target)]:
+        for side_name, full_tensor in [
+            ("baseline", full_baseline),
+            ("target", full_target),
+        ]:
             side_dir: Path = tmp_path / side_name
             side_dir.mkdir()
             ep_chunks: list[torch.Tensor] = list(full_tensor.chunk(moe_ep_size, dim=0))
