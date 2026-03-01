@@ -140,11 +140,9 @@ class DeepEPMoE(FusedMoE):
                 get_moe_runner_backend().is_flashinfer_cutedsl()
                 and self.quant_config.get_name() == "modelopt_fp4"
             )
-            and (self.use_fp8_w8a8 or self.use_w4afp8)
         ):
             # AMD HIP, NPU supports low_latency deepep without deepgemm
             # NV FP4 quantization with flashinfer_cutedsl also supports low_latency deepep without deepgemm
-            # BF16 (non-quantized) uses a native torch fallback and doesn't need deepgemm
             assert (
                 deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM
             ), f"DeepEP {self.deepep_mode} mode requires deep_gemm"
@@ -236,10 +234,8 @@ class DeepEPMoE(FusedMoE):
         elif DispatchOutputChecker.format_is_deepep_normal(dispatch_output):
             if self.use_w4afp8:
                 output = self.forward_cutlass_w4afp8(dispatch_output)
-            elif self.use_fp8_w8a8:
-                assert False, "forward_deepgemm_contiguous is deprecated"
             else:
-                output = self._forward_native_contiguous(dispatch_output)
+                assert False, "forward_deepgemm_contiguous is deprecated"
         elif DispatchOutputChecker.format_is_deepep_ll(dispatch_output):
             if (
                 get_moe_runner_backend().is_flashinfer_cutedsl()
@@ -248,10 +244,8 @@ class DeepEPMoE(FusedMoE):
                 output = self.forward_flashinfer_cutedsl(dispatch_output)
             elif self.use_w4afp8:
                 output = self.forward_cutlass_w4afp8_masked(dispatch_output)
-            elif self.use_fp8_w8a8:
-                assert False, "forward_deepgemm_masked is deprecated"
             else:
-                output = self._forward_native_masked(dispatch_output)
+                assert False, "forward_deepgemm_masked is deprecated"
 
         combine_input_wrapper = (
             DeepEPNormalCombineInput
@@ -440,85 +434,6 @@ class DeepEPMoE(FusedMoE):
             raise ValueError(f"Not Supported DeepEP format {dispatch_output.format}")
 
         return hidden_states
-
-    def _forward_native_contiguous(
-        self,
-        dispatch_output: DeepEPNormalDispatchOutput,
-    ) -> torch.Tensor:
-        """BF16 native fallback for DeepEP normal (contiguous) mode.
-
-        Iterates over local experts, applying gate_up → activation → down
-        projections using plain torch ops. Slow but correct for non-quantized
-        models where deep_gemm / cutlass paths are unavailable.
-        """
-        hidden_states = dispatch_output.hidden_states
-        num_recv_tokens_per_expert = dispatch_output.num_recv_tokens_per_expert
-
-        if num_recv_tokens_per_expert is None or sum(num_recv_tokens_per_expert) == 0:
-            return hidden_states.to(torch.bfloat16)
-
-        from torch.nn import functional as F
-
-        from sglang.srt.layers.activation import SiluAndMul
-
-        act_fn: SiluAndMul = SiluAndMul()
-        outputs: list[torch.Tensor] = []
-        offset: int = 0
-
-        for expert_idx, num_tokens in enumerate(num_recv_tokens_per_expert):
-            if num_tokens == 0:
-                continue
-
-            tokens: torch.Tensor = hidden_states[offset : offset + num_tokens]
-            gate_up: torch.Tensor = F.linear(tokens.to(torch.bfloat16), self.w13_weight[expert_idx])
-            activated: torch.Tensor = act_fn(gate_up)
-            down: torch.Tensor = F.linear(activated, self.w2_weight[expert_idx])
-            outputs.append(down)
-            offset += num_tokens
-
-        if outputs:
-            return torch.cat(outputs, dim=0)
-        return hidden_states.new_empty(0, self.w2_weight.shape[1], dtype=torch.bfloat16)
-
-    def _forward_native_masked(
-        self,
-        dispatch_output: DeepEPLLDispatchOutput,
-    ) -> torch.Tensor:
-        """BF16 native fallback for DeepEP low-latency (masked) mode.
-
-        The hidden_states tensor has shape [num_experts, max_tokens, hidden_dim].
-        masked_m[i] gives the number of valid tokens for expert i. We process
-        each expert independently and write results back into the same 3D layout.
-        """
-        hidden_states = dispatch_output.hidden_states
-        masked_m = dispatch_output.masked_m
-
-        from torch.nn import functional as F
-
-        from sglang.srt.layers.activation import SiluAndMul
-
-        act_fn: SiluAndMul = SiluAndMul()
-        num_experts: int = hidden_states.shape[0]
-        max_tokens: int = hidden_states.shape[1]
-        down_dim: int = self.w2_weight.shape[1]
-        output: torch.Tensor = torch.zeros(
-            num_experts, max_tokens, down_dim,
-            device=hidden_states.device,
-            dtype=torch.bfloat16,
-        )
-
-        for expert_idx in range(num_experts):
-            m: int = int(masked_m[expert_idx].item())
-            if m == 0:
-                continue
-
-            tokens: torch.Tensor = hidden_states[expert_idx, :m].to(torch.bfloat16)
-            gate_up: torch.Tensor = F.linear(tokens, self.w13_weight[expert_idx])
-            activated: torch.Tensor = act_fn(gate_up)
-            down: torch.Tensor = F.linear(activated, self.w2_weight[expert_idx])
-            output[expert_idx, :m] = down
-
-        return output
 
 
 class NpuFuseEPMoE(DeepEPMoE):
