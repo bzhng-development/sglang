@@ -25,13 +25,13 @@ patches:
   # Dump activations in GroupedMLP.forward
   - target: megatron.core.transformer.moe.experts.GroupedMLP.forward
     edits:
-      # ② After gate+up GEMM
+      # After gate+up GEMM
       - match: "self.activation_func("
         prepend: |
           dumper.dump_tensor("megatron_after_gemm1", fc1_output,
                             dims="t_global(ep) n // ep:replicated",
                             ep_dispatch_path="megatron_a2a")
-      # ⑤ After down GEMM
+      # After down GEMM
       - match: "return fc2_output"
         prepend: |
           dumper.dump_tensor("megatron_after_gemm2", fc2_output,
