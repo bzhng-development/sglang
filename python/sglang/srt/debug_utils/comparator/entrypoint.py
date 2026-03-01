@@ -49,14 +49,17 @@ def main() -> None:
 
 
 def run(args: argparse.Namespace) -> int:
-    args.baseline_path = str(
-        _auto_descend_dir(Path(args.baseline_path), label="baseline_path")
+    baseline_path: Path = _auto_descend_dir(
+        Path(args.baseline_path), label="baseline_path"
     )
-    args.target_path = str(
-        _auto_descend_dir(Path(args.target_path), label="target_path")
+    target_path: Path = _auto_descend_dir(
+        Path(args.target_path), label="target_path"
     )
 
-    report_path: Optional[Path] = _resolve_report_path(args)
+    report_path: Optional[Path] = _resolve_report_path(
+        target_path=target_path,
+        report_path_arg=args.report_path,
+    )
     report_sink.configure(
         output_format=args.output_format,
         report_path=report_path,
@@ -65,12 +68,22 @@ def run(args: argparse.Namespace) -> int:
     try:
         report_sink.add(ConfigRecord.from_args(args))
 
-        dfs: Pair[pl.DataFrame] = _read_df(args)
+        dfs: Pair[pl.DataFrame] = _read_df(
+            baseline_path=baseline_path,
+            target_path=target_path,
+            start_step=args.start_step,
+            end_step=args.end_step,
+            filter_pattern=args.filter,
+        )
 
-        tokenizer: Any = _maybe_load_tokenizer(args)
+        tokenizer: Any = _maybe_load_tokenizer(
+            tokenizer_arg=getattr(args, "tokenizer", None),
+            baseline_path=baseline_path,
+            target_path=target_path,
+        )
         for label, df, dump_dir in [
-            ("baseline", dfs.x, Path(args.baseline_path)),
-            ("target", dfs.y, Path(args.target_path)),
+            ("baseline", dfs.x, baseline_path),
+            ("target", dfs.y, target_path),
         ]:
             emit_display_records(
                 df=df,
@@ -108,8 +121,8 @@ def run(args: argparse.Namespace) -> int:
 
         comparison_records = _compare_bundle_pairs(
             bundle_info_pairs=bundle_info_pairs,
-            baseline_path=Path(args.baseline_path),
-            target_path=Path(args.target_path),
+            baseline_path=baseline_path,
+            target_path=target_path,
             token_aligner_mode=ta_result.mode,
             token_aligner_plan=ta_result.plan,
             diff_threshold=args.diff_threshold,
@@ -154,17 +167,21 @@ def _auto_descend_dir(directory: Path, label: str) -> Path:
     return directory
 
 
-def _resolve_report_path(args: argparse.Namespace) -> Optional[Path]:
-    if args.report_path is not None:
-        return Path(args.report_path) if args.report_path else None
-    return Path(args.target_path) / "comparator_report.jsonl"
+def _resolve_report_path(
+    *, target_path: Path, report_path_arg: Optional[str]
+) -> Optional[Path]:
+    if report_path_arg is not None:
+        return Path(report_path_arg) if report_path_arg else None
+    return target_path / "comparator_report.jsonl"
 
 
-def _maybe_load_tokenizer(args: argparse.Namespace) -> Any:
-    tokenizer_path: Optional[str] = getattr(args, "tokenizer", None)
+def _maybe_load_tokenizer(
+    *, tokenizer_arg: Optional[str], baseline_path: Path, target_path: Path
+) -> Any:
+    tokenizer_path: Optional[str] = tokenizer_arg
 
     if tokenizer_path is None:
-        for directory in [Path(args.baseline_path), Path(args.target_path)]:
+        for directory in [baseline_path, target_path]:
             tokenizer_path = read_tokenizer_path(directory)
             if tokenizer_path is not None:
                 break
@@ -180,15 +197,24 @@ def _maybe_load_tokenizer(args: argparse.Namespace) -> Any:
         return None
 
 
-def _read_df(args: argparse.Namespace) -> Pair[pl.DataFrame]:
-    df_baseline = read_meta(args.baseline_path)
+def _read_df(
+    *,
+    baseline_path: Path,
+    target_path: Path,
+    start_step: int,
+    end_step: int,
+    filter_pattern: Optional[str],
+) -> Pair[pl.DataFrame]:
+    df_baseline = read_meta(baseline_path)
 
-    df_target = read_meta(args.target_path)
+    df_target = read_meta(target_path)
     df_target = df_target.filter(
-        (pl.col("step") >= args.start_step) & (pl.col("step") <= args.end_step)
+        (pl.col("step") >= start_step) & (pl.col("step") <= end_step)
     )
-    if args.filter:
-        df_target = df_target.filter(pl.col("filename").str.contains(args.filter))
+    if filter_pattern:
+        df_target = df_target.filter(
+            pl.col("filename").str.contains(filter_pattern)
+        )
     assert all(c in df_target.columns for c in ["rank", "step", "dump_index", "name"])
 
     return Pair(x=df_baseline, y=df_target)
