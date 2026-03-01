@@ -8,6 +8,7 @@ from typing import Any, Iterator, Optional, Union
 import polars as pl
 
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.entrypoint import (
+    TokenAlignerMode,
     TokenAlignerResult,
     compute_maybe_token_aligner_result,
 )
@@ -55,9 +56,11 @@ def main() -> None:
 def run(args: argparse.Namespace) -> int:
     # NOTE: Only this function (and parse_args) should access `args` directly.
     # All helpers below receive explicit parameters, never the raw namespace.
-    dir_pair: Pair[Path] = Pair(
-        x=auto_descend_dir(Path(args.baseline_path), label="baseline_path"),
-        y=auto_descend_dir(Path(args.target_path), label="target_path"),
+    raw_dir_pair: Pair[Path] = Pair(
+        x=Path(args.baseline_path), y=Path(args.target_path)
+    )
+    dir_pair: Pair[Path] = raw_dir_pair.map(
+        lambda p: auto_descend_dir(p, label=str(p))
     )
 
     output_format: str = args.output_format
@@ -65,6 +68,7 @@ def run(args: argparse.Namespace) -> int:
     end_step: int = args.end_step
     filter_pattern: Optional[str] = args.filter
     tokenizer_arg: Optional[str] = args.tokenizer
+    token_aligner_mode: Optional[TokenAlignerMode] = args.token_aligner
     grouping_skip_keys: Optional[list[str]] = args.grouping_skip_keys
     diff_threshold: float = args.diff_threshold
     viz_output_dir: Optional[Path] = (
@@ -109,8 +113,11 @@ def run(args: argparse.Namespace) -> int:
                 df=df, dump_dir=dump_dir, label=label, tokenizer=tokenizer
             )
 
-        # NOTE: compute_maybe_token_aligner_result still takes args (external API)
-        ta_result: TokenAlignerResult = compute_maybe_token_aligner_result(args, dfs)
+        ta_result: TokenAlignerResult = compute_maybe_token_aligner_result(
+            dir_pair=dir_pair,
+            dfs=dfs,
+            token_aligner_mode=token_aligner_mode,
+        )
 
         if ta_result.mode == "smart":
             dfs = dfs.map(lambda df: df.filter(~pl.col("name").is_in(AUX_NAMES)))
