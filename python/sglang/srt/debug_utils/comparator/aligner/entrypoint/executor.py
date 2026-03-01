@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional
 
 import torch
 
@@ -33,6 +33,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.executor import (
 )
 from sglang.srt.debug_utils.comparator.aligner.unsharder.types import UnsharderPlan
 from sglang.srt.debug_utils.comparator.output_types import ReplicatedCheckResult
+from sglang.srt.debug_utils.comparator.raw_aux_loader import RawAuxLoader
 from sglang.srt.debug_utils.comparator.utils import Pair
 
 
@@ -47,7 +48,8 @@ def execute_aligner_plan(
     *,
     tensors_pair: Pair[list[torch.Tensor]],
     plan: AlignerPlan,
-    aux_tensors_pair: Pair[dict[str, torch.Tensor]] = Pair(x={}, y={}),
+    aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(x=None, y=None),
+    metas_pair: Pair[list[dict[str, Any]]] = Pair(x=[], y=[]),
 ) -> AlignerResult:
     """Execute unified unshard/reorder + token-align."""
     all_checks: list[ReplicatedCheckResult] = []
@@ -56,14 +58,16 @@ def execute_aligner_plan(
     step_tensors_x, checks_x = _execute_step_plans(
         tensors=tensors_pair.x,
         step_plans=plan.per_step_plans.x,
-        aux_tensors=aux_tensors_pair.x,
+        aux_loader=aux_loader_pair.x,
+        metas=metas_pair.x,
     )
     all_checks.extend(checks_x)
 
     step_tensors_y, checks_y = _execute_step_plans(
         tensors=tensors_pair.y,
         step_plans=plan.per_step_plans.y,
-        aux_tensors=aux_tensors_pair.y,
+        aux_loader=aux_loader_pair.y,
+        metas=metas_pair.y,
     )
     all_checks.extend(checks_y)
 
@@ -111,7 +115,8 @@ def _execute_step_plans(
     tensors: list[torch.Tensor],
     step_plans: list[AlignerPerStepPlan],
     *,
-    aux_tensors: dict[str, torch.Tensor],
+    aux_loader: Optional[RawAuxLoader],
+    metas: list[dict[str, Any]],
 ) -> tuple[dict[int, torch.Tensor], list[ReplicatedCheckResult]]:
     result: dict[int, torch.Tensor] = {}
     all_checks: list[ReplicatedCheckResult] = []
@@ -120,10 +125,17 @@ def _execute_step_plans(
         step_tensors: list[torch.Tensor] = [
             tensors[i] for i in step_plan.input_object_indices
         ]
+
+        step_metas: list[dict[str, Any]] = [
+            metas[i] for i in step_plan.input_object_indices if i < len(metas)
+        ]
+        step_meta: dict[str, Any] = step_metas[0] if step_metas else {}
+
         tensor, checks = execute_sub_plans(
             tensors=step_tensors,
             plans=step_plan.sub_plans,
-            aux_tensors=aux_tensors,
+            aux_loader=aux_loader,
+            meta=step_meta,
         )
         all_checks.extend(checks)
         if tensor is not None:
@@ -136,7 +148,8 @@ def execute_sub_plans(
     tensors: list[torch.Tensor],
     plans: list[AlignerPerStepSubPlan],
     *,
-    aux_tensors: dict[str, torch.Tensor],
+    aux_loader: Optional[RawAuxLoader] = None,
+    meta: dict[str, Any] = {},  # noqa: B006
 ) -> tuple[Optional[torch.Tensor], list[ReplicatedCheckResult]]:
     if not tensors:
         return None, []
@@ -149,8 +162,8 @@ def execute_sub_plans(
     current: list[torch.Tensor] = tensors
     all_checks: list[ReplicatedCheckResult] = []
     for plan in plans:
-        current, checks = execute_sub_plan(
-            tensors=current, plan=plan, aux_tensors=aux_tensors
+        current, checks = _execute_sub_plan(
+            tensors=current, plan=plan, aux_loader=aux_loader, meta=meta
         )
         all_checks.extend(checks)
 
@@ -158,11 +171,12 @@ def execute_sub_plans(
     return current[0], all_checks
 
 
-def execute_sub_plan(
+def _execute_sub_plan(
     tensors: list[torch.Tensor],
     plan: AlignerPerStepSubPlan,
     *,
-    aux_tensors: dict[str, torch.Tensor],
+    aux_loader: Optional[RawAuxLoader],
+    meta: dict[str, Any],
 ) -> tuple[list[torch.Tensor], list[ReplicatedCheckResult]]:
     if isinstance(plan, UnsharderPlan):
         unsharder_result: UnsharderResult = execute_unsharder_plan(plan, tensors)
@@ -174,7 +188,8 @@ def execute_sub_plan(
             execute_de_router_plan(
                 plan=plan,
                 tensor=t,
-                aux_tensors=aux_tensors,
+                aux_loader=aux_loader,
+                meta=meta,
             )
             for t in tensors
         ]

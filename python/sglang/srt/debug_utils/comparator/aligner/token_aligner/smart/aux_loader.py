@@ -241,7 +241,7 @@ def _load_and_align_aux_tensor(
             tensors = [apply_dim_names(t, dim_names) for t in tensors]
 
         result, _replicated_checks = execute_sub_plans(
-            tensors=tensors, plans=sub_plans, aux_tensors={}
+            tensors=tensors, plans=sub_plans
         )
         assert result is not None
         return result.rename(None)  # strip named dims before returning to plugin

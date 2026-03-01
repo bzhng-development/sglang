@@ -15,10 +15,6 @@ from sglang.srt.debug_utils.comparator.aligner.entrypoint.planner import (
     compute_aligner_plan,
 )
 from sglang.srt.debug_utils.comparator.aligner.entrypoint.types import AlignerPlan
-from sglang.srt.debug_utils.comparator.aligner.ep_derouter.entrypoint import (
-    get_required_aux_dump_names,
-)
-from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
 from sglang.srt.debug_utils.comparator.aligner.token_aligner.smart.types import (
     TokenAlignerPlan,
 )
@@ -92,13 +88,11 @@ def _compare_bundle_pair_inner(
     token_aligner_mode: Optional[str],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
-    thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
-        x=None, y=None
-    ),
-    viz_output_dir: Optional[Path] = None,
-    compute_per_token: bool = False,
-    meta_overrider: Optional[MetaOverrider] = None,
-    aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(x=None, y=None),
+    thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
+    viz_output_dir: Optional[Path],
+    compute_per_token: bool,
+    meta_overrider: Optional[MetaOverrider],
+    aux_loader_pair: Pair[Optional[RawAuxLoader]],
 ) -> Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]:
     # 1. Load all successfully loaded values
     all_pair: Pair[list[ValueWithMeta]] = Pair(
@@ -174,12 +168,10 @@ def _compare_bundle_pair_tensor_type(
     token_aligner_mode: Optional[str],
     token_aligner_plan: Optional[TokenAlignerPlan],
     diff_threshold: float,
-    thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]] = Pair(
-        x=None, y=None
-    ),
-    viz_output_dir: Optional[Path] = None,
-    compute_per_token: bool = False,
-    aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(x=None, y=None),
+    thd_seq_lens_by_step_pair: Pair[Optional[dict[int, list[int]]]],
+    viz_output_dir: Optional[Path],
+    compute_per_token: bool,
+    aux_loader_pair: Pair[Optional[RawAuxLoader]],
 ) -> Union[TensorComparisonRecord, SkipComparisonRecord]:
     if not valid_pair.x or not valid_pair.y:
         reason = "baseline_load_failed" if not valid_pair.x else "target_load_failed"
@@ -196,13 +188,6 @@ def _compare_bundle_pair_tensor_type(
         thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
     )
 
-    # Load EP aux tensors from the plan's de-router sub-plans
-    aux_tensors_pair: Pair[dict[str, torch.Tensor]] = _load_ep_aux_tensors(
-        plan=plan,
-        aux_loader_pair=aux_loader_pair,
-        metas_pair=metas_pair,
-    )
-
     # Apply dim names to tensors, then execute
     tensors_pair: Pair[list[torch.Tensor]] = Pair(
         x=_apply_dim_names_from_meta(
@@ -217,7 +202,8 @@ def _compare_bundle_pair_tensor_type(
     aligner_result: AlignerResult = execute_aligner_plan(
         tensors_pair=tensors_pair,
         plan=plan,
-        aux_tensors_pair=aux_tensors_pair,
+        aux_loader_pair=aux_loader_pair,
+        metas_pair=metas_pair,
     )
     replicated_checks = aligner_result.replicated_checks
 
@@ -258,47 +244,6 @@ def _compare_bundle_pair_tensor_type(
         )
 
     return record
-
-
-def _load_ep_aux_tensors(
-    *,
-    plan: AlignerPlan,
-    aux_loader_pair: Pair[Optional[RawAuxLoader]],
-    metas_pair: Pair[list[dict[str, Any]]],
-) -> Pair[dict[str, torch.Tensor]]:
-    """Load EP auxiliary tensors required by de-router sub-plans."""
-    required_names: set[str] = set()
-    for side_plans in [plan.per_step_plans.x, plan.per_step_plans.y]:
-        for step_plan in side_plans:
-            for sub_plan in step_plan.sub_plans:
-                if isinstance(sub_plan, DeRouterPlan):
-                    required_names |= get_required_aux_dump_names(
-                        sub_plan.dispatch_path
-                    )
-
-    if not required_names:
-        return Pair(x={}, y={})
-
-    frozen_names: frozenset[str] = frozenset(required_names)
-
-    def _load_side(
-        loader: Optional[RawAuxLoader],
-        metas: list[dict[str, Any]],
-    ) -> dict[str, torch.Tensor]:
-        if loader is None or not metas:
-            return {}
-        meta: dict[str, Any] = metas[0]
-        return loader.load(
-            step=int(meta["step"]),
-            rank=int(meta["rank"]),
-            layer_id=int(meta["layer_id"]),
-            aux_names=frozen_names,
-        )
-
-    return Pair(
-        x=_load_side(loader=aux_loader_pair.x, metas=metas_pair.x),
-        y=_load_side(loader=aux_loader_pair.y, metas=metas_pair.y),
-    )
 
 
 def _try_generate_viz(

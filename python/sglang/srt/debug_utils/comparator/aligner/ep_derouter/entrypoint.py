@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any, Optional
+
 import torch
 
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.base import DeRouterPlugin
@@ -16,6 +18,9 @@ from sglang.srt.debug_utils.comparator.aligner.ep_derouter.plugins.megatron_a2a 
     MegatronA2ADeRouter,
 )
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
+
+if TYPE_CHECKING:
+    from sglang.srt.debug_utils.comparator.raw_aux_loader import RawAuxLoader
 
 _PLUGIN_REGISTRY: dict[str, type[DeRouterPlugin]] = {
     "fused_moe": FusedMoEDeRouter,
@@ -43,12 +48,14 @@ def get_required_aux_dump_names(dispatch_path: str) -> frozenset[str]:
 def execute_de_router_plan(
     plan: DeRouterPlan,
     tensor: torch.Tensor,
-    aux_tensors: dict[str, torch.Tensor],
+    *,
+    aux_loader: Optional[RawAuxLoader],
+    meta: dict[str, Any],
 ) -> torch.Tensor:
     """Execute a de-router plan on a single tensor.
 
-    Resolves the plugin from ``plan.dispatch_path``, validates that all
-    required auxiliary tensors are present, then calls
+    Resolves the plugin from ``plan.dispatch_path``, loads the required
+    auxiliary tensors via *aux_loader*, then calls
     ``flatten_routed_tensor`` + ``compute_forward_permutation`` and
     applies the unified scatter.
     """
@@ -61,13 +68,11 @@ def execute_de_router_plan(
 
     plugin: DeRouterPlugin = plugin_cls()
 
-    for name in plugin.required_aux_dump_names:
-        if name not in aux_tensors:
-            raise ValueError(
-                f"De-router plugin {plan.dispatch_path!r} requires auxiliary tensor "
-                f"{name!r}, but it was not found. "
-                f"Available: {sorted(aux_tensors.keys())}"
-            )
+    aux_tensors: dict[str, torch.Tensor] = _load_aux_tensors(
+        required_names=plugin.required_aux_dump_names,
+        aux_loader=aux_loader,
+        meta=meta,
+    )
 
     flat_tensor: torch.Tensor = plugin.flatten_routed_tensor(
         routed_tensor=tensor, aux_tensors=aux_tensors
@@ -84,6 +89,40 @@ def execute_de_router_plan(
         forward_perm=forward_perm,
         total_slots=plan.num_tokens * plan.top_k,
     )
+
+
+def _load_aux_tensors(
+    *,
+    required_names: frozenset[str],
+    aux_loader: Optional[RawAuxLoader],
+    meta: dict[str, Any],
+) -> dict[str, torch.Tensor]:
+    """Load auxiliary tensors required by a de-router plugin."""
+    if not required_names:
+        return {}
+
+    if aux_loader is None:
+        raise ValueError(
+            f"De-router requires auxiliary tensors {sorted(required_names)}, "
+            f"but no aux_loader was provided."
+        )
+
+    result: dict[str, torch.Tensor] = aux_loader.load(
+        step=int(meta["step"]),
+        rank=int(meta["rank"]),
+        layer_id=int(meta["layer_id"]),
+        aux_names=required_names,
+    )
+
+    for name in required_names:
+        if name not in result:
+            raise ValueError(
+                f"De-router requires auxiliary tensor {name!r}, "
+                f"but it was not found in the dump. "
+                f"Available: {sorted(result.keys())}"
+            )
+
+    return result
 
 
 def _apply_forward_permutation(

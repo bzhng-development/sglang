@@ -232,7 +232,7 @@ def _compare_bundle_pairs(
     viz_output_dir: Optional[Path] = None,
     compute_per_token: bool = False,
     meta_overrider: Optional[MetaOverrider] = None,
-    aux_loader_pair: Pair[Optional[RawAuxLoader]] = Pair(x=None, y=None),
+    aux_loader_pair: Pair[Optional[RawAuxLoader]],
 ) -> Iterator[
     Union[TensorComparisonRecord, SkipComparisonRecord, NonTensorComparisonRecord]
 ]:
