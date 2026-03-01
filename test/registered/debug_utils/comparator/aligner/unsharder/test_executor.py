@@ -19,7 +19,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
     ReduceSumParams,
     UnsharderPlan,
 )
-from sglang.srt.debug_utils.comparator.dims import (
+from sglang.srt.debug_utils.comparator.dims_spec import (
     DimSpec,
     ParallelAxis,
     parse_dims,

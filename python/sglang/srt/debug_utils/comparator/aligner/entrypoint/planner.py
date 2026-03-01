@@ -23,7 +23,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.parallel_info import (
 from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
     compute_unsharder_plan,
 )
-from sglang.srt.debug_utils.comparator.dims import (
+from sglang.srt.debug_utils.comparator.dims_spec import (
     DimSpec,
     DimsSpec,
     ParallelAxis,
