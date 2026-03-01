@@ -169,9 +169,7 @@ def _resolve_report_path(
     return target_path / "comparator_report.jsonl"
 
 
-def _maybe_load_tokenizer(
-    *, tokenizer_arg: Optional[str], dir_pair: Pair[Path]
-) -> Any:
+def _maybe_load_tokenizer(*, tokenizer_arg: Optional[str], dir_pair: Pair[Path]) -> Any:
     tokenizer_path: Optional[str] = tokenizer_arg
 
     if tokenizer_path is None:

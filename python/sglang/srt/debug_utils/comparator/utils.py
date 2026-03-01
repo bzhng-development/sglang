@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import functools
 import re
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, Generic, Optional, Tuple, TypeVar
 
