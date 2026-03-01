@@ -18,6 +18,7 @@ from sglang.srt.debug_utils.comparator.dims import (
     apply_dim_names,
     find_dim_index,
     parse_dim,
+    parse_dim_names,
     parse_dims,
     resolve_dim_by_name,
     resolve_dim_names,
@@ -105,6 +106,13 @@ class TestParseDim:
     def test_duplicate_axis_raises(self) -> None:
         with pytest.raises(ValueError, match="Duplicate axis"):
             parse_dim("h(tp,tp)")
+
+    def test_squeeze_dim(self) -> None:
+        assert parse_dim("1") == DimSpec(name="1")
+
+    def test_squeeze_dim_rejects_modifiers(self) -> None:
+        with pytest.raises(ValueError, match="Invalid dim token"):
+            parse_dim("1(tp)")
 
     def test_squeeze_dim(self) -> None:
         assert parse_dim("1") == DimSpec(name="1")
