@@ -61,9 +61,7 @@ class TestExecuteSubPlans:
             groups=[[0, 1]],
         )
 
-        result, checks = execute_sub_plans(
-            tensors=[t0, t1], plans=[plan]
-        )
+        result, checks = execute_sub_plans(tensors=[t0, t1], plans=[plan])
 
         assert result is not None
         expected: torch.Tensor = torch.tensor([[1.0, 2.0, 3.0, 4.0]])
@@ -78,7 +76,10 @@ class TestExecuteSubPlan:
 
         with pytest.raises(NotImplementedError, match="Unknown"):
             _execute_sub_plan(
-                tensors=[torch.tensor([1.0])], plan=_FakePlan(), aux_loader=None, meta={}
+                tensors=[torch.tensor([1.0])],
+                plan=_FakePlan(),
+                aux_loader=None,
+                meta={},
             )
 
 
