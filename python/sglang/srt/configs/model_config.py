@@ -1273,6 +1273,7 @@ multimodal_model_archs = [
     "StepVLForConditionalGeneration",
     "KimiK25ForConditionalGeneration",
     "NemotronParseForConditionalGeneration",
+    "T5Gemma2ForConditionalGeneration",
 ]
 
 if external_mm_model_arch := envs.SGLANG_EXTERNAL_MM_MODEL_ARCH.get():
@@ -1308,6 +1309,7 @@ def is_encoder_decoder_model(model_architectures: List[str]):
     models = [
         "WhisperForConditionalGeneration",
         "NemotronParseForConditionalGeneration",
+        "T5Gemma2ForConditionalGeneration",
     ]
     return any(model in model_architectures for model in models)
 
