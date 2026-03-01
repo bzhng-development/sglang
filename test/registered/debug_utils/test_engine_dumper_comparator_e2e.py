@@ -88,38 +88,38 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated')"
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
       - match: |
           hidden_states, residual = self.layer_communicator.prepare_mlp(
               hidden_states, residual, forward_batch
           )
-        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_tp:replicated')"
       - match: |
           hidden_states = self.mlp(
               hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
           )
-        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 
   # --- attention internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
-        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp]')"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp] # moe_tp:replicated')"
 
   # --- moe internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
     edits:
       - match: "router_logits, _ = self.gate(hidden_states)"
-        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated')"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_tp:replicated')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -141,38 +141,38 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated dp:=attn_dp')"
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated dp:=attn_dp')"
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        append: "dumper.dump('attn_output', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('attn_output', hidden_states, dims='t h # tp:replicated moe_tp:replicated')"
       - match: |
           hidden_states, residual = self.layer_communicator.prepare_mlp(
               hidden_states, residual, forward_batch
           )
-        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_tp:replicated')"
       - match: |
           hidden_states = self.mlp(
               hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
           )
-        append: "dumper.dump('mlp_output', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h # tp:replicated moe_tp:replicated')"
 
   # --- attention internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
-        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h # tp:replicated')"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h # tp:replicated moe_tp:replicated')"
 
   # --- moe internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_normal
     edits:
       - match: "router_logits, _ = self.gate(hidden_states)"
-        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated')"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_tp:replicated')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
@@ -240,6 +240,8 @@ patches:
   # --- decoder layer level ---
   # DeepEP auto-sets ep_size=tp_size. Since EP overlays the same ranks
   # as TP, non-MoE tensors have the same dims as the non-EP baseline.
+  # With DeepEP, moe_ep is active (size=tp_size) but tensors are replicated
+  # across moe_ep (EP-combined internally). moe_tp_size=tp/ep=1 so not active.
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
     edits:
       - match: |
@@ -252,30 +254,30 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
               hidden_states=hidden_states,
               forward_batch=forward_batch,
           )
-        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('attn_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
       - match: |
           hidden_states, residual = self.layer_communicator.prepare_mlp(
               hidden_states, residual, forward_batch
           )
-        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated')"
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
       - match: |
           hidden_states = self.mlp(
               hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
           )
-        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
 
   # --- attention internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
     edits:
       - match: "output, _ = self.o_proj(attn_output)"
-        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp]')"
+        prepend: "dumper.dump('attn_pre_o_proj', attn_output, dims='t attn_h[tp] # moe_ep:replicated')"
 
   # --- moe internals (forward_deepep path) ---
   # DeepEPMoE combines EP results internally, so moe_expert_output is
@@ -283,13 +285,13 @@ patches:
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_deepep
     edits:
       - match: "router_logits, _ = self.gate(hidden_states)"
-        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated')"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated')"
       - match: |
           final_hidden_states = self.experts(
               hidden_states=hidden_states,
               topk_output=topk_output,
           )
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial]')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
 """
 
 
