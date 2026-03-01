@@ -238,8 +238,7 @@ def _compare_bundle_pairs(
         ] = compare_bundle_pair(
             name=name,
             filenames_pair=filenames_pair,
-            baseline_path=dir_pair.x,
-            target_path=dir_pair.y,
+            dir_pair=dir_pair,
             token_aligner_mode=token_aligner_mode,
             token_aligner_plan=token_aligner_plan,
             diff_threshold=diff_threshold,
