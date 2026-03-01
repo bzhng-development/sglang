@@ -38,12 +38,12 @@ def compute_axis_aligner_plan(
         return None
 
     # Build einops source tokens per side (fused dims → "(a b)", squeeze → "1")
-    source_pair: Pair[list[str]] = specs_pair.map(_build_einops_tokens)
+    source_tokens_pair: Pair[list[str]] = specs_pair.map(_build_einops_tokens)
 
     # Target order: y's semantic names (no squeeze), each fused group in "(a b)" form
-    target_tokens: list[str] = [t for t in source_pair.y if t != SQUEEZE_DIM_NAME]
+    target_tokens: list[str] = [t for t in source_tokens_pair.y if t != SQUEEZE_DIM_NAME]
 
-    pattern: Pair[Optional[str]] = source_pair.map(
+    pattern: Pair[Optional[str]] = source_tokens_pair.map(
         lambda tokens: _build_pattern(source=tokens, target=target_tokens)
     )
 
