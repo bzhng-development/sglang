@@ -14,9 +14,10 @@ class FusedMoEDeRouter(DeRouterPlugin):
 
     The routed tensor is **not physically permuted** — the Triton kernel uses
     ``sorted_token_ids`` for indirect addressing.  So we actually just need to
-    validate that the tensor is in the original order.  However, for dump points
-    *after* the kernel (③④⑤), the tensor **is** in sorted order and needs
-    inverse scatter.
+    validate that the tensor is in the original order.  However, for tensors
+    that have been physically reordered by the dispatch kernel (e.g. after
+    up/gate GEMM, activation, or down GEMM), the inverse scatter restores the
+    original token order.
     """
 
     def de_route(

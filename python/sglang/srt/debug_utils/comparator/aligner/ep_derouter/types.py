@@ -13,7 +13,7 @@ class DeRouterPlan(_FrozenBase):
     """
 
     type: Literal["de_router"] = "de_router"
-    dispatch_path: str  # "fused_moe" | "deepep_normal" | "deepep_ll" | "megatron_a2a"
+    dispatch_path: Literal["fused_moe", "deepep_normal", "deepep_ll", "megatron_a2a"]
     aux_tensor_refs: dict[str, str]  # ref_key -> dump name of auxiliary tensor
     num_tokens: int
     top_k: int

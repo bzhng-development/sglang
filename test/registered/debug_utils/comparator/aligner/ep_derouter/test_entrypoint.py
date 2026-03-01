@@ -1,5 +1,6 @@
 import sys
 
+import pydantic
 import pytest
 import torch
 
@@ -44,18 +45,13 @@ class TestExecuteDeRouterPlan:
         assert torch.allclose(result[1], torch.tensor([10.0, 11.0, 12.0]))
 
     def test_unknown_dispatch_path_raises(self) -> None:
-        """Unknown dispatch_path raises ValueError."""
-        plan: DeRouterPlan = DeRouterPlan(
-            dispatch_path="unknown_path",
-            aux_tensor_refs={},
-            num_tokens=4,
-            top_k=2,
-        )
-        with pytest.raises(ValueError, match="Unknown dispatch_path"):
-            execute_de_router_plan(
-                plan=plan,
-                tensor=torch.randn(8, 3),
-                aux_tensors={},
+        """Unknown dispatch_path is rejected by Pydantic validation."""
+        with pytest.raises(pydantic.ValidationError):
+            DeRouterPlan(
+                dispatch_path="unknown_path",
+                aux_tensor_refs={},
+                num_tokens=4,
+                top_k=2,
             )
 
     def test_missing_aux_tensor_raises(self) -> None:
