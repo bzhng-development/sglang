@@ -48,7 +48,7 @@ class TestComputeAxisSwapperPlan:
 
     def test_modifiers_ignored_for_name_extraction(self) -> None:
         result: Optional[AxisSwapperPlan] = compute_axis_swapper_plan(
-            Pair(x="t h[tp] d", y="t d h[tp]")
+            Pair(x="t h(tp) d", y="t d h(tp)")
         )
         assert result is not None
         assert result.pattern == "t h d -> t d h"
