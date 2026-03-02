@@ -182,8 +182,16 @@ def _check_cutlass_block_fp8_hardware_support() -> bool:
 
 if is_blackwell_supported() and is_flashinfer_available():
     from flashinfer.gemm import gemm_fp8_nt_groupwise as _raw_gemm_fp8_nt_groupwise
-
     from sglang.srt.utils.custom_op import register_custom_op
+
+    @lru_cache(maxsize=1)
+    def _get_flashinfer_groupwise_backend() -> str:
+        major, minor = get_device_capability()
+        # SM120/121: CUTLASS only.
+        # SM100/103: TRTLLM only.
+        if major >= 12:
+            return "cutlass"
+        return "trtllm"
 
     # Wrap gemm_fp8_nt_groupwise as a custom op so torch.compile does not trace
     # into flashinfer's JIT compilation code (pathlib/cubin_loader ops).
@@ -201,13 +209,24 @@ if is_blackwell_supported() and is_flashinfer_available():
         weight_scale: torch.Tensor,
         out_dtype: torch.dtype,
     ) -> torch.Tensor:
+        backend = _get_flashinfer_groupwise_backend()
+        if backend == "cutlass":
+            return _raw_gemm_fp8_nt_groupwise(
+                q_input,
+                weight,
+                x_scale,
+                weight_scale,
+                out_dtype=out_dtype,
+                backend="cutlass",
+                scale_major_mode="MN",
+            )
         return _raw_gemm_fp8_nt_groupwise(
             q_input,
             weight,
             x_scale,
             weight_scale,
             out_dtype=out_dtype,
-            backend="trtllm",
+            backend=backend,
         )
 
 
@@ -358,14 +377,10 @@ def flashinfer_gemm_w8a8_block_fp8_linear_with_fallback(
 ) -> torch.Tensor:
     assert input_scale is None
 
-    # FlashInfer TRTLLM backend requires K dimension >= 256
-    # Check shape before quantizing, otherwise we run into Flashinfer assertion.
-    # TODO(brayden): make a better fallback here, maybe to cutlass backend?
     input_2d = input.view(-1, input.shape[-1])
-    k_dim = input_2d.shape[1]  # K dimension
-
-    if k_dim < 256:
-        # Fallback to Triton for shapes that don't meet TRTLLM constraint.
+    backend = _get_flashinfer_groupwise_backend()
+    # TRTLLM backend requires K dimension >= 256.
+    if backend == "trtllm" and input_2d.shape[1] < 256:
         return triton_w8a8_block_fp8_linear(
             input, weight, block_size, weight_scale, input_scale, bias
         )
