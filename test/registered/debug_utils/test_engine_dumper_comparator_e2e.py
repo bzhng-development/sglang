@@ -404,7 +404,7 @@ patches:
     edits:
       - match: "silu_and_mul(gateup_output.view(-1, N), down_input)"
         prepend: |
-          dumper.dump('gateup_output', gateup_output.view(all_tokens, 2, N // 2), dims='t_k[ep] gate_up h_inter # tp:replicated moe_tp:replicated moe_ep:replicated dp:replicated')
+          dumper.dump('gateup_output', gateup_output.view(all_tokens, 2, N // 2), dims='t_k[ep] gate_up h_inter # tp:replicated moe_tp:replicated moe_ep:replicated')
 
   # --- DeepEP Low-Latency: dispatch metadata + masked GEMM intermediate ---
   - target: sglang.srt.layers.moe.token_dispatcher.deepep._DeepEPDispatcherImplLowLatency.dispatch_b
@@ -433,7 +433,7 @@ patches:
     edits:
       - match: "# Act"
         prepend: |
-          dumper.dump('gateup_output', gateup_output.view(num_groups, m, 2, n // 2), dims='num_experts expected_m gate_up h_inter[ep] # tp:replicated moe_tp:replicated moe_ep:replicated dp:replicated')
+          dumper.dump('gateup_output', gateup_output.view(num_groups, m, 2, n // 2), dims='num_experts expected_m gate_up h_inter[ep] # tp:replicated moe_tp:replicated moe_ep:replicated')
 """
 
 
