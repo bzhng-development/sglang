@@ -411,6 +411,34 @@ def flashinfer_gemm_w8a8_block_fp8_linear_with_fallback(
     q_input, x_scale = sglang_per_token_group_quant_fp8(
         input_2d, block_size[1], column_major_scales=True
     )
+    if backend == "cutlass":
+        block_n, block_k = block_size
+        m, k = input_2d.shape
+        n = weight.shape[0]
+        expected_x_scale_shape = (k // block_k, m)
+        expected_weight_scale_shape = (k // block_k, n // block_n)
+        assert x_scale.shape == expected_x_scale_shape, (
+            "FlashInfer CUTLASS groupwise FP8 expects A scale layout "
+            f"(k//block_k, m) for scale_major_mode='MN', got {tuple(x_scale.shape)}; "
+            f"expected {expected_x_scale_shape}. "
+            f"strides={x_scale.stride()} is_contiguous={x_scale.is_contiguous()} "
+            f"m={m} n={n} k={k} block_size={block_size}"
+        )
+        assert weight_scale.shape == expected_weight_scale_shape, (
+            "FlashInfer CUTLASS groupwise FP8 expects B scale layout "
+            f"(k//block_k, n//block_n) for scale_major_mode='MN', got {tuple(weight_scale.shape)}; "
+            f"expected {expected_weight_scale_shape}. "
+            f"strides={weight_scale.stride()} is_contiguous={weight_scale.is_contiguous()} "
+            f"m={m} n={n} k={k} block_size={block_size}"
+        )
+        assert x_scale.dtype == torch.float32, (
+            "FlashInfer CUTLASS groupwise FP8 expects x_scale dtype float32, "
+            f"got {x_scale.dtype}."
+        )
+        assert weight_scale.dtype == torch.float32, (
+            "FlashInfer CUTLASS groupwise FP8 expects weight_scale dtype float32, "
+            f"got {weight_scale.dtype}."
+        )
     # TRTLLM requires column-major scaling factors
     output = gemm_fp8_nt_groupwise(
         q_input,
