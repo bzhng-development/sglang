@@ -549,7 +549,7 @@ class TestFP8DeepEP:
 # between TP configurations because the GEMM tiling differs (different N →
 # different BLOCK_SIZE), changing BF16 accumulation order. The per-element
 # outliers (rel_diff up to ~0.005) do not affect the final MoE output.
-_DIFF_THRESHOLD_WITH_GATEUP: float = 0.01
+_DIFF_THRESHOLD_WITH_GATEUP: float = 0.007
 
 _ALLOW_SKIPPED_BASE = (
     "input_ids|positions"
