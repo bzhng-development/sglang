@@ -398,11 +398,13 @@ patches:
           dumper.dump('deepep_normal_src2dst', src2dst)
 
   # deep_gemm contiguous path (FP8 models using DeepGEMM runner)
+  # No dp:=attn_dp here: after EP all-to-all dispatch, both DP ranks have
+  # tokens assigned to their local experts (not DP-distributed anymore).
   - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_contiguous_gemm
     edits:
       - match: "silu_and_mul(gateup_output.view(-1, N), down_input)"
         prepend: |
-          dumper.dump('gateup_output', gateup_output.view(all_tokens, 2, N // 2), dims='t_k[ep] gate_up h_inter # tp:replicated moe_tp:replicated moe_ep:replicated dp:=attn_dp')
+          dumper.dump('gateup_output', gateup_output.view(all_tokens, 2, N // 2), dims='t_k[ep] gate_up h_inter # tp:replicated moe_tp:replicated moe_ep:replicated dp:replicated')
 
   # --- DeepEP Low-Latency: dispatch metadata + masked GEMM intermediate ---
   - target: sglang.srt.layers.moe.token_dispatcher.deepep._DeepEPDispatcherImplLowLatency.dispatch_b
@@ -426,11 +428,12 @@ patches:
           dumper.dump('gateup_output', c1.view(num_experts, m, 2, n), dims='num_experts expected_m gate_up h_inter[ep] # tp:replicated moe_tp:replicated moe_ep:replicated dp:=attn_dp')
 
   # deep_gemm masked path (FP8 models using DeepGEMM runner)
+  # No dp:=attn_dp here: after EP dispatch, both DP ranks have expert data.
   - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_masked_gemm
     edits:
       - match: "# Act"
         prepend: |
-          dumper.dump('gateup_output', gateup_output.view(num_groups, m, 2, n // 2), dims='num_experts expected_m gate_up h_inter[ep] # tp:replicated moe_tp:replicated moe_ep:replicated dp:=attn_dp')
+          dumper.dump('gateup_output', gateup_output.view(num_groups, m, 2, n // 2), dims='num_experts expected_m gate_up h_inter[ep] # tp:replicated moe_tp:replicated moe_ep:replicated dp:replicated')
 """
 
 
