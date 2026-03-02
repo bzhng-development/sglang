@@ -127,17 +127,21 @@ patches:
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 
   # --- moe expert intermediate (gate/up GEMM output, before activation) ---
-  # intermediate_cache1 is written by the Triton kernel.  When c_sorted=False
-  # (non-TMA path), it is already in canonical (token_idx*top_k+k) order
-  # and does NOT need de-routing.  When c_sorted=True (TMA path, e.g. H200),
-  # it is in sorted dispatch order — but both baseline and target use the
-  # same sorting (topk_ids are replicated), so they match without de-routing.
-  # Therefore we omit [ep] from the dims so the derouter is NOT triggered.
+  # intermediate_cache1 has shape [T, 2*I_local] where the first I_local cols
+  # are gate and last I_local are up (MergedColumnParallel sharding).
+  # Simple concat would produce [gate_r0, up_r0, gate_r1, up_r1, ...] which
+  # differs between TP=2 and TP=4.  Reshaping to [T, 2, I_local] and
+  # annotating only I_local as [moe_tp] yields [T, 2, I_full] after concat,
+  # which is order-invariant to moe_tp_size.
+  #
+  # No [ep] in dims: both baseline and target use the same dispatch order
+  # (topk_ids are replicated), so the raw row order matches without derouting.
   - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
     edits:
       - match: "# Activation function with multiplication"
         prepend: |
-          dumper.dump('gateup_output', intermediate_cache1, dims='t_k h_inter_2[moe_tp] # tp:replicated')
+          _ic1_t, _ic1_n = intermediate_cache1.shape
+          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k gate_up h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -196,12 +200,13 @@ patches:
   # --- moe expert intermediate (gate/up GEMM output, before activation) ---
   # In dp-attention, prepare_mlp all-gathers tokens before MoE dispatch,
   # so fused_experts_impl sees the same full token set as baseline.
-  # Same rationale as PATCH_CONFIG_YAML: no [ep] → no derouter.
+  # Same reshape + dims rationale as PATCH_CONFIG_YAML.
   - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
     edits:
       - match: "# Activation function with multiplication"
         prepend: |
-          dumper.dump('gateup_output', intermediate_cache1, dims='t_k h_inter_2[moe_tp] # tp:replicated')
+          _ic1_t, _ic1_n = intermediate_cache1.shape
+          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k gate_up h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
