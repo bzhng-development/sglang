@@ -460,6 +460,10 @@ class TestBF16:
         In dp-attention mode (attn_tp_size=1, attn_dp_size=2), attention
         tensors are NOT TP-sharded and mlp_output is already all-reduced.
         A separate patch config with corrected dims is used for the target.
+
+        gateup_output is NOT compared here because dp-attention redistributes
+        tokens across DP ranks, causing dispatch-order intermediate results
+        to differ fundamentally even when the final MoE output matches.
         """
         _run_target_and_compare(
             model=MODEL_BF16,
@@ -468,8 +472,7 @@ class TestBF16:
             target_tp=BASELINE_TP,
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
             target_patch_config_yaml=PATCH_CONFIG_DP_ATTENTION_YAML,
-            target_extra_fields=_FIELDS_GATEUP,
-            diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
+            allow_failed_pattern="gateup_output",
         )
 
     def test_ep_fused_moe(self, tmp_path: Path) -> None:
