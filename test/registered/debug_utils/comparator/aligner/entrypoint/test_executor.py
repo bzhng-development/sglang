@@ -79,7 +79,7 @@ class TestExecuteSubPlan:
                 tensors=[torch.tensor([1.0])],
                 plan=_FakePlan(),
                 aux_loader=None,
-                meta={},
+                metas=[{}],
             )
 
 

@@ -125,19 +125,22 @@ def compute_per_step_sub_plans(
     replicated_axes: frozenset[ParallelAxis] = dims_spec.replicated_axes
     parallel_infos = [normalize_parallel_info(meta) for meta in metas]
 
+    de_router_plans: list[DeRouterPlan] = maybe_compute_de_router_plan(
+        dims_spec=dims_spec,
+        available_aux_names=available_aux_names,
+    )
+    has_de_router: bool = len(de_router_plans) > 0
+
     unsharder_plans = compute_unsharder_plan(
         dim_specs=dim_specs,
         parallel_infos=parallel_infos,
         explicit_replicated_axes=replicated_axes,
         thd_global_seq_lens=thd_global_seq_lens,
-    )
-    de_router_plans: list[DeRouterPlan] = maybe_compute_de_router_plan(
-        dims_spec=dims_spec,
-        available_aux_names=available_aux_names,
+        has_de_router=has_de_router,
     )
     reorderer_plans = compute_reorderer_plans(
         dim_specs=dim_specs,
         parallel_infos=parallel_infos,
         thd_global_seq_lens=thd_global_seq_lens,
     )
-    return [*unsharder_plans, *de_router_plans, *reorderer_plans]
+    return [*de_router_plans, *unsharder_plans, *reorderer_plans]

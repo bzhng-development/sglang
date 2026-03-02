@@ -129,13 +129,12 @@ def _execute_step_plans(
         step_metas: list[dict[str, Any]] = [
             metas[i] for i in step_plan.input_object_indices if i < len(metas)
         ]
-        step_meta: dict[str, Any] = step_metas[0] if step_metas else {}
 
         tensor, checks = execute_sub_plans(
             tensors=step_tensors,
             plans=step_plan.sub_plans,
             aux_loader=aux_loader,
-            meta=step_meta,
+            metas=step_metas,
         )
         all_checks.extend(checks)
         if tensor is not None:
@@ -149,7 +148,7 @@ def execute_sub_plans(
     plans: list[AlignerPerStepSubPlan],
     *,
     aux_loader: Optional[RawAuxLoader] = None,
-    meta: dict[str, Any] = {},  # noqa: B006
+    metas: Optional[list[dict[str, Any]]] = None,
 ) -> tuple[Optional[torch.Tensor], list[ReplicatedCheckResult]]:
     if not tensors:
         return None, []
@@ -159,11 +158,13 @@ def execute_sub_plans(
             return None, []
         return tensors[0], []
 
+    effective_metas: list[dict[str, Any]] = metas if metas is not None else [{} for _ in tensors]
+
     current: list[torch.Tensor] = tensors
     all_checks: list[ReplicatedCheckResult] = []
     for plan in plans:
         current, checks = _execute_sub_plan(
-            tensors=current, plan=plan, aux_loader=aux_loader, meta=meta
+            tensors=current, plan=plan, aux_loader=aux_loader, metas=effective_metas
         )
         all_checks.extend(checks)
 
@@ -176,7 +177,7 @@ def _execute_sub_plan(
     plan: AlignerPerStepSubPlan,
     *,
     aux_loader: Optional[RawAuxLoader],
-    meta: dict[str, Any],
+    metas: list[dict[str, Any]],
 ) -> tuple[list[torch.Tensor], list[ReplicatedCheckResult]]:
     if isinstance(plan, UnsharderPlan):
         unsharder_result: UnsharderResult = execute_unsharder_plan(plan, tensors)
@@ -189,9 +190,9 @@ def _execute_sub_plan(
                 plan=plan,
                 tensor=t,
                 aux_loader=aux_loader,
-                meta=meta,
+                meta=metas[i],
             )
-            for t in tensors
+            for i, t in enumerate(tensors)
         ]
         return result, []
     else:

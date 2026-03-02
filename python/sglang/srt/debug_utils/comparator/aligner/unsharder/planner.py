@@ -34,6 +34,7 @@ def compute_unsharder_plan(
     *,
     explicit_replicated_axes: frozenset[ParallelAxis] = frozenset(),
     thd_global_seq_lens: Optional[list[int]] = None,
+    has_de_router: bool = False,
 ) -> list[UnsharderPlan]:
     if not parallel_infos:
         raise ValueError("parallel_infos must not be empty")
@@ -94,6 +95,7 @@ def compute_unsharder_plan(
                 dim_name=dim_name,
                 parallel_infos=parallel_infos,
                 thd_global_seq_lens=thd_global_seq_lens,
+                has_de_router=has_de_router,
             ),
         )
         for dim_name, modifier in reversed_sharded_modifiers
@@ -208,8 +210,12 @@ def _resolve_unshard_params(
     dim_name: str,
     parallel_infos: list[dict[ParallelAxis, AxisInfo]],
     thd_global_seq_lens: Optional[list[int]] = None,
+    has_de_router: bool = False,
 ) -> UnsharderParams:
     if modifier.reduction is not None:
+        return ReduceSumParams()
+
+    if has_de_router and modifier.axis == ParallelAxis.EP:
         return ReduceSumParams()
 
     if (

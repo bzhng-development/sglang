@@ -8,25 +8,18 @@ from sglang.srt.debug_utils.comparator.aligner.ep_derouter.base import DeRouterP
 class DeepEPNormalDeRouter(DeRouterPlugin):
     """De-router for SGLang DeepEP Normal dispatch path.
 
-    After dispatch, tokens from all source ranks are laid out contiguously per
-    expert.  ``deepep_normal_rank_prefix_matrix[src_rank]`` gives the starting
-    offset for tokens coming from ``src_rank``.
+    Uses ``deepep_normal_src2dst`` (output of ``deepep_compute_src2dst_triton_kernel``).
 
-    We reconstruct the global flatten index for each received token using:
-    1. The source rank prefix offsets to determine which source rank each
-       received token belongs to.
-    2. The position within that rank's contribution gives the original token
-       index on that rank.
+    ``src2dst[canonical_flat_idx] = dispatch_pos`` where
+    ``canonical_flat_idx = token_idx * top_k + k_idx``.
+    Invalid positions (token not handled by this EP rank) have negative values.
 
-    NOTE: The exact encoding of ``rank_prefix_matrix`` is TBD until we have
-    real dumps.  The current implementation treats it as a 1-D tensor of
-    cumulative counts per source rank: ``rank_prefix_matrix[r]`` =
-    total number of tokens from ranks ``< r``.
+    We invert this to get ``forward_perm[dispatch_pos] = canonical_flat_idx``.
     """
 
     @property
     def required_aux_dump_names(self) -> frozenset[str]:
-        return frozenset({"deepep_normal_rank_prefix_matrix"})
+        return frozenset({"deepep_normal_src2dst"})
 
     def compute_forward_permutation(
         self,
@@ -36,38 +29,16 @@ class DeepEPNormalDeRouter(DeRouterPlugin):
         top_k: int,
         num_routed: int,
     ) -> torch.Tensor:
-        rank_prefix_matrix: torch.Tensor = aux_tensors[
-            "deepep_normal_rank_prefix_matrix"
-        ]
+        src2dst: torch.Tensor = aux_tensors["deepep_normal_src2dst"].long()
         total_slots: int = num_tokens * top_k
-
-        rank_prefix: torch.Tensor = rank_prefix_matrix.to(dtype=torch.long).flatten()
-        num_ranks: int = rank_prefix.shape[0]
-
-        device: torch.device = rank_prefix.device
-        if num_ranks > 1:
-            rank_bounds: torch.Tensor = rank_prefix.clone()
-            if rank_bounds[-1] < num_routed:
-                rank_bounds = torch.cat(
-                    [rank_bounds, torch.tensor([num_routed], device=device)]
-                )
-        else:
-            rank_bounds = torch.tensor([0, num_routed], device=device)
-
-        positions: torch.Tensor = torch.arange(
-            num_routed, dtype=torch.long, device=device
+        forward_perm: torch.Tensor = torch.full(
+            (num_routed,), -1, dtype=torch.long, device=src2dst.device
         )
-        source_ranks: torch.Tensor = (
-            torch.searchsorted(rank_bounds, positions, right=True) - 1
-        )
-        local_positions: torch.Tensor = positions - rank_bounds[source_ranks]
 
-        tokens_per_rank: int = num_tokens // num_ranks
-        global_token_idx: torch.Tensor = (
-            source_ranks * tokens_per_rank + local_positions // top_k
+        valid: torch.Tensor = (src2dst >= 0) & (src2dst < num_routed)
+        canonical_indices: torch.Tensor = torch.arange(
+            total_slots, device=src2dst.device
         )
-        k_idx: torch.Tensor = local_positions % top_k
-        flatten_idx: torch.Tensor = global_token_idx * top_k + k_idx
+        forward_perm[src2dst[valid]] = canonical_indices[valid]
 
-        flatten_idx[flatten_idx >= total_slots] = -1
-        return flatten_idx
+        return forward_perm

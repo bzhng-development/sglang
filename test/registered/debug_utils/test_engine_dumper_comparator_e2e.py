@@ -282,6 +282,22 @@ patches:
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
 
+  # --- moe expert intermediate (gate/up GEMM output, before activation) ---
+  # Same fused_experts_impl patch as baseline, with [ep] for derouting.
+  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
+    edits:
+      - match: |
+          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+              curr_topk_ids, config["BLOCK_SIZE_M"], E
+          )
+        append: |
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
+          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
+          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
+      - match: "# Activation function with multiplication"
+        prepend: |
+          _ic1_t, _ic1_n = intermediate_cache1.shape
+          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k[ep] gate_up h_inter[moe_tp] # tp:replicated')
 """
 
 # DeepEP uses forward_deepep (not forward_normal), so MoE internals need
@@ -371,10 +387,14 @@ patches:
           dumper.dump('deepep_normal_ep_num_tokens', torch.tensor(hidden_states.shape[0] if not isinstance(hidden_states, tuple) else hidden_states[0].shape[0]))
           dumper.dump('deepep_normal_ep_top_k', torch.tensor(topk_ids.shape[1]))
 
-  # gateup_output not dumped in DeepEP: EP-split intermediate tensors
-  # cannot be compared across dispatch paths without partial-overlap logic.
-  # The derouter maps each EP rank's tokens to canonical order, but only
-  # fills positions for that rank's experts, leaving zeros elsewhere.
+  # --- DeepEP Normal: gate/up GEMM intermediate + src2dst for derouting ---
+  - target: sglang.srt.layers.moe.cutlass_w4a8_moe.cutlass_w4a8_moe_deepep_normal
+    edits:
+      - match: "silu_and_mul(c1, intermediate)"
+        prepend: |
+          _n2 = c1.shape[1]
+          dumper.dump('gateup_output', c1.view(m * topk, 2, _n2 // 2), dims='t_k[ep] gate_up h_inter # tp:replicated moe_tp:replicated moe_ep:replicated dp:=attn_dp')
+          dumper.dump('deepep_normal_src2dst', src2dst)
 
   # --- DeepEP Low-Latency: dispatch metadata + masked GEMM intermediate ---
   - target: sglang.srt.layers.moe.token_dispatcher.deepep._DeepEPDispatcherImplLowLatency.dispatch_b
@@ -386,7 +406,15 @@ patches:
           dumper.dump('deepep_ll_ep_num_tokens', torch.tensor(hidden_states.shape[0] if not isinstance(hidden_states, tuple) else hidden_states[0].shape[0]))
           dumper.dump('deepep_ll_ep_top_k', torch.tensor(topk_ids.shape[1]))
 
-  # gateup_output not dumped in DeepEP low-latency: same reason as normal mode.
+  # --- DeepEP Low-Latency: gate/up GEMM intermediate ---
+  - target: sglang.srt.layers.moe.cutlass_w4a8_moe.cutlass_w4a8_moe_deepep_ll
+    edits:
+      - match: |
+          intermediate_q = torch.empty(
+              (num_experts, m, n), device=a.device, dtype=torch.float8_e4m3fn
+          )
+        prepend: |
+          dumper.dump('gateup_output', c1.view(num_experts, m, 2, n), dims='num_experts expected_m gate_up h_inter[ep] # tp:replicated moe_tp:replicated moe_ep:replicated dp:=attn_dp')
 """
 
 
@@ -460,6 +488,8 @@ class TestBF16:
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
             allow_skipped_pattern=_ALLOW_SKIPPED_EP,
+            target_extra_fields=_FIELDS_GATEUP,
+            diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
         )
 
 
@@ -514,6 +544,8 @@ class TestFP8DeepEP:
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
             allow_skipped_pattern=_ALLOW_SKIPPED_DEEPEP,
+            target_extra_fields=_FIELDS_GATEUP,
+            diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
         )
 
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
@@ -540,6 +572,8 @@ class TestFP8DeepEP:
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
             allow_skipped_pattern=_ALLOW_SKIPPED_DEEPEP,
+            target_extra_fields=_FIELDS_GATEUP,
+            diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
         )
 
 
@@ -556,13 +590,13 @@ _ALLOW_SKIPPED_BASE = (
     "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
 )
 
-_ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE + "|gateup_output"
+_ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE
 
 _ALLOW_SKIPPED_DEEPEP = (
     _ALLOW_SKIPPED_BASE
-    + "|gateup_output"
     + "|deepep_normal_recv_topk_ids|deepep_normal_num_recv_tokens_per_expert"
     + "|deepep_normal_ep_num_tokens|deepep_normal_ep_top_k"
+    + "|deepep_normal_src2dst"
     + "|deepep_ll_masked_m|deepep_ll_packed_recv_src_info"
     + "|deepep_ll_ep_num_tokens|deepep_ll_ep_top_k"
 )

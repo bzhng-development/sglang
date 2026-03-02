@@ -14,12 +14,17 @@ def maybe_compute_de_router_plan(
     dims_spec: Optional[DimsSpec],
     available_aux_names: frozenset[str],
 ) -> list[DeRouterPlan]:
-    """Generate a DeRouterPlan if dims contain ``(ep)`` and aux tensors match a plugin."""
+    """Generate a DeRouterPlan if dims contain ``[ep]`` (without reduction) and aux tensors match a plugin.
+
+    ``[ep:partial]`` does NOT trigger the derouter — it indicates that the dump
+    has already been scattered to canonical order and only needs a reduce-sum
+    across EP ranks (handled by the unsharder).
+    """
     if dims_spec is None:
         return []
 
     has_ep: bool = any(
-        mod.axis == ParallelAxis.EP
+        mod.axis == ParallelAxis.EP and mod.reduction is None
         for dim in dims_spec.dims
         for mod in dim.parallel_modifiers
     )

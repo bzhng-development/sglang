@@ -12,48 +12,69 @@ register_cpu_ci(est_time=10, suite="default", nightly=True)
 
 
 class TestDeepEPNormalDeRouter:
-    """Test compute_forward_permutation from rank_prefix_matrix."""
+    """Test compute_forward_permutation from src2dst."""
 
-    def test_single_rank(self) -> None:
-        """Single source rank: tokens arrive in order within that rank."""
+    def test_identity(self) -> None:
+        """src2dst is identity → forward_perm is identity."""
         num_tokens: int = 4
-        top_k: int = 2
+        top_k: int = 1
         total_slots: int = num_tokens * top_k
 
-        rank_prefix_matrix: torch.Tensor = torch.tensor([0], dtype=torch.long)
+        src2dst: torch.Tensor = torch.arange(total_slots, dtype=torch.long)
 
         plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"deepep_normal_rank_prefix_matrix": rank_prefix_matrix},
+            aux_tensors={"deepep_normal_src2dst": src2dst},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=total_slots,
         )
 
         assert perm.shape == (total_slots,)
-        # Single rank, identity ordering: position i maps to flatten_idx i
         assert torch.equal(perm, torch.arange(total_slots, dtype=torch.long))
 
-    def test_two_ranks(self) -> None:
-        """Two source ranks: verify tokens are correctly mapped to global indices."""
-        num_tokens: int = 4
+    def test_reversed(self) -> None:
+        """src2dst reverses positions → forward_perm is the inverse."""
+        num_tokens: int = 3
         top_k: int = 1
+        total_slots: int = num_tokens * top_k
 
-        # Rank 0 contributes 2 tokens (positions 0,1), rank 1 contributes 2 (positions 2,3)
-        rank_prefix_matrix: torch.Tensor = torch.tensor([0, 2], dtype=torch.long)
+        # canonical 0→dispatch 2, canonical 1→dispatch 1, canonical 2→dispatch 0
+        src2dst: torch.Tensor = torch.tensor([2, 1, 0], dtype=torch.long)
 
         plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"deepep_normal_rank_prefix_matrix": rank_prefix_matrix},
+            aux_tensors={"deepep_normal_src2dst": src2dst},
             num_tokens=num_tokens,
             top_k=top_k,
-            num_routed=4,
+            num_routed=total_slots,
         )
 
-        assert perm.shape == (4,)
-        # Rank 0: global tokens 0,1 → flatten 0,1
-        # Rank 1: global tokens 2,3 → flatten 2,3
-        assert torch.equal(perm, torch.tensor([0, 1, 2, 3], dtype=torch.long))
+        # forward_perm[dispatch_pos] = canonical_pos
+        # dispatch 0 ← canonical 2, dispatch 1 ← canonical 1, dispatch 2 ← canonical 0
+        assert torch.equal(perm, torch.tensor([2, 1, 0], dtype=torch.long))
+
+    def test_partial_ep_rank(self) -> None:
+        """EP rank only handles subset of tokens (others have negative src2dst)."""
+        num_tokens: int = 4
+        top_k: int = 1
+        total_slots: int = num_tokens * top_k
+
+        # This rank handles canonical 1 and 3, dispatched to positions 0 and 1
+        src2dst: torch.Tensor = torch.tensor([-1, 0, -1, 1], dtype=torch.long)
+        num_routed: int = 2
+
+        plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
+        perm: torch.Tensor = plugin.compute_forward_permutation(
+            aux_tensors={"deepep_normal_src2dst": src2dst},
+            num_tokens=num_tokens,
+            top_k=top_k,
+            num_routed=num_routed,
+        )
+
+        assert perm.shape == (num_routed,)
+        # dispatch 0 ← canonical 1, dispatch 1 ← canonical 3
+        assert torch.equal(perm, torch.tensor([1, 3], dtype=torch.long))
 
     def test_output_shape(self) -> None:
         """Output always has shape [num_routed]."""
@@ -61,11 +82,11 @@ class TestDeepEPNormalDeRouter:
         top_k: int = 2
         total_slots: int = num_tokens * top_k
 
-        rank_prefix_matrix: torch.Tensor = torch.tensor([0], dtype=torch.long)
+        src2dst: torch.Tensor = torch.arange(total_slots, dtype=torch.long)
 
         plugin: DeepEPNormalDeRouter = DeepEPNormalDeRouter()
         perm: torch.Tensor = plugin.compute_forward_permutation(
-            aux_tensors={"deepep_normal_rank_prefix_matrix": rank_prefix_matrix},
+            aux_tensors={"deepep_normal_src2dst": src2dst},
             num_tokens=num_tokens,
             top_k=top_k,
             num_routed=total_slots,
