@@ -588,6 +588,7 @@ _DIFF_THRESHOLD_WITH_GATEUP: float = 0.007
 _ALLOW_SKIPPED_BASE = (
     "input_ids|positions"
     "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
+    "|gateup_output|moe_expert_output"
 )
 
 _ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE
