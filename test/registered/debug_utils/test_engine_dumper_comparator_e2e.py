@@ -88,7 +88,10 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated')"
+        append: |
+          dumper.dump('input_ids', forward_batch.input_ids)
+          dumper.dump('seq_lens', forward_batch.seq_lens)
+          dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated')
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
@@ -141,7 +144,10 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated dp:=attn_dp')"
+        append: |
+          dumper.dump('input_ids', forward_batch.input_ids)
+          dumper.dump('seq_lens', forward_batch.seq_lens)
+          dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated dp:=attn_dp')
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
@@ -192,7 +198,10 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+        append: |
+          dumper.dump('input_ids', forward_batch.input_ids)
+          dumper.dump('seq_lens', forward_batch.seq_lens)
+          dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
@@ -254,7 +263,10 @@ patches:
                   **kwargs,
               )
           )
-        append: "dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+        append: |
+          dumper.dump('input_ids', forward_batch.input_ids)
+          dumper.dump('seq_lens', forward_batch.seq_lens)
+          dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')
       - match: |
           hidden_states = self.self_attn(
               positions=positions,
@@ -526,7 +538,12 @@ def _run_server_and_generate(
         kill_process_tree(proc.pid)
 
 
-def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
+def _run_comparator(
+    *,
+    baseline_exp: Path,
+    target_exp: Path,
+    extra_args: Optional[list[str]] = None,
+) -> None:
     """Run comparator CLI and assert success."""
     cmd: list[str] = [
         "python",
@@ -539,8 +556,12 @@ def _run_comparator(*, baseline_exp: Path, target_exp: Path) -> None:
         "--output-format",
         "json",
         "--allow-skipped-pattern",
-        "input_ids|positions",
+        "input_ids|positions|seq_lens",
+        "--token-aligner",
+        "smart",
     ]
+    if extra_args:
+        cmd.extend(extra_args)
 
     result: subprocess.CompletedProcess[str] = subprocess.run(
         cmd,
