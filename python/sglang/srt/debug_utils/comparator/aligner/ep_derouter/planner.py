@@ -11,10 +11,10 @@ from sglang.srt.debug_utils.comparator.dims_spec import DimsSpec, ParallelAxis
 
 def maybe_compute_de_router_plan(
     *,
-    bundle_name: str,
     dims_spec: Optional[DimsSpec],
+    available_aux_names: frozenset[str],
 ) -> list[DeRouterPlan]:
-    """Generate a DeRouterPlan if dims contain ``(ep)`` and the name matches a plugin."""
+    """Generate a DeRouterPlan if dims contain ``(ep)`` and aux tensors match a plugin."""
     if dims_spec is None:
         return []
 
@@ -26,16 +26,16 @@ def maybe_compute_de_router_plan(
     if not has_ep:
         return []
 
-    dispatch_path: Optional[str] = _infer_dispatch_path(bundle_name)
+    dispatch_path: Optional[str] = _infer_dispatch_path(available_aux_names)
     if dispatch_path is None:
         return []
 
     return [DeRouterPlan(dispatch_path=dispatch_path)]
 
 
-def _infer_dispatch_path(bundle_name: str) -> Optional[str]:
-    """Infer dispatch path from the tensor name prefix."""
-    for path in _PLUGIN_REGISTRY:
-        if bundle_name.startswith(path + "_"):
+def _infer_dispatch_path(available_aux_names: frozenset[str]) -> Optional[str]:
+    """Infer dispatch path from which plugin's required aux tensors are available."""
+    for path, plugin_cls in _PLUGIN_REGISTRY.items():
+        if plugin_cls().required_aux_dump_names <= available_aux_names:
             return path
     return None

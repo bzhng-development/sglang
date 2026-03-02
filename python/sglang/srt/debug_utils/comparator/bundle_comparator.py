@@ -181,12 +181,16 @@ def _compare_bundle_pair_tensor_type(
     metas_pair: Pair[list[dict[str, Any]]] = valid_pair.map(
         lambda items: [it.meta for it in items]
     )
+    available_aux_names_pair: Pair[frozenset[str]] = Pair(
+        x=_get_available_aux_names(aux_loader=aux_loader_pair.x, metas=metas_pair.x),
+        y=_get_available_aux_names(aux_loader=aux_loader_pair.y, metas=metas_pair.y),
+    )
     plan: AlignerPlan = compute_aligner_plan(
-        bundle_name=name,
         metas_pair=metas_pair,
         token_aligner_mode=token_aligner_mode,
         token_aligner_plan=token_aligner_plan,
         thd_seq_lens_by_step_pair=thd_seq_lens_by_step_pair,
+        available_aux_names_pair=available_aux_names_pair,
     )
 
     # Apply dim names to tensors, then execute
@@ -313,6 +317,22 @@ def _compare_bundle_pair_non_tensor_type(
         baseline_type=type(baseline_value).__name__,
         target_type=type(target_value).__name__,
         values_equal=values_equal,
+    )
+
+
+def _get_available_aux_names(
+    aux_loader: Optional[RawAuxLoader],
+    metas: list[dict[str, Any]],
+) -> frozenset[str]:
+    """Extract available aux tensor names for the first meta's (step, layer_id)."""
+    if aux_loader is None or not metas:
+        return frozenset()
+    meta = metas[0]
+    if "layer_id" not in meta:
+        return frozenset()
+    return aux_loader.available_names(
+        step=int(meta["step"]),
+        layer_id=int(meta["layer_id"]),
     )
 
 

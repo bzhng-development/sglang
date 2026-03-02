@@ -23,6 +23,14 @@ class RawAuxLoader:
         self._dump_dir = dump_dir
 
     @lru_cache(maxsize=32)
+    def available_names(self, *, step: int, layer_id: int) -> frozenset[str]:
+        """Return all unique aux tensor names for the given (step, layer_id)."""
+        filtered = self._df.filter(
+            (pl.col("step") == step) & (pl.col("layer_id") == layer_id)
+        )
+        return frozenset(filtered["name"].unique().to_list())
+
+    @lru_cache(maxsize=32)
     def load(
         self,
         *,

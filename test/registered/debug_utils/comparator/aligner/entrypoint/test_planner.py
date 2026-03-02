@@ -53,19 +53,18 @@ def _make_meta(
 class TestComputePerStepSubPlans:
     def test_empty_metas(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="", metas=[]
+            metas=[]
         )
         assert result == []
 
     def test_single_meta(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="", metas=[_make_meta(dims="b h[tp]", tp_size=2)]
+            metas=[_make_meta(dims="b h[tp]", tp_size=2)]
         )
         assert result == []
 
     def test_dims_none(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="",
             metas=[
                 _make_meta(tp_rank=0, tp_size=2),
                 _make_meta(tp_rank=1, tp_size=2),
@@ -75,7 +74,6 @@ class TestComputePerStepSubPlans:
 
     def test_tp_sharded_returns_unsharder_plan(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="",
             metas=[
                 _make_meta(dims="b h[tp]", tp_rank=0, tp_size=2),
                 _make_meta(dims="b h[tp]", tp_rank=1, tp_size=2),
@@ -89,7 +87,6 @@ class TestComputePerStepSubPlans:
 
     def test_zigzag_returns_both_plans(self) -> None:
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="",
             metas=[
                 _make_meta(dims="b s[cp:zigzag] h", cp_rank=0, cp_size=2),
                 _make_meta(dims="b s[cp:zigzag] h", cp_rank=1, cp_size=2),
@@ -113,7 +110,7 @@ class TestComputePerStepPlans:
             _make_meta(step=1, tp_rank=0, tp_size=1),
         ]
         result: list[AlignerPerStepPlan] = _compute_per_step_plans(
-            bundle_name="", metas=metas
+            metas=metas
         )
 
         assert len(result) == 2
@@ -129,7 +126,7 @@ class TestComputePerStepPlans:
             _make_meta(step=1),
         ]
         result: list[AlignerPerStepPlan] = _compute_per_step_plans(
-            bundle_name="", metas=metas
+            metas=metas
         )
 
         steps: list[int] = [p.step for p in result]
@@ -141,7 +138,7 @@ class TestComputePerStepPlans:
             _make_meta(step=1),
         ]
         result: list[AlignerPerStepPlan] = _compute_per_step_plans(
-            bundle_name="", metas=metas
+            metas=metas
         )
 
         assert len(result) == 2
@@ -154,7 +151,7 @@ class TestComputeAlignerPlan:
         metas_y: list[dict[str, Any]] = [_make_meta(step=0)]
 
         plan: AlignerPlan = compute_aligner_plan(
-            bundle_name="test_tensor",
+
             metas_pair=Pair(x=metas_x, y=metas_y),
             token_aligner_mode=None,
             token_aligner_plan=None,
@@ -179,7 +176,7 @@ class TestComputeAlignerPlan:
         )
 
         plan: AlignerPlan = compute_aligner_plan(
-            bundle_name="test_tensor",
+
             metas_pair=Pair(x=[_make_meta()], y=[_make_meta()]),
             token_aligner_mode="smart",
             token_aligner_plan=ta_plan,
@@ -190,16 +187,16 @@ class TestComputeAlignerPlan:
 
 
 class TestComputePerStepSubPlansDeRouter:
-    """Test de-router plan generation from dims (ep) and bundle name."""
+    """Test de-router plan generation from dims (ep) and available aux names."""
 
     def test_ep_dims_generates_de_router_plan(self) -> None:
-        """Dims with [ep] and a matching bundle name should produce a DeRouterPlan."""
+        """Dims with [ep] and matching aux names should produce a DeRouterPlan."""
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="fused_moe_after_gemm1",
             metas=[
                 _make_meta(dims="t k[ep] n"),
                 _make_meta(dims="t k[ep] n"),
             ],
+            available_aux_names=frozenset({"fused_moe_sorted_token_ids"}),
         )
 
         de_router_plans: list[DeRouterPlan] = [
@@ -211,11 +208,11 @@ class TestComputePerStepSubPlansDeRouter:
     def test_no_ep_dims_no_de_router_plan(self) -> None:
         """Without (ep) in dims, no DeRouterPlan should be generated."""
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="some_tensor",
             metas=[
                 _make_meta(dims="b h[tp]", tp_rank=0, tp_size=2),
                 _make_meta(dims="b h[tp]", tp_rank=1, tp_size=2),
             ],
+            available_aux_names=frozenset({"fused_moe_sorted_token_ids"}),
         )
 
         de_router_plans: list[DeRouterPlan] = [
@@ -223,14 +220,14 @@ class TestComputePerStepSubPlansDeRouter:
         ]
         assert len(de_router_plans) == 0
 
-    def test_ep_dims_unrecognized_name_no_plan(self) -> None:
-        """Dims with [ep] but unrecognized bundle name prefix → no plan."""
+    def test_ep_dims_no_matching_aux_no_plan(self) -> None:
+        """Dims with [ep] but no matching aux names → no plan."""
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="unknown_dispatch_after_gemm1",
             metas=[
                 _make_meta(dims="t k[ep] n"),
                 _make_meta(dims="t k[ep] n"),
             ],
+            available_aux_names=frozenset({"unrelated_tensor"}),
         )
 
         de_router_plans: list[DeRouterPlan] = [
@@ -244,7 +241,6 @@ class TestComputePerStepSubPlansThd:
         """t[cp:zigzag] h[tp] generates THD-typed unsharder + reorderer plans."""
         thd_global_seq_lens: list[int] = [100, 64, 92]
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
-            bundle_name="",
             metas=[
                 _make_meta(
                     dims="t[cp:zigzag] h[tp]",
