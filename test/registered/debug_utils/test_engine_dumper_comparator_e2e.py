@@ -134,14 +134,24 @@ patches:
   # annotating only I_local as [moe_tp] yields [T, 2, I_full] after concat,
   # which is order-invariant to moe_tp_size.
   #
-  # No [ep] in dims: both baseline and target use the same dispatch order
-  # (topk_ids are replicated), so the raw row order matches without derouting.
+  # The [ep] derouter normalises token-dispatch order to canonical order using
+  # sorted_token_ids. This is needed when the dispatch order might differ
+  # between baseline and target (e.g. dp-attention, where tiny BF16 diffs
+  # in router logits can change topk_ids at decision boundaries).
   - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
     edits:
+      - match: |
+          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+              curr_topk_ids, config["BLOCK_SIZE_M"], E
+          )
+        append: |
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
+          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
+          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
       - match: "# Activation function with multiplication"
         prepend: |
           _ic1_t, _ic1_n = intermediate_cache1.shape
-          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k gate_up h_inter[moe_tp] # tp:replicated')
+          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k[ep] gate_up h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -198,15 +208,27 @@ patches:
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 
   # --- moe expert intermediate (gate/up GEMM output, before activation) ---
-  # In dp-attention, prepare_mlp all-gathers tokens before MoE dispatch,
-  # so fused_experts_impl sees the same full token set as baseline.
-  # Same reshape + dims rationale as PATCH_CONFIG_YAML.
+  # In dp-attention, the target's attention is DP-distributed, so hidden_states
+  # entering MoE can have tiny BF16 differences from baseline.  This may cause
+  # different expert dispatch ordering (topk_ids differ at decision boundaries).
+  # The [ep] derouter normalises both sides to canonical token order using each
+  # side's own sorted_token_ids, making the comparison order-invariant.
+  # Both baseline and target have the same moe_tp_size, so the reshape to
+  # [T, 2, I_local] with moe_tp concat produces identical column ordering.
   - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
     edits:
+      - match: |
+          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+              curr_topk_ids, config["BLOCK_SIZE_M"], E
+          )
+        append: |
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
+          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
+          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
       - match: "# Activation function with multiplication"
         prepend: |
           _ic1_t, _ic1_n = intermediate_cache1.shape
-          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k gate_up h_inter[moe_tp] # tp:replicated')
+          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k[ep] gate_up h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
@@ -529,7 +551,10 @@ class TestFP8DeepEP:
 # outliers (rel_diff up to ~0.005) do not affect the final MoE output.
 _DIFF_THRESHOLD_WITH_GATEUP: float = 0.01
 
-_ALLOW_SKIPPED_BASE = "input_ids|positions"
+_ALLOW_SKIPPED_BASE = (
+    "input_ids|positions"
+    "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
+)
 
 _ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE + "|gateup_output"
 
