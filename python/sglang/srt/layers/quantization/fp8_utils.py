@@ -220,6 +220,9 @@ if is_blackwell_supported() and is_flashinfer_available():
     ) -> torch.Tensor:
         backend = _get_flashinfer_groupwise_backend()
         if backend == "cutlass":
+            # FlashInfer CUTLASS groupwise kernel requires contiguous scale tensors
+            x_scale = x_scale.contiguous()
+            weight_scale = weight_scale.contiguous()
             return _raw_gemm_fp8_nt_groupwise(
                 q_input,
                 weight,
