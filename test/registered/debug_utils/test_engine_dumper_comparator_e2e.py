@@ -1,7 +1,7 @@
 """E2E test: source patcher + dumper + comparator on SGLang server.
 
-Patches Qwen3MoeDecoderLayer.forward (and related methods) to insert
-dumper.dump() calls at 7 points, launches servers with Qwen3-30B-A3B
+Patches Qwen3MoeDecoderLayer.forward, fused_experts_impl, DeepEP dispatch,
+and GEMM functions to insert dumper.dump() calls, launches servers with Qwen3-30B-A3B
 (MOE model), runs inference, verifies patched dump fields exist, then
 runs comparator to verify numerical consistency.
 
@@ -73,6 +73,18 @@ _FIELDS_TO_VERIFY: list[str] = [
     "moe_expert_output",
 ]
 
+_FIELDS_FUSED_MOE_INTERMEDIATE: list[str] = [
+    "fused_moe_post_activation",
+]
+
+_FIELDS_DEEPEP_NORMAL_INTERMEDIATE: list[str] = [
+    "deepep_normal_post_gateup",
+]
+
+_FIELDS_DEEPEP_LL_INTERMEDIATE: list[str] = [
+    "deepep_ll_post_gateup",
+]
+
 PATCH_CONFIG_YAML: str = """\
 patches:
   # --- decoder layer level (aligned with miles test) ---
@@ -121,6 +133,28 @@ patches:
         append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_tp:replicated')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
+
+  # --- moe expert intermediate (gate/up GEMM + activation, before down proj) ---
+  # The [ep] modifier triggers the FusedMoE derouter which uses sorted_token_ids
+  # to depermute the routed tensor back to canonical (num_tokens*top_k) order.
+  # Safe for non-EP configs: unsharder ignores [ep] when ep_size=1, and the
+  # derouter applies identical depermutation on both baseline and target.
+  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
+    edits:
+      - match: |
+          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+              curr_topk_ids, config["BLOCK_SIZE_M"], E
+          )
+        append: |
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids, dims='t_padded')
+          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
+          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
+      - match: |
+          invoke_fused_moe_kernel(
+              intermediate_cache2,
+              w2,
+        prepend: |
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[tp] # moe_tp:replicated')
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -175,6 +209,24 @@ patches:
         append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_tp:replicated')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
+
+  # --- moe expert intermediate ---
+  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
+    edits:
+      - match: |
+          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+              curr_topk_ids, config["BLOCK_SIZE_M"], E
+          )
+        append: |
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids, dims='t_padded')
+          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
+          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
+      - match: |
+          invoke_fused_moe_kernel(
+              intermediate_cache2,
+              w2,
+        prepend: |
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[tp] # moe_tp:replicated')
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
@@ -227,6 +279,26 @@ patches:
         append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated')"
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+
+  # --- moe expert intermediate ---
+  # With EP=4, moe_tp_size=tp/ep=1, so h_inter is NOT TP-sharded.
+  # The [ep] modifier triggers the FusedMoE derouter for token reordering.
+  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
+    edits:
+      - match: |
+          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
+              curr_topk_ids, config["BLOCK_SIZE_M"], E
+          )
+        append: |
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids, dims='t_padded')
+          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
+          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
+      - match: |
+          invoke_fused_moe_kernel(
+              intermediate_cache2,
+              w2,
+        prepend: |
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter # moe_ep:replicated')
 """
 
 # DeepEP uses forward_deepep (not forward_normal), so MoE internals need
@@ -305,6 +377,38 @@ patches:
               topk_output=topk_output,
           )
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated dp:=attn_dp')"
+
+  # --- DeepEP Normal: dispatch metadata + contiguous GEMM intermediate ---
+  - target: sglang.srt.layers.moe.token_dispatcher.deepep._DeepEPDispatcherImplNormal.dispatch_b
+    edits:
+      - match: "return DeepEPNormalDispatchOutput("
+        prepend: |
+          dumper.dump('deepep_normal_recv_topk_ids', topk_ids, dims='t_recv[ep] k')
+          dumper.dump('deepep_normal_num_recv_tokens_per_expert', num_recv_tokens_per_expert, dims='num_experts')
+          dumper.dump('deepep_normal_ep_num_tokens', torch.tensor(hidden_states.shape[0] if not isinstance(hidden_states, tuple) else hidden_states[0].shape[0]))
+          dumper.dump('deepep_normal_ep_top_k', torch.tensor(topk_ids.shape[1]))
+
+  - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_contiguous_gemm
+    edits:
+      - match: "silu_and_mul(gateup_output"
+        prepend: |
+          dumper.dump('deepep_normal_post_gateup', gateup_output, dims='t_recv[ep] h_inter_2 # tp:replicated dp:=attn_dp')
+
+  # --- DeepEP Low-Latency: dispatch metadata + masked GEMM intermediate ---
+  - target: sglang.srt.layers.moe.token_dispatcher.deepep._DeepEPDispatcherImplLowLatency.dispatch_b
+    edits:
+      - match: "deepep_output = DeepEPLLDispatchOutput("
+        prepend: |
+          dumper.dump('deepep_ll_masked_m', masked_m, dims='num_experts')
+          dumper.dump('deepep_ll_packed_recv_src_info', torch.stack(list(self.handle[0])), dims='num_experts expected_m')
+          dumper.dump('deepep_ll_ep_num_tokens', torch.tensor(hidden_states.shape[0] if not isinstance(hidden_states, tuple) else hidden_states[0].shape[0]))
+          dumper.dump('deepep_ll_ep_top_k', torch.tensor(topk_ids.shape[1]))
+
+  - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_masked_gemm
+    edits:
+      - match: "if _MASKED_GEMM_FAST_ACT:"
+        prepend: |
+          dumper.dump('deepep_ll_post_gateup', gateup_output, dims='num_experts[ep] m h_inter_2 # tp:replicated dp:=attn_dp')
 """
 
 
@@ -329,7 +433,8 @@ class TestBF16:
             base_url=DEFAULT_URL_FOR_TEST,
         )
         _verify_patched_fields(
-            dump_dir=cls._baseline_dir / "dump", field_names=_FIELDS_TO_VERIFY
+            dump_dir=cls._baseline_dir / "dump",
+            field_names=_FIELDS_TO_VERIFY + _FIELDS_FUSED_MOE_INTERMEDIATE,
         )
 
     def test_basic_tp(self, tmp_path: Path) -> None:
@@ -339,6 +444,7 @@ class TestBF16:
             baseline_exp_dir=self._baseline_dir / "dump" / EXP_NAME,
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
+            target_extra_fields=_FIELDS_FUSED_MOE_INTERMEDIATE,
         )
 
     def test_dp_attention(self, tmp_path: Path) -> None:
@@ -355,6 +461,7 @@ class TestBF16:
             target_tp=BASELINE_TP,
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
             target_patch_config_yaml=PATCH_CONFIG_DP_ATTENTION_YAML,
+            target_extra_fields=_FIELDS_FUSED_MOE_INTERMEDIATE,
         )
 
     def test_ep_fused_moe(self, tmp_path: Path) -> None:
@@ -372,6 +479,7 @@ class TestBF16:
             target_tp=TARGET_TP,
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
+            target_extra_fields=_FIELDS_FUSED_MOE_INTERMEDIATE,
         )
 
 
@@ -398,7 +506,8 @@ class TestFP8DeepEP:
             base_url=DEFAULT_URL_FOR_TEST,
         )
         _verify_patched_fields(
-            dump_dir=cls._baseline_dir / "dump", field_names=_FIELDS_TO_VERIFY
+            dump_dir=cls._baseline_dir / "dump",
+            field_names=_FIELDS_TO_VERIFY + _FIELDS_FUSED_MOE_INTERMEDIATE,
         )
 
     def test_ep_deepep_normal(self, tmp_path: Path) -> None:
@@ -424,6 +533,8 @@ class TestFP8DeepEP:
                 "normal",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
+            target_extra_fields=_FIELDS_DEEPEP_NORMAL_INTERMEDIATE,
+            allow_skipped_pattern=_ALLOW_SKIPPED_DEEPEP,
         )
 
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
@@ -449,10 +560,30 @@ class TestFP8DeepEP:
                 "low_latency",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
+            target_extra_fields=_FIELDS_DEEPEP_LL_INTERMEDIATE,
+            allow_skipped_pattern=_ALLOW_SKIPPED_DEEPEP,
         )
 
 
 # ================================== helpers ==================================
+
+_ALLOW_SKIPPED_BASE = "input_ids|positions"
+
+_ALLOW_SKIPPED_DEEPEP = (
+    _ALLOW_SKIPPED_BASE
+    + "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
+    + "|fused_moe_post_activation"
+    + "|deepep_normal_recv_topk_ids|deepep_normal_num_recv_tokens_per_expert"
+    + "|deepep_normal_ep_num_tokens|deepep_normal_ep_top_k"
+    + "|deepep_normal_post_gateup"
+    + "|deepep_ll_masked_m|deepep_ll_packed_recv_src_info"
+    + "|deepep_ll_ep_num_tokens|deepep_ll_ep_top_k"
+    + "|deepep_ll_post_gateup"
+)
+
+_ALLOW_FAILED_DEROUTER_AUX = (
+    "fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
+)
 
 
 def _run_target_and_compare(
@@ -463,6 +594,9 @@ def _run_target_and_compare(
     target_tp: int,
     extra_target_server_args: Optional[list[str]] = None,
     target_patch_config_yaml: Optional[str] = None,
+    target_extra_fields: Optional[list[str]] = None,
+    allow_skipped_pattern: str = _ALLOW_SKIPPED_BASE,
+    allow_failed_pattern: Optional[str] = _ALLOW_FAILED_DEROUTER_AUX,
 ) -> None:
     """Run target server + comparator against a pre-existing baseline."""
     base_url: str = DEFAULT_URL_FOR_TEST
@@ -479,10 +613,16 @@ def _run_target_and_compare(
         base_url=base_url,
         extra_server_args=extra_target_server_args,
     )
-    _verify_patched_fields(dump_dir=target_dir, field_names=_FIELDS_TO_VERIFY)
+    all_fields: list[str] = _FIELDS_TO_VERIFY + (target_extra_fields or [])
+    _verify_patched_fields(dump_dir=target_dir, field_names=all_fields)
 
     target_exp: Path = target_dir / EXP_NAME
-    _run_comparator(baseline_exp=baseline_exp_dir, target_exp=target_exp)
+    _run_comparator(
+        baseline_exp=baseline_exp_dir,
+        target_exp=target_exp,
+        allow_skipped_pattern=allow_skipped_pattern,
+        allow_failed_pattern=allow_failed_pattern,
+    )
 
 
 def _run_server_and_generate(
@@ -550,6 +690,8 @@ def _run_comparator(
     baseline_exp: Path,
     target_exp: Path,
     extra_args: Optional[list[str]] = None,
+    allow_skipped_pattern: str = _ALLOW_SKIPPED_BASE,
+    allow_failed_pattern: Optional[str] = _ALLOW_FAILED_DEROUTER_AUX,
 ) -> None:
     """Run comparator CLI and assert success."""
     cmd: list[str] = [
@@ -563,8 +705,10 @@ def _run_comparator(
         "--output-format",
         "json",
         "--allow-skipped-pattern",
-        "input_ids|positions",
+        allow_skipped_pattern,
     ]
+    if allow_failed_pattern:
+        cmd.extend(["--allow-failed-pattern", allow_failed_pattern])
     if extra_args:
         cmd.extend(extra_args)
 
