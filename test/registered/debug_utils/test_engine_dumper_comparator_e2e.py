@@ -247,8 +247,11 @@ patches:
   # across moe_ep (EP-combined internally). moe_tp_size=tp/ep=1 so not active.
   # DeepEP tests use --dp 2 --enable-dp-attention, so prepare_attn
   # distributes tokens across DP ranks (one rank may be empty).
-  # Tensors dumped between prepare_attn and prepare_mlp need dp:=attn_dp
-  # so the comparator filters to the non-empty DP rank.
+  # Unlike standard DP-attention where prepare_mlp all-gathers tokens
+  # back, DeepEP keeps tokens DP-distributed through the MoE layer
+  # (DeepEP's all-to-all handles the distribution internally).
+  # Therefore ALL dump points need dp:=attn_dp so the comparator
+  # filters to the non-empty DP rank.
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeDecoderLayer.forward
     edits:
       - match: |
@@ -274,12 +277,12 @@ patches:
           hidden_states, residual = self.layer_communicator.prepare_mlp(
               hidden_states, residual, forward_batch
           )
-        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_ep:replicated')"
+        append: "dumper.dump('pre_mlp_residual', hidden_states, dims='t h # tp:replicated moe_ep:replicated dp:=attn_dp')"
       - match: |
           hidden_states = self.mlp(
               hidden_states, forward_batch, should_allreduce_fusion, use_reduce_scatter
           )
-        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+        append: "dumper.dump('mlp_output', hidden_states, dims='t h[tp:partial] # moe_ep:replicated dp:=attn_dp')"
 
   # --- attention internals ---
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeAttention.forward_core
@@ -290,18 +293,18 @@ patches:
   # --- moe internals (forward_deepep path) ---
   # DeepEPMoE combines EP results internally, so moe_expert_output is
   # already the full (EP-combined) result. Same dims as non-EP baseline.
-  # MoE runs after prepare_mlp, so tokens are already all-gathered back;
-  # no dp:=attn_dp needed here.
+  # Tokens are still DP-distributed in forward_deepep, so dp:=attn_dp
+  # is needed to filter to the non-empty DP rank.
   - target: sglang.srt.models.qwen3_moe.Qwen3MoeSparseMoeBlock.forward_deepep
     edits:
       - match: "router_logits, _ = self.gate(hidden_states)"
-        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated')"
+        append: "dumper.dump('moe_router_logits', router_logits, dims='t num_experts # tp:replicated moe_ep:replicated dp:=attn_dp')"
       - match: |
           final_hidden_states = self.experts(
               hidden_states=hidden_states,
               topk_output=topk_output,
           )
-        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
+        append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated dp:=attn_dp')"
 """
 
 
