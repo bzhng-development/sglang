@@ -154,7 +154,7 @@ patches:
               intermediate_cache2,
               w2,
         prepend: |
-          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[moe_tp] # tp:replicated')
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -226,7 +226,7 @@ patches:
               intermediate_cache2,
               w2,
         prepend: |
-          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[moe_tp] # tp:replicated')
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
