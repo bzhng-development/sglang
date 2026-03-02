@@ -22,7 +22,7 @@ patches:
               curr_topk_ids, config["BLOCK_SIZE_M"], E
           )
         append: |
-          dumper.dump("fused_moe_sorted_token_ids", sorted_token_ids, dims="t_padded")
+          dumper.dump("fused_moe_sorted_token_ids", sorted_token_ids)
           dumper.dump("fused_moe_ep_num_tokens", torch.tensor(tokens_in_chunk))
           dumper.dump("fused_moe_ep_top_k", torch.tensor(topk))
 
@@ -54,7 +54,7 @@ patches:
   - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_contiguous_gemm
     edits:
       # After gate+up GEMM, before activation
-      - match: "silu_and_mul(gateup_output"
+      - match: "silu_and_mul(gateup_output.view(-1, N), down_input)"
         prepend: |
           dumper.dump("deepep_normal_post_gateup", gateup_output,
                       dims="t_recv[ep] h_inter_2 # tp:replicated")

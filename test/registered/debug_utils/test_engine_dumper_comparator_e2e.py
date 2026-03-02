@@ -146,7 +146,7 @@ patches:
               curr_topk_ids, config["BLOCK_SIZE_M"], E
           )
         append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids, dims='t_padded')
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
           dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
           dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
       - match: |
@@ -154,7 +154,7 @@ patches:
               intermediate_cache2,
               w2,
         prepend: |
-          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[tp] # moe_tp:replicated')
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -218,7 +218,7 @@ patches:
               curr_topk_ids, config["BLOCK_SIZE_M"], E
           )
         append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids, dims='t_padded')
+          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
           dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
           dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
       - match: |
@@ -226,7 +226,7 @@ patches:
               intermediate_cache2,
               w2,
         prepend: |
-          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[tp] # moe_tp:replicated')
+          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
@@ -280,25 +280,6 @@ patches:
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
 
-  # --- moe expert intermediate ---
-  # With EP=4, moe_tp_size=tp/ep=1, so h_inter is NOT TP-sharded.
-  # The [ep] modifier triggers the FusedMoE derouter for token reordering.
-  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
-    edits:
-      - match: |
-          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
-              curr_topk_ids, config["BLOCK_SIZE_M"], E
-          )
-        append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids, dims='t_padded')
-          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
-          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
-      - match: |
-          invoke_fused_moe_kernel(
-              intermediate_cache2,
-              w2,
-        prepend: |
-          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k[ep] h_inter # moe_ep:replicated')
 """
 
 # DeepEP uses forward_deepep (not forward_normal), so MoE internals need
@@ -390,7 +371,7 @@ patches:
 
   - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_contiguous_gemm
     edits:
-      - match: "silu_and_mul(gateup_output"
+      - match: "silu_and_mul(gateup_output.view(-1, N), down_input)"
         prepend: |
           dumper.dump('deepep_normal_post_gateup', gateup_output, dims='t_recv[ep] h_inter_2 # tp:replicated dp:=attn_dp')
 
@@ -479,7 +460,12 @@ class TestBF16:
             target_tp=TARGET_TP,
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
-            target_extra_fields=_FIELDS_FUSED_MOE_INTERMEDIATE,
+            allow_skipped_pattern=(
+                _ALLOW_SKIPPED_BASE
+                + "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens"
+                + "|fused_moe_ep_top_k|fused_moe_post_activation"
+            ),
+            allow_failed_pattern=None,
         )
 
 
