@@ -210,23 +210,9 @@ patches:
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 
-  # --- moe expert intermediate ---
-  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
-    edits:
-      - match: |
-          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
-              curr_topk_ids, config["BLOCK_SIZE_M"], E
-          )
-        append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
-          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
-          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
-      - match: |
-          invoke_fused_moe_kernel(
-              intermediate_cache2,
-              w2,
-        prepend: |
-          dumper.dump('fused_moe_post_activation', intermediate_cache2, dims='t_k h_inter[moe_tp] # tp:replicated')
+  # NOTE: fused_experts_impl intermediate is NOT dumped in dp-attention mode.
+  # In dp-attention, tokens are distributed across DP ranks differently than
+  # in the baseline, making per-expert intermediate comparison invalid.
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
@@ -442,7 +428,6 @@ class TestBF16:
             target_tp=BASELINE_TP,
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
             target_patch_config_yaml=PATCH_CONFIG_DP_ATTENTION_YAML,
-            target_extra_fields=_FIELDS_FUSED_MOE_INTERMEDIATE,
         )
 
     def test_ep_fused_moe(self, tmp_path: Path) -> None:
@@ -461,9 +446,7 @@ class TestBF16:
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
             allow_skipped_pattern=(
-                _ALLOW_SKIPPED_BASE
-                + "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens"
-                + "|fused_moe_ep_top_k|fused_moe_post_activation"
+                _ALLOW_SKIPPED_BASE + "|fused_moe_post_activation"
             ),
             allow_failed_pattern=None,
         )
@@ -553,11 +536,13 @@ class TestFP8DeepEP:
 
 # ================================== helpers ==================================
 
-_ALLOW_SKIPPED_BASE = "input_ids|positions"
+_ALLOW_SKIPPED_BASE = (
+    "input_ids|positions"
+    "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
+)
 
 _ALLOW_SKIPPED_DEEPEP = (
     _ALLOW_SKIPPED_BASE
-    + "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
     + "|fused_moe_post_activation"
     + "|deepep_normal_recv_topk_ids|deepep_normal_num_recv_tokens_per_expert"
     + "|deepep_normal_ep_num_tokens|deepep_normal_ep_top_k"
