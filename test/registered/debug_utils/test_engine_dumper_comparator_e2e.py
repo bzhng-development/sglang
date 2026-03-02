@@ -89,8 +89,8 @@ patches:
               )
           )
         append: |
-          dumper.dump('input_ids', forward_batch.input_ids)
-          dumper.dump('seq_lens', forward_batch.seq_lens)
+          if self.layer_id == 0: dumper.dump('input_ids', forward_batch.input_ids)
+          if self.layer_id == 0: dumper.dump('seq_lens', forward_batch.seq_lens)
           dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated')
       - match: |
           hidden_states = self.self_attn(
@@ -145,8 +145,8 @@ patches:
               )
           )
         append: |
-          dumper.dump('input_ids', forward_batch.input_ids)
-          dumper.dump('seq_lens', forward_batch.seq_lens)
+          if self.layer_id == 0: dumper.dump('input_ids', forward_batch.input_ids)
+          if self.layer_id == 0: dumper.dump('seq_lens', forward_batch.seq_lens)
           dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_tp:replicated dp:=attn_dp')
       - match: |
           hidden_states = self.self_attn(
@@ -199,8 +199,8 @@ patches:
               )
           )
         append: |
-          dumper.dump('input_ids', forward_batch.input_ids)
-          dumper.dump('seq_lens', forward_batch.seq_lens)
+          if self.layer_id == 0: dumper.dump('input_ids', forward_batch.input_ids)
+          if self.layer_id == 0: dumper.dump('seq_lens', forward_batch.seq_lens)
           dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')
       - match: |
           hidden_states = self.self_attn(
@@ -264,8 +264,8 @@ patches:
               )
           )
         append: |
-          dumper.dump('input_ids', forward_batch.input_ids)
-          dumper.dump('seq_lens', forward_batch.seq_lens)
+          if self.layer_id == 0: dumper.dump('input_ids', forward_batch.input_ids)
+          if self.layer_id == 0: dumper.dump('seq_lens', forward_batch.seq_lens)
           dumper.dump('layer_input', hidden_states, dims='t h # tp:replicated moe_ep:replicated')
       - match: |
           hidden_states = self.self_attn(
