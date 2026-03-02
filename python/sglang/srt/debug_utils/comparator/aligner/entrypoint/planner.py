@@ -125,9 +125,12 @@ def compute_per_step_sub_plans(
     replicated_axes: frozenset[ParallelAxis] = dims_spec.replicated_axes
     parallel_infos = [normalize_parallel_info(meta) for meta in metas]
 
+    all_axes: set[ParallelAxis] = {axis for info in parallel_infos for axis in info}
+    ep_active: bool = ParallelAxis.EP in all_axes
+
     de_router_plans: list[DeRouterPlan] = maybe_compute_de_router_plan(
         dims_spec=dims_spec,
-        available_aux_names=available_aux_names,
+        available_aux_names=available_aux_names if ep_active else frozenset(),
     )
     has_de_router: bool = len(de_router_plans) > 0
 
