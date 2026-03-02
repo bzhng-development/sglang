@@ -69,5 +69,5 @@ def _extract_valid_rows(
     """
     expected_m: int = tensor_3d.shape[1]
     arange: torch.Tensor = torch.arange(expected_m, device=masked_m.device)
-    valid_mask: torch.Tensor = arange.unsqueeze(0) < masked_m.unsqueeze(1)
-    return tensor_3d[valid_mask]
+    valid_mask: torch.Tensor = arange.unsqueeze(0) < masked_m.rename(None).unsqueeze(1)
+    return tensor_3d.rename(None)[valid_mask]
