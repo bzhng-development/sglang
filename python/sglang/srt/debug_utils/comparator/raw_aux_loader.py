@@ -8,11 +8,19 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional, Union
 
 import polars as pl
 import torch
 
 from sglang.srt.debug_utils.dump_loader import ValueWithMeta, filter_rows
+
+
+def _cast_for_filter(value: int, dtype: Optional[pl.DataType]) -> Union[int, str]:
+    """Cast a Python int to match the polars column dtype (may be String)."""
+    if dtype == pl.String:
+        return str(value)
+    return value
 
 
 class RawAuxLoader:
@@ -25,8 +33,10 @@ class RawAuxLoader:
     @lru_cache(maxsize=32)
     def available_names(self, *, step: int, layer_id: int) -> frozenset[str]:
         """Return all unique aux tensor names for the given (step, layer_id)."""
+        step_val = _cast_for_filter(step, self._df.schema.get("step"))
+        layer_val = _cast_for_filter(layer_id, self._df.schema.get("layer_id"))
         filtered = self._df.filter(
-            (pl.col("step") == step) & (pl.col("layer_id") == layer_id)
+            (pl.col("step") == step_val) & (pl.col("layer_id") == layer_val)
         )
         return frozenset(filtered["name"].unique().to_list())
 
