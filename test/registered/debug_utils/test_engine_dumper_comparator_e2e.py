@@ -127,23 +127,17 @@ patches:
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_tp:replicated')"
 
   # --- moe expert intermediate (gate/up GEMM output, before activation) ---
-  # The [ep] modifier triggers the FusedMoE derouter which uses sorted_token_ids
-  # to depermute the routed tensor back to canonical (num_tokens*top_k) order.
-  # Safe for non-EP configs: unsharder ignores [ep] when ep_size=1, and the
-  # derouter applies identical depermutation on both baseline and target.
+  # intermediate_cache1 is written by the Triton kernel.  When c_sorted=False
+  # (non-TMA path), it is already in canonical (token_idx*top_k+k) order
+  # and does NOT need de-routing.  When c_sorted=True (TMA path, e.g. H200),
+  # it is in sorted dispatch order — but both baseline and target use the
+  # same sorting (topk_ids are replicated), so they match without de-routing.
+  # Therefore we omit [ep] from the dims so the derouter is NOT triggered.
   - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
     edits:
-      - match: |
-          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
-              curr_topk_ids, config["BLOCK_SIZE_M"], E
-          )
-        append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
-          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
-          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
       - match: "# Activation function with multiplication"
         prepend: |
-          dumper.dump('gateup_output', intermediate_cache1, dims='t_k[ep] h_inter_2[moe_tp] # tp:replicated')
+          dumper.dump('gateup_output', intermediate_cache1, dims='t_k h_inter_2[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_DP_ATTENTION_YAML: str = """\
@@ -202,19 +196,12 @@ patches:
   # --- moe expert intermediate (gate/up GEMM output, before activation) ---
   # In dp-attention, prepare_mlp all-gathers tokens before MoE dispatch,
   # so fused_experts_impl sees the same full token set as baseline.
+  # Same rationale as PATCH_CONFIG_YAML: no [ep] → no derouter.
   - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
     edits:
-      - match: |
-          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
-              curr_topk_ids, config["BLOCK_SIZE_M"], E
-          )
-        append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
-          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
-          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
       - match: "# Activation function with multiplication"
         prepend: |
-          dumper.dump('gateup_output', intermediate_cache1, dims='t_k[ep] h_inter_2[moe_tp] # tp:replicated')
+          dumper.dump('gateup_output', intermediate_cache1, dims='t_k h_inter_2[moe_tp] # tp:replicated')
 """
 
 PATCH_CONFIG_EP_YAML: str = """\
@@ -529,10 +516,7 @@ class TestFP8DeepEP:
 
 # ================================== helpers ==================================
 
-_ALLOW_SKIPPED_BASE = (
-    "input_ids|positions"
-    "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
-)
+_ALLOW_SKIPPED_BASE = "input_ids|positions"
 
 _ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE + "|gateup_output"
 
