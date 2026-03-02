@@ -392,10 +392,6 @@ class TestFP8DeepEP:
             dump_dir=cls._baseline_dir / "dump", field_names=_FIELDS_TO_VERIFY
         )
 
-    @pytest.mark.xfail(
-        reason="DeepEP adds padding tokens; comparator needs token aligner support",
-        strict=False,
-    )
     def test_ep_deepep_normal(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=2+DeepEP normal target.
 
@@ -410,6 +406,9 @@ class TestFP8DeepEP:
             tmp_path=tmp_path,
             target_tp=BASELINE_TP,
             extra_target_server_args=[
+                "--dp",
+                "2",
+                "--enable-dp-attention",
                 "--moe-a2a-backend",
                 "deepep",
                 "--deepep-mode",
@@ -418,10 +417,6 @@ class TestFP8DeepEP:
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
         )
 
-    @pytest.mark.xfail(
-        reason="DeepEP adds padding tokens; comparator needs token aligner support",
-        strict=False,
-    )
     def test_ep_deepep_low_latency(self, tmp_path: Path) -> None:
         """TP=2 baseline vs TP=2+DeepEP low-latency target.
 
@@ -436,6 +431,9 @@ class TestFP8DeepEP:
             tmp_path=tmp_path,
             target_tp=BASELINE_TP,
             extra_target_server_args=[
+                "--dp",
+                "2",
+                "--enable-dp-attention",
                 "--moe-a2a-backend",
                 "deepep",
                 "--deepep-mode",
