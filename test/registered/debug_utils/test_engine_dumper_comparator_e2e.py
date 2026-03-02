@@ -482,6 +482,10 @@ class TestBF16:
         4 ranks via FusedMoE/Triton dispatch. Decoder-level tensors remain
         TP-sharded and should compare correctly after unsharding.
         The target uses EP-specific dims with moe_ep:replicated.
+
+        gateup_output is allowed to fail because EP changes which experts
+        each rank processes, causing BF16 accumulation order differences
+        that exceed the threshold in deeper layers.
         """
         _run_target_and_compare(
             model=MODEL_BF16,
@@ -491,6 +495,7 @@ class TestBF16:
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
             allow_skipped_pattern=_ALLOW_SKIPPED_EP,
+            allow_failed_pattern="gateup_output",
             target_extra_fields=_FIELDS_GATEUP,
             diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
         )
