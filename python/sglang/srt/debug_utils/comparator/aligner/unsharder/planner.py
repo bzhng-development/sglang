@@ -11,6 +11,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.types import (
     UnsharderPlan,
 )
 from sglang.srt.debug_utils.comparator.dims_spec import (
+    EP_LIKE_AXES,
     TOKEN_DIM_NAME,
     DimSpec,
     ParallelAxis,
@@ -215,7 +216,7 @@ def _resolve_unshard_params(
     if modifier.reduction is not None:
         return ReduceSumParams()
 
-    if has_de_router and modifier.axis == ParallelAxis.EP:
+    if has_de_router and modifier.axis in EP_LIKE_AXES:
         return ReduceSumParams()
 
     if (

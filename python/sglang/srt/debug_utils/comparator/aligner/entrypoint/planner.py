@@ -28,6 +28,7 @@ from sglang.srt.debug_utils.comparator.aligner.unsharder.planner import (
     compute_unsharder_plan,
 )
 from sglang.srt.debug_utils.comparator.dims_spec import (
+    EP_LIKE_AXES,
     DimSpec,
     DimsSpec,
     ParallelAxis,
@@ -126,7 +127,7 @@ def compute_per_step_sub_plans(
     parallel_infos = [normalize_parallel_info(meta) for meta in metas]
 
     all_axes: set[ParallelAxis] = {axis for info in parallel_infos for axis in info}
-    ep_active: bool = ParallelAxis.EP in all_axes
+    ep_active: bool = bool(all_axes & EP_LIKE_AXES)
 
     de_router_plans: list[DeRouterPlan] = maybe_compute_de_router_plan(
         dims_spec=dims_spec,

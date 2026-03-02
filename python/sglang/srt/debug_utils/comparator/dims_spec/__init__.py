@@ -13,6 +13,7 @@ from sglang.srt.debug_utils.comparator.dims_spec.tensor_naming import (
 from sglang.srt.debug_utils.comparator.dims_spec.types import (
     _FUSED_NAME_SEP,
     BATCH_DIM_NAME,
+    EP_LIKE_AXES,
     SEQ_DIM_NAME,
     SQUEEZE_DIM_NAME,
     TOKEN_DIM_NAME,
@@ -27,6 +28,7 @@ from sglang.srt.debug_utils.comparator.dims_spec.types import (
 
 __all__ = [
     "BATCH_DIM_NAME",
+    "EP_LIKE_AXES",
     "SEQ_DIM_NAME",
     "SQUEEZE_DIM_NAME",
     "TOKEN_DIM_NAME",

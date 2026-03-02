@@ -297,7 +297,7 @@ patches:
       - match: "# Activation function with multiplication"
         prepend: |
           _ic1_t, _ic1_n = intermediate_cache1.shape
-          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k[ep] gate_up h_inter[moe_tp] # tp:replicated')
+          dumper.dump('gateup_output', intermediate_cache1.view(_ic1_t, 2, _ic1_n // 2), dims='t_k[moe_ep] gate_up h_inter[moe_tp] # tp:replicated')
 """
 
 # DeepEP uses forward_deepep (not forward_normal), so MoE internals need

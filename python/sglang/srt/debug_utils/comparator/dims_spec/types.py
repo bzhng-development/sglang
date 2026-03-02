@@ -29,6 +29,9 @@ class ParallelAxis(Enum):
     RECOMPUTE_PSEUDO = "recompute_pseudo"
 
 
+EP_LIKE_AXES: frozenset[ParallelAxis] = frozenset({ParallelAxis.EP, ParallelAxis.MOE_EP})
+
+
 class Ordering(Enum):
     ZIGZAG = "zigzag"
     NATURAL = "natural"

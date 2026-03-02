@@ -6,7 +6,11 @@ from sglang.srt.debug_utils.comparator.aligner.ep_derouter.entrypoint import (
     _PLUGIN_REGISTRY,
 )
 from sglang.srt.debug_utils.comparator.aligner.ep_derouter.types import DeRouterPlan
-from sglang.srt.debug_utils.comparator.dims_spec import DimsSpec, ParallelAxis
+from sglang.srt.debug_utils.comparator.dims_spec import (
+    EP_LIKE_AXES,
+    DimsSpec,
+    ParallelAxis,
+)
 
 
 def maybe_compute_de_router_plan(
@@ -24,7 +28,7 @@ def maybe_compute_de_router_plan(
         return []
 
     has_ep: bool = any(
-        mod.axis == ParallelAxis.EP and mod.reduction is None
+        mod.axis in EP_LIKE_AXES and mod.reduction is None
         for dim in dims_spec.dims
         for mod in dim.parallel_modifiers
     )
