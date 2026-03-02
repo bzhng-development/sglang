@@ -401,6 +401,7 @@ class TestBF16:
             tmp_path=tmp_path,
             target_tp=TARGET_TP,
             target_extra_fields=_FIELDS_GATEUP,
+            diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
         )
 
     def test_dp_attention(self, tmp_path: Path) -> None:
@@ -418,6 +419,7 @@ class TestBF16:
             extra_target_server_args=["--dp", "2", "--enable-dp-attention"],
             target_patch_config_yaml=PATCH_CONFIG_DP_ATTENTION_YAML,
             target_extra_fields=_FIELDS_GATEUP,
+            diff_threshold=_DIFF_THRESHOLD_WITH_GATEUP,
         )
 
     def test_ep_fused_moe(self, tmp_path: Path) -> None:
@@ -521,6 +523,12 @@ class TestFP8DeepEP:
 
 # ================================== helpers ==================================
 
+# MoE intermediate (gateup_output) can have larger numerical differences
+# between TP configurations because the GEMM tiling differs (different N →
+# different BLOCK_SIZE), changing BF16 accumulation order. The per-element
+# outliers (rel_diff up to ~0.005) do not affect the final MoE output.
+_DIFF_THRESHOLD_WITH_GATEUP: float = 0.01
+
 _ALLOW_SKIPPED_BASE = "input_ids|positions"
 
 _ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE + "|gateup_output"
@@ -546,6 +554,7 @@ def _run_target_and_compare(
     target_extra_fields: Optional[list[str]] = None,
     allow_skipped_pattern: str = _ALLOW_SKIPPED_BASE,
     allow_failed_pattern: Optional[str] = None,
+    diff_threshold: Optional[float] = None,
 ) -> None:
     """Run target server + comparator against a pre-existing baseline."""
     base_url: str = DEFAULT_URL_FOR_TEST
@@ -571,6 +580,7 @@ def _run_target_and_compare(
         target_exp=target_exp,
         allow_skipped_pattern=allow_skipped_pattern,
         allow_failed_pattern=allow_failed_pattern,
+        diff_threshold=diff_threshold,
     )
 
 
@@ -641,6 +651,7 @@ def _run_comparator(
     extra_args: Optional[list[str]] = None,
     allow_skipped_pattern: str = _ALLOW_SKIPPED_BASE,
     allow_failed_pattern: Optional[str] = None,
+    diff_threshold: Optional[float] = None,
 ) -> None:
     """Run comparator CLI and assert success."""
     cmd: list[str] = [
@@ -658,6 +669,8 @@ def _run_comparator(
     ]
     if allow_failed_pattern:
         cmd.extend(["--allow-failed-pattern", allow_failed_pattern])
+    if diff_threshold is not None:
+        cmd.extend(["--diff-threshold", str(diff_threshold)])
     if extra_args:
         cmd.extend(extra_args)
 
