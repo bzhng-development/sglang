@@ -115,14 +115,15 @@ def _apply_forward_permutation(
 
     Positions where ``forward_perm[i] == -1`` are discarded (padding).
     """
+    flat_unnamed: torch.Tensor = flat_routed.rename(None)
     valid_mask: torch.Tensor = forward_perm >= 0
-    trailing_shape: list[int] = list(flat_routed.shape[1:])
+    trailing_shape: list[int] = list(flat_unnamed.shape[1:])
 
     output: torch.Tensor = torch.zeros(
         [total_slots] + trailing_shape,
-        dtype=flat_routed.dtype,
-        device=flat_routed.device,
+        dtype=flat_unnamed.dtype,
+        device=flat_unnamed.device,
     )
-    output[forward_perm[valid_mask]] = flat_routed[valid_mask]
+    output[forward_perm[valid_mask]] = flat_unnamed[valid_mask]
 
     return output
