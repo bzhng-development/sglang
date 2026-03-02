@@ -268,21 +268,6 @@ patches:
       - match: "final_hidden_states = self.experts(hidden_states, topk_output)"
         append: "dumper.dump('moe_expert_output', final_hidden_states, dims='t h[tp:partial] # moe_ep:replicated')"
 
-  # --- moe expert intermediate (gate/up GEMM output, before activation) ---
-  - target: sglang.srt.layers.moe.fused_moe_triton.fused_moe.fused_experts_impl
-    edits:
-      - match: |
-          sorted_token_ids, expert_ids, num_tokens_post_padded = moe_align_block_size(
-              curr_topk_ids, config["BLOCK_SIZE_M"], E
-          )
-        append: |
-          dumper.dump('fused_moe_sorted_token_ids', sorted_token_ids)
-          dumper.dump('fused_moe_ep_num_tokens', torch.tensor(tokens_in_chunk))
-          dumper.dump('fused_moe_ep_top_k', torch.tensor(topk))
-      - match: "# Activation function with multiplication"
-        prepend: |
-          dumper.dump('gateup_output', intermediate_cache1, dims='t_k[ep] h_inter_2[moe_tp] # tp:replicated')
-
 """
 
 # DeepEP uses forward_deepep (not forward_normal), so MoE internals need
@@ -372,11 +357,10 @@ patches:
           dumper.dump('deepep_normal_ep_num_tokens', torch.tensor(hidden_states.shape[0] if not isinstance(hidden_states, tuple) else hidden_states[0].shape[0]))
           dumper.dump('deepep_normal_ep_top_k', torch.tensor(topk_ids.shape[1]))
 
-  - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_contiguous_gemm
-    edits:
-      - match: "silu_and_mul(gateup_output.view(-1, N), down_input)"
-        prepend: |
-          dumper.dump('gateup_output', gateup_output, dims='t_recv[ep] h_inter_2 # tp:replicated dp:=attn_dp')
+  # gateup_output not dumped in DeepEP: EP-split intermediate tensors
+  # cannot be compared across dispatch paths without partial-overlap logic.
+  # The derouter maps each EP rank's tokens to canonical order, but only
+  # fills positions for that rank's experts, leaving zeros elsewhere.
 
   # --- DeepEP Low-Latency: dispatch metadata + masked GEMM intermediate ---
   - target: sglang.srt.layers.moe.token_dispatcher.deepep._DeepEPDispatcherImplLowLatency.dispatch_b
@@ -388,11 +372,7 @@ patches:
           dumper.dump('deepep_ll_ep_num_tokens', torch.tensor(hidden_states.shape[0] if not isinstance(hidden_states, tuple) else hidden_states[0].shape[0]))
           dumper.dump('deepep_ll_ep_top_k', torch.tensor(topk_ids.shape[1]))
 
-  - target: sglang.srt.layers.moe.moe_runner.deep_gemm.DeepGemmRunnerCore._run_masked_gemm
-    edits:
-      - match: "if _MASKED_GEMM_FAST_ACT:"
-        prepend: |
-          dumper.dump('gateup_output', gateup_output, dims='num_experts[ep] m h_inter_2 # tp:replicated dp:=attn_dp')
+  # gateup_output not dumped in DeepEP low-latency: same reason as normal mode.
 """
 
 
@@ -463,7 +443,7 @@ class TestBF16:
             target_tp=TARGET_TP,
             extra_target_server_args=["--ep-size", "4"],
             target_patch_config_yaml=PATCH_CONFIG_EP_YAML,
-            target_extra_fields=_FIELDS_GATEUP,
+            allow_skipped_pattern=_ALLOW_SKIPPED_EP,
         )
 
 
@@ -517,7 +497,6 @@ class TestFP8DeepEP:
                 "normal",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
-            target_extra_fields=_FIELDS_GATEUP,
             allow_skipped_pattern=_ALLOW_SKIPPED_DEEPEP,
         )
 
@@ -544,7 +523,6 @@ class TestFP8DeepEP:
                 "low_latency",
             ],
             target_patch_config_yaml=PATCH_CONFIG_DEEPEP_YAML,
-            target_extra_fields=_FIELDS_GATEUP,
             allow_skipped_pattern=_ALLOW_SKIPPED_DEEPEP,
         )
 
@@ -556,8 +534,11 @@ _ALLOW_SKIPPED_BASE = (
     "|fused_moe_sorted_token_ids|fused_moe_ep_num_tokens|fused_moe_ep_top_k"
 )
 
+_ALLOW_SKIPPED_EP = _ALLOW_SKIPPED_BASE + "|gateup_output"
+
 _ALLOW_SKIPPED_DEEPEP = (
     _ALLOW_SKIPPED_BASE
+    + "|gateup_output"
     + "|deepep_normal_recv_topk_ids|deepep_normal_num_recv_tokens_per_expert"
     + "|deepep_normal_ep_num_tokens|deepep_normal_ep_top_k"
     + "|deepep_ll_masked_m|deepep_ll_packed_recv_src_info"
@@ -701,6 +682,19 @@ def _run_comparator(
         stdout=result.stdout, stderr=result.stderr
     )
     print(f"Comparator debug output: {debug_file}")
+
+    if result.returncode != 0:
+        import json
+
+        failed_names: list[str] = []
+        for line in result.stdout.strip().split("\n"):
+            try:
+                record = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if record.get("type") == "comparison" and not record.get("passed", True):
+                failed_names.append(record.get("name", "<unknown>"))
+        print(f"Failed fields: {failed_names}")
 
     assert (
         result.returncode == 0
