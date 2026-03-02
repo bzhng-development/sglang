@@ -37,6 +37,8 @@ def _make_meta(
     tp_size: int = 1,
     cp_rank: int = 0,
     cp_size: int = 1,
+    ep_rank: int = 0,
+    ep_size: int = 1,
 ) -> dict[str, Any]:
     meta: dict[str, Any] = {"step": step}
     if dims is not None:
@@ -46,6 +48,8 @@ def _make_meta(
         "tp_size": tp_size,
         "cp_rank": cp_rank,
         "cp_size": cp_size,
+        "ep_rank": ep_rank,
+        "ep_size": ep_size,
     }
     return meta
 
@@ -193,8 +197,8 @@ class TestComputePerStepSubPlansDeRouter:
         """Dims with [ep] and matching aux names should produce a DeRouterPlan."""
         result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
             metas=[
-                _make_meta(dims="t k[ep] n"),
-                _make_meta(dims="t k[ep] n"),
+                _make_meta(dims="t k[ep] n", ep_rank=0, ep_size=2),
+                _make_meta(dims="t k[ep] n", ep_rank=1, ep_size=2),
             ],
             available_aux_names=frozenset({"fused_moe_sorted_token_ids"}),
         )
@@ -228,6 +232,21 @@ class TestComputePerStepSubPlansDeRouter:
                 _make_meta(dims="t k[ep] n"),
             ],
             available_aux_names=frozenset({"unrelated_tensor"}),
+        )
+
+        de_router_plans: list[DeRouterPlan] = [
+            p for p in result if isinstance(p, DeRouterPlan)
+        ]
+        assert len(de_router_plans) == 0
+
+    def test_ep_dims_ep_size_1_no_de_router_plan(self) -> None:
+        """Dims with [ep] but ep_size=1 → no DeRouterPlan (EP not active)."""
+        result: list[AlignerPerStepSubPlan] = compute_per_step_sub_plans(
+            metas=[
+                _make_meta(dims="t k[ep] n"),
+                _make_meta(dims="t k[ep] n"),
+            ],
+            available_aux_names=frozenset({"fused_moe_sorted_token_ids"}),
         )
 
         de_router_plans: list[DeRouterPlan] = [
