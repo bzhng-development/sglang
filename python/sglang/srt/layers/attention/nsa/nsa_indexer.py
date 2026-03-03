@@ -36,6 +36,9 @@ if is_npu():
 from sglang.srt.distributed import (
     get_attn_context_model_parallel_rank,
     get_attn_context_model_parallel_world_size,
+    get_tensor_model_parallel_rank,
+    get_tensor_model_parallel_world_size,
+    tensor_model_parallel_all_reduce,
 )
 from sglang.srt.distributed.parallel_state import get_pp_group
 from sglang.srt.layers import deep_gemm_wrapper
@@ -45,7 +48,8 @@ from sglang.srt.layers.attention.nsa.utils import (
     is_nsa_prefill_cp_in_seq_split,
 )
 from sglang.srt.layers.communicator import ScatterMode
-from sglang.srt.layers.linear import ReplicatedLinear
+from sglang.srt.layers.dp_attention import is_dp_attention_enabled
+from sglang.srt.layers.linear import ReplicatedLinear, RowParallelLinear
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
 from sglang.srt.layers.rotary_embedding import get_rope_wrapper
 from sglang.srt.model_executor.cuda_graph_runner import get_is_capture_mode
@@ -177,6 +181,12 @@ class Indexer(MultiPlatformOp):
         else:
             self.cp_size = None
             self.cp_rank = None
+
+        self.enable_tp_weights_proj = not is_dp_attention_enabled()
+        tp_size = get_tensor_model_parallel_world_size()
+        tp_rank = get_tensor_model_parallel_rank()
+        self.tp_size = tp_size
+        self.tp_rank = tp_rank
         if _is_cuda:
             self.sm_count = deep_gemm.get_num_sms()
             self.half_device_sm_count = ceil_align(self.sm_count // 2, 8)
@@ -200,13 +210,26 @@ class Indexer(MultiPlatformOp):
             quant_config=quant_config,
             prefix=add_prefix("wk", prefix),
         )
-        self.weights_proj = ReplicatedLinear(
-            self.hidden_size,
-            self.n_heads,
-            bias=False,
-            params_dtype=torch.bfloat16 if _is_cuda else torch.float32,
-            prefix=add_prefix("weights_proj", prefix),
-        )
+        if self.enable_tp_weights_proj:
+            self.weights_proj = RowParallelLinear(
+                self.hidden_size,
+                self.n_heads,
+                bias=False,
+                input_is_parallel=False,
+                reduce_results=False,
+                params_dtype=torch.bfloat16 if _is_cuda else torch.float32,
+                prefix=add_prefix("weights_proj", prefix),
+                tp_rank=tp_rank,
+                tp_size=tp_size,
+            )
+        else:
+            self.weights_proj = ReplicatedLinear(
+                self.hidden_size,
+                self.n_heads,
+                bias=False,
+                params_dtype=torch.bfloat16 if _is_cuda else torch.float32,
+                prefix=add_prefix("weights_proj", prefix),
+            )
         self.k_norm = LayerNorm(self.head_dim, dtype=torch.float32)
         self.rotary_emb = get_rope_wrapper(
             rope_head_dim,
@@ -239,18 +262,27 @@ class Indexer(MultiPlatformOp):
     def _weights_proj_bf16_in_fp32_out(self, x: torch.Tensor) -> torch.Tensor:
         if deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM:
             weight = self.weights_proj.weight
+            if self.enable_tp_weights_proj:
+                shard_size = weight.shape[1]
+                x = x[:, self.tp_rank * shard_size : (self.tp_rank + 1) * shard_size]
+                x = x.contiguous()
             out = torch.empty(
                 (x.shape[0], weight.shape[0]),
                 dtype=torch.float32,
                 device=x.device,
             )
             deep_gemm_wrapper.gemm_nt_bf16bf16f32(x, weight, out)
+            if self.enable_tp_weights_proj and self.tp_size > 1:
+                out = tensor_model_parallel_all_reduce(out)
             return out
 
         if _is_hip:
             x = x.to(self.weights_proj.weight.dtype)
         weights, _ = self.weights_proj(x)
-        return weights.float()
+        weights = weights.float()
+        if self.enable_tp_weights_proj and self.tp_size > 1:
+            weights = tensor_model_parallel_all_reduce(weights)
+        return weights
 
     @torch.compile(dynamic=True) if not _is_hip else lambda f: f
     def _project_and_scale_head_gates(self, x: torch.Tensor):
