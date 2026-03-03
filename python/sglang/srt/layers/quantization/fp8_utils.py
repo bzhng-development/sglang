@@ -186,6 +186,7 @@ def _check_cutlass_block_fp8_hardware_support() -> bool:
 
 if is_blackwell_supported() and is_flashinfer_available():
     from flashinfer.gemm import gemm_fp8_nt_groupwise as _raw_gemm_fp8_nt_groupwise
+
     from sglang.srt.utils.custom_op import register_custom_op
 
     @lru_cache(maxsize=1)
