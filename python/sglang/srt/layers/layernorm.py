@@ -429,10 +429,17 @@ class GemmaRMSNorm(MultiPlatformOp):
         super().__init__()
         self.weight = nn.Parameter(torch.zeros(hidden_size))
         self.variance_epsilon = eps
+        self._gemma_weight: Optional[torch.Tensor] = None
 
         # Re-dispatch
         if _is_hip:
             self._forward_method = self.forward_native
+
+    @property
+    def gemma_weight(self) -> torch.Tensor:
+        if self._gemma_weight is None or self._gemma_weight.data_ptr() == 0:
+            self._gemma_weight = self.weight.data + 1.0
+        return self._gemma_weight
 
     def _forward_impl(
         self,
@@ -521,6 +528,51 @@ class GemmaRMSNorm(MultiPlatformOp):
         post_residual_addition: Optional[torch.Tensor] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         return self._forward_impl(x, residual, post_residual_addition)
+
+    def forward_with_allreduce_fusion(
+        self,
+        x: torch.Tensor,
+        residual: Optional[torch.Tensor] = None,
+        post_residual_addition: Optional[torch.Tensor] = None,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+        if residual is not None:
+            from sglang.srt.distributed import (
+                get_tensor_model_parallel_world_size,
+                tensor_model_parallel_all_reduce,
+                tensor_model_parallel_fused_allreduce_rmsnorm,
+            )
+            from sglang.srt.layers.flashinfer_comm_fusion import (
+                flashinfer_allreduce_residual_rmsnorm,
+            )
+
+            if get_tensor_model_parallel_world_size() > 1:
+                if post_residual_addition is not None:
+                    residual = residual + post_residual_addition
+
+                if _use_aiter:
+                    fused_result = tensor_model_parallel_fused_allreduce_rmsnorm(
+                        x, residual, self.gemma_weight, self.variance_epsilon
+                    )
+                    if fused_result is not None:
+                        return fused_result
+                else:
+                    fused_result = flashinfer_allreduce_residual_rmsnorm(
+                        input_tensor=x,
+                        residual=residual,
+                        weight=self.gemma_weight,
+                        eps=self.variance_epsilon,
+                    )
+                    if fused_result[0] is not None:
+                        return fused_result
+
+                if (
+                    _use_aiter
+                    and get_global_server_args().enable_aiter_allreduce_fusion
+                ):
+                    x = tensor_model_parallel_all_reduce(x)
+                    return self.forward(x, residual, None)
+
+        return self.forward(x, residual, post_residual_addition)
 
 
 class Gemma3RMSNorm(MultiPlatformOp):
