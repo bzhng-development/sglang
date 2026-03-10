@@ -760,6 +760,9 @@ class ServerArgs:
         # Apply model-specific adjustments.
         self._handle_model_specific_adjustments()
 
+        # Handle speculative decoding logic.
+        self._handle_speculative_decoding()
+
         # Set kernel backends.
         self._handle_sampling_backend()
         self._handle_attention_backend_compatibility()
@@ -787,9 +790,6 @@ class ServerArgs:
 
         # Handle pipeline parallelism.
         self._handle_pipeline_parallelism()
-
-        # Handle speculative decoding logic.
-        self._handle_speculative_decoding()
 
         # Handle model loading format.
         self._handle_load_format()
@@ -2086,15 +2086,17 @@ class ServerArgs:
                 # Before the kernel is fixed, we choose fa3 as the default backend on Hopper MHA
                 # ref: https://github.com/sgl-project/sglang/issues/17411
                 return "fa3"
-            elif (
-                is_sm100_supported()
-                and is_no_spec_infer_or_topk_one(self)
-                and (
-                    self.speculative_algorithm is None
-                    or self.speculative_eagle_topk is not None
-                )
-            ):
-                return "trtllm_mha"
+            elif is_sm100_supported():
+                # On SM100, use trtllm_mha by default for MHA models as long as we
+                # as we are not using speculative decoding with topk > 1.
+                if (
+                    self.speculative_algorithm is not None
+                    and self.speculative_eagle_topk is not None
+                    and self.speculative_eagle_topk > 1
+                ):
+                    pass
+                else:
+                    return "trtllm_mha"
             elif is_hip():
                 return "aiter"
             else:
