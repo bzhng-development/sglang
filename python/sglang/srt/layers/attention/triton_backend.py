@@ -19,8 +19,8 @@ from sglang.srt.utils import (
     get_device_core_count,
     get_int_env_var,
     next_power_of_2,
-    supports_pdl,
 )
+from sgl_kernel.utils import is_arch_support_pdl
 
 if TYPE_CHECKING:
     from sglang.srt.layers.radix_attention import RadixAttention
@@ -124,7 +124,7 @@ class TritonAttnBackend(AttentionBackend):
             self.max_kv_splits = _mla_decode_kv_splits_cap(
                 self.max_kv_splits, self.device_core_count
             )
-        self.use_pdl = supports_pdl()
+        self.use_pdl = is_arch_support_pdl()
 
         self.allow_bidirectional_attention_in_extend = (
             model_runner.server_args.disable_cuda_graph
