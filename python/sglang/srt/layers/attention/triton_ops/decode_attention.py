@@ -282,7 +282,7 @@ def _fwd_grouped_kernel_stage1(
     Lk: tl.constexpr,
     Lv: tl.constexpr,
     HAS_MLA: tl.constexpr = False,
-    USE_GDC: tl.constexpr = False,
+    USE_PDL: tl.constexpr = False,
 ):
     cur_batch = tl.program_id(0)
     cur_head_id = tl.program_id(1)
@@ -421,7 +421,7 @@ def _fwd_grouped_kernel_stage1(
             mask=mask_h,
         )
 
-    if USE_GDC:
+    if USE_PDL:
         tl.extra.cuda.gdc_launch_dependents()
 
 
@@ -513,7 +513,7 @@ def _decode_grouped_att_m_fwd(
         Lk=Lk,
         Lv=Lv,
         HAS_MLA=has_mla,
-        USE_GDC=use_pdl,
+        USE_PDL=use_pdl,
         **extra_kargs,
     )
 
@@ -537,12 +537,12 @@ def _fwd_kernel_stage2(
     BLOCK_DV: tl.constexpr,
     Lv: tl.constexpr,
     HAS_SINK: tl.constexpr,
-    USE_GDC: tl.constexpr = False,
+    USE_PDL: tl.constexpr = False,
 ):
     cur_batch = tl.program_id(0)
     cur_head = tl.program_id(1)
 
-    if USE_GDC:
+    if USE_PDL:
         tl.extra.cuda.gdc_wait()
 
     cur_batch_seq_len = tl.load(kv_indptr + cur_batch + 1) - tl.load(
@@ -638,7 +638,7 @@ def _decode_softmax_reducev_fwd(
         BLOCK_DV=BLOCK_DV,
         Lv=Lv,
         HAS_SINK=HAS_SINK,
-        USE_GDC=use_pdl,
+        USE_PDL=use_pdl,
         num_warps=4,
         num_stages=2,
         **({"launch_pdl": True} if use_pdl else {}),
