@@ -374,8 +374,7 @@ def _fwd_kernel(
                 mask=(mask_n[None, :]) & (mask_d[:, None]),
                 other=0.0,
             )
-
-            qk = tl.dot(q.to(k.dtype), k)
+            qk = tl.dot(q, k.to(q.dtype))
             if BLOCK_DPE > 0:
                 offs_kpe = (
                     offs_kv_loc[None, :] * stride_buf_kbs
@@ -387,7 +386,7 @@ def _fwd_kernel(
                     mask=mask_n[None, :],
                     other=0.0,
                 )
-                qk += tl.dot(qpe.to(kpe.dtype), kpe)
+                qk += tl.dot(qpe, kpe.to(qpe.dtype))
             qk *= sm_scale * k_scale
 
             if logit_cap > 0:
@@ -416,8 +415,8 @@ def _fwd_kernel(
                 mask=mask_n[:, None] & mask_dv[None, :],
                 other=0.0,
             )
-            p = p.to(v.dtype)
-            acc = acc * re_scale[:, None] + tl.dot(p, v) * v_scale
+            p = p.to(q.dtype)
+            acc = acc * re_scale[:, None] + tl.dot(p, v.to(q.dtype)) * v_scale
 
             e_max = n_e_max
 
@@ -879,8 +878,7 @@ def _fwd_kernel_unified(
                 other=0.0,
             )
 
-            # Compute QK
-            qk = tl.dot(q.to(k.dtype), k)
+            qk = tl.dot(q, k.to(q.dtype))
             if BLOCK_DPE > 0:
                 offs_kpe = (
                     offs_kv_loc[None, :] * stride_buf_kbs
@@ -892,7 +890,7 @@ def _fwd_kernel_unified(
                     mask=mask_n[None, :],
                     other=0.0,
                 )
-                qk += tl.dot(qpe.to(kpe.dtype), kpe)
+                qk += tl.dot(qpe, kpe.to(qpe.dtype))
 
             qk *= sm_scale_withk
 
@@ -924,8 +922,8 @@ def _fwd_kernel_unified(
                 mask=mask_n[:, None] & mask_dv[None, :],
                 other=0.0,
             )
-            p = p.to(v.dtype)
-            acc = acc * re_scale[:, None] + tl.dot(p, v)
+            p = p.to(q.dtype)
+            acc = acc * re_scale[:, None] + tl.dot(p, v.to(q.dtype))
 
             e_max = n_e_max
 

@@ -281,6 +281,7 @@ def _fwd_grouped_kernel_stage1(
     xai_temperature_len: tl.constexpr,
     Lk: tl.constexpr,
     Lv: tl.constexpr,
+    HAS_MLA: tl.constexpr = False,
 ):
     cur_batch = tl.program_id(0)
     cur_head_id = tl.program_id(1)
@@ -329,24 +330,27 @@ def _fwd_grouped_kernel_stage1(
     e_sum = tl.zeros([BLOCK_H], dtype=tl.float32)
     acc = tl.zeros([BLOCK_H, BLOCK_DV], dtype=tl.float32)
 
+    # Hoist loop-invariant base offsets
+    base_offs_k = cur_kv_head * stride_buf_kh + offs_d[:, None]
+    if BLOCK_DPE > 0:
+        base_offs_kpe = cur_kv_head * stride_buf_kh + offs_dpe[:, None]
+    if not HAS_MLA:
+        base_offs_v = cur_kv_head * stride_buf_vh + offs_dv[None, :]
+
     if split_kv_end > split_kv_start:
         q = tl.load(Q + offs_q, mask=(mask_h[:, None]) & (mask_d[None, :]), other=0.0)
         if BLOCK_DPE > 0:
             qpe = tl.load(
                 Q + off_qpe, mask=(mask_h[:, None]) & (mask_dpe[None, :]), other=0.0
             )
-        for start_n in range(split_kv_start, split_kv_end, BLOCK_N):
+        for start_n in tl.range(split_kv_start, split_kv_end, BLOCK_N):
             offs_n = start_n + tl.arange(0, BLOCK_N)
             kv_loc = tl.load(
                 kv_indices + cur_batch_kv_start_idx + offs_n,
                 mask=offs_n < split_kv_end,
                 other=0,
             )
-            offs_buf_k = (
-                kv_loc[None, :] * stride_buf_kbs
-                + cur_kv_head * stride_buf_kh
-                + offs_d[:, None]
-            )
+            offs_buf_k = kv_loc[None, :] * stride_buf_kbs + base_offs_k
             k = tl.load(
                 K_Buffer + offs_buf_k,
                 mask=(offs_n[None, :] < split_kv_end) & (mask_d[:, None]),
@@ -354,11 +358,7 @@ def _fwd_grouped_kernel_stage1(
             )
             qk = tl.dot(q, k.to(q.dtype))
             if BLOCK_DPE > 0:
-                offs_buf_kpe = (
-                    kv_loc[None, :] * stride_buf_kbs
-                    + cur_kv_head * stride_buf_kh
-                    + offs_dpe[:, None]
-                )
+                offs_buf_kpe = kv_loc[None, :] * stride_buf_kbs + base_offs_kpe
                 kpe = tl.load(
                     K_Buffer + offs_buf_kpe,
                     mask=(offs_n[None, :] < split_kv_end) & (mask_dpe[:, None]),
@@ -376,23 +376,21 @@ def _fwd_grouped_kernel_stage1(
             qk = tl.where(
                 mask_h[:, None] & (offs_n[None, :] < split_kv_end), qk, float("-inf")
             )
-
-            offs_buf_v = (
-                kv_loc[:, None] * stride_buf_vbs
-                + cur_kv_head * stride_buf_vh
-                + offs_dv[None, :]
-            )
-            v = tl.load(
-                V_Buffer + offs_buf_v,
-                mask=(offs_n[:, None] < split_kv_end) & (mask_dv[None, :]),
-                other=0.0,
-            )
+            if HAS_MLA:
+                v = tl.trans(k)
+            else:
+                offs_buf_v = kv_loc[:, None] * stride_buf_vbs + base_offs_v
+                v = tl.load(
+                    V_Buffer + offs_buf_v,
+                    mask=(offs_n[:, None] < split_kv_end) & (mask_dv[None, :]),
+                    other=0.0,
+                )
 
             n_e_max = tl.maximum(tl.max(qk, 1), e_max)
             re_scale = tl.exp(e_max - n_e_max)
             p = tl.exp(qk - n_e_max[:, None])
             acc *= re_scale[:, None]
-            acc += tl.dot(p.to(v.dtype), v)
+            acc += tl.dot(p.to(q.dtype), v.to(q.dtype))
 
             e_sum = e_sum * re_scale + tl.sum(p, 1)
             e_max = n_e_max
@@ -436,6 +434,7 @@ def _decode_grouped_att_m_fwd(
     sm_scale_withk,
     logit_cap,
     xai_temperature_len=-1,
+    has_mla=False,
 ):
     BLOCK = 32
     Lk = k_buffer.shape[-1]
@@ -508,6 +507,7 @@ def _decode_grouped_att_m_fwd(
         num_stages=num_stages,
         Lk=Lk,
         Lv=Lv,
+        HAS_MLA=has_mla,
         **extra_kargs,
     )
 
@@ -694,6 +694,7 @@ def decode_attention_fwd_grouped(
     logit_cap=0.0,
     sinks=None,
     xai_temperature_len=-1,
+    has_mla=False,
 ):
     _decode_grouped_att_m_fwd(
         q,
@@ -708,6 +709,7 @@ def decode_attention_fwd_grouped(
         sm_scale_withk,
         logit_cap,
         xai_temperature_len,
+        has_mla=has_mla,
     )
     _decode_softmax_reducev_fwd(
         attn_logits,
@@ -740,6 +742,7 @@ def decode_attention_fwd(
     logit_cap=0.0,
     sinks=None,
     xai_temperature_len=-1,
+    has_mla=False,
 ):
     assert max_kv_splits == attn_logits.shape[2]
     assert q.shape[0] <= kv_indptr.shape[0] - 1
@@ -784,4 +787,5 @@ def decode_attention_fwd(
             logit_cap=logit_cap,
             sinks=sinks,
             xai_temperature_len=xai_temperature_len,
+            has_mla=has_mla,
         )
