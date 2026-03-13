@@ -641,7 +641,7 @@ def _decode_softmax_reducev_fwd(
         USE_GDC=use_pdl,
         num_warps=4,
         num_stages=2,
-        launch_pdl=use_pdl,
+        **({"launch_pdl": True} if use_pdl else {}),
         **extra_kargs,
     )
 
