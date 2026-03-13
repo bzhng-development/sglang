@@ -270,6 +270,11 @@ is_sm90_supported = lru_cache(maxsize=1)(
 )
 
 
+def supports_pdl() -> bool:
+    """Check if Programmatic Dependent Launch is supported (requires SM >= 9.0)."""
+    return is_sm90_supported() or is_sm100_supported()
+
+
 try:
     import sgl_kernel  # noqa: F401
 

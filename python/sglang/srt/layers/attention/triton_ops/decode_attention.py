@@ -282,6 +282,7 @@ def _fwd_grouped_kernel_stage1(
     Lk: tl.constexpr,
     Lv: tl.constexpr,
     HAS_MLA: tl.constexpr = False,
+    USE_GDC: tl.constexpr = False,
 ):
     cur_batch = tl.program_id(0)
     cur_head_id = tl.program_id(1)
@@ -420,6 +421,9 @@ def _fwd_grouped_kernel_stage1(
             mask=mask_h,
         )
 
+    if USE_GDC:
+        tl.extra.cuda.gdc_launch_dependents()
+
 
 def _decode_grouped_att_m_fwd(
     q,
@@ -435,6 +439,7 @@ def _decode_grouped_att_m_fwd(
     logit_cap,
     xai_temperature_len=-1,
     has_mla=False,
+    use_pdl=False,
 ):
     BLOCK = 32
     Lk = k_buffer.shape[-1]
@@ -508,6 +513,7 @@ def _decode_grouped_att_m_fwd(
         Lk=Lk,
         Lv=Lv,
         HAS_MLA=has_mla,
+        USE_GDC=use_pdl,
         **extra_kargs,
     )
 
@@ -531,9 +537,13 @@ def _fwd_kernel_stage2(
     BLOCK_DV: tl.constexpr,
     Lv: tl.constexpr,
     HAS_SINK: tl.constexpr,
+    USE_GDC: tl.constexpr = False,
 ):
     cur_batch = tl.program_id(0)
     cur_head = tl.program_id(1)
+
+    if USE_GDC:
+        tl.extra.cuda.gdc_wait()
 
     cur_batch_seq_len = tl.load(kv_indptr + cur_batch + 1) - tl.load(
         kv_indptr + cur_batch
@@ -594,6 +604,7 @@ def _decode_softmax_reducev_fwd(
     num_kv_splits,
     max_kv_splits,
     sinks=None,
+    use_pdl=False,
 ):
     batch, head_num = q.shape[0], q.shape[1]
     Lv = v_buffer.shape[-1]
@@ -627,8 +638,10 @@ def _decode_softmax_reducev_fwd(
         BLOCK_DV=BLOCK_DV,
         Lv=Lv,
         HAS_SINK=HAS_SINK,
+        USE_GDC=use_pdl,
         num_warps=4,
         num_stages=2,
+        launch_pdl=use_pdl,
         **extra_kargs,
     )
 
@@ -695,6 +708,7 @@ def decode_attention_fwd_grouped(
     sinks=None,
     xai_temperature_len=-1,
     has_mla=False,
+    use_pdl=False,
 ):
     _decode_grouped_att_m_fwd(
         q,
@@ -710,6 +724,7 @@ def decode_attention_fwd_grouped(
         logit_cap,
         xai_temperature_len,
         has_mla=has_mla,
+        use_pdl=use_pdl,
     )
     _decode_softmax_reducev_fwd(
         attn_logits,
@@ -722,6 +737,7 @@ def decode_attention_fwd_grouped(
         num_kv_splits,
         max_kv_splits,
         sinks,
+        use_pdl=use_pdl,
     )
 
 
@@ -743,6 +759,7 @@ def decode_attention_fwd(
     sinks=None,
     xai_temperature_len=-1,
     has_mla=False,
+    use_pdl=False,
 ):
     assert max_kv_splits == attn_logits.shape[2]
     assert q.shape[0] <= kv_indptr.shape[0] - 1
@@ -788,4 +805,5 @@ def decode_attention_fwd(
             sinks=sinks,
             xai_temperature_len=xai_temperature_len,
             has_mla=has_mla,
+            use_pdl=use_pdl,
         )
