@@ -438,9 +438,17 @@ class GemmaRMSNorm(MultiPlatformOp):
         super().__init__()
         self.weight = nn.Parameter(torch.zeros(hidden_size))
         self.variance_epsilon = eps
+        self._gemma_weight: Optional[torch.Tensor] = None
+
         # Re-dispatch
         if _is_hip:
             self._forward_method = self.forward_native
+
+    @property
+    def gemma_weight(self) -> torch.Tensor:
+        if self._gemma_weight is None or self._gemma_weight.data_ptr() == 0:
+            self._gemma_weight = self.weight.data + 1.0
+        return self._gemma_weight
 
     def _forward_impl(
         self,
@@ -536,10 +544,9 @@ class GemmaRMSNorm(MultiPlatformOp):
         residual: Optional[torch.Tensor] = None,
         post_residual_addition: Optional[torch.Tensor] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
-        """Forward with allreduce fusion; uses 1 + weight for fused kernels."""
-        # TODO(brayden): we can see if TRTLLM allreduce fusion can provide gemma-style norm
+        """Forward with allreduce fusion; uses gemma_weight (1 + weight) for fused kernels."""
         return _forward_with_allreduce_fusion(
-            self, x, residual, post_residual_addition, self.weight + 1.0
+            self, x, residual, post_residual_addition, self.gemma_weight
         )
 
 
