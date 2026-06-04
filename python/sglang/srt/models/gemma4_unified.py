@@ -50,10 +50,7 @@ from sglang.srt.managers.schedule_batch import (
     MultimodalDataItem,
     flatten_nested_list,
 )
-from sglang.srt.model_loader.weight_utils import (
-    default_weight_loader,
-    maybe_remap_kv_scale_name,
-)
+from sglang.srt.model_loader.weight_utils import default_weight_loader
 from sglang.srt.models.gemma4_causal import Gemma4TextModel, pp_filter_load_weight
 from sglang.srt.models.gemma4_mm import Gemma4ForConditionalGeneration
 from sglang.srt.utils import add_prefix
@@ -444,14 +441,13 @@ class Gemma4UnifiedForConditionalGeneration(Gemma4ForConditionalGeneration):
             else:
                 if name.endswith(".bias") and name not in params_dict:
                     continue
-                # ModelOpt FP8/NVFP4 checkpoints store per-layer KV-cache scales
-                # under self_attn.{k,v}_proj.{k,v}_scale; SGLang holds them on the
-                # RadixAttention module (self_attn.attn.{k,v}_scale). Remap so the
-                # calibrated KV scales are actually loaded instead of defaulting to 1.0.
-                remapped_name = maybe_remap_kv_scale_name(name, params_dict)
-                if remapped_name is None:
-                    continue
-                name = remapped_name
+                # NOTE: do NOT remap ModelOpt's projection KV scales
+                # (self_attn.{k,v}_proj.{k,v}_scale) onto the RadixAttention
+                # attn.{k,v}_scale. Gemma4 writes K/V to the cache *after* q/k
+                # RMSNorm (and RoPE for K), so the projection-output scales are the
+                # wrong descale factor for the cached tensors — applying them
+                # corrupts the spec-decode (NEXTN/MTP) verify forward. Leaving them
+                # unloaded lets attn.{k,v}_scale default to 1.0 (correct).
                 if name not in params_dict:
                     continue
                 param = params_dict[name]
