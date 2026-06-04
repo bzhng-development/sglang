@@ -30,7 +30,11 @@ from sglang.srt.layers.moe.utils import (
     is_flashinfer_cutedsl_v1_path,
     should_use_flashinfer_cutlass_moe_fp4_allgather,
 )
-from sglang.srt.layers.parameter import ModelWeightParameter, PerTensorScaleParameter
+from sglang.srt.layers.parameter import (
+    BlockQuantScaleParameter,
+    ModelWeightParameter,
+    PerTensorScaleParameter,
+)
 from sglang.srt.layers.quantization.base_config import (
     FusedMoEMethodBase,
     LinearMethodBase,
@@ -45,7 +49,10 @@ from sglang.srt.layers.quantization.fp8_kernel import scaled_fp8_quant
 from sglang.srt.layers.quantization.fp8_utils import (
     apply_fp8_linear,
     cutlass_fp8_supported,
+    deepgemm_w8a8_block_fp8_linear_with_fallback,
+    dispatch_w8a8_block_fp8_linear,
     is_blackwell_supported,
+    requant_weight_ue8m0_inplace,
 )
 from sglang.srt.layers.quantization.kv_cache import BaseKVCacheMethod
 from sglang.srt.layers.quantization.marlin_utils_fp4 import (
@@ -276,6 +283,28 @@ ACTIVATION_SCHEMES = ["static"]
 _SUPPORTED_ACT_STRS = ("silu", "relu2", "gelu")
 
 
+def _wrap_modelopt_block_scale_loader(weight_loader):
+    """Wrap a weight loader to normalize ModelOpt's ``fp8_pb_wo`` block scales.
+
+    ModelOpt serializes the 2D 128x128 weight-scale grid with singleton
+    block-internal axes, i.e. shape ``[out/block_n, 1, in/block_k, 1]``. SGLang's
+    :class:`BlockQuantScaleParameter` (and the block FP8 GEMM) expect the 2D
+    ``[out/block_n, in/block_k]`` grid, so collapse the singleton axes before
+    delegating to the real (TP-aware, fusion-aware) loader.
+    """
+
+    def _loader(param, loaded_weight, *args, **kwargs):
+        if (
+            loaded_weight.dim() == 4
+            and loaded_weight.shape[1] == 1
+            and loaded_weight.shape[3] == 1
+        ):
+            loaded_weight = loaded_weight.squeeze(3).squeeze(1)
+        return weight_loader(param, loaded_weight, *args, **kwargs)
+
+    return _loader
+
+
 class ModelOptQuantConfig(QuantizationConfig):
     def __init__(
         self,
@@ -397,13 +426,19 @@ class ModelOptFp8Config(ModelOptQuantConfig):
         kv_cache_quant_method: Optional[str] = None,
         exclude_modules: Optional[List[str]] = None,
         packed_modules_mapping: Optional[Dict[str, List[str]]] = None,
+        weight_block_size: Optional[List[int]] = None,
     ) -> None:
         """
         Args:
             is_checkpoint_fp8_serialized (bool): Indicates if the checkpoint uses serialized FP8 format.
+            weight_block_size (Optional[List[int]]): 2D weight-quantization block
+                shape ``[block_n, block_k]`` for ModelOpt's ``fp8_pb_wo`` per-block
+                weight-only FP8 checkpoints (e.g. ``[128, 128]``). ``None`` selects
+                the default per-tensor FP8 path.
         """
         super().__init__(kv_cache_quant_method, exclude_modules, packed_modules_mapping)
         self.is_checkpoint_fp8_serialized = is_checkpoint_fp8_serialized
+        self.weight_block_size = weight_block_size
         if is_checkpoint_fp8_serialized:
             logger.warning(
                 "Detected ModelOpt FP8 checkpoint. The format is experimental and subject to change."
@@ -469,9 +504,16 @@ class ModelOptFp8Config(ModelOptQuantConfig):
             raise ValueError(
                 "Cannot find 'quant_algo' in the model's quantization config. "
             )
-        if "FP8" not in quant_method:
+        # ModelOpt's per-block weight-only FP8 ("fp8_pb_wo") tags the algo as
+        # "fp8_pb_wo" (lowercase) rather than "FP8". It quantizes weights to FP8
+        # in 2D 128x128 blocks (no activation scale -> dynamic per-token-group
+        # activation quant at runtime), which maps onto SGLang's existing block
+        # FP8 GEMM. Accept it and route the linear method through the block path.
+        is_block_fp8 = quant_method == "fp8_pb_wo"
+        if "FP8" not in quant_method and not is_block_fp8:
             raise ValueError(
-                "ModelOptFp8Config only supports static FP8 quantization in SGLang. "
+                "ModelOptFp8Config only supports static FP8 and per-block "
+                "weight-only FP8 (fp8_pb_wo) quantization in SGLang. "
                 "For FP4 quantization, use ModelOptFp4Config. "
                 "Check the quantization config for your model's configuration."
             )
@@ -481,6 +523,7 @@ class ModelOptFp8Config(ModelOptQuantConfig):
             kv_cache_quant_method=kv_cache_quant_method,
             exclude_modules=exclude_modules,
             packed_modules_mapping=config.get("packed_modules_mapping"),
+            weight_block_size=[128, 128] if is_block_fp8 else None,
         )
 
     def get_quant_method(
@@ -509,6 +552,13 @@ class ModelOptFp8LinearMethod(LinearMethodBase):
         super().__init__()
         self.quant_config = quant_config
         self.cutlass_fp8_supported = cutlass_fp8_supported()
+        # ModelOpt "fp8_pb_wo": per-block weight-only FP8 (2D block scales,
+        # dynamic per-token-group activation quant). Routed through SGLang's
+        # block FP8 GEMM instead of the per-tensor scaled_mm path.
+        self.block_quant = quant_config.weight_block_size is not None
+        self.w8a8_block_fp8_linear = (
+            dispatch_w8a8_block_fp8_linear() if self.block_quant else None
+        )
 
     def create_weights(
         self,
@@ -550,6 +600,28 @@ class ModelOptFp8LinearMethod(LinearMethodBase):
         )
 
         if self.quant_config.is_checkpoint_fp8_serialized:
+            if self.block_quant:
+                # Per-block weight-only FP8 (fp8_pb_wo): a 2D [block_n, block_k]
+                # scale grid, no activation scale. ModelOpt serializes the grid
+                # as [out/block_n, 1, in/block_k, 1]; the squeeze loader below
+                # collapses the singleton block-internal axes to the 2D layout
+                # SGLang's block GEMM expects.
+                block_n, block_k = self.quant_config.weight_block_size
+                scale = BlockQuantScaleParameter(
+                    data=torch.empty(
+                        (output_size_per_partition + block_n - 1) // block_n,
+                        (input_size_per_partition + block_k - 1) // block_k,
+                        dtype=torch.float32,
+                    ),
+                    input_dim=1,
+                    output_dim=0,
+                    weight_loader=_wrap_modelopt_block_scale_loader(weight_loader),
+                )
+                scale[:] = torch.finfo(torch.float32).min
+                scale.format_ue8m0 = False
+                layer.register_parameter("weight_scale", scale)
+                # Weight-only: activations are dynamically quantized at runtime.
+                return
             # Register weight and input scales
             for scale_name in ["weight_scale", "input_scale"]:
                 layer.register_parameter(
@@ -566,6 +638,41 @@ class ModelOptFp8LinearMethod(LinearMethodBase):
 
     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
         """Requantizes weights after loading using the maximum scale."""
+        if self.block_quant:
+            from sglang.srt.model_loader.utils import (
+                should_deepgemm_weight_requant_ue8m0,
+            )
+
+            # Block FP8 GEMM consumes the [out, in] weight and 2D block scale
+            # directly (activations are quantized on the fly); no transpose.
+            weight = layer.weight.data
+            # A stray saturated value can show up in fp8_pb_wo exports; neutralize
+            # it so a single NaN cannot poison an entire GEMM tile.
+            if torch.isnan(weight.float()).any():
+                weight = torch.nan_to_num(weight.float(), nan=0.0).to(weight.dtype)
+            layer.weight = Parameter(weight, requires_grad=False)
+            layer.weight_scale = Parameter(
+                layer.weight_scale.data, requires_grad=False
+            )
+            # DeepGEMM on Blackwell expects UE8M0 (power-of-two) block scales; the
+            # modelopt fp8_pb_wo checkpoint ships arbitrary FP32 block scales, so
+            # requantize in place to match the active backend. Mirrors
+            # Fp8LinearMethod.process_weights_after_loading_block_quant.
+            if (
+                should_deepgemm_weight_requant_ue8m0(
+                    weight_block_size=self.quant_config.weight_block_size
+                )
+                and self.w8a8_block_fp8_linear
+                is deepgemm_w8a8_block_fp8_linear_with_fallback
+                and not getattr(layer.weight_scale, "format_ue8m0", False)
+            ):
+                requant_weight_ue8m0_inplace(
+                    layer.weight,
+                    layer.weight_scale,
+                    self.quant_config.weight_block_size,
+                )
+                layer.weight_scale.format_ue8m0 = True
+            return
         max_w_scale, quantized_weight = requantize_with_max_scale(
             layer.weight, layer.weight_scale, layer.logical_widths
         )
@@ -583,6 +690,15 @@ class ModelOptFp8LinearMethod(LinearMethodBase):
         bias: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """Applies FP8 linear transformation."""
+        if self.block_quant:
+            return self.w8a8_block_fp8_linear(
+                input=x,
+                weight=layer.weight,
+                block_size=self.quant_config.weight_block_size,
+                weight_scale=layer.weight_scale,
+                input_scale=None,
+                bias=bias,
+            )
         return apply_fp8_linear(
             input=x,
             weight=layer.weight,

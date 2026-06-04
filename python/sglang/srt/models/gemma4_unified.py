@@ -50,12 +50,51 @@ from sglang.srt.managers.schedule_batch import (
     MultimodalDataItem,
     flatten_nested_list,
 )
-from sglang.srt.model_loader.weight_utils import default_weight_loader
+from sglang.srt.model_loader.weight_utils import (
+    default_weight_loader,
+    maybe_remap_kv_scale_name,
+)
 from sglang.srt.models.gemma4_causal import Gemma4TextModel, pp_filter_load_weight
 from sglang.srt.models.gemma4_mm import Gemma4ForConditionalGeneration
 from sglang.srt.utils import add_prefix
 
 logger = logging.getLogger(__name__)
+
+
+# transformers>=5.10 (the gemma4_unified support commit) restructured the
+# encoder-free vision stack: on save it folds the patch pipeline *and* the
+# projector under a single ``embed_vision.*`` submodule, emitting
+# ``embed_vision.{patch_dense,patch_ln1,patch_ln2,pos_embedding,pos_norm}`` and
+# ``embed_vision.multimodal_embedder.embedding_projection``. SGLang keeps these
+# split across ``vision_embedder.*`` (the patch pipeline) and
+# ``embed_vision.embedding_projection`` (the projector), matching the names in
+# the original ``google/gemma-4-*`` checkpoints. ModelOpt PTQ exports re-save
+# through transformers, so their checkpoints carry the folded names and the
+# vision/audio weights silently fail to load. Map them back here so a quantized
+# (or any transformers>=5.10-resaved) checkpoint is a drop-in. Audio names are
+# already ``embed_audio.embedding_projection`` in both layouts.
+_GEMMA4_UNIFIED_VISION_PATCH_SUBMODULES = (
+    "patch_dense.",
+    "patch_ln1.",
+    "patch_ln2.",
+    "pos_embedding",
+    "pos_norm.",
+)
+
+
+def _remap_gemma4_unified_mm_name(name: str) -> str:
+    """Map transformers>=5.10 folded ``embed_vision.*`` names to SGLang's layout.
+
+    ``name`` is expected to already have the leading ``model.`` stripped.
+    """
+    if name.startswith("embed_vision.multimodal_embedder."):
+        return name.replace(
+            "embed_vision.multimodal_embedder.", "embed_vision.", 1
+        )
+    for sub in _GEMMA4_UNIFIED_VISION_PATCH_SUBMODULES:
+        if name.startswith("embed_vision." + sub):
+            return name.replace("embed_vision.", "vision_embedder.", 1)
+    return name
 
 
 class Gemma4UnifiedVisionEmbedder(nn.Module):
@@ -356,6 +395,7 @@ class Gemma4UnifiedForConditionalGeneration(Gemma4ForConditionalGeneration):
 
         for name, loaded_weight in weights:
             name = re.sub(r"^model\.", "", name)
+            name = _remap_gemma4_unified_mm_name(name)
 
             if pp_filter_load_weight(
                 name,
@@ -404,6 +444,14 @@ class Gemma4UnifiedForConditionalGeneration(Gemma4ForConditionalGeneration):
             else:
                 if name.endswith(".bias") and name not in params_dict:
                     continue
+                # ModelOpt FP8/NVFP4 checkpoints store per-layer KV-cache scales
+                # under self_attn.{k,v}_proj.{k,v}_scale; SGLang holds them on the
+                # RadixAttention module (self_attn.attn.{k,v}_scale). Remap so the
+                # calibrated KV scales are actually loaded instead of defaulting to 1.0.
+                remapped_name = maybe_remap_kv_scale_name(name, params_dict)
+                if remapped_name is None:
+                    continue
+                name = remapped_name
                 if name not in params_dict:
                     continue
                 param = params_dict[name]
