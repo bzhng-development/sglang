@@ -64,6 +64,8 @@ def fused_qk_norm_rope_store(
         slots: (num_tokens,) int64 destination page per token.
         eps: RMSNorm epsilon.
     """
+    if k_cache.stride() != v_cache.stride() or k_cache.stride(2) != 1:
+        raise ValueError("k_cache / v_cache must share strides with contiguous last dim")
     module = _fused_qk_norm_rope_store_module(qkv.dtype)
     module.fused_qk_norm_rope_store(
         qkv,
@@ -77,4 +79,6 @@ def fused_qk_norm_rope_store(
         cos_sin,
         slots,
         eps,
+        k_cache.stride(0),
+        k_cache.stride(1),
     )

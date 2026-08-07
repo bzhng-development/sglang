@@ -133,7 +133,9 @@ void fused_qk_norm_rope_store(
     tvm::ffi::TensorView k_norm_w,
     tvm::ffi::TensorView cos_sin,
     tvm::ffi::TensorView slots,
-    double eps) {
+    double eps,
+    int64_t cache_page_stride,
+    int64_t cache_head_stride) {
   using namespace host;
 
   auto device = SymbolicDevice{};
@@ -148,11 +150,9 @@ void fused_qk_norm_rope_store(
   const int64_t head_dim = q_norm_w.size(0);
   const int64_t num_kv_heads = k_hot.size(1);
   const int64_t num_q_heads = q_out.size(1) / head_dim;
-  // Cache-store layout from the (possibly head-major) k_cache view; k/v caches
-  // must share it, hot buffers must be page-major contiguous.
-  const int64_t cache_page_stride = k_cache.stride(0);
-  const int64_t cache_head_stride = k_cache.stride(1);
-  RuntimeCheck(k_cache.stride(2) == 1, "k_cache innermost stride must be 1");
+  // Cache-store element strides come from the caller (torch-side strides):
+  // k/v caches may be head-major views, hot buffers must be page-major
+  // contiguous, innermost dim contiguous for all.
   RuntimeCheck(head_dim % 2 == 0, "head_dim must be even, got ", head_dim);
   RuntimeCheck(
       head_dim <= static_cast<int64_t>(kBlockSize),
