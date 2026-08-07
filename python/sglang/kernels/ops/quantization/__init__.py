@@ -54,6 +54,24 @@ del _name
 
 register_kernel(
     KernelSpec(
+        op="quantization.per_token_quant_fp8",
+        backend=KernelBackend.JIT,
+        target="sglang.kernels.ops.quantization.per_token_quant_fp8:per_token_quant_fp8",
+        capabilities=_CUDA,
+        format_signature=FormatSignature(
+            supported_dtypes=("float8_e4m3fn",),
+            in_place=True,
+            description=(
+                "per-token dynamic FP8 quantization, small-batch (1 token/CTA) "
+                "schedule for latency-bound decode; bf16/fp16/fp32 input"
+            ),
+        ),
+        description="Per-token FP8 quantization (sglang.kernels.jit).",
+    )
+)
+
+register_kernel(
+    KernelSpec(
         op="quantization.per_token_group_quant",
         backend=KernelBackend.JIT,
         target="sglang.kernels.ops.quantization.per_token_group_quant:per_token_group_quant",
