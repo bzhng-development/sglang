@@ -35,9 +35,9 @@ template <typename DType>
 __global__ void fused_qk_norm_rope_store_kernel(
     const DType* __restrict__ qkv,        // (tokens, (Hq+2*Hkv)*D) packed q|k|v
     DType* __restrict__ q_out,            // (tokens, Hq*D) roped
-    DType* __restrict__ k_cache,          // (pages, Hkv, D) un-roped normed K
+    DType* __restrict__ k_cache,          // strided un-roped normed K store
     DType* __restrict__ k_hot,            // (pages, Hkv, D) roped normed K
-    DType* __restrict__ v_cache,          // (pages, Hkv, D)
+    DType* __restrict__ v_cache,          // strided V store
     DType* __restrict__ v_hot,            // (pages, Hkv, D)
     const DType* __restrict__ q_norm_w,   // (D,)
     const DType* __restrict__ k_norm_w,   // (D,)
@@ -46,7 +46,11 @@ __global__ void fused_qk_norm_rope_store_kernel(
     const uint32_t num_q_heads,
     const uint32_t num_kv_heads,
     const uint32_t head_dim,
-    const float eps) {
+    const float eps,
+    // Cache-store element strides: hot buffers are page-major contiguous, but
+    // the (un-roped) caches may live head-major, e.g. HF StaticCache (H, L, D).
+    const int64_t cache_page_stride,
+    const int64_t cache_head_stride) {
   using namespace device;
 
   const uint32_t token = blockIdx.x;
@@ -104,16 +108,17 @@ __global__ void fused_qk_norm_rope_store_kernel(
   }
 
   const uint32_t kv_head = head - num_q_heads;
-  const int64_t page_offset = (slot * num_kv_heads + kv_head) * head_dim + tid;
-  k_cache[page_offset] = static_cast<DType>(normed);
-  k_hot[page_offset] = static_cast<DType>(roped);
+  const int64_t hot_offset = (slot * num_kv_heads + kv_head) * head_dim + tid;
+  const int64_t cache_offset = slot * cache_page_stride + kv_head * cache_head_stride + tid;
+  k_cache[cache_offset] = static_cast<DType>(normed);
+  k_hot[hot_offset] = static_cast<DType>(roped);
 
   // V passes through untouched; the v rows sit after all K rows in qkv.
   const DType* v_src =
       qkv + token * qkv_stride + (num_q_heads + num_kv_heads + kv_head) * head_dim;
   const DType v_val = v_src[tid];
-  v_cache[page_offset] = v_val;
-  v_hot[page_offset] = v_val;
+  v_cache[cache_offset] = v_val;
+  v_hot[hot_offset] = v_val;
 }
 
 template <typename DType>
@@ -141,8 +146,13 @@ void fused_qk_norm_rope_store(
 
   const int64_t num_tokens = T.unwrap();
   const int64_t head_dim = q_norm_w.size(0);
-  const int64_t num_kv_heads = k_cache.size(1);
+  const int64_t num_kv_heads = k_hot.size(1);
   const int64_t num_q_heads = q_out.size(1) / head_dim;
+  // Cache-store layout from the (possibly head-major) k_cache view; k/v caches
+  // must share it, hot buffers must be page-major contiguous.
+  const int64_t cache_page_stride = k_cache.stride(0);
+  const int64_t cache_head_stride = k_cache.stride(1);
+  RuntimeCheck(k_cache.stride(2) == 1, "k_cache innermost stride must be 1");
   RuntimeCheck(head_dim % 2 == 0, "head_dim must be even, got ", head_dim);
   RuntimeCheck(
       head_dim <= static_cast<int64_t>(kBlockSize),
@@ -167,7 +177,9 @@ void fused_qk_norm_rope_store(
       static_cast<uint32_t>(num_q_heads),
       static_cast<uint32_t>(num_kv_heads),
       static_cast<uint32_t>(head_dim),
-      static_cast<float>(eps));
+      static_cast<float>(eps),
+      cache_page_stride,
+      cache_head_stride);
 }
 
 }  // namespace
