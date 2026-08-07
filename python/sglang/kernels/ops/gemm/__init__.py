@@ -32,6 +32,23 @@ register_kernel(
 )
 register_kernel(
     KernelSpec(
+        op="gemm.fp8_per_tensor_scaled_mm",
+        backend=KernelBackend.JIT,
+        target="sglang.kernels.ops.gemm.fp8_per_tensor_gemm:fp8_per_tensor_scaled_mm",
+        capabilities=_CUDA,
+        format_signature=FormatSignature(
+            supported_dtypes=("float8_e4m3fn",),
+            description=(
+                "C = (A_fp8 @ B_fp8) * scales_a * scales_b (+ bias); per-tensor "
+                "or rowwise (per-token x per-channel) scale vectors; "
+                "sm89/sm90/sm100/sm120 dispatch with M-bucketed tiles"
+            ),
+        ),
+        description="FP8 scaled matmul (sglang.kernels.jit, cutlass c3x).",
+    )
+)
+register_kernel(
+    KernelSpec(
         op="gemm.bmm_fp8",
         backend=KernelBackend.FLASHINFER,
         target="sglang.srt.layers.quantization.fp8_utils:bmm_fp8",
