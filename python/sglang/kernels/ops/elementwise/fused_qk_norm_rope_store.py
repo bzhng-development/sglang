@@ -31,7 +31,10 @@ def _fused_qk_norm_rope_store_module(dtype: torch.dtype) -> Module:
         "fused_qk_norm_rope_store",
         *args,
         cuda_files=["gemm/fused_qk_norm_rope_store.cuh"],
-        cuda_wrappers=[("fused_qk_norm_rope_store", f"fused_qk_norm_rope_store<{args}>")],
+        cuda_wrappers=[
+            ("fused_qk_norm_rope_store", f"fused_qk_norm_rope_store<{args}>"),
+            ("fused_qk_norm_rope_store_fp8kv", f"fused_qk_norm_rope_store_fp8kv<{args}>"),
+        ],
     )
 
 
@@ -74,6 +77,60 @@ def fused_qk_norm_rope_store(
         k_hot,
         v_cache,
         v_hot,
+        q_norm_weight,
+        k_norm_weight,
+        cos_sin,
+        slots,
+        eps,
+        k_cache.stride(0),
+        k_cache.stride(1),
+    )
+
+
+@register_custom_op(
+    op_name="fused_qk_norm_rope_store_fp8kv",
+    mutates_args=["q_out", "k_cache", "k_hot", "v_cache", "v_hot", "k_hot_fp8", "v_hot_fp8"],
+)
+def fused_qk_norm_rope_store_fp8kv(
+    qkv: torch.Tensor,
+    q_out: torch.Tensor,
+    k_cache: torch.Tensor,
+    k_hot: torch.Tensor,
+    v_cache: torch.Tensor,
+    v_hot: torch.Tensor,
+    k_hot_fp8: torch.Tensor,
+    v_hot_fp8: torch.Tensor,
+    q_norm_weight: torch.Tensor,
+    k_norm_weight: torch.Tensor,
+    cos_sin: torch.Tensor,
+    slots: torch.Tensor,
+    eps: float = 1e-6,
+) -> None:
+    """`fused_qk_norm_rope_store` that also mirrors roped K and V into e4m3
+    hot buffers (saturating conversion, scale 1.0) at the same slot geometry —
+    the fp8 KV cache a trtllm-gen decode path reads while bf16 consumers keep
+    the exact stores.
+
+    Args:
+        k_hot_fp8 / v_hot_fp8: (num_pages, Hkv, D) float8_e4m3fn, contiguous.
+        Remaining args as in `fused_qk_norm_rope_store`.
+    """
+    if k_cache.stride() != v_cache.stride() or k_cache.stride(2) != 1:
+        raise ValueError("k_cache / v_cache must share strides with contiguous last dim")
+    if k_hot_fp8.dtype != torch.float8_e4m3fn or v_hot_fp8.dtype != torch.float8_e4m3fn:
+        raise ValueError("k_hot_fp8 / v_hot_fp8 must be float8_e4m3fn")
+    if not k_hot_fp8.is_contiguous() or not v_hot_fp8.is_contiguous():
+        raise ValueError("k_hot_fp8 / v_hot_fp8 must be contiguous")
+    module = _fused_qk_norm_rope_store_module(qkv.dtype)
+    module.fused_qk_norm_rope_store_fp8kv(
+        qkv,
+        q_out,
+        k_cache,
+        k_hot,
+        v_cache,
+        v_hot,
+        k_hot_fp8,
+        v_hot_fp8,
         q_norm_weight,
         k_norm_weight,
         cos_sin,

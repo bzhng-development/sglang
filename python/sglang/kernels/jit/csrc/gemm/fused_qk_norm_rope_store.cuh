@@ -1,3 +1,4 @@
+#include <cuda_fp8.h>
 #include <sgl_kernel/tensor.h>
 #include <sgl_kernel/utils.h>
 
@@ -31,7 +32,11 @@ namespace {
 
 constexpr size_t kBlockSize = 128;
 
-template <typename DType>
+// kStoreFp8 additionally mirrors the roped K and V into e4m3 hot buffers at
+// the same slot geometry (saturating-finite conversion, scale 1.0) — the fp8
+// KV cache read by the trtllm-gen decode path while bf16 consumers keep the
+// exact copies.
+template <typename DType, bool kStoreFp8>
 __global__ void fused_qk_norm_rope_store_kernel(
     const DType* __restrict__ qkv,        // (tokens, (Hq+2*Hkv)*D) packed q|k|v
     DType* __restrict__ q_out,            // (tokens, Hq*D) roped
@@ -39,6 +44,8 @@ __global__ void fused_qk_norm_rope_store_kernel(
     DType* __restrict__ k_hot,            // (pages, Hkv, D) roped normed K
     DType* __restrict__ v_cache,          // strided V store
     DType* __restrict__ v_hot,            // (pages, Hkv, D)
+    __nv_fp8_storage_t* __restrict__ k_hot_fp8,  // (pages, Hkv, D) or nullptr
+    __nv_fp8_storage_t* __restrict__ v_hot_fp8,  // (pages, Hkv, D) or nullptr
     const DType* __restrict__ q_norm_w,   // (D,)
     const DType* __restrict__ k_norm_w,   // (D,)
     const float* __restrict__ cos_sin,    // (tokens, 2, D) gathered rows
@@ -119,16 +126,24 @@ __global__ void fused_qk_norm_rope_store_kernel(
   const DType v_val = v_src[tid];
   v_cache[cache_offset] = v_val;
   v_hot[hot_offset] = v_val;
+
+  if constexpr (kStoreFp8) {
+    k_hot_fp8[hot_offset] = __nv_cvt_float_to_fp8(roped, __NV_SATFINITE, __NV_E4M3);
+    v_hot_fp8[hot_offset] =
+        __nv_cvt_float_to_fp8(static_cast<float>(v_val), __NV_SATFINITE, __NV_E4M3);
+  }
 }
 
-template <typename DType>
-void fused_qk_norm_rope_store(
+template <typename DType, bool kStoreFp8>
+void launch_fused_qk_norm_rope_store(
     tvm::ffi::TensorView qkv,
     tvm::ffi::TensorView q_out,
     tvm::ffi::TensorView k_cache,
     tvm::ffi::TensorView k_hot,
     tvm::ffi::TensorView v_cache,
     tvm::ffi::TensorView v_hot,
+    __nv_fp8_storage_t* k_hot_fp8,
+    __nv_fp8_storage_t* v_hot_fp8,
     tvm::ffi::TensorView q_norm_w,
     tvm::ffi::TensorView k_norm_w,
     tvm::ffi::TensorView cos_sin,
@@ -163,13 +178,15 @@ void fused_qk_norm_rope_store(
 
   const dim3 grid(num_tokens, num_q_heads + num_kv_heads);
   LaunchKernel(grid, kBlockSize, device.unwrap())(
-      fused_qk_norm_rope_store_kernel<DType>,
+      fused_qk_norm_rope_store_kernel<DType, kStoreFp8>,
       static_cast<const DType*>(qkv.data_ptr()),
       static_cast<DType*>(q_out.data_ptr()),
       static_cast<DType*>(k_cache.data_ptr()),
       static_cast<DType*>(k_hot.data_ptr()),
       static_cast<DType*>(v_cache.data_ptr()),
       static_cast<DType*>(v_hot.data_ptr()),
+      k_hot_fp8,
+      v_hot_fp8,
       static_cast<const DType*>(q_norm_w.data_ptr()),
       static_cast<const DType*>(k_norm_w.data_ptr()),
       static_cast<const float*>(cos_sin.data_ptr()),
@@ -178,6 +195,83 @@ void fused_qk_norm_rope_store(
       static_cast<uint32_t>(num_kv_heads),
       static_cast<uint32_t>(head_dim),
       static_cast<float>(eps),
+      cache_page_stride,
+      cache_head_stride);
+}
+
+template <typename DType>
+void fused_qk_norm_rope_store(
+    tvm::ffi::TensorView qkv,
+    tvm::ffi::TensorView q_out,
+    tvm::ffi::TensorView k_cache,
+    tvm::ffi::TensorView k_hot,
+    tvm::ffi::TensorView v_cache,
+    tvm::ffi::TensorView v_hot,
+    tvm::ffi::TensorView q_norm_w,
+    tvm::ffi::TensorView k_norm_w,
+    tvm::ffi::TensorView cos_sin,
+    tvm::ffi::TensorView slots,
+    double eps,
+    int64_t cache_page_stride,
+    int64_t cache_head_stride) {
+  launch_fused_qk_norm_rope_store<DType, false>(
+      qkv,
+      q_out,
+      k_cache,
+      k_hot,
+      v_cache,
+      v_hot,
+      nullptr,
+      nullptr,
+      q_norm_w,
+      k_norm_w,
+      cos_sin,
+      slots,
+      eps,
+      cache_page_stride,
+      cache_head_stride);
+}
+
+template <typename DType>
+void fused_qk_norm_rope_store_fp8kv(
+    tvm::ffi::TensorView qkv,
+    tvm::ffi::TensorView q_out,
+    tvm::ffi::TensorView k_cache,
+    tvm::ffi::TensorView k_hot,
+    tvm::ffi::TensorView v_cache,
+    tvm::ffi::TensorView v_hot,
+    tvm::ffi::TensorView k_hot_fp8,
+    tvm::ffi::TensorView v_hot_fp8,
+    tvm::ffi::TensorView q_norm_w,
+    tvm::ffi::TensorView k_norm_w,
+    tvm::ffi::TensorView cos_sin,
+    tvm::ffi::TensorView slots,
+    double eps,
+    int64_t cache_page_stride,
+    int64_t cache_head_stride) {
+  using namespace host;
+  // e4m3 mirrors share the hot buffers' page-major (pages, Hkv, D) geometry;
+  // dtype is checked python-side (fp8 has no TensorMatcher dtype tag).
+  for (int dim = 0; dim < 3; ++dim) {
+    RuntimeCheck(
+        k_hot_fp8.size(dim) == k_hot.size(dim) && v_hot_fp8.size(dim) == v_hot.size(dim),
+        "fp8 hot buffers must match the hot buffers' shape at dim ",
+        dim);
+  }
+  launch_fused_qk_norm_rope_store<DType, true>(
+      qkv,
+      q_out,
+      k_cache,
+      k_hot,
+      v_cache,
+      v_hot,
+      static_cast<__nv_fp8_storage_t*>(k_hot_fp8.data_ptr()),
+      static_cast<__nv_fp8_storage_t*>(v_hot_fp8.data_ptr()),
+      q_norm_w,
+      k_norm_w,
+      cos_sin,
+      slots,
+      eps,
       cache_page_stride,
       cache_head_stride);
 }
