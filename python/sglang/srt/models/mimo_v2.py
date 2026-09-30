@@ -54,6 +54,7 @@ from sglang.srt.layers.moe import (
 )
 from sglang.srt.layers.moe.ep_moe.layer import DeepEPMoE, get_moe_impl_class
 from sglang.srt.layers.moe.topk import TopK, TopKOutputFormat
+from sglang.srt.layers.moe.utils import RoutingMethodType
 from sglang.srt.layers.quantization.base_config import QuantizationConfig
 from sglang.srt.layers.radix_attention import RadixAttention
 from sglang.srt.layers.rotary_embedding import get_rope
@@ -420,6 +421,8 @@ class MiMoV2MoE(nn.Module):
             layer_id=self.layer_id,
             quant_config=quant_config,
             routed_scaling_factor=1.0,
+            # Sigmoid + correction bias + grouped top-k; fused-routing kernels default to softmax.
+            routing_method_type=RoutingMethodType.DeepSeekV3,
             prefix=add_prefix("experts", prefix),
         )
 
