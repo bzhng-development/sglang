@@ -2779,6 +2779,56 @@ class DeepseekV4AttnBackend(
             )
             return
         meta = self.forward_metadata
+        num_real = None
+        if (
+            forward_batch.forward_mode.is_extend()
+            and not forward_batch.forward_mode.is_target_verify()
+            and forward_batch.extend_seq_lens_cpu is not None
+            and getattr(meta, "late_layer_tail", None) is None
+            and not self._low_ratio_in_prefill_graph()
+        ):
+            num_real = sum(_as_int_list(forward_batch.extend_seq_lens_cpu))
+            if num_real >= positions.shape[0]:
+                num_real = None
+        if num_real is not None:
+            # An attention-TP gather (MegaMoE) pads the extend to a multiple of
+            # attn_tp_size; padded rows belong to no request. The fused extend
+            # compressor takes every row (its out_loc is 0 there and it walks
+            # per-request offsets), so padded rows reuse the last request as
+            # expand_prefill_causally does. Everything else sees real rows only;
+            # the indexer leaves padded rows at -1.
+            req_real = token_req_indices(forward_batch, num_tokens=num_real)
+            req = torch.cat(
+                [req_real, req_real[-1:].expand(positions.shape[0] - num_real)]
+            )
+            pos = positions
+            fused_extend = (
+                layer.compressor is not None
+                and layer.compressor.use_fused_compress
+                and forward_batch.forward_mode.is_extend_without_speculative()
+                and forward_batch.extend_start_loc is not None
+            )
+            if run_compressor and layer.compressor is not None:
+                if fused_extend:
+                    self._low_ratio_compress(layer, x, req, pos, forward_batch)
+                else:
+                    self._low_ratio_compress(
+                        layer,
+                        x[:num_real],
+                        req_real,
+                        pos[:num_real],
+                        forward_batch,
+                    )
+            if run_indexer and layer.indexer is not None:
+                self._low_ratio_index_topk(
+                    layer,
+                    x[:num_real],
+                    None if q_lora is None else q_lora[:num_real],
+                    req_real,
+                    pos[:num_real],
+                    forward_batch,
+                )
+            return
         hoisted_req = getattr(meta, "low_ratio_req_indices", None)
         hoisted_pos = getattr(meta, "low_ratio_pos_i64", None)
         if (
