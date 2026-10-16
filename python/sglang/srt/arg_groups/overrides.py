@@ -961,10 +961,63 @@ def _flashinfer_allreduce_fusion_auto_enable(view: Any) -> dict:
     return {}
 
 
+# Archs whose decoder installs CuteDSLFusion on every non-NextN layer and falls
+# back to AR + norm when the MoE cannot defer its finalize. Qwen3.5 is left out:
+# it raises at load unless every layer is block-FP8 with deferred finalize.
+_CUTEDSL_ALLREDUCE_FUSION_ARCHS = frozenset(
+    {
+        "DeepseekV3ForCausalLM",
+        "DeepseekV32ForCausalLM",
+        "GlmMoeDsaForCausalLM",
+    }
+)
+
+
+def _cutedsl_allreduce_fusion_supported(view: Any) -> bool:
+    import torch
+
+    model_config = model_config_of(view)
+    hf_config = model_config.hf_config
+    return (
+        hf_config.architectures[0] in _CUTEDSL_ALLREDUCE_FUSION_ARCHS
+        and get_platform().is_sm100
+        # FlashInfer MNNVLCuteDSLAllReduceFusionWorkspace: bf16 only, these TP sizes.
+        and model_config.dtype == torch.bfloat16
+        and view.tp_size in (2, 4, 8, 16)
+        # LL/BT kernels move 16B bf16 vectors.
+        and hf_config.hidden_size % 8 == 0
+        and view.pp_size == 1
+        # CuteDSLFusion._eligible declines every batch under either; an explicit
+        # auto skips the auto-enable gate that would have excluded them.
+        and not attn_dp_enabled_of(view)
+        and view.moe_a2a_backend == "none"
+        # DeepseekV2DecoderLayer installs no fusion under prefill CP, and
+        # prepare_cutedsl_fusion raises when no layer installed one.
+        and not view.enable_prefill_cp
+        and view.attn_cp_size == 1
+        # One mutable workspace cannot serve concurrent PDMux streams.
+        and not view.enable_pdmux
+    )
+
+
+@register_post_process
+def _flashinfer_allreduce_fusion_prefer_cutedsl(view: Any) -> dict:
+    """Upgrade auto to cutedsl where the kernel and the model wiring accept it."""
+    if view.flashinfer_allreduce_fusion_backend != "auto":
+        return {}
+    if not _cutedsl_allreduce_fusion_supported(view):
+        return {}
+    logger.info(
+        "Selecting the FlashInfer MNNVL CuTe DSL allreduce fusion backend for "
+        f"{model_config_of(view).hf_config.architectures[0]}"
+    )
+    return {"flashinfer_allreduce_fusion_backend": "cutedsl"}
+
+
 @register_post_process
 def _enforce_disable_allreduce_fusion(view: Any) -> dict:
-    """Slot pass right after the auto-enable: the user's enforce-disable
-    switch wins over every model-specific adjustment."""
+    """Slot pass right after the auto-enable and the cutedsl upgrade: the user's
+    enforce-disable switch wins over every model-specific adjustment."""
     if view.enforce_disable_flashinfer_allreduce_fusion:
         logger.info(
             "FlashInfer allreduce fusion is forcibly disabled "

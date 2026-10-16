@@ -40,6 +40,7 @@ from sglang.kernels.ops.attention.utils import (
     concat_mla_absorb_q_general,
     mla_quantize_and_rope_for_fp8,
     mla_quantize_for_fp8_no_rope,
+    mla_quantize_rope_and_append_kv_fp8,
     q8kv8_topk_length_from_indices,
     seqlens_expand_triton,
 )
@@ -95,6 +96,9 @@ from sglang.srt.utils import (
 from sglang.srt.utils.torch_memory_saver_adapter import TorchMemorySaverAdapter
 
 _IS_GFX95 = is_gfx95_supported()
+# Rows of the identity page table the fused RoPE + KV-append path reads; larger
+# forwards (big prefill chunks) take the unfused path. Arbitrary, matches _arange_buf.
+_FUSED_ROPE_KV_APPEND_MAX_TOKENS = 16384
 
 if is_cuda():
     import deep_gemm
@@ -575,6 +579,7 @@ class DeepseekSparseAttnBackend(
             self.device_capability = torch.cuda.get_device_capability()
         self.device_sm_major = self.device_capability[0]
         self.kv_cache_dtype = model_runner.kv_cache_dtype
+        self.use_fused_rope_kv_append = self._init_fused_rope_kv_append()
 
         # `flashmla_sparse_q8` = the native FP8 SM90 sparse-prefill kernel. It always
         # runs FP8 (requires fp8_e4m3 KV) and is SM90-only, so validate both at
@@ -3563,6 +3568,50 @@ class DeepseekSparseAttnBackend(
 
         return o
 
+    def _init_fused_rope_kv_append(self) -> bool:
+        # Subclass pools (hisparse, layer-split, unified, FP4) override the MLA
+        # write, so only the plain DSA pool with a raw [k_nope | k_rope] fp8 row qualifies.
+        from sglang.srt.mem_cache.memory_pool import DSATokenToKVPool
+
+        enabled = (
+            envs.SGLANG_OPT_DSA_TRTLLM_FUSED_ROPE_KV_APPEND.get()
+            and not _is_hip
+            and type(self.token_to_kv_pool) is DSATokenToKVPool
+            and self.token_to_kv_pool.dtype == torch.float8_e4m3fn
+            and not self.dsa_kv_cache_store_fp8
+            and self.qk_rope_head_dim > 0
+            and get_parallel().attn_dcp_size == 1
+        )
+        if enabled:
+            self._fused_append_identity_indptr = torch.arange(
+                _FUSED_ROPE_KV_APPEND_MAX_TOKENS + 1,
+                dtype=torch.int64,
+                device=self.device,
+            )
+            self._fused_append_zero_positions = torch.zeros(
+                _FUSED_ROPE_KV_APPEND_MAX_TOKENS, dtype=torch.int64, device=self.device
+            )
+        return enabled
+
+    def _can_fuse_rope_kv_append(
+        self,
+        forward_batch: ForwardBatch,
+        layer: RadixAttention,
+        q_rope: torch.Tensor,
+        save_kv_cache: bool,
+    ) -> bool:
+        cache_loc = forward_batch.out_cache_loc
+        return (
+            self.use_fused_rope_kv_append
+            and save_kv_cache
+            and not layer.is_cross_attention
+            and not dsa_use_prefill_cp(forward_batch)
+            and cache_loc.dtype == torch.int64
+            # DP padding can leave q with more rows than out_cache_loc.
+            and cache_loc.shape[0] == q_rope.shape[0]
+            and q_rope.shape[0] <= _FUSED_ROPE_KV_APPEND_MAX_TOKENS
+        )
+
     def _forward_trtllm(
         self,
         q: torch.Tensor,
@@ -3602,6 +3651,25 @@ class DeepseekSparseAttnBackend(
                     self.kv_lora_rank,
                     self.qk_rope_head_dim,
                 )
+            elif self._can_fuse_rope_kv_append(
+                forward_batch, layer, q_rope, save_kv_cache
+            ):
+                q = mla_quantize_rope_and_append_kv_fp8(
+                    q,
+                    q_rope,
+                    k.squeeze(1),
+                    k_rope.squeeze(1),
+                    forward_batch.positions,
+                    cos_sin_cache,
+                    is_neox,
+                    self.token_to_kv_pool.get_key_buffer(layer.layer_id),
+                    forward_batch.out_cache_loc,
+                    self._fused_append_identity_indptr[: q_rope.shape[0] + 1],
+                    self._fused_append_zero_positions[: q_rope.shape[0]],
+                    self.kv_lora_rank,
+                    self.qk_rope_head_dim,
+                )
+                save_kv_cache = False
             else:
                 rope_positions = forward_batch.positions
                 if dsa_use_prefill_cp(forward_batch):

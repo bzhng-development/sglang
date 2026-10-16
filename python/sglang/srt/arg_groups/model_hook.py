@@ -15,6 +15,7 @@ from sglang.srt.arg_groups.overrides import (
     _dsa_split_backend_resolution,
     _enforce_disable_allreduce_fusion,
     _flashinfer_allreduce_fusion_auto_enable,
+    _flashinfer_allreduce_fusion_prefer_cutedsl,
     _hrm_text_attention_force,
     _mamba_radix_cache_resolution,
     _sparse_head_overlap_disable,
@@ -742,6 +743,7 @@ def handle_model_specific_adjustments(server_args: Any):
     # slots.
 
     run_post_process_pass(server_args, _flashinfer_allreduce_fusion_auto_enable)
+    run_post_process_pass(server_args, _flashinfer_allreduce_fusion_prefer_cutedsl)
     run_post_process_pass(server_args, _enforce_disable_allreduce_fusion)
 
 

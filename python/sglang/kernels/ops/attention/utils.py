@@ -174,6 +174,65 @@ def mla_quantize_and_rope_for_fp8(
     return q_out, k_nope_out, k_rope_out
 
 
+def mla_quantize_rope_and_append_kv_fp8(
+    q_nope: torch.Tensor,
+    q_rope: torch.Tensor,
+    k_nope: torch.Tensor,
+    k_rope: torch.Tensor,
+    pos_ids: torch.Tensor,
+    cos_sin_cache: torch.Tensor,
+    is_neox: bool,
+    kv_buffer: torch.Tensor,
+    cache_loc: torch.Tensor,
+    identity_indptr: torch.Tensor,
+    zero_positions: torch.Tensor,
+    kv_lora_rank: int,
+    qk_rope_head_dim: int,
+) -> torch.Tensor:
+    """``mla_quantize_and_rope_for_fp8`` plus the KV-cache write, in one kernel.
+
+    Writes token ``i``'s fp8 [k_nope | rope(k_rope)] row to ``kv_buffer[cache_loc[i]]``
+    and returns the merged fp8 query ``[num_tokens, num_heads, kv_lora_rank +
+    qk_rope_head_dim]``. ``kv_buffer`` is ``[num_slots, 1, kv_lora_rank +
+    qk_rope_head_dim]`` fp8; ``k_nope`` / ``k_rope`` are ``[num_tokens, dim]``.
+    ``identity_indptr`` (``arange(num_tokens + 1)``) and ``zero_positions`` (zeros)
+    make FlashInfer's paged append address one slot per token; all index tensors
+    must be int64, matching ``cache_loc``, so no cast kernel runs.
+    """
+    import flashinfer.rope
+
+    num_tokens, num_heads = q_rope.shape[0], q_rope.shape[1]
+    q_out = q_rope.new_empty(
+        num_tokens,
+        num_heads,
+        kv_lora_rank + qk_rope_head_dim,
+        dtype=torch.float8_e4m3fn,
+    )
+    flashinfer.rope.rope_quantize_fp8_append_paged_kv_cache(
+        q_rope=q_rope,
+        k_rope=k_rope,
+        q_nope=q_nope,
+        k_nope=k_nope,
+        v=None,
+        cos_sin_cache=cos_sin_cache,
+        pos_ids=pos_ids,
+        paged_kv_cache=(kv_buffer[..., :kv_lora_rank], kv_buffer[..., kv_lora_rank:]),
+        kv_indices=cache_loc,
+        kv_indptr=identity_indptr,
+        batch_indices=identity_indptr[:num_tokens],
+        positions=zero_positions,
+        is_neox=is_neox,
+        quantize_dtype=torch.float8_e4m3fn,
+        quant_scale_q=1.0,
+        quant_scale_kv=1.0,
+        page_size=1,
+        q_rope_out=q_out[..., kv_lora_rank:],
+        q_nope_out=q_out[..., :kv_lora_rank],
+        enable_pdl=is_arch_support_pdl(),
+    )
+    return q_out
+
+
 def mla_quantize_for_fp8_no_rope(
     q_nope: torch.Tensor,
     q_rope: torch.Tensor,
