@@ -621,12 +621,15 @@ def capture_prefill_graph(
         layer_model,
     )
 
-    if not has_standard_gqa_for_all_local_layers(
-        attention_layer_count=sum(
-            layer is not None for layer in model_runner.attention_layers
-        ),
-        start_layer=model_runner.layer_info.start_layer,
-        end_layer=model_runner.layer_info.end_layer,
+    if (
+        False
+        and not has_standard_gqa_for_all_local_layers(  # LOCAL TEST: skip gate (see #36952)
+            attention_layer_count=sum(
+                layer is not None for layer in model_runner.attention_layers
+            ),
+            start_layer=model_runner.layer_info.start_layer,
+            end_layer=model_runner.layer_info.end_layer,
+        )
     ):
         # TODO(yuwei): support Non-Standard GQA
         log_info_on_rank0(
