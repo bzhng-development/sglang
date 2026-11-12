@@ -39,6 +39,7 @@ REASONING_PARSER_NAMES = [
     "inkling",
     "iquest_q1",
     "flint",
+    "ripple",
     "cohere_command4",
     "gigachat35",
     "response_template",
